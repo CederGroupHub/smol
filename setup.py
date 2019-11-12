@@ -10,7 +10,8 @@ import platform
 
 from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext as _build_ext
-
+from Cython.Build import cythonize
+import numpy  # this can be put in a function like build_ext to check import and then cythonize
 
 class build_ext(_build_ext):
     """Extension builder that checks for numpy before install."""
@@ -84,7 +85,5 @@ setup(
         "Topic :: Scientific/Engineering :: Chemistry",
         "Topic :: Software Development :: Libraries :: Python Modules"
     ],
-    ext_modules=[Extension("pyabinitio.cluster_expansion.ce_utils",
-                           ["pyabinitio/cluster_expansion/ce_utils.c"],
-                           include_dirs=get_numpy_include_dirs())],
+    ext_modules=cythonize("src/ce_utils.pyx", include_path=[numpy.get_include()])
 )

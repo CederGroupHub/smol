@@ -8,7 +8,7 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 #from pymatgen.util.coord import is_coord_subset, lattice_points_in_supercell, coord_list_mapping,\
 #            coord_list_mapping_pbc, is_coord_subset_pbc # new pymatgen :( 
 
-from pymatgen.util.coord_utils import is_coord_subset, lattice_points_in_supercell, coord_list_mapping,\
+from pymatgen.util.coord import is_coord_subset, lattice_points_in_supercell, coord_list_mapping,\
             coord_list_mapping_pbc, is_coord_subset_pbc
 from monty.json import MSONable
 from warnings import warn
@@ -16,7 +16,7 @@ from warnings import warn
 import itertools
 import numpy as np
 
-from pyabinitio.cluster_expansion.ce_utils import delta_corr_single_flip
+from ..cluster_expansion.ce_utils import delta_corr_single_flip
 
 SITE_TOL = 1e-6
 
@@ -33,9 +33,9 @@ def get_bits(structure):
     all_bits = []
     for site in structure:
         bits = []
-        for sp in sorted(site.species_and_occu.keys()):
+        for sp in sorted(site.species.keys()):
             bits.append(str(sp))
-        if site.species_and_occu.num_atoms < 0.99:
+        if site.species.num_atoms < 0.99:
             bits.append("Vacancy")
         all_bits.append(bits)
     return all_bits
@@ -334,8 +334,8 @@ class ClusterExpansion(object):
         """
         symops = SpacegroupAnalyzer(structure).get_symmetry_operations()
         #get the sites to expand over
-        sites_to_expand = [site for site in structure if site.species_and_occu.num_atoms < 0.99 \
-                            or len(site.species_and_occu) > 1]
+        sites_to_expand = [site for site in structure if site.species.num_atoms < 0.99 \
+                            or len(site.species) > 1]
         expansion_structure = Structure.from_sites(sites_to_expand)
         clusters = cls._clusters_from_radii(expansion_structure, radii, symops)
         return cls(structure=structure, expansion_structure=expansion_structure, symops=symops, clusters=clusters,

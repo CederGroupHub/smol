@@ -51,6 +51,7 @@ def _energies_above_hull(pd, structures, energies):
         e_above_hull.append(pd.get_e_above_hull(PDEntry(s.composition.element_composition, e)))
     return np.array(e_above_hull)
 
+
 class LightFittedEciGenerator(object):
 
     def __init__(self, cluster_expansion, ecis):
