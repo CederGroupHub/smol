@@ -15,7 +15,7 @@ from copy import deepcopy
 import os
 
 from pymatgen.analysis.structure_matcher import StructureMatcher
-from pyabinitio.cluster_expansion.ce import Cluster, SymmetrizedCluster, get_bits
+from ..cluster_expansion.ce import Cluster, SymmetrizedCluster, get_bits
 import logging
 
 from copy import deepcopy

@@ -8,8 +8,8 @@ from itertools import chain
 
 from pymatgen import Composition, Structure
 from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
-from pyabinitio.compressive.bregman import split_bregman
-from pyabinitio.cluster_expansion.ce import ClusterExpansion
+from ..compressive.bregman import split_bregman
+from ..cluster_expansion.ce import ClusterExpansion
 
 from matplotlib import pylab as plt
 
@@ -376,7 +376,7 @@ class EciGenerator(object):
         """
         A and f should already have been adjusted to account for weighting
         """
-        from pyabinitio.cluster_expansion.l1regls import l1regls, solvers
+        from .l1regls import l1regls, solvers
         solvers.options['show_progress'] = False
         from cvxopt import matrix
         A1 = matrix(A)
