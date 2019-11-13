@@ -1,11 +1,9 @@
 from __future__ import division
 import unittest
 
-from pymatgen import Lattice, Structure, write_structure
-from pyabinitio.cluster_expansion.ce import Cluster,\
-        SymmetrizedCluster, ClusterSupercell,\
-        ClusterExpansion
-from pyabinitio.cluster_expansion.monte_carlo import ClusterMonteCarlo
+from pymatgen import Lattice, Structure
+from ..ce import ClusterExpansion
+from ...cluster_expansion.monte_carlo import ClusterMonteCarlo
 
 import numpy as np
 
@@ -42,8 +40,8 @@ class MCTest(unittest.TestCase):
         
         best_occu, best_energy, energies = cmc.simulated_anneal(occu, 0.5, 0, 200)
         
-        print np.dot(cmc.cluster_supercell.corr_from_occupancy(best_occu), ecis), best_energy
-        print best_occu
+        print(np.dot(cmc.cluster_supercell.corr_from_occupancy(best_occu), ecis), best_energy)
+        print(best_occu)
 
 
         import matplotlib.pylab as plt

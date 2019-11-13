@@ -11,6 +11,8 @@ from ce_utils import delta_corr_single_flip
 from .utils import SITE_TOL
 
 
+#TODO can we simple obtain the cluster vectors based on the clustersubspace (ie get rid of this supercell thing)?
+
 def get_bits(structure):
     """
     Helper method to compute list of species on each site.

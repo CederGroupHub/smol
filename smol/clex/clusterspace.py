@@ -10,6 +10,7 @@ from .cluster import Cluster, SymmetrizedCluster
 from .supercell import get_bits, ClusterSupercell
 from .utils import SYMMETRY_ERROR, SITE_TOL
 
+#TODO This needs to be renamed to a clusterspace and include only the abstractions defining a clustersubspace
 
 class ClusterExpansion(object):
     """

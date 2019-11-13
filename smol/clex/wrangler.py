@@ -1,0 +1,1 @@
+#TODO StructureWrangler takes training data, checks it (ie does it map, etc) and creates feature matrices and fitting data
