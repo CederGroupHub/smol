@@ -6,17 +6,21 @@ from pymatgen.analysis.structure_matcher import StructureMatcher, OrderDisorderE
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc
 
-from .cluster import Cluster, SymmetrizedCluster
+from smol.clex.orbit import Orbit
 from .supercell import get_bits, ClusterSupercell
 from .utils import SYMMETRY_ERROR, SITE_TOL
 
 #TODO This needs to be renamed to a clusterspace and include only the abstractions defining a clustersubspace
 
-class ClusterExpansion(object):
+class ClusterSubspace(object):
     """
-    Holds lists of SymmetrizedClusters and ClusterSupercells. This is probably the class you're looking for
-    and should be instantiating. You probably want to generate from ClusterExpansion.from_radii, which will
-    auto-generate the symmetrized clusters, unless you want more control over them.
+    Holds lists of SymmetrizedClusters and ClusterSupercells. This class defines the Cluster subspace over which to fit
+    a cluster expansion: This sets the orbits (groups of clusters) that are to be considered in the fit.
+
+    This is probably the class you're looking for to start defining a cluster expansion.
+
+    You probably want to generate from ClusterSubspace.from_radii, which will auto-generate the symmetrized clusters,
+    unless you want more control over them.
     """
 
     def __init__(self, structure, expansion_structure, symops, clusters, ltol=0.2, stol=0.1, angle_tol=5,
@@ -127,35 +131,36 @@ class ClusterExpansion(object):
         """
         bits = get_bits(expansion_structure)
         nbits = np.array([len(b) - 1 for b in bits])
-        new_clusters = []
-        clusters = {}
+        orbits = {}
+        new_orbits = []
+
         for i, site in enumerate(expansion_structure):
-            new_c = Cluster([site.frac_coords], expansion_structure.lattice)
-            new_sc = SymmetrizedCluster(new_c, [np.arange(nbits[i])], symops)
-            if new_sc not in new_clusters:
-                new_clusters.append(new_sc)
-        clusters[1] = sorted(new_clusters, key = lambda x: (np.round(x.max_radius,6), -x.multiplicity))
+            orbit = Orbit([site.frac_coords], expansion_structure.lattice, [np.arange(nbits[i])], symops)
+            if orbit not in new_orbits:
+                new_orbits.append(orbit)
+        orbits[1] = sorted(new_orbits, key = lambda x: (np.round(x.max_radius,6), -x.multiplicity))
 
         all_neighbors = expansion_structure.lattice.get_points_in_sphere(expansion_structure.frac_coords, [0.5, 0.5, 0.5],
                                     max(radii.values()) + sum(expansion_structure.lattice.abc)/2)
 
         for size, radius in sorted(radii.items()):
-            new_clusters = []
-            for c in clusters[size-1]:
+            new_orbits = []
+            for c in orbits[size-1]:
                 if c.max_radius > radius:
                     continue
                 for n in all_neighbors:
                     p = n[0]
                     if is_coord_subset([p], c.sites, atol=SITE_TOL):
                         continue
-                    new_c = Cluster(np.concatenate([c.sites, [p]]), expansion_structure.lattice)
-                    if new_c.max_radius > radius + 1e-8:
+                    orbit = Orbit(np.concatenate([c.sites, [p]]), expansion_structure.lattice,
+                                   c.bits + [np.arange(nbits[n[2]])], symops)
+                    if orbit.max_radius > radius + 1e-8:
                         continue
-                    new_sc = SymmetrizedCluster(new_c, c.bits + [np.arange(nbits[n[2]])], symops)
-                    if new_sc not in new_clusters:
-                        new_clusters.append(new_sc)
-            clusters[size] = sorted(new_clusters, key = lambda x: (np.round(x.max_radius,6), -x.multiplicity))
-        return clusters
+                    elif orbit not in new_orbits:
+                        new_orbits.append(orbit)
+
+            orbits[size] = sorted(new_orbits, key = lambda x: (np.round(x.max_radius,6), -x.multiplicity))
+        return orbits
 
     def supercell_matrix_from_structure(self, structure):
         sc_matrix = self.sm.get_supercell_matrix(structure, self.structure)
@@ -233,7 +238,7 @@ class ClusterExpansion(object):
         symops = [SymmOp.from_dict(so) for so in d['symops']]
         clusters = {}
         for k, v in d['clusters_and_bits'].items():
-            clusters[int(k)] = [SymmetrizedCluster(Cluster.from_dict(c[0]), c[1], symops) for c in v]
+            clusters[int(k)] = [Orbit(c[0], c[1], symops) for c in v]
         return cls(structure=Structure.from_dict(d['structure']),
                    expansion_structure=Structure.from_dict(d['expansion_structure']),
                    clusters=clusters, symops=symops,
@@ -245,7 +250,7 @@ class ClusterExpansion(object):
     def as_dict(self):
         c = {}
         for k, v in self.clusters.items():
-            c[int(k)] = [(sc.base_cluster.as_dict(), [list(b) for b in sc.bits]) for sc in v]
+            c[int(k)] = [(sc.as_dict(), [list(b) for b in sc.bits]) for sc in v]
         return {'structure': self.structure.as_dict(),
                 'expansion_structure': self.expansion_structure.as_dict(),
                 'symops': [so.as_dict() for so in self.symops],

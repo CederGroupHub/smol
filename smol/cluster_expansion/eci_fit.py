@@ -8,8 +8,8 @@ from itertools import chain
 
 from pymatgen import Composition, Structure
 from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
-from ..compressive.bregman import split_bregman
-from ..cluster_expansion.ce import ClusterExpansion
+#from pyabinitio.compressive.bregman import split_bregman
+from .ce import ClusterExpansion
 
 from matplotlib import pylab as plt
 
@@ -50,7 +50,6 @@ def _energies_above_hull(pd, structures, energies):
     for s, e in zip(structures, energies):
         e_above_hull.append(pd.get_e_above_hull(PDEntry(s.composition.element_composition, e)))
     return np.array(e_above_hull)
-
 
 class LightFittedEciGenerator(object):
 
@@ -383,8 +382,8 @@ class EciGenerator(object):
         b = matrix(f * mu)
         return (np.array(l1regls(A1, b)) / mu).flatten()
 
-    def _solve_bregman(self, A, f, mu):
-        return split_bregman(A, f, MaxIt=1e5, tol=1e-7, mu=mu, l=1, quiet=True)
+    #def _solve_bregman(self, A, f, mu):
+     #   return split_bregman(A, f, MaxIt=1e5, tol=1e-7, mu=mu, l=1, quiet=True)
 
     def _solve_gs_preserve(self, A, f, mu):
         from cvxopt import matrix

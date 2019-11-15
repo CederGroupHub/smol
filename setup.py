@@ -49,7 +49,7 @@ setup(
     cmdclass={'build_ext': build_ext},
     setup_requires=['numpy>=1.14.3', 'setuptools>=18.0'],
     python_requires='>=3.6',
-    install_requires=["numpy>=1.14.3"],
+    install_requires=["numpy>=1.14.3", 'monty', 'pymatgen'],
     extras_require={
         "provenance": ["pybtex"],
         "ase": ["ase>=3.3"],

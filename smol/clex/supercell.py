@@ -7,7 +7,7 @@ from pymatgen.analysis.structure_matcher import StructureMatcher, OrderDisorderE
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.util.coord import lattice_points_in_supercell, coord_list_mapping_pbc
 
-from ce_utils import delta_corr_single_flip
+#from ce_utils import delta_corr_single_flip
 from .utils import SITE_TOL
 
 
@@ -106,25 +106,25 @@ class ClusterSupercell(object):
             # There seems to be an issue with SpacegroupAnalyzer such that making a supercell
             # can actually reduce the symmetry operations, so we're going to group the ewald
             # matrix by the equivalency in self.cluster_indices
-            equiv_sc_inds = []
+            equiv_orb_inds = []
             ei = self.ewald_inds
             n_inds = len(self.ewald_matrix)
-            for sc, inds in self.cluster_indices:
+            for orb, inds in self.cluster_indices:
                 # only want the point terms, which should be first
-                if len(sc.bits) > 1:
+                if len(orb.bits) > 1:
                     break
                 equiv = ei[inds[:, 0]]  # inds is normally 2d, but these are point terms
                 for inds in equiv.T:
                     if inds[0] > -1:
                         b = np.zeros(n_inds, dtype=np.int)
                         b[inds] = 1
-                        equiv_sc_inds.append(b)
+                        equiv_orb_inds.append(b)
 
             self._partial_ems = []
-            for x in equiv_sc_inds:
+            for x in equiv_orb_inds:
                 mask = x[None, :] * x[:, None]
                 self._partial_ems.append(self.ewald_matrix * mask)
-            for x, y in itertools.combinations(equiv_sc_inds, r=2):
+            for x, y in itertools.combinations(equiv_orb_inds, r=2):
                 mask = x[None, :] * y[:, None]
                 mask = mask.T + mask  # for the love of god don't use a += here, or you will forever regret it
                 self._partial_ems.append(self.ewald_matrix * mask)
@@ -180,8 +180,8 @@ class ClusterSupercell(object):
         ts = lattice_points_in_supercell(self.supercell_matrix)
         self.cluster_indices = []
         self.clusters_by_sites = defaultdict(list)
-        for sc in self.cluster_expansion.symmetrized_clusters:
-            prim_fcoords = np.array([c.sites for c in sc.equivalent_clusters])
+        for orb in self.cluster_expansion.symmetrized_clusters:
+            prim_fcoords = np.array([c.sites for c in orb.clusters])
             fcoords = np.dot(prim_fcoords, self.prim_to_supercell)
             # tcoords contains all the coordinates of the symmetrically equivalent clusters
             # the indices are: [equivalent cluster (primitive cell), translational image, index of site in cluster, coordinate index]
@@ -190,7 +190,7 @@ class ClusterSupercell(object):
             inds = coord_list_mapping_pbc(tcoords.reshape((-1, 3)),
                                           self.fcoords, atol=SITE_TOL).reshape((tcs[0] * tcs[1], tcs[2]))
             self.cluster_indices.append(
-                (sc, inds))  # symmetrized cluster, 2d array of index groups that correspond to the cluster
+                (orb, inds))  # symmetrized cluster, 2d array of index groups that correspond to the cluster
             # the 2d array may have some duplicates. This is due to symetrically equivalent
             # groups being matched to the same sites (eg in simply cubic all 6 nn interactions
             # will all be [0, 0] indices. This multiplicity disappears as supercell size
@@ -203,7 +203,7 @@ class ClusterSupercell(object):
             for site_index in np.unique(inds):
                 in_inds = np.any(inds == site_index, axis=-1)
                 ratio = len(inds) / np.sum(in_inds)
-                self.clusters_by_sites[site_index].append((sc.bit_combos, sc.sc_b_id, inds[in_inds], ratio))
+                self.clusters_by_sites[site_index].append((orb.bit_combos, orb.o_b_id, inds[in_inds], ratio))
 
     def structure_from_occu(self, occu):
         sites = []
@@ -219,11 +219,11 @@ class ClusterSupercell(object):
         corr = np.zeros(self.cluster_expansion.n_bit_orderings)
         corr[0] = 1  # zero point cluster
         occu = np.array(occu)
-        for sc, inds in self.cluster_indices:
+        for orb, inds in self.cluster_indices:
             c_occu = occu[inds]
-            for i, bits in enumerate(sc.bit_combos):
+            for i, bits in enumerate(orb.bit_combos):
                 p = np.all(c_occu[None, :, :] == bits[:, None, :], axis=-1)
-                corr[sc.sc_b_id + i] = np.average(p)
+                corr[orb.o_b_id + i] = np.average(p)
         if self.cluster_expansion.use_ewald:
             corr = np.concatenate([corr, self._get_ewald_eci(occu)])
         return corr
@@ -233,7 +233,7 @@ class ClusterSupercell(object):
         Calculates the correlation vector. Structure must be on this supercell
         """
         # calculate mapping to supercell
-        sm_no_sc = StructureMatcher(primitive_cell=False,
+        sm_no_orb = StructureMatcher(primitive_cell=False,
                                     attempt_supercell=False,
                                     allow_subset=True,
                                     comparator=OrderDisorderElementComparator(),
@@ -243,7 +243,7 @@ class ClusterSupercell(object):
                                     stol=self.cluster_expansion.stol,
                                     angle_tol=self.cluster_expansion.angle_tol)
         if self.mapping == None:
-            mapping = sm_no_sc.get_mapping(self.supercell, structure).tolist()
+            mapping = sm_no_orb.get_mapping(self.supercell, structure).tolist()
         else:
             mapping = self.mapping
         if mapping is None:

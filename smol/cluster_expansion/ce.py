@@ -6,14 +6,19 @@ from pymatgen.analysis.structure_matcher import StructureMatcher, OrderDisorderE
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.util.coord import is_coord_subset, lattice_points_in_supercell, coord_list_mapping,\
-            coord_list_mapping_pbc, is_coord_subset_pbc
+            coord_list_mapping_pbc, is_coord_subset_pbc # new pymatgen :( 
+
+#from pymatgen.util.coord_utils import is_coord_subset, lattice_points_in_supercell, coord_list_mapping,\
+#            coord_list_mapping_pbc, is_coord_subset_pbc
+#In new pymatgen this has been changed to util.coord!
+
 from monty.json import MSONable
 from warnings import warn
 
 import itertools
 import numpy as np
 
-from ce_utils import delta_corr_single_flip
+from .ce_utils import delta_corr_single_flip
 
 SITE_TOL = 1e-6
 

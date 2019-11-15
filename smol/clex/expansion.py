@@ -7,7 +7,7 @@ import numpy as np
 from matplotlib import pylab as plt
 from pymatgen import Composition, Structure
 from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
-from ..compressive.bregman import split_bregman
+#from ..compressive.bregman import split_bregman
 from ..cluster_expansion.ce import ClusterExpansion
 
 
@@ -381,8 +381,8 @@ class EciGenerator(object):
         b = matrix(f * mu)
         return (np.array(l1regls(A1, b)) / mu).flatten()
 
-    def _solve_bregman(self, A, f, mu):
-        return split_bregman(A, f, MaxIt=1e5, tol=1e-7, mu=mu, l=1, quiet=True)
+    #def _solve_bregman(self, A, f, mu):
+     #   return split_bregman(A, f, MaxIt=1e5, tol=1e-7, mu=mu, l=1, quiet=True)
 
     def _solve_gs_preserve(self, A, f, mu):
         from cvxopt import matrix

@@ -58,8 +58,8 @@ class CETest(unittest.TestCase):
     def test_SymmetrizedCluster(self):
         clust = Cluster.from_sites(self.structure[:2])
         sc = SymmetrizedCluster(clust, [1,2], self.symops)
-        self.assertEqual(len(sc.equivalent_clusters), 4)
-        for c in sc.equivalent_clusters[1:]:
+        self.assertEqual(len(sc.clusters), 4)
+        for c in sc.clusters[1:]:
             self.assertNotEqual(sc.base_cluster, c)
             self.assertEqual(sc, SymmetrizedCluster(c, [1,2], self.symops))
         self.assertEqual(sc.multiplicity, 4)
@@ -109,7 +109,7 @@ class CETest(unittest.TestCase):
                 new_fc = np.dot(cs.fcoords[x], cs.supercell_matrix)
                 self.assertGreater(sc.max_radius + 1e-7, pbc_radius)
                 found = False
-                for equiv in sc.equivalent_clusters:
+                for equiv in sc.clusters:
                     if is_coord_subset_pbc(equiv.sites, new_fc, atol=SITE_TOL):
                         found = True
                         break
