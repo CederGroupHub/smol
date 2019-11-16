@@ -14,16 +14,16 @@ from .utils import SYMMETRY_ERROR, SITE_TOL
 
 class ClusterSubspace(object):
     """
-    Holds lists of SymmetrizedClusters and ClusterSupercells. This class defines the Cluster subspace over which to fit
+    Holds lists of Orbits and ClusterSupercells. This class defines the Cluster subspace over which to fit
     a cluster expansion: This sets the orbits (groups of clusters) that are to be considered in the fit.
 
     This is probably the class you're looking for to start defining a cluster expansion.
 
-    You probably want to generate from ClusterSubspace.from_radii, which will auto-generate the symmetrized clusters,
+    You probably want to generate from ClusterSubspace.from_radii, which will auto-generate the orbits,
     unless you want more control over them.
     """
 
-    def __init__(self, structure, expansion_structure, symops, clusters, ltol=0.2, stol=0.1, angle_tol=5,
+    def __init__(self, structure, expansion_structure, symops, orbits, ltol=0.2, stol=0.1, angle_tol=5,
                  supercell_size='volume', use_ewald=False, use_inv_r=False, eta=None):
         """
             Args:
@@ -76,14 +76,14 @@ class ClusterSubspace(object):
                                    stol=self.stol,
                                    ltol=self.ltol,
                                    angle_tol=self.angle_tol)
-        self.clusters = clusters
+        self.orbits = orbits
 
         # assign the cluster ids
         n_clusters = 1
         n_bit_orderings = 1
         n_sclusters = 1
-        for k in sorted(self.clusters.keys()):
-            for y in self.clusters[k]:
+        for k in sorted(self.orbits.keys()):
+            for y in self.orbits[k]:
                 n_sclusters, n_bit_orderings, n_clusters = y.assign_ids(n_sclusters, n_bit_orderings, n_clusters)
         self.n_sclusters = n_sclusters
         self.n_clusters = n_clusters
@@ -118,15 +118,15 @@ class ClusterSubspace(object):
         sites_to_expand = [site for site in structure if site.species.num_atoms < 0.99 \
                             or len(site.species) > 1]
         expansion_structure = Structure.from_sites(sites_to_expand)
-        clusters = cls._clusters_from_radii(expansion_structure, radii, symops)
-        return cls(structure=structure, expansion_structure=expansion_structure, symops=symops, clusters=clusters,
+        orbits = cls._orbits_from_radii(expansion_structure, radii, symops)
+        return cls(structure=structure, expansion_structure=expansion_structure, symops=symops, orbits=orbits,
                    ltol=ltol, stol=stol, angle_tol=angle_tol, supercell_size=supercell_size, use_ewald=use_ewald,
                    use_inv_r=use_inv_r, eta=eta)
 
     @classmethod
-    def _clusters_from_radii(cls, expansion_structure, radii, symops):
+    def _orbits_from_radii(cls, expansion_structure, radii, symops):
         """
-        Generates dictionary of size: [SymmetrizedCluster] given a dictionary of maximal cluster radii and symmetry
+        Generates dictionary of {size: [Orbits]} given a dictionary of maximal cluster radii and symmetry
         operations to apply (not necessarily all the symmetries of the expansion_structure)
         """
         bits = get_bits(expansion_structure)
@@ -217,17 +217,17 @@ class ClusterSubspace(object):
         return cs.structure_energy(structure, ecis)
 
     @property
-    def symmetrized_clusters(self):
+    def orbit(self):
         """
         Yields all symmetrized clusters
         """
-        for k in sorted(self.clusters.keys()):
-            for c in self.clusters[k]:
+        for k in sorted(self.orbits.keys()):
+            for c in self.orbits[k]:
                 yield c
 
     def __str__(self):
         s = "ClusterBasis: {}\n".format(self.structure.composition)
-        for k, v in self.clusters.items():
+        for k, v in self.orbits.items():
             s += "    size: {}\n".format(k)
             for z in v:
                 s += "    {}\n".format(z)
@@ -249,7 +249,7 @@ class ClusterSubspace(object):
 
     def as_dict(self):
         c = {}
-        for k, v in self.clusters.items():
+        for k, v in self.orbits.items():
             c[int(k)] = [(sc.as_dict(), [list(b) for b in sc.bits]) for sc in v]
         return {'structure': self.structure.as_dict(),
                 'expansion_structure': self.expansion_structure.as_dict(),

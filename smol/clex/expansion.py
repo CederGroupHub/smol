@@ -569,7 +569,7 @@ class EciGenerator(object):
         corr = np.zeros(self.ce.n_bit_orderings)
         corr[0] = 1  # zero point cluster
         cluster_std = np.std(self.feature_matrix, axis=0)
-        for sc in self.ce.symmetrized_clusters:
+        for sc in self.ce.orbit:
             print(sc, len(sc.bits) - 1, sc.sc_b_id)
             print('bit    eci    cluster_std    eci*cluster_std')
             for i, bits in enumerate(sc.bit_combos):
