@@ -11,11 +11,12 @@ from .supercell import get_bits, ClusterSupercell
 from .utils import SYMMETRY_ERROR, SITE_TOL
 
 #TODO This needs to be renamed to a clusterspace and include only the abstractions defining a clustersubspace
+#TODO what the flip does the use_ewald do here? its just passed on to the solver? fitting class?
 
 class ClusterSubspace(object):
     """
-    Holds lists of Orbits and ClusterSupercells. This class defines the Cluster subspace over which to fit
-    a cluster expansion: This sets the orbits (groups of clusters) that are to be considered in the fit.
+    Holds a structure, its expansion structure and a list of Orbits. This class defines the Cluster subspace over
+    which to fit a cluster expansion: This sets the orbits (groups of clusters) that are to be considered in the fit.
 
     This is probably the class you're looking for to start defining a cluster expansion.
 
@@ -174,6 +175,8 @@ class ClusterSubspace(object):
         sc_matrix = self.supercell_matrix_from_structure(structure)
         return self.supercell_from_matrix(sc_matrix)
 
+    #TODO the cluster-space does not hold any supercells it always creates them on the fly whenever it is needed
+    #TODO is there a better way to do this? get rid of the supercell class? or create a factory-thingy?
     def supercell_from_matrix(self, sc_matrix):
         sc_matrix = tuple(sorted(tuple(s) for s in sc_matrix))
         if sc_matrix in self._supercells:
@@ -196,10 +199,6 @@ class ClusterSubspace(object):
         occu = sc.occu_from_structure(structure)
         return sc.structure_from_occu(occu)
 
-    def structure_energy(self, structure, ecis):
-        cs = self.supercell_from_structure(structure)
-        return cs.structure_energy(structure, ecis)
-
     def corr_from_external(self, structure, sc_matrix, mapping=None):
         cs = self.supercell_from_matrix(sc_matrix) # get clustersupercell
         self.cs = cs
@@ -212,12 +211,18 @@ class ClusterSubspace(object):
         occu, mapping = cs.occu_from_structure(structure, return_mapping = True)
         return cs.structure_from_occu(occu), mapping
 
+    #TODO this should be done by the cluster-expansion
+    def structure_energy(self, structure, ecis):
+        cs = self.supercell_from_structure(structure)
+        return cs.structure_energy(structure, ecis)
+
+    #TODO this should be done by the cluster-expansion
     def structure_energy_from_sc_matrix(self, structure, ecis, sc_matrix):
         cs = self.supercell_from_matrix(sc_matrix)
         return cs.structure_energy(structure, ecis)
 
     @property
-    def orbit(self):
+    def orbits(self):
         """
         Yields all symmetrized clusters
         """
