@@ -15,8 +15,7 @@ class StructureWrangler(object):
     fit the final ClusterExpansion.
     """
 
-    def __init__(self, clustersubspace, structures, properties, max_dielectric=None, max_ewald=None,
-                 weights=None):
+    def __init__(self, clustersubspace, structures, properties, max_ewald=None):
         """
         Fit ECI's to obtain a cluster expansion. This init function takes in all possible arguments,
         but its much simpler to use one of the factory classmethods below,
@@ -37,20 +36,19 @@ class StructureWrangler(object):
                  reasonable value for dielectric constants around 10.
         """
         self.cs = clustersubspace
-        self.max_dielectric = max_dielectric
         self.max_ewald = max_ewald
-        self.weights = np.ones(len(structures)) if weights is None else weights
 
         # Match all input structures to cluster expansion
         self.items = []
         supercell_matrices, fm_rows = [None] * len(structures), [None] * len(structures)
+        #TODO structures and properties should be input as a dict or something, not separate lists.
         for s, e, fm_row in zip(structures, properties, fm_rows):
             try:
                 m = self.cs.supercell_matrix_from_structure(s)
                 sc = self.cs.supercell_from_matrix(m)
                 if fm_row is None:
                     fm_row = sc.corr_from_structure(s)
-            except Exception:
+            except Exception: #TODO too broad never catch ALL exceptions like this
                 logging.debug('Unable to match {} with energy {} to supercell'
                               ''.format(s.composition, e))
                 if self.cs.supercell_size not in ['volume', 'num_sites', 'num_atoms'] \
@@ -58,7 +56,7 @@ class StructureWrangler(object):
                     logging.warning('Specie {} not in {}'.format(self.cs.supercell_size, s.composition))
                 continue
             self.items.append({'structure': s,
-                               'energy': e,
+                               'property': e,
                                'supercell': sc,
                                'features': fm_row,
                                'size': sc.size})
@@ -91,8 +89,8 @@ class StructureWrangler(object):
         return [i['structure'] for i in self.items]
 
     @property
-    def energies(self):
-        return np.array([i['energy'] for i in self.items])
+    def property_vector(self):
+        return np.array([i['property'] for i in self.items])
 
     @property
     def supercells(self):
@@ -110,12 +108,11 @@ class StructureWrangler(object):
     def from_dict(cls, d):
         return cls(clustersubspace=ClusterSubspace.from_dict(d['cluster_subspace']),
                    structures=[Structure.from_dict(s) for s in d['structures']],
-                   max_dielectric=d.get('max_dielectric'), max_ewald=d.get('max_ewald'))
+                   max_ewald=d.get('max_ewald'))
 
     def as_dict(self):
         return {'cluster_expansion': self.cs.as_dict(),
                 'structures': [s.as_dict() for s in self.structures],
-                'max_dielectric': self.max_dielectric,
                 'max_ewald': self.max_ewald,
                 #'feature_matrix': self.feature_matrix.tolist(), #TODO should we keep this to be able to use the from_dict?
                 '@module': self.__class__.__module__,

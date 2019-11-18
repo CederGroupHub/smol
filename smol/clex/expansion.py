@@ -1,17 +1,12 @@
 from __future__ import division
 import warnings
 from collections import defaultdict
-from itertools import chain
 import logging
 import numpy as np
-from matplotlib import pylab as plt
 from pymatgen import Composition, Structure
 from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
-from ..cluster_expansion.ce import ClusterExpansion
+from .utils import NotFittedError
 
-
-#TODO This needs to be simplified to only hold the cluster expansion (ie ECI) and include methods to use and analyze it
-#TODO Also should have the fit methods
 
 def _pd(structures, energies, ce):
     """
@@ -51,15 +46,13 @@ def _energies_above_hull(pd, structures, energies):
 
 #TODO this needs a lot of restructuring. Basic functionality should be hold ECI's, have a general fit method, and a
 #TODO predict method. End of story...maybe some further analysis methods...but thats it.
-#TODO probably going to cut all the plotting functionality, users should know how to do that with the data...
 class ClusterExpansion(object):
     _pd_input = None
     _pd_ce = None
     _e_above_hull_input = None
     _e_above_hull_ce = None
 
-    def __init__(self, datawrangler, max_dielectric=None, max_ewald=None, solver='cvxopt_l1',
-                 weights=None, ecis=None):
+    def __init__(self, datawrangler, solver='cvxopt_l1', weights=None, max_dielectric=None,  ecis=None):
         """
         Fit ECI's to obtain a cluster expansion. This init function takes in all possible arguments,
         but its much simpler to use one of the factory classmethods below,
@@ -70,34 +63,30 @@ class ClusterExpansion(object):
             max_dielectric: constrain the dielectric constant to be positive and below the
                 supplied value (note that this is also affected by whether the primitive
                 cell is the correct size)
-            max_ewald: filter the input structures to only use those with low electrostatic
-                energies (no large charge separation in cell). This energy is referenced to the lowest
-                value at that composition. Note that this is before the division by the relative dielectric
-                 constant and is per primitive cell in the cluster exapnsion -- 1.5 eV/atom seems to be a
-                 reasonable value for dielectric constants around 10.
             solver: solver, current options are cvxopt_l1, bregman_l1, gs_preserve
         """
         self.wrangler = datawrangler
         self.solver = solver
         self.max_dielectric = max_dielectric
-        self.max_ewald = max_ewald
         self.ecis = ecis
+        self.weights = np.ones(len(self.wrangler.structures)) if weights is None else weights
 
         # do least squares for comparison
-        x = np.linalg.lstsq(self.feature_matrix, self.normalized_energies)[0]
-        ls_err = np.dot(self.feature_matrix, x) - self.normalized_energies
-        logging.info('least squares rmse: {}'.format(np.sqrt(np.sum(ls_err ** 2) / len(self.feature_matrix))))
+        # x = np.linalg.lstsq(self.feature_matrix, self.normalized_energies)[0]
+        # ls_err = np.dot(self.feature_matrix, x) - self.normalized_energies
+        # logging.info('least squares rmse: {}'.format(np.sqrt(np.sum(ls_err ** 2) / len(self.feature_matrix))))
 
+    #TODO The next @properties should be removed and an analysis/tools module with hull stuff should do this
     @property
     def pd_input(self):
         if self._pd_input is None:
-            self._pd_input = _pd(self.structures, self.energies, self.ce)
+            self._pd_input = _pd(self.structures, self.energies, self.datawranger.cs)
         return self._pd_input
 
     @property
     def pd_ce(self):
         if self._pd_ce is None:
-            self._pd_ce = _pd(self.structures, self.ce_energies, self.ce)
+            self._pd_ce = _pd(self.structures, self.datawranger.cs_energies, self.datawranger.cs)
         return self._pd_ce
 
     @property
@@ -109,41 +98,43 @@ class ClusterExpansion(object):
     @property
     def e_above_hull_ce(self):
         if self._e_above_hull_ce is None:
-            self._e_above_hull_ce = _energies_above_hull(self.pd_ce, self.structures, self.ce_energies)
+            self._e_above_hull_ce = _energies_above_hull(self.pd_ce, self.structures, self.datawranger.cs_energies)
         return self._e_above_hull_ce
 
-    def get_scatterplot(self, xaxis='e_above_hull_input', yaxis='e_above_hull_ce'):
-        """
-        plots two attributes. Some useful pairs:
-            xaxis='e_above_hull_input', yaxis='e_above_hull_ce'
-            xaxis='normalized_energies', yaxis='normalized_ce_energies'
-            xaxis='e_above_hull_input', yaxis='normalized_error'
-        """
-        plt.scatter(self.__getattribute__(xaxis), self.__getattribute__(yaxis))
-        plt.xlabel(xaxis)
-        plt.ylabel(yaxis)
-        return plt
-
-    def _fit(self, A, f, weights, mu, override_solver=False):
+    def fit(self, f, mu, override_solver=False):
         """
         Returns the A matrix and f vector for the bregman
         iterations, given weighting parameters
         """
-        A_in = A.copy()
-        f_in = f.copy()
+        A_in = self.wrangler.feature_matrix.copy()
+        f_in = self.wrangler.propert_vector.copy()
 
-        ecis = self._solve_weighted(A_in, f_in, weights, mu, override_solver=override_solver)
+        self.ecis = self._solve_weighted(A_in, f_in, self.weights, mu, override_solver=override_solver)
 
-        if self.ce.use_ewald and self.max_dielectric is not None:
-            if self.ce.use_inv_r:
-                raise NotImplementedError('cant use inv_r with max dielectric yet')
-            if ecis[-1] < 1 / self.max_dielectric:
+        if self.max_dielectric is not None:
+            if self.wrangler.cs.use_ewald is False:
+                warnings.warn('The StructureWrangler.use_ewald is False can not constrain by max_dieletric'
+                                    ' This will be ignored', RuntimeWarning)
+                return
+
+            if self.datawranger.cs.use_inv_r:
+                warnings.warn('Cant use inv_r with max dielectric. This has not been implemented yet.'
+                                    'inv_r will be ignored.', RuntimeWarning)
+
+            if self.ecis[-1] < 1 / self.max_dielectric:
                 f_in -= A_in[:, -1] / self.max_dielectric
                 A_in[:, -1] = 0
                 ecis = self._solve_weighted(A_in, f_in, weights, mu, override_solver=override_solver)
                 ecis[-1] = 1 / self.max_dielectric
 
-        return ecis
+        self.ecis = ecis
+
+    def predict(self, structure):
+        if self.ecis is None:
+            raise NotFittedError('This ClusterExpansion has not been fitted yet.'
+                                 'Run ClusterExpansion.fit to do so.')
+        scaled_corr = self.datawrangler.clustersubspace.corr_from_structure(structure)
+        return np.dot(scaled_corr, self.ecis)
 
     def _calc_cv_score(self, mu, A, f, weights, k=5):
         """
@@ -182,7 +173,7 @@ class ClusterExpansion(object):
         corr = np.zeros(self.wrangler.cs.n_bit_orderings)
         corr[0] = 1  # zero point cluster
         cluster_std = np.std(self.feature_matrix, axis=0)
-        for sc in self.ce.orbits:
+        for sc in self.datawranger.cs.orbits:
             print(sc, len(sc.bits) - 1, sc.sc_b_id)
             print('bit    eci    cluster_std    eci*cluster_std')
             for i, bits in enumerate(sc.bit_combos):
@@ -190,9 +181,6 @@ class ClusterExpansion(object):
                 c_std = cluster_std[sc.sc_b_id + i]
                 print(bits, eci, c_std, eci * c_std)
         print(self.ecis)
-
-    def structure_energy(self, structure):
-        return self.ce.structure_energy(structure, self.ecis)
 
     @classmethod
     def from_dict(cls, d):
@@ -204,12 +192,12 @@ class ClusterExpansion(object):
                    solver=d.get('solver', 'cvxopt_l1'), weights=d['weights'])
 
     def as_dict(self):
-        return {'cluster_expansion': self.ce.as_dict(),
+        return {'cluster_expansion': self.datawranger.cs.as_dict(),
                 'structures': [s.as_dict() for s in self.structures],
                 'energies': self.energies.tolist(),
                 'supercell_matrices': [cs.supercell_matrix.tolist() for cs in self.supercells],
                 'max_dielectric': self.max_dielectric,
-                'max_ewald': self.max_ewald,
+                'max_ewald': self.wrangler.max_ewald,
                 'mu': self.mu,
                 'ecis': self.ecis.tolist(),
                 'feature_matrix': self.feature_matrix.tolist(),

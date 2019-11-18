@@ -34,17 +34,17 @@ class ClusterSupercell(object):
     Calculates correlation vectors on a specific supercell lattice.
     """
 
-    def __init__(self, supercell_matrix, cluster_expansion):
+    def __init__(self, supercell_matrix, clustersubspace):
         """
         Args:
             supercell matrix: array describing the supercell, e.g. [[1,0,0],[0,1,0],[0,0,1]]
-            cluster_expansion: ClusterExpansion object
+            clustersubspace: ClusterExpansion object
         """
         self.supercell_matrix = np.array(supercell_matrix)
         self.prim_to_supercell = np.linalg.inv(self.supercell_matrix)
-        self.cluster_expansion = cluster_expansion
+        self.clustersubspace = clustersubspace
 
-        self.supercell = cluster_expansion.structure.copy()
+        self.supercell = clustersubspace.structure.copy()
         self.supercell.make_supercell(self.supercell_matrix)
         self.size = int(round(np.abs(np.linalg.det(self.supercell_matrix))))
 
@@ -57,7 +57,7 @@ class ClusterSupercell(object):
         # JY definition
         self.mapping = None
 
-        if self.cluster_expansion.use_ewald:
+        if self.clustersubspace.use_ewald:
             # lazily generate the difficult ewald parts
             self.ewald_inds = []
             ewald_sites = []
@@ -83,11 +83,11 @@ class ClusterSupercell(object):
     @property
     def all_ewalds(self):
         if self._all_ewalds is None:
-            if self.cluster_expansion.use_ewald:
+            if self.clustersubspace.use_ewald:
                 ms = [self.ewald_matrix]
             else:
                 ms = []
-            if self.cluster_expansion.use_inv_r:
+            if self.clustersubspace.use_inv_r:
                 ms += self.partial_ems
             self._all_ewalds = np.array(ms)
         return self._all_ewalds
@@ -96,7 +96,7 @@ class ClusterSupercell(object):
     def ewald_matrix(self):
         if self._ewald_matrix is None:
             self._ewald = EwaldSummation(self._ewald_structure,
-                                         eta=self.cluster_expansion.eta)
+                                         eta=self.clustersubspace.eta)
             self._ewald_matrix = self._ewald.total_energy_matrix
         return self._ewald_matrix
 
@@ -144,7 +144,7 @@ class ClusterSupercell(object):
         inds = self._get_ewald_occu(occu)
         ecis = [np.sum(self.ewald_matrix[inds, :][:, inds]) / self.size]
 
-        if self.cluster_expansion.use_inv_r:
+        if self.clustersubspace.use_inv_r:
             for m in self.partial_ems:
                 ecis.append(np.sum(m[inds, :][:, inds]) / self.size)
 
@@ -159,7 +159,7 @@ class ClusterSupercell(object):
         sub = inds & diff
 
         ms = [self.ewald_matrix]
-        if self.cluster_expansion.use_inv_r:
+        if self.clustersubspace.use_inv_r:
             ms += self.partial_ems
 
         diffs = []
@@ -180,7 +180,7 @@ class ClusterSupercell(object):
         ts = lattice_points_in_supercell(self.supercell_matrix)
         self.cluster_indices = []
         self.clusters_by_sites = defaultdict(list)
-        for orb in self.cluster_expansion.orbits:
+        for orb in self.clustersubspace.orbits:
             prim_fcoords = np.array([c.sites for c in orb.clusters])
             fcoords = np.dot(prim_fcoords, self.prim_to_supercell)
             # tcoords contains all the coordinates of the symmetrically equivalent clusters
@@ -216,7 +216,7 @@ class ClusterSupercell(object):
         """
         Each entry in the correlation vector corresponds to a particular symmetrically distinct bit ordering
         """
-        corr = np.zeros(self.cluster_expansion.n_bit_orderings)
+        corr = np.zeros(self.clustersubspace.n_bit_orderings)
         corr[0] = 1  # zero point cluster
         occu = np.array(occu)
         for orb, inds in self.cluster_indices:
@@ -224,7 +224,7 @@ class ClusterSupercell(object):
             for i, bits in enumerate(orb.bit_combos):
                 p = np.all(c_occu[None, :, :] == bits[:, None, :], axis=-1)
                 corr[orb.o_b_id + i] = np.average(p)
-        if self.cluster_expansion.use_ewald:
+        if self.clustersubspace.use_ewald:
             corr = np.concatenate([corr, self._get_ewald_eci(occu)])
         return corr
 
@@ -237,11 +237,11 @@ class ClusterSupercell(object):
                                     attempt_supercell=False,
                                     allow_subset=True,
                                     comparator=OrderDisorderElementComparator(),
-                                    supercell_size=self.cluster_expansion.supercell_size,
+                                    supercell_size=self.clustersubspace.supercell_size,
                                     scale=True,
-                                    ltol=self.cluster_expansion.ltol,
-                                    stol=self.cluster_expansion.stol,
-                                    angle_tol=self.cluster_expansion.angle_tol)
+                                    ltol=self.clustersubspace.ltol,
+                                    stol=self.clustersubspace.stol,
+                                    angle_tol=self.clustersubspace.angle_tol)
         if self.mapping == None:
             mapping = sm_no_orb.get_mapping(self.supercell, structure).tolist()
         else:
@@ -269,9 +269,6 @@ class ClusterSupercell(object):
         occu = self.occu_from_structure(structure)
         return self.corr_from_occupancy(occu)
 
-    def structure_energy(self, structure, ecis):
-        return np.dot(self.corr_from_structure(structure), ecis) * self.size
-
     def occu_energy(self, occu, ecis):
         return np.dot(self.corr_from_occupancy(occu), ecis) * self.size
 
@@ -282,12 +279,12 @@ class ClusterSupercell(object):
         """
         new_occu = occu.copy()
 
-        delta_corr = np.zeros(self.cluster_expansion.n_bit_orderings + len(self.all_ewalds))
+        delta_corr = np.zeros(self.clustersubspace.n_bit_orderings + len(self.all_ewalds))
         for f in flips:
             new_occu_f = new_occu.copy()
             new_occu_f[f[0]] = f[1]
             delta_corr += delta_corr_single_flip(new_occu_f, new_occu,
-                                                 self.cluster_expansion.n_bit_orderings,
+                                                 self.clustersubspace.n_bit_orderings,
                                                  self.clusters_by_sites[f[0]], f[0], f[1], self.all_ewalds,
                                                  self.ewald_inds, self.size)
             new_occu = new_occu_f

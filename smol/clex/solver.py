@@ -209,7 +209,7 @@ def _solve_gs_preserve(self, A, f, mu):
             for j in structure_index_at_hull:
                 if not j == i:
                     entries_new.append(
-                        PDEntry(self.structures[j].composition.element_composition, self.energies[j]))
+                        PDEntry(self.structures[j].composition.element_composition, self.property_vector[j]))
 
             for el in self.ce.structure.composition.keys():
                 entries_new.append(PDEntry(Composition({el: 1}).element_composition,

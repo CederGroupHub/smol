@@ -8,7 +8,7 @@ from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc
 
 from smol.clex.orbit import Orbit
 from .supercell import get_bits, ClusterSupercell
-from .utils import SYMMETRY_ERROR, SITE_TOL
+from .utils import SymmetryError, SYMMETRY_ERROR_MESSAGE, SITE_TOL
 
 #TODO This needs to be renamed to a clusterspace and include only the abstractions defining a clustersubspace
 #TODO what the flip does the use_ewald do here? its just passed on to the solver? fitting class?
@@ -62,12 +62,16 @@ class ClusterSubspace(object):
         fc = self.structure.frac_coords
         for op in self.symops:
             if not is_coord_subset_pbc(op.operate_multi(fc), fc, SITE_TOL):
-                raise SYMMETRY_ERROR
+                raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
 
         self.supercell_size = supercell_size
+
+        #TODO remove these from here, should not be part of the subspace
+        #TODO this is passed into constructor of SuperCells and used in there too.
         self.use_ewald = use_ewald
         self.eta = eta
         self.use_inv_r = use_inv_r
+
         self.sm = StructureMatcher(primitive_cell=False,
                                    attempt_supercell=True,
                                    allow_subset=True,
@@ -77,16 +81,16 @@ class ClusterSubspace(object):
                                    stol=self.stol,
                                    ltol=self.ltol,
                                    angle_tol=self.angle_tol)
-        self.orbits = orbits
+        self._orbits = orbits
 
         # assign the cluster ids
         n_clusters = 1
         n_bit_orderings = 1
-        n_sclusters = 1
-        for k in sorted(self.orbits.keys()):
-            for y in self.orbits[k]:
-                n_sclusters, n_bit_orderings, n_clusters = y.assign_ids(n_sclusters, n_bit_orderings, n_clusters)
-        self.n_sclusters = n_sclusters
+        n_orbits = 1
+        for k in sorted(self._orbits.keys()):
+            for y in self._orbits[k]:
+                n_orbits, n_bit_orderings, n_clusters = y.assign_ids(n_orbits, n_bit_orderings, n_clusters)
+        self.n_orbits = n_orbits
         self.n_clusters = n_clusters
         self.n_bit_orderings = n_bit_orderings
         self._supercells = {}
@@ -180,19 +184,19 @@ class ClusterSubspace(object):
     def supercell_from_matrix(self, sc_matrix):
         sc_matrix = tuple(sorted(tuple(s) for s in sc_matrix))
         if sc_matrix in self._supercells:
-            cs = self._supercells[sc_matrix]
+            sc = self._supercells[sc_matrix]
         else:
-            cs = ClusterSupercell(sc_matrix, self)
-            self._supercells[sc_matrix] = cs
-        return cs
+            sc = ClusterSupercell(sc_matrix, self)
+            self._supercells[sc_matrix] = sc
+        return sc
 
     def corr_from_structure(self, structure):
         """
         Given a structure, determines which supercell to use,
         and gets the correlation vector
         """
-        cs = self.supercell_from_structure(structure)
-        return cs.corr_from_structure(structure)
+        sc = self.supercell_from_structure(structure)
+        return sc.corr_from_structure(structure)
 
     def refine_structure(self, structure):
         sc = self.supercell_from_structure(structure)
@@ -200,39 +204,36 @@ class ClusterSubspace(object):
         return sc.structure_from_occu(occu)
 
     def corr_from_external(self, structure, sc_matrix, mapping=None):
-        cs = self.supercell_from_matrix(sc_matrix) # get clustersupercell
-        self.cs = cs
+        sc = self.supercell_from_matrix(sc_matrix) # get clustersupercell
         if mapping != None:
-            cs.mapping = mapping
-        return cs.corr_from_structure(structure)
+            sc.mapping = mapping
+        return sc.corr_from_structure(structure)
 
     def refine_structure_external(self, structure, sc_matrix):
-        cs = self.supercell_from_matrix(sc_matrix)
-        occu, mapping = cs.occu_from_structure(structure, return_mapping = True)
-        return cs.structure_from_occu(occu), mapping
+        sc = self.supercell_from_matrix(sc_matrix)
+        occu, mapping = sc.occu_from_structure(structure, return_mapping = True)
+        return sc.structure_from_occu(occu), mapping
 
-    #TODO this should be done by the cluster-expansion
-    def structure_energy(self, structure, ecis):
-        cs = self.supercell_from_structure(structure)
-        return cs.structure_energy(structure, ecis)
+    def scaled_corr_from_structure(self, structure):
+        sc = self.supercell_from_structure(structure)
+        return sc.size * sc.corr_from_structure(structure)
 
-    #TODO this should be done by the cluster-expansion
-    def structure_energy_from_sc_matrix(self, structure, ecis, sc_matrix):
-        cs = self.supercell_from_matrix(sc_matrix)
-        return cs.structure_energy(structure, ecis)
+    def scaled_corr_from_sc_matrix(self, structure, sc_matrix):
+        sc = self.supercell_from_matrix(sc_matrix)
+        return sc.size * sc.corr_from_structure(structure)
 
     @property
     def orbits(self):
         """
-        Yields all symmetrized clusters
+        Yields all orbits
         """
-        for k in sorted(self.orbits.keys()):
-            for c in self.orbits[k]:
+        for k in sorted(self._orbits.keys()):
+            for c in self._orbits[k]:
                 yield c
 
     def __str__(self):
         s = "ClusterBasis: {}\n".format(self.structure.composition)
-        for k, v in self.orbits.items():
+        for k, v in self._orbits.items():
             s += "    size: {}\n".format(k)
             for z in v:
                 s += "    {}\n".format(z)
@@ -254,7 +255,7 @@ class ClusterSubspace(object):
 
     def as_dict(self):
         c = {}
-        for k, v in self.orbits.items():
+        for k, v in self._orbits.items():
             c[int(k)] = [(sc.as_dict(), [list(b) for b in sc.bits]) for sc in v]
         return {'structure': self.structure.as_dict(),
                 'expansion_structure': self.expansion_structure.as_dict(),

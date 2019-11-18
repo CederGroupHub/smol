@@ -4,7 +4,7 @@ import numpy as np
 from pymatgen.util.coord import coord_list_mapping
 
 from smol.clex.cluster import Cluster
-from smol.clex.utils import SITE_TOL, SYMMETRY_ERROR
+from smol.clex.utils import SymmetryError, SYMMETRY_ERROR_MESSAGE, SITE_TOL
 
 
 class Orbit(Cluster):
@@ -63,7 +63,7 @@ class Orbit(Cluster):
                 c_sites = c.sites + np.round(self.centroid - c.centroid)
                 self._symops.append((symop, tuple(coord_list_mapping(self.sites, c_sites, atol=SITE_TOL))))
         if len(self._symops) * self.multiplicity != len(self.structure_symops):
-            raise SYMMETRY_ERROR
+            raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
         return self._symops
 
     @property
@@ -106,7 +106,7 @@ class Orbit(Cluster):
                 equiv.append(c)
         self._equiv = equiv
         if len(equiv) * len(self.cluster_symops) != len(self.structure_symops):
-            raise SYMMETRY_ERROR
+            raise SYMMETRY_ERROR_MESSAGE
         return equiv
 
     @property
