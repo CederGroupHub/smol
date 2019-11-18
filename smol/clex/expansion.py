@@ -102,6 +102,7 @@ class ClusterExpansion(object):
         return self._e_above_hull_ce
 
     def fit(self, f, mu, override_solver=False):
+        #TODO change this so that the CE gets a solver class, implement it and also allow to bring in sklearn classes...
         """
         Returns the A matrix and f vector for the bregman
         iterations, given weighting parameters
@@ -118,20 +119,20 @@ class ClusterExpansion(object):
                 return
 
             if self.datawranger.cs.use_inv_r:
-                warnings.warn('Cant use inv_r with max dielectric. This has not been implemented yet.'
-                                    'inv_r will be ignored.', RuntimeWarning)
+                warnings.warn('Cant use inv_r with max dielectric. This has not been implemented yet. '
+                               'inv_r will be ignored.', RuntimeWarning)
 
             if self.ecis[-1] < 1 / self.max_dielectric:
                 f_in -= A_in[:, -1] / self.max_dielectric
                 A_in[:, -1] = 0
-                ecis = self._solve_weighted(A_in, f_in, weights, mu, override_solver=override_solver)
+                ecis = self._solve_weighted(A_in, f_in, self.weights, mu, override_solver=override_solver)
                 ecis[-1] = 1 / self.max_dielectric
 
         self.ecis = ecis
 
     def predict(self, structure):
         if self.ecis is None:
-            raise NotFittedError('This ClusterExpansion has not been fitted yet.'
+            raise NotFittedError('This ClusterExpansion has not been fitted yet. '
                                  'Run ClusterExpansion.fit to do so.')
         scaled_corr = self.datawrangler.clustersubspace.corr_from_structure(structure)
         return np.dot(scaled_corr, self.ecis)
@@ -170,6 +171,10 @@ class ClusterExpansion(object):
         return cv
 
     def print_ecis(self):
+        if self.ecis is None:
+            raise NotFittedError('This ClusterExpansion has not been fitted yet. '
+                                 'Run ClusterExpansion.fit to do so.')
+
         corr = np.zeros(self.wrangler.cs.n_bit_orderings)
         corr[0] = 1  # zero point cluster
         cluster_std = np.std(self.feature_matrix, axis=0)

@@ -4,7 +4,8 @@ from smol.clex.orbit import Orbit
 from pymatgen.io.cif import CifParser
 from pymatgen.core.structure import Structure
 import numpy as np
-from smol.clex.clusterspace import ClusterSubspace
+from smol.clex import ClusterSubspace, StructureWrangler, ClusterExpansion
+
 import json
 
 # Load and prep prim structure
@@ -38,3 +39,14 @@ for calc_i, calc in enumerate(calc_data):
 print("{}/{} structures map to the lattice".format(len(valid_structs), len(calc_data))) 
 
 print('Also here is a random corr_vector:\n', cs.corr_from_structure(valid_structs[0][0]))
+
+# Create the data wrangler.
+sw = StructureWrangler(cs, [struct for struct, _ in valid_structs],
+					   [e for _, e in valid_structs], max_ewald=3)
+
+
+# Create a ClusterExpansion Object
+ce = ClusterExpansion(sw, max_dielectric=100)
+
+
+# Finally need to fit it!

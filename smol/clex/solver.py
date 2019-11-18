@@ -1,11 +1,6 @@
 #TODO Here go all the solver functions ok. Build them up out of fragments of the old eci_fit file
 import numpy as np
-
-# actually fit the cluster expansion
-if ecis is None:
-    self.ecis = self._fit(self.feature_matrix, self.normalized_energies, self.weights, self.mu)
-else:
-    self.ecis = np.array(ecis)
+import warnings
 
 # calculate the results of the fitting
 self.normalized_ce_energies = np.dot(self.feature_matrix, self.ecis)

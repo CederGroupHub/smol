@@ -6,6 +6,7 @@ from pymatgen import Structure
 from .clusterspace import ClusterSubspace
 
 #TODO StructureWrangler takes training data, checks it (ie does it map, etc) and creates feature matrices and fitting data
+#TODO maybe add some convenient checker functions like in daniils script
 #TODO make an MSONable??
 
 class StructureWrangler(object):
