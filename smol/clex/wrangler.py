@@ -3,7 +3,7 @@ from collections import defaultdict
 import logging
 import numpy as np
 from pymatgen import Structure
-from .clusterspace import ClusterSubspace
+from smol.clex.cspace.clusterspace import ClusterSubspace
 
 #TODO StructureWrangler takes training data, checks it (ie does it map, etc) and creates feature matrices and fitting data
 # maybe add some convenient checker functions like in daniils script

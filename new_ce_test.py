@@ -1,6 +1,3 @@
-from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
-from smol.clex.cluster import Cluster
-from smol.clex.orbit import Orbit
 from pymatgen.io.cif import CifParser
 from pymatgen.core.structure import Structure
 import numpy as np

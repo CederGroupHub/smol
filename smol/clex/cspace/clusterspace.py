@@ -6,9 +6,9 @@ from pymatgen.analysis.structure_matcher import StructureMatcher, OrderDisorderE
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc
 
-from smol.clex.orbit import Orbit
+from .orbit import Orbit
 from .supercell import get_bits, ClusterSupercell
-from .utils import SymmetryError, SYMMETRY_ERROR_MESSAGE, SITE_TOL
+from ..utils import SymmetryError, SYMMETRY_ERROR_MESSAGE, SITE_TOL
 
 #TODO what the flip does the use_ewald do here? its just passed on to the solver? fitting class?
 

@@ -4,7 +4,7 @@ import numpy as np
 from pymatgen.util.coord import coord_list_mapping
 
 from .cluster import Cluster
-from .utils import SymmetryError, SYMMETRY_ERROR_MESSAGE, SITE_TOL, _repr
+from ..utils import SymmetryError, SYMMETRY_ERROR_MESSAGE, SITE_TOL, _repr
 
 
 class Orbit(Cluster):

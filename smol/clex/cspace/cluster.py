@@ -3,7 +3,7 @@ import numpy as np
 from pymatgen.util.coord import is_coord_subset
 from monty.json import MSONable
 
-from .utils import SITE_TOL, _repr
+from ..utils import SITE_TOL, _repr
 
 class Cluster(MSONable):
     """
