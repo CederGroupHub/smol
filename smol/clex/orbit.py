@@ -3,8 +3,8 @@ import itertools
 import numpy as np
 from pymatgen.util.coord import coord_list_mapping
 
-from smol.clex.cluster import Cluster
-from smol.clex.utils import SymmetryError, SYMMETRY_ERROR_MESSAGE, SITE_TOL
+from .cluster import Cluster
+from .utils import SymmetryError, SYMMETRY_ERROR_MESSAGE, SITE_TOL, _repr
 
 
 class Orbit(Cluster):
@@ -105,8 +105,11 @@ class Orbit(Cluster):
             if c not in equiv:
                 equiv.append(c)
         self._equiv = equiv
+        #TODO if an error is raised then should the self._equiv be set? the next if statement runs an infinite recursiong
+        # because self.cluster_symops calls self.clusters hence this needs to be unravelled.
         if len(equiv) * len(self.cluster_symops) != len(self.structure_symops):
-            raise SYMMETRY_ERROR_MESSAGE
+            raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
+
         return equiv
 
     @property
@@ -127,6 +130,10 @@ class Orbit(Cluster):
         self.o_b_id = o_b_id
         c_id = start_c_id
         for c in self.clusters:
+            #TODO we can be ripe for errors here, since the orbit inherits from cluster, but in the equivalent clusters
+            #there is also a cluster with the same sites and will be given the same id.
+            #Maybe an orbit should not be a cluster after all....
+            self.c_id = start_c_id
             c_id = c.assign_ids(c_id)
         return o_id + 1, o_b_id + len(self.bit_combos), c_id
 
@@ -141,9 +148,9 @@ class Orbit(Cluster):
         return not self.__eq__(other)
 
     def __str__(self):
-        return "Orbit: id: {:<4}, bit_id: {:<4}, multiplicity: {:<4}, symops: {:<4}" \
-            " {}".format(str(self.o_id), str(self.o_b_id), str(self.multiplicity), str(len(self.cluster_symops)),
-                         super().__str__())
+        return f'[Orbit] id: {self.o_id:<4} bit_id: {self.o_b_id:<4} multiplicity: {self.multiplicity:<4}' \
+               f' no. symops: {len(self.cluster_symops):<4} {super().__str__()}'
 
-    #def __repr__(self):
-     #   return self.__str__()str(
+    def __repr__(self):
+        return _repr(self, o_id=self.o_id, o_b_id=self.o_b_id, c_id=self.c_id, radius=self.max_radius,
+                     centroid=self.centroid, lattice=self.lattice)

@@ -32,9 +32,11 @@ for calc_i, calc in enumerate(calc_data):
         struct = Structure.from_dict(calc['s']) 
         cs.corr_from_structure(struct) 
         valid_structs.append((struct, calc['toten'])) 
-    except: 
+    except ValueError: 
         #print("\tToo far off lattice, throwing out.") 
-        continue 
+        continue
+    except AttributeError as e:
+        continue
  
 print("{}/{} structures map to the lattice".format(len(valid_structs), len(calc_data))) 
 

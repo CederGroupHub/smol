@@ -10,7 +10,6 @@ from smol.clex.orbit import Orbit
 from .supercell import get_bits, ClusterSupercell
 from .utils import SymmetryError, SYMMETRY_ERROR_MESSAGE, SITE_TOL
 
-#TODO This needs to be renamed to a clusterspace and include only the abstractions defining a clustersubspace
 #TODO what the flip does the use_ewald do here? its just passed on to the solver? fitting class?
 
 class ClusterSubspace(object):
@@ -30,9 +29,9 @@ class ClusterSubspace(object):
             Args:
                 structure:
                     disordered structure to build a cluster expansion for. Typically the primitive cell
-                radii:
-                    dict of {cluster_size: max_radius}. Radii should be strictly decreasing.
-                    Typically something like {2:5, 3:4}
+                expansion_structure:
+                symops:
+                orbits:
                 ltol, stol, angle_tol, supercell_size: parameters to pass through to the StructureMatcher.
                     Structures that don't match to the primitive cell under these tolerances won't be included
                     in the expansion. Easiest option for supercell_size is usually to use a species that has a
@@ -67,7 +66,7 @@ class ClusterSubspace(object):
         self.supercell_size = supercell_size
 
         #TODO remove these from here, should not be part of the subspace
-        #TODO this is passed into constructor of SuperCells and used in there too.
+        # this is passed into constructor of SuperCells and used in there too.
         self.use_ewald = use_ewald
         self.eta = eta
         self.use_inv_r = use_inv_r
@@ -180,7 +179,7 @@ class ClusterSubspace(object):
         return self.supercell_from_matrix(sc_matrix)
 
     #TODO the cluster-space does not hold any supercells it always creates them on the fly whenever it is needed
-    #TODO is there a better way to do this? get rid of the supercell class? or create a factory-thingy?
+    # is there a better way to do this? get rid of the supercell class? or create a factory-thingy?
     def supercell_from_matrix(self, sc_matrix):
         sc_matrix = tuple(sorted(tuple(s) for s in sc_matrix))
         if sc_matrix in self._supercells:
@@ -222,22 +221,16 @@ class ClusterSubspace(object):
         sc = self.supercell_from_matrix(sc_matrix)
         return sc.size * sc.corr_from_structure(structure)
 
+    #TODO this should be renamed to something that makes it obvious it is a generator and the property orbits
+    # should just give orbits.items()
     @property
     def orbits(self):
         """
-        Yields all orbits
+        Yields all orbits sorted by size
         """
         for k in sorted(self._orbits.keys()):
             for c in self._orbits[k]:
                 yield c
-
-    def __str__(self):
-        s = "ClusterBasis: {}\n".format(self.structure.composition)
-        for k, v in self._orbits.items():
-            s += "    size: {}\n".format(k)
-            for z in v:
-                s += "    {}\n".format(z)
-        return s
 
     @classmethod
     def from_dict(cls, d):
@@ -270,3 +263,11 @@ class ClusterSubspace(object):
                 'eta': self.eta,
                 '@module': self.__class__.__module__,
                 '@class': self.__class__.__name__}
+
+    def __str__(self):
+        s = "ClusterBasis: {}\n".format(self.structure.composition)
+        for k, v in self._orbits.items():
+            s += "    size: {}\n".format(k)
+            for z in v:
+                s += "    {}\n".format(z)
+        return s

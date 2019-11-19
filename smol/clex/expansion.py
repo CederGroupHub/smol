@@ -44,8 +44,6 @@ def _energies_above_hull(pd, structures, energies):
     return np.array(e_above_hull)
 
 
-#TODO this needs a lot of restructuring. Basic functionality should be hold ECI's, have a general fit method, and a
-#TODO predict method. End of story...maybe some further analysis methods...but thats it.
 class ClusterExpansion(object):
     _pd_input = None
     _pd_ce = None
@@ -178,12 +176,12 @@ class ClusterExpansion(object):
         corr = np.zeros(self.wrangler.cs.n_bit_orderings)
         corr[0] = 1  # zero point cluster
         cluster_std = np.std(self.feature_matrix, axis=0)
-        for sc in self.datawranger.cs.orbits:
-            print(sc, len(sc.bits) - 1, sc.sc_b_id)
+        for orbit in self.datawranger.cs.orbits:
+            print(orbit, len(orbit.bits) - 1, orbit.sc_b_id)
             print('bit    eci    cluster_std    eci*cluster_std')
-            for i, bits in enumerate(sc.bit_combos):
-                eci = self.ecis[sc.sc_b_id + i]
-                c_std = cluster_std[sc.sc_b_id + i]
+            for i, bits in enumerate(orbit.bit_combos):
+                eci = self.ecis[orbit.sc_b_id + i]
+                c_std = cluster_std[orbit.sc_b_id + i]
                 print(bits, eci, c_std, eci * c_std)
         print(self.ecis)
 

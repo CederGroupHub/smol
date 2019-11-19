@@ -3,8 +3,7 @@ import numpy as np
 from pymatgen.util.coord import is_coord_subset
 from monty.json import MSONable
 
-from .utils import SITE_TOL
-
+from .utils import SITE_TOL, _repr
 
 class Cluster(MSONable):
     """
@@ -60,11 +59,8 @@ class Cluster(MSONable):
 
     def __str__(self):
         points = str(np.round(self.sites,2)).replace("\n", " ").ljust(len(self.sites) * 21)
-        return "Cluster: id: {}, Radius: {:<4.3}, Points: {}, Centroid: {}".format(self.c_id,
-                                                                                   self.max_radius,
-                                                                                   points,
-                                                                                   np.round(self.centroid,2))
-    # TODO maybe implement this.
-    # repr should never default to str! only the other way around.
-    #def __repr__(self):
-     #   return self.__str__()
+        return f'[Cluster] id: {self.c_id}, Radius: {self.max_radius:<4.3}, Points: {points}, ' \
+               f'Centroid: {np.round(self.centroid,2)}'
+
+    def __repr__(self):
+        return _repr(self, c_id=self.c_id, radius=self.max_radius, centroid=self.centroid, lattice=self.lattice)

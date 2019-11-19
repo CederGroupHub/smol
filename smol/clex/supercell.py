@@ -12,7 +12,6 @@ from .utils import SITE_TOL
 
 
 #TODO can we simple obtain the cluster vectors based on the clustersubspace (ie get rid of this supercell thing)?
-
 def get_bits(structure):
     """
     Helper method to compute list of species on each site.
@@ -180,8 +179,8 @@ class ClusterSupercell(object):
         ts = lattice_points_in_supercell(self.supercell_matrix)
         self.cluster_indices = []
         self.clusters_by_sites = defaultdict(list)
-        for orb in self.clustersubspace.orbits:
-            prim_fcoords = np.array([c.sites for c in orb.clusters])
+        for orbit in self.clustersubspace.orbits:
+            prim_fcoords = np.array([c.sites for c in orbit.clusters])
             fcoords = np.dot(prim_fcoords, self.prim_to_supercell)
             # tcoords contains all the coordinates of the symmetrically equivalent clusters
             # the indices are: [equivalent cluster (primitive cell), translational image, index of site in cluster, coordinate index]
@@ -190,20 +189,20 @@ class ClusterSupercell(object):
             inds = coord_list_mapping_pbc(tcoords.reshape((-1, 3)),
                                           self.fcoords, atol=SITE_TOL).reshape((tcs[0] * tcs[1], tcs[2]))
             self.cluster_indices.append(
-                (orb, inds))  # symmetrized cluster, 2d array of index groups that correspond to the cluster
+                (orbit, inds))  # orbit, 2d array of index groups that correspond to the cluster
             # the 2d array may have some duplicates. This is due to symetrically equivalent
             # groups being matched to the same sites (eg in simply cubic all 6 nn interactions
             # will all be [0, 0] indices. This multiplicity disappears as supercell size
             # increases, so I haven't implemented a more efficient method
 
-            # now we store the symmetrized clusters grouped by site index in the supercell,
+            # now we store the orbits grouped by site index in the supercell,
             # to be used by delta_corr. We also store a reduced index array, where only the
             # rows with the site index are stored. The ratio is needed because the correlations
             # are averages over the full inds array.
             for site_index in np.unique(inds):
                 in_inds = np.any(inds == site_index, axis=-1)
                 ratio = len(inds) / np.sum(in_inds)
-                self.clusters_by_sites[site_index].append((orb.bit_combos, orb.o_b_id, inds[in_inds], ratio))
+                self.clusters_by_sites[site_index].append((orbit.bit_combos, orbit.o_b_id, inds[in_inds], ratio))
 
     def structure_from_occu(self, occu):
         sites = []
