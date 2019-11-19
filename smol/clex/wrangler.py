@@ -90,8 +90,12 @@ class StructureWrangler(object):
         return [i['structure'] for i in self.items]
 
     @property
-    def property_vector(self):
+    def properties(self):
         return np.array([i['property'] for i in self.items])
+
+    @property
+    def normalized_properties(self):
+        return self.properties / self.sizes
 
     @property
     def supercells(self):

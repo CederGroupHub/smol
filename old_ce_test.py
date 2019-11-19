@@ -46,5 +46,6 @@ eg = EciGenerator.unweighted(cluster_expansion=ce,
                              max_dielectric=100, 
                              max_ewald=3) 
 
+print(f"ECIS: {eg.ecis}")
 print("RMSE: {} eV/prim".format(eg.rmse))
 print("Number non zero ECIs: {}".format(len([eci for eci in eg.ecis if np.abs(eci) > 1e-3])))    

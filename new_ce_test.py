@@ -4,7 +4,7 @@ from smol.clex.orbit import Orbit
 from pymatgen.io.cif import CifParser
 from pymatgen.core.structure import Structure
 import numpy as np
-from smol.clex import ClusterSubspace, StructureWrangler, ClusterExpansion
+from smol.clex import ClusterSubspace, StructureWrangler, ClusterExpansion, Estimator
 
 import json
 
@@ -40,15 +40,30 @@ for calc_i, calc in enumerate(calc_data):
  
 print("{}/{} structures map to the lattice".format(len(valid_structs), len(calc_data))) 
 
-print('Also here is a random corr_vector:\n', cs.corr_from_structure(valid_structs[0][0]))
+#print('Also here is a random corr_vector:\n', cs.corr_from_structure(valid_structs[0][0]))
 
 # Create the data wrangler.
 sw = StructureWrangler(cs, [struct for struct, _ in valid_structs],
 					   [e for _, e in valid_structs], max_ewald=3)
 
 
+# Create Estimator
+est = Estimator()
+print('Estimator solver ', est)
+
+
 # Create a ClusterExpansion Object
-ce = ClusterExpansion(sw, max_dielectric=100)
+ce = ClusterExpansion(sw, est, max_dielectric=100)
 
+ce.fit()
 
-# Finally need to fit it!
+err = ce.predict(sw.structures, normalized=True) - sw.normalized_properties
+rmse = np.average(err**2)**0.5
+
+#x = np.linalg.lstsq(sw.feature_matrix, sw.normalized_properties)[0]
+#rmse = np.average((np.dot(sw.feature_matrix,x)-sw.normalized_properties)**2)**0.5
+#print(f'NP RMSE: {rmse}')
+
+print(f"ECIS: {ce.ecis}")
+print(f"RMSE: {rmse} eV/prim")
+print(f"Number non zero ECIs: {len([eci for eci in ce.ecis if np.abs(eci) > 1e-3])}")    

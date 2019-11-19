@@ -213,13 +213,13 @@ class ClusterSubspace(object):
         occu, mapping = sc.occu_from_structure(structure, return_mapping = True)
         return sc.structure_from_occu(occu), mapping
 
-    def scaled_corr_from_structure(self, structure):
+    def size_corr_from_structure(self, structure):
         sc = self.supercell_from_structure(structure)
-        return sc.size * sc.corr_from_structure(structure)
+        return sc.size, sc.corr_from_structure(structure)
 
     def scaled_corr_from_sc_matrix(self, structure, sc_matrix):
         sc = self.supercell_from_matrix(sc_matrix)
-        return sc.size * sc.corr_from_structure(structure)
+        return sc.size, sc.corr_from_structure(structure)
 
     #TODO this should be renamed to something that makes it obvious it is a generator and the property orbits
     # should just give orbits.items()
