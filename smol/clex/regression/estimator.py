@@ -5,33 +5,39 @@ to be used for a ClusterExpansion
 If your solver is simple enough then just write the Subclass here, otherwise make a seperate file and import
 the Estimator in the __init__.py file (ie see solve_gs_preserve)
 """
-from abc import ABC, abstractmethod
 import numpy as np
 import logging
 import warnings
 from ..utils import NotFittedError
 
-class BaseEstimator(ABC):
+class BaseEstimator():
     """
     A simple estimator class to use different 'in-house'  solvers to fit a cluster-expansion
     This should be used to create specific estimator classes by inheriting. New classes simple need to implement
     the solve method.
     The methods have the same signatures as most Scikit-learn regressors, such that those can be directly used
     instead of this to fit a cluster-expansion
+    The base estimator does not fit. It only has a predict function for Expansions where the user supplies the
+    ecis
     """
 
     def __init__(self):
         self.coef_ = None
         self.mus = None
         self.cvs = None
+        self.weights = None
 
-    @abstractmethod
     def _solve(self):
         '''This needs to be overloaded in derived classes'''
         raise AttributeError(f'No solve method specified: self._solver: {self._solve}')
 
     def fit(self, X, y, sample_weights=None, mu=None, *args, **kwargs):
         if sample_weights is not None:
+            X = X * sample_weights[:, None] ** 0.5
+            y = y * sample_weights ** 0.5
+            self.weights = sample_weights
+        elif self.weights is not None:
+            sample_weights = self.weights
             X = X * sample_weights[:, None] ** 0.5
             y = y * sample_weights ** 0.5
 

@@ -27,9 +27,6 @@ class StructureWrangler(object):
             structures: list of Structure objects
             properties: list of total (non-normalized) properties to
             weights: list of weights for the optimization.
-            max_dielectric: constrain the dielectric constant to be positive and below the
-                supplied value (note that this is also affected by whether the primitive
-                cell is the correct size)
             max_ewald: filter the input structures to only use those with low electrostatic
                 energies (no large charge separation in cell). This energy is referenced to the lowest
                 value at that composition. Note that this is before the division by the relative dielectric

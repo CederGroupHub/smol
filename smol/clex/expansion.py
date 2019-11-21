@@ -14,7 +14,7 @@ class ClusterExpansion(object):
     _e_above_hull_input = None
     _e_above_hull_ce = None
 
-    def __init__(self, datawrangler, estimator=None, weights=None, max_dielectric=None,  ecis=None):
+    def __init__(self, datawrangler, estimator=None, max_dielectric=None, ecis=None):
         """
         Fit ECI's to obtain a cluster expansion. This init function takes in all possible arguments,
         but its much simpler to use one of the factory classmethods below,
@@ -30,13 +30,12 @@ class ClusterExpansion(object):
         self.wrangler = datawrangler
         self.estimator = estimator
         self.max_dielectric = max_dielectric
-        self.weights = weights
         self.ecis = ecis
 
         if self.estimator is None:
             if self.ecis is None:
                 raise AttributeError('No estimator or ecis were given. One of them needs to be provided')
-            self.estimator = BaseEstimator(solver=None)
+            self.estimator = BaseEstimator()
             self.estimator.coef_ = self.ecis
 
         # do least squares for comparison
@@ -77,8 +76,12 @@ class ClusterExpansion(object):
         A_in = self.wrangler.feature_matrix.copy()
         y_in = self.wrangler.normalized_properties.copy()
 
-        self.estimator.fit(A_in, y_in, self.weights, *args, **kwargs)
-        self.ecis = self.estimator.coef_
+        self.estimator.fit(A_in, y_in, *args, **kwargs)
+        try:
+            self.ecis = self.estimator.coef_
+        except AttributeError:
+            msg = f'The provided estimator does not provide fit coefficients for ECIS: {self.estimator}'
+            warnings.warn(msg)
 
         if self.max_dielectric is not None:
             if self.wrangler.cs.use_ewald is False:
@@ -93,30 +96,26 @@ class ClusterExpansion(object):
             if self.ecis[-1] < 1 / self.max_dielectric:
                 y_in -= A_in[:, -1] / self.max_dielectric
                 A_in[:, -1] = 0
-                self.estimator.fit(A_in, y_in, self.weights, *args, **kwargs)
+                self.estimator.fit(A_in, y_in, *args, **kwargs)
                 self.ecis[-1] = 1 / self.max_dielectric
 
     def predict(self, structures, normalized=False):
-        preds = []
+        structures = structures if type(structures) == list else [structures]
+        corrs = []
         for structure in structures:
-            preds.append(self._predict_single(structure, normalized))
-        return np.array(preds)
-
-    def _predict_single(self, structure, normalized=False):
-        try:
             size, corr = self.wrangler.cs.size_corr_from_structure(structure)
-        except NotFittedError:
-            raise NotFittedError('This ClusterExpansion has not been fitted yet. '
-                                 'Run ClusterExpansion.fit to do so.')
-        pred = self.estimator.predict(corr)
-        if not normalized:
-            pred *= size
-        return pred
+            if not normalized:
+                corr *= size
+            corrs.append(corr)
+
+        return self.estimator.predict(np.array(corrs))
 
     def print_ecis(self):
         if self.ecis is None:
-            raise NotFittedError('This ClusterExpansion has not been fitted yet. '
-                                 'Run ClusterExpansion.fit to do so.')
+            raise NotFittedError('This ClusterExpansion has no ECIs available.'
+                                 'If it has not been fitted yet, run ClusterExpansion.fit to do so.'
+                                 'Otherwise you may have chosen an estimator that does not provide them:'
+                                 f'{self.estimator}.')
 
         corr = np.zeros(self.wrangler.cs.n_bit_orderings)
         corr[0] = 1  # zero point cluster

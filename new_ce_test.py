@@ -1,6 +1,7 @@
 from pymatgen.io.cif import CifParser
 from pymatgen.core.structure import Structure
 import numpy as np
+from sklearn.linear_model import ElasticNetCV, LassoCV, Ridge, LinearRegression, BayesianRidge, ARDRegression
 from smol.clex import ClusterSubspace, StructureWrangler, ClusterExpansion, CVXEstimator
 
 import json
@@ -46,7 +47,8 @@ sw = StructureWrangler(cs, [struct for struct, _ in valid_structs],
 
 # Create Estimator
 est = CVXEstimator()
-print('Estimator solver ', est)
+#est = ARDRegression(fit_intercept=False) 
+print('Estimator: ', est)
 
 
 # Create a ClusterExpansion Object
@@ -57,6 +59,7 @@ ce.fit()
 err = ce.predict(sw.structures, normalized=True) - sw.normalized_properties
 rmse = np.average(err**2)**0.5
 
+struct = sw.structures[0]
 #x = np.linalg.lstsq(sw.feature_matrix, sw.normalized_properties)[0]
 #rmse = np.average((np.dot(sw.feature_matrix,x)-sw.normalized_properties)**2)**0.5
 #print(f'NP RMSE: {rmse}')
