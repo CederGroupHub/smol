@@ -8,9 +8,8 @@ from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.util.coord import lattice_points_in_supercell, coord_list_mapping_pbc
 
 #TODO fix this import
-#from ce_utils import delta_corr_single_flip
 from ..utils import SITE_TOL
-
+from src.ce_utils import delta_corr_single_flip
 
 #TODO can we simple obtain the cluster vectors based on the clustersubspace (ie get rid of this supercell thing)?
 def get_bits(structure):

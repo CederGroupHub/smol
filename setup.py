@@ -42,6 +42,23 @@ long_desc = """
 A long description of this package
 """
 
+# Compile option for cython extensions
+if '--use-cython' in sys.argv:
+    USE_CYTHON = True
+    sys.argv.remove('--use-cython')
+else:
+    USE_CYTHON = False
+ext = '.pyx' if USE_CYTHON else '.c'
+extensions = [Extension("src.ce_utils",
+                        ["src/ce_utils"+ext],
+                        language='c',
+                        include_path=[numpy.get_include()],
+                        include_dirs=['src/'])]
+
+if USE_CYTHON:
+    from Cython.Build import cythonize
+    extensions = cythonize(extensions)
+
 setup(
     name="smol",
     packages=find_packages(),
@@ -85,5 +102,5 @@ setup(
         "Topic :: Scientific/Engineering :: Chemistry",
         "Topic :: Software Development :: Libraries :: Python Modules"
     ],
-    ext_modules=cythonize("src/ce_utils.pyx", include_path=[numpy.get_include()])
+    ext_modules=extensions
 )

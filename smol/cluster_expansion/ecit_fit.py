@@ -13,7 +13,7 @@ from warnings import warn
 import itertools
 import numpy as np
 
-from .ce_utils import delta_corr_single_flip
+from src.ce_utils import delta_corr_single_flip
 
 SITE_TOL = 1e-6
 
