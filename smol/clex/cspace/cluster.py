@@ -29,7 +29,7 @@ class Cluster(MSONable):
         return len(self.sites)
 
     @property
-    def max_radius(self):
+    def radius(self):
         coords = self.lattice.get_cartesian_coords(self.sites)
         all_d2 = np.sum((coords[None, :, :] - coords[:, None, :]) ** 2, axis=-1)
         return np.max(all_d2) ** 0.5
@@ -59,8 +59,8 @@ class Cluster(MSONable):
 
     def __str__(self):
         points = str(np.round(self.sites,2)).replace("\n", " ").ljust(len(self.sites) * 21)
-        return f'[Cluster] id: {self.c_id}, Radius: {self.max_radius:<4.3}, Points: {points}, ' \
+        return f'[Cluster] id: {self.c_id}, Radius: {self.radius:<4.3}, Points: {points}, ' \
                f'Centroid: {np.round(self.centroid,2)}'
 
     def __repr__(self):
-        return _repr(self, c_id=self.c_id, radius=self.max_radius, centroid=self.centroid, lattice=self.lattice)
+        return _repr(self, c_id=self.c_id, radius=self.radius, centroid=self.centroid, lattice=self.lattice)

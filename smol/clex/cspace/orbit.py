@@ -7,7 +7,7 @@ from .cluster import Cluster
 from ..utils import SymmetryError, SYMMETRY_ERROR_MESSAGE, SITE_TOL, _repr
 
 
-class Orbit(Cluster):
+class Orbit(object):
     """
     An Orbit represents a set of clusters that are symmetrically equivalent (when undecorated).
     This usually includes translational and structure symmetry of the underlying lattice. But this is not
@@ -42,8 +42,10 @@ class Orbit(Cluster):
         self._symops = None
         self._bit_combos = None
 
-        # Initialize Cluster base class
-        super().__init__(sites, lattice)
+        # Create basecluster
+        self.basecluster = Cluster(sites, lattice)
+        self.radius = self.basecluster.radius
+        self.lattice = lattice
 
     @property
     def cluster_symops(self):
@@ -57,11 +59,11 @@ class Orbit(Cluster):
             return self._symops
         self._symops = []
         for symop in self.structure_symops:
-            new_sites = symop.operate_multi(self.sites)
-            c = Cluster(new_sites, self.lattice)
+            new_sites = symop.operate_multi(self.basecluster.sites)
+            c = Cluster(new_sites, self.basecluster.lattice)
             if self.clusters[0] == c:
-                c_sites = c.sites + np.round(self.centroid - c.centroid)
-                self._symops.append((symop, tuple(coord_list_mapping(self.sites, c_sites, atol=SITE_TOL))))
+                c_sites = c.sites + np.round(self.basecluster.centroid - c.centroid)
+                self._symops.append((symop, tuple(coord_list_mapping(self.basecluster.sites, c_sites, atol=SITE_TOL))))
         if len(self._symops) * self.multiplicity != len(self.structure_symops):
             raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
         return self._symops
@@ -98,16 +100,15 @@ class Orbit(Cluster):
         """
         if self._equiv:
             return self._equiv
-        equiv = [Cluster(self.sites, self.lattice)]
+        equiv = [self.basecluster]
         for symop in self.structure_symops:
-            new_sites = symop.operate_multi(self.sites)
+            new_sites = symop.operate_multi(self.basecluster.sites)
             c = Cluster(new_sites, self.lattice)
             if c not in equiv:
                 equiv.append(c)
         self._equiv = equiv
-        #TODO if an error is raised then should the self._equiv be set? the next if statement runs an infinite recursiong
-        # because self.cluster_symops calls self.clusters hence this needs to be unravelled.
         if len(equiv) * len(self.cluster_symops) != len(self.structure_symops):
+            self._equiv = None # Unset this
             raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
 
         return equiv
@@ -130,17 +131,13 @@ class Orbit(Cluster):
         self.o_b_id = o_b_id
         c_id = start_c_id
         for c in self.clusters:
-            #TODO we can be ripe for errors here, since the orbit inherits from cluster, but in the equivalent clusters
-            #there is also a cluster with the same sites and will be given the same id.
-            #Maybe an orbit should not be a cluster after all....
-            self.c_id = start_c_id
             c_id = c.assign_ids(c_id)
         return o_id + 1, o_b_id + len(self.bit_combos), c_id
 
     def __eq__(self, other):
         #try:
         #when performing SymmetrizedCluster in list, this ordering stops the equivalent structures from generating
-        return any(super(Orbit, self).__eq__(cluster) for cluster in other.clusters)
+        return any(self.basecluster == cluster for cluster in other.clusters)
         #except:
         #    return NotImplemented
 
@@ -149,8 +146,8 @@ class Orbit(Cluster):
 
     def __str__(self):
         return f'[Orbit] id: {self.o_id:<4} bit_id: {self.o_b_id:<4} multiplicity: {self.multiplicity:<4}' \
-               f' no. symops: {len(self.cluster_symops):<4} {super().__str__()}'
+               f' no. symops: {len(self.cluster_symops):<4} {str(self.basecluster)}'
 
     def __repr__(self):
-        return _repr(self, o_id=self.o_id, o_b_id=self.o_b_id, c_id=self.c_id, radius=self.max_radius,
-                     centroid=self.centroid, lattice=self.lattice)
+        return _repr(self, o_id=self.o_id, o_b_id=self.o_b_id, radius=self.radius, lattice=self.lattice,
+                     basecluster=self.basecluster)

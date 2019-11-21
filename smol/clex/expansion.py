@@ -38,10 +38,6 @@ class ClusterExpansion(object):
             self.estimator = BaseEstimator()
             self.estimator.coef_ = self.ecis
 
-        # do least squares for comparison
-        # x = np.linalg.lstsq(self.feature_matrix, self.normalized_energies)[0]
-        # ls_err = np.dot(self.feature_matrix, x) - self.normalized_energies
-        # logging.info('least squares rmse: {}'.format(np.sqrt(np.sum(ls_err ** 2) / len(self.feature_matrix))))
 
     #TODO The next @properties should be removed and an analysis/tools module with hull stuff should do this
     @property

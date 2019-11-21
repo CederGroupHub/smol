@@ -10,7 +10,6 @@ from .orbit import Orbit
 from .supercell import get_bits, ClusterSupercell
 from ..utils import SymmetryError, SYMMETRY_ERROR_MESSAGE, SITE_TOL
 
-#TODO what the flip does the use_ewald do here? its just passed on to the solver? fitting class?
 
 class ClusterSubspace(object):
     """
@@ -65,8 +64,8 @@ class ClusterSubspace(object):
 
         self.supercell_size = supercell_size
 
-        #TODO remove these from here, should not be part of the subspace
-        # this is passed into constructor of SuperCells and used in there too.
+        #TODO think about how to handle these, the do represent fitting parameters or terms in the expansion
+        # but are not really part of the subspace. Aren't these terms a 'total' supercell cluster term?
         self.use_ewald = use_ewald
         self.eta = eta
         self.use_inv_r = use_inv_r
@@ -139,31 +138,31 @@ class ClusterSubspace(object):
         new_orbits = []
 
         for i, site in enumerate(expansion_structure):
-            orbit = Orbit([site.frac_coords], expansion_structure.lattice, [np.arange(nbits[i])], symops)
-            if orbit not in new_orbits:
-                new_orbits.append(orbit)
-        orbits[1] = sorted(new_orbits, key = lambda x: (np.round(x.max_radius,6), -x.multiplicity))
+            new_orbit = Orbit([site.frac_coords], expansion_structure.lattice, [np.arange(nbits[i])], symops)
+            if new_orbit not in new_orbits:
+                new_orbits.append(new_orbit)
+        orbits[1] = sorted(new_orbits, key = lambda x: (np.round(x.radius,6), -x.multiplicity))
 
         all_neighbors = expansion_structure.lattice.get_points_in_sphere(expansion_structure.frac_coords, [0.5, 0.5, 0.5],
                                     max(radii.values()) + sum(expansion_structure.lattice.abc)/2)
 
         for size, radius in sorted(radii.items()):
             new_orbits = []
-            for c in orbits[size-1]:
-                if c.max_radius > radius:
+            for orbit in orbits[size-1]:
+                if orbit.radius > radius:
                     continue
                 for n in all_neighbors:
                     p = n[0]
-                    if is_coord_subset([p], c.sites, atol=SITE_TOL):
+                    if is_coord_subset([p], orbit.basecluster.sites, atol=SITE_TOL):
                         continue
-                    orbit = Orbit(np.concatenate([c.sites, [p]]), expansion_structure.lattice,
-                                   c.bits + [np.arange(nbits[n[2]])], symops)
-                    if orbit.max_radius > radius + 1e-8:
+                    new_orbit = Orbit(np.concatenate([orbit.basecluster.sites, [p]]), expansion_structure.lattice,
+                                      orbit.bits + [np.arange(nbits[n[2]])], symops)
+                    if new_orbit.radius > radius + 1e-8:
                         continue
-                    elif orbit not in new_orbits:
-                        new_orbits.append(orbit)
+                    elif new_orbit not in new_orbits:
+                        new_orbits.append(new_orbit)
 
-            orbits[size] = sorted(new_orbits, key = lambda x: (np.round(x.max_radius,6), -x.multiplicity))
+            orbits[size] = sorted(new_orbits, key = lambda x: (np.round(x.radius,6), -x.multiplicity))
         return orbits
 
     def supercell_matrix_from_structure(self, structure):

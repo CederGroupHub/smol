@@ -10,7 +10,7 @@ from pymatgen.util.coord import lattice_points_in_supercell, coord_list_mapping_
 from ..utils import SITE_TOL
 from src.ce_utils import delta_corr_single_flip
 
-#TODO can we simple obtain the cluster vectors based on the clustersubspace (ie get rid of this supercell thing)?
+#TODO can we simple obtain the cluster vectors based on the clustersubspace (ie get rid or simplify this supercell thing)?
 def get_bits(structure):
     """
     Helper method to compute list of species on each site.
