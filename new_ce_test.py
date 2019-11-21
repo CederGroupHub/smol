@@ -1,7 +1,7 @@
 from pymatgen.io.cif import CifParser
 from pymatgen.core.structure import Structure
 import numpy as np
-from smol.clex import ClusterSubspace, StructureWrangler, ClusterExpansion, Estimator
+from smol.clex import ClusterSubspace, StructureWrangler, ClusterExpansion, CVXEstimator
 
 import json
 
@@ -45,7 +45,7 @@ sw = StructureWrangler(cs, [struct for struct, _ in valid_structs],
 
 
 # Create Estimator
-est = Estimator()
+est = CVXEstimator()
 print('Estimator solver ', est)
 
 

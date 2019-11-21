@@ -5,7 +5,7 @@ import numpy as np
 from pymatgen import Composition, Structure
 from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
 from .utils import NotFittedError
-from .regression.estimator import Estimator
+from .regression.estimator import BaseEstimator
 
 
 class ClusterExpansion(object):
@@ -36,7 +36,7 @@ class ClusterExpansion(object):
         if self.estimator is None:
             if self.ecis is None:
                 raise AttributeError('No estimator or ecis were given. One of them needs to be provided')
-            self.estimator = Estimator(solver=None)
+            self.estimator = BaseEstimator(solver=None)
             self.estimator.coef_ = self.ecis
 
         # do least squares for comparison

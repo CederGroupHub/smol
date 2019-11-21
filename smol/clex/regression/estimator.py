@@ -1,33 +1,43 @@
+"""
+Solvers aka functions that fit a linear model and are used to define the fit method of the Estimator
+to be used for a ClusterExpansion
+
+If your solver is simple enough then just write the Subclass here, otherwise make a seperate file and import
+the Estimator in the __init__.py file (ie see solve_gs_preserve)
+"""
+from abc import ABC, abstractmethod
 import numpy as np
 import logging
 import warnings
-
 from ..utils import NotFittedError
-from ..regression import solvers
 
-class Estimator(object):
+class BaseEstimator(ABC):
     """
     A simple estimator class to use different 'in-house'  solvers to fit a cluster-expansion
+    This should be used to create specific estimator classes by inheriting. New classes simple need to implement
+    the solve method.
     The methods have the same signatures as most Scikit-learn regressors, such that those can be directly used
     instead of this to fit a cluster-expansion
     """
 
-    def __init__(self, solver=solvers.solve_cvxopt):
-        self._solver = solver
+    def __init__(self):
         self.coef_ = None
         self.mus = None
         self.cvs = None
 
+    @abstractmethod
+    def _solve(self):
+        '''This needs to be overloaded in derived classes'''
+        raise AttributeError(f'No solve method specified: self._solver: {self._solve}')
+
     def fit(self, X, y, sample_weights=None, mu=None, *args, **kwargs):
-        if self._solver is None:
-            raise AttributeError(f'No solver specified: self._solver: {self._solver}')
         if sample_weights is not None:
             X = X * sample_weights[:, None] ** 0.5
             y = y * sample_weights ** 0.5
 
         if mu is None:
             mu = self._get_optimum_mu(X, y, sample_weights)
-        self.coef_ = self._solver(X, y, mu, *args, **kwargs)
+        self.coef_ = self._solve(X, y, mu, *args, **kwargs)
 
     def predict(self, X):
         if self.coef_ is None:
@@ -95,5 +105,37 @@ class Estimator(object):
         logging.info('best cv score: {}'.format(np.nanmax(self.cvs)))
         return mus[np.nanargmax(cvs)]
 
-    def __str__(self):
-        return f'Estimator, solver: {str(self._solver)}'
+
+class CVXEstimator(BaseEstimator):
+    """
+    Estimator implementing the written l1regs cvx based solver
+    """
+
+    def __init__(self):
+        super().__init__()
+
+    def _solve(self, X, y, mu):
+        """
+        X and y should already have been adjusted to account for weighting
+        """
+        # Maybe its cleaner to use importlib at the top to try and import these?
+        from .l1regls import l1regls, solvers
+        solvers.options['show_progress'] = False
+        from cvxopt import matrix
+
+        X1 = matrix(X)
+        b = matrix(y * mu)
+        return (np.array(l1regls(X1, b)) / mu).flatten()
+
+
+class BregmanEstimator(BaseEstimator):
+    """
+    Estimator implemting the split bregman solver
+    """
+
+    def __init__(self):
+        super().__init__()
+
+    def _solve(self,  X, y, mu):
+        #TODO this needs the compressive module code in pyabinitio
+        return split_bregman(X, y, MaxIt=1e5, tol=1e-7, mu=mu, l=1, quiet=True)
