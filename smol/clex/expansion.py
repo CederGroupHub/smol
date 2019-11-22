@@ -127,27 +127,29 @@ class ClusterExpansion(object):
 
     @classmethod
     def from_dict(cls, d):
-        return cls(cluster_expansion=ClusterExpansion.from_dict(d['cluster_expansion']),
-                   structures=[Structure.from_dict(s) for s in d['structures']],
-                   energies=np.array(d['energies']), max_dielectric=d.get('max_dielectric'),
-                   max_ewald=d.get('max_ewald'), supercell_matrices=d['supercell_matrices'],
-                   mu=d.get('mu'), ecis=d.get('ecis'), feature_matrix=d.get('feature_matrix'),
-                   solver=d.get('solver', 'cvxopt_l1'), weights=d['weights'])
+        raise NotImplementedError('needs to be properly implemented')
+        #return cls(cluster_expansion=ClusterExpansion.from_dict(d['cluster_expansion']),
+         #          structures=[Structure.from_dict(s) for s in d['structures']],
+          #         energies=np.array(d['energies']), max_dielectric=d.get('max_dielectric'),
+           #        max_ewald=d.get('max_ewald'), supercell_matrices=d['supercell_matrices'],
+            #       mu=d.get('mu'), ecis=d.get('ecis'), feature_matrix=d.get('feature_matrix'),
+             #      solver=d.get('solver', 'cvxopt_l1'), weights=d['weights'])
 
     def as_dict(self):
-        return {'cluster_expansion': self.wrangler.cs.as_dict(),
-                'structures': [s.as_dict() for s in self.structures],
-                'energies': self.energies.tolist(),
-                'supercell_matrices': [cs.supercell_matrix.tolist() for cs in self.supercells],
-                'max_dielectric': self.max_dielectric,
-                'max_ewald': self.wrangler.max_ewald,
-                'mu': self.mu,
-                'ecis': self.ecis.tolist(),
-                'feature_matrix': self.feature_matrix.tolist(),
-                'weights': self.weights.tolist(),
-                'solver': self.estimator,
-                '@module': self.__class__.__module__,
-                '@class': self.__class__.__name__}
+        raise NotImplementedError('needs to be properly implemented')
+        #return {'cluster_expansion': self.wrangler.cs.as_dict(),
+         #       'structures': [s.as_dict() for s in self.structures],
+          #      'energies': self.energies.tolist(),
+           #     'supercell_matrices': [cs.supercell_matrix.tolist() for cs in self.supercells],
+            #    'max_dielectric': self.max_dielectric,
+             #   'max_ewald': self.wrangler.max_ewald,
+              #  'mu': self.mu,
+               # 'ecis': self.ecis.tolist(),
+                #'feature_matrix': self.feature_matrix.tolist(),
+                #'weights': self.weights.tolist(),
+                #'solver': self.estimator,
+                #'@module': self.__class__.__module__,
+                #'@class': self.__class__.__name__}
 
 
 #TODO need to refactor this into a tools module and remove the corresponding ClusterExpansion attributes
