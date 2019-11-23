@@ -220,16 +220,16 @@ class ClusterSubspace(object):
         sc = self.supercell_from_matrix(sc_matrix)
         return sc.size, sc.corr_from_structure(structure)
 
-    #TODO this should be renamed to something that makes it obvious it is a generator and the property orbits
-    # should just give orbits.items()
     @property
     def orbits(self):
-        """
-        Yields all orbits sorted by size
-        """
-        for k in sorted(self._orbits.keys()):
-            for c in self._orbits[k]:
-                yield c
+        """Returns a list of all orbits sorted by size"""
+        return [orbit for k, orbits in sorted(self._orbits.items()) for orbit in orbits]
+
+    def iterorbits(self):
+        """Orbit generator, yields orbits"""
+        for key in self._orbits.keys():
+            for orbit in self._orbits[key]:
+                yield orbit
 
     @classmethod
     def from_dict(cls, d):

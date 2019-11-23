@@ -178,7 +178,7 @@ class ClusterSupercell(object):
         ts = lattice_points_in_supercell(self.supercell_matrix)
         self.cluster_indices = []
         self.clusters_by_sites = defaultdict(list)
-        for orbit in self.clustersubspace.orbits:
+        for orbit in self.clustersubspace.iterorbits():
             prim_fcoords = np.array([c.sites for c in orbit.clusters])
             fcoords = np.dot(prim_fcoords, self.prim_to_supercell)
             # tcoords contains all the coordinates of the symmetrically equivalent clusters

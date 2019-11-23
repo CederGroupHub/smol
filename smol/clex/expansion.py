@@ -116,7 +116,7 @@ class ClusterExpansion(object):
         corr = np.zeros(self.wrangler.cs.n_bit_orderings)
         corr[0] = 1  # zero point cluster
         cluster_std = np.std(self.feature_matrix, axis=0)
-        for orbit in self.wrangler.cs.orbits:
+        for orbit in self.wrangler.cs.iterorbits():
             print(orbit, len(orbit.bits) - 1, orbit.sc_b_id)
             print('bit    eci    cluster_std    eci*cluster_std')
             for i, bits in enumerate(orbit.bit_combos):
