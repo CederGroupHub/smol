@@ -10,6 +10,40 @@ from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
 from cvxopt import matrix, solvers
 from .estimator import BaseEstimator
 
+# TODO gspreserve solve need to fix calls to e_above_hull was in the ECI_gen megaclass from before
+'''
+These are the functions called by gspreserve solve, they were part of the original ECIgen megaclass
+The helper functions _func are in utils.py, there is probably no need to keep these and only use the ones
+in utils.py
+
+@property
+def pd_input(self):
+    if self._pd_input is None:
+        self._pd_input = _pd(self.structures, self.energies, self.wrangler.cs)
+    return self._pd_input
+
+
+@property
+def pd_ce(self):
+    if self._pd_ce is None:
+        self._pd_ce = _pd(self.structures, self.wrangler.cs_energies, self.wrangler.cs)
+    return self._pd_ce
+
+
+@property
+def e_above_hull_input(self):
+    if self._e_above_hull_input is None:
+        self._e_above_hull_input = _energies_above_hull(self.pd_input, self.structures, self.energies)
+    return self._e_above_hull_input
+
+
+@property
+def e_above_hull_ce(self):
+    if self._e_above_hull_ce is None:
+        self._e_above_hull_ce = _energies_above_hull(self.pd_ce, self.structures, self.wrangler.cs_energies)
+    return self._e_above_hull_ce
+'''
+
 class GSPreserveEstimator(BaseEstimator):
     """
     Esetimator implementing WH's gs preserve fit.
@@ -19,7 +53,6 @@ class GSPreserveEstimator(BaseEstimator):
         super().__init__()
 
     def _solve(self, A, f, mu):
-        #TODO need to fix calls to e_above_hull which is in the ECI_gen megaclass from before
         solvers.options['show_progress'] = False
         ehull = list(self.e_above_hull_input)
         structure_index_at_hull = [i for (i, e) in enumerate(ehull) if e < 1e-5]
