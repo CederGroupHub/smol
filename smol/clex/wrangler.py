@@ -3,7 +3,8 @@ from collections import defaultdict
 import logging
 import numpy as np
 from pymatgen import Structure
-from smol.clex.cspace.clusterspace import ClusterSubspace
+from .cspace.clusterspace import ClusterSubspace
+from .utils import StructureMatchError
 
 #TODO StructureWrangler takes training data, checks it (ie does it map, etc) and creates feature matrices and fitting data
 # maybe add some convenient checker functions like in daniils script
@@ -16,7 +17,7 @@ class StructureWrangler(object):
     fit the final ClusterExpansion.
     """
 
-    def __init__(self, clustersubspace, structures, properties, max_ewald=None):
+    def __init__(self, clustersubspace, data, max_ewald=None):
         """
         Fit ECI's to obtain a cluster expansion. This init function takes in all possible arguments,
         but its much simpler to use one of the factory classmethods below,
@@ -24,9 +25,7 @@ class StructureWrangler(object):
 
         Args:
             clustersubspace: A ClusterSubspace object
-            structures: list of Structure objects
-            properties: list of total (non-normalized) properties to
-            weights: list of weights for the optimization.
+            data: list of (structure, property) data
             max_ewald: filter the input structures to only use those with low electrostatic
                 energies (no large charge separation in cell). This energy is referenced to the lowest
                 value at that composition. Note that this is before the division by the relative dielectric
@@ -38,15 +37,15 @@ class StructureWrangler(object):
 
         # Match all input structures to cluster expansion
         self.items = []
-        supercell_matrices, fm_rows = [None] * len(structures), [None] * len(structures)
-        #TODO structures and properties should be input as a dict or something, not separate lists.
-        for s, e, fm_row in zip(structures, properties, fm_rows):
+        #supercell_matrices=   [None] * len(data),
+        fm_rows = [None] * len(data)
+        for (s, e), fm_row in zip(data, fm_rows):
             try:
                 m = self.cs.supercell_matrix_from_structure(s)
                 sc = self.cs.supercell_from_matrix(m)
                 if fm_row is None:
                     fm_row = sc.corr_from_structure(s)
-            except Exception: #TODO too broad never catch ALL exceptions like this
+            except StructureMatchError:
                 logging.debug('Unable to match {} with energy {} to supercell'
                               ''.format(s.composition, e))
                 if self.cs.supercell_size not in ['volume', 'num_sites', 'num_atoms'] \
@@ -80,7 +79,7 @@ class StructureWrangler(object):
             self.items = items
 
         logging.info("Matched {} of {} structures".format(len(self.items),
-                                                          len(structures)))
+                                                          len(data)))
 
     @property
     def structures(self):
@@ -116,6 +115,6 @@ class StructureWrangler(object):
         return {'cluster_expansion': self.cs.as_dict(),
                 'structures': [s.as_dict() for s in self.structures],
                 'max_ewald': self.max_ewald,
-                #'feature_matrix': self.feature_matrix.tolist(), #TODO should we keep this to be able to use the from_dict?
+                #'feature_matrix': self.feature_matrix.tolist(),
                 '@module': self.__class__.__module__,
                 '@class': self.__class__.__name__}

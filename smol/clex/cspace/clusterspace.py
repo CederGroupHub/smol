@@ -8,7 +8,7 @@ from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc
 
 from .orbit import Orbit
 from .supercell import get_bits, ClusterSupercell
-from ..utils import SymmetryError, SYMMETRY_ERROR_MESSAGE, SITE_TOL
+from ..utils import SymmetryError, StructureMatchError, SYMMETRY_ERROR_MESSAGE, SITE_TOL
 
 
 class ClusterSubspace(object):
@@ -168,7 +168,7 @@ class ClusterSubspace(object):
     def supercell_matrix_from_structure(self, structure):
         sc_matrix = self.sm.get_supercell_matrix(structure, self.structure)
         if sc_matrix is None:
-            raise ValueError("Supercell couldn't be found")
+            raise StructureMatchError("Supercell couldn't be found")
         if np.linalg.det(sc_matrix) < 0:
             sc_matrix *= -1
         return sc_matrix

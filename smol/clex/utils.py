@@ -5,7 +5,7 @@ from typing import Dict, Any
 SITE_TOL = 1e-6
 
 
-SYMMETRY_ERROR_MESSAGE = ValueError("Error in calculating symmetry operations. Try using a "
+SYMMETRY_ERROR_MESSAGE =    ("Error in calculating symmetry operations. Try using a "
                             "more symmetrically refined input structure. "
                             "SpacegroupAnalyzer(s).get_refined_structure().get_primitive_structure() "
                             "usually results in a safe choice")
@@ -23,6 +23,12 @@ class NotFittedError(ValueError, AttributeError):
     Exception class to raise if regression is used before fitting.
     This class inherits from both ValueError and AttributeError to help with
     exception handling and backward compatibility.
+    """
+
+
+class StructureMatchError(RuntimeError):
+    """
+    Raised when a pymatgen StructureMatcher returns None
     """
 
 

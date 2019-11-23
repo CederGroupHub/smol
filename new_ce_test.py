@@ -29,20 +29,22 @@ for calc_i, calc in enumerate(calc_data):
     try: 
         struct = Structure.from_dict(calc['s']) 
         cs.corr_from_structure(struct) 
-        valid_structs.append((struct, calc['toten'])) 
-    except ValueError: 
+        valid_structs.append((struct, calc['toten']))
+    except AttributeError:
+        #raise
+        continue 
+    except: 
         #print("\tToo far off lattice, throwing out.") 
         continue
-    except AttributeError as e:
-        continue
+        #raise
+    
  
 print("{}/{} structures map to the lattice".format(len(valid_structs), len(calc_data))) 
 
 #print('Also here is a random corr_vector:\n', cs.corr_from_structure(valid_structs[0][0]))
 
 # Create the data wrangler.
-sw = StructureWrangler(cs, [struct for struct, _ in valid_structs],
-					   [e for _, e in valid_structs], max_ewald=3)
+sw = StructureWrangler(cs, [(struct, e) for struct, e in valid_structs], max_ewald=3)
 
 
 # Create Estimator
@@ -66,4 +68,4 @@ struct = sw.structures[0]
 
 print(f"ECIS: {ce.ecis}")
 print(f"RMSE: {rmse} eV/prim")
-print(f"Number non zero ECIs: {len([eci for eci in ce.ecis if np.abs(eci) > 1e-3])}")    
+print(f"Number non zero ECIs: {len([eci for eci in ce.ecis if np.abs(eci) > 1e-3])}") 
