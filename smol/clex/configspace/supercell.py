@@ -187,8 +187,8 @@ class ClusterSupercell(object):
             tcs = tcoords.shape
             inds = coord_list_mapping_pbc(tcoords.reshape((-1, 3)),
                                           self.fcoords, atol=SITE_TOL).reshape((tcs[0] * tcs[1], tcs[2]))
-            self.cluster_indices.append(
-                (orbit, inds))  # orbit, 2d array of index groups that correspond to the cluster
+            self.cluster_indices.append((orbit, inds))
+            # orbit, 2d array of index groups that correspond to the cluster
             # the 2d array may have some duplicates. This is due to symetrically equivalent
             # groups being matched to the same sites (eg in simply cubic all 6 nn interactions
             # will all be [0, 0] indices. This multiplicity disappears as supercell size
@@ -214,13 +214,14 @@ class ClusterSupercell(object):
         """
         Each entry in the correlation vector corresponds to a particular symmetrically distinct bit ordering
         """
+        #print(occu)
         corr = np.zeros(self.clustersubspace.n_bit_orderings)
         corr[0] = 1  # zero point cluster
         occu = np.array(occu)
         for orb, inds in self.cluster_indices:
             c_occu = occu[inds]
             for i, bits in enumerate(orb.bit_combos):
-                p = np.all(c_occu[None, :, :] == bits[:, None, :], axis=-1)
+                p = np.all(c_occu == bits, axis=1)
                 corr[orb.o_b_id + i] = np.average(p)
         if self.clustersubspace.use_ewald:
             corr = np.concatenate([corr, self._get_ewald_eci(occu)])

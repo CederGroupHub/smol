@@ -41,7 +41,7 @@ for calc_i, calc in enumerate(calc_data):
  
 print("{}/{} structures map to the lattice".format(len(valid_structs), len(calc_data))) 
 
-#print('Also here is a random corr_vector:\n', cs.corr_from_structure(valid_structs[0][0]))
+print('Also here is a random corr_vector:\n', cs.corr_from_structure(valid_structs[10][0]))
 
 # Create the data wrangler.
 sw = StructureWrangler(cs, [(struct, e) for struct, e in valid_structs], max_ewald=3)

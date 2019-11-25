@@ -90,8 +90,8 @@ class Orbit(object):
                     if new_bit not in new_bits:
                         new_bits.append(new_bit)
                 all_combos.append(new_bits)
-        self._bits = [np.array(x, dtype=np.int) for x in all_combos] # this shouldn't be an array
-        return self._bits
+        self._bit_combos = [np.array(x, dtype=np.int) for x in all_combos] # this shouldn't be an array
+        return self._bit_combos
 
     @property
     def clusters(self):

@@ -10,6 +10,7 @@ from smol.cluster_expansion.ce import ClusterExpansion
 prim = CifParser('/home/lbluque/Develop/daniil_CEMC_workshop/lno_prim.cif') 
 prim = prim.get_structures()[0] 
 
+print(prim)
 # Create old ClusterExpansion behemoth
 ce = ClusterExpansion.from_radii(structure=prim, 
                                  radii={2: 5, 3: 4.1}, 
@@ -36,7 +37,7 @@ for calc_i, calc in enumerate(calc_data):
  
 print("{}/{} structures map to the lattice".format(len(valid_structs), len(calc_data))) 
 
-print('Also here is a random corr_vector:\n', ce.corr_from_structure(valid_structs[0][0]))
+print('Also here is a random corr_vector:\n', ce.corr_from_structure(valid_structs[10][0]))
 
 
 # Fit the cluster expansion 
