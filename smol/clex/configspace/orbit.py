@@ -34,8 +34,8 @@ class Orbit(object):
 
         self.bits = bits
         self.structure_symops = structure_symops
-        self.o_id = None
-        self.o_b_id = None
+        self.orb_id = None
+        self.orb_b_id = None
 
         #lazy generation of properties
         self._equiv = None
@@ -127,8 +127,8 @@ class Orbit(object):
         Returns:
             next symmetrized cluster id, next bit ordering id, next cluster id
         """
-        self.o_id = o_id
-        self.o_b_id = o_b_id
+        self.orb_id = o_id
+        self.orb_b_id = o_b_id
         c_id = start_c_id
         for c in self.clusters:
             c_id = c.assign_ids(c_id)
@@ -145,9 +145,9 @@ class Orbit(object):
         return not self.__eq__(other)
 
     def __str__(self):
-        return f'[Orbit] id: {self.o_id:<4} bit_id: {self.o_b_id:<4} multiplicity: {self.multiplicity:<4}' \
+        return f'[Orbit] id: {self.orb_id:<4} bit_id: {self.orb_b_id:<4} multiplicity: {self.multiplicity:<4}' \
                f' no. symops: {len(self.cluster_symops):<4} {str(self.basecluster)}'
 
     def __repr__(self):
-        return _repr(self, o_id=self.o_id, o_b_id=self.o_b_id, radius=self.radius, lattice=self.lattice,
+        return _repr(self, orb_id=self.orb_id, orb_b_id=self.orb_b_id, radius=self.radius, lattice=self.lattice,
                      basecluster=self.basecluster)

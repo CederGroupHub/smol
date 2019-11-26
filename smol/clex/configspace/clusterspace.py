@@ -7,8 +7,24 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc
 
 from .orbit import Orbit
-from .supercell import get_bits, ClusterSupercell
+from .supercell import ClusterSupercell
 from ..utils import SymmetryError, StructureMatchError, SYMMETRY_ERROR_MESSAGE, SITE_TOL
+
+
+def get_bits(structure):
+    """
+    Helper method to compute list of species on each site.
+    Includes vacancies
+    """
+    all_bits = []
+    for site in structure:
+        bits = []
+        for sp in sorted(site.species.keys()):
+            bits.append(str(sp))
+        if site.species.num_atoms < 0.99:
+            bits.append("Vacancy")
+        all_bits.append(bits)
+    return all_bits
 
 
 class ClusterSubspace(object):
@@ -143,8 +159,10 @@ class ClusterSubspace(object):
                 new_orbits.append(new_orbit)
         orbits[1] = sorted(new_orbits, key = lambda x: (np.round(x.radius,6), -x.multiplicity))
 
-        all_neighbors = expansion_structure.lattice.get_points_in_sphere(expansion_structure.frac_coords, [0.5, 0.5, 0.5],
-                                    max(radii.values()) + sum(expansion_structure.lattice.abc)/2)
+        all_neighbors = expansion_structure.lattice.get_points_in_sphere(expansion_structure.frac_coords,
+                                                                         [0.5, 0.5, 0.5],
+                                                                         max(radii.values()) +
+                                                                         sum(expansion_structure.lattice.abc)/2)
 
         for size, radius in sorted(radii.items()):
             new_orbits = []
@@ -177,24 +195,27 @@ class ClusterSubspace(object):
         sc_matrix = self.supercell_matrix_from_structure(structure)
         return self.supercell_from_matrix(sc_matrix)
 
-    #TODO the cluster-space does not hold any supercells it always creates them on the fly whenever it is needed
-    # is there a better way to do this? get rid of the supercell class? or create a factory-thingy?
     def supercell_from_matrix(self, sc_matrix):
-        sc_matrix = tuple(sorted(tuple(s) for s in sc_matrix))
-        if sc_matrix in self._supercells:
-            sc = self._supercells[sc_matrix]
+        scm = tuple(sorted(tuple(s) for s in sc_matrix))
+        if scm in self._supercells:
+            sc = self._supercells[scm]
         else:
-            sc = ClusterSupercell(sc_matrix, self)
-            self._supercells[sc_matrix] = sc
+            supercell = self.structure.copy()
+            supercell.make_supercell(sc_matrix)
+            sc = ClusterSupercell(self, supercell, sc_matrix, get_bits(supercell))
+            self._supercells[scm] = sc
         return sc
 
-    def corr_from_structure(self, structure):
+    def corr_from_structure(self, structure, return_size=False):
         """
         Given a structure, determines which supercell to use,
         and gets the correlation vector
         """
         sc = self.supercell_from_structure(structure)
-        return sc.corr_from_structure(structure)
+        if return_size:
+            return sc.corr_from_structure(structure), sc.size
+        else:
+            return sc.corr_from_structure(structure)
 
     def refine_structure(self, structure):
         sc = self.supercell_from_structure(structure)
@@ -211,14 +232,6 @@ class ClusterSubspace(object):
         sc = self.supercell_from_matrix(sc_matrix)
         occu, mapping = sc.occu_from_structure(structure, return_mapping = True)
         return sc.structure_from_occu(occu), mapping
-
-    def size_corr_from_structure(self, structure):
-        sc = self.supercell_from_structure(structure)
-        return sc.size, sc.corr_from_structure(structure)
-
-    def scaled_corr_from_sc_matrix(self, structure, sc_matrix):
-        sc = self.supercell_from_matrix(sc_matrix)
-        return sc.size, sc.corr_from_structure(structure)
 
     @property
     def orbits(self):
