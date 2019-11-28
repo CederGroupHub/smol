@@ -15,11 +15,11 @@ class Orbit(object):
     translational symmetry).
     Also includes the possible ordering on the clusters
     """
-    def __init__(self, sites, lattice, bits, structure_symops):
+    def __init__(self, sites, lattice, bits, site_bases, structure_symops):
         """
         Args:
             base_cluster: a Cluster object.
-            bits: list describing the occupancy of each site in cluster. For each site, should
+            bits (list): list describing the occupancy of each site in cluster. For each site, should
                     be the number of possible occupancies minus one. i.e. for a 3 site cluster,
                     each of which having one of Li, TM, or Vac, bits should be
                     [[0, 1], [0, 1], [0, 1]]. This is because the bit combinations that the
@@ -29,10 +29,12 @@ class Orbit(object):
                     because of the L1 norm).
                     In any case, we know that pairwise ECIs aren't sparse in an ionic system, so
                     not sure how big of an issue this is.
-            structure_symops: list of symmetry operations for the base structure
+            structure_symops (list): list of symmetry operations for the base structure
+            site_bases (list): list of SiteBasis objects for each site in the given sites.
         """
 
         self.bits = bits
+        self.sbases = site_bases
         self.structure_symops = structure_symops
         self.orb_id = None
         self.orb_b_id = None
@@ -89,8 +91,8 @@ class Orbit(object):
                     new_bit = tuple(bit_combo[np.array(b_o)])
                     if new_bit not in new_bits:
                         new_bits.append(new_bit)
-                all_combos.append(new_bits)
-        self._bit_combos = [np.array(x, dtype=np.int) for x in all_combos] # this shouldn't be an array
+                all_combos += new_bits
+        self._bit_combos = all_combos
         return self._bit_combos
 
     @property
@@ -116,6 +118,22 @@ class Orbit(object):
     @property
     def multiplicity(self):
         return len(self.clusters)
+
+    def eval(self, fun_dict):
+        """
+        Evaluates a cluster function defined for this orbit
+
+        Args:
+            fun_dict: dictionary specifying {index of site function: input specie} for each site
+                function in the orbit.
+
+        Returns:
+
+        """
+        p = 1
+        for i, (ind, specie) in enumerate(fun_dict.items()):
+            p *= self.sbases[i].eval(ind, specie)
+        return p
 
     def assign_ids(self, o_id, o_b_id, start_c_id):
         """

@@ -206,16 +206,18 @@ class ClusterSupercell(object):
         occu = np.array(occu)
         for orb, inds in self.cluster_indices:
             c_occu = occu[inds]
+            #print(c_occu, orb.bit_combos)
             for i, bits in enumerate(orb.bit_combos):
-                p = np.all(c_occu == bits, axis=1)
-                corr[orb.orb_b_id + i] = np.average(p)
+                #each bit in bits represents a site that has its own site basis in orb.sbases
+                p = np.fromiter(map(lambda occu: orb.eval({b: o for b, o in zip(bits, occu)}), c_occu), dtype=np.float)
+                corr[orb.orb_b_id + i] = p.mean()
         if self.clustersubspace.use_ewald:
             corr = np.concatenate([corr, self._get_ewald_eci(occu)])
         return corr
 
     def occu_from_structure(self, structure, return_mapping=False):
         """
-        Calculates the correlation vector. Structure must be on this supercell
+        Returns list of occupancies of each site in the structure
         """
         # calculate mapping to supercell
         sm_no_orb = StructureMatcher(primitive_cell=False,
@@ -236,7 +238,7 @@ class ClusterSupercell(object):
         if mapping is None:
             raise ValueError('Structure cannot be mapped to this supercell')
 
-        occu = np.zeros(len(self.supercell), dtype=np.int)
+        occu = [] #np.zeros(len(self.supercell), dtype=np.int)
         for i, bit in enumerate(self.bits):
             # rather than starting with all vacancies and looping
             # only over mapping, explicitly loop over everything to
@@ -245,7 +247,8 @@ class ClusterSupercell(object):
                 sp = str(structure[mapping.index(i)].specie)
             else:
                 sp = 'Vacancy'
-            occu[i] = bit.index(sp)
+            #occu[i] = bit.index(sp)
+            occu.append(sp)
         if not return_mapping:
             return occu
         else:

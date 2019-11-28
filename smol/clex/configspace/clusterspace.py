@@ -6,10 +6,8 @@ from pymatgen.analysis.structure_matcher import StructureMatcher, OrderDisorderE
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc
 
-from .orbit import Orbit
-from .supercell import ClusterSupercell
+from . import Orbit, ClusterSupercell, basis_factory
 from ..utils import SymmetryError, StructureMatchError, SYMMETRY_ERROR_MESSAGE, SITE_TOL
-
 
 def get_bits(structure):
     """
@@ -111,7 +109,7 @@ class ClusterSubspace(object):
 
     @classmethod
     def from_radii(cls, structure, radii, ltol=0.2, stol=0.1, angle_tol=5, supercell_size='volume',
-                   use_ewald=False, use_inv_r=False, eta=None):
+                   use_ewald=False, use_inv_r=False, eta=None, basis='indicator'):
         """
         Args:
             structure:
@@ -137,33 +135,34 @@ class ClusterSubspace(object):
         sites_to_expand = [site for site in structure if site.species.num_atoms < 0.99 \
                             or len(site.species) > 1]
         expansion_structure = Structure.from_sites(sites_to_expand)
-        orbits = cls._orbits_from_radii(expansion_structure, radii, symops)
+        orbits = cls._orbits_from_radii(expansion_structure, radii, symops, basis)
         return cls(structure=structure, expansion_structure=expansion_structure, symops=symops, orbits=orbits,
                    ltol=ltol, stol=stol, angle_tol=angle_tol, supercell_size=supercell_size, use_ewald=use_ewald,
                    use_inv_r=use_inv_r, eta=eta)
 
     @classmethod
-    def _orbits_from_radii(cls, expansion_structure, radii, symops):
+    def _orbits_from_radii(cls, expansion_structure, radii, symops, basis):
         """
         Generates dictionary of {size: [Orbits]} given a dictionary of maximal cluster radii and symmetry
         operations to apply (not necessarily all the symmetries of the expansion_structure)
         """
         bits = get_bits(expansion_structure)
         nbits = np.array([len(b) - 1 for b in bits])
+        sbases = tuple(basis_factory(basis, bit) for bit in bits)
         orbits = {}
         new_orbits = []
 
-        for i, site in enumerate(expansion_structure):
-            new_orbit = Orbit([site.frac_coords], expansion_structure.lattice, [np.arange(nbits[i])], symops)
+        for bit, nbit, site, sbasis in zip(bits, nbits, expansion_structure, sbases):
+            new_orbit = Orbit([site.frac_coords], expansion_structure.lattice,
+                              [np.arange(nbit)], [sbasis], symops)
             if new_orbit not in new_orbits:
                 new_orbits.append(new_orbit)
-        orbits[1] = sorted(new_orbits, key = lambda x: (np.round(x.radius,6), -x.multiplicity))
 
+        orbits[1] = sorted(new_orbits, key = lambda x: (np.round(x.radius,6), -x.multiplicity))
         all_neighbors = expansion_structure.lattice.get_points_in_sphere(expansion_structure.frac_coords,
                                                                          [0.5, 0.5, 0.5],
                                                                          max(radii.values()) +
                                                                          sum(expansion_structure.lattice.abc)/2)
-
         for size, radius in sorted(radii.items()):
             new_orbits = []
             for orbit in orbits[size-1]:
@@ -174,7 +173,7 @@ class ClusterSubspace(object):
                     if is_coord_subset([p], orbit.basecluster.sites, atol=SITE_TOL):
                         continue
                     new_orbit = Orbit(np.concatenate([orbit.basecluster.sites, [p]]), expansion_structure.lattice,
-                                      orbit.bits + [np.arange(nbits[n[2]])], symops)
+                                      orbit.bits + [np.arange(nbits[n[2]])], orbit.sbases + [sbases[n[2]]], symops)
                     if new_orbit.radius > radius + 1e-8:
                         continue
                     elif new_orbit not in new_orbits:

@@ -10,13 +10,13 @@ from smol.cluster_expansion.ce import ClusterExpansion
 prim = CifParser('/home/lbluque/Develop/daniil_CEMC_workshop/lno_prim.cif') 
 prim = prim.get_structures()[0] 
 
-print(prim)
+#print(prim)
 # Create old ClusterExpansion behemoth
 ce = ClusterExpansion.from_radii(structure=prim, 
                                  radii={2: 5, 3: 4.1}, 
                                  ltol=0.15, stol=0.2, angle_tol=5, 
                                  supercell_size='O2-', 
-                                 use_ewald=True, 
+                                 use_ewald=False, 
                                  use_inv_r=False, eta=None) 
 
 print('Here is the cluster expansion object: \n', ce)
