@@ -16,7 +16,7 @@ cs = ClusterSubspace.from_radii(structure=prim,
                                  radii={2: 5, 3: 4.1},
                                  ltol=0.15, stol=0.2, angle_tol=5,
                                  supercell_size='O2-',
-                                 use_ewald=False,
+                                 use_ewald=True,
                                  use_inv_r=False, eta=None)
 print('Here is the cluster subspace object: \n', cs)
 

@@ -158,6 +158,8 @@ class ClusterSupercell(object):
         return b_inds[:-1]
 
     def _get_ewald_eci(self, occu):
+        # This is a quick fix for occu being a list of species strings now. Could be better?
+        occu = np.array([bit.index(sp) for bit, sp in zip(self.bits, occu)])
         inds = self._get_ewald_occu(occu)
         ecis = [np.sum(self.ewald_matrix[inds, :][:, inds]) / self.size]
 
@@ -192,9 +194,9 @@ class ClusterSupercell(object):
 
     def structure_from_occu(self, occu):
         sites = []
-        for b, o, s in zip(self.bits, occu, self.supercell):
-            if b[o] != 'Vacancy':
-                sites.append(PeriodicSite(b[o], s.frac_coords, self.supercell.lattice))
+        for sp, s in zip(occu, self.supercell):
+            if sp != 'Vacancy':
+                sites.append(PeriodicSite(sp, s.frac_coords, self.supercell.lattice))
         return Structure.from_sites(sites)
 
     def corr_from_occupancy(self, occu):
