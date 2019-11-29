@@ -70,7 +70,7 @@ class ClusterExpansion(object):
         structures = structures if type(structures) == list else [structures]
         corrs = []
         for structure in structures:
-            size, corr = self.wrangler.cs.size_corr_from_structure(structure)
+            corr, size = self.wrangler.cs.corr_from_structure(structure, return_size=True)
             if not normalized:
                 corr *= size
             corrs.append(corr)

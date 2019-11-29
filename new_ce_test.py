@@ -3,6 +3,7 @@ from pymatgen.core.structure import Structure
 import numpy as np
 from sklearn.linear_model import ElasticNetCV, LassoCV, Ridge, LinearRegression, BayesianRidge, ARDRegression
 from smol.clex import ClusterSubspace, StructureWrangler, ClusterExpansion, CVXEstimator
+from smol.clex.utils import StructureMatchError
 
 import json
 
@@ -15,7 +16,7 @@ cs = ClusterSubspace.from_radii(structure=prim,
                                  radii={2: 5, 3: 4.1},
                                  ltol=0.15, stol=0.2, angle_tol=5,
                                  supercell_size='O2-',
-                                 use_ewald=True,
+                                 use_ewald=False,
                                  use_inv_r=False, eta=None)
 print('Here is the cluster subspace object: \n', cs)
 
@@ -30,13 +31,11 @@ for calc_i, calc in enumerate(calc_data):
         struct = Structure.from_dict(calc['s']) 
         cs.corr_from_structure(struct) 
         valid_structs.append((struct, calc['toten']))
-    except AttributeError:
-        #raise
-        continue 
-    except: 
+    except StructureMatchError: 
         #print("\tToo far off lattice, throwing out.") 
         continue
-        #raise
+    except AttributeError:
+    	continue
     
  
 print("{}/{} structures map to the lattice".format(len(valid_structs), len(calc_data))) 

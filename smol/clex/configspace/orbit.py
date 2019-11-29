@@ -15,11 +15,11 @@ class Orbit(object):
     translational symmetry).
     Also includes the possible ordering on the clusters
     """
-    def __init__(self, sites, lattice, bits, structure_symops):
+    def __init__(self, sites, lattice, bits, site_bases, structure_symops):
         """
         Args:
             base_cluster: a Cluster object.
-            bits: list describing the occupancy of each site in cluster. For each site, should
+            bits (list): list describing the occupancy of each site in cluster. For each site, should
                     be the number of possible occupancies minus one. i.e. for a 3 site cluster,
                     each of which having one of Li, TM, or Vac, bits should be
                     [[0, 1], [0, 1], [0, 1]]. This is because the bit combinations that the
@@ -29,13 +29,15 @@ class Orbit(object):
                     because of the L1 norm).
                     In any case, we know that pairwise ECIs aren't sparse in an ionic system, so
                     not sure how big of an issue this is.
-            structure_symops: list of symmetry operations for the base structure
+            structure_symops (list): list of symmetry operations for the base structure
+            site_bases (list): list of SiteBasis objects for each site in the given sites.
         """
 
         self.bits = bits
+        self.sbases = site_bases
         self.structure_symops = structure_symops
-        self.o_id = None
-        self.o_b_id = None
+        self.orb_id = None
+        self.orb_b_id = None
 
         #lazy generation of properties
         self._equiv = None
@@ -89,8 +91,8 @@ class Orbit(object):
                     new_bit = tuple(bit_combo[np.array(b_o)])
                     if new_bit not in new_bits:
                         new_bits.append(new_bit)
-                all_combos.append(new_bits)
-        self._bit_combos = [np.array(x, dtype=np.int) for x in all_combos] # this shouldn't be an array
+                all_combos += new_bits
+        self._bit_combos = all_combos
         return self._bit_combos
 
     @property
@@ -117,6 +119,23 @@ class Orbit(object):
     def multiplicity(self):
         return len(self.clusters)
 
+    def eval(self, bits, species):
+        """
+        Evaluates a cluster function defined for this orbit
+
+        Args:
+            bits:
+            species:
+
+        Returns:
+
+        """
+        #print(fun_dict)
+        p = 1
+        for i, (b, sp) in enumerate(zip(bits, species)):
+            p *= self.sbases[i].eval(b, sp)
+        return p
+
     def assign_ids(self, o_id, o_b_id, start_c_id):
         """
         Args:
@@ -127,8 +146,8 @@ class Orbit(object):
         Returns:
             next symmetrized cluster id, next bit ordering id, next cluster id
         """
-        self.o_id = o_id
-        self.o_b_id = o_b_id
+        self.orb_id = o_id
+        self.orb_b_id = o_b_id
         c_id = start_c_id
         for c in self.clusters:
             c_id = c.assign_ids(c_id)
@@ -145,9 +164,9 @@ class Orbit(object):
         return not self.__eq__(other)
 
     def __str__(self):
-        return f'[Orbit] id: {self.o_id:<4} bit_id: {self.o_b_id:<4} multiplicity: {self.multiplicity:<4}' \
+        return f'[Orbit] id: {self.orb_id:<4} bit_id: {self.orb_b_id:<4} multiplicity: {self.multiplicity:<4}' \
                f' no. symops: {len(self.cluster_symops):<4} {str(self.basecluster)}'
 
     def __repr__(self):
-        return _repr(self, o_id=self.o_id, o_b_id=self.o_b_id, radius=self.radius, lattice=self.lattice,
+        return _repr(self, orb_id=self.orb_id, orb_b_id=self.orb_b_id, radius=self.radius, lattice=self.lattice,
                      basecluster=self.basecluster)
