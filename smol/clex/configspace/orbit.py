@@ -119,20 +119,21 @@ class Orbit(object):
     def multiplicity(self):
         return len(self.clusters)
 
-    def eval(self, fun_dict):
+    def eval(self, bits, species):
         """
         Evaluates a cluster function defined for this orbit
 
         Args:
-            fun_dict: dictionary specifying {index of site function: input specie} for each site
-                function in the orbit.
+            bits:
+            species:
 
         Returns:
 
         """
+        #print(fun_dict)
         p = 1
-        for i, (ind, specie) in enumerate(fun_dict.items()):
-            p *= self.sbases[i].eval(ind, specie)
+        for i, (b, sp) in enumerate(zip(bits, species)):
+            p *= self.sbases[i].eval(b, sp)
         return p
 
     def assign_ids(self, o_id, o_b_id, start_c_id):

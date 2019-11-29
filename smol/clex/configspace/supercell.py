@@ -206,10 +206,9 @@ class ClusterSupercell(object):
         occu = np.array(occu)
         for orb, inds in self.cluster_indices:
             c_occu = occu[inds]
-            #print(c_occu, orb.bit_combos)
             for i, bits in enumerate(orb.bit_combos):
                 #each bit in bits represents a site that has its own site basis in orb.sbases
-                p = np.fromiter(map(lambda occu: orb.eval({b: o for b, o in zip(bits, occu)}), c_occu), dtype=np.float)
+                p = np.fromiter(map(lambda occu: orb.eval(bits, occu), c_occu[:]), dtype=np.float)
                 corr[orb.orb_b_id + i] = p.mean()
         if self.clustersubspace.use_ewald:
             corr = np.concatenate([corr, self._get_ewald_eci(occu)])
