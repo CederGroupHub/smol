@@ -5,7 +5,8 @@ These include the basis functions and measure that defines the inner product
 
 from abc import ABC, abstractmethod
 import numpy as np
-
+from numpy.polynomial.chebyshev import chebval
+from numpy.polynomial.legendre import legval
 
 class BasisNotImplemented(NotImplementedError):
     pass
@@ -74,7 +75,6 @@ class SiteBasis(ABC):
         Returns:
             float/str encoding
         """
-        #encoding = {s: i for i, s in enumerate(self.species)}
         return specie
 
     def eval(self, fun_ind, specie): #nned to thinkg of this a bit more, how to evaluate with disticnt sites?
@@ -110,17 +110,68 @@ class IndicatorBasis(SiteBasis):
 
 class SinusoidBasis(SiteBasis):
     """
-
+    Sinusoid (Sine/cosine basis) as proposed by A.VdW.
     """
 
     def __init__(self, species):
         super().__init__(species)
+        M = len(species)
+        m = M//2
+        enc = range(-m, m)
+        self._encoding = {s: i for (s, i) in zip(species, enc)}
+        if m % 2 == 0:
+            self._functions = tuple(lambda m: np.sin(np.pi * n * m / M) for n in range(1, M))
+        else:
+            self._functions = tuple(lambda m: np.cos(np.pi*(n+1)*m/M) for n in range(1, M))
+
+    def encode(self, specie):
+        return self._encoding[specie]
+
+    @property
+    def functions(self):
+        return self._functions
 
 
-class ChebyshevBasis(SiteBasis):
+class NumpyPolyBasis(SiteBasis):
     """
+    Abstract class to quickly write polynomial basis included in Numpy
+    """
+    def __init__(self, species, poly_fun):
+        super().__init__(species)
+        M = len(species)
+        enc = np.linspace(-1, 1, M)
+        self._encoding = {s: i for (s, i) in zip(species, enc)}
+        funcs, coeffs = [], [1]
+        for i in range(M-1):
+            coeffs.append(0)
+            funcs.append(lambda x: poly_fun(x, list(reversed(coeffs))))
+        self._functions = tuple(funcs)
 
+    def encode(self, specie):
+        return self._encoding[specie]
+
+
+class ChebyshevBasis(NumpyPolyBasis):
+    """
+    Chebyshev Polynomial Basis
     """
 
     def __init__(self, species):
-        super().__init__(species)
+        super().__init__(species, chebval)
+
+    @property
+    def functions(self):
+        return self._functions
+
+
+class LegendreBasis(NumpyPolyBasis):
+    """
+    Legendre Polynomial Basis
+    """
+
+    def __init__(self, species):
+        super().__init__(species, legval)
+
+    @property
+    def functions(self):
+        return self._functions

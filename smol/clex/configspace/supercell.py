@@ -211,7 +211,7 @@ class ClusterSupercell(object):
             for i, bits in enumerate(orb.bit_combos):
                 #each bit in bits represents a site that has its own site basis in orb.sbases
                 p = np.fromiter(map(lambda occu: orb.eval(bits, occu), c_occu[:]), dtype=np.float)
-                corr[orb.orb_b_id + i] = p.mean()
+                corr[orb.orb_b_id + i] = p.sum()
         if self.clustersubspace.use_ewald:
             corr = np.concatenate([corr, self._get_ewald_eci(occu)])
         return corr
