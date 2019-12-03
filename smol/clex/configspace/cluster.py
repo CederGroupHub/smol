@@ -5,6 +5,7 @@ from monty.json import MSONable
 
 from ..utils import SITE_TOL, _repr
 
+
 class Cluster(MSONable):
     """
     An undecorated (no occupancies) cluster

@@ -5,10 +5,12 @@ These include the basis functions and measure that defines the inner product
 
 from abc import ABC, abstractmethod
 from copy import deepcopy
+import warnings
 from functools import partial
 import numpy as np
 from numpy.polynomial.chebyshev import chebval
 from numpy.polynomial.legendre import legval
+
 
 class BasisNotImplemented(NotImplementedError):
     pass
@@ -39,7 +41,11 @@ class SiteBasis(ABC):
         if not isinstance(species, dict):
             self._measure = {specie: 1 / len(species) for specie in species}
         else:
+            if not np.allclose(sum(species.values()), 1):
+                warnings.warn('The measure given does not sum to 1. Are you sure this is what you want?')
             self._measure = species
+
+        self._functions = None
 
     @property
     def species(self):
@@ -105,8 +111,11 @@ class SiteBasis(ABC):
         on_funs = [lambda s: 1.0]
         for f in self._functions:
             def g_factory(f, on_funs):
-                g_0 = lambda s: f(s) - sum(self.inner_prod(f, g)*g(s) for g in on_funs)
+
+                def g_0(s):
+                    return f(s) - sum(self.inner_prod(f, g)*g(s) for g in on_funs)
                 norm = np.sqrt(self.inner_prod(g_0, g_0))
+
                 def g_norm(s):
                     return g_0(s)/norm
                 return g_norm
@@ -115,7 +124,6 @@ class SiteBasis(ABC):
             on_funs.append(g)
         on_funs.pop(0)
         self._functions = on_funs
-
 
 
 class IndicatorBasis(SiteBasis):
@@ -140,21 +148,20 @@ class SinusoidBasis(SiteBasis):
     """
     Sinusoid (Sine/cosine basis) as proposed by A.VdW.
     """
-    #TODO this is incorrect!!
+
     def __init__(self, species):
         super().__init__(species)
         M = len(species)
-        m = M//2
-        enc = range(-m, m + M%2)
-        self._encoding = {s: i for (s, i) in zip(species, enc)}
-        if M % 2 == 0:
-            def fun(s, n):
-                return np.sin(np.pi*n*s/M)
-        else:
-            def fun(s, n):
-                return np.cos(np.pi*(n+1)*s/M)
+
+        def fun(s, n):
+            a = -(-n//2)  #ceiling division
+            if n % 2 == 0:
+                return -np.sin(2*np.pi*a*s/M)
+            else:
+                return -np.cos(2*np.pi*a*s/M)
 
         self._functions = tuple(partial(fun, n=n) for n in range(1, M))
+        self._encoding = {s: i for (i, s) in enumerate(species)}
 
     def encode(self, specie):
         return self._encoding[specie]

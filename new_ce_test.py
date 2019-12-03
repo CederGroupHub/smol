@@ -19,7 +19,7 @@ cs = ClusterSubspace.from_radii(structure=prim,
                                  use_ewald=True,
                                  use_inv_r=False,
                                  eta=None,
-                                 basis='chebyshev',
+                                 basis='indicator',
                                  orthonormal=True)
 
 print('Here is the cluster subspace object: \n', cs)
