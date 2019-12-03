@@ -109,7 +109,7 @@ class ClusterSubspace(object):
 
     @classmethod
     def from_radii(cls, structure, radii, ltol=0.2, stol=0.1, angle_tol=5, supercell_size='volume',
-                   use_ewald=False, use_inv_r=False, eta=None, basis='indicator'):
+                   use_ewald=False, use_inv_r=False, eta=None, basis='indicator', orthonormal=False):
         """
         Args:
             structure:
@@ -135,13 +135,13 @@ class ClusterSubspace(object):
         sites_to_expand = [site for site in structure if site.species.num_atoms < 0.99 \
                             or len(site.species) > 1]
         expansion_structure = Structure.from_sites(sites_to_expand)
-        orbits = cls._orbits_from_radii(expansion_structure, radii, symops, basis)
+        orbits = cls._orbits_from_radii(expansion_structure, radii, symops, basis, orthonormal)
         return cls(structure=structure, expansion_structure=expansion_structure, symops=symops, orbits=orbits,
                    ltol=ltol, stol=stol, angle_tol=angle_tol, supercell_size=supercell_size, use_ewald=use_ewald,
                    use_inv_r=use_inv_r, eta=eta)
 
     @classmethod
-    def _orbits_from_radii(cls, expansion_structure, radii, symops, basis):
+    def _orbits_from_radii(cls, expansion_structure, radii, symops, basis, orthonormal):
         """
         Generates dictionary of {size: [Orbits]} given a dictionary of maximal cluster radii and symmetry
         operations to apply (not necessarily all the symmetries of the expansion_structure)
@@ -149,6 +149,9 @@ class ClusterSubspace(object):
         bits = get_bits(expansion_structure)
         nbits = np.array([len(b) - 1 for b in bits])
         sbases = tuple(basis_factory(basis, bit) for bit in bits)
+        if orthonormal:
+            for basis in sbases:
+                basis.orthonormalize()
         orbits = {}
         new_orbits = []
 

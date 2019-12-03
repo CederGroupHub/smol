@@ -3,8 +3,8 @@ from pymatgen.io.cif import CifParser
 from pymatgen.core.structure import Structure 
 import numpy as np 
 import json 
-from smol.cluster_expansion.eci_fit import EciGenerator 
-from smol.cluster_expansion.ce import ClusterExpansion  
+from pyabinitio.cluster_expansion.eci_fit import EciGenerator 
+from pyabinitio.cluster_expansion.ce import ClusterExpansion  
 
 # Load and prep prim structure
 prim = CifParser('/home/lbluque/Develop/daniil_CEMC_workshop/lno_prim.cif') 
