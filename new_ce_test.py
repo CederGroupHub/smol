@@ -2,8 +2,8 @@ from pymatgen.io.cif import CifParser
 from pymatgen.core.structure import Structure
 import numpy as np
 from sklearn.linear_model import ElasticNetCV, LassoCV, Ridge, LinearRegression, BayesianRidge, ARDRegression
-from smol.clex import ClusterSubspace, StructureWrangler, ClusterExpansion, CVXEstimator
-from smol.clex.utils import StructureMatchError
+from smol.cofe import ClusterSubspace, StructureWrangler, ClusterExpansion, CVXEstimator
+from smol.cofe.utils import StructureMatchError
 
 import json
 

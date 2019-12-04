@@ -137,7 +137,7 @@ class IndicatorBasis(SiteBasis):
         def indicator(s, sp):
             return int(s == sp)
 
-        self._functions = tuple(partial(indicator, sp=sp) for sp in species[:-1])
+        self._functions = tuple(partial(indicator, sp=sp) for sp in self.species[:-1])
 
     @property
     def functions(self):
