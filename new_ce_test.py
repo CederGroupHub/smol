@@ -17,7 +17,11 @@ cs = ClusterSubspace.from_radii(structure=prim,
                                  ltol=0.15, stol=0.2, angle_tol=5,
                                  supercell_size='O2-',
                                  use_ewald=True,
-                                 use_inv_r=False, eta=None, basis='indicator')
+                                 use_inv_r=False,
+                                 eta=None,
+                                 basis='chebyshev',
+                                 orthonormal=True)
+
 print('Here is the cluster subspace object: \n', cs)
 
 
@@ -47,8 +51,8 @@ sw = StructureWrangler(cs, [(struct, e) for struct, e in valid_structs], max_ewa
 
 
 # Create Estimator
-est = CVXEstimator()
-#est = ARDRegression(fit_intercept=False) 
+#est = CVXEstimator()
+est = LinearRegression(fit_intercept=False) 
 #est = ElasticNetCV(fit_intercept=False, max_iter=5000, selection='random', tol=1E-4, eps=1E-7)
 print('Estimator: ', est)
 

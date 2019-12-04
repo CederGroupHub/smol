@@ -4,6 +4,8 @@ These include the basis functions and measure that defines the inner product
 """
 
 from abc import ABC, abstractmethod
+from copy import deepcopy
+from functools import partial
 import numpy as np
 from numpy.polynomial.chebyshev import chebval
 from numpy.polynomial.legendre import legval
@@ -26,7 +28,6 @@ class SiteBasis(ABC):
 
     def __init__(self, species):
         """
-
         Args:
             species (tuple/dict): Species. If dict, the species should be the keys and
                 the value should should correspond to the probability measure associated to that
@@ -44,20 +45,23 @@ class SiteBasis(ABC):
     def species(self):
         return list(self._measure.keys())
 
-    def measure(self, *species):
+    def measure(self, species):
         """
 
         Args:
-            *species (str): species names or single species names
+            species (str): species names or single species names
 
         Returns:
-            numpy array or float: represents the associated measure with the give species
+            float: represents the associated measure with the give species
         """
 
-        if isinstance(species, list) or isinstance(species, tuple):
-            return np.array([self._measure(s) for s in species])
-        else:
-            return self._measure[species]
+        return self._measure[species]
+
+    def inner_prod(self, f, g):
+        res = sum([self.measure(s)*f(self.encode(s))*g(self.encode(s)) for s in self.species])
+        if abs(res) < 5E-16:
+            res = 0.0
+        return res
 
     @property
     @abstractmethod
@@ -77,7 +81,7 @@ class SiteBasis(ABC):
         """
         return specie
 
-    def eval(self, fun_ind, specie): #nned to thinkg of this a bit more, how to evaluate with disticnt sites?
+    def eval(self, fun_ind, specie):
         """
         Evaluates the site basis function for the given species.
 
@@ -91,7 +95,27 @@ class SiteBasis(ABC):
         return self.functions[fun_ind](self.encode(specie))
 
     def orthonormalize(self):
-        pass
+        """
+        Returns an orthonormal basis function set based on the measure given
+        (basis functions are also orthogonal to phi_0 = 1)
+
+        Its sort of black magic, there may be a better way to write this...
+        """
+
+        on_funs = [lambda s: 1.0]
+        for f in self._functions:
+            def g_factory(f, on_funs):
+                g_0 = lambda s: f(s) - sum(self.inner_prod(f, g)*g(s) for g in on_funs)
+                norm = np.sqrt(self.inner_prod(g_0, g_0))
+                def g_norm(s):
+                    return g_0(s)/norm
+                return g_norm
+
+            g = g_factory(f, deepcopy(on_funs))
+            on_funs.append(g)
+        on_funs.pop(0)
+        self._functions = on_funs
+
 
 
 class IndicatorBasis(SiteBasis):
@@ -101,7 +125,11 @@ class IndicatorBasis(SiteBasis):
 
     def __init__(self, species):
         super().__init__(species)
-        self._functions = tuple(lambda s: 1.0 if s == sp else 0 for sp in self.species[:-1])
+
+        def indicator(s, sp):
+            return int(s == sp)
+
+        self._functions = tuple(partial(indicator, sp=sp) for sp in species[:-1])
 
     @property
     def functions(self):
@@ -112,17 +140,21 @@ class SinusoidBasis(SiteBasis):
     """
     Sinusoid (Sine/cosine basis) as proposed by A.VdW.
     """
-
+    #TODO this is incorrect!!
     def __init__(self, species):
         super().__init__(species)
         M = len(species)
         m = M//2
-        enc = range(-m, m)
+        enc = range(-m, m + M%2)
         self._encoding = {s: i for (s, i) in zip(species, enc)}
-        if m % 2 == 0:
-            self._functions = tuple(lambda m: np.sin(np.pi * n * m / M) for n in range(1, M))
+        if M % 2 == 0:
+            def fun(s, n):
+                return np.sin(np.pi*n*s/M)
         else:
-            self._functions = tuple(lambda m: np.cos(np.pi*(n+1)*m/M) for n in range(1, M))
+            def fun(s, n):
+                return np.cos(np.pi*(n+1)*s/M)
+
+        self._functions = tuple(partial(fun, n=n) for n in range(1, M))
 
     def encode(self, specie):
         return self._encoding[specie]
@@ -144,7 +176,7 @@ class NumpyPolyBasis(SiteBasis):
         funcs, coeffs = [], [1]
         for i in range(M-1):
             coeffs.append(0)
-            funcs.append(lambda x: poly_fun(x, list(reversed(coeffs))))
+            funcs.append(partial(poly_fun, c=list(reversed(coeffs))))
         self._functions = tuple(funcs)
 
     def encode(self, specie):

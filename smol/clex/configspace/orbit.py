@@ -124,13 +124,15 @@ class Orbit(object):
         Evaluates a cluster function defined for this orbit
 
         Args:
-            bits:
-            species:
+            bits (list):
+                list of the cluster bits specifying which site basis function to evaluate for the
+                corresponding site
+            species (list):
+                list of lists of species names for each site
 
-        Returns:
-
+        Returns: orbit function evaluated for the corresponding structure
+            float
         """
-        #print(fun_dict)
         p = 1
         for i, (b, sp) in enumerate(zip(bits, species)):
             p *= self.sbases[i].eval(b, sp)
@@ -138,13 +140,15 @@ class Orbit(object):
 
     def assign_ids(self, o_id, o_b_id, start_c_id):
         """
+        Used to assign unique orbit and cluster id's when creating a cluster subspace.
+
         Args:
             o_id: symmetrized cluster id
             o_b_id: start bit ordering id
             start_c_id: start cluster id
 
         Returns:
-            next symmetrized cluster id, next bit ordering id, next cluster id
+            next orbit id, next bit ordering id, next cluster id
         """
         self.orb_id = o_id
         self.orb_b_id = o_b_id
@@ -154,11 +158,12 @@ class Orbit(object):
         return o_id + 1, o_b_id + len(self.bit_combos), c_id
 
     def __eq__(self, other):
-        #try:
+        try:
         #when performing SymmetrizedCluster in list, this ordering stops the equivalent structures from generating
-        return any(self.basecluster == cluster for cluster in other.clusters)
-        #except:
-        #    return NotImplemented
+            return any(self.basecluster == cluster for cluster in other.clusters)
+        except AttributeError as e:
+            print(e.message)
+            raise NotImplementedError
 
     def __neq__(self, other):
         return not self.__eq__(other)
