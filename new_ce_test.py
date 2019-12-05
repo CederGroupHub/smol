@@ -20,7 +20,7 @@ cs = ClusterSubspace.from_radii(structure=prim,
                                  use_inv_r=False,
                                  eta=None,
                                  basis='indicator',
-                                 orthonormal=True)
+                                 orthonormal=False)
 
 print('Here is the cluster subspace object: \n', cs)
 
@@ -47,12 +47,12 @@ print("{}/{} structures map to the lattice".format(len(valid_structs), len(calc_
 print('Also here is a random corr_vector:\n', cs.corr_from_structure(valid_structs[10][0]))
 
 # Create the data wrangler.
-sw = StructureWrangler(cs, [(struct, e) for struct, e in valid_structs], max_ewald=3)
-
+sw = StructureWrangler(cs, [(struct, e) for struct, e in valid_structs])
+sw.filter_by_ewald(1E-2)
 
 # Create Estimator
-#est = CVXEstimator()
-est = LinearRegression(fit_intercept=False) 
+est = CVXEstimator()
+#est = LinearRegression(fit_intercept=False) 
 #est = ElasticNetCV(fit_intercept=False, max_iter=5000, selection='random', tol=1E-4, eps=1E-7)
 print('Estimator: ', est)
 

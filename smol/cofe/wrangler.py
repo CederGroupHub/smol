@@ -1,13 +1,13 @@
 from __future__ import division
 from collections import defaultdict
 import logging
+import warnings
 import numpy as np
 from pymatgen import Structure
 from .configspace.clusterspace import ClusterSubspace
 from .utils import StructureMatchError
 
-#TODO StructureWrangler takes training data, checks it (ie does it map, etc) and creates feature matrices and fitting data
-# maybe add some convenient checker functions like in daniils script
+
 #TODO make StructureWrangler an MSONable??
 
 class StructureWrangler(object):
@@ -17,68 +17,23 @@ class StructureWrangler(object):
     fit the final ClusterExpansion.
     """
 
-    def __init__(self, clustersubspace, data, max_ewald=None):
+    def __init__(self, clustersubspace, data=None):
         """
-        Fit ECI's to obtain a cluster expansion. This init function takes in all possible arguments,
-        but its much simpler to use one of the factory classmethods below,
-        e.g. EciGenerator.unweighted
+        This class is meant to take all input training data in the form of (structure, property) where the
+        property is usually (lets be honest always) the energy for the given structure.
+        The class takes care of returning the fitting data as a cluster correlation design matrix.
+        This class also has methods to check/prepare/filter the data, hence the name Wrangler from datawrangler.
 
         Args:
-            clustersubspace: A ClusterSubspace object
-            data: list of (structure, property) data
-            max_ewald: filter the input structures to only use those with low electrostatic
-                energies (no large charge separation in cell). This energy is referenced to the lowest
-                value at that composition. Note that this is before the division by the relative dielectric
-                 constant and is per primitive cell in the cluster exapnsion -- 1.5 eV/atom seems to be a
-                 reasonable value for dielectric constants around 10.
+            clustersubspace (ClusterSubspace):
+                A ClusterSubspace object that will be used to fit a ClusterExpansion with the provided data.
+            data (list):
+                list of (structure, property) data
         """
         self.cs = clustersubspace
-        self.max_ewald = max_ewald
-
-        # Match all input structures to cluster expansion
         self.items = []
-        fm_rows = [None] * len(data)
-        for (s, e), fm_row in zip(data, fm_rows):
-            try:
-                m = self.cs.supercell_matrix_from_structure(s)
-                sc = self.cs.supercell_from_matrix(m)
-                if fm_row is None:
-                    fm_row = sc.corr_from_structure(s)
-            except StructureMatchError:
-                logging.debug('Unable to match {} with energy {} to supercell'
-                              ''.format(s.composition, e))
-                if self.cs.supercell_size not in ['volume', 'num_sites', 'num_atoms'] \
-                        and s.composition[self.cs.supercell_size] == 0:
-                    logging.warning('Specie {} not in {}'.format(self.cs.supercell_size, s.composition))
-                continue
-            self.items.append({'structure': s,
-                               'property': e,
-                               'supercell': sc,
-                               'features': fm_row,
-                               'size': sc.size})
-
-        if self.cs.use_ewald and self.max_ewald is not None:
-            if self.cs.use_inv_r:
-                raise NotImplementedError('cant use inv_r with max ewald yet')
-
-            min_e = defaultdict(lambda: np.inf)
-            for i in self.items:
-                c = i['structure'].composition.reduced_composition
-                if i['features'][-1] < min_e[c]:
-                    min_e[c] = i['features'][-1]
-
-            items = []
-            for i in self.items:
-                r_e = i['features'][-1] - min_e[i['structure'].composition.reduced_composition]
-                if r_e > self.max_ewald:
-                    logging.debug('Skipping {} with energy {}, ewald energy is {}'
-                                  ''.format(i['structure'].composition, i['energy'], r_e))
-                else:
-                    items.append(i)
-            self.items = items
-
-        logging.info("Matched {} of {} structures".format(len(self.items),
-                                                          len(data)))
+        if data is not None:
+            self.add_data(data)
 
     @property
     def structures(self):
@@ -104,6 +59,70 @@ class StructureWrangler(object):
     def sizes(self):
         return np.array([i['size'] for i in self.items])
 
+    def add_data(self, data):
+        """
+        Add data to Structure Wrangler, computes correlation vector and if successful adds data otherwise
+        it ignores that structure.
+
+        Args
+            data (list):
+                list of (structure, property) data
+        """
+        items = []
+        for s, p in data:
+            try:
+                m = self.cs.supercell_matrix_from_structure(s)
+                sc = self.cs.supercell_from_matrix(m)
+                fm_row = sc.corr_from_structure(s)
+            except StructureMatchError:
+                warnings.warn(f'Unable to match {s.composition} with energy {p} to supercell.'
+                              ' Ignoring this data point.')
+                if self.cs.supercell_size not in ['volume', 'num_sites', 'num_atoms'] \
+                        and s.composition[self.cs.supercell_size] == 0:
+                    warnings.warning('Specie {} not in {}'.format(self.cs.supercell_size, s.composition))
+                continue
+            items.append({'structure': s,
+                          'property': p,
+                          'supercell': sc,
+                          'features': fm_row,
+                          'size': sc.size})
+        self.items += items
+        logging.info(f"Matched {len(items)} of {len(data)} structures")
+
+    def filter_by_ewald(self, max_ewald):
+        """
+        Filter the input structures to only use those with low electrostatic
+        energies (no large charge separation in cell). This energy is referenced to the lowest
+        value at that composition. Note that this is before the division by the relative dielectric
+        constant and is per primitive cell in the cluster expansion -- 1.5 eV/atom seems to be a
+        reasonable value for dielectric constants around 10.
+
+        Args:
+            max_ewald (float): Ewald threshold
+        """
+        if self.cs.use_ewald:
+            if self.cs.use_inv_r:
+                raise NotImplementedError('cant use inv_r with max ewald yet')
+
+            min_e = defaultdict(lambda: np.inf)
+            for i in self.items:
+                c = i['structure'].composition.reduced_composition
+                if i['features'][-1] < min_e[c]:
+                    min_e[c] = i['features'][-1]
+
+            items = []
+            for i in self.items:
+                r_e = i['features'][-1] - min_e[i['structure'].composition.reduced_composition]
+                if r_e > max_ewald:
+                    logging.debug('Skipping {} with energy {}, ewald energy is {}'
+                                  ''.format(i['structure'].composition, i['property'], r_e))
+                else:
+                    items.append(i)
+            self.items = items
+        else:
+            warnings.warn('use_ewald is not set for the given clustersubspace. '
+                          'No data cleaning will be done.')
+
     @classmethod
     def from_dict(cls, d):
         return cls(clustersubspace=ClusterSubspace.from_dict(d['cluster_subspace']),
@@ -113,7 +132,7 @@ class StructureWrangler(object):
     def as_dict(self):
         return {'cluster_expansion': self.cs.as_dict(),
                 'structures': [s.as_dict() for s in self.structures],
-                'max_ewald': self.max_ewald,
+                #'max_ewald': self.max_ewald,
                 #'feature_matrix': self.feature_matrix.tolist(),
                 '@module': self.__class__.__module__,
                 '@class': self.__class__.__name__}

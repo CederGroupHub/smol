@@ -46,7 +46,7 @@ eg = EciGenerator.unweighted(cluster_expansion=ce,
                              structures=[struct for struct, toten in valid_structs], 
                              energies=[toten for struct, toten in valid_structs], 
                              max_dielectric=100, 
-                             max_ewald=3) 
+                             max_ewald=1E-2) 
 
 print(f"ECIS: {eg.ecis}")
 print("RMSE: {} eV/prim".format(eg.rmse))
