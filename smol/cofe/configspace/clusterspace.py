@@ -1,5 +1,5 @@
 from __future__ import division
-from warnings import warn
+import warnings
 import numpy as np
 from pymatgen import Structure
 from pymatgen.analysis.structure_matcher import StructureMatcher, OrderDisorderElementComparator
@@ -60,8 +60,8 @@ class ClusterSubspace(object):
             """
 
         if use_inv_r and eta is None:
-            warn("Be careful, you might need to change eta to get properly "
-                 "converged electrostatic energies. This isn't well tested")
+            warnings.warn("Be careful, you might need to change eta to get properly "
+                 "converged electrostatic energies. This isn't well tested", RuntimeWarning)
         self.stol = stol
         self.ltol = ltol
         self.angle_tol = angle_tol

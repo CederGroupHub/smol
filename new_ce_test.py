@@ -29,8 +29,11 @@ print('Here is the cluster subspace object: \n', cs)
 with open('/home/lbluque/Develop/daniil_CEMC_workshop/lno_fitting_data.json', 'r') as fin: calc_data = json.loads(fin.read())
 
 valid_structs = [] 
-for calc_i, calc in enumerate(calc_data): 
+for calc_i, calc in enumerate(calc_data):
+    struct = Structure.from_dict(calc['s'])  
+    valid_structs.append((struct, calc['toten']))
     #print('{}/{}'.format(calc_i, len(calc_data))) 
+    continue
     try: 
         struct = Structure.from_dict(calc['s']) 
         cs.corr_from_structure(struct) 
@@ -48,7 +51,7 @@ print('Also here is a random corr_vector:\n', cs.corr_from_structure(valid_struc
 
 # Create the data wrangler.
 sw = StructureWrangler(cs, [(struct, e) for struct, e in valid_structs])
-sw.filter_by_ewald(1E-2)
+sw.filter_by_ewald(3)
 
 # Create Estimator
 est = CVXEstimator()

@@ -42,7 +42,8 @@ class SiteBasis(ABC):
             self._measure = {specie: 1 / len(species) for specie in species}
         else:
             if not np.allclose(sum(species.values()), 1):
-                warnings.warn('The measure given does not sum to 1. Are you sure this is what you want?')
+                warnings.warn('The measure given does not sum to 1. Are you sure this is what you want?',
+                              RuntimeWarning)
             self._measure = species
 
         self._functions = None

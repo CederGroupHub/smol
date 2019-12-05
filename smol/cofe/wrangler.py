@@ -9,6 +9,7 @@ from .utils import StructureMatchError
 
 
 #TODO make StructureWrangler an MSONable??
+# TODO should have a dictionary with the applied filters and their parameters to keep track of what has been done
 
 class StructureWrangler(object):
     """
@@ -76,16 +77,19 @@ class StructureWrangler(object):
                 fm_row = sc.corr_from_structure(s)
             except StructureMatchError:
                 warnings.warn(f'Unable to match {s.composition} with energy {p} to supercell.'
-                              ' Ignoring this data point.')
+                              ' Ignoring this data point.', RuntimeWarning)
                 if self.cs.supercell_size not in ['volume', 'num_sites', 'num_atoms'] \
                         and s.composition[self.cs.supercell_size] == 0:
                     warnings.warning('Specie {} not in {}'.format(self.cs.supercell_size, s.composition))
                 continue
+            except:
+                raise
             items.append({'structure': s,
                           'property': p,
                           'supercell': sc,
                           'features': fm_row,
                           'size': sc.size})
+
         self.items += items
         logging.info(f"Matched {len(items)} of {len(data)} structures")
 

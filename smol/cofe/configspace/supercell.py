@@ -7,7 +7,7 @@ from pymatgen.analysis.structure_matcher import StructureMatcher, OrderDisorderE
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.util.coord import lattice_points_in_supercell, coord_list_mapping_pbc
 
-from ..utils import SITE_TOL
+from ..utils import StructureMatchError, SITE_TOL
 from src.ce_utils import delta_corr_single_flip
 
 #TODO can we simple obtain the cluster vectors based on the clustersubspace
@@ -233,11 +233,12 @@ class ClusterSupercell(object):
         #TODO the mapping depends on the given structure. Is being able to short-circuit this by setting an
         # attribute a good idea?
         if self.mapping is None:
-            mapping = sm_no_orb.get_mapping(self.supercell, structure).tolist()
+            mapping = sm_no_orb.get_mapping(self.supercell, structure)
+            if mapping is None:
+                raise StructureMatchError
+            mapping = mapping.tolist()
         else:
             mapping = self.mapping
-        if mapping is None:
-            raise ValueError('Structure cannot be mapped to this supercell')
 
         occu = [] #np.zeros(len(self.supercell), dtype=np.int)
         for i, bit in enumerate(self.bits):

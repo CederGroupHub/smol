@@ -6,10 +6,11 @@ from .regression.estimator import BaseEstimator
 
 
 class ClusterExpansion(object):
-    _pd_input = None
-    _pd_ce = None
-    _e_above_hull_input = None
-    _e_above_hull_ce = None
+    """
+    Class for the ClusterExpansion proper needs a datawrangler to supply fitting data and an estimator to
+    provide the fitting method.
+    This is the class that is used to predict as well (i.e. to use in Monte Carlo and beyond)
+    """
 
     def __init__(self, datawrangler, estimator=None, max_dielectric=None, ecis=None):
         """
@@ -53,7 +54,7 @@ class ClusterExpansion(object):
         if self.max_dielectric is not None:
             if self.wrangler.cs.use_ewald is False:
                 warnings.warn('The StructureWrangler.use_ewald is False can not constrain by max_dieletric'
-                                    ' This will be ignored', RuntimeWarning)
+                                ' This will be ignored', RuntimeWarning)
                 return
 
             if self.wrangler.cs.use_inv_r:
