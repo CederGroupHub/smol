@@ -3,6 +3,7 @@ from collections import defaultdict
 import logging
 import warnings
 import numpy as np
+from monty.json import MSONable
 from pymatgen import Structure
 from .configspace.clusterspace import ClusterSubspace
 from .utils import StructureMatchError
@@ -11,7 +12,7 @@ from .utils import StructureMatchError
 #TODO make StructureWrangler an MSONable??
 # TODO should have a dictionary with the applied filters and their parameters to keep track of what has been done
 
-class StructureWrangler(object):
+class StructureWrangler(MSONable):
     """
     Class that handles (wrangles) input data structures and properties to fit in a cluster expansion.
     This class holds a ClusterSubspace used to compute correlation vectors and produce feauter/design matrices used to
@@ -125,14 +126,22 @@ class StructureWrangler(object):
 
     @classmethod
     def from_dict(cls, d):
-        return cls(clustersubspace=ClusterSubspace.from_dict(d['cluster_subspace']),
-                   structures=[Structure.from_dict(s) for s in d['structures']],
-                   max_ewald=d.get('max_ewald'))
+        """
+        Creates Orbit from serialized MSONable dict
+        """
+        sw = cls(clustersubspace=ClusterSubspace.from_dict(d['cs']))
+        sw.items = d['items']
+        return sw
 
     def as_dict(self):
-        return {'cluster_expansion': self.cs.as_dict(),
-                'structures': [s.as_dict() for s in self.structures],
-                #'max_ewald': self.max_ewald,
-                #'feature_matrix': self.feature_matrix.tolist(),
-                '@module': self.__class__.__module__,
-                '@class': self.__class__.__name__}
+        """
+        Json-serialization dict representation
+
+        Returns:
+            MSONable dict
+        """
+        d = {'@module': self.__class__.__module__,
+             '@class': self.__class__.__name__,
+             'cs': self.cs.as_dict(),
+             'items': self.items()}
+        return d

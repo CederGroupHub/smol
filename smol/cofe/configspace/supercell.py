@@ -1,5 +1,4 @@
 from __future__ import division
-import itertools
 import numpy as np
 from collections import defaultdict
 from pymatgen import Structure, PeriodicSite
@@ -11,7 +10,8 @@ from src.ce_utils import delta_corr_single_flip
 
 #TODO can we simple obtain the cluster vectors based on the clustersubspace
 # (ie get rid or simplify this supercell thing)?
-# this needs to be refactored/overhauled
+#TODO the supercell and supercell_matrix should probably be obtained with an undercorated structure/lattice
+
 
 class ClusterSupercell(object):
     """
@@ -108,14 +108,15 @@ class ClusterSupercell(object):
         """
         # calculate mapping to supercell
         sm_no_orb = StructureMatcher(primitive_cell=False,
-                                    attempt_supercell=False,
-                                    allow_subset=True,
-                                    comparator=OrderDisorderElementComparator(),
-                                    supercell_size=self.clustersubspace.supercell_size,
-                                    scale=True,
-                                    ltol=self.clustersubspace.ltol,
-                                    stol=self.clustersubspace.stol,
-                                    angle_tol=self.clustersubspace.angle_tol)
+                                     attempt_supercell=False,
+                                     allow_subset=True,
+                                     comparator=OrderDisorderElementComparator(),
+                                     supercell_size=self.clustersubspace.supercell_size,
+                                     scale=True,
+                                     ltol=self.clustersubspace.ltol,
+                                     stol=self.clustersubspace.stol,
+                                     angle_tol=self.clustersubspace.angle_tol)
+
         #TODO the mapping depends on the given structure. Is being able to short-circuit this by setting an
         # attribute a good idea?
         if self.mapping is None:
@@ -135,7 +136,6 @@ class ClusterSupercell(object):
                 sp = str(structure[mapping.index(i)].specie)
             else:
                 sp = 'Vacancy'
-            #occu[i] = bit.index(sp)
             occu.append(sp)
         if not return_mapping:
             return occu
@@ -155,7 +155,7 @@ class ClusterSupercell(object):
 
         new_occu = occu.copy()
 
-        delta_corr = np.zeros(self.clustersubspace.n_bit_orderings + len(self.all_ewalds))
+        delta_corr = np.zeros(self.clustersubspace.n_bit_orderings + len(all_ewalds))
         for f in flips:
             new_occu_f = new_occu.copy()
             new_occu_f[f[0]] = f[1]

@@ -1,12 +1,13 @@
 from __future__ import division
-import warnings
 import numpy as np
+from monty.json import MSONable
 from pymatgen import Structure
 from pymatgen.analysis.structure_matcher import StructureMatcher, OrderDisorderElementComparator, FrameworkComparator
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc
 
-from . import Orbit, ClusterSupercell, basis_factory
+from . import Orbit, ClusterSupercell
+from .basis import basis_factory
 from ..utils import SymmetryError, StructureMatchError, SYMMETRY_ERROR_MESSAGE, SITE_TOL
 
 def get_bits(structure):
@@ -25,7 +26,7 @@ def get_bits(structure):
     return all_bits
 
 
-class ClusterSubspace(object):
+class ClusterSubspace(MSONable):
     """
     Holds a structure, its expansion structure and a list of Orbits. This class defines the Cluster subspace over
     which to fit a cluster expansion: This sets the orbits (groups of clusters) that are to be considered in the fit.
@@ -122,6 +123,7 @@ class ClusterSubspace(object):
         Generates dictionary of {size: [Orbits]} given a dictionary of maximal cluster radii and symmetry
         operations to apply (not necessarily all the symmetries of the expansion_structure)
         """
+
         bits = get_bits(expansion_structure)
         nbits = np.array([len(b) - 1 for b in bits])
         sbases = tuple(basis_factory(basis, bit) for bit in bits)
@@ -152,7 +154,7 @@ class ClusterSubspace(object):
                     if is_coord_subset([p], orbit.basecluster.sites, atol=SITE_TOL):
                         continue
                     new_orbit = Orbit(np.concatenate([orbit.basecluster.sites, [p]]), expansion_structure.lattice,
-                                      orbit.bits + [np.arange(nbits[n[2]])], orbit.sbases + [sbases[n[2]]], symops)
+                                      orbit.bits + [np.arange(nbits[n[2]])], orbit.site_bases + [sbases[n[2]]], symops)
                     if new_orbit.radius > radius + 1e-8:
                         continue
                     elif new_orbit not in new_orbits:
@@ -237,37 +239,6 @@ class ClusterSubspace(object):
             for orbit in self._orbits[key]:
                 yield orbit
 
-    @classmethod
-    def from_dict(cls, d):
-        symops = [SymmOp.from_dict(so) for so in d['symops']]
-        clusters = {}
-        for k, v in d['clusters_and_bits'].items():
-            clusters[int(k)] = [Orbit(c[0], c[1], symops) for c in v]
-        return cls(structure=Structure.from_dict(d['structure']),
-                   expansion_structure=Structure.from_dict(d['expansion_structure']),
-                   clusters=clusters, symops=symops,
-                   ltol=d['ltol'], stol=d['stol'], angle_tol=d['angle_tol'],
-                   supercell_size=d['supercell_size'],
-                   #use_ewald=d['use_ewald'], use_inv_r=d['use_inv_r'],
-                   )
-
-    def as_dict(self):
-        c = {}
-        for k, v in self._orbits.items():
-            c[int(k)] = [(sc.as_dict(), [list(b) for b in sc.bits]) for sc in v]
-        return {'structure': self.structure.as_dict(),
-                'expansion_structure': self.expansion_structure.as_dict(),
-                'symops': [so.as_dict() for so in self.symops],
-                'clusters_and_bits': c,
-                'ltol': self.ltol,
-                'stol': self.stol,
-                'angle_tol': self.angle_tol,
-                'supercell_size': self.supercell_size,
-                #'use_ewald': self.use_ewald,
-                #'use_inv_r': self.use_inv_r,
-                '@module': self.__class__.__module__,
-                '@class': self.__class__.__name__}
-
     def __str__(self):
         s = "ClusterBasis: {}\n".format(self.structure.composition)
         for k, v in self._orbits.items():
@@ -275,3 +246,42 @@ class ClusterSubspace(object):
             for z in v:
                 s += "    {}\n".format(z)
         return s
+
+    @classmethod
+    def from_dict(cls, d):
+        """
+        Creates ClusterSubspace from serialized MSONable dict
+        """
+
+        symops = [SymmOp.from_dict(so_d) for so_d in d['symops']]
+        orbits = [Orbit.from_dict(ob_d) for ob_d in d['orbits']]
+        cs = cls(structure=Structure.from_dict(d['structure']),
+                 expansion_structure=Structure.from_dict(d['expansion_structure']),
+                 orbits=orbits, symops=symops,
+                 ltol=d['ltol'], stol=d['stol'], angle_tol=d['angle_tol'],
+                 supercell_size=d['supercell_size'])
+        # TODO implement dis
+        # cs._external_terms = [ExternalTerm.from_dict(et_d) for et_d in d['external_terms']]
+        return cs
+
+    def as_dict(self):
+        """
+        Json-serialization dict representation
+
+        Returns:
+            MSONable dict
+        """
+
+        d = {'@module': self.__class__.__module__,
+             '@class': self.__class__.__name__,
+             'structure': self.structure.as_dict(),
+             'expansion_structure': self.expansion_structure.as_dict(),
+             'symops': [so.as_dict() for so in self.symops],
+             'orbits': [ob.as_dict() for ob in self.iterorbits()],
+             'ltol': self.ltol,
+             'stol': self.stol,
+             'angle_tol': self.angle_tol,
+             'supercell_size': self.supercell_size,
+             #'external_terms': [et.as_dict() for et in self.external_terms]
+             }
+        return d

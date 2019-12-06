@@ -51,4 +51,4 @@ eg = EciGenerator.unweighted(cluster_expansion=ce,
 
 print(f"ECIS: {eg.ecis}")
 print("RMSE: {} eV/prim".format(eg.rmse))
-print("Number non zero ECIs: {}".format(len([eci for eci in eg.ecis if np.abs(eci) > 1e-3])))    
+print("Number non zero ECIs: {}".format(len([eci for eci in eg.ecis if np.abs(eci) > 1e-3])))

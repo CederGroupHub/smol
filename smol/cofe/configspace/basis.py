@@ -37,7 +37,6 @@ class SiteBasis(ABC):
             orthonormal (bool): Whether the site basis functions should be orthonormalized according
                 to the supplied measure (concentration).
         """
-
         if not isinstance(species, dict):
             self._measure = {specie: 1 / len(species) for specie in species}
         else:
@@ -215,3 +214,15 @@ class LegendreBasis(NumpyPolyBasis):
     @property
     def functions(self):
         return self._functions
+
+
+def basis_factory(basis_name, *args, **kwargs):
+    """Tries to return an instance of a Basis class"""
+    try:
+        class_name = basis_name.capitalize() + 'Basis'
+        basis_class = globals()[class_name]
+        instance = basis_class(*args, **kwargs)
+    except KeyError:
+        raise BasisNotImplemented(f'{basis_name} is not implemented. '
+              f'Choose one of {[c.__name__[:-5].lower() for c in SiteBasis.__subclasses__()]}')
+    return instance
