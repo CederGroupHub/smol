@@ -7,8 +7,8 @@ from .regression.estimator import BaseEstimator
 
 class ClusterExpansion(object):
     """
-    Class for the ClusterExpansion proper needs a datawrangler to supply fitting data and an estimator to
-    provide the fitting method.
+    Class for the ClusterExpansion proper needs a structurewrangler to supply fitting data and
+    an estimator to provide the fitting method.
     This is the class that is used to predict as well (i.e. to use in Monte Carlo and beyond)
     """
 
@@ -32,7 +32,7 @@ class ClusterExpansion(object):
 
         if self.estimator is None:
             if self.ecis is None:
-                raise AttributeError('No estimator or ecis were given. One of them needs to be provided')
+                raise AttributeError('No estimator or ECIs were given. One of them needs to be provided')
             self.estimator = BaseEstimator()
             self.estimator.coef_ = self.ecis
 
@@ -49,23 +49,24 @@ class ClusterExpansion(object):
             self.ecis = self.estimator.coef_
         except AttributeError:
             msg = f'The provided estimator does not provide fit coefficients for ECIS: {self.estimator}'
+            if self.max_dielectric is not None:
+                msg += ' constrain by max dielectric does not work without ECIS. Will Ignore.'
             warnings.warn(msg)
+            return
 
-        if self.max_dielectric is not None:
-            if self.wrangler.cs.use_ewald is False:
-                warnings.warn('The StructureWrangler.use_ewald is False can not constrain by max_dieletric'
-                                ' This will be ignored', RuntimeWarning)
-                return
+        #TODO make this more modular. its really ugly
+        for term, args, kwargs in self.wrangler.cs.external_terms:
+            if term.__name__ == 'EwaldTerm':
+                if kwargs['use_inv_r']:
+                    warnings.warn('The StructureWrangler.use_ewald is False can not constrain by max_dieletric'
+                                  ' This will be ignored', RuntimeWarning)
+                    return
 
-            if self.wrangler.cs.use_inv_r:
-                warnings.warn('Cant use inv_r with max dielectric. This has not been implemented yet. '
-                               'inv_r will be ignored.', RuntimeWarning)
-
-            if self.ecis[-1] < 1 / self.max_dielectric:
-                y_in -= A_in[:, -1] / self.max_dielectric
-                A_in[:, -1] = 0
-                self.estimator.fit(A_in, y_in, *args, **kwargs)
-                self.ecis[-1] = 1 / self.max_dielectric
+        if self.ecis[-1] < 1 / self.max_dielectric:
+            y_in -= A_in[:, -1] / self.max_dielectric
+            A_in[:, -1] = 0
+            self.estimator.fit(A_in, y_in, *args, **kwargs)
+            self.ecis[-1] = 1 / self.max_dielectric
 
     def predict(self, structures, normalized=False):
         structures = structures if type(structures) == list else [structures]

@@ -4,6 +4,7 @@ import numpy as np
 from sklearn.linear_model import ElasticNetCV, LassoCV, Ridge, LinearRegression, BayesianRidge, ARDRegression
 from smol.cofe import ClusterSubspace, StructureWrangler, ClusterExpansion, CVXEstimator
 from smol.cofe.utils import StructureMatchError
+from smol.cofe.configspace import EwaldTerm
 
 import json
 
@@ -16,11 +17,10 @@ cs = ClusterSubspace.from_radii(structure=prim,
                                  radii={2: 5, 3: 4.1},
                                  ltol=0.15, stol=0.2, angle_tol=5,
                                  supercell_size='O2-',
-                                 use_ewald=True,
-                                 use_inv_r=False,
-                                 eta=None,
                                  basis='indicator',
                                  orthonormal=False)
+
+cs.add_external_term(EwaldTerm, use_inv_r=True, eta=None)
 
 print('Here is the cluster subspace object: \n', cs)
 
@@ -51,7 +51,7 @@ print('Also here is a random corr_vector:\n', cs.corr_from_structure(valid_struc
 
 # Create the data wrangler.
 sw = StructureWrangler(cs, [(struct, e) for struct, e in valid_structs])
-sw.filter_by_ewald(3)
+#sw.filter_by_ewald(3)
 
 # Create Estimator
 est = CVXEstimator()
@@ -62,7 +62,6 @@ print('Estimator: ', est)
 
 # Create a ClusterExpansion Object
 ce = ClusterExpansion(sw, est, max_dielectric=100)
-
 ce.fit()
 
 err = ce.predict(sw.structures, normalized=True) - sw.normalized_properties

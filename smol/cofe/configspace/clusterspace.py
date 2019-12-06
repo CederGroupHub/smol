@@ -37,31 +37,20 @@ class ClusterSubspace(object):
     """
 
     def __init__(self, structure, expansion_structure, symops, orbits, ltol=0.2, stol=0.1, angle_tol=5,
-                 supercell_size='volume', use_ewald=False, use_inv_r=False, eta=None):
+                 supercell_size='volume'):
         """
-            Args:
-                structure:
-                    disordered structure to build a cluster expansion for. Typically the primitive cell
-                expansion_structure:
-                symops:
-                orbits:
-                ltol, stol, angle_tol, supercell_size: parameters to pass through to the StructureMatcher.
-                    Structures that don't match to the primitive cell under these tolerances won't be included
-                    in the expansion. Easiest option for supercell_size is usually to use a species that has a
-                    constant amount per formula unit.
-                use_ewald:
-                    whether to calculate the ewald energy of each structure and use it as a feature. Typically
-                    a good idea for ionic materials.
-                use_inv_r:
-                    experimental feature that allows fitting to arbitrary 1/r interactions between specie-site
-                    combinations.
-                eta:
-                    parameter to override the EwaldSummation default eta. Usually only necessary if use_inv_r=True
-            """
+        Args:
+            structure:
+                disordered structure to build a cluster expansion for. Typically the primitive cell
+            expansion_structure:
+            symops:
+            orbits:
+            ltol, stol, angle_tol, supercell_size: parameters to pass through to the StructureMatcher.
+                Structures that don't match to the primitive cell under these tolerances won't be included
+                in the expansion. Easiest option for supercell_size is usually to use a species that has a
+                constant amount per formula unit.
+        """
 
-        if use_inv_r and eta is None:
-            warnings.warn("Be careful, you might need to change eta to get properly "
-                 "converged electrostatic energies. This isn't well tested", RuntimeWarning)
         self.stol = stol
         self.ltol = ltol
         self.angle_tol = angle_tol
@@ -77,12 +66,6 @@ class ClusterSubspace(object):
                 raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
 
         self.supercell_size = supercell_size
-
-        #TODO think about how to handle these, the do represent fitting parameters or terms in the expansion
-        # but are not really part of the subspace. Aren't these terms a 'total' supercell cluster term?
-        self.use_ewald = use_ewald
-        self.eta = eta
-        self.use_inv_r = use_inv_r
 
         self.sm = StructureMatcher(primitive_cell=False,
                                    attempt_supercell=True,
@@ -106,10 +89,11 @@ class ClusterSubspace(object):
         self.n_clusters = n_clusters
         self.n_bit_orderings = n_bit_orderings
         self._supercells = {}
+        self._external_terms = []
 
     @classmethod
     def from_radii(cls, structure, radii, ltol=0.2, stol=0.1, angle_tol=5, supercell_size='volume',
-                   use_ewald=False, use_inv_r=False, eta=None, basis='indicator', orthonormal=False):
+                   basis='indicator', orthonormal=False):
         """
         Args:
             structure:
@@ -121,14 +105,6 @@ class ClusterSubspace(object):
                 Structures that don't match to the primitive cell under these tolerances won't be included
                 in the expansion. Easiest option for supercell_size is usually to use a species that has a
                 constant amount per formula unit.
-            use_ewald:
-                whether to calculate the ewald energy of each structure and use it as a feature. Typically
-                a good idea for ionic materials.
-            use_inv_r:
-                experimental feature that allows fitting to arbitrary 1/r interactions between specie-site
-                combinations.
-            eta:
-                parameter to override the EwaldSummation default eta. Usually only necessary if use_inv_r=True
         """
         symops = SpacegroupAnalyzer(structure).get_symmetry_operations()
         #get the sites to expand over
@@ -137,11 +113,10 @@ class ClusterSubspace(object):
         expansion_structure = Structure.from_sites(sites_to_expand)
         orbits = cls._orbits_from_radii(expansion_structure, radii, symops, basis, orthonormal)
         return cls(structure=structure, expansion_structure=expansion_structure, symops=symops, orbits=orbits,
-                   ltol=ltol, stol=stol, angle_tol=angle_tol, supercell_size=supercell_size, use_ewald=use_ewald,
-                   use_inv_r=use_inv_r, eta=eta)
+                   ltol=ltol, stol=stol, angle_tol=angle_tol, supercell_size=supercell_size)
 
-    @classmethod
-    def _orbits_from_radii(cls, expansion_structure, radii, symops, basis, orthonormal):
+    @staticmethod
+    def _orbits_from_radii(expansion_structure, radii, symops, basis, orthonormal):
         """
         Generates dictionary of {size: [Orbits]} given a dictionary of maximal cluster radii and symmetry
         operations to apply (not necessarily all the symmetries of the expansion_structure)
@@ -185,6 +160,13 @@ class ClusterSubspace(object):
             orbits[size] = sorted(new_orbits, key = lambda x: (np.round(x.radius,6), -x.multiplicity))
         return orbits
 
+    @property
+    def external_terms(self):
+        return self._external_terms
+
+    def add_external_term(self, term, *args, **kwargs):
+        self._external_terms.append((term, args, kwargs))
+
     def supercell_matrix_from_structure(self, structure):
         sc_matrix = self.sm.get_supercell_matrix(structure, self.structure)
         if sc_matrix is None:
@@ -210,14 +192,21 @@ class ClusterSubspace(object):
 
     def corr_from_structure(self, structure, return_size=False):
         """
-        Given a structure, determines which supercell to use,
-        and gets the correlation vector
+        Given a structure, determines which supercell to use, and gets the correlation vector
         """
         sc = self.supercell_from_structure(structure)
+        occu = sc.occu_from_structure(structure)
+        corr = sc.corr_from_occupancy(occu)
+
+        # get extra terms. This is for the Ewald term
+        extras = [term.corr_from_occu(occu, sc, *args, **kwargs)
+                  for term, args, kwargs in self._external_terms]
+        corr = np.concatenate([corr, *extras])
+
         if return_size:
-            return sc.corr_from_structure(structure), sc.size
+            return corr, sc.size
         else:
-            return sc.corr_from_structure(structure)
+            return corr
 
     def refine_structure(self, structure):
         sc = self.supercell_from_structure(structure)
@@ -228,7 +217,8 @@ class ClusterSubspace(object):
         sc = self.supercell_from_matrix(sc_matrix) # get clustersupercell
         if mapping != None:
             sc.mapping = mapping
-        return sc.corr_from_structure(structure)
+        occu = sc.occu_from_structure(structure)
+        return sc.corr_from_occupancy(occu)
 
     def refine_structure_external(self, structure, sc_matrix):
         sc = self.supercell_from_matrix(sc_matrix)
@@ -257,8 +247,8 @@ class ClusterSubspace(object):
                    clusters=clusters, symops=symops,
                    ltol=d['ltol'], stol=d['stol'], angle_tol=d['angle_tol'],
                    supercell_size=d['supercell_size'],
-                   use_ewald=d['use_ewald'], use_inv_r=d['use_inv_r'],
-                   eta=d['eta'])
+                   #use_ewald=d['use_ewald'], use_inv_r=d['use_inv_r'],
+                   )
 
     def as_dict(self):
         c = {}
@@ -272,9 +262,8 @@ class ClusterSubspace(object):
                 'stol': self.stol,
                 'angle_tol': self.angle_tol,
                 'supercell_size': self.supercell_size,
-                'use_ewald': self.use_ewald,
-                'use_inv_r': self.use_inv_r,
-                'eta': self.eta,
+                #'use_ewald': self.use_ewald,
+                #'use_inv_r': self.use_inv_r,
                 '@module': self.__class__.__module__,
                 '@class': self.__class__.__name__}
 

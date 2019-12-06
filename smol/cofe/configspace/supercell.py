@@ -4,7 +4,6 @@ import numpy as np
 from collections import defaultdict
 from pymatgen import Structure, PeriodicSite
 from pymatgen.analysis.structure_matcher import StructureMatcher, OrderDisorderElementComparator
-from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.util.coord import lattice_points_in_supercell, coord_list_mapping_pbc
 
 from ..utils import StructureMatchError, SITE_TOL
@@ -22,9 +21,16 @@ class ClusterSupercell(object):
     def __init__(self, clustersubspace, supercell, supercell_matrix, bits):
         """
         Args:
-            supercell matrix: array describing the supercell, e.g. [[1,0,0],[0,1,0],[0,0,1]]
-            clustersubspace: ClusterExpansion object
+            clustersubspace:
+                ClusterExpansion object
+            supercell :
+
+            supercell matrix:
+                array describing the supercell, e.g. [[1,0,0],[0,1,0],[0,0,1]]
+            bits :
+
         """
+
         self.supercell = supercell
         self.supercell_matrix = supercell_matrix
         self.prim_to_supercell = np.linalg.inv(self.supercell_matrix)
@@ -39,29 +45,6 @@ class ClusterSupercell(object):
 
         # JY definition
         self.mapping = None
-
-        if self.clustersubspace.use_ewald:
-            # lazily generate the difficult ewald parts
-            self.ewald_inds = []
-            ewald_sites = []
-            for bits, s in zip(self.bits, self.supercell):
-                inds = np.zeros(max(self.nbits) + 1) - 1
-                for i, b in enumerate(bits):
-                    if b == 'Vacancy':
-                        # inds.append(-1)
-                        continue
-                    inds[i] = len(ewald_sites)
-                    ewald_sites.append(PeriodicSite(b, s.frac_coords, s.lattice))
-                self.ewald_inds.append(inds)
-            self.ewald_inds = np.array(self.ewald_inds, dtype=np.int)
-            self._ewald_structure = Structure.from_sites(ewald_sites)
-            self._ewald_matrix = None
-            self._partial_ems = None
-            self._all_ewalds = None
-            self._range = np.arange(len(self.nbits))
-        else:
-            self._all_ewalds = np.zeros((0, 0, 0), dtype=np.float)
-            self.ewald_inds = np.zeros((0, 0), dtype=np.int)
 
     def _generate_mappings(self):
         """
@@ -97,101 +80,6 @@ class ClusterSupercell(object):
 
         return cluster_indices, clusters_by_sites
 
-    @property
-    def all_ewalds(self):
-        if self._all_ewalds is None:
-            if self.clustersubspace.use_ewald:
-                ms = [self.ewald_matrix]
-            else:
-                ms = []
-            if self.clustersubspace.use_inv_r:
-                ms += self.partial_ems
-            self._all_ewalds = np.array(ms)
-        return self._all_ewalds
-
-    @property
-    def ewald_matrix(self):
-        if self._ewald_matrix is None:
-            self._ewald = EwaldSummation(self._ewald_structure,
-                                         eta=self.clustersubspace.eta)
-            self._ewald_matrix = self._ewald.total_energy_matrix
-        return self._ewald_matrix
-
-    @property
-    def partial_ems(self):
-        if self._partial_ems is None:
-            # There seems to be an issue with SpacegroupAnalyzer such that making a supercell
-            # can actually reduce the symmetry operations, so we're going to group the ewald
-            # matrix by the equivalency in self.cluster_indices
-            equiv_orb_inds = []
-            ei = self.ewald_inds
-            n_inds = len(self.ewald_matrix)
-            for orb, inds in self.cluster_indices:
-                # only want the point terms, which should be first
-                if len(orb.bits) > 1:
-                    break
-                equiv = ei[inds[:, 0]]  # inds is normally 2d, but these are point terms
-                for inds in equiv.T:
-                    if inds[0] > -1:
-                        b = np.zeros(n_inds, dtype=np.int)
-                        b[inds] = 1
-                        equiv_orb_inds.append(b)
-
-            self._partial_ems = []
-            for x in equiv_orb_inds:
-                mask = x[None, :] * x[:, None]
-                self._partial_ems.append(self.ewald_matrix * mask)
-            for x, y in itertools.combinations(equiv_orb_inds, r=2):
-                mask = x[None, :] * y[:, None]
-                mask = mask.T + mask  # for the love of god don't use a += here, or you will forever regret it
-                self._partial_ems.append(self.ewald_matrix * mask)
-        return self._partial_ems
-
-    def _get_ewald_occu(self, occu):
-        i_inds = self.ewald_inds[self._range, occu]
-
-        # instead of this line:
-        #   i_inds = i_inds[i_inds != -1]
-        # just make b_inds one longer than it needs to be and don't return the last value
-        b_inds = np.zeros(len(self._ewald_structure) + 1, dtype=np.bool)
-        b_inds[i_inds] = True
-        return b_inds[:-1]
-
-    def _get_ewald_eci(self, occu):
-        # This is a quick fix for occu being a list of species strings now. Could be better?
-        occu = np.array([bit.index(sp) for bit, sp in zip(self.bits, occu)])
-        inds = self._get_ewald_occu(occu)
-        ecis = [np.sum(self.ewald_matrix[inds, :][:, inds]) / self.size]
-
-        if self.clustersubspace.use_inv_r:
-            for m in self.partial_ems:
-                ecis.append(np.sum(m[inds, :][:, inds]) / self.size)
-
-        return np.array(ecis)
-
-    def _get_ewald_diffs(self, new_occu, occu):
-        inds = self._get_ewald_occu(occu)
-        new_inds = self._get_ewald_occu(new_occu)
-        diff = inds != new_inds
-        both = inds & new_inds
-        add = new_inds & diff
-        sub = inds & diff
-
-        ms = [self.ewald_matrix]
-        if self.clustersubspace.use_inv_r:
-            ms += self.partial_ems
-
-        diffs = []
-        for m in ms:
-            ma = m[add]
-            ms = m[sub]
-            v = np.sum(ma[:, add]) - np.sum(ms[:, sub]) + \
-                (np.sum(ma[:, both]) - np.sum(ms[:, both])) * 2
-
-            diffs.append(v / self.size)
-
-        return diffs
-
     def structure_from_occu(self, occu):
         sites = []
         for sp, s in zip(occu, self.supercell):
@@ -212,8 +100,6 @@ class ClusterSupercell(object):
                 #each bit in bits represents a site that has its own site basis in orb.sbases
                 p = np.fromiter(map(lambda occu: orb.eval(bits, occu), c_occu[:]), dtype=np.float)
                 corr[orb.orb_b_id + i] = p.sum()
-        if self.clustersubspace.use_ewald:
-            corr = np.concatenate([corr, self._get_ewald_eci(occu)])
         return corr
 
     def occu_from_structure(self, structure, return_mapping=False):
@@ -256,18 +142,17 @@ class ClusterSupercell(object):
         else:
             return occu, mapping
 
-    def corr_from_structure(self, structure):
-        occu = self.occu_from_structure(structure)
-        return self.corr_from_occupancy(occu)
-
+    #TODO get rid of this?
     def occu_energy(self, occu, ecis):
         return np.dot(self.corr_from_occupancy(occu), ecis) * self.size
 
-    def delta_corr(self, flips, occu, debug=False):
+    def delta_corr(self, flips, occu, all_ewalds=np.zeros((0, 0, 0), dtype=np.float),
+                   ewald_inds=np.zeros((0, 0), dtype=np.int), debug=False):
         """
         Returns the *change* in the correlation vector from applying a list of flips.
         Flips is a list of (site, new_bit) tuples.
         """
+
         new_occu = occu.copy()
 
         delta_corr = np.zeros(self.clustersubspace.n_bit_orderings + len(self.all_ewalds))
@@ -276,8 +161,9 @@ class ClusterSupercell(object):
             new_occu_f[f[0]] = f[1]
             delta_corr += delta_corr_single_flip(new_occu_f, new_occu,
                                                  self.clustersubspace.n_bit_orderings,
-                                                 self.clusters_by_sites[f[0]], f[0], f[1], self.all_ewalds,
-                                                 self.ewald_inds, self.size)
+                                                 self.clusters_by_sites[f[0]], f[0], f[1],
+                                                 all_ewalds,
+                                                 ewald_inds, self.size)
             new_occu = new_occu_f
 
         if debug:

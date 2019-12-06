@@ -74,7 +74,7 @@ class StructureWrangler(object):
             try:
                 m = self.cs.supercell_matrix_from_structure(s)
                 sc = self.cs.supercell_from_matrix(m)
-                fm_row = sc.corr_from_structure(s)
+                fm_row = self.cs.corr_from_structure(s)
             except StructureMatchError:
                 warnings.warn(f'Unable to match {s.composition} with energy {p} to supercell.'
                               ' Ignoring this data point.', RuntimeWarning)
@@ -102,30 +102,29 @@ class StructureWrangler(object):
         reasonable value for dielectric constants around 10.
 
         Args:
-            max_ewald (float): Ewald threshold
+            max_ewald (float):
+                Ewald threshold
         """
-        if self.cs.use_ewald:
-            if self.cs.use_inv_r:
-                raise NotImplementedError('cant use inv_r with max ewald yet')
+        for term, args, kwargs in self.cs.external_terms:
+            if term.__name__ == 'EwaldTerm' and 'use_inv_r' in kwargs.keys():
+                if kwargs['use_inv_r']:
+                    raise NotImplementedError('cant use inv_r with max_ewald yet')
 
-            min_e = defaultdict(lambda: np.inf)
-            for i in self.items:
-                c = i['structure'].composition.reduced_composition
-                if i['features'][-1] < min_e[c]:
-                    min_e[c] = i['features'][-1]
+        min_e = defaultdict(lambda: np.inf)
+        for i in self.items:
+            c = i['structure'].composition.reduced_composition
+            if i['features'][-1] < min_e[c]:
+                min_e[c] = i['features'][-1]
 
-            items = []
-            for i in self.items:
-                r_e = i['features'][-1] - min_e[i['structure'].composition.reduced_composition]
-                if r_e > max_ewald:
-                    logging.debug('Skipping {} with energy {}, ewald energy is {}'
-                                  ''.format(i['structure'].composition, i['property'], r_e))
-                else:
-                    items.append(i)
-            self.items = items
-        else:
-            warnings.warn('use_ewald is not set for the given clustersubspace. '
-                          'No data cleaning will be done.')
+        items = []
+        for i in self.items:
+            r_e = i['features'][-1] - min_e[i['structure'].composition.reduced_composition]
+            if r_e > max_ewald:
+                logging.debug('Skipping {} with energy {}, ewald energy is {}'
+                              ''.format(i['structure'].composition, i['property'], r_e))
+            else:
+                items.append(i)
+        self.items = items
 
     @classmethod
     def from_dict(cls, d):
