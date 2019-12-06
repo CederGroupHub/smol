@@ -5,6 +5,7 @@ These include the basis functions and measure that defines the inner product
 
 from abc import ABC, abstractmethod
 from copy import deepcopy
+import inspect
 import warnings
 from functools import partial
 import numpy as np
@@ -34,8 +35,6 @@ class SiteBasis(ABC):
             species (tuple/dict): Species. If dict, the species should be the keys and
                 the value should should correspond to the probability measure associated to that
                 specie. If a tuple is given a uniform probability is assumed.
-            orthonormal (bool): Whether the site basis functions should be orthonormalized according
-                to the supplied measure (concentration).
         """
         if not isinstance(species, dict):
             self._measure = {specie: 1 / len(species) for specie in species}
@@ -46,6 +45,12 @@ class SiteBasis(ABC):
             self._measure = species
 
         self._functions = None
+
+    @property
+    @abstractmethod
+    def functions(self):
+        """This must be overloaded by subclasses and must return a tuple of basis functions"""
+        pass
 
     @property
     def species(self):
@@ -65,15 +70,9 @@ class SiteBasis(ABC):
 
     def inner_prod(self, f, g):
         res = sum([self.measure(s)*f(self.encode(s))*g(self.encode(s)) for s in self.species])
-        if abs(res) < 5E-16:
+        if abs(res) < 5E-15:  # Not sure what is causing these numerical issues, may lead to problems.
             res = 0.0
         return res
-
-    @property
-    @abstractmethod
-    def functions(self):
-        """This must be overloaded by subclasses and must return a tuple of basis functions"""
-        pass
 
     def encode(self, specie):
         """
@@ -122,7 +121,7 @@ class SiteBasis(ABC):
 
             g = g_factory(f, deepcopy(on_funs))
             on_funs.append(g)
-        on_funs.pop(0)
+        on_funs.pop(0)  # remove phi_0 = 1, since it is handled implicitly
         self._functions = on_funs
 
 
@@ -217,12 +216,27 @@ class LegendreBasis(NumpyPolyBasis):
 
 
 def basis_factory(basis_name, *args, **kwargs):
-    """Tries to return an instance of a Basis class"""
+    """Tries to return an instance of a Basis class defined in basis.py"""
     try:
         class_name = basis_name.capitalize() + 'Basis'
         basis_class = globals()[class_name]
         instance = basis_class(*args, **kwargs)
     except KeyError:
+        available = _get_subclasses(SiteBasis)
         raise BasisNotImplemented(f'{basis_name} is not implemented. '
-              f'Choose one of {[c.__name__[:-5].lower() for c in SiteBasis.__subclasses__()]}')
+              f'Choose one of {available}')
     return instance
+
+
+def _get_subclasses(base_class):
+    """
+    Gets all non-abstract classes that inherit from the given base class in a module
+    This is used to obtain all the available basis functions.
+    """
+    sub_classes = []
+    for c in base_class.__subclasses__():
+        if inspect.isabstract(c):
+            sub_classes += _get_subclasses(c)
+        else:
+            sub_classes.append(c.__name__[:-5].lower())
+    return sub_classes

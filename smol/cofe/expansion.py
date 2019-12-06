@@ -6,6 +6,8 @@ from .utils import NotFittedError
 from . import StructureWrangler
 from .regression.estimator import BaseEstimator
 
+# TODO think how to do this max_dielectric thing...
+
 
 class ClusterExpansion(MSONable):
     """

@@ -4,6 +4,7 @@ import numpy as np
 from monty.json import MSONable
 from pymatgen import Lattice, SymmOp
 from pymatgen.util.coord import coord_list_mapping
+
 from .cluster import Cluster
 from ..utils import SymmetryError, SYMMETRY_ERROR_MESSAGE, SITE_TOL, _repr
 from .basis import basis_factory

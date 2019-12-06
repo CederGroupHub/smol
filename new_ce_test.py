@@ -17,7 +17,7 @@ cs = ClusterSubspace.from_radii(structure=prim,
                                  radii={2: 5, 3: 4.1},
                                  ltol=0.15, stol=0.2, angle_tol=5,
                                  supercell_size='O2-',
-                                 basis='legendress',
+                                 basis='legendre',
                                  orthonormal=False)
 
 cs.add_external_term(EwaldTerm, use_inv_r=False, eta=None)
