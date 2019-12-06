@@ -2,7 +2,7 @@ from __future__ import division
 import warnings
 import numpy as np
 from pymatgen import Structure
-from pymatgen.analysis.structure_matcher import StructureMatcher, OrderDisorderElementComparator
+from pymatgen.analysis.structure_matcher import StructureMatcher, OrderDisorderElementComparator, FrameworkComparator
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc
 
@@ -72,6 +72,7 @@ class ClusterSubspace(object):
                                    allow_subset=True,
                                    scale=True,
                                    supercell_size=self.supercell_size,
+                                   #comparator=FrameworkComparator(),
                                    comparator=OrderDisorderElementComparator(),
                                    stol=self.stol,
                                    ltol=self.ltol,
@@ -170,8 +171,8 @@ class ClusterSubspace(object):
     def supercell_matrix_from_structure(self, structure):
         sc_matrix = self.sm.get_supercell_matrix(structure, self.structure)
         if sc_matrix is None:
-            raise StructureMatchError("Supercell couldn't be found")
-        if np.linalg.det(sc_matrix) < 0:
+            raise StructureMatchError('Supercell could not be found from structure')
+        if np.linalg.det(sc_matrix) < 0:  # What this for?
             sc_matrix *= -1
         return sc_matrix
 

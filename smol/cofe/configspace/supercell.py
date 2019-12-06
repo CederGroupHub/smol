@@ -3,7 +3,7 @@ import itertools
 import numpy as np
 from collections import defaultdict
 from pymatgen import Structure, PeriodicSite
-from pymatgen.analysis.structure_matcher import StructureMatcher, OrderDisorderElementComparator
+from pymatgen.analysis.structure_matcher import StructureMatcher, OrderDisorderElementComparator, FrameworkComparator
 from pymatgen.util.coord import lattice_points_in_supercell, coord_list_mapping_pbc
 
 from ..utils import StructureMatchError, SITE_TOL
@@ -26,9 +26,9 @@ class ClusterSupercell(object):
             supercell :
 
             supercell matrix:
-                array describing the supercell, e.g. [[1,0,0],[0,1,0],[0,0,1]]
-            bits :
 
+            bits (np.array):
+                array describing the supercell, e.g. [[1,0,0],[0,1,0],[0,0,1]]
         """
 
         self.supercell = supercell
@@ -121,7 +121,7 @@ class ClusterSupercell(object):
         if self.mapping is None:
             mapping = sm_no_orb.get_mapping(self.supercell, structure)
             if mapping is None:
-                raise StructureMatchError
+                raise StructureMatchError('Mapping could not be found from structure')
             mapping = mapping.tolist()
         else:
             mapping = self.mapping

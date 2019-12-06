@@ -14,7 +14,7 @@ prim = prim.get_structures()[0]
 # Create old ClusterExpansion behemoth
 ce = ClusterExpansion.from_radii(structure=prim, 
                                  radii={2: 5, 3: 4.1}, 
-                                 ltol=0.15, stol=0.2, angle_tol=5, 
+                                 ltol=0.15, stol=0.9, angle_tol=5, 
                                  supercell_size='O2-', 
                                  use_ewald=True, 
                                  use_inv_r=False, eta=None) 
@@ -31,8 +31,9 @@ for calc_i, calc in enumerate(calc_data):
         struct = Structure.from_dict(calc['s']) 
         ce.corr_from_structure(struct) 
         valid_structs.append((struct, calc['toten'])) 
-    except: 
-        #print("\tToo far off lattice, throwing out.") 
+    except Exception as e:
+        msg = f"Unable to match {struct.composition} with energy {calc['toten']} to supercell. Throwing out. "
+        print(msg + f'Error Message: {str(e)}.') 
         continue 
         #raise
  

@@ -70,17 +70,14 @@ class StructureWrangler(object):
                 list of (structure, property) data
         """
         items = []
-        for s, p in data:
+        for i, (s, p) in enumerate(data):
             try:
                 m = self.cs.supercell_matrix_from_structure(s)
                 sc = self.cs.supercell_from_matrix(m)
                 fm_row = self.cs.corr_from_structure(s)
-            except StructureMatchError:
-                warnings.warn(f'Unable to match {s.composition} with energy {p} to supercell.'
-                              ' Ignoring this data point.', RuntimeWarning)
-                if self.cs.supercell_size not in ['volume', 'num_sites', 'num_atoms'] \
-                        and s.composition[self.cs.supercell_size] == 0:
-                    warnings.warning('Specie {} not in {}'.format(self.cs.supercell_size, s.composition))
+            except StructureMatchError as e:
+                msg = f'Unable to match {s.composition} with energy {p} to supercell. Throwing out. '
+                warnings.warn(msg + f'Error Message: {str(e)}.', RuntimeWarning)
                 continue
             except:
                 raise

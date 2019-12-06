@@ -15,12 +15,12 @@ prim = prim.get_structures()[0]
 # Create new ClusterSubspace :)
 cs = ClusterSubspace.from_radii(structure=prim,
                                  radii={2: 5, 3: 4.1},
-                                 ltol=0.15, stol=0.2, angle_tol=5,
+                                 ltol=0.15, stol=.9, angle_tol=5,
                                  supercell_size='O2-',
-                                 basis='indicator',
+                                 basis='legendre',
                                  orthonormal=False)
 
-cs.add_external_term(EwaldTerm, use_inv_r=True, eta=None)
+cs.add_external_term(EwaldTerm, use_inv_r=False, eta=None)
 
 print('Here is the cluster subspace object: \n', cs)
 
@@ -38,9 +38,9 @@ for calc_i, calc in enumerate(calc_data):
         struct = Structure.from_dict(calc['s']) 
         cs.corr_from_structure(struct) 
         valid_structs.append((struct, calc['toten']))
-    except StructureMatchError: 
+    except StructureMatchError:
+        continue 
         #print("\tToo far off lattice, throwing out.") 
-        continue
     except AttributeError:
     	continue
     
@@ -51,11 +51,11 @@ print('Also here is a random corr_vector:\n', cs.corr_from_structure(valid_struc
 
 # Create the data wrangler.
 sw = StructureWrangler(cs, [(struct, e) for struct, e in valid_structs])
-#sw.filter_by_ewald(3)
+sw.filter_by_ewald(3)
 
 # Create Estimator
-est = CVXEstimator()
-#est = LinearRegression(fit_intercept=False) 
+#est = CVXEstimator()
+est = LinearRegression(fit_intercept=False) 
 #est = ElasticNetCV(fit_intercept=False, max_iter=5000, selection='random', tol=1E-4, eps=1E-7)
 print('Estimator: ', est)
 
