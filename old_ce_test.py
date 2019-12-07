@@ -3,8 +3,8 @@ from pymatgen.io.cif import CifParser
 from pymatgen.core.structure import Structure 
 import numpy as np 
 import json 
-from smol.cluster_expansion.eci_fit import EciGenerator 
-from smol.cluster_expansion.ce import ClusterExpansion  
+from pyabinitio.cluster_expansion.eci_fit import EciGenerator 
+from pyabinitio.cluster_expansion.ce import ClusterExpansion  
 
 # Load and prep prim structure
 prim = CifParser('/home/lbluque/Develop/daniil_CEMC_workshop/lno_prim.cif') 
@@ -14,9 +14,9 @@ prim = prim.get_structures()[0]
 # Create old ClusterExpansion behemoth
 ce = ClusterExpansion.from_radii(structure=prim, 
                                  radii={2: 5, 3: 4.1}, 
-                                 ltol=0.15, stol=0.2, angle_tol=5, 
+                                 ltol=0.15, stol=0.9, angle_tol=5, 
                                  supercell_size='O2-', 
-                                 use_ewald=False, 
+                                 use_ewald=True, 
                                  use_inv_r=False, eta=None) 
 
 print('Here is the cluster expansion object: \n', ce)
@@ -31,8 +31,9 @@ for calc_i, calc in enumerate(calc_data):
         struct = Structure.from_dict(calc['s']) 
         ce.corr_from_structure(struct) 
         valid_structs.append((struct, calc['toten'])) 
-    except: 
-        #print("\tToo far off lattice, throwing out.") 
+    except Exception as e:
+        msg = f"Unable to match {struct.composition} with energy {calc['toten']} to supercell. Throwing out. "
+        print(msg + f'Error Message: {str(e)}.') 
         continue 
         #raise
  
@@ -50,4 +51,4 @@ eg = EciGenerator.unweighted(cluster_expansion=ce,
 
 print(f"ECIS: {eg.ecis}")
 print("RMSE: {} eV/prim".format(eg.rmse))
-print("Number non zero ECIs: {}".format(len([eci for eci in eg.ecis if np.abs(eci) > 1e-3])))    
+print("Number non zero ECIs: {}".format(len([eci for eci in eg.ecis if np.abs(eci) > 1e-3])))

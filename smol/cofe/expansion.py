@@ -1,37 +1,42 @@
 from __future__ import division
 import warnings
 import numpy as np
+from monty.json import MSONable
 from .utils import NotFittedError
+from . import StructureWrangler
 from .regression.estimator import BaseEstimator
 
+# TODO think how to do this max_dielectric thing...
 
-class ClusterExpansion(object):
-    _pd_input = None
-    _pd_ce = None
-    _e_above_hull_input = None
-    _e_above_hull_ce = None
 
-    def __init__(self, datawrangler, estimator=None, max_dielectric=None, ecis=None):
+class ClusterExpansion(MSONable):
+    """
+    Class for the ClusterExpansion proper needs a structurewrangler to supply fitting data and
+    an estimator to provide the fitting method.
+    This is the class that is used to predict as well (i.e. to use in Monte Carlo and beyond)
+    """
+
+    def __init__(self, structwrangler, estimator=None, max_dielectric=None, ecis=None):
         """
         Fit ECI's to obtain a cluster expansion. This init function takes in all possible arguments,
         but its much simpler to use one of the factory classmethods below,
         e.g. EciGenerator.unweighted
 
         Args:
-            datawrangler: A StructureWrangler object to provide the fitting data and processing
+            structwrangler: A StructureWrangler object to provide the fitting data and processing
             max_dielectric: constrain the dielectric constant to be positive and below the
                 supplied value (note that this is also affected by whether the primitive
                 cell is the correct size)
             estimator: Estimator or sklearn model
         """
-        self.wrangler = datawrangler
+        self.wrangler = structwrangler
         self.estimator = estimator
         self.max_dielectric = max_dielectric
         self.ecis = ecis
 
         if self.estimator is None:
             if self.ecis is None:
-                raise AttributeError('No estimator or ecis were given. One of them needs to be provided')
+                raise AttributeError('No estimator or ECIs were given. One of them needs to be provided')
             self.estimator = BaseEstimator()
             self.estimator.coef_ = self.ecis
 
@@ -48,23 +53,24 @@ class ClusterExpansion(object):
             self.ecis = self.estimator.coef_
         except AttributeError:
             msg = f'The provided estimator does not provide fit coefficients for ECIS: {self.estimator}'
+            if self.max_dielectric is not None:
+                msg += ' constrain by max dielectric does not work without ECIS. Will Ignore.'
             warnings.warn(msg)
+            return
 
-        if self.max_dielectric is not None:
-            if self.wrangler.cs.use_ewald is False:
-                warnings.warn('The StructureWrangler.use_ewald is False can not constrain by max_dieletric'
-                                    ' This will be ignored', RuntimeWarning)
-                return
+        #TODO make this more modular. its really ugly
+        for term, args, kwargs in self.wrangler.cs.external_terms:
+            if term.__name__ == 'EwaldTerm':
+                if kwargs['use_inv_r']:
+                    warnings.warn('The StructureWrangler.use_ewald is False can not constrain by max_dieletric'
+                                  ' This will be ignored', RuntimeWarning)
+                    return
 
-            if self.wrangler.cs.use_inv_r:
-                warnings.warn('Cant use inv_r with max dielectric. This has not been implemented yet. '
-                               'inv_r will be ignored.', RuntimeWarning)
-
-            if self.ecis[-1] < 1 / self.max_dielectric:
-                y_in -= A_in[:, -1] / self.max_dielectric
-                A_in[:, -1] = 0
-                self.estimator.fit(A_in, y_in, *args, **kwargs)
-                self.ecis[-1] = 1 / self.max_dielectric
+        if self.ecis[-1] < 1 / self.max_dielectric:
+            y_in -= A_in[:, -1] / self.max_dielectric
+            A_in[:, -1] = 0
+            self.estimator.fit(A_in, y_in, *args, **kwargs)
+            self.ecis[-1] = 1 / self.max_dielectric
 
     def predict(self, structures, normalized=False):
         structures = structures if type(structures) == list else [structures]
@@ -96,29 +102,28 @@ class ClusterExpansion(object):
                 print(bits, eci, c_std, eci * c_std)
         print(self.ecis)
 
-#TODO make these MSONable?
+    #TODO save the estimator and parameters?
     @classmethod
     def from_dict(cls, d):
-        raise NotImplementedError('needs to be properly implemented')
-        #return cls(cluster_expansion=ClusterExpansion.from_dict(d['cluster_expansion']),
-         #          structures=[Structure.from_dict(s) for s in d['structures']],
-          #         energies=np.array(d['energies']), max_dielectric=d.get('max_dielectric'),
-           #        max_ewald=d.get('max_ewald'), supercell_matrices=d['supercell_matrices'],
-            #       mu=d.get('mu'), ecis=d.get('ecis'), feature_matrix=d.get('feature_matrix'),
-             #      solver=d.get('solver', 'cvxopt_l1'), weights=d['weights'])
+        """
+        Creates ClusterExpansion from serialized MSONable dict
+        """
+
+        return cls(StructureWrangler.from_dict(d['wrangler']), max_dielectric=d['max_dielectric'],
+                   ecis=['ecis'])
 
     def as_dict(self):
-        raise NotImplementedError('needs to be properly implemented')
-        #return {'cluster_expansion': self.wrangler.cs.as_dict(),
-         #       'structures': [s.as_dict() for s in self.structures],
-          #      'energies': self.energies.tolist(),
-           #     'supercell_matrices': [cs.supercell_matrix.tolist() for cs in self.supercells],
-            #    'max_dielectric': self.max_dielectric,
-             #   'max_ewald': self.wrangler.max_ewald,
-              #  'mu': self.mu,
-               # 'ecis': self.ecis.tolist(),
-                #'feature_matrix': self.feature_matrix.tolist(),
-                #'weights': self.weights.tolist(),
-                #'solver': self.estimator,
-                #'@module': self.__class__.__module__,
-                #'@class': self.__class__.__name__}
+        """
+        Json-serialization dict representation
+
+        Returns:
+            MSONable dict
+        """
+
+        d = {'@module': self.__class__.__module__,
+             '@class': self.__class__.__name__,
+             'wrangler': self.wrangler.as_dict(),
+             'estimator': self.estimator.__class__.__name__,
+             'max_dielectric': self.max_dielectric,
+             'ecis': self.ecis.tolist()}
+        return d

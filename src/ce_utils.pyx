@@ -17,6 +17,8 @@ import numpy as np
 cimport numpy as np
 cimport cython
 
+#TODO change parameter order and make ewald_matrices and ewald_inds last parameters with their default values
+# self._all_ewalds = np.zeros((0, 0, 0), dtype=np.float) self.ewald_inds = np.zeros((0, 0), dtype=np.int)
 
 @cython.boundscheck(False)
 @cython.wraparound(False)

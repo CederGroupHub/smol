@@ -1,13 +1,16 @@
 from __future__ import division
 import itertools
 import numpy as np
+from monty.json import MSONable
+from pymatgen import Lattice, SymmOp
 from pymatgen.util.coord import coord_list_mapping
 
 from .cluster import Cluster
 from ..utils import SymmetryError, SYMMETRY_ERROR_MESSAGE, SITE_TOL, _repr
+from .basis import basis_factory
 
 
-class Orbit(object):
+class Orbit(MSONable):
     """
     An Orbit represents a set of clusters that are symmetrically equivalent (when undecorated).
     This usually includes translational and structure symmetry of the underlying lattice. But this is not
@@ -18,7 +21,8 @@ class Orbit(object):
     def __init__(self, sites, lattice, bits, site_bases, structure_symops):
         """
         Args:
-            base_cluster: a Cluster object.
+            sites:
+            lattice:
             bits (list): list describing the occupancy of each site in cluster. For each site, should
                     be the number of possible occupancies minus one. i.e. for a 3 site cluster,
                     each of which having one of Li, TM, or Vac, bits should be
@@ -29,12 +33,12 @@ class Orbit(object):
                     because of the L1 norm).
                     In any case, we know that pairwise ECIs aren't sparse in an ionic system, so
                     not sure how big of an issue this is.
-            structure_symops (list): list of symmetry operations for the base structure
             site_bases (list): list of SiteBasis objects for each site in the given sites.
+            structure_symops (list): list of symmetry operations for the base structure
         """
 
         self.bits = bits
-        self.sbases = site_bases
+        self.site_bases = site_bases
         self.structure_symops = structure_symops
         self.orb_id = None
         self.orb_b_id = None
@@ -117,6 +121,11 @@ class Orbit(object):
 
     @property
     def multiplicity(self):
+        """
+        Number of clusters in the given sites of the lattice object that are in the orbit
+        Returns:
+            int
+        """
         return len(self.clusters)
 
     def eval(self, bits, species):
@@ -124,27 +133,31 @@ class Orbit(object):
         Evaluates a cluster function defined for this orbit
 
         Args:
-            bits:
-            species:
+            bits (list):
+                list of the cluster bits specifying which site basis function to evaluate for the
+                corresponding site
+            species (list):
+                list of lists of species names for each site
 
-        Returns:
-
+        Returns: orbit function evaluated for the corresponding structure
+            float
         """
-        #print(fun_dict)
         p = 1
         for i, (b, sp) in enumerate(zip(bits, species)):
-            p *= self.sbases[i].eval(b, sp)
+            p *= self.site_bases[i].eval(b, sp)
         return p
 
     def assign_ids(self, o_id, o_b_id, start_c_id):
         """
+        Used to assign unique orbit and cluster id's when creating a cluster subspace.
+
         Args:
             o_id: symmetrized cluster id
             o_b_id: start bit ordering id
             start_c_id: start cluster id
 
         Returns:
-            next symmetrized cluster id, next bit ordering id, next cluster id
+            next orbit id, next bit ordering id, next cluster id
         """
         self.orb_id = o_id
         self.orb_b_id = o_b_id
@@ -154,19 +167,51 @@ class Orbit(object):
         return o_id + 1, o_b_id + len(self.bit_combos), c_id
 
     def __eq__(self, other):
-        #try:
-        #when performing SymmetrizedCluster in list, this ordering stops the equivalent structures from generating
-        return any(self.basecluster == cluster for cluster in other.clusters)
-        #except:
-        #    return NotImplemented
+        try:
+        # when performing Oribt in list, this ordering stops the equivalent structures from generating
+            return any(self.basecluster == cluster for cluster in other.clusters)
+        except AttributeError as e:
+            print(e.message)
+            raise NotImplementedError
 
     def __neq__(self, other):
         return not self.__eq__(other)
 
     def __str__(self):
-        return f'[Orbit] id: {self.orb_id:<4} bit_id: {self.orb_b_id:<4} multiplicity: {self.multiplicity:<4}' \
+        return f'[Orbit] id: {self.orb_id:<4} bit_id: {self.orb_b_id:<4}'\
+               f'multiplicity: {self.multiplicity:<4}'\
                f' no. symops: {len(self.cluster_symops):<4} {str(self.basecluster)}'
 
     def __repr__(self):
-        return _repr(self, orb_id=self.orb_id, orb_b_id=self.orb_b_id, radius=self.radius, lattice=self.lattice,
+        return _repr(self, orb_id=self.orb_id,
+                     orb_b_id=self.orb_b_id,
+                     radius=self.radius,
+                     lattice=self.lattice,
                      basecluster=self.basecluster)
+
+    @classmethod
+    def from_dict(cls, d):
+        """
+        Creates Orbit from serialized MSONable dict
+        """
+
+        structure_symops = [SymmOp.from_dict(so_d) for so_d in d['structure_symops']]
+        site_bases = [basis_factory(*sb_d) for sb_d in d['site_bases']]
+        return cls(d['sites'], Lattice.from_dict(d['lattice']), d['bits'],
+                   site_bases, structure_symops)
+
+    def as_dict(self):
+        """
+        Json-serialization dict representation
+
+        Returns:
+            MSONable dict
+        """
+        d = {"@module": self.__class__.__module__,
+             "@class": self.__class__.__name__,
+             "sites": self.basecluster.sites.tolist() ,
+             "lattice": self.lattice.as_dict(),
+             "bits": self.bits,
+             "site_bases": [(sb.__class__.__name__[:-5].lower(), sb.species) for sb in self.site_bases],
+             "structure_symops": [so.as_dict for so in self.structure_symops]}
+        return d
