@@ -193,6 +193,7 @@ class StructureWrangler(MSONable):
         """
         sw = cls(clustersubspace=ClusterSubspace.from_dict(d['cs']))
         sw.items = d['items']
+        sw.weights = d['weights']
         return sw
 
     def as_dict(self):
@@ -205,5 +206,6 @@ class StructureWrangler(MSONable):
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
              'cs': self.cs.as_dict(),
-             'items': self.items()}
+             'items': self.items,
+             'weights': self.weights}
         return d
