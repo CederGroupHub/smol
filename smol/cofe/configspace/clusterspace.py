@@ -41,11 +41,16 @@ class ClusterSubspace(MSONable):
                  supercell_size='volume'):
         """
         Args:
-            structure:
-                disordered structure to build a cluster expansion for. Typically the primitive cell
-            expansion_structure:
-            symops:
-            orbits:
+            structure (pymatgen.Structure):
+                Structure to define the cluster space. Typically the primitive cell. Includes
+                all species regardless of partial occupation.
+            expansion_structure (pymatgen.Structure):
+                Structure including only sites that will be included in the Cluster space.
+                (partial occupancy)
+            symops (list(pymatgen.Symmop)):
+                list of Symmops for the given structure.
+            orbits (list(Orbit)):
+                list of Orbits to be included to construct the basis for the cluster space.
             ltol, stol, angle_tol, supercell_size: parameters to pass through to the StructureMatcher.
                 Structures that don't match to the primitive cell under these tolerances won't be included
                 in the expansion. Easiest option for supercell_size is usually to use a species that has a
@@ -130,6 +135,7 @@ class ClusterSubspace(MSONable):
         if orthonormal:
             for basis in sbases:
                 basis.orthonormalize()
+
         orbits = {}
         new_orbits = []
 
@@ -168,6 +174,7 @@ class ClusterSubspace(MSONable):
         return self._external_terms
 
     def add_external_term(self, term, *args, **kwargs):
+        """Add an external term (e.g. an Ewald term) to the cluster expansion terms"""
         self._external_terms.append((term, args, kwargs))
 
     def supercell_matrix_from_structure(self, structure):

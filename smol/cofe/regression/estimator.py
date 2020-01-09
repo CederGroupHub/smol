@@ -124,6 +124,7 @@ class CVXEstimator(BaseEstimator):
         """
         X and y should already have been adjusted to account for weighting
         """
+
         # Maybe its cleaner to use importlib at the top to try and import these?
         from .l1regls import l1regls, solvers
         solvers.options['show_progress'] = False
@@ -132,16 +133,3 @@ class CVXEstimator(BaseEstimator):
         X1 = matrix(X)
         b = matrix(y * mu)
         return (np.array(l1regls(X1, b)) / mu).flatten()
-
-
-class BregmanEstimator(BaseEstimator):
-    """
-    Estimator implemting the split bregman solver
-    """
-
-    def __init__(self):
-        super().__init__()
-
-    def _solve(self,  X, y, mu):
-        #TODO this needs the compressive module code in pyabinitio
-        return split_bregman(X, y, MaxIt=1e5, tol=1e-7, mu=mu, l=1, quiet=True)

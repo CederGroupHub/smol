@@ -15,20 +15,20 @@ from src.ce_utils import delta_corr_single_flip
 
 class ClusterSupercell(object):
     """
-    Calculates correlation vectors on a specific supercell lattice.
+    Used to calculates correlation vectors on a specific supercell lattice.
     """
 
     def __init__(self, clustersubspace, supercell, supercell_matrix, bits):
         """
         Args:
-            clustersubspace:
-                ClusterExpansion object
-            supercell :
-
-            supercell matrix:
-
+            clustersubspace (ClusterSubspace):
+                A ClusterSubspace object used to compute corresponding correlation vectors
+            supercell (pymatgen.Structure):
+                Structure representing the super cell
+            supercell matrix (np.array):
+                Matrix representing transformation between prim and supercell
             bits (np.array):
-                array describing the supercell, e.g. [[1,0,0],[0,1,0],[0,0,1]]
+                array describing the occupation of supercell, e.g. [[1,0,0],[0,1,0],[0,0,1]]
         """
 
         self.supercell = supercell
@@ -50,6 +50,7 @@ class ClusterSupercell(object):
         """
         Find all the supercell indices associated with each cluster
         """
+
         ts = lattice_points_in_supercell(self.supercell_matrix)
         cluster_indices = []
         clusters_by_sites = defaultdict(list)

@@ -18,23 +18,24 @@ class Orbit(MSONable):
     translational symmetry).
     Also includes the possible ordering on the clusters
     """
+
     def __init__(self, sites, lattice, bits, site_bases, structure_symops):
         """
         Args:
-            sites:
-            lattice:
-            bits (list): list describing the occupancy of each site in cluster. For each site, should
-                    be the number of possible occupancies minus one. i.e. for a 3 site cluster,
-                    each of which having one of Li, TM, or Vac, bits should be
-                    [[0, 1], [0, 1], [0, 1]]. This is because the bit combinations that the
-                    methodology *seems* to be missing are in fact linear combinations of other smaller
-                    clusters. With least squares fitting, it can be verified that reintroducing these
-                    bit combos doesn't improve the quality of the fit (though Bregman can do weird things
-                    because of the L1 norm).
-                    In any case, we know that pairwise ECIs aren't sparse in an ionic system, so
-                    not sure how big of an issue this is.
-            site_bases (list): list of SiteBasis objects for each site in the given sites.
-            structure_symops (list): list of symmetry operations for the base structure
+            sites (list(pymatgen.Sites)):
+                list of sites used in defining the orbit.
+            lattice (pymatgen.Lattice):
+                A lattice object for the given sites
+            bits (list):
+                list describing the occupancy of each site in cluster. For each site, should
+                be the number of possible occupancies minus one. i.e. for a 3 site cluster,
+                each of which having one of Li, TM, or Vac, bits should be
+                [[0, 1], [0, 1], [0, 1]]. This is ensures the expansion is not "over-complete"
+                by implicitly enforcing that all sites have a site basis function phi_0 = 1.
+            site_bases (list(SiteBasis)):
+                list of SiteBasis objects for each site in the given sites.
+            structure_symops (list(pymatgen.SymmOps)):
+                list of symmetry operations for the base structure
         """
 
         self.bits = bits

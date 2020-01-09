@@ -21,14 +21,15 @@ class EwaldTerm(object):
     def __init__(self, cluster_supercell, eta=None, use_inv_r=False):
         """
         Args:
-            cluster_supercell:
+            cluster_supercell (ClusterSupercell):
                 ClusterSupercell for which to evaluate Ewald sum
-            use_inv_r:
+            use_inv_r (bool):
                 experimental feature that allows fitting to arbitrary 1/r interactions between specie-site
                 combinations.
-            eta:
+            eta (float):
                 parameter to override the EwaldSummation default eta. Usually only necessary if use_inv_r=True
         """
+
         self.cluster_supercell = cluster_supercell
         self.eta = eta
         self.use_inv_r = use_inv_r

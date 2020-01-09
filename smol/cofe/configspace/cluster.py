@@ -15,8 +15,10 @@ class Cluster(MSONable):
     def __init__(self, sites, lattice):
         """
         Args:
-            sites: list of frac coords for the sites
-            lattice: pymatgen Lattice object
+            sites (list):
+                list of frac coords for the sites
+            lattice (pymatgen.Lattice):
+                pymatgen Lattice object
         """
         sites = np.array(sites)
         centroid = np.average(sites, axis=0)

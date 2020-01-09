@@ -23,12 +23,17 @@ class ClusterExpansion(MSONable):
         e.g. EciGenerator.unweighted
 
         Args:
-            structwrangler: A StructureWrangler object to provide the fitting data and processing
-            max_dielectric: constrain the dielectric constant to be positive and below the
+            structwrangler (StructureWrangler):
+                A StructureWrangler object to provide the fitting data and processing
+            max_dielectric (float):
+                Constrain the dielectric constant to be positive and below the
                 supplied value (note that this is also affected by whether the primitive
                 cell is the correct size)
-            estimator: Estimator or sklearn model
+            estimator:
+                Estimator or sklearn model. Needs to have a fit and predict method, fitted coefficients
+                must be stored in _coeffs attribute (usually these are the ECI).
         """
+
         self.wrangler = structwrangler
         self.estimator = estimator
         self.max_dielectric = max_dielectric

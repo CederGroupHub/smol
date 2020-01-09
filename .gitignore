@@ -43,3 +43,5 @@ Thumbs.db
 /build
 
 .idea/
+*.cif
+*.pdfo

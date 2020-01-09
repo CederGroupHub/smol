@@ -32,7 +32,8 @@ class SiteBasis(ABC):
     def __init__(self, species):
         """
         Args:
-            species (tuple/dict): Species. If dict, the species should be the keys and
+            species (tuple/dict):
+                Species. If dict, the species should be the keys and
                 the value should should correspond to the probability measure associated to that
                 specie. If a tuple is given a uniform probability is assumed.
         """
