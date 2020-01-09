@@ -25,24 +25,18 @@ class BaseEstimator():
         self.coef_ = None
         self.mus = None
         self.cvs = None
-        self.weights = None
 
     def _solve(self):
         '''This needs to be overloaded in derived classes'''
         raise AttributeError(f'No solve method specified: self._solver: {self._solve}')
 
-    def fit(self, X, y, sample_weights=None, mu=None, *args, **kwargs):
-        if sample_weights is not None:
-            X = X * sample_weights[:, None] ** 0.5
-            y = y * sample_weights ** 0.5
-            self.weights = sample_weights
-        elif self.weights is not None:
-            sample_weights = self.weights
-            X = X * sample_weights[:, None] ** 0.5
-            y = y * sample_weights ** 0.5
+    def fit(self, X, y, sample_weight=None, mu=None, *args, **kwargs):
+        if sample_weight is not None:
+            X = X * sample_weight[:, None] ** 0.5
+            y = y * sample_weight ** 0.5
 
         if mu is None:
-            mu = self._get_optimum_mu(X, y, sample_weights)
+            mu = self._get_optimum_mu(X, y, sample_weight)
         self.coef_ = self._solve(X, y, mu, *args, **kwargs)
 
     def predict(self, X):

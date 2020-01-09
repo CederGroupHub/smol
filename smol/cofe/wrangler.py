@@ -2,16 +2,66 @@ from __future__ import division
 from collections import defaultdict
 import logging
 import warnings
+from functools import partial
 import numpy as np
 from monty.json import MSONable
-from pymatgen import Structure
+from pymatgen import Composition
+from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
+
 from .configspace.clusterspace import ClusterSubspace
 from .utils import StructureMatchError
 
 
-#TODO make StructureWrangler an MSONable??
-# TODO should have a dictionary with the applied filters and their parameters to keep track of what has been done
+def weights_e_above_comp(structures, energies, temperature=2000):
+    e_above_comp = _energies_above_composition(structures, energies)
+    return np.exp(-e_above_comp / (0.00008617 * temperature))
 
+
+def weights_e_above_hull(structures, energies, ce_structure, temperature=2000):
+    e_above_hull = _energies_above_hull(structures, energies, ce_structure)
+    return np.exp(-e_above_hull / (0.00008617 * temperature))
+
+
+def _energies_above_composition(structures, energies):
+    """Computes structure energies above reduced composition"""
+    min_e = defaultdict(lambda: np.inf)
+    for s, e in zip(structures, energies):
+        comp = s.composition.reduced_composition
+        if e / len(s) < min_e[comp]:
+            min_e[comp] = e / len(s)
+    e_above = []
+    for s, e in zip(structures, energies):
+        comp = s.composition.reduced_composition
+        e_above.append(e / len(s) - min_e[comp])
+    return np.array(e_above)
+
+
+def _energies_above_hull(structures, energies, ce_structure):
+    """Computes energies above hull constructed from phase diagram of given structures"""
+    pd = _pd(structures, energies, ce_structure)
+    e_above_hull = []
+    for s, e in zip(structures, energies):
+        e_above_hull.append(pd.get_e_above_hull(PDEntry(s.composition.element_composition, e)))
+    return np.array(e_above_hull)
+
+
+def _pd(structures, energies, cs_structure):
+    """
+    Generate a phase diagram with the structures and energies
+    """
+    entries = []
+
+    for s, e in zip(structures, energies):
+        entries.append(PDEntry(s.composition.element_composition, e))
+
+    max_e = max(entries, key=lambda e: e.energy_per_atom).energy_per_atom + 1000
+    for el in cs_structure.composition.keys():
+        entries.append(PDEntry(Composition({el: 1}).element_composition, max_e))
+
+    return PhaseDiagram(entries)
+
+
+# TODO should have a dictionary with the applied filters and their parameters to keep track of what has been done
 class StructureWrangler(MSONable):
     """
     Class that handles (wrangles) input data structures and properties to fit in a cluster expansion.
@@ -19,7 +69,8 @@ class StructureWrangler(MSONable):
     fit the final ClusterExpansion.
     """
 
-    def __init__(self, clustersubspace, data=None):
+
+    def __init__(self, clustersubspace, data=None, weights=None):
         """
         This class is meant to take all input training data in the form of (structure, property) where the
         property is usually (lets be honest always) the energy for the given structure.
@@ -33,9 +84,20 @@ class StructureWrangler(MSONable):
                 list of (structure, property) data
         """
         self.cs = clustersubspace
-        self.items = []
+        self.get_weights = {'composition': weights_e_above_comp,
+                            'hull': partial(weights_e_above_hull, ce_structure=self.cs.structure)}
+        self.items, self.weights = [], None
+
         if data is not None:
             self.add_data(data)
+
+            if isinstance(weights, str) :
+                if weights not in self.get_weights.keys():
+                    raise AttributeError(f'{weights} is not a valid keyword.'
+                                         f'Weights must be one of {self.get_weights.keys()}')
+                self.weights = self.get_weights[weights](self.structures, self.properties)
+            elif weights is not None:
+                self.weights = weights
 
     @property
     def structures(self):

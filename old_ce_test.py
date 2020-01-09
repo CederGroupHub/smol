@@ -14,7 +14,7 @@ prim = prim.get_structures()[0]
 # Create old ClusterExpansion behemoth
 ce = ClusterExpansion.from_radii(structure=prim, 
                                  radii={2: 5, 3: 4.1}, 
-                                 ltol=0.15, stol=0.9, angle_tol=5, 
+                                 ltol=0.15, stol=0.2, angle_tol=5, 
                                  supercell_size='O2-', 
                                  use_ewald=True, 
                                  use_inv_r=False, eta=None) 
@@ -42,8 +42,9 @@ print("{}/{} structures map to the lattice".format(len(valid_structs), len(calc_
 print('Also here is a random corr_vector:\n', ce.corr_from_structure(valid_structs[10][0]))
 
 
-# Fit the cluster expansion 
-eg = EciGenerator.unweighted(cluster_expansion=ce, 
+# Fit the cluster expansion
+# weight_by_e_above_comp, weight_by_e_above_hull 
+eg = EciGenerator.weight_by_e_above_hull(cluster_expansion=ce, 
                              structures=[struct for struct, toten in valid_structs], 
                              energies=[toten for struct, toten in valid_structs], 
                              max_dielectric=100, 

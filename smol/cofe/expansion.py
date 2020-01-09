@@ -18,9 +18,7 @@ class ClusterExpansion(MSONable):
 
     def __init__(self, structwrangler, estimator=None, max_dielectric=None, ecis=None):
         """
-        Fit ECI's to obtain a cluster expansion. This init function takes in all possible arguments,
-        but its much simpler to use one of the factory classmethods below,
-        e.g. EciGenerator.unweighted
+        Represents a cluster expansion. The main methods to use this class are the fit and predict
 
         Args:
             structwrangler (StructureWrangler):
@@ -53,7 +51,11 @@ class ClusterExpansion(MSONable):
         A_in = self.wrangler.feature_matrix.copy()
         y_in = self.wrangler.normalized_properties.copy()
 
-        self.estimator.fit(A_in, y_in, *args, **kwargs)
+        if self.wrangler.weights is not None:
+            self.estimator.fit(A_in, y_in, self.wrangler.weights, *args, **kwargs)
+        else:
+            self.estimator.fit(A_in, y_in, *args, **kwargs)
+
         try:
             self.ecis = self.estimator.coef_
         except AttributeError:

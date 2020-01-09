@@ -17,7 +17,7 @@ cs = ClusterSubspace.from_radii(structure=prim,
                                  radii={2: 5, 3: 4.1},
                                  ltol=0.15, stol=0.2, angle_tol=5,
                                  supercell_size='O2-',
-                                 basis='legendre',
+                                 basis='indicator',
                                  orthonormal=False)
 
 cs.add_external_term(EwaldTerm, use_inv_r=False, eta=None)
@@ -50,7 +50,7 @@ print("{}/{} structures map to the lattice".format(len(valid_structs), len(calc_
 print('Also here is a random corr_vector:\n', cs.corr_from_structure(valid_structs[10][0]))
 
 # Create the data wrangler.
-sw = StructureWrangler(cs, [(struct, e) for struct, e in valid_structs])
+sw = StructureWrangler(cs, [(struct, e) for struct, e in valid_structs], weights='hull')
 sw.filter_by_ewald(3)
 
 # Create Estimator
