@@ -153,6 +153,8 @@ class StructureWrangler(MSONable):
         self.items += items
         logging.info(f"Matched {len(items)} of {len(data)} structures")
 
+    #TODO change this so data can be filtered by ewald even if the Ewald term is not used in expansion
+    # Curently the clustersubspace must have an ewald term as the very last term.
     def filter_by_ewald(self, max_ewald):
         """
         Filter the input structures to only use those with low electrostatic
