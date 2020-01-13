@@ -22,8 +22,8 @@ class Orbit(MSONable):
     def __init__(self, sites, lattice, bits, site_bases, structure_symops):
         """
         Args:
-            sites (list(pymatgen.Sites)):
-                list of sites used in defining the orbit.
+            sites (list):
+                list of frac coords for the sites
             lattice (pymatgen.Lattice):
                 A lattice object for the given sites
             bits (list):
@@ -68,11 +68,12 @@ class Orbit(MSONable):
         for symop in self.structure_symops:
             new_sites = symop.operate_multi(self.basecluster.sites)
             c = Cluster(new_sites, self.basecluster.lattice)
-            if self.clusters[0] == c:
+            if c == self.basecluster:
                 c_sites = c.sites + np.round(self.basecluster.centroid - c.centroid)
                 self._symops.append((symop, tuple(coord_list_mapping(self.basecluster.sites, c_sites, atol=SITE_TOL))))
         if len(self._symops) * self.multiplicity != len(self.structure_symops):
-            raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
+            n = len(self._symops) * self.multiplicity
+            raise SymmetryError(SYMMETRY_ERROR_MESSAGE + f'Found only {n} symops')
         return self._symops
 
     @property
@@ -214,5 +215,5 @@ class Orbit(MSONable):
              "lattice": self.lattice.as_dict(),
              "bits": self.bits,
              "site_bases": [(sb.__class__.__name__[:-5].lower(), sb.species) for sb in self.site_bases],
-             "structure_symops": [so.as_dict for so in self.structure_symops]}
+             "structure_symops": [so.as_dict() for so in self.structure_symops]}
         return d

@@ -6,6 +6,12 @@ from numpy.polynomial.legendre import legval
 from smol.cofe.configspace import basis
 
 
+available_bases = {'indicator': basis.IndicatorBasis,
+                   'sinusoid': basis.SinusoidBasis,
+                   'chebyshev': basis.ChebyshevBasis,
+                   'legendre': basis.LegendreBasis}
+
+
 class TestBasis(unittest.TestCase):
     def setUp(self) -> None:
         self.species = {'Li+': 0.5, 'Mn2+': 0.2, 'Vacancy': 0.3}
@@ -92,3 +98,8 @@ class TestBasis(unittest.TestCase):
         b = basis.LegendreBasis(self.species)
         b.orthonormalize()
         self._test_orthonormal(b)
+
+    def test_basis_factory(self):
+        for name in available_bases:
+            b = basis.basis_factory(name, self.species)
+            self.assertIsInstance(b, available_bases[name])
