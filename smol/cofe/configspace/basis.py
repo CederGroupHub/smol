@@ -57,19 +57,27 @@ class SiteBasis(ABC):
     def species(self):
         return list(self._measure.keys())
 
-    def measure(self, species):
+    def measure(self, specie):
         """
-
         Args:
-            species (str): species names or single species names
+            specie (str): specie name
 
         Returns:
             float: represents the associated measure with the give species
         """
 
-        return self._measure[species]
+        return self._measure[specie]
 
     def inner_prod(self, f, g):
+        """
+        Compute the inner product of two functions over probability the space spanned by basis
+        Args:
+            f: function
+            g: function
+
+        Returns: float
+            inner product result
+        """
         res = sum([self.measure(s)*f(self.encode(s))*g(self.encode(s)) for s in self.species])
         if abs(res) < 5E-15:  # Not sure what is causing these numerical issues, may lead to problems.
             res = 0.0
@@ -80,7 +88,7 @@ class SiteBasis(ABC):
         Possible mapping from species to another set (i.e. species names to set of integers)
 
         Args:
-            species (str): specie name
+            specie (str): specie name
 
         Returns:
             float/str encoding
@@ -151,16 +159,16 @@ class SinusoidBasis(SiteBasis):
 
     def __init__(self, species):
         super().__init__(species)
-        M = len(species)
+        m = len(species)
 
-        def fun(s, n):
-            a = -(-n//2)  #ceiling division
+        def fun_factory(n):
+            a = -(-n//2)  # ceiling division
             if n % 2 == 0:
-                return -np.sin(2*np.pi*a*s/M)
+                return lambda s: -np.sin(2 * np.pi * a * s / m)
             else:
-                return -np.cos(2*np.pi*a*s/M)
+                return lambda s: -np.cos(2 * np.pi * a * s / m)
 
-        self._functions = tuple(partial(fun, n=n) for n in range(1, M))
+        self._functions = tuple(fun_factory(n) for n in range(1, m))
         self._encoding = {s: i for (i, s) in enumerate(species)}
 
     def encode(self, specie):
@@ -171,19 +179,19 @@ class SinusoidBasis(SiteBasis):
         return self._functions
 
 
-class NumpyPolyBasis(SiteBasis):
+class NumpyPolyBasis(SiteBasis, ABC):
     """
     Abstract class to quickly write polynomial basis included in Numpy
     """
     def __init__(self, species, poly_fun):
         super().__init__(species)
-        M = len(species)
-        enc = np.linspace(-1, 1, M)
+        m = len(species)
+        enc = np.linspace(-1, 1, m)
         self._encoding = {s: i for (s, i) in zip(species, enc)}
         funcs, coeffs = [], [1]
-        for i in range(M-1):
+        for i in range(m-1):
             coeffs.append(0)
-            funcs.append(partial(poly_fun, c=list(reversed(coeffs))))
+            funcs.append(partial(poly_fun, c=coeffs[::-1]))
         self._functions = tuple(funcs)
 
     def encode(self, specie):
