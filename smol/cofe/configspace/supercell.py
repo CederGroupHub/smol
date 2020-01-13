@@ -97,10 +97,11 @@ class ClusterSupercell(object):
         occu = np.array(occu)
         for orb, inds in self.cluster_indices:
             c_occu = occu[inds]
-            for i, bits in enumerate(orb.bit_combos):
-                #each bit in bits represents a site that has its own site basis in orb.sbases
-                p = np.fromiter(map(lambda occu: orb.eval(bits, occu), c_occu[:]), dtype=np.float)
-                corr[orb.orb_b_id + i] = p.sum()
+            for i, bit_list in enumerate(orb.bit_combos):
+                for bits in bit_list:
+                    #each bit in bits represents a site that has its own site basis in orb.sbases
+                    p = np.fromiter(map(lambda occu: orb.eval(bits, occu), c_occu[:]), dtype=np.float)
+                    corr[orb.orb_b_id + i] = p.sum()
         return corr
 
     def occu_from_structure(self, structure, return_mapping=False):

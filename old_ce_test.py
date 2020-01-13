@@ -47,7 +47,7 @@ print('Also here is a random corr_vector:\n', ce.corr_from_structure(valid_struc
 eg = EciGenerator.weight_by_e_above_hull(cluster_expansion=ce, 
                              structures=[struct for struct, toten in valid_structs], 
                              energies=[toten for struct, toten in valid_structs], 
-                             max_dielectric=500, 
+                             max_dielectric=100, 
                              max_ewald=3) 
 
 print(f"ECIS: {eg.ecis}")

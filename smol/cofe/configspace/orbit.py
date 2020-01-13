@@ -96,7 +96,7 @@ class Orbit(MSONable):
                     new_bit = tuple(bit_combo[np.array(b_o)])
                     if new_bit not in new_bits:
                         new_bits.append(new_bit)
-                all_combos += new_bits
+                all_combos += [new_bits]
         self._bit_combos = all_combos
         return self._bit_combos
 
@@ -169,7 +169,7 @@ class Orbit(MSONable):
 
     def __eq__(self, other):
         try:
-        # when performing Oribt in list, this ordering stops the equivalent structures from generating
+        # when performing Orbit in list, this ordering stops the equivalent structures from generating
             return any(self.basecluster == cluster for cluster in other.clusters)
         except AttributeError as e:
             print(e.message)
