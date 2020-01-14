@@ -113,6 +113,7 @@ class ClusterSubspace(MSONable):
                 in the expansion. Easiest option for supercell_size is usually to use a species that has a
                 constant amount per formula unit.
         """
+
         symops = SpacegroupAnalyzer(structure).get_symmetry_operations()
         #get the sites to expand over
         sites_to_expand = [site for site in structure if site.species.num_atoms < 0.99 \

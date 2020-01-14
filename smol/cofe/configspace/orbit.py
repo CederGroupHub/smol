@@ -38,6 +38,12 @@ class Orbit(MSONable):
                 list of symmetry operations for the base structure
         """
 
+        if len(sites) != len(bits):
+            raise AttributeError(f'Number of sites {len(sites)} must be equal to '
+                                 f'number of bits {len(bits)}')
+        elif len(sites) != len(site_bases):
+            raise AttributeError(f'Number of sites {len(sites)} must be equal to '
+                                 f'number of site bases {len(site_bases)}')
         self.bits = bits
         self.site_bases = site_bases
         self.structure_symops = structure_symops
@@ -72,8 +78,7 @@ class Orbit(MSONable):
                 c_sites = c.sites + np.round(self.basecluster.centroid - c.centroid)
                 self._symops.append((symop, tuple(coord_list_mapping(self.basecluster.sites, c_sites, atol=SITE_TOL))))
         if len(self._symops) * self.multiplicity != len(self.structure_symops):
-            n = len(self._symops) * self.multiplicity
-            raise SymmetryError(SYMMETRY_ERROR_MESSAGE + f'Found only {n} symops')
+            raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
         return self._symops
 
     @property
@@ -154,11 +159,11 @@ class Orbit(MSONable):
         Used to assign unique orbit and cluster id's when creating a cluster subspace.
 
         Args:
-            o_id: symmetrized cluster id
-            o_b_id: start bit ordering id
-            start_c_id: start cluster id
+            o_id (int): orbit id
+            o_b_id (int): start bit ordering id
+            start_c_id (int): start cluster id
 
-        Returns:
+        Returns (int, int, int):
             next orbit id, next bit ordering id, next cluster id
         """
         self.orb_id = o_id

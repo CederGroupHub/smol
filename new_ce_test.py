@@ -52,7 +52,7 @@ print('Also here is a random corr_vector:\n', cs.corr_from_structure(valid_struc
 
 # Create the data wrangler.
 sw = StructureWrangler(cs, [(struct, e) for struct, e in valid_structs], weights='hull')
-#sw.filter_by_ewald(3)
+sw.filter_by_ewald(3)
 
 # Create Estimator
 #est = CVXEstimator()
