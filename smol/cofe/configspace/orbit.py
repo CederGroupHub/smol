@@ -84,7 +84,7 @@ class Orbit(MSONable):
     @property
     def bit_combos(self):
         """
-        List of arrays, each array is of symmetrically equivalent bit orderings
+        List of lists, each inner list is of symmetrically equivalent bit orderings
         """
         if self._bit_combos is not None:
             return self._bit_combos

@@ -2,13 +2,13 @@ import unittest
 import numpy as np
 from itertools import combinations
 from pymatgen import Lattice, Structure
-from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+from pymatgen.util.coord import is_coord_subset_pbc
 from smol.cofe.configspace import ClusterSupercell
 from smol.cofe.configspace.clusterspace import get_bits
+from smol.cofe.utils import SITE_TOL
 from smol.cofe import ClusterSubspace
 
 
-#TODO need to implement tests for missing functions
 class TestSuperCell(unittest.TestCase):
     def setUp(self) -> None:
         self.lattice = Lattice([[3, 3, 0], [0, 3, 3], [3, 0, 3]])
@@ -17,11 +17,48 @@ class TestSuperCell(unittest.TestCase):
                   (0.5, 0.5, 0.5), (0, 0, 0))
         self.structure = Structure(self.lattice, species, coords)
 
+    # TODO Implement this?
     def test_occu_from_structure(self):
         pass
 
     def test_generate_mappings(self):
-        pass
+        # check that all supercell index groups map to the correct primitive
+        # cell sites, and check that max distance under supercell pbc is
+        # less than the max distance without pbc
+
+        cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5})
+        m = np.array([[2, 0, 0], [0, 2, 0], [0, 1, 1]])
+        supercell = cs.structure.copy()
+        supercell.make_supercell(m)
+
+        sc = ClusterSupercell(cs, supercell, m, get_bits(supercell))
+        for orb, inds in sc.cluster_indices:
+            for x in inds:
+                pbc_radius = np.max(sc.supercell.lattice.get_all_distances(
+                    sc.fcoords[x], sc.fcoords[x]))
+                # primitive cell fractional coordinates
+                new_fc = np.dot(sc.fcoords[x], sc.supercell_matrix)
+                self.assertGreater(orb.radius + 1e-7, pbc_radius)
+                found = False
+                for equiv in orb.clusters:
+                    if is_coord_subset_pbc(equiv.sites, new_fc, atol=SITE_TOL):
+                        found = True
+                        break
+                self.assertTrue(found)
+
+    def test_periodicity(self):
+        # Check to see if a supercell of a smaller supercell gives the same corr
+        m = np.array([[2, 0, 0], [0, 2, 0], [0, 1, 1]])
+        supercell = self.structure.copy()
+        supercell.make_supercell(m)
+        s = Structure(supercell.lattice, ['Ca', 'Li', 'Li', 'Br', 'Br', 'Br', 'Br'],
+                      [[0.125, 1, 0.25], [0.125, 0.5, 0.25], [0.375, 0.5, 0.75], [0, 0, 0], [0, 0.5, 1],
+                       [0.5, 1, 0], [0.5, 0.5, 0]])
+        cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5})
+        a = cs.corr_from_structure(s)
+        s.make_supercell([2, 1, 1])
+        b = cs.corr_from_structure(s)
+        self.assertTrue(np.allclose(a, b))
 
     def test_vs_CASM_pairs(self):
         species = [{'Li':0.1}] * 3 + ['Br']

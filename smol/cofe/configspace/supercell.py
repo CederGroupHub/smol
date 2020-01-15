@@ -98,10 +98,9 @@ class ClusterSupercell(object):
         for orb, inds in self.cluster_indices:
             c_occu = occu[inds]
             for i, bit_list in enumerate(orb.bit_combos):
-                for bits in bit_list:
-                    #each bit in bits represents a site that has its own site basis in orb.sbases
-                    p = np.fromiter(map(lambda occu: orb.eval(bits, occu), c_occu[:]), dtype=np.float)
-                    corr[orb.orb_b_id + i] = p.mean()
+                p = np.concatenate([np.fromiter(map(lambda occu: orb.eval(bits, occu), c_occu[:]), dtype=np.float)
+                                    for bits in bit_list])
+                corr[orb.orb_b_id + i] = p.mean()
 
         return corr
 

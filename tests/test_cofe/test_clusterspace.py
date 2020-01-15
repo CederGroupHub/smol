@@ -94,8 +94,7 @@ class TestClusterSubSpace(unittest.TestCase):
         # make an ordered supercell
         s = self.structure.copy()
         s.make_supercell([2, 1, 1])
-        #species = ('Li', 'Ca', 'Li', 'Ca', 'Br', 'Br')
-        species = ('Ca', 'Li', 'Ca', 'Li', 'Br', 'Br')
+        species = ('Li', 'Ca', 'Li', 'Ca', 'Br', 'Br')
         coords = ((0.125, 0.25, 0.25),
                   (0.625, 0.25, 0.25),
                   (0.375, 0.75, 0.75),
