@@ -1,4 +1,5 @@
 import unittest
+import random
 import numpy as np
 from itertools import combinations
 from pymatgen import Lattice, Structure
@@ -87,6 +88,31 @@ class TestClusterSubSpace(unittest.TestCase):
         corr = self.cs.corr_from_structure(structure)
         self.assertEqual(len(corr), self.cs.n_bit_orderings + len(self.cs.external_terms))
         self.assertEqual(corr[0], 1)
+
+        cs = ClusterSubspace.from_radii(self.structure, {2: 5})
+
+        # make an ordered supercell
+        s = self.structure.copy()
+        s.make_supercell([2, 1, 1])
+        #species = ('Li', 'Ca', 'Li', 'Ca', 'Br', 'Br')
+        species = ('Ca', 'Li', 'Ca', 'Li', 'Br', 'Br')
+        coords = ((0.125, 0.25, 0.25),
+                  (0.625, 0.25, 0.25),
+                  (0.375, 0.75, 0.75),
+                  (0.25, 0.5, 0.5),
+                  (0, 0, 0),
+                  (0.5, 0, 0))
+        s = Structure(s.lattice, species, coords)
+        self.assertEqual(len(cs.corr_from_structure(s)), 22)
+        self.assertTrue(np.allclose(cs.corr_from_structure(s),
+                                    [1, 0.5, 0.25, 0, 0.5, 0, 0.375, 0, 0.0625, 0.25, 0.125,
+                                     0, 0.25, 0.125, 0.125, 0, 0, 0.25, 0, 0.125, 0, 0.1875]))
+
+        for _ in range(10):
+            random.shuffle(s)
+            self.assertTrue(np.allclose(cs.corr_from_structure(s),
+                                        [1, 0.5, 0.25, 0, 0.5, 0, 0.375, 0, 0.0625, 0.25, 0.125,
+                                         0, 0.25, 0.125, 0.125, 0, 0, 0.25, 0, 0.125, 0, 0.1875]))
 
     def test_repr(self):
         repr(self.cs)

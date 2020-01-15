@@ -39,7 +39,7 @@ for calc_i, calc in enumerate(calc_data):
  
 print("{}/{} structures map to the lattice".format(len(valid_structs), len(calc_data))) 
 
-print('Also here is a random corr_vector:\n', ce.corr_from_structure(valid_structs[10][0]))
+print('Also here is a random corr_vector:\n', ce.corr_from_structure(valid_structs[-2][0]))
 
 
 # Fit the cluster expansion

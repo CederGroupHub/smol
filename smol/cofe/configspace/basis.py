@@ -5,6 +5,7 @@ These include the basis functions and measure that defines the inner product
 
 from abc import ABC, abstractmethod
 from copy import deepcopy
+from collections import OrderedDict
 import inspect
 import warnings
 from functools import partial
@@ -106,6 +107,9 @@ class SiteBasis(ABC):
         Returns: float
 
         """
+        if specie not in self.species:
+            raise ValueError(f'{specie} is not in valid species: {self.species}')
+
         return self.functions[fun_ind](self.encode(specie))
 
     def orthonormalize(self):
