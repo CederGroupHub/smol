@@ -34,7 +34,7 @@ jobs:
           command: |
             . venv/bin/activate
             pip install --quiet -e .
-            pytest --cov=smol --cov-report html:coverage_reports smol
+            pytest --cov=smol --cov-report html:coverage_reports
 
       - store_artifacts:
           path: test-reports
@@ -74,7 +74,8 @@ jobs:
           command: |
             . venv/bin/activate
             python setup.py --quiet install --use-cython
-
+            pytest --cov=smol --cov-report html:coverage_reports
+            
   style-check:
     docker:
       - image: circleci/python:3.7.3
@@ -96,18 +97,18 @@ jobs:
           command: |
             . venv/bin/activate
             echo "pycodestyle checks..."
-            pycodestyle pymatgen
+            pycodestyle smol
             echo "--- Done ---"
             echo "flake8 checks..."
-            flake8 --count --show-source --statistics pymatgen
+            flake8 --count --show-source --statistics smol
             # exit-zero treats all errors as warnings.
-            flake8 --count --exit-zero --max-complexity=20 --statistics pymatgen
+            flake8 --count --exit-zero --max-complexity=20 --statistics smol
             echo "--- Done ---"
             echo "mypy checks..."
-            mypy pymatgen
+            mypy smol
             echo "--- Done ---"
             echo "pylint checks..."
-            pylint --exit-zero pymatgen
+            pylint --exit-zero smol
             echo "--- Done ---"
 
 workflows:
