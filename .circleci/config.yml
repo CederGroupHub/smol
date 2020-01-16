@@ -75,7 +75,7 @@ jobs:
             . venv/bin/activate
             python setup.py --quiet install --use-cython
             pytest --cov=smol --cov-report html:coverage_reports
-            
+
   style-check:
     docker:
       - image: circleci/python:3.7.3
