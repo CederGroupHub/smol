@@ -80,8 +80,12 @@ class TestClusterSubSpace(unittest.TestCase):
         lattice = Lattice([[2.95, 3, 0], [0, 3, 2.9], [3, 0, 3]])
         structure = Structure(lattice, ['Li', ] * 2 + ['Ca'] + ['Br'], self.coords)
         structure.make_supercell(2)
-        structure = self.cs.refine_structure(structure)
-        self.assertEqual(self.structure.lattice, structure.get_primitive_structure().lattice)
+        structure = self.cs.refine_structure(structure).get_primitive_structure()
+
+        # This is failing in pymatgen 2020.1.10, since lattice matrices are not the same,
+        # but still equivalent
+        # self.assertEqual(self.lattice, structure.lattice)
+        self.assertTrue(np.allclose(self.lattice.parameters, structure.lattice.parameters))
 
     def test_corr_from_structure(self):
         structure = Structure(self.lattice, ['Li',] * 2 + ['Ca'] + ['Br'], self.coords)

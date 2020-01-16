@@ -42,6 +42,10 @@ Thumbs.db
 *.egg-info/
 /build
 
+# Other files
+#############
 .idea/
 *.cif
 *.pdfo
+.coverage
+/smol/cofe/debug/*
