@@ -2,16 +2,67 @@ from __future__ import division
 from collections import defaultdict
 import logging
 import warnings
+from functools import partial
 import numpy as np
 from monty.json import MSONable
-from pymatgen import Structure
-from .configspace.clusterspace import ClusterSubspace
-from .utils import StructureMatchError
+from pymatgen import Composition
+from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
+
+from smol.cofe import ClusterSubspace
+from smol.cofe.configspace import EwaldTerm
+from smol.cofe.utils import StructureMatchError
 
 
-#TODO make StructureWrangler an MSONable??
+def weights_e_above_comp(structures, energies, temperature=2000):
+    e_above_comp = _energies_above_composition(structures, energies)
+    return np.exp(-e_above_comp / (0.00008617 * temperature))
+
+
+def weights_e_above_hull(structures, energies, ce_structure, temperature=2000):
+    e_above_hull = _energies_above_hull(structures, energies, ce_structure)
+    return np.exp(-e_above_hull / (0.00008617 * temperature))
+
+
+def _energies_above_composition(structures, energies):
+    """Computes structure energies above reduced composition"""
+    min_e = defaultdict(lambda: np.inf)
+    for s, e in zip(structures, energies):
+        comp = s.composition.reduced_composition
+        if e / len(s) < min_e[comp]:
+            min_e[comp] = e / len(s)
+    e_above = []
+    for s, e in zip(structures, energies):
+        comp = s.composition.reduced_composition
+        e_above.append(e / len(s) - min_e[comp])
+    return np.array(e_above)
+
+
+def _energies_above_hull(structures, energies, ce_structure):
+    """Computes energies above hull constructed from phase diagram of given structures"""
+    pd = _pd(structures, energies, ce_structure)
+    e_above_hull = []
+    for s, e in zip(structures, energies):
+        e_above_hull.append(pd.get_e_above_hull(PDEntry(s.composition.element_composition, e)))
+    return np.array(e_above_hull)
+
+
+def _pd(structures, energies, cs_structure):
+    """
+    Generate a phase diagram with the structures and energies
+    """
+    entries = []
+
+    for s, e in zip(structures, energies):
+        entries.append(PDEntry(s.composition.element_composition, e))
+
+    max_e = max(entries, key=lambda e: e.energy_per_atom).energy_per_atom + 1000
+    for el in cs_structure.composition.keys():
+        entries.append(PDEntry(Composition({el: 1}).element_composition, max_e))
+
+    return PhaseDiagram(entries)
+
+
 # TODO should have a dictionary with the applied filters and their parameters to keep track of what has been done
-
 class StructureWrangler(MSONable):
     """
     Class that handles (wrangles) input data structures and properties to fit in a cluster expansion.
@@ -19,7 +70,8 @@ class StructureWrangler(MSONable):
     fit the final ClusterExpansion.
     """
 
-    def __init__(self, clustersubspace, data=None):
+
+    def __init__(self, clustersubspace, data=None, weights=None, **wkwargs):
         """
         This class is meant to take all input training data in the form of (structure, property) where the
         property is usually (lets be honest always) the energy for the given structure.
@@ -31,11 +83,17 @@ class StructureWrangler(MSONable):
                 A ClusterSubspace object that will be used to fit a ClusterExpansion with the provided data.
             data (list):
                 list of (structure, property) data
+            wkwargs:
+                key word arguments passed to weight function
         """
         self.cs = clustersubspace
-        self.items = []
+        self.get_weights = {'composition': weights_e_above_comp,
+                            'hull': partial(weights_e_above_hull, ce_structure=self.cs.structure)}
+        self.items, self.weights = [], None
+
         if data is not None:
             self.add_data(data)
+            self.set_weights(weights, **wkwargs)
 
     @property
     def structures(self):
@@ -80,8 +138,6 @@ class StructureWrangler(MSONable):
                 msg = f'Unable to match {s.composition} with energy {p} to supercell. Throwing out. '
                 warnings.warn(msg + f'Error Message: {str(e)}.', RuntimeWarning)
                 continue
-            except:
-                raise
             items.append({'structure': s,
                           'property': p,
                           'supercell': sc,
@@ -90,6 +146,16 @@ class StructureWrangler(MSONable):
 
         self.items += items
         logging.info(f"Matched {len(items)} of {len(data)} structures")
+
+    def set_weights(self, weights, **kwargs):
+        """Set the weights for each data point"""
+        if isinstance(weights, str):
+            if weights not in self.get_weights.keys():
+                raise AttributeError(f'{weights} is not a valid keyword.'
+                                     f'Weights must be one of {self.get_weights.keys()}')
+            self.weights = self.get_weights[weights](self.structures, self.properties, **kwargs)
+        elif weights is not None:
+            self.weights = weights
 
     def filter_by_ewald(self, max_ewald):
         """
@@ -103,25 +169,33 @@ class StructureWrangler(MSONable):
             max_ewald (float):
                 Ewald threshold
         """
+        ewald_corr = None
         for term, args, kwargs in self.cs.external_terms:
-            if term.__name__ == 'EwaldTerm' and 'use_inv_r' in kwargs.keys():
-                if kwargs['use_inv_r']:
+            if term.__name__ == 'EwaldTerm':
+                if 'use_inv_r' in kwargs.keys() and kwargs['use_inv_r']:
                     raise NotImplementedError('cant use inv_r with max_ewald yet')
+                ewald_corr = [i['features'][-1] for i in self.items]
+        if ewald_corr is None:
+            ewald_corr = []
+            for s in self.structures:
+                supercell = self.cs.supercell_from_structure(s)
+                occu = supercell.occu_from_structure(s)
+                ewald_corr.append(EwaldTerm.corr_from_occu(occu, supercell))
 
         min_e = defaultdict(lambda: np.inf)
-        for i in self.items:
-            c = i['structure'].composition.reduced_composition
-            if i['features'][-1] < min_e[c]:
-                min_e[c] = i['features'][-1]
+        for ecorr, item in zip(ewald_corr, self.items):
+            c = item['structure'].composition.reduced_composition
+            if ecorr < min_e[c]:
+                min_e[c] = ecorr
 
         items = []
-        for i in self.items:
-            r_e = i['features'][-1] - min_e[i['structure'].composition.reduced_composition]
+        for ecorr, item in zip(ewald_corr, self.items):
+            r_e = ecorr - min_e[item['structure'].composition.reduced_composition]
             if r_e > max_ewald:
                 logging.debug('Skipping {} with energy {}, ewald energy is {}'
-                              ''.format(i['structure'].composition, i['property'], r_e))
+                              ''.format(item['structure'].composition, item['property'], r_e))
             else:
-                items.append(i)
+                items.append(item)
         self.items = items
 
     @classmethod
@@ -131,6 +205,7 @@ class StructureWrangler(MSONable):
         """
         sw = cls(clustersubspace=ClusterSubspace.from_dict(d['cs']))
         sw.items = d['items']
+        sw.weights = d['weights']
         return sw
 
     def as_dict(self):
@@ -143,5 +218,6 @@ class StructureWrangler(MSONable):
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
              'cs': self.cs.as_dict(),
-             'items': self.items()}
+             'items': self.items,
+             'weights': self.weights}
         return d

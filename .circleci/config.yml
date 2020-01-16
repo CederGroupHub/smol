@@ -1,0 +1,115 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.7.3
+
+    working_directory: ~/smol
+
+    steps:
+      - checkout
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "requirements.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+            pip install scikit-learn pytest coverage pytest-cov
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-{{ checksum "requirements.txt" }}
+
+      # run tests!
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            pip install --quiet -e .
+            pytest --cov=smol --cov-report html:coverage_reports smol
+
+      - store_artifacts:
+          path: test-reports
+          destination: test-reports
+
+build-cython:
+    docker:
+      - image: circleci/python:3.7.3
+
+    working_directory: ~/smol
+
+    steps:
+      - checkout
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "requirements.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+            pip install cython scikit-learn pytest coverage pytest-cov
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-{{ checksum "requirements.txt" }}
+
+      # run tests!
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            python setup.py --quiet install --use-cython
+
+  style-check:
+    docker:
+      - image: circleci/python:3.7.3
+
+    working_directory: ~/smol
+
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install pycodestyle flake8 mypy pylint
+
+      # run tests!
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            echo "pycodestyle checks..."
+            pycodestyle pymatgen
+            echo "--- Done ---"
+            echo "flake8 checks..."
+            flake8 --count --show-source --statistics pymatgen
+            # exit-zero treats all errors as warnings.
+            flake8 --count --exit-zero --max-complexity=20 --statistics pymatgen
+            echo "--- Done ---"
+            echo "mypy checks..."
+            mypy pymatgen
+            echo "--- Done ---"
+            echo "pylint checks..."
+            pylint --exit-zero pymatgen
+            echo "--- Done ---"

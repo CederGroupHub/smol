@@ -10,6 +10,7 @@ from . import Orbit, ClusterSupercell
 from .basis import basis_factory
 from ..utils import SymmetryError, StructureMatchError, SYMMETRY_ERROR_MESSAGE, SITE_TOL
 
+
 def get_bits(structure):
     """
     Helper method to compute list of species on each site.
@@ -41,11 +42,16 @@ class ClusterSubspace(MSONable):
                  supercell_size='volume'):
         """
         Args:
-            structure:
-                disordered structure to build a cluster expansion for. Typically the primitive cell
-            expansion_structure:
-            symops:
-            orbits:
+            structure (pymatgen.Structure):
+                Structure to define the cluster space. Typically the primitive cell. Includes
+                all species regardless of partial occupation.
+            expansion_structure (pymatgen.Structure):
+                Structure including only sites that will be included in the Cluster space.
+                (partial occupancy)
+            symops (list(pymatgen.Symmop)):
+                list of Symmops for the given structure.
+            orbits (dict(size: list(Orbit))):
+                dictionary with size (number of sites) as keys and list of Orbits as values.
             ltol, stol, angle_tol, supercell_size: parameters to pass through to the StructureMatcher.
                 Structures that don't match to the primitive cell under these tolerances won't be included
                 in the expansion. Easiest option for supercell_size is usually to use a species that has a
@@ -73,7 +79,7 @@ class ClusterSubspace(MSONable):
                                    allow_subset=True,
                                    scale=True,
                                    supercell_size=self.supercell_size,
-                                   #comparator=FrameworkComparator(),
+                                   # comparator=FrameworkComparator(),
                                    comparator=OrderDisorderElementComparator(),
                                    stol=self.stol,
                                    ltol=self.ltol,
@@ -87,6 +93,7 @@ class ClusterSubspace(MSONable):
         for k in sorted(self._orbits.keys()):
             for y in self._orbits[k]:
                 n_orbits, n_bit_orderings, n_clusters = y.assign_ids(n_orbits, n_bit_orderings, n_clusters)
+
         self.n_orbits = n_orbits
         self.n_clusters = n_clusters
         self.n_bit_orderings = n_bit_orderings
@@ -108,10 +115,11 @@ class ClusterSubspace(MSONable):
                 in the expansion. Easiest option for supercell_size is usually to use a species that has a
                 constant amount per formula unit.
         """
+
         symops = SpacegroupAnalyzer(structure).get_symmetry_operations()
-        #get the sites to expand over
-        sites_to_expand = [site for site in structure if site.species.num_atoms < 0.99 \
-                            or len(site.species) > 1]
+        # get the sites to expand over
+        sites_to_expand = [site for site in structure if site.species.num_atoms < 0.99
+                           or len(site.species) > 1]
         expansion_structure = Structure.from_sites(sites_to_expand)
         orbits = cls._orbits_from_radii(expansion_structure, radii, symops, basis, orthonormal)
         return cls(structure=structure, expansion_structure=expansion_structure, symops=symops, orbits=orbits,
@@ -130,6 +138,7 @@ class ClusterSubspace(MSONable):
         if orthonormal:
             for basis in sbases:
                 basis.orthonormalize()
+
         orbits = {}
         new_orbits = []
 
@@ -139,7 +148,7 @@ class ClusterSubspace(MSONable):
             if new_orbit not in new_orbits:
                 new_orbits.append(new_orbit)
 
-        orbits[1] = sorted(new_orbits, key = lambda x: (np.round(x.radius,6), -x.multiplicity))
+        orbits[1] = sorted(new_orbits, key=lambda x: (np.round(x.radius, 6), -x.multiplicity))
         all_neighbors = expansion_structure.lattice.get_points_in_sphere(expansion_structure.frac_coords,
                                                                          [0.5, 0.5, 0.5],
                                                                          max(radii.values()) +
@@ -160,7 +169,7 @@ class ClusterSubspace(MSONable):
                     elif new_orbit not in new_orbits:
                         new_orbits.append(new_orbit)
 
-            orbits[size] = sorted(new_orbits, key = lambda x: (np.round(x.radius,6), -x.multiplicity))
+            orbits[size] = sorted(new_orbits, key=lambda x: (np.round(x.radius, 6), -x.multiplicity))
         return orbits
 
     @property
@@ -168,6 +177,7 @@ class ClusterSubspace(MSONable):
         return self._external_terms
 
     def add_external_term(self, term, *args, **kwargs):
+        """Add an external term (e.g. an Ewald term) to the cluster expansion terms"""
         self._external_terms.append((term, args, kwargs))
 
     def supercell_matrix_from_structure(self, structure):
@@ -177,10 +187,6 @@ class ClusterSubspace(MSONable):
         if np.linalg.det(sc_matrix) < 0:  # What this for?
             sc_matrix *= -1
         return sc_matrix
-
-    def supercell_from_structure(self, structure):
-        sc_matrix = self.supercell_matrix_from_structure(structure)
-        return self.supercell_from_matrix(sc_matrix)
 
     def supercell_from_matrix(self, sc_matrix):
         scm = tuple(sorted(tuple(s) for s in sc_matrix))
@@ -192,6 +198,15 @@ class ClusterSubspace(MSONable):
             sc = ClusterSupercell(self, supercell, sc_matrix, get_bits(supercell))
             self._supercells[scm] = sc
         return sc
+
+    def supercell_from_structure(self, structure):
+        sc_matrix = self.supercell_matrix_from_structure(structure)
+        return self.supercell_from_matrix(sc_matrix)
+
+    def refine_structure(self, structure):
+        sc = self.supercell_from_structure(structure)
+        occu = sc.occu_from_structure(structure)
+        return sc.structure_from_occu(occu)
 
     def corr_from_structure(self, structure, return_size=False):
         """
@@ -211,21 +226,16 @@ class ClusterSubspace(MSONable):
         else:
             return corr
 
-    def refine_structure(self, structure):
-        sc = self.supercell_from_structure(structure)
-        occu = sc.occu_from_structure(structure)
-        return sc.structure_from_occu(occu)
-
     def corr_from_external(self, structure, sc_matrix, mapping=None):
-        sc = self.supercell_from_matrix(sc_matrix) # get clustersupercell
-        if mapping != None:
+        sc = self.supercell_from_matrix(sc_matrix)  # get clustersupercell
+        if mapping is not None:
             sc.mapping = mapping
         occu = sc.occu_from_structure(structure)
         return sc.corr_from_occupancy(occu)
 
     def refine_structure_external(self, structure, sc_matrix):
         sc = self.supercell_from_matrix(sc_matrix)
-        occu, mapping = sc.occu_from_structure(structure, return_mapping = True)
+        occu, mapping = sc.occu_from_structure(structure, return_mapping=True)
         return sc.structure_from_occu(occu), mapping
 
     @property
@@ -254,7 +264,7 @@ class ClusterSubspace(MSONable):
         """
 
         symops = [SymmOp.from_dict(so_d) for so_d in d['symops']]
-        orbits = [Orbit.from_dict(ob_d) for ob_d in d['orbits']]
+        orbits = {s: [Orbit.from_dict(o) for o in v] for s, v in d['orbits'].items()}
         cs = cls(structure=Structure.from_dict(d['structure']),
                  expansion_structure=Structure.from_dict(d['expansion_structure']),
                  orbits=orbits, symops=symops,
@@ -277,7 +287,7 @@ class ClusterSubspace(MSONable):
              'structure': self.structure.as_dict(),
              'expansion_structure': self.expansion_structure.as_dict(),
              'symops': [so.as_dict() for so in self.symops],
-             'orbits': [ob.as_dict() for ob in self.iterorbits()],
+             'orbits': {s: [o.as_dict() for o in v] for s, v in self._orbits.items()},
              'ltol': self.ltol,
              'stol': self.stol,
              'angle_tol': self.angle_tol,

@@ -10,7 +10,8 @@ import logging
 import warnings
 from ..utils import NotFittedError
 
-class BaseEstimator():
+
+class BaseEstimator:
     """
     A simple estimator class to use different 'in-house'  solvers to fit a cluster-expansion
     This should be used to create specific estimator classes by inheriting. New classes simple need to implement
@@ -25,25 +26,17 @@ class BaseEstimator():
         self.coef_ = None
         self.mus = None
         self.cvs = None
-        self.weights = None
 
-    def _solve(self):
+    def _solve(self, X, y, *args, **kwargs):
         '''This needs to be overloaded in derived classes'''
-        raise AttributeError(f'No solve method specified: self._solver: {self._solve}')
+        raise AttributeError(f'No solve method specified: self._solve: {self._solve}')
 
-    def fit(self, X, y, sample_weights=None, mu=None, *args, **kwargs):
-        if sample_weights is not None:
-            X = X * sample_weights[:, None] ** 0.5
-            y = y * sample_weights ** 0.5
-            self.weights = sample_weights
-        elif self.weights is not None:
-            sample_weights = self.weights
-            X = X * sample_weights[:, None] ** 0.5
-            y = y * sample_weights ** 0.5
+    def fit(self, X, y, sample_weight=None, *args, **kwargs):
+        if sample_weight is not None:
+            X = X * sample_weight[:, None] ** 0.5
+            y = y * sample_weight ** 0.5
 
-        if mu is None:
-            mu = self._get_optimum_mu(X, y, sample_weights)
-        self.coef_ = self._solve(X, y, mu, *args, **kwargs)
+        self.coef_ = self._solve(X, y, *args, **kwargs)
 
     def predict(self, X):
         if self.coef_ is None:
@@ -62,7 +55,7 @@ class BaseEstimator():
         variance for each of these partitions, and add them together
         """
         if weights is None:
-            weights = np.ones(len(X[:,0]))
+            weights = np.ones(len(X[:, 0]))
         logging.info('starting cv score calculations for mu: {}, k: {}'.format(mu, k))
         # generate random partitions
         partitions = np.tile(np.arange(k), len(y) // k + 1)
@@ -84,6 +77,29 @@ class BaseEstimator():
             'cv rms_error: {} (weighted) {} (unweighted)'.format(np.sqrt(ssr / len(y)), np.sqrt(ssr_uw / len(y))))
         cv = 1 - ssr / np.sum((y - np.average(y)) ** 2)
         return cv
+
+
+class CVXEstimator(BaseEstimator):
+    """
+    Estimator implementing the written l1regs cvx based solver
+    """
+
+    def __init__(self):
+        super().__init__()
+
+    def _solve(self, X, y, mu):
+        """
+        X and y should already have been adjusted to account for weighting
+        """
+
+        # Maybe its cleaner to use importlib at the top to try and import these?
+        from .l1regls import l1regls, solvers
+        solvers.options['show_progress'] = False
+        from cvxopt import matrix
+
+        X1 = matrix(X)
+        b = matrix(y * mu)
+        return (np.array(l1regls(X1, b)) / mu).flatten()
 
     def _get_optimum_mu(self, X, y, weights, k=5, min_mu=0.1, max_mu=6):
         """
@@ -111,37 +127,11 @@ class BaseEstimator():
         logging.info('best cv score: {}'.format(np.nanmax(self.cvs)))
         return mus[np.nanargmax(cvs)]
 
+    def fit(self, X, y, sample_weight=None, mu=None, *args, **kwargs):
+        if sample_weight is not None:
+            X = X * sample_weight[:, None] ** 0.5
+            y = y * sample_weight ** 0.5
 
-class CVXEstimator(BaseEstimator):
-    """
-    Estimator implementing the written l1regs cvx based solver
-    """
-
-    def __init__(self):
-        super().__init__()
-
-    def _solve(self, X, y, mu):
-        """
-        X and y should already have been adjusted to account for weighting
-        """
-        # Maybe its cleaner to use importlib at the top to try and import these?
-        from .l1regls import l1regls, solvers
-        solvers.options['show_progress'] = False
-        from cvxopt import matrix
-
-        X1 = matrix(X)
-        b = matrix(y * mu)
-        return (np.array(l1regls(X1, b)) / mu).flatten()
-
-
-class BregmanEstimator(BaseEstimator):
-    """
-    Estimator implemting the split bregman solver
-    """
-
-    def __init__(self):
-        super().__init__()
-
-    def _solve(self,  X, y, mu):
-        #TODO this needs the compressive module code in pyabinitio
-        return split_bregman(X, y, MaxIt=1e5, tol=1e-7, mu=mu, l=1, quiet=True)
+        if mu is None:
+            mu = self._get_optimum_mu(X, y, sample_weight)
+        self.coef_ = self._solve(X, y, mu, *args, **kwargs)

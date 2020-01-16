@@ -15,8 +15,10 @@ class Cluster(MSONable):
     def __init__(self, sites, lattice):
         """
         Args:
-            sites: list of frac coords for the sites
-            lattice: pymatgen Lattice object
+            sites (list):
+                list of frac coords for the sites
+            lattice (pymatgen.Lattice):
+                pymatgen Lattice object
         """
         sites = np.array(sites)
         centroid = np.average(sites, axis=0)
@@ -61,7 +63,7 @@ class Cluster(MSONable):
         return not self.__eq__(other)
 
     def __str__(self):
-        points = str(np.round(self.sites,2)).replace("\n", " ").ljust(len(self.sites) * 21)
+        points = str(np.round(self.sites, 2)).replace("\n", " ").ljust(len(self.sites) * 21)
         return f'[Cluster] id: {self.c_id}, Radius: {self.radius:<4.3}, Points: {points}, ' \
                f'Centroid: {np.round(self.centroid,2)}'
 
