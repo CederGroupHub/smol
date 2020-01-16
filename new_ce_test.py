@@ -5,7 +5,7 @@ from sklearn.linear_model import ElasticNetCV, LassoCV, Ridge, LinearRegression,
 from smol.cofe import ClusterSubspace, StructureWrangler, ClusterExpansion, CVXEstimator
 from smol.cofe.utils import StructureMatchError
 from smol.cofe.configspace import EwaldTerm
-from smol.cofe.expansion import constrain_dielectric
+from smol.cofe.regression import constrain_dielectric
 
 import json
 
@@ -55,8 +55,8 @@ sw = StructureWrangler(cs, [(struct, e) for struct, e in valid_structs], weights
 sw.filter_by_ewald(3)
 
 # Create Estimator
-#est = CVXEstimator()
-est = LinearRegression(fit_intercept=False) 
+est = CVXEstimator()
+#est = LinearRegression(fit_intercept=False) 
 #est = ElasticNetCV(fit_intercept=False, max_iter=5000, selection='random', tol=1E-4, eps=1E-7)
 print('Estimator: ', est)
 

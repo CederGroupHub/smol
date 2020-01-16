@@ -26,18 +26,16 @@ class BaseEstimator():
         self.mus = None
         self.cvs = None
 
-    def _solve(self):
+    def _solve(self, X, y, *args, **kwargs):
         '''This needs to be overloaded in derived classes'''
-        raise AttributeError(f'No solve method specified: self._solver: {self._solve}')
+        raise AttributeError(f'No solve method specified: self._solve: {self._solve}')
 
-    def fit(self, X, y, sample_weight=None, mu=None, *args, **kwargs):
+    def fit(self, X, y, sample_weight=None, *args, **kwargs):
         if sample_weight is not None:
             X = X * sample_weight[:, None] ** 0.5
             y = y * sample_weight ** 0.5
 
-        if mu is None:
-            mu = self._get_optimum_mu(X, y, sample_weight)
-        self.coef_ = self._solve(X, y, mu, *args, **kwargs)
+        self.coef_ = self._solve(X, y, *args, **kwargs)
 
     def predict(self, X):
         if self.coef_ is None:
@@ -79,6 +77,29 @@ class BaseEstimator():
         cv = 1 - ssr / np.sum((y - np.average(y)) ** 2)
         return cv
 
+
+class CVXEstimator(BaseEstimator):
+    """
+    Estimator implementing the written l1regs cvx based solver
+    """
+
+    def __init__(self):
+        super().__init__()
+
+    def _solve(self, X, y, mu):
+        """
+        X and y should already have been adjusted to account for weighting
+        """
+
+        # Maybe its cleaner to use importlib at the top to try and import these?
+        from .l1regls import l1regls, solvers
+        solvers.options['show_progress'] = False
+        from cvxopt import matrix
+
+        X1 = matrix(X)
+        b = matrix(y * mu)
+        return (np.array(l1regls(X1, b)) / mu).flatten()
+
     def _get_optimum_mu(self, X, y, weights, k=5, min_mu=0.1, max_mu=6):
         """
         Finds the value of mu that maximizes the cv score
@@ -105,25 +126,11 @@ class BaseEstimator():
         logging.info('best cv score: {}'.format(np.nanmax(self.cvs)))
         return mus[np.nanargmax(cvs)]
 
+    def fit(self, X, y, sample_weight=None, mu=None, *args, **kwargs):
+        if sample_weight is not None:
+            X = X * sample_weight[:, None] ** 0.5
+            y = y * sample_weight ** 0.5
 
-class CVXEstimator(BaseEstimator):
-    """
-    Estimator implementing the written l1regs cvx based solver
-    """
-
-    def __init__(self):
-        super().__init__()
-
-    def _solve(self, X, y, mu):
-        """
-        X and y should already have been adjusted to account for weighting
-        """
-
-        # Maybe its cleaner to use importlib at the top to try and import these?
-        from .l1regls import l1regls, solvers
-        solvers.options['show_progress'] = False
-        from cvxopt import matrix
-
-        X1 = matrix(X)
-        b = matrix(y * mu)
-        return (np.array(l1regls(X1, b)) / mu).flatten()
+        if mu is None:
+            mu = self._get_optimum_mu(X, y, sample_weight)
+        self.coef_ = self._solve(X, y, mu, *args, **kwargs)

@@ -16,7 +16,7 @@ class TestClusterSubSpace(unittest.TestCase):
         self.structure = Structure(self.lattice, self.species, self.coords)
         sf = SpacegroupAnalyzer(self.structure)
         self.symops = sf.get_symmetry_operations()
-        self.cs = ClusterSubspace.from_radii(self.structure, {2:6, 3:5})
+        self.cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5})
 
     def test_numbers(self):
         # Test the total generated orbits, orderings and clusters are as expected.

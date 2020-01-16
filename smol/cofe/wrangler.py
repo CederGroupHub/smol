@@ -8,8 +8,9 @@ from monty.json import MSONable
 from pymatgen import Composition
 from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
 
-from .configspace.clusterspace import ClusterSubspace
-from .utils import StructureMatchError
+from smol.cofe import ClusterSubspace
+from smol.cofe.configspace import EwaldTerm
+from smol.cofe.utils import StructureMatchError
 
 
 def weights_e_above_comp(structures, energies, temperature=2000):
@@ -70,7 +71,7 @@ class StructureWrangler(MSONable):
     """
 
 
-    def __init__(self, clustersubspace, data=None, weights=None):
+    def __init__(self, clustersubspace, data=None, weights=None, **wkwargs):
         """
         This class is meant to take all input training data in the form of (structure, property) where the
         property is usually (lets be honest always) the energy for the given structure.
@@ -82,6 +83,8 @@ class StructureWrangler(MSONable):
                 A ClusterSubspace object that will be used to fit a ClusterExpansion with the provided data.
             data (list):
                 list of (structure, property) data
+            wkwargs:
+                key word arguments passed to weight function
         """
         self.cs = clustersubspace
         self.get_weights = {'composition': weights_e_above_comp,
@@ -90,14 +93,7 @@ class StructureWrangler(MSONable):
 
         if data is not None:
             self.add_data(data)
-
-            if isinstance(weights, str) :
-                if weights not in self.get_weights.keys():
-                    raise AttributeError(f'{weights} is not a valid keyword.'
-                                         f'Weights must be one of {self.get_weights.keys()}')
-                self.weights = self.get_weights[weights](self.structures, self.properties)
-            elif weights is not None:
-                self.weights = weights
+            self.set_weights(weights, **wkwargs)
 
     @property
     def structures(self):
@@ -153,8 +149,16 @@ class StructureWrangler(MSONable):
         self.items += items
         logging.info(f"Matched {len(items)} of {len(data)} structures")
 
-    #TODO change this so data can be filtered by ewald even if the Ewald term is not used in expansion
-    # Curently the clustersubspace must have an ewald term as the very last term.
+    def set_weights(self, weights, **kwargs):
+        """Set the weights for each data point"""
+        if isinstance(weights, str):
+            if weights not in self.get_weights.keys():
+                raise AttributeError(f'{weights} is not a valid keyword.'
+                                     f'Weights must be one of {self.get_weights.keys()}')
+            self.weights = self.get_weights[weights](self.structures, self.properties, **kwargs)
+        elif weights is not None:
+            self.weights = weights
+
     def filter_by_ewald(self, max_ewald):
         """
         Filter the input structures to only use those with low electrostatic
@@ -167,25 +171,33 @@ class StructureWrangler(MSONable):
             max_ewald (float):
                 Ewald threshold
         """
+        ewald_corr = None
         for term, args, kwargs in self.cs.external_terms:
-            if term.__name__ == 'EwaldTerm' and 'use_inv_r' in kwargs.keys():
-                if kwargs['use_inv_r']:
+            if term.__name__ == 'EwaldTerm':
+                if 'use_inv_r' in kwargs.keys() and kwargs['use_inv_r']:
                     raise NotImplementedError('cant use inv_r with max_ewald yet')
+                ewald_corr = [i['features'][-1] for i in self.items]
+        if ewald_corr is None:
+            ewald_corr = []
+            for s in self.structures:
+                supercell = self.cs.supercell_from_structure(s)
+                occu = supercell.occu_from_structure(s)
+                ewald_corr.append(EwaldTerm.corr_from_occu(occu, supercell))
 
         min_e = defaultdict(lambda: np.inf)
-        for i in self.items:
-            c = i['structure'].composition.reduced_composition
-            if i['features'][-1] < min_e[c]:
-                min_e[c] = i['features'][-1]
+        for ecorr, item in zip(ewald_corr, self.items):
+            c = item['structure'].composition.reduced_composition
+            if ecorr < min_e[c]:
+                min_e[c] = ecorr
 
         items = []
-        for i in self.items:
-            r_e = i['features'][-1] - min_e[i['structure'].composition.reduced_composition]
+        for ecorr, item in zip(ewald_corr, self.items):
+            r_e = ecorr - min_e[item['structure'].composition.reduced_composition]
             if r_e > max_ewald:
                 logging.debug('Skipping {} with energy {}, ewald energy is {}'
-                              ''.format(i['structure'].composition, i['property'], r_e))
+                              ''.format(item['structure'].composition, item['property'], r_e))
             else:
-                items.append(i)
+                items.append(item)
         self.items = items
 
     @classmethod
