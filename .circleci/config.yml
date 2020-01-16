@@ -75,7 +75,7 @@ build-cython:
             . venv/bin/activate
             python setup.py --quiet install --use-cython
 
-  style-check:
+style-check:
     docker:
       - image: circleci/python:3.7.3
 
