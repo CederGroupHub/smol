@@ -10,7 +10,6 @@ import platform
 
 from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext as _build_ext
-from Cython.Build import cythonize
 import numpy  # this can be put in a function like build_ext to check import and then cythonize
 
 class build_ext(_build_ext):
