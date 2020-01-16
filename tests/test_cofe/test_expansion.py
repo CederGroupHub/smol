@@ -7,6 +7,9 @@ from smol.cofe.configspace import EwaldTerm
 from smol.cofe.regression import constrain_dielectric
 from smol.cofe.regression.estimator import CVXEstimator, BaseEstimator
 
+
+# Probably should also add fitting to synthetic data.
+# i.e. using from pymatgen.transformations.advanced_transformations import EnumerateStructureTransformation
 class TestClusterExpansion(unittest.TestCase):
     def setUp(self) -> None:
         self.cs = ClusterSubspace.from_radii(lno_prim, {2: 5, 3: 4.1}, ltol=0.15, stol=0.2,
