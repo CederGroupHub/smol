@@ -8,9 +8,9 @@ from pymatgen.util.coord import lattice_points_in_supercell, coord_list_mapping_
 from ..utils import StructureMatchError, SITE_TOL
 from src.ce_utils import delta_corr_single_flip
 
-#TODO can we simple obtain the cluster vectors based on the clustersubspace
+# TODO can we simple obtain the cluster vectors based on the clustersubspace
 # (ie get rid or simplify this supercell thing)?
-#TODO the supercell and supercell_matrix should probably be obtained with an undercorated structure/lattice
+# TODO the supercell and supercell_matrix should probably be obtained with an undercorated structure/lattice
 
 
 class ClusterSupercell(object):
@@ -119,7 +119,7 @@ class ClusterSupercell(object):
                                      stol=self.clustersubspace.stol,
                                      angle_tol=self.clustersubspace.angle_tol)
 
-        #TODO the mapping depends on the given structure. Is being able to short-circuit this by setting an
+        # TODO the mapping depends on the given structure. Is being able to short-circuit this by setting an
         # attribute a good idea?
         if self.mapping is None:
             mapping = sm_no_orb.get_mapping(self.supercell, structure)
@@ -129,7 +129,7 @@ class ClusterSupercell(object):
         else:
             mapping = self.mapping
 
-        occu = [] #np.zeros(len(self.supercell), dtype=np.int)
+        occu = []  # np.zeros(len(self.supercell), dtype=np.int)
         for i, bit in enumerate(self.bits):
             # rather than starting with all vacancies and looping
             # only over mapping, explicitly loop over everything to
@@ -144,7 +144,7 @@ class ClusterSupercell(object):
         else:
             return occu, mapping
 
-    #TODO get rid of this?
+    # TODO get rid of this?
     def occu_energy(self, occu, ecis):
         return np.dot(self.corr_from_occupancy(occu), ecis) * self.size
 

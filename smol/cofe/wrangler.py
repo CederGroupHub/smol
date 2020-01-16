@@ -138,8 +138,6 @@ class StructureWrangler(MSONable):
                 msg = f'Unable to match {s.composition} with energy {p} to supercell. Throwing out. '
                 warnings.warn(msg + f'Error Message: {str(e)}.', RuntimeWarning)
                 continue
-            except:
-                raise
             items.append({'structure': s,
                           'property': p,
                           'supercell': sc,

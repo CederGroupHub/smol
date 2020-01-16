@@ -5,7 +5,6 @@ These include the basis functions and measure that defines the inner product
 
 from abc import ABC, abstractmethod
 from copy import deepcopy
-from collections import OrderedDict
 import inspect
 import warnings
 from functools import partial
@@ -237,7 +236,7 @@ def basis_factory(basis_name, *args, **kwargs):
     except KeyError:
         available = _get_subclasses(SiteBasis)
         raise BasisNotImplemented(f'{basis_name} is not implemented. '
-              f'Choose one of {available}')
+                                  f'Choose one of {available}')
     return instance
 
 

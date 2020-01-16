@@ -10,8 +10,8 @@ from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
 from cvxopt import matrix, solvers
 from .estimator import BaseEstimator
 
-# TODO gspreserve solve need to fix calls to e_above_hull was in the ECI_gen megaclass from before
 
+# TODO gspreserve solve need to fix calls to e_above_hull was in the ECI_gen megaclass from before
 class GSPreserveEstimator(BaseEstimator):
     """
     Esetimator implementing WH's gs preserve fit.
@@ -79,7 +79,7 @@ class GSPreserveEstimator(BaseEstimator):
                 reduced_comp = self.structures[
                     i].composition.element_composition.reduced_composition.element_composition
 
-                if reduced_comp in reduce_composition_at_hull:  ## in hull composition
+                if reduced_comp in reduce_composition_at_hull:  # in hull composition
 
                     hull_idx = reduce_composition_at_hull.index(reduced_comp)
                     global_index = structure_index_at_hull[hull_idx]

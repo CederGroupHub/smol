@@ -1,4 +1,5 @@
-#TODO think of adding a metrics module
+# TODO think of adding a metrics module
+
 
 def constrain_dielectric(ce, max_dielectric, e_ind=-1, *fitargs, **fitkwargs):
     """

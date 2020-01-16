@@ -63,7 +63,7 @@ class Cluster(MSONable):
         return not self.__eq__(other)
 
     def __str__(self):
-        points = str(np.round(self.sites,2)).replace("\n", " ").ljust(len(self.sites) * 21)
+        points = str(np.round(self.sites, 2)).replace("\n", " ").ljust(len(self.sites) * 21)
         return f'[Cluster] id: {self.c_id}, Radius: {self.radius:<4.3}, Points: {points}, ' \
                f'Centroid: {np.round(self.centroid,2)}'
 

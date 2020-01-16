@@ -88,7 +88,7 @@ class Orbit(MSONable):
         """
         if self._bit_combos is not None:
             return self._bit_combos
-        #get all the bit symmetry operations
+        # get all the bit symmetry operations
         bit_ops = []
         for _, bitop in self.cluster_symops:
             if bitop not in bit_ops:
@@ -121,7 +121,7 @@ class Orbit(MSONable):
                 equiv.append(c)
         self._equiv = equiv
         if len(equiv) * len(self.cluster_symops) != len(self.structure_symops):
-            self._equiv = None # Unset this
+            self._equiv = None  # Unset this
             raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
 
         return equiv
@@ -175,7 +175,7 @@ class Orbit(MSONable):
 
     def __eq__(self, other):
         try:
-        # when performing Orbit in list, this ordering stops the equivalent structures from generating
+            # when performing Orbit in list, this ordering stops the equivalent structures from generating
             return any(self.basecluster == cluster for cluster in other.clusters)
         except AttributeError as e:
             print(e.message)
@@ -216,7 +216,7 @@ class Orbit(MSONable):
         """
         d = {"@module": self.__class__.__module__,
              "@class": self.__class__.__name__,
-             "sites": self.basecluster.sites.tolist() ,
+             "sites": self.basecluster.sites.tolist(),
              "lattice": self.lattice.as_dict(),
              "bits": self.bits,
              "site_bases": [(sb.__class__.__name__[:-5].lower(), sb.species) for sb in self.site_bases],

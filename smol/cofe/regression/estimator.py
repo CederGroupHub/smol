@@ -10,7 +10,8 @@ import logging
 import warnings
 from ..utils import NotFittedError
 
-class BaseEstimator():
+
+class BaseEstimator:
     """
     A simple estimator class to use different 'in-house'  solvers to fit a cluster-expansion
     This should be used to create specific estimator classes by inheriting. New classes simple need to implement
@@ -54,7 +55,7 @@ class BaseEstimator():
         variance for each of these partitions, and add them together
         """
         if weights is None:
-            weights = np.ones(len(X[:,0]))
+            weights = np.ones(len(X[:, 0]))
         logging.info('starting cv score calculations for mu: {}, k: {}'.format(mu, k))
         # generate random partitions
         partitions = np.tile(np.arange(k), len(y) // k + 1)

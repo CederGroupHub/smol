@@ -10,6 +10,7 @@ from . import Orbit, ClusterSupercell
 from .basis import basis_factory
 from ..utils import SymmetryError, StructureMatchError, SYMMETRY_ERROR_MESSAGE, SITE_TOL
 
+
 def get_bits(structure):
     """
     Helper method to compute list of species on each site.
@@ -78,7 +79,7 @@ class ClusterSubspace(MSONable):
                                    allow_subset=True,
                                    scale=True,
                                    supercell_size=self.supercell_size,
-                                   #comparator=FrameworkComparator(),
+                                   # comparator=FrameworkComparator(),
                                    comparator=OrderDisorderElementComparator(),
                                    stol=self.stol,
                                    ltol=self.ltol,
@@ -116,9 +117,9 @@ class ClusterSubspace(MSONable):
         """
 
         symops = SpacegroupAnalyzer(structure).get_symmetry_operations()
-        #get the sites to expand over
-        sites_to_expand = [site for site in structure if site.species.num_atoms < 0.99 \
-                            or len(site.species) > 1]
+        # get the sites to expand over
+        sites_to_expand = [site for site in structure if site.species.num_atoms < 0.99
+                           or len(site.species) > 1]
         expansion_structure = Structure.from_sites(sites_to_expand)
         orbits = cls._orbits_from_radii(expansion_structure, radii, symops, basis, orthonormal)
         return cls(structure=structure, expansion_structure=expansion_structure, symops=symops, orbits=orbits,
@@ -147,7 +148,7 @@ class ClusterSubspace(MSONable):
             if new_orbit not in new_orbits:
                 new_orbits.append(new_orbit)
 
-        orbits[1] = sorted(new_orbits, key = lambda x: (np.round(x.radius,6), -x.multiplicity))
+        orbits[1] = sorted(new_orbits, key=lambda x: (np.round(x.radius, 6), -x.multiplicity))
         all_neighbors = expansion_structure.lattice.get_points_in_sphere(expansion_structure.frac_coords,
                                                                          [0.5, 0.5, 0.5],
                                                                          max(radii.values()) +
@@ -168,7 +169,7 @@ class ClusterSubspace(MSONable):
                     elif new_orbit not in new_orbits:
                         new_orbits.append(new_orbit)
 
-            orbits[size] = sorted(new_orbits, key = lambda x: (np.round(x.radius,6), -x.multiplicity))
+            orbits[size] = sorted(new_orbits, key=lambda x: (np.round(x.radius, 6), -x.multiplicity))
         return orbits
 
     @property
@@ -226,15 +227,15 @@ class ClusterSubspace(MSONable):
             return corr
 
     def corr_from_external(self, structure, sc_matrix, mapping=None):
-        sc = self.supercell_from_matrix(sc_matrix) # get clustersupercell
-        if mapping != None:
+        sc = self.supercell_from_matrix(sc_matrix)  # get clustersupercell
+        if mapping is not None:
             sc.mapping = mapping
         occu = sc.occu_from_structure(structure)
         return sc.corr_from_occupancy(occu)
 
     def refine_structure_external(self, structure, sc_matrix):
         sc = self.supercell_from_matrix(sc_matrix)
-        occu, mapping = sc.occu_from_structure(structure, return_mapping = True)
+        occu, mapping = sc.occu_from_structure(structure, return_mapping=True)
         return sc.structure_from_occu(occu), mapping
 
     @property
