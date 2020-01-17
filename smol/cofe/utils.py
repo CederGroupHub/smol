@@ -1,20 +1,23 @@
 """
 A lot of random utilies that have no place to go :(
 """
+
 from typing import Dict, Any
 SITE_TOL = 1e-6
 
 
-SYMMETRY_ERROR_MESSAGE = ("Error in calculating symmetry operations. Try using a "
-                          "more symmetrically refined input structure. "
-                          "SpacegroupAnalyzer(s).get_refined_structure().get_primitive_structure() "
+SYMMETRY_ERROR_MESSAGE = ("Error in calculating symmetry operations."
+                          "Try using a more symmetrically refined input"
+                          "structure. "
+                          "SpacegroupAnalyzer(s).get_refined_structure()"
+                          ".get_primitive_structure() "
                           "usually results in a safe choice")
 
 
 class SymmetryError(ValueError):
     """
-    Exception class to raise when symmetry of a structure are not compatible with a set of given
-    symops
+    Exception class to raise when symmetry of a structure are not compatible
+    with a set of given symops
     """
 
 
@@ -42,6 +45,7 @@ def _repr(object: object, **fields: Dict[str, Any]) -> str:
         attrs.append(f'{key}={field!r}')
 
     if len(attrs) == 0:
-        return f"<{object.__class__.__name__} {hex(id(object))}({','.join(attrs)})>"
+        return f"<{object.__class__.__name__}" \
+               f"{hex(id(object))}({','.join(attrs)})>"
     else:
         return f"<{object.__class__.__name__} {hex(id(object))}>"

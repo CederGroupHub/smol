@@ -1,14 +1,23 @@
+"""
+This Module implements the ClusterSubspace class necessary to define the terms
+to be included in a cluster expansion. A cluster subspace is a finite set of
+clusters, more precisely orbits, that define represent vectors which define
+a subspace of the total configurational space of a given lattice system.
+"""
+
 from __future__ import division
 import numpy as np
 from monty.json import MSONable
 from pymatgen import Structure
-from pymatgen.analysis.structure_matcher import StructureMatcher, OrderDisorderElementComparator, FrameworkComparator
+from pymatgen.analysis.structure_matcher import StructureMatcher,\
+     OrderDisorderElementComparator  # , FrameworkComparator
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc
 
 from . import Orbit, ClusterSupercell
 from .basis import basis_factory
-from ..utils import SymmetryError, StructureMatchError, SYMMETRY_ERROR_MESSAGE, SITE_TOL
+from ..utils import SymmetryError, StructureMatchError,\
+    SYMMETRY_ERROR_MESSAGE, SITE_TOL
 
 
 def get_bits(structure):
@@ -29,44 +38,50 @@ def get_bits(structure):
 
 class ClusterSubspace(MSONable):
     """
-    Holds a structure, its expansion structure and a list of Orbits. This class defines the Cluster subspace over
-    which to fit a cluster expansion: This sets the orbits (groups of clusters) that are to be considered in the fit.
+    Holds a structure, its expansion structure and a list of Orbits.
+    This class defines the Cluster subspace over which to fit a cluster
+    expansion: This sets the orbits (groups of clusters) that are to be
+    considered in the fit.
 
-    This is probably the class you're looking for to start defining a cluster expansion.
+    This is probably the class you're looking for to start defining the
+    structure and cluster terms for your cluster expansion.
 
-    You probably want to generate from ClusterSubspace.from_radii, which will auto-generate the orbits,
-    unless you want more control over them.
+    You probably want to generate from ClusterSubspace.from_radii, which will
+    auto-generate the orbits, unless you want more control over them.
     """
 
-    def __init__(self, structure, expansion_structure, symops, orbits, ltol=0.2, stol=0.1, angle_tol=5,
-                 supercell_size='volume'):
+    def __init__(self, structure, expansion_struct, symops, orbits,
+                 ltol=0.2, stol=0.1, angle_tol=5, supercell_size='volume'):
         """
         Args:
             structure (pymatgen.Structure):
-                Structure to define the cluster space. Typically the primitive cell. Includes
-                all species regardless of partial occupation.
-            expansion_structure (pymatgen.Structure):
-                Structure including only sites that will be included in the Cluster space.
+                Structure to define the cluster space. Typically the primitive
+                cell. Includes all species regardless of partial occupation.
+            expansion_struct (pymatgen.Structure):
+                Structure including only sites that will be included in the
+                Cluster space.
                 (partial occupancy)
             symops (list(pymatgen.Symmop)):
                 list of Symmops for the given structure.
             orbits (dict(size: list(Orbit))):
-                dictionary with size (number of sites) as keys and list of Orbits as values.
-            ltol, stol, angle_tol, supercell_size: parameters to pass through to the StructureMatcher.
-                Structures that don't match to the primitive cell under these tolerances won't be included
-                in the expansion. Easiest option for supercell_size is usually to use a species that has a
-                constant amount per formula unit.
+                dictionary with size (number of sites) as keys and list of
+                Orbits as values.
+            ltol, stol, angle_tol, supercell_size: parameters to pass through
+                to the StructureMatcher. Structures that don't match to the
+                primitive cell under these tolerances won't be included
+                in the expansion. Easiest option for supercell_size is usually
+                to use a species that has a constant amount per formula unit.
         """
 
         self.stol = stol
         self.ltol = ltol
         self.angle_tol = angle_tol
         self.structure = structure
-        self.expansion_structure = expansion_structure
+        self.expansion_structure = expansion_struct
         self.symops = symops
 
-        # test that all the found symmetry operations map back to the input structure
-        # otherwise you can get weird subset/superset bugs
+        # test that all the found symmetry operations map back to the input
+        # structure otherwise you can get weird subset/superset bugs
         fc = self.structure.frac_coords
         for op in self.symops:
             if not is_coord_subset_pbc(op.operate_multi(fc), fc, SITE_TOL):
@@ -87,52 +102,63 @@ class ClusterSubspace(MSONable):
         self._orbits = orbits
 
         # assign the cluster ids
-        n_clusters = 1
-        n_bit_orderings = 1
-        n_orbits = 1
+        n_clstr = 1
+        n_bit_ords = 1
+        n_orbs = 1
         for k in sorted(self._orbits.keys()):
             for y in self._orbits[k]:
-                n_orbits, n_bit_orderings, n_clusters = y.assign_ids(n_orbits, n_bit_orderings, n_clusters)
+                n_orbs, n_bit_ords, n_clstr = y.assign_ids(n_orbs,
+                                                           n_bit_ords,
+                                                           n_clstr)
 
-        self.n_orbits = n_orbits
-        self.n_clusters = n_clusters
-        self.n_bit_orderings = n_bit_orderings
+        self.n_orbits = n_orbs
+        self.n_clusters = n_clstr
+        self.n_bit_orderings = n_bit_ords
         self._supercells = {}
         self._external_terms = []
 
     @classmethod
-    def from_radii(cls, structure, radii, ltol=0.2, stol=0.1, angle_tol=5, supercell_size='volume',
-                   basis='indicator', orthonormal=False):
+    def from_radii(cls, structure, radii, ltol=0.2, stol=0.1, angle_tol=5,
+                   supercell_size='volume', basis='indicator',
+                   orthonormal=False):
         """
         Args:
             structure:
-                disordered structure to build a cluster expansion for. Typically the primitive cell
+                disordered structure to build a cluster expansion for.
+                Typically the primitive cell
             radii:
-                dict of {cluster_size: max_radius}. Radii should be strictly decreasing.
-                Typically something like {2:5, 3:4}
-            ltol, stol, angle_tol, supercell_size: parameters to pass through to the StructureMatcher.
-                Structures that don't match to the primitive cell under these tolerances won't be included
-                in the expansion. Easiest option for supercell_size is usually to use a species that has a
-                constant amount per formula unit.
+                dict of {cluster_size: max_radius}. Radii should be strictly
+                decreasing. Typically something like {2:5, 3:4}
+            ltol, stol, angle_tol, supercell_size: parameters to pass through
+                to the StructureMatcher. Structures that don't match to the
+                primitive cell under these tolerances won't be included in the
+                expansion. Easiest option for supercell_size is usually to use
+                a species that has a constant amount per formula unit.
         """
 
         symops = SpacegroupAnalyzer(structure).get_symmetry_operations()
         # get the sites to expand over
-        sites_to_expand = [site for site in structure if site.species.num_atoms < 0.99
+        sites_to_expand = [site for site in structure
+                           if site.species.num_atoms < 0.99
                            or len(site.species) > 1]
         expansion_structure = Structure.from_sites(sites_to_expand)
-        orbits = cls._orbits_from_radii(expansion_structure, radii, symops, basis, orthonormal)
-        return cls(structure=structure, expansion_structure=expansion_structure, symops=symops, orbits=orbits,
-                   ltol=ltol, stol=stol, angle_tol=angle_tol, supercell_size=supercell_size)
+        orbits = cls._orbits_from_radii(expansion_structure, radii, symops,
+                                        basis, orthonormal)
+        return cls(structure=structure,
+                   expansion_struct=expansion_structure, symops=symops,
+                   orbits=orbits, ltol=ltol, stol=stol, angle_tol=angle_tol,
+                   supercell_size=supercell_size)
 
     @staticmethod
-    def _orbits_from_radii(expansion_structure, radii, symops, basis, orthonormal):
+    def _orbits_from_radii(expansion_struct, radii, symops, basis,
+                           orthonormal):
         """
-        Generates dictionary of {size: [Orbits]} given a dictionary of maximal cluster radii and symmetry
-        operations to apply (not necessarily all the symmetries of the expansion_structure)
+        Generates dictionary of {size: [Orbits]} given a dictionary of maximal
+        cluster radii and symmetry operations to apply (not necessarily all the
+        symmetries of the expansion_struct)
         """
 
-        bits = get_bits(expansion_structure)
+        bits = get_bits(expansion_struct)
         nbits = np.array([len(b) - 1 for b in bits])
         sbases = tuple(basis_factory(basis, bit) for bit in bits)
         if orthonormal:
@@ -142,17 +168,18 @@ class ClusterSubspace(MSONable):
         orbits = {}
         new_orbits = []
 
-        for bit, nbit, site, sbasis in zip(bits, nbits, expansion_structure, sbases):
-            new_orbit = Orbit([site.frac_coords], expansion_structure.lattice,
+        for bit, nbit, site, sbasis in zip(bits, nbits,
+                                           expansion_struct, sbases):
+            new_orbit = Orbit([site.frac_coords], expansion_struct.lattice,
                               [np.arange(nbit)], [sbasis], symops)
             if new_orbit not in new_orbits:
                 new_orbits.append(new_orbit)
 
-        orbits[1] = sorted(new_orbits, key=lambda x: (np.round(x.radius, 6), -x.multiplicity))
-        all_neighbors = expansion_structure.lattice.get_points_in_sphere(expansion_structure.frac_coords,
-                                                                         [0.5, 0.5, 0.5],
-                                                                         max(radii.values()) +
-                                                                         sum(expansion_structure.lattice.abc)/2)
+        orbits[1] = sorted(new_orbits, key=lambda x: (np.round(x.radius, 6), -x.multiplicity))  # noqa
+
+        all_neighbors = expansion_struct.lattice.get_points_in_sphere(expansion_struct.frac_coords,  # noqa
+                                                                      [0.5, 0.5, 0.5],  # noqa
+                                                                      max(radii.values()) + sum(expansion_struct.lattice.abc) / 2)  # noqa
         for size, radius in sorted(radii.items()):
             new_orbits = []
             for orbit in orbits[size-1]:
@@ -160,16 +187,20 @@ class ClusterSubspace(MSONable):
                     continue
                 for n in all_neighbors:
                     p = n[0]
-                    if is_coord_subset([p], orbit.basecluster.sites, atol=SITE_TOL):
+                    if is_coord_subset([p], orbit.basecluster.sites,
+                                       atol=SITE_TOL):
                         continue
-                    new_orbit = Orbit(np.concatenate([orbit.basecluster.sites, [p]]), expansion_structure.lattice,
-                                      orbit.bits + [np.arange(nbits[n[2]])], orbit.site_bases + [sbases[n[2]]], symops)
+                    new_sites = np.concatenate([orbit.basecluster.sites, [p]])
+                    new_orbit = Orbit(new_sites, expansion_struct.lattice,
+                                      orbit.bits + [np.arange(nbits[n[2]])],
+                                      orbit.site_bases + [sbases[n[2]]],
+                                      symops)
                     if new_orbit.radius > radius + 1e-8:
                         continue
                     elif new_orbit not in new_orbits:
                         new_orbits.append(new_orbit)
 
-            orbits[size] = sorted(new_orbits, key=lambda x: (np.round(x.radius, 6), -x.multiplicity))
+            orbits[size] = sorted(new_orbits, key=lambda x: (np.round(x.radius, 6), -x.multiplicity))  # noqa
         return orbits
 
     @property
@@ -177,13 +208,17 @@ class ClusterSubspace(MSONable):
         return self._external_terms
 
     def add_external_term(self, term, *args, **kwargs):
-        """Add an external term (e.g. an Ewald term) to the cluster expansion terms"""
+        """
+        Add an external term (e.g. an Ewald term) to the cluster expansion
+        terms.
+        """
         self._external_terms.append((term, args, kwargs))
 
     def supercell_matrix_from_structure(self, structure):
         sc_matrix = self.sm.get_supercell_matrix(structure, self.structure)
         if sc_matrix is None:
-            raise StructureMatchError('Supercell could not be found from structure')
+            raise StructureMatchError('Supercell could not be found from'
+                                      'structure')
         if np.linalg.det(sc_matrix) < 0:  # What this for?
             sc_matrix *= -1
         return sc_matrix
@@ -195,7 +230,8 @@ class ClusterSubspace(MSONable):
         else:
             supercell = self.structure.copy()
             supercell.make_supercell(sc_matrix)
-            sc = ClusterSupercell(self, supercell, sc_matrix, get_bits(supercell))
+            sc = ClusterSupercell(self, supercell, sc_matrix,
+                                  get_bits(supercell))
             self._supercells[scm] = sc
         return sc
 
@@ -210,7 +246,8 @@ class ClusterSubspace(MSONable):
 
     def corr_from_structure(self, structure, return_size=False):
         """
-        Given a structure, determines which supercell to use, and gets the correlation vector
+        Given a structure, determines which supercell to use, and gets the
+        correlation vector
         """
         sc = self.supercell_from_structure(structure)
         occu = sc.occu_from_structure(structure)
@@ -241,7 +278,8 @@ class ClusterSubspace(MSONable):
     @property
     def orbits(self):
         """Returns a list of all orbits sorted by size"""
-        return [orbit for k, orbits in sorted(self._orbits.items()) for orbit in orbits]
+        return [orbit for k, orbits
+                in sorted(self._orbits.items()) for orbit in orbits]
 
     def iterorbits(self):
         """Orbit generator, yields orbits"""
@@ -264,14 +302,16 @@ class ClusterSubspace(MSONable):
         """
 
         symops = [SymmOp.from_dict(so_d) for so_d in d['symops']]
-        orbits = {s: [Orbit.from_dict(o) for o in v] for s, v in d['orbits'].items()}
+        orbits = {s: [Orbit.from_dict(o) for o in v]
+                  for s, v in d['orbits'].items()}
         cs = cls(structure=Structure.from_dict(d['structure']),
-                 expansion_structure=Structure.from_dict(d['expansion_structure']),
+                 expansion_struct=Structure.from_dict(d['expansion_struct']),
                  orbits=orbits, symops=symops,
                  ltol=d['ltol'], stol=d['stol'], angle_tol=d['angle_tol'],
                  supercell_size=d['supercell_size'])
         # TODO implement dis
-        # cs._external_terms = [ExternalTerm.from_dict(et_d) for et_d in d['external_terms']]
+        # cs._external_terms = [ExternalTerm.from_dict(et_d)
+        # for et_d in d['external_terms']]
         return cs
 
     def as_dict(self):
@@ -285,13 +325,14 @@ class ClusterSubspace(MSONable):
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
              'structure': self.structure.as_dict(),
-             'expansion_structure': self.expansion_structure.as_dict(),
+             'expansion_struct': self.expansion_structure.as_dict(),
              'symops': [so.as_dict() for so in self.symops],
-             'orbits': {s: [o.as_dict() for o in v] for s, v in self._orbits.items()},
+             'orbits': {s: [o.as_dict() for o in v]
+                        for s, v in self._orbits.items()},
              'ltol': self.ltol,
              'stol': self.stol,
              'angle_tol': self.angle_tol,
              'supercell_size': self.supercell_size,
-             #'external_terms': [et.as_dict() for et in self.external_terms]
+             # 'external_terms': [et.as_dict() for et in self.external_terms]
              }
         return d

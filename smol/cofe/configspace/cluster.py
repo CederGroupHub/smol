@@ -1,3 +1,9 @@
+"""
+Implementation of the Cluster class, which represents a group of sites of a
+given lattice. Aka the building blocks for a cluster basis of functions over
+configurational space
+"""
+
 from __future__ import division
 import numpy as np
 from monty.json import MSONable
@@ -39,7 +45,7 @@ class Cluster(MSONable):
     @property
     def radius(self):
         coords = self.lattice.get_cartesian_coords(self.sites)
-        all_d2 = np.sum((coords[None, :, :] - coords[:, None, :]) ** 2, axis=-1)
+        all_d2 = np.sum((coords[None, :, :] - coords[:, None, :])**2, axis=-1)
         return np.max(all_d2) ** 0.5
 
     def assign_ids(self, c_id):
@@ -53,8 +59,8 @@ class Cluster(MSONable):
         try:
             if self.sites.shape != other.sites.shape:
                 return False
-            other_sites = other.sites + np.round(self.centroid - other.centroid)
-            return is_coord_subset(self.sites, other_sites, atol=SITE_TOL)
+            othersites = other.sites + np.round(self.centroid - other.centroid)
+            return is_coord_subset(self.sites, othersites, atol=SITE_TOL)
         except AttributeError as e:
             print(str(e))
             raise NotImplementedError
@@ -63,12 +69,14 @@ class Cluster(MSONable):
         return not self.__eq__(other)
 
     def __str__(self):
-        points = str(np.round(self.sites, 2)).replace("\n", " ").ljust(len(self.sites) * 21)
-        return f'[Cluster] id: {self.c_id}, Radius: {self.radius:<4.3}, Points: {points}, ' \
-               f'Centroid: {np.round(self.centroid,2)}'
+        points = str(np.round(self.sites, 2))
+        points.replace("\n", " ").ljust(len(self.sites)*21)
+        return f'[Cluster] id: {self.c_id}, Radius: {self.radius:<4.3},' \
+               f'Points: {points}, Centroid: {np.round(self.centroid,2)}'
 
     def __repr__(self):
-        return _repr(self, c_id=self.c_id, radius=self.radius, centroid=self.centroid, lattice=self.lattice)
+        return _repr(self, c_id=self.c_id, radius=self.radius,
+                     centroid=self.centroid, lattice=self.lattice)
 
     @classmethod
     def from_dict(cls, d):

@@ -1,18 +1,19 @@
 from __future__ import division
 
 from math import exp
-from monty.json import MSONable
-from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from random import random
-
 import logging
 import numpy as np
+from monty.json import MSONable
+from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 
 class MonteCarloRunner:
     """
     Typical usage for temperature scanning:
-    mc = MonteCarloRunner(ecis=ecis, initial_occu=occu, cluster_supercell=cluster_supercell, flip_function=get_flips)
+    mc = MonteCarloRunner(ecis=ecis, initial_occu=occu,
+                          cluster_supercell=cluster_supercell,
+                          flip_function=get_flips)
     mc.run_mc(40000, start_t=20, end_t=400, n_samples=20000)
     mc.run_mc(120000, start_t=400, end_t=6000, n_samples=60000)
     mc.run_mc(40000, start_t=6000, end_t=300000, n_samples=20000)
@@ -31,10 +32,11 @@ class MonteCarloRunner:
         Args:
             initial_occu: initial occupancy (from cluster_supercell)
             ecis: ecis for cluster expansion
-            flip_function: function that chooses flips based on a given occupancy
+            flip_function:
+                function that chooses flips based on a given occupancy
                 (see ClusterSupercell.delta_corr)
-            corr_inds (np.array[int]): Optional indices of correlations to track
-                during simulation.
+            corr_inds (np.array[int]):
+                Optional indices of correlations to track during simulation.
         """
         self.ecis = ecis
         self.initial_occu = initial_occu
@@ -67,10 +69,10 @@ class MonteCarloRunner:
         trail_x = 1 / (2 * sample_frequency)
 
         if self.corr_inds:
-            tracked_corr = self.cs.corr_from_occupancy(self.occu)[self.corr_inds]
+            tracked_corr = self.cs.corr_from_occupancy(self.occu)[self.corr_inds]  # noqa
             trailing_corr = tracked_corr.copy()
 
-        for loop in xrange(n_iterations):
+        for loop in range(n_iterations):
             flips = self.flip_function(self.occu)
             d_corr, new_occu = self.cs.delta_corr(flips, self.occu)
             de = np.dot(d_corr, self.ecis) * self.cs.size
@@ -81,13 +83,13 @@ class MonteCarloRunner:
                     tracked_corr += d_corr[self.corr_inds]
             trailing_e = (1 - trail_x) * trailing_e + trail_x * self.e
             if self.corr_inds:
-                trailing_corr = (1 - trail_x) * trailing_corr + trail_x * tracked_corr
+                trailing_corr = (1 - trail_x)*trailing_corr + trail_x*tracked_corr  # noqa
             if loop % 10000 == 0:
                 logging.debug("{}, energy: {}, moving_avg: {}, temperature: {}"
                               "".format(loop, self.e, trailing_e, exp(log_t)))
                 # recalculate energy and tracked correlations
                 self.e = self.cs.occu_energy(self.occu, self.ecis)
-                tracked_corr = self.cs.corr_from_occupancy(self.occu)[self.corr_inds]
+                tracked_corr = self.cs.corr_from_occupancy(self.occu)[self.corr_inds]  # noqa
             if loop % sample_frequency == 0:
                 self.energies.append(trailing_e)
                 self.temperatures.append(exp(log_t))
@@ -105,21 +107,23 @@ class MonteCarloRunner:
     @property
     def data(self):
         """
-        Get all the monte carlo data as a numpy array of temperatures and energies
+        Get all the monte carlo data as a numpy array of temperatures and
+        energies
         """
         return np.array([self.temperatures, self.energies])
 
     def get_mc_data(self, n_samples=10000, initial_S=None):
         if initial_S is None:
             if self.temperatures[0] > 50:
-                raise ValueError('Must supply an initial_S for runs that start at '
-                                 'finite temperature. If starting from infinite T, '
-                                 'this is the ideal mixing entropy.')
+                raise ValueError('Must supply an initial_S for runs that start'
+                                 'at finite temperature. If starting from'
+                                 'infinite T, this is the ideal mixing '
+                                 'entropy.')
             logging.info('Calculating initial_S based on symmetry of '
                          'starting structure and supercell')
             initial_struct = self.cs.structure_from_occu(self.initial_occu)
-            smin_nops = len(SpacegroupAnalyzer(initial_struct).get_symmetry_operations())
-            supercell_nops = len(SpacegroupAnalyzer(self.cs.supercell).get_symmetry_operations())
+            smin_nops = len(SpacegroupAnalyzer(initial_struct).get_symmetry_operations())  # noqa
+            supercell_nops = len(SpacegroupAnalyzer(self.cs.supercell).get_symmetry_operations())  # noqa
             initial_S = self.k * np.log(supercell_nops / smin_nops)
 
         return MCData.from_raw_data(self.temperatures, self.energies,
@@ -133,7 +137,8 @@ class MCData(MSONable):
     """
     def __init__(self, T, E, S, G):
         """
-        Don't use this constructor usually. Only needed for as_dict and from_dict
+        Don't use this constructor usually. Only needed for as_dict and
+        from_dict
         """
         self.T = np.array(T)
         self.E = np.array(E)

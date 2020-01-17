@@ -1,6 +1,6 @@
+import math
 from cvxopt import matrix, spdiag, mul, div, sqrt
 from cvxopt import blas, lapack, solvers
-import math
 
 
 def l1regls(A, b):
@@ -13,15 +13,15 @@ def l1regls(A, b):
     """
 
     m, n = A.size
-    q = matrix(1.0, (2*n,1))
-    q[:n] = -2.0 * A.T * b
+    q = matrix(1.0, (2*n, 1))
+    q[:n] = -2.0*A.T*b
 
-    def P(u, v, alpha = 1.0, beta = 0.0 ):
+    def P(u, v, alpha=1.0, beta=0.0):
         """
             v := alpha * 2.0 * [ A'*A, 0; 0, 0 ] * u + beta * v
         """
         v *= beta
-        v[:n] += alpha * 2.0 * A.T * (A * u[:n])
+        v[:n] += alpha*2.0*A.T*(A*u[:n])
 
     def G(u, v, alpha=1.0, beta=0.0, trans='N'):
         """
@@ -32,7 +32,7 @@ def l1regls(A, b):
         v[:n] += alpha*(u[:n] - u[n:])
         v[n:] += alpha*(-u[:n] - u[n:])
 
-    h = matrix(0.0, (2*n,1))
+    h = matrix(0.0, (2*n, 1))
 
     # Customized solver for the KKT system
     #
@@ -70,9 +70,9 @@ def l1regls(A, b):
     #     ( A*D^-1*A' + I ) * v = A * D^-1 * rhs
     #     x[:n] = D^-1 * ( rhs - A'*v ).
 
-    S = matrix(0.0, (m,m))
-    Asc = matrix(0.0, (m,n))
-    v = matrix(0.0, (m,1))
+    S = matrix(0.0, (m, m))
+    # Asc = matrix(0.0, (m, n))
+    v = matrix(0.0, (m, 1))
 
     def Fkkt(W):
         # Factor
@@ -84,9 +84,8 @@ def l1regls(A, b):
         d1, d2 = W['di'][:n]**2, W['di'][n:]**2
 
         # ds is square root of diagonal of D
-        ds = math.sqrt(2.0) * div( mul( W['di'][:n], W['di'][n:]),
-            sqrt(d1+d2) )
-        d3 =  div(d2 - d1, d1 + d2)
+        ds = math.sqrt(2.0)*div(mul(W['di'][:n], W['di'][n:]), sqrt(d1 + d2))
+        d3 = div(d2 - d1, d1 + d2)
 
         # Asc = A*diag(d)^-1/2
         Asc = A * spdiag(ds**-1)
@@ -100,7 +99,7 @@ def l1regls(A, b):
             x[:n] = 0.5 * (x[:n] - mul(d3, x[n:]) +
                            mul(d1, z[:n] + mul(d3, z[:n])) -
                            mul(d2, z[n:] - mul(d3, z[n:])))
-            x[:n] = div( x[:n], ds)
+            x[:n] = div(x[:n], ds)
 
             # Solve
             #
@@ -119,7 +118,7 @@ def l1regls(A, b):
             # x[n:] = (D1+D2)^-1 * ( bx[n:] - D1*bzl[:n]  - D2*bzl[n:] )
             #         - (D2-D1)*(D1+D2)^-1 * x[:n]
             x[n:] = div(x[n:] - mul(d1, z[:n]) - mul(d2, z[n:]), d1+d2)\
-                - mul( d3, x[:n] )
+                - mul(d3, x[:n])
 
             # zl[:n] = D1^1/2 * (  x[:n] - x[n:] - bzl[:n] )
             # zl[n:] = D2^1/2 * ( -x[:n] - x[n:] - bzl[n:] ).
@@ -129,4 +128,3 @@ def l1regls(A, b):
         return g
 
     return solvers.coneqp(P, q, G, h, kktsolver=Fkkt)['x'][:n]
-

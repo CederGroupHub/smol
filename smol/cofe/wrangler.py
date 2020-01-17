@@ -8,8 +8,8 @@ from monty.json import MSONable
 from pymatgen import Composition
 from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
 
-from smol.cofe import ClusterSubspace
 from smol.cofe.configspace import EwaldTerm
+from smol.cofe.configspace.clusterspace import ClusterSubspace
 from smol.cofe.utils import StructureMatchError
 
 
@@ -38,11 +38,15 @@ def _energies_above_composition(structures, energies):
 
 
 def _energies_above_hull(structures, energies, ce_structure):
-    """Computes energies above hull constructed from phase diagram of given structures"""
+    """
+    Computes energies above hull constructed from phase diagram of the
+    given structures
+    """
     pd = _pd(structures, energies, ce_structure)
     e_above_hull = []
     for s, e in zip(structures, energies):
-        e_above_hull.append(pd.get_e_above_hull(PDEntry(s.composition.element_composition, e)))
+        entry = PDEntry(s.composition.element_composition, e)
+        e_above_hull.append(pd.get_e_above_hull(entry))
     return np.array(e_above_hull)
 
 
@@ -55,32 +59,39 @@ def _pd(structures, energies, cs_structure):
     for s, e in zip(structures, energies):
         entries.append(PDEntry(s.composition.element_composition, e))
 
-    max_e = max(entries, key=lambda e: e.energy_per_atom).energy_per_atom + 1000
+    max_e = max(entries, key=lambda e: e.energy_per_atom).energy_per_atom
+    max_e += 1000
     for el in cs_structure.composition.keys():
-        entries.append(PDEntry(Composition({el: 1}).element_composition, max_e))
+        entry = PDEntry(Composition({el: 1}).element_composition, max_e)
+        entries.append(entry)
 
     return PhaseDiagram(entries)
 
 
-# TODO should have a dictionary with the applied filters and their parameters to keep track of what has been done
+# TODO should have a dictionary with the applied filters and their parameters
+# to keep track of what has been done
 class StructureWrangler(MSONable):
     """
-    Class that handles (wrangles) input data structures and properties to fit in a cluster expansion.
-    This class holds a ClusterSubspace used to compute correlation vectors and produce feauter/design matrices used to
-    fit the final ClusterExpansion.
+    Class that handles (wrangles) input data structures and properties to fit
+    in a cluster expansion. This class holds a ClusterSubspace used to compute
+    correlation vectors and produce feauter/design matrices used to fit the
+    final ClusterExpansion.
     """
-
 
     def __init__(self, clustersubspace, data=None, weights=None, **wkwargs):
         """
-        This class is meant to take all input training data in the form of (structure, property) where the
-        property is usually (lets be honest always) the energy for the given structure.
-        The class takes care of returning the fitting data as a cluster correlation design matrix.
-        This class also has methods to check/prepare/filter the data, hence the name Wrangler from datawrangler.
+        This class is meant to take all input training data in the form of
+        (structure, property) where the property is usually (lets be honest
+        always) the energy for the given structure.
+        The class takes care of returning the fitting data as a cluster
+        correlation design matrix.
+        This class also has methods to check/prepare/filter the data, hence
+        the name Wrangler from datawrangler.
 
         Args:
             clustersubspace (ClusterSubspace):
-                A ClusterSubspace object that will be used to fit a ClusterExpansion with the provided data.
+                A ClusterSubspace object that will be used to fit a
+                ClusterExpansion with the provided data.
             data (list):
                 list of (structure, property) data
             wkwargs:
@@ -88,7 +99,8 @@ class StructureWrangler(MSONable):
         """
         self.cs = clustersubspace
         self.get_weights = {'composition': weights_e_above_comp,
-                            'hull': partial(weights_e_above_hull, ce_structure=self.cs.structure)}
+                            'hull': partial(weights_e_above_hull,
+                                            ce_structure=self.cs.structure)}
         self.items, self.weights = [], None
 
         if data is not None:
@@ -121,8 +133,8 @@ class StructureWrangler(MSONable):
 
     def add_data(self, data):
         """
-        Add data to Structure Wrangler, computes correlation vector and if successful adds data otherwise
-        it ignores that structure.
+        Add data to Structure Wrangler, computes correlation vector and if
+        successful adds data otherwise it ignores that structure.
 
         Args
             data (list):
@@ -135,8 +147,9 @@ class StructureWrangler(MSONable):
                 sc = self.cs.supercell_from_matrix(m)
                 fm_row = self.cs.corr_from_structure(s)
             except StructureMatchError as e:
-                msg = f'Unable to match {s.composition} with energy {p} to supercell. Throwing out. '
-                warnings.warn(msg + f'Error Message: {str(e)}.', RuntimeWarning)
+                msg = f'Unable to match {s.composition} with energy {p} to' \
+                      f'supercell. Throwing out.\n Error Message: {str(e)}.'
+                warnings.warn(msg, RuntimeWarning)
                 continue
             items.append({'structure': s,
                           'property': p,
@@ -151,18 +164,22 @@ class StructureWrangler(MSONable):
         """Set the weights for each data point"""
         if isinstance(weights, str):
             if weights not in self.get_weights.keys():
-                raise AttributeError(f'{weights} is not a valid keyword.'
-                                     f'Weights must be one of {self.get_weights.keys()}')
-            self.weights = self.get_weights[weights](self.structures, self.properties, **kwargs)
+                msg = f'{weights} is not a valid keyword.' \
+                      f'Weights must be one of {self.get_weights.keys()}'
+                raise AttributeError(msg)
+            self.weights = self.get_weights[weights](self.structures,
+                                                     self.properties,
+                                                     **kwargs)
         elif weights is not None:
             self.weights = weights
 
     def filter_by_ewald(self, max_ewald):
         """
         Filter the input structures to only use those with low electrostatic
-        energies (no large charge separation in cell). This energy is referenced to the lowest
-        value at that composition. Note that this is before the division by the relative dielectric
-        constant and is per primitive cell in the cluster expansion -- 1.5 eV/atom seems to be a
+        energies (no large charge separation in cell). This energy is
+        referenced to the lowest value at that composition. Note that this is
+        before the division by the relative dielectric constant and is per
+        primitive cell in the cluster expansion -- 1.5 eV/atom seems to be a
         reasonable value for dielectric constants around 10.
 
         Args:
@@ -173,7 +190,7 @@ class StructureWrangler(MSONable):
         for term, args, kwargs in self.cs.external_terms:
             if term.__name__ == 'EwaldTerm':
                 if 'use_inv_r' in kwargs.keys() and kwargs['use_inv_r']:
-                    raise NotImplementedError('cant use inv_r with max_ewald yet')
+                    raise NotImplementedError('cant use inv_r with max_ewald')
                 ewald_corr = [i['features'][-1] for i in self.items]
         if ewald_corr is None:
             ewald_corr = []
@@ -190,10 +207,12 @@ class StructureWrangler(MSONable):
 
         items = []
         for ecorr, item in zip(ewald_corr, self.items):
-            r_e = ecorr - min_e[item['structure'].composition.reduced_composition]
+            mine = min_e[item['structure'].composition.reduced_composition]
+            r_e = ecorr - mine
             if r_e > max_ewald:
                 logging.debug('Skipping {} with energy {}, ewald energy is {}'
-                              ''.format(item['structure'].composition, item['property'], r_e))
+                              ''.format(item['structure'].composition,
+                                        item['property'], r_e))
             else:
                 items.append(item)
         self.items = items
