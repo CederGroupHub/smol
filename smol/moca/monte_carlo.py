@@ -1,11 +1,11 @@
 from __future__ import division
 
 from math import exp
-from monty.json import MSONable
-from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from random import random
 import logging
 import numpy as np
+from monty.json import MSONable
+from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 
 class MonteCarloRunner:

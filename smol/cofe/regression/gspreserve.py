@@ -2,12 +2,12 @@
 Ground State Preserving solver from Wenxhuan Huang (implemented by Daniil?)
 """
 
-import numpy as np
 import logging
+import numpy as np
 from pymatgen import Composition
 from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
 from cvxopt import matrix, solvers
-from .estimator import BaseEstimator
+from smol.cofe.regression.estimator import BaseEstimator
 
 
 # TODO gspreserve solve need to fix calls to e_above_hull was in the

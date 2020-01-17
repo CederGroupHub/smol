@@ -1,21 +1,29 @@
+"""
+Module implementing ClusterSupercell, which is used to evaluate cluster
+correlations on cells beyond the primitive cell used to define the
+ClusterSubspace.
+
+This class is used within the ClusterSubspace class and should rarely be needed
+directly by a user
+"""
+
 from __future__ import division
-import numpy as np
 from collections import defaultdict
+import numpy as np
 from pymatgen import Structure, PeriodicSite
 from pymatgen.analysis.structure_matcher import StructureMatcher,\
     OrderDisorderElementComparator
 from pymatgen.util.coord import lattice_points_in_supercell,\
     coord_list_mapping_pbc
-
-from ..utils import StructureMatchError, SITE_TOL
 from src.ce_utils import delta_corr_single_flip
+from smol.cofe.utils import StructureMatchError, SITE_TOL
 
 # TODO the supercell and supercell_matrix should probably be obtained with an
 #  undercorated structure/lattice
 # TODO test with FrameworkComparator to see if missed structures improves
 
 
-class ClusterSupercell(object):
+class ClusterSupercell():
     """
     Used to calculates correlation vectors on a specific supercell lattice.
     """
@@ -92,6 +100,8 @@ class ClusterSupercell(object):
         return cluster_indices, clusters_by_sites
 
     def structure_from_occu(self, occu):
+        """Get pymatgen.Structure from an occupancy vector"""
+
         sites = []
         for sp, s in zip(occu, self.supercell):
             if sp != 'Vacancy':

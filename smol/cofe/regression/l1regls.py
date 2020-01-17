@@ -1,6 +1,6 @@
+import math
 from cvxopt import matrix, spdiag, mul, div, sqrt
 from cvxopt import blas, lapack, solvers
-import math
 
 
 def l1regls(A, b):

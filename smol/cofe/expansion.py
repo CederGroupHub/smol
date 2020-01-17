@@ -1,9 +1,15 @@
+"""
+This module implements the ClusterExpansion class, which holds the necessary
+attributes to fit a set of orbit functions to a dataset of structures and
+a corresponding property (most usually energy).
+"""
+
 from __future__ import division
 import warnings
 import numpy as np
 from monty.json import MSONable
-from .utils import NotFittedError
-from . import StructureWrangler
+from smol.cofe.utils import NotFittedError
+from smol.cofe.wrangler import StructureWrangler
 from .regression.estimator import BaseEstimator
 
 

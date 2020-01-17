@@ -1,3 +1,8 @@
+"""
+Implementation of an orbit. A set of symmetrically equivalent (with respect to
+the given undecorated lattice symmetry) clusters.
+"""
+
 from __future__ import division
 import itertools
 import numpy as np

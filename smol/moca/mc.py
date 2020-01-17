@@ -2,9 +2,9 @@
 Updated on 2019.02.27 to be compatible with python3
 """
 from __future__ import division
-import numpy as np
 import random
 from copy import deepcopy
+import numpy as np
 # from pymatgen.transformations.standard_transformations import \
 # OrderDisorderedStructureTransformation
 # from pymatgen import Composition

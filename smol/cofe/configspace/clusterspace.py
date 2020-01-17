@@ -1,3 +1,10 @@
+"""
+This Module implements the ClusterSubspace class necessary to define the terms
+to be included in a cluster expansion. A cluster subspace is a finite set of
+clusters, more precisely orbits, that define represent vectors which define
+a subspace of the total configurational space of a given lattice system.
+"""
+
 from __future__ import division
 import numpy as np
 from monty.json import MSONable

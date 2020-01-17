@@ -1,3 +1,9 @@
+"""
+Implementation of the Cluster class, which represents a group of sites of a
+given lattice. Aka the building blocks for a cluster basis of functions over
+configurational space
+"""
+
 from __future__ import division
 import numpy as np
 from monty.json import MSONable
