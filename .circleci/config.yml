@@ -37,8 +37,8 @@ jobs:
             pytest --cov=smol --cov-report html:coverage_reports
 
       - store_artifacts:
-          path: test-reports
-          destination: test-reports
+          path: coverage_reports
+          destination: coverage_reports
 
   build-cython:
     docker:

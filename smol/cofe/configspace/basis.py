@@ -19,14 +19,15 @@ class BasisNotImplemented(NotImplementedError):
 
 class SiteBasis(ABC):
     """
-    Class that represents the site function space using a specified basis. This abstract class must
-    by derived from for specific bases to represent a site function space.
+    Class that represents the site function space using a specified basis.
+    This abstract class must by derived from for specific bases to represent a
+    site function space.
 
     Name all derived classes NameBasis. See implementations below
 
-    Note that all SiteBasis in theory have the first basis function = 1, but this should not be
-    defined since it is handled implicitly when computing bit_combos using total no. species - 1
-    in the Orbit class
+    Note that all SiteBasis in theory have the first basis function = 1, but
+    this should not be defined since it is handled implicitly when computing
+    bit_combos using total no. species - 1 in the Orbit class
     """
 
     def __init__(self, species):
@@ -34,14 +35,16 @@ class SiteBasis(ABC):
         Args:
             species (tuple/dict):
                 Species. If dict, the species should be the keys and
-                the value should should correspond to the probability measure associated to that
-                specie. If a tuple is given a uniform probability is assumed.
+                the value should should correspond to the probability measure
+                associated to that specie. If a tuple is given a uniform
+                probability is assumed.
         """
         if not isinstance(species, dict):
             self._measure = {specie: 1 / len(species) for specie in species}
         else:
             if not np.allclose(sum(species.values()), 1):
-                warnings.warn('The measure given does not sum to 1. Are you sure this is what you want?',
+                warnings.warn('The measure given does not sum to 1.'
+                              'Are you sure this is what you want?',
                               RuntimeWarning)
             self._measure = species
 
@@ -50,7 +53,10 @@ class SiteBasis(ABC):
     @property
     @abstractmethod
     def functions(self):
-        """This must be overloaded by subclasses and must return a tuple of basis functions"""
+        """
+        This must be overloaded by subclasses and must return a tuple
+        of basis functions
+        """
         pass
 
     @property
@@ -70,7 +76,8 @@ class SiteBasis(ABC):
 
     def inner_prod(self, f, g):
         """
-        Compute the inner product of two functions over probability the space spanned by basis
+        Compute the inner product of two functions over probability the space
+        spanned by basis
         Args:
             f: function
             g: function
@@ -78,14 +85,16 @@ class SiteBasis(ABC):
         Returns: float
             inner product result
         """
-        res = sum([self.measure(s)*f(self.encode(s))*g(self.encode(s)) for s in self.species])
-        if abs(res) < 5E-15:  # Not sure what is causing these numerical issues, may lead to problems.
+        res = sum([self.measure(s)*f(self.encode(s))*g(self.encode(s))
+                   for s in self.species])
+        if abs(res) < 5E-15:  # Not sure what's causing these numerical issues
             res = 0.0
         return res
 
     def encode(self, specie):
         """
-        Possible mapping from species to another set (i.e. species names to set of integers)
+        Possible mapping from species to another set (i.e. species names to
+        set of integers)
 
         Args:
             specie (str): specie name
@@ -107,7 +116,8 @@ class SiteBasis(ABC):
 
         """
         if specie not in self.species:
-            raise ValueError(f'{specie} is not in valid species: {self.species}')
+            raise ValueError(f'{specie} is not in valid species: '
+                             f'{self.species}')
 
         return self.functions[fun_ind](self.encode(specie))
 
@@ -124,7 +134,9 @@ class SiteBasis(ABC):
             def g_factory(f, on_funs):
 
                 def g_0(s):
-                    return f(s) - sum(self.inner_prod(f, g)*g(s) for g in on_funs)
+                    projs = sum(self.inner_prod(f, g)*g(s) for g in on_funs)
+                    return f(s) - projs
+
                 norm = np.sqrt(self.inner_prod(g_0, g_0))
 
                 def g_norm(s):
@@ -148,7 +160,8 @@ class IndicatorBasis(SiteBasis):
         def indicator(s, sp):
             return int(s == sp)
 
-        self._functions = tuple(partial(indicator, sp=sp) for sp in self.species[:-1])
+        self._functions = tuple(partial(indicator, sp=sp)
+                                for sp in self.species[:-1])
 
     @property
     def functions(self):
@@ -242,8 +255,8 @@ def basis_factory(basis_name, *args, **kwargs):
 
 def _get_subclasses(base_class):
     """
-    Gets all non-abstract classes that inherit from the given base class in a module
-    This is used to obtain all the available basis functions.
+    Gets all non-abstract classes that inherit from the given base class in
+    a module This is used to obtain all the available basis functions.
     """
     sub_classes = []
     for c in base_class.__subclasses__():

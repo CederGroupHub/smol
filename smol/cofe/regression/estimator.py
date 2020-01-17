@@ -1,25 +1,25 @@
 """
-Solvers aka functions that fit a linear model and are used to define the fit method of the Estimator
-to be used for a ClusterExpansion
+Solvers aka functions that fit a linear model and are used to define the fit
+method of the Estimator to be used for a ClusterExpansion
 
-If your solver is simple enough then just write the Subclass here, otherwise make a seperate file and import
-the Estimator in the __init__.py file (ie see solve_gs_preserve)
+If your solver is simple enough then just write the Subclass here, otherwise
+make a seperate file and import the Estimator in the __init__.py file
+(ie see solve_gs_preserve)
 """
 import numpy as np
-import logging
 import warnings
 from ..utils import NotFittedError
 
 
 class BaseEstimator:
     """
-    A simple estimator class to use different 'in-house'  solvers to fit a cluster-expansion
-    This should be used to create specific estimator classes by inheriting. New classes simple need to implement
-    the solve method.
-    The methods have the same signatures as most Scikit-learn regressors, such that those can be directly used
-    instead of this to fit a cluster-expansion
-    The base estimator does not fit. It only has a predict function for Expansions where the user supplies the
-    ecis
+    A simple estimator class to use different 'in-house'  solvers to fit a
+    cluster-expansion. This should be used to create specific estimator classes
+    by inheriting. New classes simple need to implement the solve method.
+    The methods have the same signatures as most Scikit-learn regressors, such
+    that those can be directly used instead of this to fit a cluster-expansion
+    The base estimator does not fit. It only has a predict function for
+    Expansions where the user supplies the ecis.
     """
 
     def __init__(self):
@@ -29,7 +29,8 @@ class BaseEstimator:
 
     def _solve(self, X, y, *args, **kwargs):
         '''This needs to be overloaded in derived classes'''
-        raise AttributeError(f'No solve method specified: self._solve: {self._solve}')
+        msg = f'No solve method specified: self._solve: {self._solve}'
+        raise AttributeError(msg)
 
     def fit(self, X, y, sample_weight=None, *args, **kwargs):
         if sample_weight is not None:
@@ -56,7 +57,7 @@ class BaseEstimator:
         """
         if weights is None:
             weights = np.ones(len(X[:, 0]))
-        logging.info('starting cv score calculations for mu: {}, k: {}'.format(mu, k))
+
         # generate random partitions
         partitions = np.tile(np.arange(k), len(y) // k + 1)
         np.random.shuffle(partitions)
@@ -73,8 +74,6 @@ class BaseEstimator:
             ssr += np.sum(res * weights[oos]) / np.average(weights[oos])
             ssr_uw += np.sum(res)
 
-        logging.info(
-            'cv rms_error: {} (weighted) {} (unweighted)'.format(np.sqrt(ssr / len(y)), np.sqrt(ssr_uw / len(y))))
         cv = 1 - ssr / np.sum((y - np.average(y)) ** 2)
         return cv
 
@@ -92,7 +91,7 @@ class CVXEstimator(BaseEstimator):
         X and y should already have been adjusted to account for weighting
         """
 
-        # Maybe its cleaner to use importlib at the top to try and import these?
+        # Maybe its cleaner to use importlib to try and import these?
         from .l1regls import l1regls, solvers
         solvers.options['show_progress'] = False
         from cvxopt import matrix
@@ -111,7 +110,8 @@ class CVXEstimator(BaseEstimator):
         for _ in range(2):
             i = np.nanargmax(cvs)
             if i == len(mus) - 1:
-                warnings.warn('Largest mu chosen. You should probably increase the basis set')
+                warnings.warn('Largest mu chosen. You should probably'
+                              ' increase the basis set')
                 break
 
             mu = (mus[i] * mus[i + 1]) ** 0.5
@@ -124,7 +124,6 @@ class CVXEstimator(BaseEstimator):
 
         self.mus = mus
         self.cvs = cvs
-        logging.info('best cv score: {}'.format(np.nanmax(self.cvs)))
         return mus[np.nanargmax(cvs)]
 
     def fit(self, X, y, sample_weight=None, mu=None, *args, **kwargs):

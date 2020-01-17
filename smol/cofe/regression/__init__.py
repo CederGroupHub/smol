@@ -3,9 +3,10 @@
 
 def constrain_dielectric(ce, max_dielectric, e_ind=-1, *fitargs, **fitkwargs):
     """
-    Refit a cluster expansion that contains an EwaldTerm to Constrain the dielectric constant
-    to be positive and below the supplied value (note that this is also affected by whether
-    the primitive cell is the correct size)
+    Refit a cluster expansion that contains an EwaldTerm to Constrain the
+    dielectric constant to be positive and below the supplied value
+    (note that this is also affected by whether the primitive cell is the
+    correct size)
 
     Args:
         ce (ClusterExpansion):
@@ -19,7 +20,8 @@ def constrain_dielectric(ce, max_dielectric, e_ind=-1, *fitargs, **fitkwargs):
         fitkwards:
             keyword arguments to be passed to the estimator's fit method
     """
-    if 'EwaldTerm' not in [term.__name__ for term, _, _ in ce.wrangler.cs.external_terms]:
+    ext_terms = [term.__name__ for term, _, _ in ce.wrangler.cs.external_terms]
+    if 'EwaldTerm' not in ext_terms:
         raise RuntimeError('This ClusterExpansion does not have an Ewald term')
     elif ce.ecis is None:
         raise RuntimeError('This ClusterExpansion does not have ECIs.'
