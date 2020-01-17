@@ -23,7 +23,7 @@ def l1regls(A, b):
         v *= beta
         v[:n] += alpha*2.0*A.T*(A*u[:n])
 
-    def G(u, v, alpha=1.0, beta=0.0):
+    def G(u, v, alpha=1.0, beta=0.0, trans='N'):
         """
             v := alpha*[I, -I; -I, -I] * u + beta * v  (trans = 'N' or 'T')
         """

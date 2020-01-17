@@ -95,16 +95,18 @@ class ClusterSubspace(MSONable):
         self._orbits = orbits
 
         # assign the cluster ids
-        n_clusters = 1
-        n_bit_orderings = 1
-        n_orbits = 1
+        n_clstr = 1
+        n_bit_ords = 1
+        n_orbs = 1
         for k in sorted(self._orbits.keys()):
             for y in self._orbits[k]:
-                n_orbits, n_bit_orderings, n_clusters = y.assign_ids(n_orbits, n_bit_orderings, n_clusters)
+                n_orbs, n_bit_ords, n_clstr = y.assign_ids(n_orbs,
+                                                           n_bit_ords,
+                                                           n_clstr)
 
-        self.n_orbits = n_orbits
-        self.n_clusters = n_clusters
-        self.n_bit_orderings = n_bit_orderings
+        self.n_orbits = n_orbs
+        self.n_clusters = n_clstr
+        self.n_bit_orderings = n_bit_ords
         self._supercells = {}
         self._external_terms = []
 
@@ -136,7 +138,7 @@ class ClusterSubspace(MSONable):
         orbits = cls._orbits_from_radii(expansion_structure, radii, symops,
                                         basis, orthonormal)
         return cls(structure=structure,
-                   expansion_structure=expansion_structure, symops=symops,
+                   expansion_struct=expansion_structure, symops=symops,
                    orbits=orbits, ltol=ltol, stol=stol, angle_tol=angle_tol,
                    supercell_size=supercell_size)
 
@@ -166,13 +168,11 @@ class ClusterSubspace(MSONable):
             if new_orbit not in new_orbits:
                 new_orbits.append(new_orbit)
 
-        orbits[1] = sorted(new_orbits,
-                           key=lambda x: (np.round(x.radius, 6), -x.multiplicity))
+        orbits[1] = sorted(new_orbits, key=lambda x: (np.round(x.radius, 6), -x.multiplicity))  # noqa
 
-        all_neighbors = expansion_struct.lattice.get_points_in_sphere(expansion_struct.frac_coords,
-                                                                      [0.5, 0.5, 0.5],
-                                                                      max(radii.values()) +
-                                                                      sum(expansion_struct.lattice.abc) / 2)
+        all_neighbors = expansion_struct.lattice.get_points_in_sphere(expansion_struct.frac_coords,  # noqa
+                                                                      [0.5, 0.5, 0.5],  # noqa
+                                                                      max(radii.values()) + sum(expansion_struct.lattice.abc) / 2)  # noqa
         for size, radius in sorted(radii.items()):
             new_orbits = []
             for orbit in orbits[size-1]:
@@ -193,8 +193,7 @@ class ClusterSubspace(MSONable):
                     elif new_orbit not in new_orbits:
                         new_orbits.append(new_orbit)
 
-            orbits[size] = sorted(new_orbits,
-                                  key=lambda x: (np.round(x.radius, 6), -x.multiplicity))
+            orbits[size] = sorted(new_orbits, key=lambda x: (np.round(x.radius, 6), -x.multiplicity))  # noqa
         return orbits
 
     @property
@@ -211,7 +210,8 @@ class ClusterSubspace(MSONable):
     def supercell_matrix_from_structure(self, structure):
         sc_matrix = self.sm.get_supercell_matrix(structure, self.structure)
         if sc_matrix is None:
-            raise StructureMatchError('Supercell could not be found from structure')
+            raise StructureMatchError('Supercell could not be found from'
+                                      'structure')
         if np.linalg.det(sc_matrix) < 0:  # What this for?
             sc_matrix *= -1
         return sc_matrix
