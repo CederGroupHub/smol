@@ -21,7 +21,7 @@ class TestStructureWrangler(unittest.TestCase):
         self.assertNotEqual(len_total, len_filtered)
 
     def test_weights_e_above_comp(self):
-        self.sw.set_weights(self.sw.items, 'composition', temperature=1000)
+        self.sw._set_weights(self.sw.items, 'composition', temperature=1000)
         expected = np.array([0.85636844, 0.98816632, 1., 0.59208249, 1.,
                              0.92881806, 0.87907016, 0.94729116, 0.40489097, 0.82483607,
                              0.81578342, 1., 0.89614741, 0.9289274, 0.81650053,
@@ -30,7 +30,7 @@ class TestStructureWrangler(unittest.TestCase):
         self.assertTrue(np.allclose(expected, self.sw.weights))
 
     def test_weights_e_above_hull(self):
-        self.sw.set_weights(self.sw.items, 'hull', temperature=1000)
+        self.sw._set_weights(self.sw.items, 'hull', temperature=1000)
         expected = np.array([0.85636844, 0.98816632, 1., 0.56915087, 0.96126956,
                              0.89284453, 0.84502339, 0.91060216, 0.40489097, 0.82483607,
                              0.81578342, 1., 0.89614741, 0.9289274, 0.81650053,

@@ -55,6 +55,7 @@ class ClusterSubspace(MSONable):
         """
         Args:
             structure (pymatgen.Structure):
+            structure (pymatgen.Structure):
                 Structure to define the cluster space. Typically the primitive
                 cell. Includes all species regardless of partial occupation.
             expansion_struct (pymatgen.Structure):
@@ -122,6 +123,10 @@ class ClusterSubspace(MSONable):
                    supercell_size='volume', basis='indicator',
                    orthonormal=False):
         """
+        Creates a ClusterSubspace with orbits of the given size and radius
+        smaller than or equal to the given radius.
+        This is the best (and the only easy) way to create one.
+
         Args:
             structure:
                 disordered structure to build a cluster expansion for.
@@ -134,6 +139,14 @@ class ClusterSubspace(MSONable):
                 primitive cell under these tolerances won't be included in the
                 expansion. Easiest option for supercell_size is usually to use
                 a species that has a constant amount per formula unit.
+            basis (str):
+                a string specifying the site basis functions
+            orthonormal (bool):
+                wether to enforece an orthonormal basis. From the current
+                available bases only the indicator basis is not orthogonal out
+                of the box
+        Returns:
+            ClusterSubSpace
         """
 
         symops = SpacegroupAnalyzer(structure).get_symmetry_operations()

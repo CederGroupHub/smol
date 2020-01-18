@@ -11,7 +11,7 @@ from pymatgen import Structure, PeriodicSite
 from pymatgen.analysis.ewald import EwaldSummation
 
 
-class EwaldTerm(object):
+class EwaldTerm():
     """
     Class cooked up to remove the functions required to fit an ewald term from
     the supercel This concept can be extended to other terms, but then the best
