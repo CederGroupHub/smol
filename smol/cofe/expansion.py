@@ -60,7 +60,7 @@ class ClusterExpansion(MSONable):
         A_in = self.wrangler.feature_matrix.copy()
         y_in = self.wrangler.normalized_properties.copy()
 
-        if self.wrangler.weights is not None:
+        if self.wrangler.weight_type is not None:
             self.estimator.fit(A_in, y_in,
                                self.wrangler.weights,
                                *args, **kwargs)

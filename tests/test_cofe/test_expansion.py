@@ -25,7 +25,7 @@ class TestClusterExpansion(unittest.TestCase):
         ce.fit(mu=5)
         self.assertIsNotNone(ce.ecis)
         self.assertEqual(len(ce.ecis), self.cs.n_bit_orderings)
-        self.sw.set_weights('hull')
+        self.sw.set_weights(self.sw.items, 'hull')
         ce.fit()
 
     def test_sklearn(self):

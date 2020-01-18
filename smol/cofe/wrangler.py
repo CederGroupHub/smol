@@ -94,6 +94,9 @@ class StructureWrangler(MSONable):
                 ClusterExpansion with the provided data.
             data (list):
                 list of (structure, property) data
+            weights (str or array):
+                str specifying type of weights (i.e. 'hull') or array directly
+                specifying each weight for item in data
             wkwargs:
                 key word arguments passed to weight function
         """
@@ -101,11 +104,12 @@ class StructureWrangler(MSONable):
         self.get_weights = {'composition': weights_e_above_comp,
                             'hull': partial(weights_e_above_hull,
                                             ce_structure=self.cs.structure)}
-        self.items, self.weights = [], None
+        self.items, self.weight_type = [], None
 
         if data is not None:
             self.add_data(data)
-            self.set_weights(weights, **wkwargs)
+            if weights is not None:
+                self.set_weights(self.items, weights, **wkwargs)
 
     @property
     def structures(self):
@@ -131,7 +135,11 @@ class StructureWrangler(MSONable):
     def sizes(self):
         return np.array([i['size'] for i in self.items])
 
-    def add_data(self, data):
+    @property
+    def weights(self):
+        return np.array([i.get('weight') for i in self.items])
+
+    def add_data(self, data, verbose=False, weights=None, **wkwargs):
         """
         Add data to Structure Wrangler, computes correlation vector and if
         successful adds data otherwise it ignores that structure.
@@ -139,6 +147,10 @@ class StructureWrangler(MSONable):
         Args
             data (list):
                 list of (structure, property) data
+            verbose (bool):
+                if True then print structures that fail in StructureMatcher
+            wkwargs:
+                key word arguments passed to weight function
         """
         items = []
         for i, (s, p) in enumerate(data):
@@ -147,9 +159,10 @@ class StructureWrangler(MSONable):
                 sc = self.cs.supercell_from_matrix(m)
                 fm_row = self.cs.corr_from_structure(s)
             except StructureMatchError as e:
-                msg = f'Unable to match {s.composition} with energy {p} to' \
-                      f'supercell. Throwing out.\n Error Message: {str(e)}.'
-                warnings.warn(msg, RuntimeWarning)
+                if verbose:
+                    print(f'Unable to match {s.composition} with energy {p} to'
+                          f'supercell. Throwing out.\n'
+                          f'Error Message: {str(e)}.')
                 continue
             items.append({'structure': s,
                           'property': p,
@@ -157,21 +170,35 @@ class StructureWrangler(MSONable):
                           'features': fm_row,
                           'size': sc.size})
 
+        if weights is not None:
+            if self.weight_type in self.get_weights.keys():
+                warnings.warn(f'Argument <weights> has been provided but the '
+                              f'type of weights is already set to '
+                              f'{self.weight_type}. Make sure this is what you'
+                              f' want')
+            self.set_weights(items, weights, **wkwargs)
+
         self.items += items
         logging.info(f"Matched {len(items)} of {len(data)} structures")
 
-    def set_weights(self, weights, **kwargs):
-        """Set the weights for each data point"""
+    def set_weights(self, items, weights, **kwargs):
+        """Set the weight_type for each data point"""
+        # This function is not great since it is implicitly using python
+        # pass by reference design....
         if isinstance(weights, str):
             if weights not in self.get_weights.keys():
                 msg = f'{weights} is not a valid keyword.' \
                       f'Weights must be one of {self.get_weights.keys()}'
                 raise AttributeError(msg)
-            self.weights = self.get_weights[weights](self.structures,
-                                                     self.properties,
-                                                     **kwargs)
+            self.weight_type = weights
+            weights = self.get_weights[weights]([i['structure'] for i in items],  # noqa
+                                                [i['property'] for i in items],
+                                                **kwargs)
         elif weights is not None:
-            self.weights = weights
+            self.weight_type = 'external'
+
+        for item, weight in zip(items, weights):
+            item['weight'] = weight
 
     def filter_by_ewald(self, max_ewald):
         """
@@ -224,7 +251,7 @@ class StructureWrangler(MSONable):
         """
         sw = cls(clustersubspace=ClusterSubspace.from_dict(d['cs']))
         sw.items = d['items']
-        sw.weights = d['weights']
+        sw.weight_type = d['weight_type']
         return sw
 
     def as_dict(self):
@@ -238,5 +265,5 @@ class StructureWrangler(MSONable):
              '@class': self.__class__.__name__,
              'cs': self.cs.as_dict(),
              'items': self.items,
-             'weights': self.weights}
+             'weight_type': self.weight_type}
         return d
