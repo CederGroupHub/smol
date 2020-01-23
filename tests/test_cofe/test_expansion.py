@@ -1,11 +1,10 @@
 import unittest
 import numpy as np
-from ..data import lno_prim, lno_data
 from smol.cofe import StructureWrangler, ClusterSubspace, ClusterExpansion
 from smol.cofe.configspace import EwaldTerm
 from smol.cofe.regression import constrain_dielectric
 from smol.cofe.regression.estimator import CVXEstimator, BaseEstimator
-from sklearn.linear_model import LinearRegression
+from tests.data import lno_prim, lno_data
 
 # Probably should also add fitting to synthetic data.
 # i.e. using from pymatgen.transformations.advanced_transformations import

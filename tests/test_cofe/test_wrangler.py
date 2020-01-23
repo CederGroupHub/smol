@@ -1,8 +1,8 @@
 import unittest
 import warnings
 import numpy as np
-from ..data import lno_prim, lno_data
 from smol.cofe import StructureWrangler, ClusterSubspace
+from tests.data import lno_prim, lno_data
 
 class TestStructureWrangler(unittest.TestCase):
     def setUp(self) -> None:
