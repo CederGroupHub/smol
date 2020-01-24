@@ -1,6 +1,5 @@
 from __future__ import division
 from collections import defaultdict
-import logging
 import warnings
 from collections.abc import Sequence
 from functools import partial
