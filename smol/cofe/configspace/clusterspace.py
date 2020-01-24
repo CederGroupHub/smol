@@ -10,7 +10,7 @@ import numpy as np
 from monty.json import MSONable
 from pymatgen import Structure
 from pymatgen.analysis.structure_matcher import StructureMatcher,\
-     OrderDisorderElementComparator, FrameworkComparator
+     OrderDisorderElementComparator  # , FrameworkComparator
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc
 

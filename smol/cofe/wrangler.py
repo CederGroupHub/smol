@@ -1,6 +1,5 @@
 from __future__ import division
 from collections import defaultdict
-import logging
 import warnings
 from collections.abc import Sequence
 from functools import partial
@@ -201,7 +200,6 @@ class StructureWrangler(MSONable):
         """
         for item in self.items:
             item['features'] = self.cs.corr_from_structure(item['structure'])
-
 
     def remove_all_data(self):
         """Removes all data from Wrangler"""
