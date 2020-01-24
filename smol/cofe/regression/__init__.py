@@ -4,6 +4,10 @@ and testing the performance of the fit
 """
 # TODO think of adding a metrics module
 
+from .estimator import CVXEstimator, BaseEstimator
+
+__all__ = ['CVXEstimator', 'BaseEstimator']
+
 
 def constrain_dielectric(ce, max_dielectric, e_ind=-1, *fitargs, **fitkwargs):
     """

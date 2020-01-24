@@ -46,7 +46,7 @@ class ClusterSupercell():
         self.supercell = supercell
         self.supercell_matrix = supercell_matrix
         self.prim_to_supercell = np.linalg.inv(self.supercell_matrix)
-        self.clustersubspace = clustersubspace
+        self.csubspace = clustersubspace
         self.size = int(round(np.abs(np.linalg.det(self.supercell_matrix))))
 
         self.bits = bits
@@ -55,8 +55,16 @@ class ClusterSupercell():
 
         self.cluster_indices, self.clusters_by_sites = self._generate_mappings()  # noqa
 
-        # JY definition
-        self.mapping = None
+        comparator = OrderDisorderElementComparator()
+        self._sm = StructureMatcher(primitive_cell=False,
+                                    attempt_supercell=False,
+                                    allow_subset=True,
+                                    comparator=comparator,
+                                    supercell_size=self.csubspace.supercell_size,  # noqa
+                                    scale=True,
+                                    ltol=self.csubspace.ltol,
+                                    stol=self.csubspace.stol,
+                                    angle_tol=self.csubspace.angle_tol)
 
     def _generate_mappings(self):
         """
@@ -66,7 +74,7 @@ class ClusterSupercell():
         ts = lattice_points_in_supercell(self.supercell_matrix)
         cluster_indices = []
         clusters_by_sites = defaultdict(list)
-        for orbit in self.clustersubspace.iterorbits():
+        for orbit in self.csubspace.iterorbits():
             prim_fcoords = np.array([c.sites for c in orbit.clusters])
             fcoords = np.dot(prim_fcoords, self.prim_to_supercell)
             # tcoords contains all the coordinates of the symmetrically
@@ -114,7 +122,7 @@ class ClusterSupercell():
         Each entry in the correlation vector corresponds to a particular
         symmetrically distinct bit ordering
         """
-        corr = np.zeros(self.clustersubspace.n_bit_orderings)
+        corr = np.zeros(self.csubspace.n_bit_orderings)
         corr[0] = 1  # zero point cluster
         occu = np.array(occu)
         for orb, inds in self.cluster_indices:
@@ -132,27 +140,12 @@ class ClusterSupercell():
         Returns list of occupancies of each site in the structure
         """
         # calculate mapping to supercell
-        sm_no_orb = StructureMatcher(primitive_cell=False,
-                                     attempt_supercell=False,
-                                     allow_subset=True,
-                                     comparator=OrderDisorderElementComparator(),  # noqa
-                                     supercell_size=self.clustersubspace.supercell_size,  # noqa
-                                     scale=True,
-                                     ltol=self.clustersubspace.ltol,
-                                     stol=self.clustersubspace.stol,
-                                     angle_tol=self.clustersubspace.angle_tol)
 
-        # TODO the mapping depends on the given structure.
-        #  Is being able to short-circuit this by setting an attribute a
-        #  good idea?
-        if self.mapping is None:
-            mapping = sm_no_orb.get_mapping(self.supercell, structure)
-            if mapping is None:
-                raise StructureMatchError('Mapping could not be found from '
-                                          'structure')
-            mapping = mapping.tolist()
-        else:
-            mapping = self.mapping
+        mapping = self._sm.get_mapping(self.supercell, structure)
+        if mapping is None:
+            raise StructureMatchError('Mapping could not be found from '
+                                      'structure')
+        mapping = mapping.tolist()
 
         occu = []  # np.zeros(len(self.supercell), dtype=np.int)
         for i, bit in enumerate(self.bits):
@@ -182,14 +175,14 @@ class ClusterSupercell():
         """
 
         new_occu = occu.copy()
-        len_eci = self.clustersubspace.n_bit_orderings + len(all_ewalds)
+        len_eci = self.csubspace.n_bit_orderings + len(all_ewalds)
         delta_corr = np.zeros(len_eci)
 
         for f in flips:
             new_occu_f = new_occu.copy()
             new_occu_f[f[0]] = f[1]
             delta_corr += delta_corr_single_flip(new_occu_f, new_occu,
-                                                 self.clustersubspace.n_bit_orderings,  # noqa
+                                                 self.csubspace.n_bit_orderings,  # noqa
                                                  self.clusters_by_sites[f[0]],
                                                  f[0], f[1], all_ewalds,
                                                  ewald_inds, self.size)

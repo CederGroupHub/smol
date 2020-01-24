@@ -3,7 +3,7 @@ import numpy as np
 from pymatgen import Structure, Lattice
 from pymatgen.transformations.advanced_transformations import EnumerateStructureTransformation
 from smol.cofe import ClusterSubspace
-from smol.cofe import CVXEstimator
+from smol.cofe.regression import CVXEstimator
 
 
 class TestEstimator(unittest.TestCase):

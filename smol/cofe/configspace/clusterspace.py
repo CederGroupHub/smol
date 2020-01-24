@@ -55,6 +55,7 @@ class ClusterSubspace(MSONable):
         """
         Args:
             structure (pymatgen.Structure):
+            structure (pymatgen.Structure):
                 Structure to define the cluster space. Typically the primitive
                 cell. Includes all species regardless of partial occupation.
             expansion_struct (pymatgen.Structure):
@@ -87,18 +88,22 @@ class ClusterSubspace(MSONable):
             if not is_coord_subset_pbc(op.operate_multi(fc), fc, SITE_TOL):
                 raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
 
+        comparator = OrderDisorderElementComparator()
+        # Doesn't seem to change success rate for matching structures, but may
+        # be a good option to try if it is failing.
+        # comparator = FrameworkComparator()
+
         self.supercell_size = supercell_size
 
-        self.sm = StructureMatcher(primitive_cell=False,
-                                   attempt_supercell=True,
-                                   allow_subset=True,
-                                   scale=True,
-                                   supercell_size=self.supercell_size,
-                                   # comparator=FrameworkComparator(),
-                                   comparator=OrderDisorderElementComparator(),
-                                   stol=self.stol,
-                                   ltol=self.ltol,
-                                   angle_tol=self.angle_tol)
+        self._sm = StructureMatcher(primitive_cell=False,
+                                    attempt_supercell=True,
+                                    allow_subset=True,
+                                    supercell_size=self.supercell_size,
+                                    comparator=comparator,
+                                    scale=True,
+                                    stol=self.stol,
+                                    ltol=self.ltol,
+                                    angle_tol=self.angle_tol)
         self._orbits = orbits
 
         # assign the cluster ids
@@ -122,6 +127,10 @@ class ClusterSubspace(MSONable):
                    supercell_size='volume', basis='indicator',
                    orthonormal=False):
         """
+        Creates a ClusterSubspace with orbits of the given size and radius
+        smaller than or equal to the given radius.
+        This is the best (and the only easy) way to create one.
+
         Args:
             structure:
                 disordered structure to build a cluster expansion for.
@@ -134,6 +143,14 @@ class ClusterSubspace(MSONable):
                 primitive cell under these tolerances won't be included in the
                 expansion. Easiest option for supercell_size is usually to use
                 a species that has a constant amount per formula unit.
+            basis (str):
+                a string specifying the site basis functions
+            orthonormal (bool):
+                wether to enforece an orthonormal basis. From the current
+                available bases only the indicator basis is not orthogonal out
+                of the box
+        Returns:
+            ClusterSubSpace
         """
 
         symops = SpacegroupAnalyzer(structure).get_symmetry_operations()
@@ -215,9 +232,9 @@ class ClusterSubspace(MSONable):
         self._external_terms.append((term, args, kwargs))
 
     def supercell_matrix_from_structure(self, structure):
-        sc_matrix = self.sm.get_supercell_matrix(structure, self.structure)
+        sc_matrix = self._sm.get_supercell_matrix(structure, self.structure)
         if sc_matrix is None:
-            raise StructureMatchError('Supercell could not be found from'
+            raise StructureMatchError('Supercell could not be found from '
                                       'structure')
         if np.linalg.det(sc_matrix) < 0:  # What this for?
             sc_matrix *= -1

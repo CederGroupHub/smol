@@ -1,7 +1,7 @@
 from __future__ import division
 from collections import defaultdict
-import logging
 import warnings
+from collections.abc import Sequence
 from functools import partial
 import numpy as np
 from monty.json import MSONable
@@ -69,7 +69,7 @@ def _pd(structures, energies, cs_structure):
 
 
 # TODO should have a dictionary with the applied filters and their parameters
-# to keep track of what has been done
+#  to keep track of what has been done
 class StructureWrangler(MSONable):
     """
     Class that handles (wrangles) input data structures and properties to fit
@@ -78,7 +78,7 @@ class StructureWrangler(MSONable):
     final ClusterExpansion.
     """
 
-    def __init__(self, clustersubspace, data=None, weights=None, **wkwargs):
+    def __init__(self, clustersubspace, weight_type=None):
         """
         This class is meant to take all input training data in the form of
         (structure, property) where the property is usually (lets be honest
@@ -92,20 +92,23 @@ class StructureWrangler(MSONable):
             clustersubspace (ClusterSubspace):
                 A ClusterSubspace object that will be used to fit a
                 ClusterExpansion with the provided data.
-            data (list):
-                list of (structure, property) data
-            wkwargs:
-                key word arguments passed to weight function
+            weight_type (str or dict):
+                str specifying type of weights (i.e. 'hull') OR
+                dict with single key specifying the type of weights as above,
+                and values being dict of kwargs
         """
         self.cs = clustersubspace
         self.get_weights = {'composition': weights_e_above_comp,
                             'hull': partial(weights_e_above_hull,
                                             ce_structure=self.cs.structure)}
-        self.items, self.weights = [], None
+        self.items = []
+        self.weight_type = weight_type
+        self.weight_kwargs = {}
 
-        if data is not None:
-            self.add_data(data)
-            self.set_weights(weights, **wkwargs)
+        if isinstance(weight_type, str):
+            self.weight_type = weight_type
+        elif isinstance(weight_type, Sequence):
+            self.weight_type, self.weight_kwargs = weight_type
 
     @property
     def structures(self):
@@ -131,7 +134,11 @@ class StructureWrangler(MSONable):
     def sizes(self):
         return np.array([i['size'] for i in self.items])
 
-    def add_data(self, data):
+    @property
+    def weights(self):
+        return np.array([i.get('weight') for i in self.items])
+
+    def add_data(self, data, weights=None, verbose=False):
         """
         Add data to Structure Wrangler, computes correlation vector and if
         successful adds data otherwise it ignores that structure.
@@ -139,17 +146,28 @@ class StructureWrangler(MSONable):
         Args
             data (list):
                 list of (structure, property) data
+            verbose (bool):
+                if True then print structures that fail in StructureMatcher
+              weights (str, list/tuple or array):
+                str specifying type of weights (i.e. 'hull') OR
+                list/tuple with two elements (name, kwargs) were name specifies
+                the type of weights as above, and kwargs are a dict of
+                keyword arguments to obtain the weights OR
+                array directly specifying the weights
+
         """
         items = []
+
         for i, (s, p) in enumerate(data):
             try:
                 m = self.cs.supercell_matrix_from_structure(s)
                 sc = self.cs.supercell_from_matrix(m)
                 fm_row = self.cs.corr_from_structure(s)
             except StructureMatchError as e:
-                msg = f'Unable to match {s.composition} with energy {p} to' \
-                      f'supercell. Throwing out.\n Error Message: {str(e)}.'
-                warnings.warn(msg, RuntimeWarning)
+                if verbose:
+                    print(f'Unable to match {s.composition} with energy {p} to'
+                          f' supercell. Throwing out.\n'
+                          f'Error Message: {str(e)}.')
                 continue
             items.append({'structure': s,
                           'property': p,
@@ -157,23 +175,56 @@ class StructureWrangler(MSONable):
                           'features': fm_row,
                           'size': sc.size})
 
-        self.items += items
-        logging.info(f"Matched {len(items)} of {len(data)} structures")
+        if self.weight_type is not None:
+            self._set_weights(items, self.weight_type, **self.weight_kwargs)
 
-    def set_weights(self, weights, **kwargs):
-        """Set the weights for each data point"""
+        if weights is not None:
+            kwargs = {}
+            if self.weight_type in self.get_weights.keys():
+                warnings.warn(f'Argument <weights> has been provided but the '
+                              f'type of weights is already set to '
+                              f'\'{self.weight_type}\'. Make sure this is what'
+                              f'you want.')
+            if isinstance(weights, Sequence) and not isinstance(weights, str):
+                weights, kwargs = weights
+            self._set_weights(items, weights, **kwargs)
+
+        self.items += items
+
+    def update_features(self):
+        """
+        Update the features/feature matrix for the data held. This is useful
+        when something is changed in the clustersubspace after
+        creating the Wrangler, for example added an Ewald term after creating
+        the Wrangler.
+        """
+        for item in self.items:
+            item['features'] = self.cs.corr_from_structure(item['structure'])
+
+    def remove_all_data(self):
+        """Removes all data from Wrangler"""
+        self.items = []
+
+    def _set_weights(self, items, weights, **kwargs):
+        """Set the weight_type for each data point"""
+        # This function is not great since it is implicitly using python
+        # pass by reference design....
         if isinstance(weights, str):
             if weights not in self.get_weights.keys():
                 msg = f'{weights} is not a valid keyword.' \
                       f'Weights must be one of {self.get_weights.keys()}'
                 raise AttributeError(msg)
-            self.weights = self.get_weights[weights](self.structures,
-                                                     self.properties,
-                                                     **kwargs)
-        elif weights is not None:
-            self.weights = weights
+            self.weight_type = weights
+            weights = self.get_weights[weights]([i['structure'] for i in items],  # noqa
+                                                [i['property'] for i in items],
+                                                **kwargs)
+        else:
+            self.weight_type = 'external'
 
-    def filter_by_ewald(self, max_ewald):
+        for item, weight in zip(items, weights):
+            item['weight'] = weight
+
+    def filter_by_ewald(self, max_ewald, verbose=False):
         """
         Filter the input structures to only use those with low electrostatic
         energies (no large charge separation in cell). This energy is
@@ -210,9 +261,9 @@ class StructureWrangler(MSONable):
             mine = min_e[item['structure'].composition.reduced_composition]
             r_e = ecorr - mine
             if r_e > max_ewald:
-                logging.debug('Skipping {} with energy {}, ewald energy is {}'
-                              ''.format(item['structure'].composition,
-                                        item['property'], r_e))
+                if verbose:
+                    print(f'Skipping {item["structure"].composition} '
+                          f'ewald energy is {r_e}')
             else:
                 items.append(item)
         self.items = items
@@ -224,7 +275,7 @@ class StructureWrangler(MSONable):
         """
         sw = cls(clustersubspace=ClusterSubspace.from_dict(d['cs']))
         sw.items = d['items']
-        sw.weights = d['weights']
+        sw.weight_type = d['weight_type']
         return sw
 
     def as_dict(self):
@@ -238,5 +289,5 @@ class StructureWrangler(MSONable):
              '@class': self.__class__.__name__,
              'cs': self.cs.as_dict(),
              'items': self.items,
-             'weights': self.weights}
+             'weight_type': self.weight_type}
         return d
