@@ -159,7 +159,9 @@ class ClusterExpansion(MSONable):
             return
 
     def predict(self, structures, normalized=False):
-        structures = structures if type(structures) == list else [structures]
+        if not isinstance(structures, Sequence):
+            structures = [structures]
+
         corrs = []
         for structure in structures:
             corr, size = self.wrangler.cs.corr_from_structure(structure,

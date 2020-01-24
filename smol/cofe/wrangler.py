@@ -104,6 +104,7 @@ class StructureWrangler(MSONable):
                                             ce_structure=self.cs.structure)}
         self.items = []
         self.weight_type = weight_type
+        self.weight_kwargs = {}
 
         if isinstance(weight_type, str):
             self.weight_type = weight_type
@@ -166,7 +167,7 @@ class StructureWrangler(MSONable):
             except StructureMatchError as e:
                 if verbose:
                     print(f'Unable to match {s.composition} with energy {p} to'
-                          f'supercell. Throwing out.\n'
+                          f' supercell. Throwing out.\n'
                           f'Error Message: {str(e)}.')
                 continue
             items.append({'structure': s,
@@ -185,11 +186,26 @@ class StructureWrangler(MSONable):
                               f'type of weights is already set to '
                               f'\'{self.weight_type}\'. Make sure this is what'
                               f'you want.')
-            if isinstance(weights, Sequence):
+            if isinstance(weights, Sequence) and not isinstance(weights, str):
                 weights, kwargs = weights
             self._set_weights(items, weights, **kwargs)
 
         self.items += items
+
+    def update_features(self):
+        """
+        Update the features/feature matrix for the data held. This is useful
+        when something is changed in the clustersubspace after
+        creating the Wrangler, for example added an Ewald term after creating
+        the Wrangler.
+        """
+        for item in self.items:
+            item['features'] = self.cs.corr_from_structure(item['structure'])
+
+
+    def remove_all_data(self):
+        """Removes all data from Wrangler"""
+        self.items = []
 
     def _set_weights(self, items, weights, **kwargs):
         """Set the weight_type for each data point"""
@@ -210,7 +226,7 @@ class StructureWrangler(MSONable):
         for item, weight in zip(items, weights):
             item['weight'] = weight
 
-    def filter_by_ewald(self, max_ewald):
+    def filter_by_ewald(self, max_ewald, verbose=False):
         """
         Filter the input structures to only use those with low electrostatic
         energies (no large charge separation in cell). This energy is
@@ -247,9 +263,9 @@ class StructureWrangler(MSONable):
             mine = min_e[item['structure'].composition.reduced_composition]
             r_e = ecorr - mine
             if r_e > max_ewald:
-                logging.debug('Skipping {} with energy {}, ewald energy is {}'
-                              ''.format(item['structure'].composition,
-                                        item['property'], r_e))
+                if verbose:
+                    print(f'Skipping {item["structure"].composition} '
+                          f'ewald energy is {r_e}')
             else:
                 items.append(item)
         self.items = items

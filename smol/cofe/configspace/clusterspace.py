@@ -89,7 +89,10 @@ class ClusterSubspace(MSONable):
                 raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
 
         comparator = OrderDisorderElementComparator()
+        # Doesn't seem to change success rate for matching structures, but may
+        # be a good option to try if it is failing.
         # comparator = FrameworkComparator()
+
         self.supercell_size = supercell_size
 
         self._sm = StructureMatcher(primitive_cell=False,
