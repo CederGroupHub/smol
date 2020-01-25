@@ -221,6 +221,18 @@ class ClusterSubspace(MSONable):
         return orbits
 
     @property
+    def orbits(self):
+        """Returns a list of all orbits sorted by size"""
+        return [orbit for k, orbits
+                in sorted(self._orbits.items()) for orbit in orbits]
+
+    def iterorbits(self):
+        """Orbit generator, yields orbits"""
+        for key in self._orbits.keys():
+            for orbit in self._orbits[key]:
+                yield orbit
+
+    @property
     def external_terms(self):
         return self._external_terms
 
@@ -232,6 +244,9 @@ class ClusterSubspace(MSONable):
         self._external_terms.append((term, args, kwargs))
 
     def supercell_matrix_from_structure(self, structure):
+        """
+        Obtain the supercell matrix to convert give structure to self.structure
+        """
         sc_matrix = self._sm.get_supercell_matrix(structure, self.structure)
         if sc_matrix is None:
             raise StructureMatchError('Supercell could not be found from '
@@ -241,6 +256,7 @@ class ClusterSubspace(MSONable):
         return sc_matrix
 
     def supercell_from_matrix(self, sc_matrix):
+        """ Return a ClusterSupercell from a given supercell_matrix """
         scm = tuple(sorted(tuple(s) for s in sc_matrix))
         if scm in self._supercells:
             sc = self._supercells[scm]
@@ -253,10 +269,15 @@ class ClusterSubspace(MSONable):
         return sc
 
     def supercell_from_structure(self, structure):
+        """ Return a ClusterSupercell from a given structure """
         sc_matrix = self.supercell_matrix_from_structure(structure)
         return self.supercell_from_matrix(sc_matrix)
 
     def refine_structure(self, structure):
+        """
+        Refine a (relaxed) structure to a multiple of a perfect supercell
+        of self.structure
+        """
         sc = self.supercell_from_structure(structure)
         occu = sc.occu_from_structure(structure)
         return sc.structure_from_occu(occu)
@@ -281,28 +302,19 @@ class ClusterSubspace(MSONable):
             return corr
 
     def corr_from_external(self, structure, sc_matrix, mapping=None):
-        sc = self.supercell_from_matrix(sc_matrix)  # get clustersupercell
+        """Compute corr directly from given structure and matrix (mapping)"""
+        sc = self.supercell_from_matrix(sc_matrix)
         if mapping is not None:
             sc.mapping = mapping
         occu = sc.occu_from_structure(structure)
         return sc.corr_from_occupancy(occu)
 
     def refine_structure_external(self, structure, sc_matrix):
+        """Refine struct directly from given structure and matrix (mapping)"""
         sc = self.supercell_from_matrix(sc_matrix)
-        occu, mapping = sc.occu_from_structure(structure, return_mapping=True)
+        mapping = sc.mapping_from_structure(structure)
+        occu = sc.occu_from_structure(structure)
         return sc.structure_from_occu(occu), mapping
-
-    @property
-    def orbits(self):
-        """Returns a list of all orbits sorted by size"""
-        return [orbit for k, orbits
-                in sorted(self._orbits.items()) for orbit in orbits]
-
-    def iterorbits(self):
-        """Orbit generator, yields orbits"""
-        for key in self._orbits.keys():
-            for orbit in self._orbits[key]:
-                yield orbit
 
     def __str__(self):
         s = "ClusterBasis: {}\n".format(self.structure.composition)

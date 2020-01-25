@@ -135,19 +135,24 @@ class ClusterSupercell():
 
         return corr
 
-    def occu_from_structure(self, structure, return_mapping=False):
+    def mapping_from_structure(self, structure):
         """
-        Returns list of occupancies of each site in the structure
+        Obtain the mapping of sites from a given structure to the supercell
+        structure
         """
-        # calculate mapping to supercell
-
         mapping = self._sm.get_mapping(self.supercell, structure)
         if mapping is None:
             raise StructureMatchError('Mapping could not be found from '
                                       'structure')
-        mapping = mapping.tolist()
+        return mapping.tolist()
 
+    def occu_from_structure(self, structure):
+        """
+        Returns list of occupancies of each site in the structure
+        """
+        mapping = self.mapping_from_structure(structure)
         occu = []  # np.zeros(len(self.supercell), dtype=np.int)
+
         for i, bit in enumerate(self.bits):
             # rather than starting with all vacancies and looping
             # only over mapping, explicitly loop over everything to
@@ -157,10 +162,8 @@ class ClusterSupercell():
             else:
                 sp = 'Vacancy'
             occu.append(sp)
-        if not return_mapping:
-            return occu
-        else:
-            return occu, mapping
+
+        return occu
 
     # TODO get rid of this?
     def occu_energy(self, occu, ecis):
@@ -173,7 +176,10 @@ class ClusterSupercell():
         Returns the *change* in the correlation vector from applying a list of
         flips. Flips is a list of (site, new_bit) tuples.
         """
-
+        # TODO Need to change occu into an int array to use cython func
+        #  look into _get_ewald ECI and maybe make a function that does this
+        # TODO create two delta_corr_single_flip functions, one without ewald
+        #  another for ewald (or other terms?).
         new_occu = occu.copy()
         len_eci = self.csubspace.n_bit_orderings + len(all_ewalds)
         delta_corr = np.zeros(len_eci)
