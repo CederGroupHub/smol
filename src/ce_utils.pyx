@@ -95,3 +95,4 @@ def delta_corr_single_flip(np.int_t[:] final, np.int_t[:] init, int n_bit_orderi
         o_view[l + n_bit_orderings] = o / size
         l += 1
 
+    return out

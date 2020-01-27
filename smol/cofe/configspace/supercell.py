@@ -18,16 +18,12 @@ from pymatgen.util.coord import lattice_points_in_supercell,\
 from src.ce_utils import delta_corr_single_flip
 from smol.cofe.utils import StructureMatchError, SITE_TOL
 
-# TODO the supercell and supercell_matrix should probably be obtained with an
-#  undercorated structure/lattice
-# TODO test with FrameworkComparator to see if missed structures improves
-
 
 class ClusterSupercell():
     """
     Used to calculates correlation vectors on a specific supercell lattice.
     """
-
+    # TODO also remove keeping the csubspace as an attribute, just use whats needed, aka the orbits
     def __init__(self, clustersubspace, supercell, supercell_matrix, bits):
         """
         Args:
@@ -85,6 +81,8 @@ class ClusterSupercell():
             tcs = tcoords.shape
             inds = coord_list_mapping_pbc(tcoords.reshape((-1, 3)),
                                           self.fcoords, atol=SITE_TOL).reshape((tcs[0] * tcs[1], tcs[2]))  # noqa
+            # TODO cluster_indices will only be used in cluster_supercell
+            #  not in the calculator
             cluster_indices.append((orbit, inds))
             # orbit, 2d array of index groups that correspond to the cluster
             # the 2d array may have some duplicates. This is due to
@@ -98,6 +96,8 @@ class ClusterSupercell():
             # where only the rows with the site index are stored. The ratio is
             # needed because the correlations are averages over the full inds
             # array.
+            # TODO break this apart and put this in the CalculatorClass
+            #  cluster_by_sites is only used in delta_corr
             for site_index in np.unique(inds):
                 in_inds = np.any(inds == site_index, axis=-1)
                 ratio = len(inds) / np.sum(in_inds)
@@ -107,6 +107,7 @@ class ClusterSupercell():
 
         return cluster_indices, clusters_by_sites
 
+    # TODO this should be a method in the calculator
     def structure_from_occu(self, occu):
         """Get pymatgen.Structure from an occupancy vector"""
 
@@ -165,6 +166,21 @@ class ClusterSupercell():
 
         return occu
 
+    # TODO write test for this
+    # TODO this should be part of the calculator too!
+    def encode_occu(self, occu):
+        """
+        Encode occupancy vector of species str to ints.
+        This is mainly used to compute delta_corr
+        """
+        ec_occu = np.array([bit.index(sp) for bit, sp in zip(self.bits, occu)])
+        return ec_occu
+
+    def decode_occu(self, enc_occu):
+        """Decode encoded occupancy vector of int to species str"""
+        occu = [bit[i] for i, bit in zip(enc_occu, self.bits)]
+        return occu
+
     # TODO get rid of this?
     def occu_energy(self, occu, ecis):
         return np.dot(self.corr_from_occupancy(occu), ecis) * self.size
@@ -176,14 +192,13 @@ class ClusterSupercell():
         Returns the *change* in the correlation vector from applying a list of
         flips. Flips is a list of (site, new_bit) tuples.
         """
-        # TODO Need to change occu into an int array to use cython func
-        #  look into _get_ewald ECI and maybe make a function that does this
-        # TODO create two delta_corr_single_flip functions, one without ewald
-        #  another for ewald (or other terms?).
-        new_occu = occu.copy()
+
+        new_occu = self.encode_occu(occu)
         len_eci = self.csubspace.n_bit_orderings + len(all_ewalds)
         delta_corr = np.zeros(len_eci)
+        new_occu = new_occu # TODO code/decode this so that occu is returned as str not ints? May slow down though
 
+        # TODO need to figure out how to implement delta_corr for different bases!!!
         for f in flips:
             new_occu_f = new_occu.copy()
             new_occu_f[f[0]] = f[1]
@@ -195,7 +210,8 @@ class ClusterSupercell():
             new_occu = new_occu_f
 
         if debug:
-            e = self.corr_from_occupancy(new_occu)
+            e = self.corr_from_occupancy(self.decode_occu(new_occu))
             de = e - self.corr_from_occupancy(occu)
             assert np.allclose(delta_corr, de)
+
         return delta_corr, new_occu

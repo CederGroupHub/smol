@@ -134,9 +134,7 @@ class EwaldTerm():
     def _get_ewald_eci(self, occu):
         # This is a quick fix for occu being a list of species strings now.
         # Could be better?
-        occu = np.array([bit.index(sp)
-                         for bit, sp in
-                         zip(self.cluster_supercell.bits, occu)])
+        occu = self.cluster_supercell.encode_occu(occu)
         inds = self._get_ewald_occu(occu)
         ecis = [np.sum(self.ewald_matrix[inds, :][:, inds])/self.cluster_supercell.size]  # noqa
 

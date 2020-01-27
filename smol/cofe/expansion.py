@@ -6,9 +6,10 @@ a corresponding property (most usually energy).
 
 from __future__ import division
 import warnings
-from collections.abc import Sequence
 import numpy as np
+from collections.abc import Sequence
 from monty.json import MSONable
+from pymatgen import Structure
 from smol.cofe.utils import NotFittedError
 from smol.cofe.configspace.clusterspace import ClusterSubspace
 from smol.cofe.wrangler import StructureWrangler
@@ -159,7 +160,7 @@ class ClusterExpansion(MSONable):
             return
 
     def predict(self, structures, normalized=False):
-        if not isinstance(structures, Sequence):
+        if isinstance(structures, Structure):
             structures = [structures]
 
         corrs = []

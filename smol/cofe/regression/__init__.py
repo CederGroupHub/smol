@@ -6,7 +6,7 @@ and testing the performance of the fit
 
 from .estimator import CVXEstimator, BaseEstimator
 
-__all__ = ['CVXEstimator', 'BaseEstimator']
+__all__ = ['CVXEstimator', 'BaseEstimator', 'constrain_dielectric']
 
 
 def constrain_dielectric(ce, max_dielectric, e_ind=-1, *fitargs, **fitkwargs):
