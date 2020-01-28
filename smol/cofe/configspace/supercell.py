@@ -23,8 +23,9 @@ class ClusterSupercell():
     """
     Used to calculates correlation vectors on a specific supercell lattice.
     """
-    # TODO also remove keeping the csubspace as an attribute, just use whats needed, aka the orbits
-    def __init__(self, clustersubspace, supercell, supercell_matrix, bits):
+
+    def __init__(self, supercell, supercell_matrix, bits,
+                 n_bit_orderings, orbits, **matcher_kwargs):
         """
         Args:
             clustersubspace (ClusterSubspace):
@@ -37,18 +38,26 @@ class ClusterSupercell():
             bits (np.array):
                 array describing the occupation of supercell,
                 e.g. [[1,0,0],[0,1,0],[0,0,1]]
+            n_bit_orderings (int):
+                total number of possible orderings of bits for all prim sites
+            orbits (list(Orbit)):
+                list of cluster orbits ordered by increasing size
+            matcher_kwargs:
+                keyword arguments to be passed to StructureMatcher: ltol, stol,
+                atol, supercell_size
         """
 
         self.supercell = supercell
         self.supercell_matrix = supercell_matrix
         self.prim_to_supercell = np.linalg.inv(self.supercell_matrix)
-        self.csubspace = clustersubspace
         self.size = int(round(np.abs(np.linalg.det(self.supercell_matrix))))
 
         self.bits = bits
         self.nbits = np.array([len(b) - 1 for b in self.bits])
-        self.fcoords = np.array(self.supercell.frac_coords)
+        self.n_bit_orderings = n_bit_orderings
+        self.orbits = orbits
 
+        self.fcoords = np.array(self.supercell.frac_coords)
         self.cluster_indices, self.clusters_by_sites = self._generate_mappings()  # noqa
 
         comparator = OrderDisorderElementComparator()
@@ -56,11 +65,8 @@ class ClusterSupercell():
                                     attempt_supercell=False,
                                     allow_subset=True,
                                     comparator=comparator,
-                                    supercell_size=self.csubspace.supercell_size,  # noqa
                                     scale=True,
-                                    ltol=self.csubspace.ltol,
-                                    stol=self.csubspace.stol,
-                                    angle_tol=self.csubspace.angle_tol)
+                                    **matcher_kwargs)
 
     def _generate_mappings(self):
         """
@@ -70,7 +76,7 @@ class ClusterSupercell():
         ts = lattice_points_in_supercell(self.supercell_matrix)
         cluster_indices = []
         clusters_by_sites = defaultdict(list)
-        for orbit in self.csubspace.iterorbits():
+        for orbit in self.orbits:
             prim_fcoords = np.array([c.sites for c in orbit.clusters])
             fcoords = np.dot(prim_fcoords, self.prim_to_supercell)
             # tcoords contains all the coordinates of the symmetrically
@@ -84,7 +90,7 @@ class ClusterSupercell():
             # TODO cluster_indices will only be used in cluster_supercell
             #  not in the calculator
             cluster_indices.append((orbit, inds))
-            # orbit, 2d array of index groups that correspond to the cluster
+            # 2d array of index groups that correspond to the cluster
             # the 2d array may have some duplicates. This is due to
             # symetrically equivalent groups being matched to the same sites
             # (eg in simply cubic all 6 nn interactions will all be [0, 0]
@@ -123,7 +129,7 @@ class ClusterSupercell():
         Each entry in the correlation vector corresponds to a particular
         symmetrically distinct bit ordering
         """
-        corr = np.zeros(self.csubspace.n_bit_orderings)
+        corr = np.zeros(self.n_bit_orderings)
         corr[0] = 1  # zero point cluster
         occu = np.array(occu)
         for orb, inds in self.cluster_indices:
@@ -194,7 +200,7 @@ class ClusterSupercell():
         """
 
         new_occu = self.encode_occu(occu)
-        len_eci = self.csubspace.n_bit_orderings + len(all_ewalds)
+        len_eci = self.n_bit_orderings + len(all_ewalds)
         delta_corr = np.zeros(len_eci)
         new_occu = new_occu # TODO code/decode this so that occu is returned as str not ints? May slow down though
 
@@ -203,7 +209,7 @@ class ClusterSupercell():
             new_occu_f = new_occu.copy()
             new_occu_f[f[0]] = f[1]
             delta_corr += delta_corr_single_flip(new_occu_f, new_occu,
-                                                 self.csubspace.n_bit_orderings,  # noqa
+                                                 self.n_bit_orderings,
                                                  self.clusters_by_sites[f[0]],
                                                  f[0], f[1], all_ewalds,
                                                  ewald_inds, self.size)

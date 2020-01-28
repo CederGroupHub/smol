@@ -31,7 +31,10 @@ class TestSuperCell(unittest.TestCase):
         supercell = cs.structure.copy()
         supercell.make_supercell(m)
 
-        sc = ClusterSupercell(cs, supercell, m, get_bits(supercell))
+        sc = ClusterSupercell(supercell, supercell_matrix=m,
+                              bits=get_bits(supercell),
+                              n_bit_orderings=cs.n_bit_orderings,
+                              orbits=cs.orbits)
         for orb, inds in sc.cluster_indices:
             for x in inds:
                 pbc_radius = np.max(sc.supercell.lattice.get_all_distances(
@@ -69,7 +72,11 @@ class TestSuperCell(unittest.TestCase):
 
         supercell = cs.structure.copy()
 
-        sc = ClusterSupercell(cs, supercell, [[1,0,0],[0,1,0],[0,0,1]], get_bits(supercell))
+        sc = ClusterSupercell(supercell,
+                              supercell_matrix=[[1,0,0],[0,1,0],[0,0,1]],
+                              bits=get_bits(supercell),
+                              n_bit_orderings=cs.n_bit_orderings,
+                              orbits=cs.orbits)
         # last two clusters are switched from CASM output (and using occupancy basis)
         # all_li (ignore casm point term)
         self.assertTrue(np.allclose(sc.corr_from_occupancy(['Li', 'Li', 'Li']),
@@ -100,7 +107,11 @@ class TestSuperCell(unittest.TestCase):
         structure = Structure(self.lattice, species, coords)
         cs = ClusterSubspace.from_radii(structure, {2: 6, 3: 4.5})
         supercell = cs.structure.copy()
-        sc = ClusterSupercell(cs, supercell, [[1, 0, 0], [0, 1, 0], [0, 0, 1]], get_bits(supercell))
+        sc = ClusterSupercell(supercell,
+                              supercell_matrix=[[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+                              bits=get_bits(supercell),
+                              n_bit_orderings=cs.n_bit_orderings,
+                              orbits=cs.orbits)
 
         # last two pair terms are switched from CASM output (and using occupancy basis)
         # all_li (ignore casm point term)
@@ -125,7 +136,11 @@ class TestSuperCell(unittest.TestCase):
     def test_vs_CASM_multicomp(self):
         cs = ClusterSubspace.from_radii(self.structure, {2: 5})
         supercell = cs.structure.copy()
-        sc = ClusterSupercell(cs, supercell, [[1, 0, 0], [0, 1, 0], [0, 0, 1]], get_bits(supercell))
+        sc = ClusterSupercell(supercell,
+                              supercell_matrix= [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+                              bits=get_bits(supercell),
+                              n_bit_orderings=cs.n_bit_orderings,
+                              orbits=cs.orbits)
 
         # mixed
         self.assertTrue(np.allclose(sc.corr_from_occupancy(['Vacancy', 'Li', 'Li']),
