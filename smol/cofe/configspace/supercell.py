@@ -39,7 +39,9 @@ class ClusterSupercell():
                 array describing the occupation of supercell,
                 e.g. [[1,0,0],[0,1,0],[0,0,1]]
             n_bit_orderings (int):
-                total number of possible orderings of bits for all prim sites
+                total number of possible orderings of bits for all prim sites.
+                This corresponds to the total number of cluster functions in
+                the expansion.
             orbits (list(Orbit)):
                 list of cluster orbits ordered by increasing size
             matcher_kwargs:
@@ -59,7 +61,10 @@ class ClusterSupercell():
 
         self.fcoords = np.array(self.supercell.frac_coords)
         self.cluster_indices, self.clusters_by_sites = self._generate_mappings()  # noqa
+        # TODO cluster_indices are used to compute corr_vects
+        # TODO clusters_by_sites to compute delta_corr (Calculator only)
 
+        # TODO SM is not needed in calculator (for montecarlo!)
         comparator = OrderDisorderElementComparator()
         self._sm = StructureMatcher(primitive_cell=False,
                                     attempt_supercell=False,
@@ -202,9 +207,12 @@ class ClusterSupercell():
         new_occu = self.encode_occu(occu)
         len_eci = self.n_bit_orderings + len(all_ewalds)
         delta_corr = np.zeros(len_eci)
-        new_occu = new_occu # TODO code/decode this so that occu is returned as str not ints? May slow down though
+        # TODO code/decode this so that occu is returned as str not ints?
+        #  May slow down though
+        new_occu = new_occu
 
-        # TODO need to figure out how to implement delta_corr for different bases!!!
+        # TODO need to figure out how to implement delta_corr for different
+        #  bases!!!
         for f in flips:
             new_occu_f = new_occu.copy()
             new_occu_f[f[0]] = f[1]
