@@ -7,10 +7,9 @@ import numpy as np
 from monty.json import MSONable
 from pymatgen import Composition
 from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
-
 from smol.cofe.configspace import EwaldTerm
 from smol.cofe.configspace.clusterspace import ClusterSubspace
-from smol.cofe.configspace.utils import StructureMatchError
+from smol.exceptions import StructureMatchError
 
 
 def weights_e_above_comp(structures, energies, temperature=2000):
@@ -212,7 +211,8 @@ class StructureWrangler(MSONable):
         the Wrangler.
         """
         for item in self.items:
-            item['features'] = self.subspace.corr_from_structure(item['structure'])
+            struct = item['structure']
+            item['features'] = self.subspace.corr_from_structure(struct)
 
     def remove_all_data(self):
         """Removes all data from Wrangler"""

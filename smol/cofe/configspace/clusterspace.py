@@ -13,11 +13,11 @@ from pymatgen.analysis.structure_matcher import StructureMatcher,\
      OrderDisorderElementComparator  # , FrameworkComparator
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc
-
 from smol.cofe.configspace import Orbit, ClusterSupercell
 from smol.cofe.configspace.basis import basis_factory
-from smol.cofe.configspace.utils import SymmetryError, StructureMatchError, \
-    SYMMETRY_ERROR_MESSAGE, SITE_TOL, get_bits
+from smol.cofe.configspace.utils import SITE_TOL, get_bits
+from smol.exceptions import SymmetryError, StructureMatchError,\
+    SYMMETRY_ERROR_MESSAGE
 
 
 class ClusterSubspace(MSONable):
@@ -229,7 +229,8 @@ class ClusterSubspace(MSONable):
 
     def supercell_matrix_from_structure(self, structure):
         """
-        Obtain the supercell_structure matrix to convert give structure to self.structure
+        Obtain the supercell_structure matrix to convert given structure to
+        prim structure.
         """
         sc_matrix = self._sm.get_supercell_matrix(structure, self.structure)
         if sc_matrix is None:
@@ -262,8 +263,8 @@ class ClusterSubspace(MSONable):
 
     def refine_structure(self, structure):
         """
-        Refine a (relaxed) structure to a multiple of a perfect supercell_structure
-        of self.structure
+        Refine a (relaxed) structure to a multiple of a perfect supercell
+        structure of of the prim structure
         """
         sc = self.supercell_from_structure(structure)
         occu = sc.occu_from_structure(structure)
@@ -271,8 +272,8 @@ class ClusterSubspace(MSONable):
 
     def corr_from_structure(self, structure, return_size=False):
         """
-        Given a structure, determines which supercell_structure to use, and gets the
-        correlation vector
+        Given a structure, determines which supercell structure to use, and
+        gets the correlation vector
         """
         sc = self.supercell_from_structure(structure)
         occu = sc.occu_from_structure(structure)

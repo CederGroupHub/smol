@@ -20,7 +20,7 @@ class ClusterExpansionProcessor(MSONable):
     """
     A processor used to generate Markov processes for sampling thermodynamic
     properties from a cluster expansion hamiltonian. Think of this as fixed
-    size supercell_structure optimized to calculate correlation vectors and local changes
+    size supercell optimized to calculate correlation vectors and local changes
     to correlation vectors from site flips.
     """
 

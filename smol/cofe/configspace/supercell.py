@@ -14,7 +14,8 @@ from pymatgen.analysis.structure_matcher import StructureMatcher,\
     OrderDisorderElementComparator
 from pymatgen.util.coord import lattice_points_in_supercell,\
     coord_list_mapping_pbc
-from smol.cofe.configspace.utils import get_bits, StructureMatchError, SITE_TOL
+from smol.cofe.configspace.utils import SITE_TOL
+from smol.exceptions import StructureMatchError
 
 
 class ClusterSupercell():

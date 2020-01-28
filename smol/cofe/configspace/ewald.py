@@ -17,7 +17,7 @@ class EwaldTerm():
     the supercel This concept can be extended to other terms, but then the best
     would probably be to write a base class for extra cluster expansion terms
     and then subclass that with any other terms people can cook up Baseclass
-    could simply have an abstract classmethod the returns True if a supercell_structure
+    could simply have an abstract classmethod the returns True if a structure
     is needed for it to be constructed
     """
 
@@ -91,7 +91,7 @@ class EwaldTerm():
     def partial_ems(self):
         if self._partial_ems is None:
             # There seems to be an issue with SpacegroupAnalyzer such that
-            # making a supercell_structure can actually reduce the symmetry operations,
+            # making a supercell can actually reduce the symmetry operations,
             # so we're going to group the ewald matrix by the equivalency in
             # self.orbit_indices
             equiv_orb_inds = []

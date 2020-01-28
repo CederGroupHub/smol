@@ -13,7 +13,7 @@ from pymatgen import Structure
 from smol.cofe.configspace.clusterspace import ClusterSubspace
 from smol.cofe.wrangler import StructureWrangler
 from smol.cofe.regression.estimator import BaseEstimator, CVXEstimator
-from smol.cofe.configspace.utils import NotFittedError
+from smol.exceptions import NotFittedError
 
 
 class ClusterExpansion(MSONable):
@@ -61,7 +61,6 @@ class ClusterExpansion(MSONable):
                                      'One of them needs to be provided')
             self.estimator = BaseEstimator()
             self.estimator.coef_ = self.ecis
-
 
     @classmethod
     def from_radii(cls, structure, radii, ltol=0.2, stol=0.1, angle_tol=5,
