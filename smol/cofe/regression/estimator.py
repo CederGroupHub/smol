@@ -8,7 +8,7 @@ make a seperate file and import the Estimator in the __init__.py file
 """
 import numpy as np
 import warnings
-from ..utils import NotFittedError
+from smol.cofe.configspace.utils import NotFittedError
 
 
 class BaseEstimator:

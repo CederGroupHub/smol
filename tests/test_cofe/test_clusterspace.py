@@ -42,7 +42,7 @@ class TestClusterSubSpace(unittest.TestCase):
         sc_matrix = self.cs.supercell_matrix_from_structure(supercell)
         self.assertAlmostEqual(np.linalg.det(sc_matrix), 8)
 
-        # A more complex supercell
+        # A more complex supercell_structure
         m = np.array([[ 0,  5,  3],
                       [-2,  0,  2],
                       [-2,  4,  3]])
@@ -74,7 +74,7 @@ class TestClusterSubSpace(unittest.TestCase):
         sc = self.cs.supercell_from_matrix(m)
         supercell = self.structure.copy()
         supercell.make_supercell(m)
-        self.assertEqual(sc.supercell, supercell)
+        self.assertEqual(sc.supercell_struct, supercell)
 
     def test_refine_structure(self):
         lattice = Lattice([[2.95, 3, 0], [0, 3, 2.9], [3, 0, 3]])
@@ -95,7 +95,7 @@ class TestClusterSubSpace(unittest.TestCase):
 
         cs = ClusterSubspace.from_radii(self.structure, {2: 5})
 
-        # make an ordered supercell
+        # make an ordered supercell_structure
         s = self.structure.copy()
         s.make_supercell([2, 1, 1])
         species = ('Li', 'Ca', 'Li', 'Ca', 'Br', 'Br')

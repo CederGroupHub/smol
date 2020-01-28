@@ -17,7 +17,7 @@ class EwaldTerm():
     the supercel This concept can be extended to other terms, but then the best
     would probably be to write a base class for extra cluster expansion terms
     and then subclass that with any other terms people can cook up Baseclass
-    could simply have an abstract classmethod the returns True if a supercell
+    could simply have an abstract classmethod the returns True if a supercell_structure
     is needed for it to be constructed
     """
 
@@ -48,7 +48,7 @@ class EwaldTerm():
                           'not well tested', RuntimeWarning)
 
         for bits, s in zip(self.cluster_supercell.bits,
-                           self.cluster_supercell.supercell):
+                           self.cluster_supercell.supercell_struct):
             inds = np.zeros(max(self.cluster_supercell.nbits) + 1) - 1
             for i, b in enumerate(bits):
                 if b == 'Vacancy':
@@ -91,13 +91,13 @@ class EwaldTerm():
     def partial_ems(self):
         if self._partial_ems is None:
             # There seems to be an issue with SpacegroupAnalyzer such that
-            # making a supercell can actually reduce the symmetry operations,
+            # making a supercell_structure can actually reduce the symmetry operations,
             # so we're going to group the ewald matrix by the equivalency in
-            # self.cluster_indices
+            # self.orbit_indices
             equiv_orb_inds = []
             ei = self.ewald_inds
             n_inds = len(self.ewald_matrix)
-            for orb, inds in self.cluster_supercell.cluster_indices:
+            for orb, inds in self.cluster_supercell.orbit_indices:
                 # only want the point terms, which should be first
                 if len(orb.bits) > 1:
                     break
@@ -134,7 +134,8 @@ class EwaldTerm():
     def _get_ewald_eci(self, occu):
         # This is a quick fix for occu being a list of species strings now.
         # Could be better?
-        occu = self.cluster_supercell.encode_occu(occu)
+        occu = np.array([bit.index(sp) for bit, sp
+                         in zip(self.cluster_supercell.bits, occu)])
         inds = self._get_ewald_occu(occu)
         ecis = [np.sum(self.ewald_matrix[inds, :][:, inds])/self.cluster_supercell.size]  # noqa
 

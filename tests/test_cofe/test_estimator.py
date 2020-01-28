@@ -27,9 +27,9 @@ class TestEstimator(unittest.TestCase):
             structures.append(x['structure'])
             energies.append(x['energy'])
 
-        cs = ClusterSubspace.from_radii(self.structure, {2: 2})
+        subspace = ClusterSubspace.from_radii(self.structure, {2: 2})
 
-        feature_matrix = np.array([cs.corr_from_structure(s) for s in structures])
+        feature_matrix = np.array([subspace.corr_from_structure(s) for s in structures])
         energies = np.array(energies)
 
         est = CVXEstimator()

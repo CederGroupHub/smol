@@ -8,35 +8,35 @@ directly by a user
 """
 
 from __future__ import division
-from collections import defaultdict
 import numpy as np
 from pymatgen import Structure, PeriodicSite
 from pymatgen.analysis.structure_matcher import StructureMatcher,\
     OrderDisorderElementComparator
 from pymatgen.util.coord import lattice_points_in_supercell,\
     coord_list_mapping_pbc
-from src.ce_utils import delta_corr_single_flip
-from smol.cofe.utils import StructureMatchError, SITE_TOL
+from smol.cofe.configspace.utils import get_bits, StructureMatchError, SITE_TOL
 
 
 class ClusterSupercell():
     """
-    Used to calculates correlation vectors on a specific supercell lattice.
+    Used to calculates correlation vectors on a specific supercell structure
+    lattice.
     """
 
-    def __init__(self, supercell, supercell_matrix, bits,
+    def __init__(self, supercell_structure, supercell_matrix, bits,
                  n_bit_orderings, orbits, **matcher_kwargs):
         """
         Args:
             clustersubspace (ClusterSubspace):
                 A ClusterSubspace object used to compute corresponding
                 correlation vectors
-            supercell (pymatgen.Structure):
+            supercell_structure (pymatgen.Structure):
                 Structure representing the super cell
-            supercell matrix (np.array):
-                Matrix representing transformation between prim and supercell
+            supercell_struct matrix (np.array):
+                Matrix representing transformation between prim and
+                supercell_struct
             bits (np.array):
-                array describing the occupation of supercell,
+                array describing the occupation of supercell_struct,
                 e.g. [[1,0,0],[0,1,0],[0,0,1]]
             n_bit_orderings (int):
                 total number of possible orderings of bits for all prim sites.
@@ -49,22 +49,18 @@ class ClusterSupercell():
                 atol, supercell_size
         """
 
-        self.supercell = supercell
+        self.supercell_struct = supercell_structure
         self.supercell_matrix = supercell_matrix
         self.prim_to_supercell = np.linalg.inv(self.supercell_matrix)
-        self.size = int(round(np.abs(np.linalg.det(self.supercell_matrix))))
+        self.size = int(round(np.abs(np.linalg.det(supercell_matrix))))
 
         self.bits = bits
-        self.nbits = np.array([len(b) - 1 for b in self.bits])
+        self.nbits = np.array([len(b)-1 for b in self.bits])
         self.n_bit_orderings = n_bit_orderings
-        self.orbits = orbits
 
-        self.fcoords = np.array(self.supercell.frac_coords)
-        self.cluster_indices, self.clusters_by_sites = self._generate_mappings()  # noqa
-        # TODO cluster_indices are used to compute corr_vects
-        # TODO clusters_by_sites to compute delta_corr (Calculator only)
+        self.fcoords = np.array(self.supercell_struct.frac_coords)
+        self.orbit_indices = self._generate_mappings(orbits)
 
-        # TODO SM is not needed in calculator (for montecarlo!)
         comparator = OrderDisorderElementComparator()
         self._sm = StructureMatcher(primitive_cell=False,
                                     attempt_supercell=False,
@@ -73,15 +69,14 @@ class ClusterSupercell():
                                     scale=True,
                                     **matcher_kwargs)
 
-    def _generate_mappings(self):
+    def _generate_mappings(self, orbits):
         """
-        Find all the supercell indices associated with each cluster
+        Find all the supercell_structure indices associated with each cluster
         """
 
         ts = lattice_points_in_supercell(self.supercell_matrix)
-        cluster_indices = []
-        clusters_by_sites = defaultdict(list)
-        for orbit in self.orbits:
+        orbit_indices = []
+        for orbit in orbits:
             prim_fcoords = np.array([c.sites for c in orbit.clusters])
             fcoords = np.dot(prim_fcoords, self.prim_to_supercell)
             # tcoords contains all the coordinates of the symmetrically
@@ -91,43 +86,18 @@ class ClusterSupercell():
             tcoords = fcoords[:, None, :, :] + ts[None, :, None, :]
             tcs = tcoords.shape
             inds = coord_list_mapping_pbc(tcoords.reshape((-1, 3)),
-                                          self.fcoords, atol=SITE_TOL).reshape((tcs[0] * tcs[1], tcs[2]))  # noqa
-            # TODO cluster_indices will only be used in cluster_supercell
-            #  not in the calculator
-            cluster_indices.append((orbit, inds))
-            # 2d array of index groups that correspond to the cluster
+                                          self.fcoords,
+                                          atol=SITE_TOL).reshape((tcs[0] * tcs[1], tcs[2]))  # noqa
+            # orbit_indices holds orbit, and 2d array of index groups that
+            # correspond to the orbit
             # the 2d array may have some duplicates. This is due to
             # symetrically equivalent groups being matched to the same sites
             # (eg in simply cubic all 6 nn interactions will all be [0, 0]
-            # indices. This multiplicity disappears as supercell size
+            # indices. This multiplicity disappears as supercell_structure size
             # increases, so I haven't implemented a more efficient method
+            orbit_indices.append((orbit, inds))
 
-            # now we store the orbits grouped by site index in the supercell,
-            # to be used by delta_corr. We also store a reduced index array,
-            # where only the rows with the site index are stored. The ratio is
-            # needed because the correlations are averages over the full inds
-            # array.
-            # TODO break this apart and put this in the CalculatorClass
-            #  cluster_by_sites is only used in delta_corr
-            for site_index in np.unique(inds):
-                in_inds = np.any(inds == site_index, axis=-1)
-                ratio = len(inds) / np.sum(in_inds)
-                clusters_by_sites[site_index].append((orbit.bit_combos,
-                                                      orbit.orb_b_id,
-                                                      inds[in_inds], ratio))
-
-        return cluster_indices, clusters_by_sites
-
-    # TODO this should be a method in the calculator
-    def structure_from_occu(self, occu):
-        """Get pymatgen.Structure from an occupancy vector"""
-
-        sites = []
-        for sp, s in zip(occu, self.supercell):
-            if sp != 'Vacancy':
-                site = PeriodicSite(sp, s.frac_coords, self.supercell.lattice)
-                sites.append(site)
-        return Structure.from_sites(sites)
+        return orbit_indices
 
     def corr_from_occupancy(self, occu):
         """
@@ -137,7 +107,7 @@ class ClusterSupercell():
         corr = np.zeros(self.n_bit_orderings)
         corr[0] = 1  # zero point cluster
         occu = np.array(occu)
-        for orb, inds in self.cluster_indices:
+        for orb, inds in self.orbit_indices:
             c_occu = occu[inds]
             for i, bit_list in enumerate(orb.bit_combos):
                 p = [np.fromiter(map(lambda occu: orb.eval(bits, occu),
@@ -149,10 +119,10 @@ class ClusterSupercell():
 
     def mapping_from_structure(self, structure):
         """
-        Obtain the mapping of sites from a given structure to the supercell
-        structure
+        Obtain the mapping of sites from a given structure to the
+        supercell_structure
         """
-        mapping = self._sm.get_mapping(self.supercell, structure)
+        mapping = self._sm.get_mapping(self.supercell_struct, structure)
         if mapping is None:
             raise StructureMatchError('Mapping could not be found from '
                                       'structure')
@@ -163,7 +133,7 @@ class ClusterSupercell():
         Returns list of occupancies of each site in the structure
         """
         mapping = self.mapping_from_structure(structure)
-        occu = []  # np.zeros(len(self.supercell), dtype=np.int)
+        occu = []  # np.zeros(len(self.supercell_structure), dtype=np.int)
 
         for i, bit in enumerate(self.bits):
             # rather than starting with all vacancies and looping
@@ -173,59 +143,19 @@ class ClusterSupercell():
                 sp = str(structure[mapping.index(i)].specie)
             else:
                 sp = 'Vacancy'
+            if sp not in bit:
+                raise StructureMatchError(f'A site in given structure has a'
+                                          f' unrecognized specie {sp}. ')
             occu.append(sp)
 
         return occu
 
-    # TODO write test for this
-    # TODO this should be part of the calculator too!
-    def encode_occu(self, occu):
-        """
-        Encode occupancy vector of species str to ints.
-        This is mainly used to compute delta_corr
-        """
-        ec_occu = np.array([bit.index(sp) for bit, sp in zip(self.bits, occu)])
-        return ec_occu
-
-    def decode_occu(self, enc_occu):
-        """Decode encoded occupancy vector of int to species str"""
-        occu = [bit[i] for i, bit in zip(enc_occu, self.bits)]
-        return occu
-
-    # TODO get rid of this?
-    def occu_energy(self, occu, ecis):
-        return np.dot(self.corr_from_occupancy(occu), ecis) * self.size
-
-    def delta_corr(self, flips, occu,
-                   all_ewalds=np.zeros((0, 0, 0), dtype=np.float),
-                   ewald_inds=np.zeros((0, 0), dtype=np.int), debug=False):
-        """
-        Returns the *change* in the correlation vector from applying a list of
-        flips. Flips is a list of (site, new_bit) tuples.
-        """
-
-        new_occu = self.encode_occu(occu)
-        len_eci = self.n_bit_orderings + len(all_ewalds)
-        delta_corr = np.zeros(len_eci)
-        # TODO code/decode this so that occu is returned as str not ints?
-        #  May slow down though
-        new_occu = new_occu
-
-        # TODO need to figure out how to implement delta_corr for different
-        #  bases!!!
-        for f in flips:
-            new_occu_f = new_occu.copy()
-            new_occu_f[f[0]] = f[1]
-            delta_corr += delta_corr_single_flip(new_occu_f, new_occu,
-                                                 self.n_bit_orderings,
-                                                 self.clusters_by_sites[f[0]],
-                                                 f[0], f[1], all_ewalds,
-                                                 ewald_inds, self.size)
-            new_occu = new_occu_f
-
-        if debug:
-            e = self.corr_from_occupancy(self.decode_occu(new_occu))
-            de = e - self.corr_from_occupancy(occu)
-            assert np.allclose(delta_corr, de)
-
-        return delta_corr, new_occu
+    def structure_from_occu(self, occu):
+        """Get pymatgen.Structure from an occupancy vector"""
+        sites = []
+        for sp, s in zip(occu, self.supercell_struct):
+            if sp != 'Vacancy':
+                site = PeriodicSite(sp, s.frac_coords,
+                                    self.supercell_struct.lattice)
+                sites.append(site)
+        return Structure.from_sites(sites)

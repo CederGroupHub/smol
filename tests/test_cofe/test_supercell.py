@@ -1,11 +1,9 @@
 import unittest
 import numpy as np
-from itertools import combinations
 from pymatgen import Lattice, Structure
 from pymatgen.util.coord import is_coord_subset_pbc
 from smol.cofe.configspace import ClusterSupercell
-from smol.cofe.configspace.clusterspace import get_bits
-from smol.cofe.utils import SITE_TOL
+from smol.cofe.configspace.utils import SITE_TOL, get_bits
 from smol.cofe import ClusterSubspace
 
 
@@ -22,8 +20,8 @@ class TestSuperCell(unittest.TestCase):
         pass
 
     def test_generate_mappings(self):
-        # check that all supercell index groups map to the correct primitive
-        # cell sites, and check that max distance under supercell pbc is
+        # check that all supercell_structure index groups map to the correct primitive
+        # cell sites, and check that max distance under supercell_structure pbc is
         # less than the max distance without pbc
 
         cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5})
@@ -35,9 +33,9 @@ class TestSuperCell(unittest.TestCase):
                               bits=get_bits(supercell),
                               n_bit_orderings=cs.n_bit_orderings,
                               orbits=cs.orbits)
-        for orb, inds in sc.cluster_indices:
+        for orb, inds in sc.orbit_indices:
             for x in inds:
-                pbc_radius = np.max(sc.supercell.lattice.get_all_distances(
+                pbc_radius = np.max(sc.supercell_struct.lattice.get_all_distances(
                     sc.fcoords[x], sc.fcoords[x]))
                 # primitive cell fractional coordinates
                 new_fc = np.dot(sc.fcoords[x], sc.supercell_matrix)
@@ -50,7 +48,7 @@ class TestSuperCell(unittest.TestCase):
                 self.assertTrue(found)
 
     def test_periodicity(self):
-        # Check to see if a supercell of a smaller supercell gives the same corr
+        # Check to see if a supercell_structure of a smaller supercell_structure gives the same corr
         m = np.array([[2, 0, 0], [0, 2, 0], [0, 1, 1]])
         supercell = self.structure.copy()
         supercell.make_supercell(m)
@@ -148,7 +146,3 @@ class TestSuperCell(unittest.TestCase):
         # Li_tet_ca_oct
         self.assertTrue(np.allclose(sc.corr_from_occupancy(['Vacancy', 'Li', 'Ca']),
                                     [1, 0.5, 0, 0, 1, 0, 0.5, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, 0.5, 0, 0]))
-
-    # TODO write this too!
-    def test_delta_corr(self):
-        pass

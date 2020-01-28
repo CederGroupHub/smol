@@ -14,26 +14,10 @@ from pymatgen.analysis.structure_matcher import StructureMatcher,\
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc
 
-from . import Orbit, ClusterSupercell
-from .basis import basis_factory
-from ..utils import SymmetryError, StructureMatchError,\
-    SYMMETRY_ERROR_MESSAGE, SITE_TOL
-
-
-def get_bits(structure):
-    """
-    Helper method to compute list of species on each site.
-    Includes vacancies
-    """
-    all_bits = []
-    for site in structure:
-        bits = []
-        for sp in sorted(site.species.keys()):
-            bits.append(str(sp))
-        if site.species.num_atoms < 0.99:
-            bits.append("Vacancy")
-        all_bits.append(bits)
-    return all_bits
+from smol.cofe.configspace import Orbit, ClusterSupercell
+from smol.cofe.configspace.basis import basis_factory
+from smol.cofe.configspace.utils import SymmetryError, StructureMatchError, \
+    SYMMETRY_ERROR_MESSAGE, SITE_TOL, get_bits
 
 
 class ClusterSubspace(MSONable):
@@ -245,13 +229,13 @@ class ClusterSubspace(MSONable):
 
     def supercell_matrix_from_structure(self, structure):
         """
-        Obtain the supercell matrix to convert give structure to self.structure
+        Obtain the supercell_structure matrix to convert give structure to self.structure
         """
         sc_matrix = self._sm.get_supercell_matrix(structure, self.structure)
         if sc_matrix is None:
             raise StructureMatchError('Supercell could not be found from '
                                       'structure')
-        if np.linalg.det(sc_matrix) < 0:  # What this for?
+        if np.linalg.det(sc_matrix) < 0:
             sc_matrix *= -1
         return sc_matrix
 
@@ -278,7 +262,7 @@ class ClusterSubspace(MSONable):
 
     def refine_structure(self, structure):
         """
-        Refine a (relaxed) structure to a multiple of a perfect supercell
+        Refine a (relaxed) structure to a multiple of a perfect supercell_structure
         of self.structure
         """
         sc = self.supercell_from_structure(structure)
@@ -287,7 +271,7 @@ class ClusterSubspace(MSONable):
 
     def corr_from_structure(self, structure, return_size=False):
         """
-        Given a structure, determines which supercell to use, and gets the
+        Given a structure, determines which supercell_structure to use, and gets the
         correlation vector
         """
         sc = self.supercell_from_structure(structure)
@@ -342,7 +326,7 @@ class ClusterSubspace(MSONable):
                  ltol=d['ltol'], stol=d['stol'], angle_tol=d['angle_tol'],
                  supercell_size=d['supercell_size'])
         # TODO implement dis
-        # cs._external_terms = [ExternalTerm.from_dict(et_d)
+        # subspace._external_terms = [ExternalTerm.from_dict(et_d)
         # for et_d in d['external_terms']]
         return cs
 

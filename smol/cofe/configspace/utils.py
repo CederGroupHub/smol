@@ -3,7 +3,24 @@ A lot of random utilies that have no place to go :(
 """
 
 from typing import Dict, Any
+
 SITE_TOL = 1e-6
+
+
+def get_bits(structure):
+    """
+    Helper method to compute list of species on each site.
+    Includes vacancies
+    """
+    all_bits = []
+    for site in structure:
+        bits = []
+        for sp in sorted(site.species.keys()):
+            bits.append(str(sp))
+        if site.species.num_atoms < 0.99:
+            bits.append("Vacancy")
+        all_bits.append(bits)
+    return all_bits
 
 
 SYMMETRY_ERROR_MESSAGE = ("Error in calculating symmetry operations."
@@ -14,25 +31,28 @@ SYMMETRY_ERROR_MESSAGE = ("Error in calculating symmetry operations."
                           "usually results in a safe choice")
 
 
-class SymmetryError(ValueError):
-    """
-    Exception class to raise when symmetry of a structure are not compatible
-    with a set of given symops
-    """
-
-
 class NotFittedError(ValueError, AttributeError):
     """
     Exception class to raise if regression is used before fitting.
     This class inherits from both ValueError and AttributeError to help with
     exception handling and backward compatibility.
     """
+    pass
+
+
+class SymmetryError(ValueError):
+    """
+    Exception class to raise when symmetry of a structure are not compatible
+    with a set of given symops
+    """
+    pass
 
 
 class StructureMatchError(RuntimeError):
     """
     Raised when a pymatgen StructureMatcher returns None
     """
+    pass
 
 
 def _repr(object: object, **fields: Dict[str, Any]) -> str:

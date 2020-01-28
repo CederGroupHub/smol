@@ -10,10 +10,10 @@ import numpy as np
 from collections.abc import Sequence
 from monty.json import MSONable
 from pymatgen import Structure
-from smol.cofe.utils import NotFittedError
 from smol.cofe.configspace.clusterspace import ClusterSubspace
 from smol.cofe.wrangler import StructureWrangler
-from .regression.estimator import BaseEstimator, CVXEstimator
+from smol.cofe.regression.estimator import BaseEstimator, CVXEstimator
+from smol.cofe.configspace.utils import NotFittedError
 
 
 class ClusterExpansion(MSONable):
@@ -61,6 +61,7 @@ class ClusterExpansion(MSONable):
                                      'One of them needs to be provided')
             self.estimator = BaseEstimator()
             self.estimator.coef_ = self.ecis
+
 
     @classmethod
     def from_radii(cls, structure, radii, ltol=0.2, stol=0.1, angle_tol=5,
@@ -165,8 +166,8 @@ class ClusterExpansion(MSONable):
 
         corrs = []
         for structure in structures:
-            corr, size = self.wrangler.cs.corr_from_structure(structure,
-                                                              return_size=True)
+            corr, size = self.wrangler.subspace.corr_from_structure(structure,
+                                                                    return_size=True)
             if not normalized:
                 corr *= size
             corrs.append(corr)
@@ -183,10 +184,10 @@ class ClusterExpansion(MSONable):
                                  'that does not provide them:'
                                  f'{self.estimator}.')
 
-        corr = np.zeros(self.wrangler.cs.n_bit_orderings)
+        corr = np.zeros(self.wrangler.subspace.n_bit_orderings)
         corr[0] = 1  # zero point cluster
         cluster_std = np.std(self.wrangler.feature_matrix, axis=0)
-        for orbit in self.wrangler.cs.iterorbits():
+        for orbit in self.wrangler.subspace.iterorbits():
             print(orbit, len(orbit.bits) - 1, orbit.orb_b_id)
             print('bit    eci    cluster_std    eci*cluster_std')
             for i, bits in enumerate(orbit.bit_combos):

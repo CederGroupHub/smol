@@ -28,7 +28,8 @@ def constrain_dielectric(ce, max_dielectric, e_ind=-1, *fitargs, **fitkwargs):
         fitkwards:
             keyword arguments to be passed to the estimator's fit method
     """
-    ext_terms = [term.__name__ for term, _, _ in ce.wrangler.cs.external_terms]
+    ext_terms = [term.__name__ for term, _, _
+                 in ce.wrangler.subspace.external_terms]
     if 'EwaldTerm' not in ext_terms:
         raise RuntimeError('This ClusterExpansion does not have an Ewald term')
     elif ce.ecis is None:

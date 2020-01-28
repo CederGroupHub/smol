@@ -120,7 +120,7 @@ class MonteCarloRunner:
                                  'infinite T, this is the ideal mixing '
                                  'entropy.')
             logging.info('Calculating initial_S based on symmetry of '
-                         'starting structure and supercell')
+                         'starting structure and supercell_structure')
             initial_struct = self.cs.structure_from_occu(self.initial_occu)
             smin_nops = len(SpacegroupAnalyzer(initial_struct).get_symmetry_operations())  # noqa
             supercell_nops = len(SpacegroupAnalyzer(self.cs.supercell).get_symmetry_operations())  # noqa
