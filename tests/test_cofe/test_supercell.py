@@ -26,11 +26,7 @@ class TestSuperCell(unittest.TestCase):
 
         cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5})
         m = np.array([[2, 0, 0], [0, 2, 0], [0, 1, 1]])
-        supercell = cs.structure.copy()
-        supercell.make_supercell(m)
-
-        sc = ClusterSupercell(supercell, supercell_matrix=m,
-                              bits=get_bits(supercell),
+        sc = ClusterSupercell(cs.structure.copy(), supercell_matrix=m,
                               n_bit_orderings=cs.n_bit_orderings,
                               orbits=cs.orbits)
         for orb, inds in sc.orbit_indices:
@@ -68,11 +64,8 @@ class TestSuperCell(unittest.TestCase):
         structure = Structure(self.lattice, species, coords)
         cs = ClusterSubspace.from_radii(structure, {2: 6})
 
-        supercell = cs.structure.copy()
-
-        sc = ClusterSupercell(supercell,
+        sc = ClusterSupercell(cs.structure.copy(),
                               supercell_matrix=[[1,0,0],[0,1,0],[0,0,1]],
-                              bits=get_bits(supercell),
                               n_bit_orderings=cs.n_bit_orderings,
                               orbits=cs.orbits)
         # last two clusters are switched from CASM output (and using occupancy basis)
@@ -104,10 +97,9 @@ class TestSuperCell(unittest.TestCase):
                   (0.5, 0.5, 0.5), (0, 0, 0))
         structure = Structure(self.lattice, species, coords)
         cs = ClusterSubspace.from_radii(structure, {2: 6, 3: 4.5})
-        supercell = cs.structure.copy()
-        sc = ClusterSupercell(supercell,
+
+        sc = ClusterSupercell(cs.structure.copy(),
                               supercell_matrix=[[1, 0, 0], [0, 1, 0], [0, 0, 1]],
-                              bits=get_bits(supercell),
                               n_bit_orderings=cs.n_bit_orderings,
                               orbits=cs.orbits)
 
@@ -133,10 +125,9 @@ class TestSuperCell(unittest.TestCase):
 
     def test_vs_CASM_multicomp(self):
         cs = ClusterSubspace.from_radii(self.structure, {2: 5})
-        supercell = cs.structure.copy()
-        sc = ClusterSupercell(supercell,
+
+        sc = ClusterSupercell(cs.structure.copy(),
                               supercell_matrix= [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
-                              bits=get_bits(supercell),
                               n_bit_orderings=cs.n_bit_orderings,
                               orbits=cs.orbits)
 

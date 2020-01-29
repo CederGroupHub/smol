@@ -14,7 +14,7 @@ from pymatgen.analysis.structure_matcher import StructureMatcher,\
     OrderDisorderElementComparator
 from pymatgen.util.coord import lattice_points_in_supercell,\
     coord_list_mapping_pbc
-from smol.cofe.configspace.utils import SITE_TOL
+from smol.cofe.configspace.utils import get_bits, SITE_TOL
 from smol.exceptions import StructureMatchError
 
 
@@ -24,21 +24,15 @@ class ClusterSupercell():
     lattice.
     """
 
-    def __init__(self, supercell_structure, supercell_matrix, bits,
-                 n_bit_orderings, orbits, **matcher_kwargs):
+    def __init__(self, structure, supercell_matrix, n_bit_orderings, orbits,
+                 **matcher_kwargs):
         """
         Args:
-            clustersubspace (ClusterSubspace):
-                A ClusterSubspace object used to compute corresponding
-                correlation vectors
-            supercell_structure (pymatgen.Structure):
-                Structure representing the super cell
+            structure (pymatgen.Structure):
+                Prim structure from which to create the super cell
             supercell_struct matrix (np.array):
                 Matrix representing transformation between prim and
                 supercell_struct
-            bits (np.array):
-                array describing the occupation of supercell_struct,
-                e.g. [[1,0,0],[0,1,0],[0,0,1]]
             n_bit_orderings (int):
                 total number of possible orderings of bits for all prim sites.
                 This corresponds to the total number of cluster functions in
@@ -50,12 +44,13 @@ class ClusterSupercell():
                 atol, supercell_size
         """
 
-        self.supercell_struct = supercell_structure
+        self.supercell_struct = structure
+        self.supercell_struct.make_supercell(supercell_matrix)
         self.supercell_matrix = supercell_matrix
         self.prim_to_supercell = np.linalg.inv(self.supercell_matrix)
         self.size = int(round(np.abs(np.linalg.det(supercell_matrix))))
 
-        self.bits = bits
+        self.bits = get_bits(self.supercell_struct)
         self.nbits = np.array([len(b)-1 for b in self.bits])
         self.n_bit_orderings = n_bit_orderings
 

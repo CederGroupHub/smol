@@ -246,9 +246,7 @@ class ClusterSubspace(MSONable):
         if scm in self._supercells:
             sc = self._supercells[scm]
         else:
-            supercell = self.structure.copy()
-            supercell.make_supercell(sc_matrix)
-            sc = ClusterSupercell(supercell, sc_matrix, get_bits(supercell),
+            sc = ClusterSupercell(self.structure.copy(), sc_matrix,
                                   self.n_bit_orderings, self.orbits,
                                   supercell_size=self.supercell_size,
                                   ltol=self.ltol, stol=self.stol,
