@@ -9,6 +9,7 @@ import numpy as np
 import warnings
 from pymatgen import Structure, PeriodicSite
 from pymatgen.analysis.ewald import EwaldSummation
+from smol.cofe.configspace.utils import get_bits
 
 
 class EwaldTerm():
@@ -21,11 +22,13 @@ class EwaldTerm():
     is needed for it to be constructed
     """
 
-    def __init__(self, cluster_supercell, eta=None, use_inv_r=False):
+    def __init__(self, structure, orbit_indices, eta=None, use_inv_r=False):
         """
         Args:
-            cluster_supercell (ClusterSupercell):
-                ClusterSupercell for which to evaluate Ewald sum
+            structure (pymatgen.Structure):
+                structure for which to compute the Ewald eci term
+            bits (list):
+                list of the possible species at each site.
             use_inv_r (bool):
                 experimental feature that allows fitting to arbitrary 1/r
                 interactions between specie-site combinations.
@@ -34,7 +37,10 @@ class EwaldTerm():
                 Usually only necessary if use_inv_r=True
         """
 
-        self.cluster_supercell = cluster_supercell
+        self.structure = structure
+        self.bits = get_bits(structure)
+        self.orbit_indices = orbit_indices
+        self.nbits = np.array([len(b) - 1 for b in self.bits])
         self.eta = eta
         self.use_inv_r = use_inv_r
 
@@ -47,9 +53,9 @@ class EwaldTerm():
                           'properly converged electrostatic energies. This is '
                           'not well tested', RuntimeWarning)
 
-        for bits, s in zip(self.cluster_supercell.bits,
-                           self.cluster_supercell.supercell_struct):
-            inds = np.zeros(max(self.cluster_supercell.nbits) + 1) - 1
+        for bits, s in zip(self.bits,
+                           self.structure):
+            inds = np.zeros(max(self.nbits) + 1) - 1
             for i, b in enumerate(bits):
                 if b == 'Vacancy':
                     # inds.append(-1)
@@ -63,12 +69,13 @@ class EwaldTerm():
         self._ewald_matrix = None
         self._partial_ems = None
         self._all_ewalds = None
-        self._range = np.arange(len(self.cluster_supercell.nbits))
+        self._range = np.arange(len(self.nbits))
 
     @classmethod
-    def corr_from_occu(cls, occu, cluster_supercell, eta=None,
+    def corr_from_occu(cls, occu, structure, orbit_indices, eta=None,
                        use_inv_r=False):
-        return cls(cluster_supercell, eta, use_inv_r)._get_ewald_eci(occu)
+        et = cls(structure, orbit_indices, eta, use_inv_r)
+        return et._get_ewald_eci(occu)
 
     @property
     def all_ewalds(self):
@@ -97,7 +104,7 @@ class EwaldTerm():
             equiv_orb_inds = []
             ei = self.ewald_inds
             n_inds = len(self.ewald_matrix)
-            for orb, inds in self.cluster_supercell.orbit_indices:
+            for orb, inds in self.orbit_indices:
                 # only want the point terms, which should be first
                 if len(orb.bits) > 1:
                     break
@@ -132,16 +139,14 @@ class EwaldTerm():
         return b_inds[:-1]
 
     def _get_ewald_eci(self, occu):
-        # This is a quick fix for occu being a list of species strings now.
-        # Could be better?
-        occu = np.array([bit.index(sp) for bit, sp
-                         in zip(self.cluster_supercell.bits, occu)])
+        # Change occu to list of integers instead of species strings
+        occu = np.array([bit.index(sp) for bit, sp in zip(self.bits, occu)])
         inds = self._get_ewald_occu(occu)
-        ecis = [np.sum(self.ewald_matrix[inds, :][:, inds])/self.cluster_supercell.size]  # noqa
+        ecis = [np.sum(self.ewald_matrix[inds, :][:, inds])]  # noqa
 
         if self.use_inv_r:
             for m in self.partial_ems:
-                ecis.append(np.sum(m[inds, :][:, inds])/self.cluster_supercell.size)  # noqa
+                ecis.append(np.sum(m[inds, :][:, inds]))  # noqa
 
         return np.array(ecis)
 
@@ -164,6 +169,6 @@ class EwaldTerm():
             v = np.sum(ma[:, add]) - np.sum(ms[:, sub]) + \
                 (np.sum(ma[:, both]) - np.sum(ms[:, both])) * 2
 
-            diffs.append(v / self.cluster_supercell.supercell.size)
+            diffs.append(v)  # removed normalization by number of prims
 
         return diffs

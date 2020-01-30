@@ -163,12 +163,11 @@ class ClusterExpansion(MSONable):
         if isinstance(structures, Structure):
             structures = [structures]
 
+        extensive = not normalized
         corrs = []
         for structure in structures:
-            corr, size = self.wrangler.subspace.corr_from_structure(structure,
-                                                                    return_size=True)
-            if not normalized:
-                corr *= size
+            corr = self.wrangler.subspace.corr_from_structure(structure,
+                                                              extensive)
             corrs.append(corr)
 
         return self.estimator.predict(np.array(corrs))

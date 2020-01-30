@@ -135,8 +135,8 @@ class StructureWrangler(MSONable):
         return self.properties / self.sizes
 
     @property
-    def supercells(self):
-        return np.array([i['supercell_structure'] for i in self.items])
+    def supercell_matrices(self):
+        return np.array([i['supercell_matrix'] for i in self.items])
 
     @property
     def feature_matrix(self):
@@ -173,7 +173,7 @@ class StructureWrangler(MSONable):
         for i, (s, p) in enumerate(data):
             try:
                 m = self.subspace.supercell_matrix_from_structure(s)
-                sc = self.subspace.supercell_from_matrix(m)
+                size = self.subspace.num_prims_from_matrix(m)
                 fm_row = self.subspace.corr_from_structure(s)
             except StructureMatchError as e:
                 if verbose:
@@ -183,9 +183,9 @@ class StructureWrangler(MSONable):
                 continue
             items.append({'structure': s,
                           'property': p,
-                          'supercell_structure': sc,
+                          'supercell_matrix': m,
                           'features': fm_row,
-                          'size': sc.size})
+                          'size': size})
 
         if self.weight_type is not None:
             self._set_weights(items, self.weight_type, **self.weight_kwargs)
@@ -258,10 +258,14 @@ class StructureWrangler(MSONable):
                 ewald_corr = [i['features'][-1] for i in self.items]
         if ewald_corr is None:
             ewald_corr = []
-            for s in self.structures:
-                supercell = self.subspace.supercell_from_structure(s)
-                occu = supercell.occu_from_structure(s)
-                ewald_corr.append(EwaldTerm.corr_from_occu(occu, supercell))
+            for struct in self.structures:
+                sc_matrix = self.subspace.supercell_matrix_from_structure(struct)  # noqa
+                occu = self.subspace.occu_from_structure(struct, sc_matrix)
+                supercell = self.subspace.structure.copy()
+                supercell.make_supercell(sc_matrix)
+                orb_inds = self.subspace.orbit_mappings_from_matrix(sc_matrix)
+                term = EwaldTerm.corr_from_occu(occu, supercell, orb_inds)
+                ewald_corr.append(term)
 
         min_e = defaultdict(lambda: np.inf)
         for ecorr, item in zip(ewald_corr, self.items):
