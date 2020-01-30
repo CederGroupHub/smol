@@ -47,12 +47,12 @@ class ClusterExpansionProcessor(MSONable):
         # needed because the correlations are averages over the full inds
         # array.
         for orbit, inds in self.orbit_inds:
-            for site_index in np.unique(inds):
-                in_inds = np.any(inds == site_index, axis=-1)
+            for site_ind in np.unique(inds):
+                in_inds = np.any(inds == site_ind, axis=-1)
                 ratio = len(inds) / np.sum(in_inds)
-                self.orbits_by_sites[site_index].append((orbit.bit_combos,
-                                                         orbit.orb_b_id,
-                                                         inds[in_inds], ratio))
+                self.orbits_by_sites[site_ind].append((orbit.bit_combos,
+                                                       orbit.orb_b_id,
+                                                       inds[in_inds], ratio))
 
     def compute_corr(self, occu):
         """
@@ -113,8 +113,7 @@ class ClusterExpansionProcessor(MSONable):
             delta_corr += delta_corr_single_flip(new_occu_f, new_occu,
                                                  self.n_orbit_functions,
                                                  self.orbits_by_sites[f[0]],
-                                                 f[0], f[1], all_ewalds,
-                                                 ewald_inds, self.size)
+                                                 f[0], f[1])
             new_occu = new_occu_f
 
         if debug:
@@ -122,7 +121,7 @@ class ClusterExpansionProcessor(MSONable):
             de = e - self.compute_corr(occu)
             assert np.allclose(delta_corr, de)
 
-        return delta_corr, new_occu
+        return delta_corr
 
     def from_dict(cls, d):
         pass

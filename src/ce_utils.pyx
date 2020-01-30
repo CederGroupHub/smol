@@ -17,15 +17,13 @@ import numpy as np
 cimport numpy as np
 cimport cython
 
-#TODO change parameter order and make ewald_matrices and ewald_inds last parameters with their default values
-# self._all_ewalds = np.zeros((0, 0, 0), dtype=np.float) self.ewald_inds = np.zeros((0, 0), dtype=np.int)
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
-def delta_corr_single_flip(np.int_t[:] final, np.int_t[:] init, int n_bit_orderings, clusters,
-                           int ind, int bit, np.float_t[:, :, :] ewald_matrices, np.int_t[:, :] ewald_inds, double size):
+def delta_corr_single_flip(np.int_t[:] final, np.int_t[:] init,
+                           int n_bit_orderings, clusters, int ind, int bit):
     """
     Counts number of rows of a that are present in b
     Args:
@@ -35,12 +33,11 @@ def delta_corr_single_flip(np.int_t[:] final, np.int_t[:] init, int n_bit_orderi
         delta_corr vector from a single flip
     """
 
-    cdef int i, j, k, I, J, K, l, add, sub
+    cdef int i, j, k, I, J, K, l
     cdef bint ok
     cdef np.int_t[:, :] b, inds
-    out = np.zeros(n_bit_orderings + len(ewald_matrices))
+    out = np.zeros(n_bit_orderings)
     cdef np.float_t[:] o_view = out
-    cdef np.float_t[:, :] m
     cdef double r, o
 
     for sc_bits, sc_b_id, inds, r in clusters:
@@ -71,6 +68,26 @@ def delta_corr_single_flip(np.int_t[:] final, np.int_t[:] init, int n_bit_orderi
             o_view[l] = o / r / (I * J)
             l += 1
 
+    return out
+
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.initializedcheck(False)
+@cython.cdivision(True)
+def delta_ewald_corr_single_flip(np.int_t[:] final, np.int_t[:] init,
+                                 int n_bit_orderings, clusters, int ind, int bit,
+                                 np.float_t[:, :, :] ewald_matrices,
+                                 np.int_t[:, :] ewald_inds, double size):
+
+    cdef int i, j, k, I, J, K, l, add, sub
+    cdef bint ok
+    cdef np.int_t[:, :] inds
+    out = np.zeros(len(ewald_matrices))
+    cdef np.float_t[:] o_view = out
+    # cdef np.float_t[:, :] m
+    cdef double r, o
+
     # values of -1 are vacancies and hence don't have ewald indices
     add = ewald_inds[ind, bit]
     sub = ewald_inds[ind, init[ind]]
@@ -92,7 +109,7 @@ def delta_corr_single_flip(np.int_t[:] final, np.int_t[:] init, int n_bit_orderi
                 else:
                     o -= ewald_matrices[l, i, sub]
 
-        o_view[l + n_bit_orderings] = o / size
+        o_view[l] = o / size
         l += 1
 
     return out
