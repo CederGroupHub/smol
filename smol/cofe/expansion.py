@@ -18,19 +18,19 @@ from smol.exceptions import NotFittedError
 
 class ClusterExpansion(MSONable):
     """
-    Class for the ClusterExpansion proper needs a structurewrangler to supply
+    Class for the ClusterExpansion proper needs a structure_wrangler to supply
     fitting data and an estimator to provide the fitting method.
     This is the class that is used to predict as well.
     (i.e. to use in Monte Carlo and beyond)
     """
 
-    def __init__(self, structurewrangler, estimator=None, ecis=None):
+    def __init__(self, structure_wrangler, estimator=None, ecis=None):
         """
         Represents a cluster expansion. The main methods to use this class are
         the fit and predict
 
         Args:
-            structurewrangler (StructureWrangler):
+            structure_wrangler (StructureWrangler):
                 A StructureWrangler object to provide the fitting data and
                 processing
             max_dielectric (float):
@@ -47,7 +47,7 @@ class ClusterExpansion(MSONable):
                 correspond to the correlation vector terms (length and order)
         """
 
-        self.wrangler = structurewrangler
+        self.wrangler = structure_wrangler
 
         # Expose some functionality directly to cluster expansion
         self.add_data = self.wrangler.add_data

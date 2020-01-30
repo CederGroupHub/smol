@@ -41,7 +41,7 @@ class TestClusterSubSpace(unittest.TestCase):
         # Simple scaling
         supercell = self.structure.copy()
         supercell.make_supercell(2)
-        sc_matrix = self.cs.supercell_matrix_from_structure(supercell)
+        sc_matrix = self.cs.scmatrix_from_structure(supercell)
         self.assertAlmostEqual(np.linalg.det(sc_matrix), 8)
 
         # A more complex supercell_structure
@@ -50,7 +50,7 @@ class TestClusterSubSpace(unittest.TestCase):
                       [-2,  4,  3]])
         supercell = self.structure.copy()
         supercell.make_supercell(m)
-        sc_matrix = self.cs.supercell_matrix_from_structure(supercell)
+        sc_matrix = self.cs.scmatrix_from_structure(supercell)
         self.assertAlmostEqual(np.linalg.det(sc_matrix), abs(np.linalg.det(m)))
 
         # Test a slightly distorted structure
@@ -58,7 +58,7 @@ class TestClusterSubSpace(unittest.TestCase):
         structure = Structure(lattice, self.species, self.coords)
         supercell = structure.copy()
         supercell.make_supercell(2)
-        sc_matrix = self.cs.supercell_matrix_from_structure(supercell)
+        sc_matrix = self.cs.scmatrix_from_structure(supercell)
         self.assertAlmostEqual(np.linalg.det(sc_matrix), 8)
 
         m = np.array([[0, 5, 3],
@@ -66,7 +66,7 @@ class TestClusterSubSpace(unittest.TestCase):
                       [-2, 4, 3]])
         supercell = structure.copy()
         supercell.make_supercell(m)
-        sc_matrix = self.cs.supercell_matrix_from_structure(supercell)
+        sc_matrix = self.cs.scmatrix_from_structure(supercell)
         self.assertAlmostEqual(np.linalg.det(sc_matrix), abs(np.linalg.det(m)))
 
     def test_refine_structure(self):
@@ -121,7 +121,7 @@ class TestClusterSubSpace(unittest.TestCase):
         supercell_struct.make_supercell(m)
         fcoords = np.array(supercell_struct.frac_coords)
 
-        for orb, inds in self.cs.orbit_mappings_from_matrix(m):
+        for orb, inds in self.cs.supercell_orbit_mappings(m):
             for x in inds:
                 pbc_radius = np.max(supercell_struct.lattice.get_all_distances(
                     fcoords[x], fcoords[x]))
@@ -138,7 +138,7 @@ class TestClusterSubSpace(unittest.TestCase):
         # check that the matrix was cached
         m_hash = tuple(sorted(tuple(s) for s in m))
         self.assertTrue(self.cs._supercell_orb_inds[m_hash] is
-                        self.cs.orbit_mappings_from_matrix(m))
+                        self.cs.supercell_orbit_mappings(m))
 
     def test_periodicity(self):
         # Check to see if a supercell of a smaller structure gives the same corr
@@ -161,30 +161,30 @@ class TestClusterSubSpace(unittest.TestCase):
         structure = Structure(self.lattice, species, coords)
         cs = ClusterSubspace.from_radii(structure, {2: 6})
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-        orb_inds = cs.orbit_mappings_from_matrix(m)
+        orb_inds = cs.supercell_orbit_mappings(m)
 
         # last two clusters are switched from CASM output (and using occupancy basis)
         # all_li (ignore casm point term)
-        corr = cs._corr_from_occupancy(['Li', 'Li', 'Li'], orb_inds)
+        corr = cs.corr_from_occupancy(['Li', 'Li', 'Li'], orb_inds)
         self.assertTrue(np.allclose(corr, np.array([1]*12)))
         # all_vacancy
-        corr = cs._corr_from_occupancy(['Vacancy', 'Vacancy', 'Vacancy'], orb_inds)
+        corr = cs.corr_from_occupancy(['Vacancy', 'Vacancy', 'Vacancy'], orb_inds)
         self.assertTrue(np.allclose(corr,
                                     np.array([1]+[0]*11)))
         # octahedral
-        corr = cs._corr_from_occupancy(['Vacancy', 'Vacancy', 'Li'], orb_inds)
+        corr = cs.corr_from_occupancy(['Vacancy', 'Vacancy', 'Li'], orb_inds)
         self.assertTrue(np.allclose(corr,
                                     [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1]))
         # tetrahedral
-        corr = cs._corr_from_occupancy(['Li', 'Li', 'Vacancy'], orb_inds)
+        corr = cs.corr_from_occupancy(['Li', 'Li', 'Vacancy'], orb_inds)
         self.assertTrue(np.allclose(corr,
                                     [1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0]))
         # mixed
-        corr = cs._corr_from_occupancy(['Li', 'Vacancy', 'Li'], orb_inds)
+        corr = cs.corr_from_occupancy(['Li', 'Vacancy', 'Li'], orb_inds)
         self.assertTrue(np.allclose(corr,
                                     [1, 0.5, 1, 0.5, 0, 0.5, 1, 0.5, 0, 0, 0.5, 1]))
         # single_tet
-        corr = cs._corr_from_occupancy(['Li', 'Vacancy', 'Vacancy'], orb_inds)
+        corr = cs.corr_from_occupancy(['Li', 'Vacancy', 'Vacancy'], orb_inds)
         self.assertTrue(np.allclose(corr,
                                     [1, 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.5, 0]))
 
@@ -198,45 +198,45 @@ class TestClusterSubSpace(unittest.TestCase):
         structure = Structure(self.lattice, species, coords)
         cs = ClusterSubspace.from_radii(structure, {2: 6, 3: 4.5})
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-        orb_inds = cs.orbit_mappings_from_matrix(m)
+        orb_inds = cs.supercell_orbit_mappings(m)
 
         # last two pair terms are switched from CASM output (and using occupancy basis)
         # all_vacancy (ignore casm point term)
-        corr = cs._corr_from_occupancy(['Vacancy', 'Vacancy', 'Vacancy'],
-                                       orb_inds)
+        corr = cs.corr_from_occupancy(['Vacancy', 'Vacancy', 'Vacancy'],
+                                      orb_inds)
         self.assertTrue(np.allclose(corr, np.array([1] + [0] * 18)))
         # all_li
-        corr = cs._corr_from_occupancy(['Li', 'Li', 'Li'], orb_inds)
+        corr = cs.corr_from_occupancy(['Li', 'Li', 'Li'], orb_inds)
         self.assertTrue(np.allclose(corr, np.array([1] * 19)))
         # octahedral
-        corr = cs._corr_from_occupancy(['Vacancy', 'Vacancy', 'Li'], orb_inds)
+        corr = cs.corr_from_occupancy(['Vacancy', 'Vacancy', 'Li'], orb_inds)
         self.assertTrue(np.allclose(corr,
                                     [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1]))
 
         # tetrahedral
-        corr = cs._corr_from_occupancy(['Li', 'Li', 'Vacancy'], orb_inds)
+        corr = cs.corr_from_occupancy(['Li', 'Li', 'Vacancy'], orb_inds)
         self.assertTrue(np.allclose(corr,
                                     [1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0]))
         # mixed
-        corr = cs._corr_from_occupancy(['Li', 'Vacancy', 'Li'], orb_inds)
+        corr = cs.corr_from_occupancy(['Li', 'Vacancy', 'Li'], orb_inds)
         self.assertTrue(np.allclose(corr,
                                     [1, 0.5, 1, 0.5, 0, 0.5, 1, 0.5, 0, 0, 0.5, 1, 0, 0, 0.5, 0.5, 0.5, 0.5, 1]))
         # single_tet
-        corr = cs._corr_from_occupancy(['Li', 'Vacancy', 'Vacancy'], orb_inds)
+        corr = cs.corr_from_occupancy(['Li', 'Vacancy', 'Vacancy'], orb_inds)
         self.assertTrue(np.allclose(corr,
                                     [1, 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0, 0.5, 0.5, 0]))
 
     def test_vs_CASM_multicomp(self):
         cs = ClusterSubspace.from_radii(self.structure, {2: 5})
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-        orb_inds = cs.orbit_mappings_from_matrix(m)
+        orb_inds = cs.supercell_orbit_mappings(m)
 
         # mixed
-        corr = cs._corr_from_occupancy(['Vacancy', 'Li', 'Li'], orb_inds)
+        corr = cs.corr_from_occupancy(['Vacancy', 'Li', 'Li'], orb_inds)
         self.assertTrue(np.allclose(corr,
                                     [1, 0.5, 0, 1, 0, 0.5, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 1, 0, 0, 0.5, 0, 0, 0]))
         # Li_tet_ca_oct
-        corr = cs._corr_from_occupancy(['Vacancy', 'Li', 'Ca'], orb_inds)
+        corr = cs.corr_from_occupancy(['Vacancy', 'Li', 'Ca'], orb_inds)
         self.assertTrue(np.allclose(corr,
                                     [1, 0.5, 0, 0, 1, 0, 0.5, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, 0.5, 0, 0]))
 

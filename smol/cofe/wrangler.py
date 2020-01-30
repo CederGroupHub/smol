@@ -69,6 +69,8 @@ def _pd(structures, energies, cs_structure):
 
 # TODO should have a dictionary with the applied filters and their parameters
 #  to keep track of what has been done
+# TODO should allow a bunch of properties saved by keys...
+
 class StructureWrangler(MSONable):
     """
     Class that handles (wrangles) input data structures and properties to fit
@@ -77,7 +79,7 @@ class StructureWrangler(MSONable):
     final ClusterExpansion.
     """
 
-    def __init__(self, clustersubspace, weight_type=None):
+    def __init__(self, cluster_subspace, weight_type=None):
         """
         This class is meant to take all input training data in the form of
         (structure, property) where the property is usually (lets be honest
@@ -88,7 +90,7 @@ class StructureWrangler(MSONable):
         the name Wrangler from datawrangler.
 
         Args:
-            clustersubspace (ClusterSubspace):
+            cluster_subspace (ClusterSubspace):
                 A ClusterSubspace object that will be used to fit a
                 ClusterExpansion with the provided data.
             weight_type (str or dict):
@@ -96,7 +98,7 @@ class StructureWrangler(MSONable):
                 dict with single key specifying the type of weights as above,
                 and values being dict of kwargs
         """
-        self.subspace = clustersubspace
+        self.subspace = cluster_subspace
         self.get_weights = {'composition': weights_e_above_comp,
                             'hull': partial(weights_e_above_hull,
                                             ce_structure=self.subspace.structure)}  # noqa
@@ -120,7 +122,7 @@ class StructureWrangler(MSONable):
         Copy of the expansion structure with only sites included in the
         expansion (i.e. sites with partial occupancies)
         """
-        return self.subspace.expansion_structure.copy()
+        return self.subspace.exp_structure.copy()
 
     @property
     def structures(self):
@@ -136,7 +138,7 @@ class StructureWrangler(MSONable):
 
     @property
     def supercell_matrices(self):
-        return np.array([i['supercell_matrix'] for i in self.items])
+        return np.array([i['scmatrix'] for i in self.items])
 
     @property
     def feature_matrix(self):
@@ -172,7 +174,7 @@ class StructureWrangler(MSONable):
 
         for i, (s, p) in enumerate(data):
             try:
-                m = self.subspace.supercell_matrix_from_structure(s)
+                m = self.subspace.scmatrix_from_structure(s)
                 size = self.subspace.num_prims_from_matrix(m)
                 fm_row = self.subspace.corr_from_structure(s)
             except StructureMatchError as e:
@@ -183,7 +185,7 @@ class StructureWrangler(MSONable):
                 continue
             items.append({'structure': s,
                           'property': p,
-                          'supercell_matrix': m,
+                          'scmatrix': m,
                           'features': fm_row,
                           'size': size})
 
@@ -206,7 +208,7 @@ class StructureWrangler(MSONable):
     def update_features(self):
         """
         Update the features/feature matrix for the data held. This is useful
-        when something is changed in the clustersubspace after
+        when something is changed in the cluster_subspace after
         creating the Wrangler, for example added an Ewald term after creating
         the Wrangler.
         """
@@ -259,11 +261,11 @@ class StructureWrangler(MSONable):
         if ewald_corr is None:
             ewald_corr = []
             for struct in self.structures:
-                sc_matrix = self.subspace.supercell_matrix_from_structure(struct)  # noqa
-                occu = self.subspace.occu_from_structure(struct, sc_matrix)
+                scmatrix = self.subspace.scmatrix_from_structure(struct)  # noqa
+                occu = self.subspace.occupancy_from_structure(struct, scmatrix)
                 supercell = self.subspace.structure.copy()
-                supercell.make_supercell(sc_matrix)
-                orb_inds = self.subspace.orbit_mappings_from_matrix(sc_matrix)
+                supercell.make_supercell(scmatrix)
+                orb_inds = self.subspace.supercell_orbit_mappings(scmatrix)
                 term = EwaldTerm.corr_from_occu(occu, supercell, orb_inds)
                 ewald_corr.append(term)
 
@@ -288,9 +290,9 @@ class StructureWrangler(MSONable):
     @classmethod
     def from_dict(cls, d):
         """
-        Creates Orbit from serialized MSONable dict
+        Creates Structure Wrangler from serialized MSONable dict
         """
-        sw = cls(clustersubspace=ClusterSubspace.from_dict(d['subspace']))
+        sw = cls(cluster_subspace=ClusterSubspace.from_dict(d['subspace']))
         sw.items = d['items']
         sw.weight_type = d['weight_type']
         return sw
