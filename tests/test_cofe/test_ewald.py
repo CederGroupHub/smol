@@ -3,7 +3,7 @@ import numpy as np
 from pymatgen import Structure, Lattice
 from pymatgen.analysis.ewald import EwaldSummation
 from smol.cofe import ClusterSubspace
-from smol.cofe.configspace import ClusterSupercell, EwaldTerm
+from smol.cofe.configspace import EwaldTerm
 
 class TestEwald(unittest.TestCase):
     def setUp(self) -> None:
@@ -19,13 +19,14 @@ class TestEwald(unittest.TestCase):
         m = np.array([[2, 0, 0], [0, 2, 0], [0, 1, 1]])
         supercell = cs.structure.copy()
         supercell.make_supercell(m)
-        sc = cs.supercell_from_structure(supercell)
+        orb_inds = cs.supercell_orbit_mappings(m)
+
         s = Structure(supercell.lattice, ['Ca2+', 'Li+', 'Li+', 'Br-', 'Br-', 'Br-', 'Br-'],
                       [[0.125, 1, 0.25], [0.125, 0.5, 0.25], [0.375, 0.5, 0.75], [0, 0, 0], [0, 0.5, 1],
                        [0.5, 1, 0], [0.5, 0.5, 0]])
-        occu = sc.occu_from_structure(s)
-        ew = EwaldTerm(sc, eta=0.15)
-        self.assertAlmostEqual(ew._get_ewald_eci(occu)[0] * sc.size,
+        occu = cs.occupancy_from_structure(s)
+        ew = EwaldTerm(supercell, orb_inds, eta=0.15)
+        self.assertAlmostEqual(ew._get_ewald_eci(occu)[0],
                                EwaldSummation(s, eta=ew._ewald._eta).total_energy, places=5)
         self.assertIsNotNone(ew.partial_ems)  # these need to be improved to check actual values
         self.assertIsNotNone(ew.all_ewalds)

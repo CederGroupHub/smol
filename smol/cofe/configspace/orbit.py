@@ -11,7 +11,8 @@ from pymatgen import Lattice, SymmOp
 from pymatgen.util.coord import coord_list_mapping
 
 from .cluster import Cluster
-from ..utils import SymmetryError, SYMMETRY_ERROR_MESSAGE, SITE_TOL, _repr
+from smol.cofe.configspace.utils import SITE_TOL, _repr
+from smol.exceptions import SymmetryError, SYMMETRY_ERROR_MESSAGE
 from .basis import basis_factory
 
 
@@ -115,8 +116,9 @@ class Orbit(MSONable):
                     new_bit = tuple(bit_combo[np.array(b_o)])
                     if new_bit not in new_bits:
                         new_bits.append(new_bit)
-                all_combos += [new_bits]
-        self._bit_combos = all_combos
+                all_combos.append(new_bits)
+        self._bit_combos = tuple(np.array(c, dtype=np.int)
+                                 for c in all_combos)
         return self._bit_combos
 
     @property

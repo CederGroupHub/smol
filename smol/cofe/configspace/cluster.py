@@ -10,7 +10,7 @@ from monty.json import MSONable
 from pymatgen.util.coord import is_coord_subset
 from pymatgen import Lattice
 
-from ..utils import SITE_TOL, _repr
+from smol.cofe.configspace.utils import SITE_TOL, _repr
 
 
 class Cluster(MSONable):

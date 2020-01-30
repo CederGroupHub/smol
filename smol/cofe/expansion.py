@@ -6,30 +6,35 @@ a corresponding property (most usually energy).
 
 from __future__ import division
 import warnings
-from collections.abc import Sequence
 import numpy as np
+from collections.abc import Sequence
 from monty.json import MSONable
-from smol.cofe.utils import NotFittedError
+from pymatgen import Structure
 from smol.cofe.configspace.clusterspace import ClusterSubspace
 from smol.cofe.wrangler import StructureWrangler
-from .regression.estimator import BaseEstimator, CVXEstimator
+from smol.cofe.regression.estimator import BaseEstimator, CVXEstimator
+from smol.exceptions import NotFittedError
+
+
+# TODO remove wrangler from being a property, pass instead a subspace,
+# TODO and pass in feature_matrix and property_vector
 
 
 class ClusterExpansion(MSONable):
     """
-    Class for the ClusterExpansion proper needs a structurewrangler to supply
+    Class for the ClusterExpansion proper needs a structure_wrangler to supply
     fitting data and an estimator to provide the fitting method.
     This is the class that is used to predict as well.
     (i.e. to use in Monte Carlo and beyond)
     """
 
-    def __init__(self, structurewrangler, estimator=None, ecis=None):
+    def __init__(self, structure_wrangler, estimator=None, ecis=None):
         """
         Represents a cluster expansion. The main methods to use this class are
         the fit and predict
 
         Args:
-            structurewrangler (StructureWrangler):
+            structure_wrangler (StructureWrangler):
                 A StructureWrangler object to provide the fitting data and
                 processing
             max_dielectric (float):
@@ -46,7 +51,7 @@ class ClusterExpansion(MSONable):
                 correspond to the correlation vector terms (length and order)
         """
 
-        self.wrangler = structurewrangler
+        self.wrangler = structure_wrangler
 
         # Expose some functionality directly to cluster expansion
         self.add_data = self.wrangler.add_data
@@ -159,15 +164,14 @@ class ClusterExpansion(MSONable):
             return
 
     def predict(self, structures, normalized=False):
-        if not isinstance(structures, Sequence):
+        if isinstance(structures, Structure):
             structures = [structures]
 
+        extensive = not normalized
         corrs = []
         for structure in structures:
-            corr, size = self.wrangler.cs.corr_from_structure(structure,
-                                                              return_size=True)
-            if not normalized:
-                corr *= size
+            corr = self.wrangler.subspace.corr_from_structure(structure,
+                                                              extensive)
             corrs.append(corr)
 
         return self.estimator.predict(np.array(corrs))
@@ -182,10 +186,10 @@ class ClusterExpansion(MSONable):
                                  'that does not provide them:'
                                  f'{self.estimator}.')
 
-        corr = np.zeros(self.wrangler.cs.n_bit_orderings)
+        corr = np.zeros(self.wrangler.subspace.n_bit_orderings)
         corr[0] = 1  # zero point cluster
         cluster_std = np.std(self.wrangler.feature_matrix, axis=0)
-        for orbit in self.wrangler.cs.iterorbits():
+        for orbit in self.wrangler.subspace.iterorbits():
             print(orbit, len(orbit.bits) - 1, orbit.orb_b_id)
             print('bit    eci    cluster_std    eci*cluster_std')
             for i, bits in enumerate(orbit.bit_combos):
