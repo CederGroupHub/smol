@@ -16,6 +16,10 @@ from smol.cofe.regression.estimator import BaseEstimator, CVXEstimator
 from smol.exceptions import NotFittedError
 
 
+# TODO remove wrangler from being a property, pass instead a subspace,
+# TODO and pass in feature_matrix and property_vector
+
+
 class ClusterExpansion(MSONable):
     """
     Class for the ClusterExpansion proper needs a structure_wrangler to supply

@@ -14,7 +14,6 @@ from src.ce_utils import delta_corr_single_flip
 
 # TODO consider optimizing by ignoring zeroed eci, by removing those orbits
 #  from cluster subspace
-# TODO this needs to have a way to determine valid flips, swaps etc.
 
 
 class ClusterExpansionProcessor(MSONable):
@@ -36,7 +35,7 @@ class ClusterExpansionProcessor(MSONable):
         self.size = self.subspace.num_prims_from_matrix(supercell_matrix)
         self.n_orbit_functions = self.subspace.n_bit_orderings
 
-        self.orbit_inds = self.subspace.supercell_orbit_mappings(supercell_matrix)
+        self.orbit_inds = self.subspace.supercell_orbit_mappings(supercell_matrix)  # noqa
 
         # Create a dictionary of orbits by site index and information
         # neccesary to compute local changes in correlation vectors from flips
@@ -107,6 +106,7 @@ class ClusterExpansionProcessor(MSONable):
 
         # TODO need to figure out how to implement delta_corr for different
         #  bases!!!
+        # this loop is candidate for optimization as well
         for f in flips:
             new_occu_f = new_occu.copy()
             new_occu_f[f[0]] = f[1]
@@ -123,8 +123,23 @@ class ClusterExpansionProcessor(MSONable):
 
         return delta_corr
 
+    @classmethod
     def from_dict(cls, d):
+        """
+        Creates Structure Wrangler from serialized MSONable dict
+        """
         pass
 
     def as_dict(self) -> dict:
-        pass
+        """
+        Json-serialization dict representation
+
+        Returns:
+            MSONable dict
+        """
+        d = {'@module': self.__class__.__module__,
+             '@class': self.__class__.__name__,
+             'ecis': self.ecis,
+             'subspace': self.subspace,
+             'supercell_matrix': self.supercell_matrix}
+        return d
