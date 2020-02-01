@@ -13,7 +13,7 @@ from smol.cofe.configspace.utils import get_bits
 from src.ce_utils import delta_corr_single_flip
 
 # TODO consider optimizing by ignoring zeroed eci, by removing those orbits
-#  from cluster subspace
+#  from cluster _subspace
 
 
 class ClusterExpansionProcessor(MSONable):
@@ -27,8 +27,8 @@ class ClusterExpansionProcessor(MSONable):
     def __init__(self, cluster_expansion, supercell_matrix):
 
         self.ecis = cluster_expansion.ecis.copy()
-        self.subspace = cluster_expansion.wrangler.subspace
-        self.structure = cluster_expansion.wrangler.prim_structure.copy()
+        self.subspace = cluster_expansion.subspace
+        self.structure = cluster_expansion.prim_structure.copy()
         self.supercell_matrix = supercell_matrix
         self.structure.make_supercell(supercell_matrix)
         self.bits = get_bits(self.structure)
@@ -140,6 +140,6 @@ class ClusterExpansionProcessor(MSONable):
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
              'ecis': self.ecis,
-             'subspace': self.subspace,
+             '_subspace': self.subspace,
              'supercell_matrix': self.supercell_matrix}
         return d

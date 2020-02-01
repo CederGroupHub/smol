@@ -32,8 +32,9 @@ class TestClusterExpansion(unittest.TestCase):
         ce1 = ClusterExpansion.from_radii(lno_prim, {2: 5, 3: 4.1},
                                          ltol=0.15, stol=0.2,
                                          angle_tol=5, supercell_size='O2-',
-                                         estimator=estimator)
-        ce1.add_data(lno_data, weights=weights)
+                                         estimator=estimator, data=lno_data,
+                                         weights=weights)
+
         ce1.fit()
 
         ce2 = ClusterExpansion.from_radii(lno_prim, {2: 5, 3: 4.1},
@@ -50,8 +51,8 @@ class TestClusterExpansion(unittest.TestCase):
         ce3 = ClusterExpansion.from_radii(lno_prim, {2: 5, 3: 4.1},
                                           ltol=0.15, stol=0.2,
                                           angle_tol=5, supercell_size='O2-',
-                                          externalterms=[EwaldTerm,
-                                                         {'eta': None}],
+                                          external_terms=[EwaldTerm,
+                                                          {'eta': None}],
                                           data=lno_data,
                                           weights=weights)
         ce3.fit()
@@ -59,7 +60,9 @@ class TestClusterExpansion(unittest.TestCase):
         self.assertEqual(len(ce3.predict(test_structs)), len(test_structs))
 
     def test_cvxestimator(self):
-        ce = ClusterExpansion(self.sw, estimator=CVXEstimator())
+        ce = ClusterExpansion(self.cs, self.sw.feature_matrix,
+                              self.sw.normalized_properties,
+                              estimator=CVXEstimator())
         self.assertRaises(AttributeError, ce.predict, self.sw.structures[:10])
         ce.fit(mu=5)
         self.assertIsNotNone(ce.ecis)
@@ -73,7 +76,8 @@ class TestClusterExpansion(unittest.TestCase):
         except ImportError:
             return
 
-        ce = ClusterExpansion(self.sw, estimator=Ridge())
+        ce = ClusterExpansion(self.cs, self.sw.feature_matrix,
+                              self.sw.normalized_properties, estimator=Ridge())
         self.assertRaises(AttributeError, ce.predict, self.sw.structures[:10])
         ce.fit()
         self.assertIsNotNone(ce.ecis)
@@ -86,7 +90,9 @@ class TestClusterExpansion(unittest.TestCase):
     def test_numpy(self):
         estimator = BaseEstimator()
         estimator._solve = lambda X, y: np.linalg.lstsq(X, y, rcond=None)[0]
-        ce = ClusterExpansion(self.sw, estimator=estimator)
+        ce = ClusterExpansion(self.cs, self.sw.feature_matrix,
+                              self.sw.normalized_properties,
+                              estimator=estimator)
         self.assertRaises(AttributeError, ce.predict, self.sw.structures[:10])
         ce.fit()
         self.assertIsNotNone(ce.ecis)
@@ -94,24 +100,28 @@ class TestClusterExpansion(unittest.TestCase):
 
     def test_no_estimator(self):
         ecis = np.ones((self.cs.n_bit_orderings))
-        ce = ClusterExpansion(self.sw, ecis=ecis)
+        ce = ClusterExpansion(self.cs, self.sw.feature_matrix,
+                              self.sw.normalized_properties, ecis=ecis)
         structs = self.sw.structures[:10]
         p = np.array([sum(self.cs.corr_from_structure(s)) for s in structs])
         self.assertTrue(np.allclose(ce.predict(structs, normalized=True), p))
 
     def test_constrain_dielectric(self):
         self.cs.add_external_term(EwaldTerm)
-        ce = ClusterExpansion(self.sw, estimator=CVXEstimator())
+        ce = ClusterExpansion(self.cs, self.sw.feature_matrix,
+                              self.sw.normalized_properties,
+                              estimator=CVXEstimator())
         ce.fit()
         constrain_dielectric(ce, 15)
         self.assertEqual(ce.ecis[-1], 1/15)
 
     def test_msonable(self):
         ecis = np.ones((self.cs.n_bit_orderings))
-        ce = ClusterExpansion(self.sw, ecis=ecis)
+        ce = ClusterExpansion(self.cs, self.sw.feature_matrix,
+                              self.sw.normalized_properties, ecis=ecis)
         # ce.print_ecis()
         d = ce.as_dict()
         ce1 = ClusterExpansion.from_dict(d)
         self.assertTrue(np.array_equal(ce.ecis, ce1.ecis))
-        self.assertIsInstance(ce.wrangler, StructureWrangler)
+        self.assertIsInstance(ce.subspace, ClusterSubspace)
         self.assertIsInstance(ce.estimator, BaseEstimator)

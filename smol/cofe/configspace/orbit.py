@@ -173,7 +173,7 @@ class Orbit(MSONable):
     def assign_ids(self, o_id, o_b_id, start_c_id):
         """
         Used to assign unique orbit and cluster id's when creating a cluster
-        subspace.
+        _subspace.
 
         Args:
             o_id (int): orbit id

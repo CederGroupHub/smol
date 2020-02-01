@@ -29,15 +29,15 @@ def constrain_dielectric(ce, max_dielectric, e_ind=-1, *fitargs, **fitkwargs):
             keyword arguments to be passed to the estimator's fit method
     """
     ext_terms = [term.__name__ for term, _, _
-                 in ce.wrangler.subspace.external_terms]
+                 in ce.subspace.external_terms]
     if 'EwaldTerm' not in ext_terms:
         raise RuntimeError('This ClusterExpansion does not have an Ewald term')
     elif ce.ecis is None:
         raise RuntimeError('This ClusterExpansion does not have ECIs.'
                            'Perhaps it has not been fitted yet?')
 
-    A_in = ce.wrangler.feature_matrix.copy()
-    y_in = ce.wrangler.normalized_properties.copy()
+    A_in = ce.feature_matrix.copy()
+    y_in = ce.property_vector.copy()
 
     if ce.ecis[e_ind] < 1.0 / max_dielectric:
         y_in -= A_in[:, e_ind] / max_dielectric

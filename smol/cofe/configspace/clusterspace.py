@@ -1,8 +1,8 @@
 """
 This Module implements the ClusterSubspace class necessary to define the terms
-to be included in a cluster expansion. A cluster subspace is a finite set of
+to be included in a cluster expansion. A cluster _subspace is a finite set of
 clusters, more precisely orbits, that define represent vectors which define
-a subspace of the total configurational space of a given lattice system.
+a _subspace of the total configurational space of a given lattice system.
 """
 
 from __future__ import division
@@ -24,7 +24,7 @@ from smol.exceptions import SymmetryError, StructureMatchError,\
 class ClusterSubspace(MSONable):
     """
     Holds a structure, its expansion structure and a list of Orbits.
-    This class defines the Cluster subspace over which to fit a cluster
+    This class defines the Cluster _subspace over which to fit a cluster
     expansion: This sets the orbits (groups of clusters) that are to be
     considered in the fit.
 
@@ -445,7 +445,7 @@ class ClusterSubspace(MSONable):
                  orbits=orbits, symops=symops,
                  **d['structure_matcher_kwargs'])
         # TODO implement dis
-        # subspace._external_terms = [ExternalTerm.from_dict(et_d)
+        # _subspace._external_terms = [ExternalTerm.from_dict(et_d)
         # for et_d in d['external_terms']]
         return cs
 

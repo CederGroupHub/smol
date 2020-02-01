@@ -5,7 +5,7 @@ from collections.abc import Sequence
 from functools import partial
 import numpy as np
 from monty.json import MSONable
-from pymatgen import Composition
+from pymatgen import Composition, Structure
 from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
 from smol.cofe.configspace import EwaldTerm
 from smol.cofe.configspace.clusterspace import ClusterSubspace
@@ -98,11 +98,13 @@ class StructureWrangler(MSONable):
                 dict with single key specifying the type of weights as above,
                 and values being dict of kwargs
         """
-        self.subspace = cluster_subspace
+        self._subspace = cluster_subspace
+
+        weights_hull_partial = partial(weights_e_above_hull,
+                                       ce_structure=self._subspace.structure)
         self.get_weights = {'composition': weights_e_above_comp,
-                            'hull': partial(weights_e_above_hull,
-                                            ce_structure=self.subspace.structure)}  # noqa
-        self.items = []
+                            'hull': weights_hull_partial}
+        self._items = []
         self.weight_type = weight_type
         self.weight_kwargs = {}
 
@@ -112,25 +114,20 @@ class StructureWrangler(MSONable):
             self.weight_type, self.weight_kwargs = weight_type
 
     @property
-    def prim_structure(self):
-        """ Copy of primitive structure which the Expansion is based on """
-        return self.subspace.structure.copy()
-
-    @property
-    def expansion_structure(self):
-        """
-        Copy of the expansion structure with only sites included in the
-        expansion (i.e. sites with partial occupancies)
-        """
-        return self.subspace.exp_structure.copy()
+    def items(self):
+        return self._items
 
     @property
     def structures(self):
-        return [i['structure'] for i in self.items]
+        return [i['structure'] for i in self._items]
+
+    @property
+    def refined_structures(self):
+        return [i['refined_structure'] for i in self._items]
 
     @property
     def properties(self):
-        return np.array([i['property'] for i in self.items])
+        return np.array([i['property'] for i in self._items])
 
     @property
     def normalized_properties(self):
@@ -138,19 +135,19 @@ class StructureWrangler(MSONable):
 
     @property
     def supercell_matrices(self):
-        return np.array([i['scmatrix'] for i in self.items])
+        return np.array([i['scmatrix'] for i in self._items])
 
     @property
     def feature_matrix(self):
-        return np.array([i['features'] for i in self.items])
+        return np.array([i['features'] for i in self._items])
 
     @property
     def sizes(self):
-        return np.array([i['size'] for i in self.items])
+        return np.array([i['size'] for i in self._items])
 
     @property
     def weights(self):
-        return np.array([i.get('weight') for i in self.items])
+        return np.array([i.get('weight') for i in self._items])
 
     def add_data(self, data, weights=None, verbose=False):
         """
@@ -172,20 +169,22 @@ class StructureWrangler(MSONable):
         """
         items = []
 
-        for i, (s, p) in enumerate(data):
+        for i, (struct, prop) in enumerate(data):
             try:
-                m = self.subspace.scmatrix_from_structure(s)
-                size = self.subspace.num_prims_from_matrix(m)
-                fm_row = self.subspace.corr_from_structure(s)
+                scmatrix = self._subspace.scmatrix_from_structure(struct)
+                size = self._subspace.num_prims_from_matrix(scmatrix)
+                fm_row = self._subspace.corr_from_structure(struct)
+                refined_struct = self._subspace.refine_structure(struct)
             except StructureMatchError as e:
                 if verbose:
-                    print(f'Unable to match {s.composition} with energy {p} to'
-                          f' supercell_structure. Throwing out.\n'
+                    print(f'Unable to match {struct.composition} with energy '
+                          f'{prop} to supercell_structure. Throwing out.\n'
                           f'Error Message: {str(e)}.')
                 continue
-            items.append({'structure': s,
-                          'property': p,
-                          'scmatrix': m,
+            items.append({'structure': struct,
+                          'refined_structure': refined_struct,
+                          'property': prop,
+                          'scmatrix': scmatrix,
                           'features': fm_row,
                           'size': size})
 
@@ -203,7 +202,7 @@ class StructureWrangler(MSONable):
                 weights, kwargs = weights
             self._set_weights(items, weights, **kwargs)
 
-        self.items += items
+        self._items += items
 
     def update_features(self):
         """
@@ -212,13 +211,13 @@ class StructureWrangler(MSONable):
         creating the Wrangler, for example added an Ewald term after creating
         the Wrangler.
         """
-        for item in self.items:
+        for item in self._items:
             struct = item['structure']
-            item['features'] = self.subspace.corr_from_structure(struct)
+            item['features'] = self._subspace.corr_from_structure(struct)
 
     def remove_all_data(self):
         """Removes all data from Wrangler"""
-        self.items = []
+        self._items = []
 
     def _set_weights(self, items, weights, **kwargs):
         """Set the weight_type for each data point"""
@@ -253,30 +252,30 @@ class StructureWrangler(MSONable):
                 Ewald threshold
         """
         ewald_corr = None
-        for term, args, kwargs in self.subspace.external_terms:
+        for term, args, kwargs in self._subspace.external_terms:
             if term.__name__ == 'EwaldTerm':
                 if 'use_inv_r' in kwargs.keys() and kwargs['use_inv_r']:
                     raise NotImplementedError('cant use inv_r with max_ewald')
-                ewald_corr = [i['features'][-1] for i in self.items]
+                ewald_corr = [i['features'][-1] for i in self._items]
         if ewald_corr is None:
             ewald_corr = []
             for struct in self.structures:
-                scmatrix = self.subspace.scmatrix_from_structure(struct)  # noqa
-                occu = self.subspace.occupancy_from_structure(struct, scmatrix)
-                supercell = self.subspace.structure.copy()
+                scmatrix = self._subspace.scmatrix_from_structure(struct)
+                occu = self._subspace.occupancy_from_structure(struct, scmatrix)  # noqa
+                supercell = self._subspace.structure.copy()
                 supercell.make_supercell(scmatrix)
-                orb_inds = self.subspace.supercell_orbit_mappings(scmatrix)
+                orb_inds = self._subspace.supercell_orbit_mappings(scmatrix)
                 term = EwaldTerm.corr_from_occu(occu, supercell, orb_inds)
                 ewald_corr.append(term)
 
         min_e = defaultdict(lambda: np.inf)
-        for ecorr, item in zip(ewald_corr, self.items):
+        for ecorr, item in zip(ewald_corr, self._items):
             c = item['structure'].composition.reduced_composition
             if ecorr < min_e[c]:
                 min_e[c] = ecorr
 
         items = []
-        for ecorr, item in zip(ewald_corr, self.items):
+        for ecorr, item in zip(ewald_corr, self._items):
             mine = min_e[item['structure'].composition.reduced_composition]
             r_e = ecorr - mine
             if r_e > max_ewald:
@@ -285,15 +284,25 @@ class StructureWrangler(MSONable):
                           f'ewald energy is {r_e}')
             else:
                 items.append(item)
-        self.items = items
+        self._items = items
 
     @classmethod
     def from_dict(cls, d):
         """
         Creates Structure Wrangler from serialized MSONable dict
         """
-        sw = cls(cluster_subspace=ClusterSubspace.from_dict(d['subspace']))
-        sw.items = d['items']
+        sw = cls(cluster_subspace=ClusterSubspace.from_dict(d['_subspace']))
+        items = []
+        for item in d['items']:
+            items.append({'property': item['property'],
+                          'structure':
+                              Structure.from_dict(item['structure']),
+                          'refined_structure':
+                              Structure.from_dict(item['refined_structure']),
+                          'scmatrix': np.array(item['scmatrix']),
+                          'features': np.array(item['features']),
+                          'size': item['size']})
+        sw._items = items
         sw.weight_type = d['weight_type']
         return sw
 
@@ -304,9 +313,19 @@ class StructureWrangler(MSONable):
         Returns:
             MSONable dict
         """
+        s_items = []
+        for item in self._items:
+            s_items.append({'property': item['property'],
+                            'structure': item['structure'].as_dict(),
+                            'refined_structure':
+                                item['refined_structure'].as_dict(),
+                            'scmatrix': item['scmatrix'].tolist(),
+                            'features': item['features'].tolist(),
+                            'size': item['size']})
+
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
-             'subspace': self.subspace.as_dict(),
-             'items': self.items,
+             '_subspace': self._subspace.as_dict(),
+             'items': s_items,
              'weight_type': self.weight_type}
         return d
