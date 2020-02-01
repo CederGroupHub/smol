@@ -9,6 +9,7 @@ can be changed to use "concentration dependent" bases.
 
 from abc import ABC, abstractmethod
 from copy import deepcopy
+from itertools import combinations
 import inspect
 import warnings
 from functools import partial
@@ -125,6 +126,20 @@ class SiteBasis(ABC):
 
         return self.functions[fun_ind](self.encode(specie))
 
+    @property
+    def is_orthogonal(self):
+        """ Test if the basis is orthogonal """
+        x_terms = all(self.inner_prod(f, g) == 0
+                      for f, g in combinations(self.functions, 2))
+        d_terms = all(self.inner_prod(f, f) != 0 for f in self.functions)
+        return x_terms and d_terms
+
+    @property
+    def is_orthonormal(self):
+        """Test if the basis is orthonormal"""
+        d_terms = all(np.isclose(self.inner_prod(f, f), 1) for f in self.functions)
+        return d_terms and self.is_orthogonal
+
     def orthonormalize(self):
         """
         Returns an orthonormal basis function set based on the measure given
@@ -155,7 +170,7 @@ class SiteBasis(ABC):
 
 class IndicatorBasis(SiteBasis):
     """
-    Indicator Basis
+    Indicator Basis. This basis as defined is not orthogonal.
     """
 
     def __init__(self, species):
