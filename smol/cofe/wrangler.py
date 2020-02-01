@@ -1,3 +1,8 @@
+"""
+Implementation of a StructureWrangler and additional functions used to
+preprocess and check (wrangle) fitting data of structures and properties.
+"""
+
 from __future__ import division
 from collections import defaultdict
 import warnings
@@ -11,15 +16,46 @@ from smol.cofe.configspace import EwaldTerm
 from smol.cofe.configspace.clusterspace import ClusterSubspace
 from smol.exceptions import StructureMatchError
 
+kB = 0.00008617
 
 def weights_e_above_comp(structures, energies, temperature=2000):
+    """
+    Computes weights for structure energy above the minimum reduced composition
+    energy.
+
+    Args:
+        structures list(pymatgen.Structure):
+            structures corresponding to the given energies.
+        energies array:
+            energies for given structures.
+        temperature (float):
+            temperature to used in boltzmann weight
+
+    Returns: weights for each structure.
+        array
+    """
     e_above_comp = _energies_above_composition(structures, energies)
-    return np.exp(-e_above_comp / (0.00008617 * temperature))
+    return np.exp(-e_above_comp / (kB * temperature))
 
 
 def weights_e_above_hull(structures, energies, ce_structure, temperature=2000):
+    """
+    Computes weights for structure energy above the hull of all given
+    structures
+
+    Args:
+        structures list(pymatgen.Structure):
+            structures corresponding to the given energies.
+        energies array:
+            energies for given structures.
+        temperature (float):
+            temperature to used in boltzmann weight
+
+    Returns: weights for each structure.
+        array
+    """
     e_above_hull = _energies_above_hull(structures, energies, ce_structure)
-    return np.exp(-e_above_hull / (0.00008617 * temperature))
+    return np.exp(-e_above_hull / (kB * temperature))
 
 
 def _energies_above_composition(structures, energies):
@@ -161,7 +197,7 @@ class StructureWrangler(MSONable):
                 list of (structure, property) data
             verbose (bool):
                 if True then print structures that fail in StructureMatcher
-              weights (str, list/tuple or array):
+            weights (str, list/tuple or array):
                 str specifying type of weights (i.e. 'hull') OR
                 list/tuple with two elements (name, kwargs) were name specifies
                 the type of weights as above, and kwargs are a dict of

@@ -16,10 +16,6 @@ from smol.cofe.regression.estimator import BaseEstimator, CVXEstimator
 from smol.exceptions import NotFittedError
 
 
-# TODO remove wrangler from being a property, pass instead a _subspace,
-# TODO and pass in feature_matrix and property_vector
-
-
 class ClusterExpansion(MSONable):
     """
     Class for the ClusterExpansion proper needs a structure_wrangler to supply
@@ -29,8 +25,8 @@ class ClusterExpansion(MSONable):
     """
 
     def __init__(self, cluster_subspace, feature_matrix=None,
-                 property_vector=None, weights=None, estimator=None,
-                 ecis=None):
+                 property_vector=None, weights=None, ecis=None,
+                 estimator=None):
         """
         Represents a cluster expansion. The main methods to use this class are
         the fit and predict
@@ -45,10 +41,17 @@ class ClusterExpansion(MSONable):
             property_vector (np.array):
                 1D array with the value of the property to fit to corresponding
                 to the structures in the feature matrix.
-            ecis (array):
+            weights (np.array): optional
+                1D array of weights for each data point (structure) in feature
+                matrix
+            ecis (array): optional
                 ecis for cluster expansion. This should only be used if the
                 expansion was already fitted. Make sure the supplied eci
                 correspond to the correlation vector terms (length and order)
+            estimator: optional
+                Estimator class with fit and predict functionality. See
+                smol.cofe.regression.estimator for details. Either ECIs or an
+                estimator must be provided.
         """
 
         self._subspace = cluster_subspace
@@ -99,13 +102,13 @@ class ClusterExpansion(MSONable):
             basis (str):
                 a string specifying the site basis functions
             orthonormal (bool):
-                wether to enforece an orthonormal basis. From the current
+                whether to enforce an orthonormal basis. From the current
                 available bases only the indicator basis is not orthogonal out
                 of the box
             external_terms (object):
-                any external terms to add to the cluster _subspace
-                Currently only an EwaldTerm
-            estimator:
+                any external terms to add to the cluster subspace
+                Currently only an EwaldTerm.
+            estimator: optional
                 Estimator or sklearn model. Needs to have a fit and predict
                 method, fitted coefficients must be stored in _coeffs
                 attribute (usually these are the ECI).
@@ -206,6 +209,18 @@ class ClusterExpansion(MSONable):
                           f'coefficients for ECIS: {self.estimator}')
 
     def predict(self, structures, normalized=False):
+        """
+        Predict the fitted property for a given set of structures.
+
+        Args:
+            structures (list or Structure):
+                Structures to predict from
+            normalized (bool):
+                Whether to return the predicted property normalized by
+                supercell size.
+        Returns:
+            array
+        """
         if isinstance(structures, Structure):
             structures = [structures]
 
@@ -265,7 +280,6 @@ class ClusterExpansion(MSONable):
         Returns:
             MSONable dict
         """
-
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
              'cluster_subspace': self.subspace.as_dict(),

@@ -1,8 +1,11 @@
 """
 This Module implements the ClusterSubspace class necessary to define the terms
-to be included in a cluster expansion. A cluster _subspace is a finite set of
-clusters, more precisely orbits, that define represent vectors which define
-a _subspace of the total configurational space of a given lattice system.
+to be included in a cluster expansion. A cluster subspace is a finite set of
+clusters, more precisely orbits, that define/represent vectors which span
+a subspace of the total configurational space of a given lattice system. The
+site functions defined for the sites in the orbits make up the cluster/orbit
+functions that span the corresponding function space over the configurational
+space.
 """
 
 from __future__ import division
@@ -25,9 +28,9 @@ from smol.exceptions import SymmetryError, StructureMatchError,\
 class ClusterSubspace(MSONable):
     """
     Holds a structure, its expansion structure and a list of Orbits.
-    This class defines the Cluster _subspace over which to fit a cluster
-    expansion: This sets the orbits (groups of clusters) that are to be
-    considered in the fit.
+    This class defines the cluster subspace over which to fit a cluster
+    expansion: This sets the orbits (groups of clusters) and the site basis
+    functions that are to be considered in the fit.
 
     This is probably the class you're looking for to start defining the
     structure and cluster terms for your cluster expansion.
@@ -40,7 +43,6 @@ class ClusterSubspace(MSONable):
                  **matcher_kwargs):
         """
         Args:
-            structure (pymatgen.Structure):
             structure (pymatgen.Structure):
                 Structure to define the cluster space. Typically the primitive
                 cell. Includes all species regardless of partial occupation.
@@ -200,6 +202,16 @@ class ClusterSubspace(MSONable):
         then determine the mappings between sites to create the occupancy
         vector and also determine the orbit mappings to evaluate the
         corresponding cluster functions.
+
+        Args:
+            structure (pymatgen.Structure):
+                structure to compute correlation from
+            extensive (bool):
+                option to return the extensive (non-normalized) correlation
+                vector
+
+        Returns: correlation vector for given structure
+            array
         """
         scmatrix = self.scmatrix_from_structure(structure)
         occu = self.occupancy_from_structure(structure, scmatrix)
@@ -227,6 +239,9 @@ class ClusterSubspace(MSONable):
         """
         Refine a (relaxed) structure to a perfect supercell structure of the
         the prim structure (aka the corresponding unrelaxed structure)
+
+        Args:
+            structure (pymatgen.Structure)
         """
         scmatrix = self.scmatrix_from_structure(structure)
         occu = self.occupancy_from_structure(structure, scmatrix)
@@ -246,6 +261,19 @@ class ClusterSubspace(MSONable):
         """
         Returns a tuple of occupancies of each site in a the structure in the
         appropriate order set implicitly by the scmatrix that is found
+        This function is useful to obtain an initial occupancy for a Monte
+        Carlo simulation (make sure that the same supercell matrix is being
+        used here as in the instance of the processor class for the simulation.
+
+        Args:
+            structure (pymatgen.Structure):
+                structure to obtain a occupancy vector for
+            scmatrix (array): optional
+                super cell matrix relating the given structure and the
+                primitive structure
+
+        Returns: occupancy vector for structure (species names ie ['Li+', ...]
+            array
         """
         if scmatrix is None:
             scmatrix = self.scmatrix_from_structure(structure)
@@ -276,6 +304,12 @@ class ClusterSubspace(MSONable):
         """
         Obtain the supercell_structure matrix to convert given structure to
         prim structure.
+
+        Args:
+            structure (pymatgen.Structure)
+
+        Returns: supercell matrix relating passed structure and prim structure.
+            array
         """
         scmatrix = self._scmatcher.get_supercell_matrix(structure,
                                                         self.structure)
@@ -290,6 +324,15 @@ class ClusterSubspace(MSONable):
         """
         Return the orbit mappings for a specific supercell of the prim
         structure represented by the given matrix
+
+        Args:
+            scmatrix (array):
+                array relating a supercell with the primitive matrix
+
+        Returns: list of tuples with orbits and the site indices for all
+                 equivalent orbits in a supercell obtained from the given
+                 matrix
+            list((orbit, indices))
         """
 
         # np.arrays are not hashable and can't be used as dict keys.
@@ -306,6 +349,16 @@ class ClusterSubspace(MSONable):
         """
         Each entry in the correlation vector corresponds to a particular
         symmetrically distinct bit ordering
+
+        Args:
+            occu (array):
+                occupancy vector
+            orbit_indices (list(orbits, indices)):
+                list of tuples of orbits and their corresponding indices. This
+                should be obtained using supercell_orbit_mappings
+
+        Returns: correlation vector
+            array
         """
         corr = np.zeros(self.n_bit_orderings)
         corr[0] = 1  # zero point cluster
@@ -394,7 +447,7 @@ class ClusterSubspace(MSONable):
     def _structure_site_mapping(self, supercell, structure):
         """
         Returns the mapping between sites in the given structure and a prim
-        supercell of the corresponding size
+        supercell of the corresponding size.
         """
 
         mapping = self._site_matcher.get_mapping(supercell, structure)
@@ -406,7 +459,7 @@ class ClusterSubspace(MSONable):
     def _gen_orbit_indices(self, scmatrix):
         """
         Finds all the indices associated with each orbit for the supercell
-        structure corresponding to the given supercell matrix
+        structure corresponding to the given supercell matrix.
         """
 
         supercell = self.structure.copy()

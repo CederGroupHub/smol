@@ -146,8 +146,6 @@ class Orbit(MSONable):
         """
         Number of clusters in the given sites of the lattice object that are in
         the orbit.
-        Returns:
-            int
         """
         return len(self.clusters)
 
