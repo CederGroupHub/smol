@@ -7,6 +7,7 @@ a _subspace of the total configurational space of a given lattice system.
 
 from __future__ import division
 import numpy as np
+from copy import deepcopy
 from monty.json import MSONable
 from pymatgen import Structure, PeriodicSite
 from pymatgen.analysis.structure_matcher import StructureMatcher,\
@@ -319,6 +320,23 @@ class ClusterSubspace(MSONable):
 
         return corr
 
+    def change_site_bases(self, new_basis, orthonormal=False):
+        """
+        Changes the type of basis used in the site basis functions
+
+        Args:
+            new_basis (str):
+                name of new basis for all site bases
+            orthormal (bool):
+                option to orthonormalize all new site bases
+        """
+        for orbit in self.iterorbits():
+            orbit.transform_site_bases(new_basis, orthonormal)
+
+    def copy(self):
+        """Deep copy of instance"""
+        return deepcopy(self)
+
     @staticmethod
     def _orbits_from_radii(expansion_struct, radii, symops, basis,
                            orthonormal):
@@ -330,16 +348,16 @@ class ClusterSubspace(MSONable):
 
         bits = get_bits(expansion_struct)
         nbits = np.array([len(b) - 1 for b in bits])
-        sbases = tuple(basis_factory(basis, bit) for bit in bits)
+        site_bases = tuple(basis_factory(basis, bit) for bit in bits)
         if orthonormal:
-            for basis in sbases:
+            for basis in site_bases:
                 basis.orthonormalize()
 
         orbits = {}
         new_orbits = []
 
-        for bit, nbit, site, sbasis in zip(bits, nbits,
-                                           expansion_struct, sbases):
+        for bit, nbit, site, sbasis in zip(bits, nbits, expansion_struct,
+                                           site_bases):
             new_orbit = Orbit([site.frac_coords], expansion_struct.lattice,
                               [np.arange(nbit)], [sbasis], symops)
             if new_orbit not in new_orbits:
@@ -363,7 +381,7 @@ class ClusterSubspace(MSONable):
                     new_sites = np.concatenate([orbit.basecluster.sites, [p]])
                     new_orbit = Orbit(new_sites, expansion_struct.lattice,
                                       orbit.bits + [np.arange(nbits[n[2]])],
-                                      orbit.site_bases + [sbases[n[2]]],
+                                      orbit.site_bases + [site_bases[n[2]]],
                                       symops)
                     if new_orbit.radius > radius + 1e-8:
                         continue

@@ -240,6 +240,36 @@ class TestClusterSubSpace(unittest.TestCase):
         self.assertTrue(np.allclose(corr,
                                     [1, 0.5, 0, 0, 1, 0, 0.5, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, 0.5, 0, 0]))
 
+    def test_copy(self):
+        cs = self.cs.copy()
+        self.assertFalse(cs is self.cs)
+        self.assertTrue(isinstance(cs, ClusterSubspace))
+
+    def test_change_basis(self):
+        # make an ordered supercell_structure
+        s = self.structure.copy()
+        s.make_supercell([2, 1, 1])
+        species = ('Li', 'Ca', 'Li', 'Ca', 'Br', 'Br')
+        coords = ((0.125, 0.25, 0.25),
+                  (0.625, 0.25, 0.25),
+                  (0.375, 0.75, 0.75),
+                  (0.25, 0.5, 0.5),
+                  (0, 0, 0),
+                  (0.5, 0, 0))
+        s = Structure(s.lattice, species, coords)
+
+        cs = self.cs.copy()
+        for basis in ('sinusoid', 'chebyshev', 'legendre'):
+            cs.change_site_bases(basis)
+            self.assertFalse(np.allclose(cs.corr_from_structure(s),
+                                         self.cs.corr_from_structure(s)))
+        cs.change_site_bases('indicator', orthonormal=True)
+        self.assertFalse(np.allclose(cs.corr_from_structure(s),
+                                     self.cs.corr_from_structure(s)))
+        cs.change_site_bases('indicator', orthonormal=False)
+        self.assertTrue(np.allclose(cs.corr_from_structure(s),
+                                    self.cs.corr_from_structure(s)))
+
     def test_repr(self):
         repr(self.cs)
 

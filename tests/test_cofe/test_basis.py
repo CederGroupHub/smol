@@ -59,7 +59,7 @@ class TestBasis(unittest.TestCase):
 
     def test_chebyshev_basis(self):
         b = basis.ChebyshevBasis(self.species.keys())
-        self.assertTrue(b.is_orthonormal)
+        self.assertTrue(b.is_orthogonal)
 
         # test evaluation of basis functions
         m, coeffs = len(self.species), [1]

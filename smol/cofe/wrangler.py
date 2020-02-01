@@ -147,7 +147,9 @@ class StructureWrangler(MSONable):
 
     @property
     def weights(self):
-        return np.array([i.get('weight') for i in self._items])
+        weights = [i.get('weight') for i in self._items]
+        if len(weights) > 0 and weights[0] is not None:
+            return np.array(weights)
 
     def add_data(self, data, weights=None, verbose=False):
         """

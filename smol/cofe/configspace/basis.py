@@ -45,13 +45,13 @@ class SiteBasis(ABC):
                 probability is assumed.
         """
         if not isinstance(species, dict):
-            self._measure = {specie: 1 / len(species) for specie in species}
+            self._domain = {specie: 1 / len(species) for specie in species}
         else:
             if not np.allclose(sum(species.values()), 1):
                 warnings.warn('The measure given does not sum to 1.'
                               'Are you sure this is what you want?',
                               RuntimeWarning)
-            self._measure = species
+            self._domain = species
 
         self._functions = None
 
@@ -66,7 +66,16 @@ class SiteBasis(ABC):
 
     @property
     def species(self):
-        return list(self._measure.keys())
+        return list(self._domain.keys())
+
+    @property
+    def site_space(self):
+        """
+        The site space refers to the probability space represented by the
+        allowed species and their respective probabilities (concentration)
+        over which the site functions are defined.
+        """
+        return self._domain
 
     def measure(self, specie):
         """
@@ -77,7 +86,7 @@ class SiteBasis(ABC):
             float: represents the associated measure with the give species
         """
 
-        return self._measure[specie]
+        return self._domain[specie]
 
     def inner_prod(self, f, g):
         """
@@ -137,7 +146,8 @@ class SiteBasis(ABC):
     @property
     def is_orthonormal(self):
         """Test if the basis is orthonormal"""
-        d_terms = all(np.isclose(self.inner_prod(f, f), 1) for f in self.functions)
+        d_terms = all(np.isclose(self.inner_prod(f, f), 1)
+                      for f in self.functions)
         return d_terms and self.is_orthogonal
 
     def orthonormalize(self):

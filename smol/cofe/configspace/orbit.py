@@ -170,6 +170,25 @@ class Orbit(MSONable):
             p *= self.site_bases[i].eval(b, sp)
         return p
 
+    def transform_site_bases(self, basis_name, orthonormal=False):
+        """
+        Transforms the Orbits site bases to new set of bases
+
+        Args:
+            basis_name (str):
+                name of new basis for all site bases
+            orthormal (bool):
+                option to orthonormalize all new site bases
+        """
+        new_bases = []
+        for basis in self.site_bases:
+            new_basis = basis_factory(basis_name, basis.site_space)
+            if orthonormal:
+                new_basis.orthonormalize()
+            new_bases.append(new_basis)
+
+        self.site_bases = tuple(new_bases)
+
     def assign_ids(self, o_id, o_b_id, start_c_id):
         """
         Used to assign unique orbit and cluster id's when creating a cluster
