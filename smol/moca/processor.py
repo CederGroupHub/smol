@@ -35,7 +35,7 @@ class ClusterExpansionProcessor(MSONable):
         self.orbit_inds = self.subspace.supercell_orbit_mappings(supercell_matrix)  # noqa
 
         # Create a dictionary of orbits by site index and information
-        # neccesary to compute local changes in correlation vectors from flips
+        # necessary to compute local changes in correlation vectors from flips
         self.orbits_by_sites = defaultdict(list)
         # Store the orbits grouped by site index in the structure,
         # to be used by delta_corr. We also store a reduced index array,

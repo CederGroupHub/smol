@@ -418,7 +418,8 @@ class ClusterSubspace(MSONable):
 
     def _assign_orbit_ids(self):
         """
-
+        Assigns unique id's to each orbit based on all its orbit functions and
+        all clusters in the prim structure that are in each orbit
         """
         n_clstr = 1
         n_bit_ords = 1
