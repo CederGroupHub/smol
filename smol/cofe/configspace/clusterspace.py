@@ -104,19 +104,11 @@ class ClusterSubspace(MSONable):
                                               **matcher_kwargs)
 
         self._orbits = orbits
-        self._supercells = {}
         self._supercell_orb_inds = {}
         self._external_terms = []
 
         # assign the cluster ids
-        n_clstr = 1
-        n_bit_ords = 1
-        n_orbs = 1
-        for k in sorted(self._orbits.keys()):
-            for y in self._orbits[k]:
-                n_orbs, n_bit_ords, n_clstr = y.assign_ids(n_orbs,
-                                                           n_bit_ords,
-                                                           n_clstr)
+        n_orbs, n_bit_ords, n_clstr = self._assign_orbit_ids()
         self.n_orbits = n_orbs
         self.n_clusters = n_clstr
         self.n_bit_orderings = n_bit_ords
@@ -168,13 +160,13 @@ class ClusterSubspace(MSONable):
     @property
     def orbits(self):
         """Returns a list of all orbits sorted by size"""
-        return [orbit for k, orbits
+        return [orbit for key, orbits
                 in sorted(self._orbits.items()) for orbit in orbits]
 
     def iterorbits(self):
         """Orbit generator, yields orbits"""
-        for key in self._orbits.keys():
-            for orbit in self._orbits[key]:
+        for key, orbits in sorted(self._orbits.items()):
+            for orbit in orbits:
                 yield orbit
 
     @property
@@ -386,9 +378,58 @@ class ClusterSubspace(MSONable):
         for orbit in self.iterorbits():
             orbit.transform_site_bases(new_basis, orthonormal)
 
+    def remove_orbits(self, orbit_indices):
+        """
+        Removes orbits from cluster spaces. This is useful to prune a
+        ClusterExpansion by removing orbits with small associated ECI.
+        Note that this will remove a full orbit, which for the case of sites
+        with only two species is the same as removing a single correlation
+        vector element (only one ECI). For cases with sites having more than 2
+        species allowed per site there are more than one orbit functions (for
+        all the possible bit orderings) and removing an orbit will remove more
+        than one element in the correlation vector
+        Args:
+            orbit_indices (dict):
+                dict of {size: [indices for orbits to be removed]}
+        """
+        for key, orb_ids in orbit_indices.items():
+            if min(orb_ids) < 0:
+                raise ValueError('Index out of range. Negative indices are '
+                                 'not allowed.')
+            elif max(orb_ids) > len(self._orbits[key]) - 1:
+                raise ValueError('Index out of range. Total number of orbits '
+                                 f'of size {key} is: {len(self._orbits[key])}')
+            self._orbits[key] = [orbit for i, orbit
+                                 in enumerate(self._orbits[key])
+                                 if i not in orb_ids]
+
+        # Re-assign ids
+        n_orbs, n_bit_ords, n_clstr = self._assign_orbit_ids()
+        self.n_orbits = n_orbs
+        self.n_clusters = n_clstr
+        self.n_bit_orderings = n_bit_ords
+
+        # Clear the cached supercell orbit mappings
+        self._supercell_orb_inds = {}
+
     def copy(self):
         """Deep copy of instance"""
         return deepcopy(self)
+
+    def _assign_orbit_ids(self):
+        """
+
+        """
+        n_clstr = 1
+        n_bit_ords = 1
+        n_orbs = 1
+
+        for key in sorted(self._orbits.keys()):
+            for orbit in self._orbits[key]:
+                n_orbs, n_bit_ords, n_clstr = orbit.assign_ids(n_orbs,
+                                                               n_bit_ords,
+                                                               n_clstr)
+        return n_orbs, n_bit_ords, n_clstr
 
     @staticmethod
     def _orbits_from_radii(expansion_struct, radii, symops, basis,

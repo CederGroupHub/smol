@@ -57,16 +57,18 @@ class ClusterExpansion(MSONable):
         self._subspace = cluster_subspace
 
         self._feature_matrix = feature_matrix
-        if feature_matrix.shape[0] != property_vector.shape[0]:
-            raise AttributeError(f'Feature matrix of shape '
-                                 f'{feature_matrix.shape} does not '
-                                 f'correspond to property vector of shape '
-                                 f'{property_vector.shape}')
-        elif (weights is not None
-                and weights.shape[0] != property_vector.shape[0]):
-            raise AttributeError(f'Provided weights of shape {weights.shape} '
-                                 f'does not match shape of property vector '
-                                 f'{property_vector.shape}')
+        if feature_matrix is not None and property_vector is not None:
+            if feature_matrix.shape[0] != property_vector.shape[0]:
+                raise AttributeError(f'Feature matrix of shape '
+                                     f'{feature_matrix.shape} does not '
+                                     f'correspond to property vector of shape '
+                                     f'{property_vector.shape}')
+            elif (weights is not None
+                    and weights.shape[0] != property_vector.shape[0]):
+                raise AttributeError(f'Provided weights of shape '
+                                     f'{weights.shape} does not match shape of'
+                                     f' property vector '
+                                     f'{property_vector.shape}')
 
         self._property_vector = property_vector
         self._weights = weights
@@ -172,11 +174,13 @@ class ClusterExpansion(MSONable):
 
     @property
     def feature_matrix(self):
-        return self._feature_matrix.copy()
+        if self._feature_matrix is not None:
+            return self._feature_matrix.copy()
 
     @property
     def property_vector(self):
-        return self._property_vector
+        if self._property_vector is not None:
+            return self._property_vector
 
     @property
     def weights(self):
@@ -221,14 +225,14 @@ class ClusterExpansion(MSONable):
         Returns:
             array
         """
-        if isinstance(structures, Structure):
-            structures = [structures]
-
         extensive = not normalized
-        corrs = []
-        for structure in structures:
-            corr = self.subspace.corr_from_structure(structure, extensive)
-            corrs.append(corr)
+        if isinstance(structures, Structure):
+            corrs = self.subspace.corr_from_structure(structures, extensive)
+        else:
+            corrs = []
+            for structure in structures:
+                corr = self.subspace.corr_from_structure(structure, extensive)
+                corrs.append(corr)
 
         return self.estimator.predict(np.array(corrs))
 

@@ -18,6 +18,7 @@ from smol.exceptions import StructureMatchError
 
 kB = 0.00008617
 
+
 def weights_e_above_comp(structures, energies, temperature=2000):
     """
     Computes weights for structure energy above the minimum reduced composition
@@ -203,7 +204,6 @@ class StructureWrangler(MSONable):
                 the type of weights as above, and kwargs are a dict of
                 keyword arguments to obtain the weights OR
                 array directly specifying the weights
-
         """
         items = []
 

@@ -12,9 +12,6 @@ from pymatgen import Structure, PeriodicSite
 from smol.cofe.configspace.utils import get_bits
 from src.ce_utils import delta_corr_single_flip
 
-# TODO consider optimizing by ignoring zeroed eci, by removing those orbits
-#  from cluster _subspace
-
 
 class ClusterExpansionProcessor(MSONable):
     """
