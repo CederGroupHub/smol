@@ -105,8 +105,9 @@ class ClusterExpansion(MSONable):
                 a string specifying the site basis functions
             orthonormal (bool):
                 whether to enforce an orthonormal basis. From the current
-                available bases only the indicator basis is not orthogonal out
-                of the box
+                available bases only the sinusoid basis is orthogonal out
+                of the box for any number of species. Legendre and Chebyshev
+                are orthogonal for only 2 species out of the box.
             external_terms (object):
                 any external terms to add to the cluster subspace
                 Currently only an EwaldTerm.

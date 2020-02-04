@@ -287,9 +287,13 @@ class TestClusterSubSpace(unittest.TestCase):
         cs.change_site_bases('indicator', orthonormal=True)
         self.assertFalse(np.allclose(cs.corr_from_structure(s),
                                      self.cs.corr_from_structure(s)))
+        self.assertTrue(cs.basis_orthogonal)
+        self.assertTrue(cs.basis_orthonormal)
         cs.change_site_bases('indicator', orthonormal=False)
         self.assertTrue(np.allclose(cs.corr_from_structure(s),
                                     self.cs.corr_from_structure(s)))
+        self.assertFalse(cs.basis_orthogonal)
+        self.assertFalse(cs.basis_orthonormal)
 
     def test_repr(self):
         repr(self.cs)

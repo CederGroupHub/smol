@@ -149,6 +149,16 @@ class Orbit(MSONable):
         """
         return len(self.clusters)
 
+    @property
+    def basis_orthogonal(self):
+        """ Test if the Orbit bases are orthogonal """
+        return all(basis.is_orthogonal for basis in self.site_bases)
+
+    @property
+    def basis_orthonormal(self):
+        """Test if the orbit bases are orthonormal"""
+        return all(basis.is_orthonormal for basis in self.site_bases)
+
     def eval(self, bits, species):
         """
         Evaluates a cluster function defined for this orbit

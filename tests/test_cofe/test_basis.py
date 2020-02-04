@@ -27,7 +27,8 @@ class TestBasis(unittest.TestCase):
         self.assertEqual(measure, list(self.species.values()))
 
     def test_indicator_basis(self):
-        b = basis.IndicatorBasis(self.species)
+        b = basis.IndicatorBasis(self.species.keys())
+        self.assertFalse(b.is_orthogonal)
 
         # test evaluation of basis functions
         for i, sp in enumerate(list(self.species.keys())[:-1]):
@@ -54,12 +55,16 @@ class TestBasis(unittest.TestCase):
         self._test_basis_uniform_measure(basis.SinusoidBasis)
         self._test_measure(basis.SinusoidBasis)
         b = basis.SinusoidBasis(self.species)
+        self.assertFalse(b.is_orthogonal)
         b.orthonormalize()
         self.assertTrue(b.is_orthonormal)
 
     def test_chebyshev_basis(self):
+        species = list(self.species.keys())[:2]
+        b = basis.ChebyshevBasis(species)
+        self.assertTrue(b.is_orthogonal)  # orthogonal only for 2 species
         b = basis.ChebyshevBasis(self.species.keys())
-        self.assertTrue(b.is_orthogonal)
+        self.assertFalse(b.is_orthogonal)
 
         # test evaluation of basis functions
         m, coeffs = len(self.species), [1]
@@ -72,12 +77,16 @@ class TestBasis(unittest.TestCase):
         self._test_basis_uniform_measure(basis.ChebyshevBasis)
         self._test_measure(basis.ChebyshevBasis)
         b = basis.ChebyshevBasis(self.species)
+        self.assertFalse(b.is_orthogonal)
         b.orthonormalize()
         self.assertTrue(b.is_orthonormal)
 
     def test_legendre_basis(self):
+        species = list(self.species.keys())[:2]
+        b = basis.LegendreBasis(species)
+        self.assertTrue(b.is_orthogonal)  # orthogonal only for 2 species
         b = basis.LegendreBasis(self.species.keys())
-        self.assertTrue(b.is_orthogonal)
+        self.assertFalse(b.is_orthogonal)
 
         # test evaluation of basis functions
         m, coeffs = len(self.species), [1]
@@ -90,6 +99,7 @@ class TestBasis(unittest.TestCase):
         self._test_basis_uniform_measure(basis.LegendreBasis)
         self._test_measure(basis.LegendreBasis)
         b = basis.LegendreBasis(self.species)
+        self.assertFalse(b.is_orthogonal)
         b.orthonormalize()
         self.assertTrue(b.is_orthonormal)
 

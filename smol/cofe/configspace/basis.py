@@ -138,8 +138,10 @@ class SiteBasis(ABC):
     @property
     def is_orthogonal(self):
         """ Test if the basis is orthogonal """
+        # add the implicit 0th function
+        functions = [lambda x: 1, *self.functions]
         x_terms = all(self.inner_prod(f, g) == 0
-                      for f, g in combinations(self.functions, 2))
+                      for f, g in combinations(functions, 2))
         d_terms = all(self.inner_prod(f, f) != 0 for f in self.functions)
         return x_terms and d_terms
 
@@ -234,7 +236,7 @@ class NumpyPolyBasis(SiteBasis, ABC):
         enc = np.linspace(-1, 1, m)
         self._encoding = {s: i for (s, i) in zip(species, enc)}
         funcs, coeffs = [], [1]
-        for i in range(m-1):
+        for i in range(1, m):
             coeffs.append(0)
             funcs.append(partial(poly_fun, c=coeffs[::-1]))
         self._functions = tuple(funcs)

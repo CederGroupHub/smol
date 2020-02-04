@@ -60,6 +60,16 @@ class TestOrbit(unittest.TestCase):
         bit_combos = orbit.bit_combos  # orbit with two symmetrically distinct sites
         self.assertEqual(len(bit_combos), 4)
 
+    def test_is_orthonormal(self):
+        self.assertFalse(self.orbit.basis_orthogonal)
+        self.assertFalse(self.orbit.basis_orthonormal)
+        for b in self.bases:
+            b.orthonormalize()
+            self.assertTrue(b.is_orthogonal)
+        orbit1 = Orbit(self.coords[:2], self.lattice, [[0, 1], [0, 1]],
+                       self.bases, self.symops)
+        self.assertTrue(orbit1.basis_orthogonal)
+        self.assertTrue(orbit1.basis_orthonormal)
 
     def _test_eval(self, bases):
         for s1, s2 in combinations_with_replacement(self.bits[0], 2):

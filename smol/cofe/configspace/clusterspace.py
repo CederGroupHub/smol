@@ -170,6 +170,30 @@ class ClusterSubspace(MSONable):
                 yield orbit
 
     @property
+    def is_basis_orthogonal(self):
+        """
+        Checks if the basis defined for the cluster subspace is
+        orthogonal
+        """
+        return all(orb.basis_orthogonal for orb in self.iterorbits())
+
+    @property
+    def basis_orthogonal(self):
+        """
+        Checks if the basis defined for the cluster subspace is
+        orthogonal
+        """
+        return all(orb.basis_orthogonal for orb in self.iterorbits())
+
+    @property
+    def basis_orthonormal(self):
+        """
+        Checks if the basis defined for the cluster subspace is
+        orthonormal
+        """
+        return all(orb.basis_orthonormal for orb in self.iterorbits())
+
+    @property
     def external_terms(self):
         return self._external_terms
 
