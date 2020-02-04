@@ -24,9 +24,8 @@ class ClusterExpansion(MSONable):
     (i.e. to use in Monte Carlo and beyond)
     """
 
-    def __init__(self, cluster_subspace, feature_matrix=None,
-                 property_vector=None, weights=None, ecis=None,
-                 estimator=None):
+    def __init__(self, cluster_subspace, fit_structures, property_vector,
+                 feature_matrix=None, weights=None, ecis=None, estimator=None):
         """
         Represents a cluster expansion. The main methods to use this class are
         the fit and predict
@@ -35,12 +34,15 @@ class ClusterExpansion(MSONable):
             cluster_subspace (ClusterSubspace):
                 A StructureWrangler object to provide the fitting data and
                 processing
-            feature_matrix (np.array):
-                2D array with features, the correlation vectors for each
-                structure in the training data.
+            fit_structures (list):
+                list of structures used to fit the cluster expansion
             property_vector (np.array):
                 1D array with the value of the property to fit to corresponding
                 to the structures in the feature matrix.
+            feature_matrix (np.array): optional
+                2D array with features, the correlation vectors for each
+                structure in the training data. If not provided then it will
+                be computed using the given structures.
             weights (np.array): optional
                 1D array of weights for each data point (structure) in feature
                 matrix
@@ -55,6 +57,7 @@ class ClusterExpansion(MSONable):
         """
 
         self._subspace = cluster_subspace
+        self._structures = fit_structures
 
         self._feature_matrix = feature_matrix
         if feature_matrix is not None and property_vector is not None:
@@ -156,7 +159,8 @@ class ClusterExpansion(MSONable):
         if estimator is None and ecis is None:
             estimator = CVXEstimator()
 
-        return cls(subspace, feature_matrix=wrangler.feature_matrix,
+        return cls(subspace, fit_structures=wrangler.refined_structures,
+                   feature_matrix=wrangler.feature_matrix,
                    property_vector=wrangler.normalized_properties,
                    weights=wrangler.weights, estimator=estimator, ecis=ecis)
 
@@ -175,8 +179,10 @@ class ClusterExpansion(MSONable):
 
     @property
     def feature_matrix(self):
-        if self._feature_matrix is not None:
-            return self._feature_matrix.copy()
+        if self._feature_matrix is None:
+            self._feature_matrix = np.array([self.subspace.corr_from_structure(s)  # noqa
+                                             for s in self._structures])
+        return self._feature_matrix.copy()
 
     @property
     def property_vector(self):
@@ -237,6 +243,32 @@ class ClusterExpansion(MSONable):
 
         return self.estimator.predict(np.array(corrs))
 
+    def convert_eci(self, new_basis, orthonormal=False):
+        """
+        Numerically converts the eci of the cluster expansion to eci in a
+        new basis
+
+        Args:
+            fit_structures (list):
+                list of Structures that where used to fit the cluster expansion
+                The order needs to be the same as was used for fitting.
+            new_basis (str):
+                name of basis to convert coefficients into.
+            orthonormal (bool):
+                option to make new basis orthonormal
+
+        Returns: coefficients converted into new_basis
+            array
+        """
+        subspace = self.subspace.copy()
+        subspace.change_site_bases(new_basis, orthonormal=orthonormal)
+        feature_matrix = np.array([subspace.corr_from_structure(struct)
+                                   for struct in self._structures])
+        C = np.matmul(self.feature_matrix.T,
+                      np.linalg.pinv(feature_matrix.T))
+
+        return np.matmul(C.T, self.ecis)
+
     # TODO implement this and add test.
     def prune(self, threshold=1E-5):
         """
@@ -273,7 +305,9 @@ class ClusterExpansion(MSONable):
         """
         Creates ClusterExpansion from serialized MSONable dict
         """
+        structures = [Structure.from_dict(ds) for ds in d['fit_structures']]
         return cls(ClusterSubspace.from_dict(d['cluster_subspace']),
+                   fit_structures=structures,
                    feature_matrix=np.array(d['feature_matrix']),
                    property_vector=np.array(d['property_vector']),
                    ecis=d['ecis'])
@@ -285,9 +319,11 @@ class ClusterExpansion(MSONable):
         Returns:
             MSONable dict
         """
+        structures = [struct.as_dict() for struct in self._structures]
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
              'cluster_subspace': self.subspace.as_dict(),
+             'fit_structures': structures,
              'feature_matrix': self.feature_matrix.tolist(),
              'property_vector': self.property_vector.tolist(),
              'estimator': self.estimator.__class__.__name__,

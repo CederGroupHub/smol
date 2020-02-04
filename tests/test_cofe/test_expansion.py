@@ -60,7 +60,7 @@ class TestClusterExpansion(unittest.TestCase):
         self.assertEqual(len(ce3.predict(test_structs)), len(test_structs))
 
     def test_cvxestimator(self):
-        ce = ClusterExpansion(self.cs, self.sw.feature_matrix,
+        ce = ClusterExpansion(self.cs, self.sw.refined_structures,
                               self.sw.normalized_properties,
                               estimator=CVXEstimator())
         self.assertRaises(AttributeError, ce.predict, self.sw.structures[:10])
@@ -76,7 +76,7 @@ class TestClusterExpansion(unittest.TestCase):
         except ImportError:
             return
 
-        ce = ClusterExpansion(self.cs, self.sw.feature_matrix,
+        ce = ClusterExpansion(self.cs, self.sw.refined_structures,
                               self.sw.normalized_properties, estimator=Ridge())
         self.assertRaises(AttributeError, ce.predict, self.sw.structures[:10])
         ce.fit()
@@ -90,7 +90,7 @@ class TestClusterExpansion(unittest.TestCase):
     def test_numpy(self):
         estimator = BaseEstimator()
         estimator._solve = lambda X, y: np.linalg.lstsq(X, y, rcond=None)[0]
-        ce = ClusterExpansion(self.cs, self.sw.feature_matrix,
+        ce = ClusterExpansion(self.cs, self.sw.refined_structures,
                               self.sw.normalized_properties,
                               estimator=estimator)
         self.assertRaises(AttributeError, ce.predict, self.sw.structures[:10])
@@ -100,24 +100,41 @@ class TestClusterExpansion(unittest.TestCase):
 
     def test_no_estimator(self):
         ecis = np.ones((self.cs.n_bit_orderings))
-        ce = ClusterExpansion(self.cs, self.sw.feature_matrix,
+        ce = ClusterExpansion(self.cs, self.sw.refined_structures,
                               self.sw.normalized_properties, ecis=ecis)
         structs = self.sw.structures[:10]
         p = np.array([sum(self.cs.corr_from_structure(s)) for s in structs])
         self.assertTrue(np.allclose(ce.predict(structs, normalized=True), p))
 
+    def test_convert_eci(self):
+        estimator = BaseEstimator()
+        estimator._solve = lambda X, y: np.linalg.lstsq(X, y, rcond=None)[0]
+        ce = ClusterExpansion(self.cs, self.sw.refined_structures[:15],
+                              self.sw.normalized_properties[:15],
+                              estimator=estimator)
+        ce.fit()
+        cs = self.cs.copy()
+        cs.change_site_bases('indicator', orthonormal=True)
+        feature_matrix = np.array([cs.corr_from_structure(s)
+                                   for s in self.sw.refined_structures[15:]])
+        eci = ce.convert_eci('indicator', orthonormal=True)
+
+        self.assertTrue(np.allclose(ce.predict(self.sw.refined_structures[15:],
+                                               normalized=True),
+                                    np.dot(feature_matrix, eci)))
+
     def test_constrain_dielectric(self):
         self.cs.add_external_term(EwaldTerm)
-        ce = ClusterExpansion(self.cs, self.sw.feature_matrix,
+        ce = ClusterExpansion(self.cs, self.sw.refined_structures,
                               self.sw.normalized_properties,
                               estimator=CVXEstimator())
         ce.fit()
-        constrain_dielectric(ce, 15)
-        self.assertEqual(ce.ecis[-1], 1/15)
+        constrain_dielectric(ce, 5)
+        self.assertEqual(ce.ecis[-1], 1/5)
 
     def test_msonable(self):
         ecis = np.ones((self.cs.n_bit_orderings))
-        ce = ClusterExpansion(self.cs, self.sw.feature_matrix,
+        ce = ClusterExpansion(self.cs, self.sw.refined_structures,
                               self.sw.normalized_properties, ecis=ecis)
         # ce.print_ecis()
         d = ce.as_dict()
