@@ -25,7 +25,7 @@ class ClusterExpansion(MSONable):
     """
 
     def __init__(self, cluster_subspace, fit_structures, property_vector,
-                 weights=None, ecis=None, estimator=None):
+                 feature_matrix=None, weights=None, ecis=None, estimator=None):
         """
         Represents a cluster expansion. The main methods to use this class are
         the fit method to fit the cluster expansion using the provided
@@ -43,6 +43,13 @@ class ClusterExpansion(MSONable):
             property_vector (np.array):
                 1D array with the value of the property to fit to corresponding
                 to the structures in the feature matrix.
+            feature_matrix (np.array): optional
+                2D array with features, the correlation vectors for each
+                structure in the training data. If this has already been
+                computed, fitting the Expansion will be A LOT faster.
+                If not provided then it will be computed using the given
+                structures. Make sure this was computed with an the same
+                cluster_subspace provided.
             weights (np.array): optional
                 1D array of weights for each data point (structure) in feature
                 matrix
@@ -59,7 +66,7 @@ class ClusterExpansion(MSONable):
 
         self._subspace = cluster_subspace
         self._structures = fit_structures
-        self._feature_matrix = None
+        self._feature_matrix = feature_matrix
 
         if len(fit_structures) != len(property_vector):
             raise AttributeError(f'Number of provided fit structures '
@@ -164,6 +171,7 @@ class ClusterExpansion(MSONable):
             estimator = CVXEstimator()
 
         return cls(subspace, fit_structures=wrangler.refined_structures,
+                   feature_matrix=wrangler.feature_matrix,
                    property_vector=wrangler.normalized_properties,
                    weights=wrangler.weights, estimator=estimator, ecis=ecis)
 
@@ -246,10 +254,17 @@ class ClusterExpansion(MSONable):
 
         return self.estimator.predict(np.array(corrs))
 
+    # TODO check if the new subspace is trying to match the structures again
+    #  this is probably slowing it down a lot!
+    #  On that same note, maybe cache the supercell matrices for all the structures
+    #  used to fit the CE
+    # This needs further testing. For out-of-training structures
+    # the predictions do not always match with those using the original eci
+    # with which the fit was done.
     def convert_eci(self, new_basis, orthonormal=False):
         """
         Numerically converts the eci of the cluster expansion to eci in a
-        new basis
+        new basis.
 
         Args:
             fit_structures (list):
@@ -311,6 +326,7 @@ class ClusterExpansion(MSONable):
         structures = [Structure.from_dict(ds) for ds in d['fit_structures']]
         return cls(ClusterSubspace.from_dict(d['cluster_subspace']),
                    fit_structures=structures,
+                   feature_matrix=np.array(d['feature_matrix']),
                    property_vector=np.array(d['property_vector']),
                    ecis=d['ecis'])
 
@@ -326,6 +342,7 @@ class ClusterExpansion(MSONable):
              '@class': self.__class__.__name__,
              'cluster_subspace': self.subspace.as_dict(),
              'fit_structures': structures,
+             'feature_matrix': self.feature_matrix.tolist(),
              'property_vector': self.property_vector.tolist(),
              'estimator': self.estimator.__class__.__name__,
              'ecis': self.ecis.tolist()}

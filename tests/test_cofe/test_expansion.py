@@ -62,6 +62,7 @@ class TestClusterExpansion(unittest.TestCase):
     def test_cvxestimator(self):
         ce = ClusterExpansion(self.cs, self.sw.refined_structures,
                               self.sw.normalized_properties,
+                              feature_matrix=self.sw.feature_matrix,
                               estimator=CVXEstimator())
         self.assertRaises(AttributeError, ce.predict, self.sw.structures[:10])
         ce.fit(mu=5)
@@ -77,7 +78,9 @@ class TestClusterExpansion(unittest.TestCase):
             return
 
         ce = ClusterExpansion(self.cs, self.sw.refined_structures,
-                              self.sw.normalized_properties, estimator=Ridge())
+                              self.sw.normalized_properties,
+                              feature_matrix=self.sw.feature_matrix,
+                              estimator=Ridge())
         self.assertRaises(AttributeError, ce.predict, self.sw.structures[:10])
         ce.fit()
         self.assertIsNotNone(ce.ecis)
@@ -92,6 +95,7 @@ class TestClusterExpansion(unittest.TestCase):
         estimator._solve = lambda X, y: np.linalg.lstsq(X, y, rcond=None)[0]
         ce = ClusterExpansion(self.cs, self.sw.refined_structures,
                               self.sw.normalized_properties,
+                              feature_matrix=self.sw.feature_matrix,
                               estimator=estimator)
         self.assertRaises(AttributeError, ce.predict, self.sw.structures[:10])
         ce.fit()
@@ -127,6 +131,7 @@ class TestClusterExpansion(unittest.TestCase):
         self.cs.add_external_term(EwaldTerm)
         ce = ClusterExpansion(self.cs, self.sw.refined_structures,
                               self.sw.normalized_properties,
+                              feature_matrix=self.sw.feature_matrix,
                               estimator=CVXEstimator())
         ce.fit()
         constrain_dielectric(ce, 5)
