@@ -25,10 +25,14 @@ class ClusterExpansion(MSONable):
     """
 
     def __init__(self, cluster_subspace, fit_structures, property_vector,
-                 feature_matrix=None, weights=None, ecis=None, estimator=None):
+                 weights=None, ecis=None, estimator=None):
         """
         Represents a cluster expansion. The main methods to use this class are
-        the fit and predict
+        the fit method to fit the cluster expansion using the provided
+        structures (and or feature matrix) and the predict method to predict
+        the fitted property to new structures. The ClusterExpansion also
+        contains a few regression metrics methods to check the quality of the
+        fit.
 
         Args:
             cluster_subspace (ClusterSubspace):
@@ -39,16 +43,13 @@ class ClusterExpansion(MSONable):
             property_vector (np.array):
                 1D array with the value of the property to fit to corresponding
                 to the structures in the feature matrix.
-            feature_matrix (np.array): optional
-                2D array with features, the correlation vectors for each
-                structure in the training data. If not provided then it will
-                be computed using the given structures.
             weights (np.array): optional
                 1D array of weights for each data point (structure) in feature
                 matrix
             ecis (array): optional
                 ecis for cluster expansion. This should only be used if the
-                expansion was already fitted. Make sure the supplied eci
+                expansion was already fitted or the eci where obtained
+                externally by some other means. Make sure the supplied eci
                 correspond to the correlation vector terms (length and order)
             estimator: optional
                 Estimator class with fit and predict functionality. See
@@ -58,20 +59,19 @@ class ClusterExpansion(MSONable):
 
         self._subspace = cluster_subspace
         self._structures = fit_structures
+        self._feature_matrix = None
 
-        self._feature_matrix = feature_matrix
-        if feature_matrix is not None and property_vector is not None:
-            if feature_matrix.shape[0] != property_vector.shape[0]:
-                raise AttributeError(f'Feature matrix of shape '
-                                     f'{feature_matrix.shape} does not '
-                                     f'correspond to property vector of shape '
-                                     f'{property_vector.shape}')
-            elif (weights is not None
-                    and weights.shape[0] != property_vector.shape[0]):
-                raise AttributeError(f'Provided weights of shape '
-                                     f'{weights.shape} does not match shape of'
-                                     f' property vector '
-                                     f'{property_vector.shape}')
+        if len(fit_structures) != len(property_vector):
+            raise AttributeError(f'Number of provided fit structures '
+                                 f'{len(fit_structures)} does not '
+                                 f'correspond to property vector of shape '
+                                 f'{property_vector.shape}')
+        elif (weights is not None
+                and weights.shape[0] != property_vector.shape[0]):
+            raise AttributeError(f'Provided weights of shape '
+                                 f'{weights.shape} does not match shape of'
+                                 f' property vector '
+                                 f'{property_vector.shape}')
 
         self._property_vector = property_vector
         self._weights = weights
@@ -92,6 +92,10 @@ class ClusterExpansion(MSONable):
                    orthonormal=False, external_terms=None, estimator=None,
                    ecis=None, data=None, verbose=False, weights=None):
         """
+        This convenience method creates a ClusterExpansion in one go (with no
+        need to create the underlying objects necessary) This is the quickest
+        and easiest way to get a ClusterExpansion up and running.
+
         Args:
             structure:
                 disordered structure to build a cluster expansion for.
@@ -160,7 +164,6 @@ class ClusterExpansion(MSONable):
             estimator = CVXEstimator()
 
         return cls(subspace, fit_structures=wrangler.refined_structures,
-                   feature_matrix=wrangler.feature_matrix,
                    property_vector=wrangler.normalized_properties,
                    weights=wrangler.weights, estimator=estimator, ecis=ecis)
 
@@ -308,7 +311,6 @@ class ClusterExpansion(MSONable):
         structures = [Structure.from_dict(ds) for ds in d['fit_structures']]
         return cls(ClusterSubspace.from_dict(d['cluster_subspace']),
                    fit_structures=structures,
-                   feature_matrix=np.array(d['feature_matrix']),
                    property_vector=np.array(d['property_vector']),
                    ecis=d['ecis'])
 
@@ -324,7 +326,6 @@ class ClusterExpansion(MSONable):
              '@class': self.__class__.__name__,
              'cluster_subspace': self.subspace.as_dict(),
              'fit_structures': structures,
-             'feature_matrix': self.feature_matrix.tolist(),
              'property_vector': self.property_vector.tolist(),
              'estimator': self.estimator.__class__.__name__,
              'ecis': self.ecis.tolist()}
