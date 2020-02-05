@@ -211,7 +211,7 @@ class ClusterSubspace(MSONable):
         """
         return int(round(np.abs(np.linalg.det(scmatrix))))
 
-    def corr_from_structure(self, structure, extensive=False):
+    def corr_from_structure(self, structure, scmatrix=None, extensive=False):
         """
         Returns the correlation vector for a given structure. To do this the
         correct supercell matrix of the prim necessary needs to be found to
@@ -222,6 +222,10 @@ class ClusterSubspace(MSONable):
         Args:
             structure (pymatgen.Structure):
                 structure to compute correlation from
+            scmatrix (array): optional
+                supercell matrix relating the prim structure to the given
+                structure. Passing this if it has already been matched will
+                make things much quicker.
             extensive (bool):
                 option to return the extensive (non-normalized) correlation
                 vector
@@ -229,7 +233,10 @@ class ClusterSubspace(MSONable):
         Returns: correlation vector for given structure
             array
         """
-        scmatrix = self.scmatrix_from_structure(structure)
+
+        if scmatrix is None:
+            scmatrix = self.scmatrix_from_structure(structure)
+
         occu = self.occupancy_from_structure(structure, scmatrix)
         orb_inds = self.supercell_orbit_mappings(scmatrix)
 

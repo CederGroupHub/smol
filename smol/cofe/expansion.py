@@ -247,10 +247,8 @@ class ClusterExpansion(MSONable):
         if isinstance(structures, Structure):
             corrs = self.subspace.corr_from_structure(structures, extensive)
         else:
-            corrs = []
-            for structure in structures:
-                corr = self.subspace.corr_from_structure(structure, extensive)
-                corrs.append(corr)
+            corrs = [self.subspace.corr_from_structure(structure, extensive)
+                     for structure in structures]
 
         return self.estimator.predict(np.array(corrs))
 
