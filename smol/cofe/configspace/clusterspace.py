@@ -258,15 +258,25 @@ class ClusterSubspace(MSONable):
 
         return corr
 
-    def refine_structure(self, structure):
+    def refine_structure(self, structure, scmatrix=None):
         """
         Refine a (relaxed) structure to a perfect supercell structure of the
         the prim structure (aka the corresponding unrelaxed structure)
 
         Args:
-            structure (pymatgen.Structure)
+            structure (pymatgen.Structure):
+                structure to refine to a perfect multiple of the prim
+            scmatrix (array): optional
+                supercell matrix relating the prim structure to the given
+                structure. Passing this if it has already been matched will
+                make things much quicker.
+
+        Returns: Structure
+            Refined Structure
         """
-        scmatrix = self.scmatrix_from_structure(structure)
+        if scmatrix is None:
+            scmatrix = self.scmatrix_from_structure(structure)
+
         occu = self.occupancy_from_structure(structure, scmatrix)
 
         supercell_structure = self.structure.copy()

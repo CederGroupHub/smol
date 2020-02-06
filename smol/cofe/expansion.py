@@ -25,7 +25,8 @@ class ClusterExpansion(MSONable):
     """
 
     def __init__(self, cluster_subspace, fit_structures, property_vector,
-                 feature_matrix=None, weights=None, ecis=None, estimator=None):
+                 feature_matrix=None, supercell_matrices=None, weights=None,
+                 ecis=None, estimator=None):
         """
         Represents a cluster expansion. The main methods to use this class are
         the fit method to fit the cluster expansion using the provided
@@ -50,6 +51,11 @@ class ClusterExpansion(MSONable):
                 If not provided then it will be computed using the given
                 structures. Make sure this was computed with an the same
                 cluster_subspace provided.
+            supercell_matrices (list):
+                list of supercell matrices relating subspaces prim structure to
+                the corresponding fit structures. Providing these will make
+                computing things much faster since the structures no longer
+                need to be matched to the prim structure
             weights (np.array): optional
                 1D array of weights for each data point (structure) in feature
                 matrix
@@ -64,25 +70,31 @@ class ClusterExpansion(MSONable):
                 estimator must be provided.
         """
 
+        # Check the shape of all input
+        if len(fit_structures) != len(property_vector):
+            raise ValueError(f'Number of provided fit structures '
+                             f'{len(fit_structures)} does not '
+                             f'correspond to property vector of shape '
+                             f'{property_vector.shape}')
+        if weights is not None and len(weights) != len(property_vector):
+            raise ValueError(f'Provided weights of length '
+                             f'{len(weights)} do not match the '
+                             f'{len(fit_structures)} fit structures provided.')
+        if supercell_matrices is not None:
+            if len(supercell_matrices) != len(property_vector):
+                raise ValueError(f'Provided list of supercell matrices of '
+                                 f'length {len(supercell_matrices)} does not '
+                                 f'correspond to the {len(fit_structures)} fit'
+                                 f' structures provided.')
+        else:
+            supercell_matrices = len(fit_structures)*[None, ]
+
         self._subspace = cluster_subspace
         self._structures = fit_structures
         self._feature_matrix = feature_matrix
-
-        if len(fit_structures) != len(property_vector):
-            raise AttributeError(f'Number of provided fit structures '
-                                 f'{len(fit_structures)} does not '
-                                 f'correspond to property vector of shape '
-                                 f'{property_vector.shape}')
-        elif (weights is not None
-                and weights.shape[0] != property_vector.shape[0]):
-            raise AttributeError(f'Provided weights of shape '
-                                 f'{weights.shape} does not match shape of'
-                                 f' property vector '
-                                 f'{property_vector.shape}')
-
+        self._scmatrices = supercell_matrices
         self._property_vector = property_vector
         self._weights = weights
-
         self.estimator = estimator
         self.ecis = ecis
 
@@ -191,8 +203,9 @@ class ClusterExpansion(MSONable):
     @property
     def feature_matrix(self):
         if self._feature_matrix is None:
-            self._feature_matrix = np.array([self.subspace.corr_from_structure(s)  # noqa
-                                             for s in self._structures])
+            matrix = [self.subspace.corr_from_structure(s, m)
+                      for s, m in zip(self._structures, self._scmatrices)]
+            self._feature_matrix = np.array(matrix)
         return self._feature_matrix.copy()
 
     @property
@@ -245,17 +258,15 @@ class ClusterExpansion(MSONable):
         """
         extensive = not normalized
         if isinstance(structures, Structure):
-            corrs = self.subspace.corr_from_structure(structures, extensive)
+            corrs = self.subspace.corr_from_structure(structures,
+                                                      extensive=extensive)
         else:
-            corrs = [self.subspace.corr_from_structure(structure, extensive)
+            corrs = [self.subspace.corr_from_structure(structure,
+                                                       extensive=extensive)
                      for structure in structures]
 
         return self.estimator.predict(np.array(corrs))
 
-    # TODO check if the new subspace is trying to match the structures again
-    #  this is probably slowing it down a lot!
-    #  On that same note, maybe cache the supercell matrices for all the structures
-    #  used to fit the CE
     # This needs further testing. For out-of-training structures
     # the predictions do not always match with those using the original eci
     # with which the fit was done.
@@ -278,8 +289,9 @@ class ClusterExpansion(MSONable):
         """
         subspace = self.subspace.copy()
         subspace.change_site_bases(new_basis, orthonormal=orthonormal)
-        feature_matrix = np.array([subspace.corr_from_structure(struct)
-                                   for struct in self._structures])
+        feature_matrix = np.array([subspace.corr_from_structure(s, m)
+                                   for s, m in zip(self._structures,
+                                                   self._scmatrices)])
         C = np.matmul(self.feature_matrix.T,
                       np.linalg.pinv(feature_matrix.T))
 

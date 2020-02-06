@@ -211,8 +211,9 @@ class StructureWrangler(MSONable):
             try:
                 scmatrix = self._subspace.scmatrix_from_structure(struct)
                 size = self._subspace.num_prims_from_matrix(scmatrix)
-                fm_row = self._subspace.corr_from_structure(struct)
-                refined_struct = self._subspace.refine_structure(struct)
+                fm_row = self._subspace.corr_from_structure(struct, scmatrix)
+                refined_struct = self._subspace.refine_structure(struct,
+                                                                 scmatrix)
             except StructureMatchError as e:
                 if verbose:
                     print(f'Unable to match {struct.composition} with energy '
