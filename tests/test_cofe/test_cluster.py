@@ -19,6 +19,7 @@ class TestCluster(unittest.TestCase):
         c3 = np.array([0, 0, -2])
         c4 = np.array([0.5, 0.5, -1.5])
         self.cluster = Cluster([c1, c2, c3, c4], self.lattice)
+        self.cluster.assign_ids(1)
 
     def test_from_sites(self):
         clust1 = Cluster.from_sites(self.structure.sites)
