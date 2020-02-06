@@ -67,8 +67,6 @@ class TestClusterExpansion(unittest.TestCase):
         ce.fit(mu=5)
         self.assertIsNotNone(ce.ecis)
         self.assertEqual(len(ce.ecis), self.cs.n_bit_orderings)
-        self.sw._set_weights(self.sw.items, 'hull')
-        ce.fit()
 
     def test_sklearn(self):
         try:
@@ -95,6 +93,29 @@ class TestClusterExpansion(unittest.TestCase):
         ce.fit()
         self.assertIsNotNone(ce.ecis)
         self.assertEqual(len(ce.ecis), self.cs.n_bit_orderings)
+        pred = ce.estimator.predict(ce.feature_matrix)
+
+        self.assertEqual(ce.max_error,
+                         np.max(np.abs(ce.property_vector - pred)))
+        self.assertEqual(ce.mean_absolute_error,
+                         np.average(np.abs(ce.property_vector - pred)))
+        self.assertEqual(ce.root_mean_squared_error,
+                         np.sqrt(np.average((ce.property_vector - pred) ** 2)))
+
+        self.sw._set_weights(self.sw.items, 'hull')
+        ce._weights = self.sw.weights
+        self.assertTrue(np.array_equal(ce.weights, self.sw.weights))
+        ce.fit()
+        pred = ce.estimator.predict(ce.feature_matrix)
+
+        self.assertEqual(ce.max_error,
+                         np.max(np.abs(ce.property_vector - pred)))
+        self.assertEqual(ce.mean_absolute_error,
+                         np.average(np.abs(ce.property_vector - pred),
+                                    weights=ce.weights))
+        self.assertEqual(ce.root_mean_squared_error,
+                         np.sqrt(np.average((ce.property_vector - pred) ** 2,
+                                            weights=ce.weights)))
 
     def test_no_estimator(self):
         ecis = np.ones((self.cs.n_bit_orderings))

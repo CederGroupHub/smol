@@ -98,6 +98,11 @@ class ClusterExpansion(MSONable):
         self.estimator = estimator
         self.ecis = ecis
 
+        # Fit metrics
+        self._maxerr = None
+        self._mae = None
+        self._rmse = None
+
         if self.estimator is None:
             if self.ecis is None:
                 raise AttributeError('No estimator or ECIs were given. '
@@ -198,7 +203,7 @@ class ClusterExpansion(MSONable):
 
         Args:
             structure_wrangler (StructureWrangler):
-            estimator (object:
+            estimator (object):
                 An estimator instance to fit the expansion
             ecis (array):
                 ecis if already obtained. Either an estimator or ecis need to
@@ -215,7 +220,6 @@ class ClusterExpansion(MSONable):
                    supercell_matrices=structure_wrangler.supercell_matrices,
                    weights=structure_wrangler.weights, estimator=estimator,
                    ecis=ecis)
-
 
     @property
     def prim_structure(self):
@@ -241,7 +245,7 @@ class ClusterExpansion(MSONable):
     @property
     def property_vector(self):
         if self._property_vector is not None:
-            return self._property_vector
+            return self._property_vector.copy()
 
     @property
     def weights(self):
@@ -251,6 +255,33 @@ class ClusterExpansion(MSONable):
     @property
     def subspace(self):
         return self._subspace
+
+    @property
+    def max_error(self):
+        """Maximum residual error of fit"""
+        if self._maxerr is None:
+            pred = self.estimator.predict(self.feature_matrix)
+            self._maxerr = np.max(np.abs(self.property_vector - pred))
+        return self._maxerr
+
+    @property
+    def mean_absolute_error(self):
+        """(Weighted) mean absolute error of fit"""
+        if self._mae is None:
+            pred = self.estimator.predict(self.feature_matrix)
+            self._mae = np.average(np.abs(self.property_vector - pred),
+                                   weights=self.weights)
+        return self._mae
+
+    @property
+    def root_mean_squared_error(self):
+        """(Weighted) root mean squared error of fit"""
+        if self._rmse is None:
+            pred = self.estimator.predict(self.feature_matrix)
+            mse = np.average((self.property_vector - pred)**2,
+                             weights=self.weights)
+            self._rmse = np.sqrt(mse)
+        return self._rmse
 
     def fit(self, *args, **kwargs):
         """
@@ -272,6 +303,9 @@ class ClusterExpansion(MSONable):
         except AttributeError:
             warnings.warn(f'The provided estimator does not provide fit '
                           f'coefficients for ECIS: {self.estimator}')
+
+        # reset fit metrics
+        self._maxerr, self._mae, self._rmse = None, None, None
 
     def predict(self, structures, normalized=False):
         """
@@ -306,9 +340,6 @@ class ClusterExpansion(MSONable):
         new basis.
 
         Args:
-            fit_structures (list):
-                list of Structures that where used to fit the cluster expansion
-                The order needs to be the same as was used for fitting.
             new_basis (str):
                 name of basis to convert coefficients into.
             orthonormal (bool):
