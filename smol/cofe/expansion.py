@@ -370,9 +370,9 @@ class ClusterExpansion(MSONable):
     def print_ecis(self):
         if self.ecis is None:
             raise NotFittedError('This ClusterExpansion has no ECIs available.'
-                                 'If it has not been fitted yet, run'
+                                 ' If it has not been fitted yet, run '
                                  'ClusterExpansion.fit to do so.'
-                                 'Otherwise you may have chosen an estimator'
+                                 'Otherwise you may have chosen an estimator '
                                  'that does not provide them:'
                                  f'{self.estimator}.')
 
@@ -387,6 +387,33 @@ class ClusterExpansion(MSONable):
                 c_std = cluster_std[orbit.orb_b_id + i]
                 print(bits, eci, c_std, eci * c_std)
         print(self.ecis)
+
+    def __str__(self):
+        corr = np.zeros(self.subspace.n_bit_orderings)
+        corr[0] = 1  # zero point cluster
+        # This might need to be redefined to take "expectation" using measure
+        feature_avg = np.average(self.feature_matrix, axis=0)
+        feature_std = np.std(self.feature_matrix, axis=0)
+        s = f'ClusterExpansion:\n    Prim Composition: ' \
+            f'{self.prim_structure.composition} Num fit structures: ' \
+            f'{len(self.property_vector)} ' \
+            f'Num orbit functions: {self.subspace.n_bit_orderings}\n'
+        ecis = len(corr)*[None, ] if self.ecis is None else self.ecis
+        s += f'    [Orbit]  id: {str(0):<3}\n'
+        s += f'        bit       eci\n'
+        s += f'        {"[X]":<10}{self.ecis[0]:<4.3}\n'
+        for orbit in self.subspace.iterorbits():
+            s += f'    [Orbit]  id: {orbit.orb_b_id:<3} size: ' \
+                 f'{len(orbit.bits):<3} radius: {orbit.radius:<4.3}\n'
+            s += f'        bit       eci     feature avg  feature std  ' \
+                 f'eci*std\n'
+            for i, bits in enumerate(orbit.bit_combos):
+                eci = self.ecis[orbit.orb_b_id + i]
+                f_avg = feature_avg[orbit.orb_b_id + i]
+                f_std = feature_std[orbit.orb_b_id + i]
+                s += f'        {str(bits[0]):<10}{eci:<8.3f}{f_avg:<13.3f}' \
+                     f'{f_std:<13.3f}{eci*f_std:<.3f}\n'
+        return s
 
     # TODO save the estimator and parameters?
     @classmethod

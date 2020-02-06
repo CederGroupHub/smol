@@ -70,9 +70,10 @@ class Cluster(MSONable):
 
     def __str__(self):
         points = str(np.round(self.sites, 2))
-        points.replace("\n", " ").ljust(len(self.sites)*21)
-        return f'[Cluster] id: {self.c_id}, Radius: {self.radius:<4.3},' \
-               f'Points: {points}, Centroid: {np.round(self.centroid,2)}'
+        points = points.replace('\n', ' ').ljust(len(self.sites)*21)
+        centroid = str(np.round(self.centroid, 2))
+        return (f'[Cluster] id: {self.c_id:<4} Radius: {self.radius:<5.3} '
+                f'Centroid: {centroid:<18} Points: {points}')
 
     def __repr__(self):
         return _repr(self, c_id=self.c_id, radius=self.radius,

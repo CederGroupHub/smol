@@ -576,11 +576,11 @@ class ClusterSubspace(MSONable):
         return orbit_indices
 
     def __str__(self):
-        s = "ClusterBasis: {}\n".format(self.structure.composition)
-        for k, v in self._orbits.items():
-            s += "    size: {}\n".format(k)
-            for z in v:
-                s += "    {}\n".format(z)
+        s = f'ClusterBasis: [Prim Composition] {self.structure.composition}\n'
+        for size, orbits in self._orbits.items():
+            s += "    size: {}\n".format(size)
+            for orbit in orbits:
+                s += "    {}\n".format(orbit)
         return s
 
     @classmethod
