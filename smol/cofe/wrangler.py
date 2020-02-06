@@ -151,6 +151,10 @@ class StructureWrangler(MSONable):
             self.weight_type, self.weight_kwargs = weight_type
 
     @property
+    def cluster_subspace(self):
+        return self._subspace
+
+    @property
     def items(self):
         return self._items
 

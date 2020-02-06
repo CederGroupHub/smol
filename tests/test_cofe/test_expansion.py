@@ -60,10 +60,9 @@ class TestClusterExpansion(unittest.TestCase):
         self.assertEqual(len(ce3.predict(test_structs)), len(test_structs))
 
     def test_cvxestimator(self):
-        ce = ClusterExpansion(self.cs, self.sw.refined_structures,
-                              self.sw.normalized_properties,
-                              feature_matrix=self.sw.feature_matrix,
-                              estimator=CVXEstimator())
+        estimator = CVXEstimator()
+        ce = ClusterExpansion.from_structure_wrangler(self.sw,
+                                                      estimator=estimator)
         self.assertRaises(AttributeError, ce.predict, self.sw.structures[:10])
         ce.fit(mu=5)
         self.assertIsNotNone(ce.ecis)
@@ -76,11 +75,8 @@ class TestClusterExpansion(unittest.TestCase):
             from sklearn.linear_model import Ridge, LassoCV
         except ImportError:
             return
-
-        ce = ClusterExpansion(self.cs, self.sw.refined_structures,
-                              self.sw.normalized_properties,
-                              feature_matrix=self.sw.feature_matrix,
-                              estimator=Ridge())
+        ce = ClusterExpansion.from_structure_wrangler(self.sw,
+                                                      estimator=Ridge())
         self.assertRaises(AttributeError, ce.predict, self.sw.structures[:10])
         ce.fit()
         self.assertIsNotNone(ce.ecis)
@@ -93,10 +89,8 @@ class TestClusterExpansion(unittest.TestCase):
     def test_numpy(self):
         estimator = BaseEstimator()
         estimator._solve = lambda X, y: np.linalg.lstsq(X, y, rcond=None)[0]
-        ce = ClusterExpansion(self.cs, self.sw.refined_structures,
-                              self.sw.normalized_properties,
-                              feature_matrix=self.sw.feature_matrix,
-                              estimator=estimator)
+        ce = ClusterExpansion.from_structure_wrangler(self.sw,
+                                                      estimator=estimator)
         self.assertRaises(AttributeError, ce.predict, self.sw.structures[:10])
         ce.fit()
         self.assertIsNotNone(ce.ecis)
@@ -104,8 +98,7 @@ class TestClusterExpansion(unittest.TestCase):
 
     def test_no_estimator(self):
         ecis = np.ones((self.cs.n_bit_orderings))
-        ce = ClusterExpansion(self.cs, self.sw.refined_structures,
-                              self.sw.normalized_properties, ecis=ecis)
+        ce = ClusterExpansion.from_structure_wrangler(self.sw, ecis=ecis)
         structs = self.sw.structures[:10]
         p = np.array([sum(self.cs.corr_from_structure(s)) for s in structs])
         self.assertTrue(np.allclose(ce.predict(structs, normalized=True), p))
@@ -113,9 +106,8 @@ class TestClusterExpansion(unittest.TestCase):
     def test_convert_eci(self):
         estimator = BaseEstimator()
         estimator._solve = lambda X, y: np.linalg.lstsq(X, y, rcond=None)[0]
-        ce = ClusterExpansion(self.cs, self.sw.refined_structures[:15],
-                              self.sw.normalized_properties[:15],
-                              estimator=estimator)
+        ce = ClusterExpansion.from_structure_wrangler(self.sw,
+                                                      estimator=estimator)
         ce.fit()
         cs = self.cs.copy()
         cs.change_site_bases('indicator', orthonormal=True)
@@ -129,18 +121,15 @@ class TestClusterExpansion(unittest.TestCase):
 
     def test_constrain_dielectric(self):
         self.cs.add_external_term(EwaldTerm)
-        ce = ClusterExpansion(self.cs, self.sw.refined_structures,
-                              self.sw.normalized_properties,
-                              feature_matrix=self.sw.feature_matrix,
-                              estimator=CVXEstimator())
+        ce = ClusterExpansion.from_structure_wrangler(self.sw,
+                                                      estimator=CVXEstimator())
         ce.fit()
         constrain_dielectric(ce, 5)
         self.assertEqual(ce.ecis[-1], 1/5)
 
     def test_msonable(self):
         ecis = np.ones((self.cs.n_bit_orderings))
-        ce = ClusterExpansion(self.cs, self.sw.refined_structures,
-                              self.sw.normalized_properties, ecis=ecis)
+        ce = ClusterExpansion.from_structure_wrangler(self.sw, ecis=ecis)
         # ce.print_ecis()
         d = ce.as_dict()
         ce1 = ClusterExpansion.from_dict(d)

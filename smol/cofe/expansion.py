@@ -187,6 +187,36 @@ class ClusterExpansion(MSONable):
                    property_vector=wrangler.normalized_properties,
                    weights=wrangler.weights, estimator=estimator, ecis=ecis)
 
+    @classmethod
+    def from_structure_wrangler(cls, structure_wrangler, estimator=None,
+                                ecis=None):
+        """
+        Convenience method to construct a cluster expansion from a structure
+        wrangler. This is the recommended method to create a cluster expansion
+        if more control over the cluster subspace and further data
+        pre-processing needs to be done to the fit structures.
+
+        Args:
+            structure_wrangler (StructureWrangler):
+            estimator (object:
+                An estimator instance to fit the expansion
+            ecis (array):
+                ecis if already obtained. Either an estimator or ecis need to
+                be provided.
+
+        Returns:
+            ClusterExpansion
+        """
+
+        return cls(structure_wrangler.cluster_subspace,
+                   fit_structures=structure_wrangler.refined_structures,
+                   property_vector=structure_wrangler.normalized_properties,
+                   feature_matrix=structure_wrangler.feature_matrix,
+                   supercell_matrices=structure_wrangler.supercell_matrices,
+                   weights=structure_wrangler.weights, estimator=estimator,
+                   ecis=ecis)
+
+
     @property
     def prim_structure(self):
         """ Copy of primitive structure which the Expansion is based on """
