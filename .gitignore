@@ -48,4 +48,5 @@ Thumbs.db
 *.cif
 *.pdfo
 .coverage
+.ipynp_checkpoints
 /smol/cofe/debug/*
