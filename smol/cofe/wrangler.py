@@ -193,7 +193,7 @@ class StructureWrangler(MSONable):
         if len(weights) > 0 and weights[0] is not None:
             return np.array(weights)
 
-    def add_data(self, data, weights=None, verbose=False, nprocs=None):
+    def add_data(self, data, weights=None, verbose=False, nprocs=1):
         """
         Add data to Structure Wrangler, computes correlation vector and if
         successful adds data otherwise it ignores that structure.
@@ -201,22 +201,29 @@ class StructureWrangler(MSONable):
         Args
             data (list):
                 list of (structure, property) data
-            verbose (bool):
-                if True then print structures that fail in StructureMatcher
             weights (str, list/tuple or array):
                 str specifying type of weights (i.e. 'hull') OR
                 list/tuple with two elements (name, kwargs) were name specifies
                 the type of weights as above, and kwargs are a dict of
                 keyword arguments to obtain the weights OR
                 array directly specifying the weights
+            verbose (bool):
+                if True then print structures that fail in StructureMatcher
+            nprocs (int):
+                number of processes to run data processing on. 0 defaults to
+                maximum number of processors.
         """
-        if nprocs is None:
+        if nprocs == 0 or nprocs > cpu_count():
             nprocs = cpu_count()
 
         fun = partial(self._process_data, verbose=verbose)
-        with Pool(processes=nprocs) as pool:
-            pool = Pool(processes=nprocs)
-            items = pool.map(fun, data, chunksize=len(data)//nprocs)
+        if nprocs == 1:
+            items = list(map(fun, data))
+        else:
+            with Pool(processes=nprocs) as pool:
+                pool = Pool(processes=nprocs)
+                items = pool.map(fun, data, chunksize=len(data)//nprocs)
+        items = [i for i in items if i is not None]  # clean up failed structs
 
         if self.weight_type is not None:
             self._set_weights(items, self.weight_type, **self.weight_kwargs)
