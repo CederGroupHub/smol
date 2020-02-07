@@ -188,10 +188,7 @@ class IndicatorBasis(SiteBasis):
     def __init__(self, species):
         super().__init__(species)
 
-        def indicator(s, sp):
-            return int(s == sp)
-
-        self._functions = tuple(partial(indicator, sp=sp)
+        self._functions = tuple(partial(_indicator, sp=sp)
                                 for sp in self.species[:-1])
 
     @property
@@ -270,6 +267,9 @@ class LegendreBasis(NumpyPolyBasis):
     def functions(self):
         return self._functions
 
+
+def _indicator(s, sp):
+    return int(s == sp)
 
 def basis_factory(basis_name, *args, **kwargs):
     """Tries to return an instance of a Basis class defined in basis.py"""
