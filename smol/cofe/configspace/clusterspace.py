@@ -9,8 +9,9 @@ space.
 """
 
 from __future__ import division
-import numpy as np
 from copy import deepcopy
+import warnings
+import numpy as np
 from monty.json import MSONable
 from pymatgen import Structure, PeriodicSite
 from pymatgen.analysis.structure_matcher import StructureMatcher,\
@@ -108,10 +109,7 @@ class ClusterSubspace(MSONable):
         self._external_terms = []
 
         # assign the cluster ids
-        n_orbs, n_bit_ords, n_clstr = self._assign_orbit_ids()
-        self.n_orbits = n_orbs
-        self.n_clusters = n_clstr
-        self.n_bit_orderings = n_bit_ords
+        self._assign_orbit_ids()
 
     @classmethod
     def from_radii(cls, structure, radii, ltol=0.2, stol=0.1, angle_tol=5,
@@ -446,17 +444,49 @@ class ClusterSubspace(MSONable):
                                   if orbit.id not in orbit_ids]
 
         # Re-assign ids
-        n_orbs, n_bit_ords, n_clstr = self._assign_orbit_ids()
-        self.n_orbits = n_orbs
-        self.n_clusters = n_clstr
-        self.n_bit_orderings = n_bit_ords
+        self._assign_orbit_ids()
 
         # Clear the cached supercell orbit mappings
         self._supercell_orb_inds = {}
 
+    def remove_orbit_bit_combos(self, combos_by_orbit_id):
+        """
+        Removes a specific bit combo from an orbit. This allows more granular
+        removal of terms involved in fitting/evaluating a cluster expansion.
+        Similar to remove_orbits this is useful to prune a cluster expansion
+        and actually allows to remove a single term (ie one with small
+        associated ECI).
+        This procedure is perfectly well posed mathematically. The resultant
+        CE is still a valid function of configurations with all the necessary
+        symmetries from the underlying structure. Chemically however it is not
+        obvious what it means to remove certain combinations of an n-body
+        interaction term, and not the whole term itself, considering that each
+        bit combo does not represent a specific set of the n species, but the
+        specific set of n site functions.
 
-    def remove_orbit_bit_combos(self, ):
-        pass
+
+        Args:
+            combos_by_orbit_id (dict):
+                dictionary of {orbit_id: [bits in bit_combos to remove]}
+        """
+        empty_orbit_ids = []
+
+        for orbit in self.iterorbits():
+            combos_to_remove = combos_by_orbit_id.get(orbit.id)
+            if combos_to_remove is not None:
+                try:
+                    for bits in combos_to_remove:
+                        orbit.remove_bit_combo(bits)
+                except RuntimeError:
+                    empty_orbit_ids.append(orbit.id)
+                    warnings.warn(f'All bit combos have been removed from '
+                                  f'orbit with id {orbit.id}. This orbit will'
+                                  f'be fully removed.')
+
+        if empty_orbit_ids:
+            self.remove_orbits(empty_orbit_ids)
+        else:
+            self._assign_orbit_ids()
 
     def copy(self):
         """Deep copy of instance"""
@@ -476,7 +506,9 @@ class ClusterSubspace(MSONable):
                 n_orbs, n_bit_ords, n_clstr = orbit.assign_ids(n_orbs,
                                                                n_bit_ords,
                                                                n_clstr)
-        return n_orbs, n_bit_ords, n_clstr
+        self.n_orbits = n_orbs
+        self.n_clusters = n_clstr
+        self.n_bit_orderings = n_bit_ords
 
     @staticmethod
     def _orbits_from_radii(expansion_struct, radii, symops, basis,

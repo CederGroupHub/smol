@@ -59,8 +59,8 @@ class Orbit(MSONable):
 
         # ids should be assigned using the assign_id method externally
         self.id = None  # id identifying orbit amongst all other orbits only
-        self.bit_id = None  # id identifying the first bit combo in this orbit
-                            # from all the bit combos in all orbits.
+        self.bit_id = None  # id for first bit combo in this orbit
+        # considering all the bit combos in all orbits.
 
         # lazy generation of properties
         self._equiv = None
@@ -120,8 +120,7 @@ class Orbit(MSONable):
                     if new_bit not in new_bits:
                         new_bits.append(new_bit)
                 all_combos.append(new_bits)
-        self._bit_combos = tuple(np.array(c, dtype=np.int)
-                                 for c in all_combos)
+        self._bit_combos = tuple(np.array(c, dtype=np.int) for c in all_combos)
         return self._bit_combos
 
     @property
@@ -161,6 +160,23 @@ class Orbit(MSONable):
     def basis_orthonormal(self):
         """Test if the orbit bases are orthonormal"""
         return all(basis.is_orthonormal for basis in self.site_bases)
+
+    def remove_bit_combo(self, bits):
+        """
+        Removes bit_combos from orbit. Only a single set bits in the bit combo
+        (symmetrically equivalent bit orderings) needs to be passed
+        """
+        bit_combos = []
+
+        for bit_combo in self.bit_combos:
+            if not any(np.array_equal(bits, b) for b in bit_combo):
+                bit_combos.append(bit_combo)
+
+        if not bit_combos:
+            raise RuntimeError(f'All bit_combos have been removed from orbit '
+                               f'with id {self.id}')
+
+        self._bit_combos = tuple(bit_combos)
 
     def eval(self, bits, species):
         """

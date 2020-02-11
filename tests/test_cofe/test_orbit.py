@@ -1,5 +1,6 @@
 import unittest
 from itertools import combinations_with_replacement
+import numpy as np
 from pymatgen import Lattice, Structure
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe.configspace import Orbit, Cluster
@@ -76,6 +77,20 @@ class TestOrbit(unittest.TestCase):
             for i, j in combinations_with_replacement([0, 1], 2):
                 self.assertEqual(bases[0].eval(i, s1)*bases[1].eval(j, s2),
                                  self.orbit.eval([i,j], [s1, s2]))
+
+    def test_remove_bit_combo(self):
+        bits = [0, 0]
+        self.orbit.remove_bit_combo(bits)
+        self.assertFalse(any(any(np.array_equal(bits, b) for b in b_c)
+                             for b_c in self.orbit.bit_combos))
+        bits = [0, 1]
+        equiv_bits = [1, 0]
+        self.orbit.remove_bit_combo(bits)
+        self.assertFalse(any(any(np.array_equal(equiv_bits, b) for b in b_c)
+                             for b_c in self.orbit.bit_combos))
+
+        # check that it complains if we remove the last remaining combo
+        self.assertRaises(RuntimeError, self.orbit.remove_bit_combo, [1, 1])
 
     def test_eval(self):
         # Test cluster function evaluation with indicator basis

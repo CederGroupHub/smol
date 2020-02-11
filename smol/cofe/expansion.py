@@ -13,7 +13,6 @@ from pymatgen import Structure
 from smol.cofe.configspace.clusterspace import ClusterSubspace
 from smol.cofe.wrangler import StructureWrangler
 from smol.cofe.regression.estimator import BaseEstimator, CVXEstimator
-from smol.exceptions import NotFittedError
 
 
 class ClusterExpansion(MSONable):
@@ -367,28 +366,6 @@ class ClusterExpansion(MSONable):
         smaller than the given threshold
         """
         pass
-
-    # TODO change this to  __str__
-    def print_ecis(self):
-        if self.ecis is None:
-            raise NotFittedError('This ClusterExpansion has no ECIs available.'
-                                 ' If it has not been fitted yet, run '
-                                 'ClusterExpansion.fit to do so.'
-                                 'Otherwise you may have chosen an estimator '
-                                 'that does not provide them:'
-                                 f'{self.estimator}.')
-
-        corr = np.zeros(self.subspace.n_bit_orderings)
-        corr[0] = 1  # zero point cluster
-        cluster_std = np.std(self.feature_matrix, axis=0)
-        for orbit in self.subspace.iterorbits():
-            print(orbit, len(orbit.bits) - 1, orbit.bit_id)
-            print('bit    eci    cluster_std    eci*cluster_std')
-            for i, bits in enumerate(orbit.bit_combos):
-                eci = self.ecis[orbit.bit_id + i]
-                c_std = cluster_std[orbit.bit_id + i]
-                print(bits, eci, c_std, eci * c_std)
-        print(self.ecis)
 
     def __str__(self):
         corr = np.zeros(self.subspace.n_bit_orderings)
