@@ -123,10 +123,13 @@ class TestClusterSubSpace(unittest.TestCase):
                   (0, 0, 0),
                   (0.5, 0, 0))
         s = Structure(s.lattice, species, coords)
-        self.assertRaises(ValueError, cs.remove_orbits, {2: [-1]})
-        self.assertRaises(ValueError, cs.remove_orbits, {1: [2]})
+        self.assertRaises(ValueError, cs.remove_orbits, [-1])
+        self.assertRaises(ValueError, cs.remove_orbits,
+                          [cs.n_orbits + 1])
+        self.assertRaises(ValueError, cs.remove_orbits, [0])
 
-        cs.remove_orbits({2: [0, 2, 4]})
+        cs.remove_orbits([3, 5, 7])
+
         expected = [1, 0.5, 0.25, 0, 0.5, 0.25, 0.125, 0, 0, 0, 0.25]
         self.assertEqual(len(cs.corr_from_structure(s)), 11)
         self.assertEqual(cs.n_orbits, 5)

@@ -382,11 +382,11 @@ class ClusterExpansion(MSONable):
         corr[0] = 1  # zero point cluster
         cluster_std = np.std(self.feature_matrix, axis=0)
         for orbit in self.subspace.iterorbits():
-            print(orbit, len(orbit.bits) - 1, orbit.orb_b_id)
+            print(orbit, len(orbit.bits) - 1, orbit.bit_id)
             print('bit    eci    cluster_std    eci*cluster_std')
             for i, bits in enumerate(orbit.bit_combos):
-                eci = self.ecis[orbit.orb_b_id + i]
-                c_std = cluster_std[orbit.orb_b_id + i]
+                eci = self.ecis[orbit.bit_id + i]
+                c_std = cluster_std[orbit.bit_id + i]
                 print(bits, eci, c_std, eci * c_std)
         print(self.ecis)
 
@@ -405,14 +405,14 @@ class ClusterExpansion(MSONable):
         s += f'        bit       eci\n'
         s += f'        {"[X]":<10}{ecis[0]:<4.3}\n'
         for orbit in self.subspace.iterorbits():
-            s += f'    [Orbit]  id: {orbit.orb_b_id:<3} size: ' \
+            s += f'    [Orbit]  id: {orbit.bit_id:<3} size: ' \
                  f'{len(orbit.bits):<3} radius: {orbit.radius:<4.3}\n'
             s += f'        bit       eci     feature avg  feature std  ' \
                  f'eci*std\n'
             for i, bits in enumerate(orbit.bit_combos):
-                eci = ecis[orbit.orb_b_id + i]
-                f_avg = feature_avg[orbit.orb_b_id + i]
-                f_std = feature_std[orbit.orb_b_id + i]
+                eci = ecis[orbit.bit_id + i]
+                f_avg = feature_avg[orbit.bit_id + i]
+                f_std = feature_std[orbit.bit_id + i]
                 s += f'        {str(bits[0]):<10}{eci:<8.3f}{f_avg:<13.3f}' \
                      f'{f_std:<13.3f}{eci*f_std:<.3f}\n'
         return s

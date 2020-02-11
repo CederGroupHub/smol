@@ -394,7 +394,7 @@ class ClusterSubspace(MSONable):
                 p = [np.fromiter(map(lambda occu: orb.eval(bits, occu),
                                      c_occu[:]), dtype=np.float)
                      for bits in bit_list]
-                corr[orb.orb_b_id + i] = np.concatenate(p).mean()
+                corr[orb.bit_id + i] = np.concatenate(p).mean()
 
         return corr
 
@@ -411,30 +411,39 @@ class ClusterSubspace(MSONable):
         for orbit in self.iterorbits():
             orbit.transform_site_bases(new_basis, orthonormal)
 
-    def remove_orbits(self, orbit_indices):
+    def remove_orbits(self, orbit_ids):
         """
-        Removes orbits from cluster spaces. This is useful to prune a
-        ClusterExpansion by removing orbits with small associated ECI.
-        Note that this will remove a full orbit, which for the case of sites
-        with only two species is the same as removing a single correlation
-        vector element (only one ECI). For cases with sites having more than 2
-        species allowed per site there are more than one orbit functions (for
-        all the possible bit orderings) and removing an orbit will remove more
-        than one element in the correlation vector
+        Removes orbits from cluster spaces. It is helpful to print a
+        ClusterSubspace or ClusterExpansion to obtain orbit ids. After removing
+        orbits, orbit id and orbit bit id are re-assigned.
+
+        This is useful to prune a ClusterExpansion by removing orbits with
+        small associated ECI. Note that this will remove a full orbit, which
+        for the case of sites with only two species is the same as removing a
+        single correlation vector element (only one ECI). For cases with sites
+        having more than 2 species allowed per site there are more than one
+        orbit functions (for all the possible bit orderings) and removing an
+        orbit will remove more than one element in the correlation vector
+
         Args:
-            orbit_indices (dict):
-                dict of {size: [indices for orbits to be removed]}
+            orbit_ids (list):
+                list of orbit ids to be removed
         """
-        for key, orb_ids in orbit_indices.items():
-            if min(orb_ids) < 0:
-                raise ValueError('Index out of range. Negative indices are '
-                                 'not allowed.')
-            elif max(orb_ids) > len(self._orbits[key]) - 1:
-                raise ValueError('Index out of range. Total number of orbits '
-                                 f'of size {key} is: {len(self._orbits[key])}')
-            self._orbits[key] = [orbit for i, orbit
-                                 in enumerate(self._orbits[key])
-                                 if i not in orb_ids]
+
+        if min(orbit_ids) < 0:
+            raise ValueError('Index out of range. Negative inds are not '
+                             'allowed.')
+        elif min(orbit_ids) == 0:
+            raise ValueError('The empty orbit can not be removed.'
+                             'If you really want to do this remove the first'
+                             'column in your feature matrix before fitting.')
+        elif max(orbit_ids) > self.n_orbits - 1:
+            raise ValueError('Index out of range. Total number of orbits '
+                             f' is: {self.n_orbits}')
+
+        for size, orbits in self._orbits.items():
+            self._orbits[size] = [orbit for orbit in orbits
+                                  if orbit.id not in orbit_ids]
 
         # Re-assign ids
         n_orbs, n_bit_ords, n_clstr = self._assign_orbit_ids()
@@ -444,6 +453,10 @@ class ClusterSubspace(MSONable):
 
         # Clear the cached supercell orbit mappings
         self._supercell_orb_inds = {}
+
+
+    def remove_orbit_bit_combos(self, ):
+        pass
 
     def copy(self):
         """Deep copy of instance"""
@@ -556,7 +569,7 @@ class ClusterSubspace(MSONable):
             inds = coord_list_mapping_pbc(tcoords.reshape((-1, 3)),
                                           supercell_fcoords,
                                           atol=SITE_TOL).reshape((tcs[0] * tcs[1], tcs[2]))  # noqa
-            # orbit_indices holds orbit, and 2d array of index groups that
+            # orbit_ids holds orbit, and 2d array of index groups that
             # correspond to the orbit
             # the 2d array may have some duplicates. This is due to
             # symetrically equivalent groups being matched to the same sites

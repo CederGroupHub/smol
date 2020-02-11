@@ -32,7 +32,7 @@ class Cluster(MSONable):
         self.centroid = centroid - shift
         self.sites = sites - shift
         self.lattice = lattice
-        self.c_id = None
+        self.id = None
 
     @staticmethod
     def from_sites(sites):
@@ -48,12 +48,12 @@ class Cluster(MSONable):
         all_d2 = np.sum((coords[None, :, :] - coords[:, None, :])**2, axis=-1)
         return np.max(all_d2) ** 0.5
 
-    def assign_ids(self, c_id):
+    def assign_ids(self, id):
         """
         Method to recursively assign ids to clusters after initialization.
         """
-        self.c_id = c_id
-        return c_id + 1
+        self.id = id
+        return id + 1
 
     def __eq__(self, other):
         try:
@@ -72,11 +72,11 @@ class Cluster(MSONable):
         points = str(np.round(self.sites, 2))
         points = points.replace('\n', ' ').ljust(len(self.sites)*21)
         centroid = str(np.round(self.centroid, 2))
-        return (f'[Cluster] id: {self.c_id:<4} Radius: {self.radius:<5.3} '
+        return (f'[Cluster] id: {self.id:<4} Radius: {self.radius:<5.3} '
                 f'Centroid: {centroid:<18} Points: {points}')
 
     def __repr__(self):
-        return _repr(self, c_id=self.c_id, radius=self.radius,
+        return _repr(self, c_id=self.id, radius=self.radius,
                      centroid=self.centroid, lattice=self.lattice)
 
     @classmethod

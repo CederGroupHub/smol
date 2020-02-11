@@ -56,8 +56,11 @@ class Orbit(MSONable):
         self.bits = bits
         self.site_bases = site_bases
         self.structure_symops = structure_symops
-        self.orb_id = None
-        self.orb_b_id = None
+
+        # ids should be assigned using the assign_id method externally
+        self.id = None  # id identifying orbit amongst all other orbits only
+        self.bit_id = None  # id identifying the first bit combo in this orbit
+                            # from all the bit combos in all orbits.
 
         # lazy generation of properties
         self._equiv = None
@@ -197,25 +200,25 @@ class Orbit(MSONable):
 
         self.site_bases = tuple(new_bases)
 
-    def assign_ids(self, o_id, o_b_id, start_c_id):
+    def assign_ids(self, orbit_id, orbit_bit_id, start_cluster_id):
         """
         Used to assign unique orbit and cluster id's when creating a cluster
         _subspace.
 
         Args:
-            o_id (int): orbit id
-            o_b_id (int): start bit ordering id
-            start_c_id (int): start cluster id
+            orbit_id (int): orbit id
+            orbit_bit_id (int): start bit ordering id
+            start_cluster_id (int): start cluster id
 
         Returns (int, int, int):
             next orbit id, next bit ordering id, next cluster id
         """
-        self.orb_id = o_id
-        self.orb_b_id = o_b_id
-        c_id = start_c_id
+        self.id = orbit_id
+        self.bit_id = orbit_bit_id
+        c_id = start_cluster_id
         for c in self.clusters:
             c_id = c.assign_ids(c_id)
-        return o_id + 1, o_b_id + len(self.bit_combos), c_id
+        return orbit_id + 1, orbit_bit_id + len(self.bit_combos), c_id
 
     def __eq__(self, other):
         try:
@@ -231,14 +234,14 @@ class Orbit(MSONable):
         return not self.__eq__(other)
 
     def __str__(self):
-        return f'[Orbit] id: {self.orb_id:<4} bit_id: {self.orb_b_id:<4}' \
+        return f'[Orbit] id: {self.id:<4} bit_id: {self.bit_id:<4}' \
                f'multiplicity: {self.multiplicity:<4}' \
                f' no. symops: {len(self.cluster_symops):<4} ' \
                f'{str(self.basecluster)}'
 
     def __repr__(self):
-        return _repr(self, orb_id=self.orb_id,
-                     orb_b_id=self.orb_b_id,
+        return _repr(self, orb_id=self.id,
+                     orb_b_id=self.bit_id,
                      radius=self.radius,
                      lattice=self.lattice,
                      basecluster=self.basecluster)
