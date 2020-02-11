@@ -5,6 +5,7 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe.configspace import Orbit, Cluster
 from smol.cofe.configspace.basis import basis_factory
 
+
 class TestOrbit(unittest.TestCase):
     def setUp(self) -> None:
         self.lattice = Lattice([[3, 3, 0], [0, 3, 3], [3, 0, 3]])
@@ -59,13 +60,33 @@ class TestOrbit(unittest.TestCase):
         bit_combos = orbit.bit_combos  # orbit with two symmetrically distinct sites
         self.assertEqual(len(bit_combos), 4)
 
+    def test_is_orthonormal(self):
+        self.assertFalse(self.orbit.basis_orthogonal)
+        self.assertFalse(self.orbit.basis_orthonormal)
+        for b in self.bases:
+            b.orthonormalize()
+            self.assertTrue(b.is_orthogonal)
+        orbit1 = Orbit(self.coords[:2], self.lattice, [[0, 1], [0, 1]],
+                       self.bases, self.symops)
+        self.assertTrue(orbit1.basis_orthogonal)
+        self.assertTrue(orbit1.basis_orthonormal)
+
+    def _test_eval(self, bases):
+        for s1, s2 in combinations_with_replacement(self.bits[0], 2):
+            for i, j in combinations_with_replacement([0, 1], 2):
+                self.assertEqual(bases[0].eval(i, s1)*bases[1].eval(j, s2),
+                                 self.orbit.eval([i,j], [s1, s2]))
 
     def test_eval(self):
         # Test cluster function evaluation with indicator basis
-        for s1, s2 in combinations_with_replacement(self.bits[0], 2):
-            for i, j in combinations_with_replacement([0, 1], 2):
-                self.assertEqual(self.bases[0].eval(i, s1)*self.bases[1].eval(j, s2),
-                                 self.orbit.eval([i,j], [s1, s2]))
+        bases = [basis_factory('indicator', bit) for bit in self.bits]
+        self._test_eval(bases)
+
+    def test_transform_basis(self):
+        for basis in ('sinusoid', 'chebyshev', 'legendre'):
+            self.orbit.transform_site_bases(basis)
+            bases = [basis_factory(basis, bit) for bit in self.bits]
+            self._test_eval(bases)
 
     def test_repr(self):
         repr(self.orbit)

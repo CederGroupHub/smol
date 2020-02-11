@@ -1,5 +1,5 @@
 """
-A lot of random utilies that have no place to go :(
+A lot of random utilities that have no place to go.
 """
 
 from typing import Dict, Any

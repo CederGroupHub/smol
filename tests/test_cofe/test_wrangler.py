@@ -67,6 +67,7 @@ class TestStructureWrangler(unittest.TestCase):
     def test_msonable(self):
         d = self.sw.as_dict()
         sw = StructureWrangler.from_dict(d)
-        self.assertTrue(all(sw.properties == self.sw.properties))
-        self.assertTrue(sw.structures == self.sw.structures)
+        self.assertTrue(np.array_equal(sw.properties, self.sw.properties))
+        self.assertTrue(all([s1 == s2 for s1, s2 in zip(sw.structures, self.sw.structures)]))
+        self.assertTrue(all([s1 == s2 for s1, s2 in zip(sw.refined_structures, self.sw.refined_structures)]))
         self.assertTrue(np.array_equal(sw.feature_matrix, self.sw.feature_matrix))

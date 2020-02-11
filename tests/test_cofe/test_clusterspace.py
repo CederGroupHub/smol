@@ -111,6 +111,27 @@ class TestClusterSubSpace(unittest.TestCase):
     def test_occu_from_structure(self):
         pass
 
+    def test_remove_orbits(self):
+        cs = ClusterSubspace.from_radii(self.structure, {2: 5})
+        s = self.structure.copy()
+        s.make_supercell([2, 1, 1])
+        species = ('Li', 'Ca', 'Li', 'Ca', 'Br', 'Br')
+        coords = ((0.125, 0.25, 0.25),
+                  (0.625, 0.25, 0.25),
+                  (0.375, 0.75, 0.75),
+                  (0.25, 0.5, 0.5),
+                  (0, 0, 0),
+                  (0.5, 0, 0))
+        s = Structure(s.lattice, species, coords)
+        self.assertRaises(ValueError, cs.remove_orbits, {2: [-1]})
+        self.assertRaises(ValueError, cs.remove_orbits, {1: [2]})
+
+        cs.remove_orbits({2: [0, 2, 4]})
+        expected = [1, 0.5, 0.25, 0, 0.5, 0.25, 0.125, 0, 0, 0, 0.25]
+        self.assertEqual(len(cs.corr_from_structure(s)), 11)
+        self.assertEqual(cs.n_orbits, 5)
+        self.assertTrue(np.allclose(cs.corr_from_structure(s), expected))
+
     def test_orbit_mappings_from_matrix(self):
         # check that all supercell_structure index groups map to the correct
         # primitive cell sites, and check that max distance under supercell
@@ -239,6 +260,40 @@ class TestClusterSubSpace(unittest.TestCase):
         corr = cs.corr_from_occupancy(['Vacancy', 'Li', 'Ca'], orb_inds)
         self.assertTrue(np.allclose(corr,
                                     [1, 0.5, 0, 0, 1, 0, 0.5, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, 0.5, 0, 0]))
+
+    def test_copy(self):
+        cs = self.cs.copy()
+        self.assertFalse(cs is self.cs)
+        self.assertTrue(isinstance(cs, ClusterSubspace))
+
+    def test_change_basis(self):
+        # make an ordered supercell_structure
+        s = self.structure.copy()
+        s.make_supercell([2, 1, 1])
+        species = ('Li', 'Ca', 'Li', 'Ca', 'Br', 'Br')
+        coords = ((0.125, 0.25, 0.25),
+                  (0.625, 0.25, 0.25),
+                  (0.375, 0.75, 0.75),
+                  (0.25, 0.5, 0.5),
+                  (0, 0, 0),
+                  (0.5, 0, 0))
+        s = Structure(s.lattice, species, coords)
+
+        cs = self.cs.copy()
+        for basis in ('sinusoid', 'chebyshev', 'legendre'):
+            cs.change_site_bases(basis)
+            self.assertFalse(np.allclose(cs.corr_from_structure(s),
+                                         self.cs.corr_from_structure(s)))
+        cs.change_site_bases('indicator', orthonormal=True)
+        self.assertFalse(np.allclose(cs.corr_from_structure(s),
+                                     self.cs.corr_from_structure(s)))
+        self.assertTrue(cs.basis_orthogonal)
+        self.assertTrue(cs.basis_orthonormal)
+        cs.change_site_bases('indicator', orthonormal=False)
+        self.assertTrue(np.allclose(cs.corr_from_structure(s),
+                                    self.cs.corr_from_structure(s)))
+        self.assertFalse(cs.basis_orthogonal)
+        self.assertFalse(cs.basis_orthonormal)
 
     def test_repr(self):
         repr(self.cs)

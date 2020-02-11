@@ -9,6 +9,7 @@ can be changed to use "concentration dependent" bases.
 
 from abc import ABC, abstractmethod
 from copy import deepcopy
+from itertools import combinations
 import inspect
 import warnings
 from functools import partial
@@ -44,13 +45,13 @@ class SiteBasis(ABC):
                 probability is assumed.
         """
         if not isinstance(species, dict):
-            self._measure = {specie: 1 / len(species) for specie in species}
+            self._domain = {specie: 1 / len(species) for specie in species}
         else:
             if not np.allclose(sum(species.values()), 1):
                 warnings.warn('The measure given does not sum to 1.'
                               'Are you sure this is what you want?',
                               RuntimeWarning)
-            self._measure = species
+            self._domain = species
 
         self._functions = None
 
@@ -65,7 +66,16 @@ class SiteBasis(ABC):
 
     @property
     def species(self):
-        return list(self._measure.keys())
+        return list(self._domain.keys())
+
+    @property
+    def site_space(self):
+        """
+        The site space refers to the probability space represented by the
+        allowed species and their respective probabilities (concentration)
+        over which the site functions are defined.
+        """
+        return self._domain
 
     def measure(self, specie):
         """
@@ -76,7 +86,7 @@ class SiteBasis(ABC):
             float: represents the associated measure with the give species
         """
 
-        return self._measure[specie]
+        return self._domain[specie]
 
     def inner_prod(self, f, g):
         """
@@ -125,6 +135,23 @@ class SiteBasis(ABC):
 
         return self.functions[fun_ind](self.encode(specie))
 
+    @property
+    def is_orthogonal(self):
+        """ Test if the basis is orthogonal """
+        # add the implicit 0th function
+        functions = [lambda x: 1, *self.functions]
+        x_terms = all(self.inner_prod(f, g) == 0
+                      for f, g in combinations(functions, 2))
+        d_terms = all(self.inner_prod(f, f) != 0 for f in self.functions)
+        return x_terms and d_terms
+
+    @property
+    def is_orthonormal(self):
+        """Test if the basis is orthonormal"""
+        d_terms = all(np.isclose(self.inner_prod(f, f), 1)
+                      for f in self.functions)
+        return d_terms and self.is_orthogonal
+
     def orthonormalize(self):
         """
         Returns an orthonormal basis function set based on the measure given
@@ -155,7 +182,7 @@ class SiteBasis(ABC):
 
 class IndicatorBasis(SiteBasis):
     """
-    Indicator Basis
+    Indicator Basis. This basis as defined is not orthogonal.
     """
 
     def __init__(self, species):
@@ -209,7 +236,7 @@ class NumpyPolyBasis(SiteBasis, ABC):
         enc = np.linspace(-1, 1, m)
         self._encoding = {s: i for (s, i) in zip(species, enc)}
         funcs, coeffs = [], [1]
-        for i in range(m-1):
+        for i in range(1, m):
             coeffs.append(0)
             funcs.append(partial(poly_fun, c=coeffs[::-1]))
         self._functions = tuple(funcs)

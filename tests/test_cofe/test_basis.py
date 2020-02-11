@@ -26,14 +26,9 @@ class TestBasis(unittest.TestCase):
         measure = [b.measure(specie) for specie in self.species.keys()]
         self.assertEqual(measure, list(self.species.values()))
 
-    def _test_orthonormal(self, b):
-        for f, g in combinations(b.functions, 2):
-            self.assertEqual(b.inner_prod(f, g), 0)
-            self.assertGreater(b.inner_prod(f, f), 0)
-            self.assertGreater(b.inner_prod(g, g), 0)
-
     def test_indicator_basis(self):
-        b = basis.IndicatorBasis(self.species)
+        b = basis.IndicatorBasis(self.species.keys())
+        self.assertFalse(b.is_orthogonal)
 
         # test evaluation of basis functions
         for i, sp in enumerate(list(self.species.keys())[:-1]):
@@ -43,11 +38,11 @@ class TestBasis(unittest.TestCase):
         self._test_measure(basis.IndicatorBasis)
 
         b.orthonormalize()
-        self._test_orthonormal(b)
+        self.assertTrue(b.is_orthonormal)
 
     def test_sinusoid_basis(self):
         b = basis.SinusoidBasis(self.species.keys())
-        self._test_orthonormal(b)
+        self.assertTrue(b.is_orthogonal)
 
         # test evaluation of basis functions
         m = len(self.species)
@@ -60,12 +55,16 @@ class TestBasis(unittest.TestCase):
         self._test_basis_uniform_measure(basis.SinusoidBasis)
         self._test_measure(basis.SinusoidBasis)
         b = basis.SinusoidBasis(self.species)
+        self.assertFalse(b.is_orthogonal)
         b.orthonormalize()
-        self._test_orthonormal(b)
+        self.assertTrue(b.is_orthonormal)
 
     def test_chebyshev_basis(self):
+        species = list(self.species.keys())[:2]
+        b = basis.ChebyshevBasis(species)
+        self.assertTrue(b.is_orthogonal)  # orthogonal only for 2 species
         b = basis.ChebyshevBasis(self.species.keys())
-        self._test_orthonormal(b)
+        self.assertFalse(b.is_orthogonal)
 
         # test evaluation of basis functions
         m, coeffs = len(self.species), [1]
@@ -78,12 +77,16 @@ class TestBasis(unittest.TestCase):
         self._test_basis_uniform_measure(basis.ChebyshevBasis)
         self._test_measure(basis.ChebyshevBasis)
         b = basis.ChebyshevBasis(self.species)
+        self.assertFalse(b.is_orthogonal)
         b.orthonormalize()
-        self._test_orthonormal(b)
+        self.assertTrue(b.is_orthonormal)
 
     def test_legendre_basis(self):
+        species = list(self.species.keys())[:2]
+        b = basis.LegendreBasis(species)
+        self.assertTrue(b.is_orthogonal)  # orthogonal only for 2 species
         b = basis.LegendreBasis(self.species.keys())
-        self._test_orthonormal(b)
+        self.assertFalse(b.is_orthogonal)
 
         # test evaluation of basis functions
         m, coeffs = len(self.species), [1]
@@ -96,8 +99,9 @@ class TestBasis(unittest.TestCase):
         self._test_basis_uniform_measure(basis.LegendreBasis)
         self._test_measure(basis.LegendreBasis)
         b = basis.LegendreBasis(self.species)
+        self.assertFalse(b.is_orthogonal)
         b.orthonormalize()
-        self._test_orthonormal(b)
+        self.assertTrue(b.is_orthonormal)
 
     def test_basis_factory(self):
         for name in available_bases:
