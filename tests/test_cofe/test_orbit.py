@@ -92,6 +92,21 @@ class TestOrbit(unittest.TestCase):
         # check that it complains if we remove the last remaining combo
         self.assertRaises(RuntimeError, self.orbit.remove_bit_combo, [1, 1])
 
+    def test_remove_bit_combo_by_inds(self):
+        orb1 = Orbit(self.coords[:2], self.lattice, [[0, 1], [0, 1]],
+              self.bases, self.symops)
+        orb1.assign_ids(1, 1, 1)
+        orb2 = Orbit(self.coords[:2], self.lattice, [[0, 1], [0, 1]],
+                     self.bases, self.symops)
+        orb2.assign_ids(1, 1, 1)
+
+        bit = orb1.bit_combos[1][0]
+        orb1.remove_bit_combos_by_inds([1])
+        orb2.remove_bit_combo(bit)
+        self.assertTrue(all(np.array_equal(bc1, bc2) for bc1, bc2 in
+                             zip(orb1.bit_combos, orb2.bit_combos)))
+        self.assertRaises(RuntimeError, orb1.remove_bit_combos_by_inds, [0,1])
+
     def test_eval(self):
         # Test cluster function evaluation with indicator basis
         bases = [basis_factory('indicator', bit) for bit in self.bits]

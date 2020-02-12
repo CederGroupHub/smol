@@ -147,17 +147,15 @@ class TestClusterSubSpace(unittest.TestCase):
                   (0, 0, 0),
                   (0.5, 0, 0))
         s = Structure(s.lattice, species, coords)
-        remove = {4: [[0, 0], [0, 1]], 7: [[0, 0]]}
-        new_n_orderings = cs.n_bit_orderings - len(remove) - 1
+        remove = [9, 10, 18] #{4: [[0, 0], [0, 1]], 7: [[0, 0]]}
+        new_n_orderings = cs.n_bit_orderings - len(remove)
 
         cs.remove_orbit_bit_combos(remove)
         self.assertEqual(cs.n_bit_orderings, new_n_orderings)
         expected = [1, 0.5, 0.25, 0, 0.5, 0, 0.375, 0, 0.0625,
                     0, 0.25, 0.125, 0.125, 0, 0, 0.25, 0.125, 0, 0.1875]
         self.assertTrue(np.allclose(cs.corr_from_structure(s), expected))
-
-        self.assertWarns(UserWarning, cs.remove_orbit_bit_combos,
-                         {4:[[1,1]]})
+        self.assertWarns(UserWarning, cs.remove_orbit_bit_combos, [9])
 
     def test_orbit_mappings_from_matrix(self):
         # check that all supercell_structure index groups map to the correct

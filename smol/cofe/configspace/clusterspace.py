@@ -449,7 +449,9 @@ class ClusterSubspace(MSONable):
         # Clear the cached supercell orbit mappings
         self._supercell_orb_inds = {}
 
-    def remove_orbit_bit_combos(self, combos_by_orbit_id):
+    # TODO change this to remove by bit_id, more simple when pruning
+    #  Remember to add the bit_id to the __str__ method as well....
+    def remove_orbit_bit_combos(self, orbit_bit_ids):
         """
         Removes a specific bit combo from an orbit. This allows more granular
         removal of terms involved in fitting/evaluating a cluster expansion.
@@ -464,19 +466,21 @@ class ClusterSubspace(MSONable):
         bit combo does not represent a specific set of the n species, but the
         specific set of n site functions.
 
-
         Args:
-            combos_by_orbit_id (dict):
-                dictionary of {orbit_id: [bits in bit_combos to remove]}
+            orbit_bit_ids (list):
+                list of orbit bit ids to remove
         """
         empty_orbit_ids = []
+        bit_ids = np.array(orbit_bit_ids, dtype=int)
 
         for orbit in self.iterorbits():
-            combos_to_remove = combos_by_orbit_id.get(orbit.id)
-            if combos_to_remove is not None:
+            first_id = orbit.bit_id
+            last_id = orbit.bit_id + len(orbit.bit_combos)
+            to_remove = bit_ids[bit_ids >= first_id]
+            to_remove = to_remove[to_remove < last_id] - first_id
+            if to_remove.size > 0:
                 try:
-                    for bits in combos_to_remove:
-                        orbit.remove_bit_combo(bits)
+                    orbit.remove_bit_combos_by_inds(to_remove)
                 except RuntimeError:
                     empty_orbit_ids.append(orbit.id)
                     warnings.warn(f'All bit combos have been removed from '

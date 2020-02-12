@@ -359,13 +359,22 @@ class ClusterExpansion(MSONable):
 
         return np.matmul(C.T, self.ecis)
 
-    # TODO implement this and add test.
     def prune(self, threshold=1E-5):
         """
-        Remove ECI's and orbits in the ClusterSubspaces that have ECI values
-        smaller than the given threshold
+        Remove ECI's (fitting parameters) and orbits in the ClusterSubspaces
+        that have ECI/parameter values smaller than the given threshold
         """
-        pass
+        if self.ecis is None:
+            raise RuntimeError('ClusterExpansion has not ECIs. Cannot prune.')
+
+        b_ids = np.array([i for i, eci in enumerate(self.ecis)
+                          if abs(eci) < threshold], dtype=int)
+        b_id = 1
+        to_remove = {}  # need a get orbit id, and bit_combos
+        # or change remove bit combos function to remove combos by bit id
+
+        for orbit in self.subspace.iterorbits():
+            pass
 
     def __str__(self):
         corr = np.zeros(self.subspace.n_bit_orderings)
@@ -384,14 +393,15 @@ class ClusterExpansion(MSONable):
         for orbit in self.subspace.iterorbits():
             s += f'    [Orbit]  id: {orbit.bit_id:<3} size: ' \
                  f'{len(orbit.bits):<3} radius: {orbit.radius:<4.3}\n'
-            s += f'        bit       eci     feature avg  feature std  ' \
+            s += f'        id    bit       eci     feature avg  feature std  '\
                  f'eci*std\n'
             for i, bits in enumerate(orbit.bit_combos):
                 eci = ecis[orbit.bit_id + i]
                 f_avg = feature_avg[orbit.bit_id + i]
                 f_std = feature_std[orbit.bit_id + i]
-                s += f'        {str(bits[0]):<10}{eci:<8.3f}{f_avg:<13.3f}' \
-                     f'{f_std:<13.3f}{eci*f_std:<.3f}\n'
+                s += f'        {orbit.bit_id + i:<6}{str(bits[0]):<10}' \
+                     f'{eci:<8.3f}{f_avg:<13.3f}{f_std:<13.3f}' \
+                     f'{eci*f_std:<.3f}\n'
         return s
 
     # TODO save the estimator and parameters?
