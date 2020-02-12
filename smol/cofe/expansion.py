@@ -17,23 +17,29 @@ from smol.cofe.regression.estimator import BaseEstimator, CVXEstimator
 
 class ClusterExpansion(MSONable):
     """
-    Class for the ClusterExpansion proper needs a structure_wrangler to supply
-    fitting data and an estimator to provide the fitting method.
-    This is the class that is used to predict as well.
-    (i.e. to use in Monte Carlo and beyond)
+    This is the class you want to fit and use a cluster expansion. Look at
+    from_radii method for the easiest way to create an instance. If you want
+    more control consider using the from_structure_wrangler method. If you want
+    even more control then just use the constructor.
+
+    Class for the ClusterExpansion proper. This needs a ClusterSubspace and
+    a set of structures and properties. Also needs an estimator to provide the
+    fitting method. Unless previously computed ECI are provided instead.
+
+    The main methods to use this class are the fit method to fit the CE using
+    the provided structures (and or feature matrix) and the predict method to
+    predict the fitted property for new structures. The ClusterExpansion also
+    contains a few regression metrics methods to check the quality of the
+    fit.
+
+    This class is also used for Monte Carlo simulations to create a
+    ClusterExpansionProcessor.
     """
 
     def __init__(self, cluster_subspace, fit_structures, property_vector,
                  feature_matrix=None, supercell_matrices=None, weights=None,
                  ecis=None, estimator=None):
         """
-        Represents a cluster expansion. The main methods to use this class are
-        the fit method to fit the cluster expansion using the provided
-        structures (and or feature matrix) and the predict method to predict
-        the fitted property to new structures. The ClusterExpansion also
-        contains a few regression metrics methods to check the quality of the
-        fit.
-
         Args:
             cluster_subspace (ClusterSubspace):
                 A StructureWrangler object to provide the fitting data and

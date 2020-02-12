@@ -47,7 +47,7 @@ class ClusterExpansionProcessor(MSONable):
                 in_inds = np.any(inds == site_ind, axis=-1)
                 ratio = len(inds) / np.sum(in_inds)
                 self.orbits_by_sites[site_ind].append((orbit.bit_combos,
-                                                       orbit.orb_b_id,
+                                                       orbit.bit_id,
                                                        inds[in_inds], ratio))
 
     def compute_corr(self, occu):
@@ -107,10 +107,13 @@ class ClusterExpansionProcessor(MSONable):
         for f in flips:
             new_occu_f = new_occu.copy()
             new_occu_f[f[0]] = f[1]
-            delta_corr += delta_corr_single_flip(new_occu_f, new_occu,
-                                                 self.n_orbit_functions,
-                                                 self.orbits_by_sites[f[0]],
-                                                 f[0], f[1])
+            #delta_corr += delta_corr_single_flip(new_occu_f, new_occu,
+             #                                    self.n_orbit_functions,
+              #                                   self.orbits_by_sites[f[0]],
+               #                                  f[0], f[1])
+            delta_corr += delta_corr_single_flip_py(new_occu_f, new_occu,
+                                                    self.n_orbit_functions,
+                                                    self.orbits_by_sites[f[0]])
             new_occu = new_occu_f
 
         if debug:
@@ -140,3 +143,36 @@ class ClusterExpansionProcessor(MSONable):
              '_subspace': self.subspace,
              'supercell_matrix': self.supercell_matrix}
         return d
+'''
+cluster = 
+(orbit.bit_combos,
+orbit.bit_id,
+inds[in_inds], ratio)
+'''
+from numba import jit
+
+@jit
+def delta_corr_single_flip_py(final, init, n_bit_orderings, orbits):
+    """
+    A python version of delta corr single flip for non orthonormal indicator
+    basis. How slow is this actually?
+    """
+    out = np.zeros(n_bit_orderings)
+    num_orbs = len(orbits)
+    for i in range(num_orbs):
+        bit_combos, orb_bit_id, inds, r = orbits[i]
+        l = orb_bit_id
+        num_bits = len(bit_combos)
+        for j in range(num_bits):
+            bits = bit_combos[j]
+            o = 0
+            occu = final[inds]
+            o += np.all(occu[None, :, :] == bits[:, None, :], axis=-1).sum()
+
+            occu = init[inds]
+            o -= np.all(occu[None, :, :] == bits[:, None, :], axis=-1).sum()
+
+            out[l] = o / r / (inds.shape[0] * bits.shape[0])
+            l += 1
+
+    return out

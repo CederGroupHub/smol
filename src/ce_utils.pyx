@@ -4,14 +4,6 @@
 Utilities for manipulating coordinates or list of coordinates, under periodic
 boundary conditions or otherwise.
 """
-
-__author__ = "Will Richards"
-__copyright__ = "Copyright 2011, The Materials Project"
-__version__ = "1.0"
-__maintainer__ = "Will Richards"
-__email__ = "wmdrichards@gmail.com"
-__date__ = "Nov 27, 2011"
-
 import numpy as np
 
 cimport numpy as np
@@ -23,7 +15,7 @@ cimport cython
 @cython.initializedcheck(False)
 @cython.cdivision(True)
 def delta_corr_single_flip(np.int_t[:] final, np.int_t[:] init,
-                           int n_bit_orderings, clusters, int ind, int bit):
+                           int n_bit_orderings, clusters):
     """
     Counts number of rows of a that are present in b
     Args:
