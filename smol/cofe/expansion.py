@@ -214,7 +214,7 @@ class ClusterExpansion(MSONable):
         if estimator is None and ecis is None:
             estimator = CVXEstimator()
 
-        return cls(structure_wrangler.cluster_subspace,
+        return cls(structure_wrangler.cluster_subspace.copy(),
                    fit_structures=structure_wrangler.refined_structures,
                    property_vector=structure_wrangler.normalized_properties,
                    feature_matrix=structure_wrangler.feature_matrix,
@@ -362,19 +362,30 @@ class ClusterExpansion(MSONable):
     def prune(self, threshold=1E-5):
         """
         Remove ECI's (fitting parameters) and orbits in the ClusterSubspaces
-        that have ECI/parameter values smaller than the given threshold
+        that have ECI/parameter values smaller than the given threshold.
+
+        This will change the fits error metrics (ie RMSE) a little, but it
+        should not be much. If they change a lot then the threshold used is
+        probably to high and important ECI are being pruned.
+
+        This will not re-fit the ClusterExpansion. Note that if you re-fit
+        after pruning the ECI will probably change and hence also the fit
+        performance.
         """
+
         if self.ecis is None:
-            raise RuntimeError('ClusterExpansion has not ECIs. Cannot prune.')
+            raise RuntimeError('ClusterExpansion has no ECIs. Cannot prune.')
 
-        b_ids = np.array([i for i, eci in enumerate(self.ecis)
-                          if abs(eci) < threshold], dtype=int)
-        b_id = 1
-        to_remove = {}  # need a get orbit id, and bit_combos
-        # or change remove bit combos function to remove combos by bit id
+        bit_ids = [i for i, eci in enumerate(self.ecis)
+                   if abs(eci) < threshold]
+        self.subspace.remove_orbit_bit_combos(bit_ids)
 
-        for orbit in self.subspace.iterorbits():
-            pass
+        # Update necessary attributes
+        ids_compliment = list(set(range(len(self.ecis))) - set(bit_ids))
+        self.estimator.coef_ = self.estimator.coef_[ids_compliment]
+        self.ecis = self.estimator.coef_
+        self._feature_matrix = self.feature_matrix[:, ids_compliment]
+        self._rmse, self._mae, self._maxerr = None, None, None
 
     def __str__(self):
         corr = np.zeros(self.subspace.n_bit_orderings)

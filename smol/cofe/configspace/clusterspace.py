@@ -484,7 +484,7 @@ class ClusterSubspace(MSONable):
                 except RuntimeError:
                     empty_orbit_ids.append(orbit.id)
                     warnings.warn(f'All bit combos have been removed from '
-                                  f'orbit with id {orbit.id}. This orbit will'
+                                  f'orbit with id {orbit.id}. This orbit will '
                                   f'be fully removed.')
 
         if empty_orbit_ids:
