@@ -11,8 +11,7 @@ from monty.json import MSONable
 from pymatgen import Structure, PeriodicSite
 from smol.cofe.configspace.utils import get_bits
 from src.ce_utils import delta_corr_single_flip
-from numba import jit, float64, int32
-from numba.typed import List
+
 
 class ClusterExpansionProcessor(MSONable):
     """
@@ -37,7 +36,7 @@ class ClusterExpansionProcessor(MSONable):
 
         # Create a dictionary of orbits by site index and information
         # necessary to compute local changes in correlation vectors from flips
-        self.orbits_by_sites = defaultdict(List)
+        self.orbits_by_sites = defaultdict(list)
         # Store the orbits grouped by site index in the structure,
         # to be used by delta_corr. We also store a reduced index array,
         # where only the rows with the site index are stored. The ratio is
@@ -102,8 +101,6 @@ class ClusterExpansionProcessor(MSONable):
         new_occu = occu.copy()
         delta_corr = np.zeros(self.n_orbit_functions + len(all_ewalds))
 
-        # TODO need to figure out how to implement delta_corr for different
-        #  bases!!!
         # this loop is candidate for optimization as well
         for f in flips:
             new_occu_f = new_occu.copy()
@@ -111,9 +108,6 @@ class ClusterExpansionProcessor(MSONable):
             delta_corr += delta_corr_single_flip(new_occu_f, new_occu,
                                                  self.n_orbit_functions,
                                                  self.orbits_by_sites[f[0]])
-            #delta_corr += delta_corr_single_flip_py(new_occu_f, new_occu,
-             #                                       self.n_orbit_functions,
-              #                                      self.orbits_by_sites[f[0]])
             new_occu = new_occu_f
 
         if debug:
@@ -143,39 +137,3 @@ class ClusterExpansionProcessor(MSONable):
              '_subspace': self.subspace,
              'supercell_matrix': self.supercell_matrix}
         return d
-'''
-cluster = 
-(orbit.bit_combos,
-orbit.bit_id,
-inds[in_inds], ratio)
-'''
-
-#@jit(float64[:](int32[:], int32[:], int32, pyobject))
-@jit(nopython=True)
-def delta_corr_single_flip_py(final, init, n_bit_orderings, orbits):
-    """
-    A python version of delta corr single flip for non orthonormal indicator
-    basis. How slow is this actually?
-    """
-    out = np.zeros(n_bit_orderings)
-    num_orbs = len(orbits)
-    for i in range(num_orbs):
-        bit_combos, orb_bit_id, inds, r = orbits[i]
-        l = orb_bit_id
-        num_bits = len(bit_combos)
-        for j in range(num_bits):
-            bits = bit_combos[j]
-            o = 0
-            for k in range(inds.shape[0]):
-                occu = final[inds[k]]
-                if np.all(occu == bits):
-                    o += 1
-
-                occu = init[inds[k]]
-                if np.all(occu == bits):
-                    o -= 1
-
-            out[l] = o / r / (inds.shape[0] * bits.shape[0])
-            l += 1
-
-    return out
