@@ -2,9 +2,9 @@
 Implementation of a processor for a fixed size Super Cell optimized to compute
 correlation vectors and local changes in correlation vectors. This class allows
 the use a cluster expansion hamiltonian to run Monte Carlo based simulations.
-The name comes from its use to create the "Markov process" aka Markov Processor
 """
 
+import numpy as np
 from collections import defaultdict
 import numpy as np
 from monty.json import MSONable
@@ -23,15 +23,22 @@ class ClusterExpansionProcessor(MSONable):
 
     def __init__(self, cluster_expansion, supercell_matrix):
 
+        # the only reason to keep the CE is for the MSONable from_dict
+        self.cluster_expansion = cluster_expansion
+
         self.ecis = cluster_expansion.ecis.copy()
         self.subspace = cluster_expansion.subspace
-        self.structure = cluster_expansion.prim_structure.copy()
-        self.supercell_matrix = supercell_matrix
+        self.structure = self.subspace.structure.copy()
         self.structure.make_supercell(supercell_matrix)
+        self.supercell_matrix = supercell_matrix
+
+        # this can be used (maybe should) to check if a flip is valid
+        expansion_bits = get_bits(cluster_expansion.expansion_structure)
+        self.unique_bits = np.unique(expansion_bits)
+
         self.bits = get_bits(self.structure)
         self.size = self.subspace.num_prims_from_matrix(supercell_matrix)
         self.n_orbit_functions = self.subspace.n_bit_orderings
-
         self.orbit_inds = self.subspace.supercell_orbit_mappings(supercell_matrix)  # noqa
 
         # Create a dictionary of orbits by site index and information
@@ -50,10 +57,45 @@ class ClusterExpansionProcessor(MSONable):
                                                        orbit.bit_id,
                                                        inds[in_inds], ratio))
 
-    def compute_corr(self, occu):
+    def compute_property(self, occu):
         """
+        Computes the total value of the property corresponding to the CE
+        for the given occupancy vector
+
+        Args:
+            occu (array):
+                encoded occupancy array
+        Returns: predicted property
+            float
+        """
+        return np.dot(self.compute_correlation(occu), self.ecis) * self.size
+
+    def compute_property_change(self, occu, flips):
+        """
+        Compute change in property from a set of flips
+        Args:
+            occu (array):
+                encoded occupancy array
+            flips (list):
+                list of tuples for (index of site, specie code to set)
+
+        Returns:
+            float
+        """
+        return np.dot(self.delta_corr(flips, occu), self.ecis)*self.size
+
+    def compute_correlation(self, occu):
+        """
+        Computes the correlation vector for a given occupancy vector.
         Each entry in the correlation vector corresponds to a particular
-        symmetrically distinct bit ordering
+        symmetrically distinct bit ordering.
+
+        Args:
+            occu (array):
+                encoded occupation vector
+
+        Returns: Correlation vector
+            array
         """
         # This can be optimized by writing a separate corr_from_occu function
         # that used only the encoded occu vector and has an optimized orbit
@@ -61,15 +103,18 @@ class ClusterExpansionProcessor(MSONable):
         occu = self.decode_occupancy(occu)
         return self.subspace.corr_from_occupancy(occu, self.orbit_inds)
 
-    def compute_property(self, occu):
-        """
-        Computes the total value of the property represented by the given ECIs
-        for the given occupancy vector
-        """
-        return np.dot(self.compute_corr(occu), self.ecis) * self.size
-
     def structure_from_occupancy(self, occu):
-        """Get pymatgen.Structure from an occupancy vector"""
+        """
+        Get pymatgen.Structure from an occupancy vector
+
+        Args:
+            occu (array):
+                encoded occupancy array
+
+        Returns:
+            Structure
+        """
+        occu = self.decode_occupancy(occu)
         sites = []
         for sp, s in zip(occu, self.structure):
             if sp != 'Vacancy':
@@ -80,13 +125,14 @@ class ClusterExpansionProcessor(MSONable):
     def encode_occupancy(self, occu):
         """
         Encode occupancy vector of species str to ints.
-        This is mainly used to compute delta_corr
         """
         ec_occu = np.array([bit.index(sp) for bit, sp in zip(self.bits, occu)])
         return ec_occu
 
     def decode_occupancy(self, enc_occu):
-        """Decode encoded occupancy vector of int to species str"""
+        """
+        Decode encoded occupancy vector of int to species str
+        """
         occu = [bit[i] for i, bit in zip(enc_occu, self.bits)]
         return occu
 
@@ -96,6 +142,16 @@ class ClusterExpansionProcessor(MSONable):
         """
         Returns the *change* in the correlation vector from applying a list of
         flips. Flips is a list of (site, new_bit) tuples.
+
+        Args:
+            flips:
+            occu:
+            all_ewalds:
+            ewald_inds:
+            debug:
+
+        Returns: change in correlation vector from flips
+            array
         """
 
         new_occu = occu.copy()
@@ -111,8 +167,8 @@ class ClusterExpansionProcessor(MSONable):
             new_occu = new_occu_f
 
         if debug:
-            e = self.compute_corr(new_occu)
-            de = e - self.compute_corr(occu)
+            e = self.compute_correlation(new_occu)
+            de = e - self.compute_correlation(occu)
             assert np.allclose(delta_corr, de)
 
         return delta_corr
@@ -120,9 +176,9 @@ class ClusterExpansionProcessor(MSONable):
     @classmethod
     def from_dict(cls, d):
         """
-        Creates Structure Wrangler from serialized MSONable dict
+        Creates CEProcessor from serialized MSONable dict
         """
-        pass
+        return cls(d['cluster_expansion'], np.array(d['supercell_matrix']))
 
     def as_dict(self) -> dict:
         """
@@ -133,7 +189,6 @@ class ClusterExpansionProcessor(MSONable):
         """
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
-             'ecis': self.ecis,
-             '_subspace': self.subspace,
-             'supercell_matrix': self.supercell_matrix}
+             'cluster_expansion': self.cluster_expansion.as_dict(),
+             'supercell_matrix': self.supercell_matrix.to_list()}
         return d
