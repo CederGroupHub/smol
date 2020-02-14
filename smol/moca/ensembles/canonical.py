@@ -1,6 +1,6 @@
 import random
 from monty.json import MSONable
-from smol.moca.ensemble.base import BaseEnsemble
+from smol.moca.ensembles.base import BaseEnsemble
 from smol.globals import kB
 
 

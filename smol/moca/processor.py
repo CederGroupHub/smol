@@ -137,7 +137,7 @@ class ClusterExpansionProcessor(MSONable):
 
     def delta_corr(self, flips, occu,
                    all_ewalds=np.zeros((0, 0, 0), dtype=np.float),
-                   ewald_inds=np.zeros((0, 0), dtype=np.int), debug=False):
+                   ewald_inds=np.zeros((0, 0), dtype=np.int)):
         """
         Returns the *change* in the correlation vector from applying a list of
         flips. Flips is a list of (site, new_bit) tuples.
@@ -165,11 +165,6 @@ class ClusterExpansionProcessor(MSONable):
                                                  self.n_orbit_functions,
                                                  self.orbits_by_sites[f[0]])
             new_occu = new_occu_f
-
-        if debug:
-            e = self.compute_correlation(new_occu)
-            de = e - self.compute_correlation(occu)
-            assert np.allclose(delta_corr, de)
 
         return delta_corr
 

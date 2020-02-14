@@ -103,7 +103,7 @@ class BaseEnsemble(ABC):
 
     def run(self, iterations, sublattice_name=None):
         """
-        Samples the ensemble for the given number of iterations. Sampling at
+        Samples the ensembles for the given number of iterations. Sampling at
         the provided intervals???
 
         Args:
@@ -157,10 +157,10 @@ class BaseEnsemble(ABC):
     @abstractmethod
     def _get_current_data(self):
         """
-        Method to extract the ensemble data from the current state. Should
+        Method to extract the ensembles data from the current state. Should
         return a dict with current data.
 
-        Returns: ensemble data
+        Returns: ensembles data
             dict
         """
         pass

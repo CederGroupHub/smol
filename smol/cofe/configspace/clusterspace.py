@@ -33,11 +33,13 @@ class ClusterSubspace(MSONable):
     expansion: This sets the orbits (groups of clusters) and the site basis
     functions that are to be considered in the fit.
 
-    This is probably the class you're looking for to start defining the
-    structure and cluster terms for your cluster expansion.
-
     You probably want to generate from ClusterSubspace.from_radii, which will
     auto-generate the orbits, unless you want more control over them.
+
+    This is probably the class you're looking for to start defining the
+    structure and cluster terms for your cluster expansion with more control
+    than just calling the ClusterExpansion.from_radii method, which
+    automatically creates the ClusterSubspace by calling its own from_radii
     """
 
     def __init__(self, structure, expansion_structure, symops, orbits,
@@ -94,8 +96,8 @@ class ClusterSubspace(MSONable):
                                            **matcher_kwargs)
 
         # This structure matcher is used to find the mapping between the sites
-        # of a given structure and the sites in the appropriate sized supercell
-        # of the prim structure. Only the "get_mapping method" is used
+        # of a given supercell structure and the sites in the appropriate sized
+        # supercell of the prim structure. Only "get_mapping" method is used.
         site_comparator = OrderDisorderElementComparator()
         self._site_matcher = StructureMatcher(primitive_cell=False,
                                               attempt_supercell=False,
@@ -317,7 +319,7 @@ class ClusterSubspace(MSONable):
             else:
                 sp = 'Vacancy'
             if sp not in bit:
-                raise StructureMatchError(f'A site in given structure has a'
+                raise StructureMatchError(f'A site in given structure has an'
                                           f' unrecognized specie {sp}. ')
             occu.append(sp)
 
@@ -449,8 +451,6 @@ class ClusterSubspace(MSONable):
         # Clear the cached supercell orbit mappings
         self._supercell_orb_inds = {}
 
-    # TODO change this to remove by bit_id, more simple when pruning
-    #  Remember to add the bit_id to the __str__ method as well....
     def remove_orbit_bit_combos(self, orbit_bit_ids):
         """
         Removes a specific bit combo from an orbit. This allows more granular
