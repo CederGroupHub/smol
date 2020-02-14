@@ -1,6 +1,6 @@
 import random
+from math import exp
 from abc import ABC, abstractmethod
-from monty.json import MSONable
 from pymatgen.transformations.standard_transformations import \
     OrderDisorderedStructureTransformation
 
@@ -8,7 +8,7 @@ from pymatgen.transformations.standard_transformations import \
 #  a variety of information during a montecarlo run
 
 
-class BaseEnsemble(ABC, MSONable):
+class BaseEnsemble(ABC):
     """
     Base Class for Monte Carlo Ensembles.
     """
@@ -45,9 +45,9 @@ class BaseEnsemble(ABC, MSONable):
             initial_occupancy = processor.subspace.occupancy_from_structure(struct, scmatrix)  # noqa
 
         if sublattices is None:
-            sublattices = {str(bit) : [i for i, b in
-                                       enumerate(initial_occupancy)
-                                       if b in bit]
+            sublattices = {str(bit): [i for i, b in
+                                      enumerate(initial_occupancy)
+                                      if b in bit]
                            for bit in processor.unique_bits}
 
         self.processor = processor
@@ -55,6 +55,7 @@ class BaseEnsemble(ABC, MSONable):
         self.save_interval = save_interval
         self._sublattices = sublattices
         self._occupancy = self.init_occupancy.copy()
+        self._energy = processor.compute_property(initial_occupancy)
         self._step = 0
         self._ssteps = 0
         self._data = []
@@ -67,8 +68,12 @@ class BaseEnsemble(ABC, MSONable):
         random.seed(seed)
 
     @property
-    def current_occupancy(self):
+    def occupancy(self):
         return self._occupancy
+
+    @property
+    def energy(self):
+        return self._energy
 
     @property
     def current_structure(self):
@@ -96,7 +101,7 @@ class BaseEnsemble(ABC, MSONable):
         """
         pass
 
-    def run(self, iterations):
+    def run(self, iterations, sublattice_name=None):
         """
         Samples the ensemble for the given number of iterations. Sampling at
         the provided intervals???
@@ -117,9 +122,10 @@ class BaseEnsemble(ABC, MSONable):
             no_interrupt = min(remaining, self.save_interval)
 
             # get a list of flips for all the no_interrupt attempts
-            flips = self._get_flips(no_interrupt)
-            for i in range(len(flips)):
-                success = self._attempt_flip(flips[i])
+
+            for i in range(no_interrupt):
+                flip = self._get_flip(sublattice_name)
+                success = self._attempt_flip(flip)
                 self._ssteps += success
                 self._step += 1
 
@@ -134,18 +140,7 @@ class BaseEnsemble(ABC, MSONable):
         pass
 
     @abstractmethod
-    def _get_current_data(self):
-        """
-        Method to extract the ensemble data from the current state. Should
-        return a dict with current data.
-
-        Returns: ensemble data
-            dict
-        """
-        pass
-
-    @abstractmethod
-    def _get_flips(self, length, sublattice_name=None):
+    def _get_flip(self, sublattice_name=None):
         """
         Args:
             length (int):
@@ -159,6 +154,32 @@ class BaseEnsemble(ABC, MSONable):
         """
         pass
 
+    @abstractmethod
+    def _get_current_data(self):
+        """
+        Method to extract the ensemble data from the current state. Should
+        return a dict with current data.
+
+        Returns: ensemble data
+            dict
+        """
+        pass
+
+    @staticmethod
+    def _accept(delta_e, beta=1.0):
+        """
+        Evaluate metropolis criteria
+
+        Args:
+            delta_e (float):
+                energy change
+            beta (float):
+                1/kBT
+        Returns:
+            bool
+        """
+        return True if delta_e <= 0 else exp(-beta*delta_e) > random.random()
+
     def _save_data(self):
         """
         Save the current sample and properties
@@ -169,12 +190,3 @@ class BaseEnsemble(ABC, MSONable):
         data = self._get_current_data()
         data['step'] = self.current_step
         self._data.append(data)
-
-    def as_dict(self) -> dict:
-        """
-        JSON serialization to save ensemble
-
-        Returns:
-            dict
-        """
-        pass

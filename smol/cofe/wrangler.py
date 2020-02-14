@@ -15,8 +15,7 @@ from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
 from smol.cofe.configspace import EwaldTerm
 from smol.cofe.configspace.clusterspace import ClusterSubspace
 from smol.exceptions import StructureMatchError
-
-kB = 0.00008617
+from smol.globals import kB
 
 
 def weights_e_above_comp(structures, energies, temperature=2000):

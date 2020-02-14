@@ -275,8 +275,8 @@ def basis_factory(basis_name, *args, **kwargs):
         instance = basis_class(*args, **kwargs)
     except KeyError:
         available = _get_subclasses(SiteBasis)
-        raise NotImplemented(f'{basis_name} is not implemented. '
-                             f'Choose one of {available}')
+        raise NotImplementedError(f'{basis_name} is not implemented. '
+                                  f'Choose one of {available}')
     return instance
 
 

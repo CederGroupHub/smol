@@ -6,7 +6,6 @@ the use a cluster expansion hamiltonian to run Monte Carlo based simulations.
 
 import numpy as np
 from collections import defaultdict
-import numpy as np
 from monty.json import MSONable
 from pymatgen import Structure, PeriodicSite
 from smol.cofe.configspace.utils import get_bits
@@ -82,7 +81,7 @@ class ClusterExpansionProcessor(MSONable):
         Returns:
             float
         """
-        return np.dot(self.delta_corr(flips, occu), self.ecis)*self.size
+        return np.dot(self.delta_corr(flips, occu), self.ecis) * self.size
 
     def compute_correlation(self, occu):
         """
@@ -158,6 +157,7 @@ class ClusterExpansionProcessor(MSONable):
         delta_corr = np.zeros(self.n_orbit_functions + len(all_ewalds))
 
         # this loop is candidate for optimization as well
+        # think of re-writing to just take the occu and the flips
         for f in flips:
             new_occu_f = new_occu.copy()
             new_occu_f[f[0]] = f[1]
