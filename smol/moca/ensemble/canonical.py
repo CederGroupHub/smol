@@ -35,9 +35,21 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         super().__init__(processor, initial_occupancy=initial_occupancy,
                          save_interval=save_interval, seed=seed)
         self.temperature = temperature
-        self.beta = 1.0/(kB*temperature)
         self._min_energy = self._energy
         self._min_occupancy = self._init_occupancy
+
+    @property
+    def temperature(self):
+        return self._temperature
+
+    @temperature.setter
+    def temperature(self, T):
+        self._temperature = T
+        self._beta = 1.0/(kB*T)
+
+    @property
+    def beta(self):
+        return self._beta
 
     @property
     def minimum_energy(self):
