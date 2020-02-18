@@ -1,3 +1,8 @@
+"""
+Implementation of Canonical Ensemble Class for running Monte Carlo simulations
+for fixed concentration of species.
+"""
+
 import random
 from monty.json import MSONable
 from smol.moca.ensemble.base import BaseEnsemble
@@ -25,9 +30,24 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
                 seed for random number generator
         """
 
-        super().__init__(processor, initial_occupancy, save_interval, seed)
+        super().__init__(processor, initial_occupancy=initial_occupancy,
+                         save_interval=save_interval, seed=seed)
         self.temperature = temperature
         self.beta = 1.0/(kB*temperature)
+        self._min_energy = self._energy
+        self._min_occupancy = self._init_occupancy
+
+    @property
+    def minimum_energy(self):
+        return self._min_energy
+
+    @property
+    def minimum_energy_occupancy(self):
+        return self.processor.decode_occupancy(self._min_occupancy)
+
+    @property
+    def minimum_energy_structure(self):
+        return self.processor.structure_from_occupancy(self._min_occupancy)
 
     def _attempt_flip(self, flips):
         """
@@ -40,12 +60,18 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         Returns: Flip acceptance
             bool
         """
-        delta_e = self.processor.compute_property_change(self.occupancy, flips)
+        delta_e = self.processor.compute_property_change(self._occupancy,
+                                                         flips)
         accept = self._accept(delta_e, self.beta)
+
         if accept:
             self._energy += delta_e
             for f in flips:
                 self._occupancy[f[0]] = f[1]
+            if self._energy < self._min_energy:
+                self._min_energy = self._energy
+                self._min_occupancy = self._occupancy.copy()
+
         return accept
 
     def _get_flip(self, sublattice_name=None):
@@ -55,22 +81,24 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             sublattice_name (str): optional
                 If only considering one sublattice.
         Returns:
-
+            tuple
         """
         if sublattice_name is None:
             sublattice_name = random.choice(list(self._sublattices.keys()))
 
         ind1 = random.choice(self._sublattices[sublattice_name])
         swap_options = [i for i in self._sublattices[sublattice_name]
-                        if self.occupancy[i] != self.occupancy[ind1]]
+                        if self._occupancy[i] != self._occupancy[ind1]]
         if swap_options:
             ind2 = random.choice(swap_options)
-            return ((ind1, self.occupancy[ind1]), (ind2, self.occupancy[ind2]))
+            return ((ind1, self._occupancy[ind2]),
+                    (ind2, self._occupancy[ind1]))
         else:
+            # inefficient, maybe re-call method?
             return tuple()
 
     def _get_current_data(self):
-        pass
+        return {'energy': self.energy, 'occupancy': self.occupancy}
 
     def as_dict(self) -> dict:
         pass

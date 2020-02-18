@@ -1,4 +1,5 @@
 import random
+from copy import deepcopy
 from math import exp
 from abc import ABC, abstractmethod
 from pymatgen.transformations.standard_transformations import \
@@ -51,11 +52,11 @@ class BaseEnsemble(ABC):
                            for bit in processor.unique_bits}
 
         self.processor = processor
-        self.init_occupancy = initial_occupancy
         self.save_interval = save_interval
+        self._init_occupancy = processor.encode_occupancy(initial_occupancy)
         self._sublattices = sublattices
-        self._occupancy = self.init_occupancy.copy()
-        self._energy = processor.compute_property(initial_occupancy)
+        self._occupancy = self._init_occupancy.copy()
+        self._energy = processor.compute_property(self._occupancy)
         self._step = 0
         self._ssteps = 0
         self._data = []
@@ -69,11 +70,11 @@ class BaseEnsemble(ABC):
 
     @property
     def occupancy(self):
-        return self._occupancy
+        return self.processor.decode_occupancy(self._occupancy)
 
     @property
     def energy(self):
-        return self._energy
+        return deepcopy(self._energy)
 
     @property
     def current_structure(self):
@@ -94,12 +95,6 @@ class BaseEnsemble(ABC):
     @property
     def seed(self):
         return self._seed
-
-    def dump(self):
-        """
-        Write data into a json file
-        """
-        pass
 
     def run(self, iterations, sublattice_name=None):
         """
@@ -131,6 +126,12 @@ class BaseEnsemble(ABC):
 
             self._save_data()
 
+    def dump(self):
+        """
+        Write data into a json file
+        """
+        pass
+
     @abstractmethod
     def _attempt_flip(self, flip):
         """
@@ -154,7 +155,7 @@ class BaseEnsemble(ABC):
         """
         pass
 
-    @abstractmethod
+
     def _get_current_data(self):
         """
         Method to extract the ensemble data from the current state. Should
@@ -163,7 +164,7 @@ class BaseEnsemble(ABC):
         Returns: ensemble data
             dict
         """
-        pass
+        return {}
 
     @staticmethod
     def _accept(delta_e, beta=1.0):
