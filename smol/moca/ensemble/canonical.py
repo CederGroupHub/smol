@@ -4,7 +4,9 @@ for fixed concentration of species.
 """
 
 import random
+import numpy as np
 from monty.json import MSONable
+from smol.moca.processor import ClusterExpansionProcessor
 from smol.moca.ensemble.base import BaseEnsemble
 from smol.globals import kB
 
@@ -14,7 +16,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
     A Canonical Ensemble class to run Monte Carlo Simulations
     """
 
-    def __init__(self, processor, save_interval, temperature,
+    def __init__(self, processor, temperature, save_interval,
                  initial_occupancy=None, seed=None):
         """
         Args:
@@ -98,10 +100,51 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             return tuple()
 
     def _get_current_data(self):
+        """
+        Get ensemble specific data for current MC step
+        """
         return {'energy': self.energy, 'occupancy': self.occupancy}
 
     def as_dict(self) -> dict:
-        pass
+        """
+        Json-serialization dict representation
 
+        Returns:
+            MSONable dict
+        """
+        d = {'@module': self.__class__.__module__,
+             '@class': self.__class__.__name__,
+             'processor': self.processor.as_dict(),
+             'temperature': self.temperature,
+             'save_interval': self.save_interval,
+             'initial_occupancy': self.occupancy,
+             'seed': self.seed,
+             '_min_energy': self.minimum_energy,
+             '_min_occupancy': self._min_occupancy.tolist(),
+             '_sublattices': self._sublattices,
+             '_data': self.data,
+             '_step': self.current_step,
+             '_ssteps': self.accepted_steps,
+             '_energy': self.energy,
+             '_occupancy': self._occupancy.tolist()}
+        return d
+
+    @classmethod
     def from_dict(cls, d):
-        pass
+        """
+        Creates a CanonicalEnsemble from MSONable dict representation
+        """
+        eb = cls(ClusterExpansionProcessor.from_dict(d['processor']),
+                 temperature=d['temperature'],
+                 save_interval=d['save_interval'],
+                 initial_occupancy=d['initial_occupancy'],
+                 seed=d['seed'])
+        eb._min_energy = d['_min_energy']
+        eb._min_occupancy = np.array(d['_min_occupancy'])
+        eb._sublattices = d['_sublattices']
+        eb._data = d['_data']
+        eb._step = d['_step']
+        eb._ssteps = d['_ssteps']
+        eb._energy = d['_energy']
+        eb._occupancy = np.array(d['_occupancy'])
+        return eb

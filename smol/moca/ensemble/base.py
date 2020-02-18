@@ -107,7 +107,7 @@ class BaseEnsemble(ABC):
         """
 
         write_loops = iterations//self.save_interval
-        if iterations % self.save_interval == 0:
+        if iterations % self.save_interval > 0:
             write_loops += 1
 
         start_step = self.current_step
@@ -179,7 +179,7 @@ class BaseEnsemble(ABC):
         Returns:
             bool
         """
-        return True if delta_e <= 0 else exp(-beta*delta_e) > random.random()
+        return True if delta_e < 0 else exp(-beta*delta_e) >= random.random()
 
     def _save_data(self):
         """
