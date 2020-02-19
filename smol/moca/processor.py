@@ -8,6 +8,7 @@ import numpy as np
 from collections import defaultdict
 from monty.json import MSONable
 from pymatgen import Structure, PeriodicSite
+from smol.cofe import ClusterExpansion
 from smol.cofe.configspace.utils import get_bits
 from src.ce_utils import delta_corr_single_flip
 
@@ -33,7 +34,7 @@ class ClusterExpansionProcessor(MSONable):
 
         # this can be used (maybe should) to check if a flip is valid
         expansion_bits = get_bits(cluster_expansion.expansion_structure)
-        self.unique_bits = np.unique(expansion_bits)
+        self.unique_bits = tuple(set(tuple(bits)for bits in expansion_bits))
 
         self.bits = get_bits(self.structure)
         self.size = self.subspace.num_prims_from_matrix(supercell_matrix)
@@ -173,7 +174,8 @@ class ClusterExpansionProcessor(MSONable):
         """
         Creates CEProcessor from serialized MSONable dict
         """
-        return cls(d['cluster_expansion'], np.array(d['supercell_matrix']))
+        return cls(ClusterExpansion.from_dict(d['cluster_expansion']),
+                   np.array(d['supercell_matrix']))
 
     def as_dict(self) -> dict:
         """
@@ -185,5 +187,5 @@ class ClusterExpansionProcessor(MSONable):
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
              'cluster_expansion': self.cluster_expansion.as_dict(),
-             'supercell_matrix': self.supercell_matrix.to_list()}
+             'supercell_matrix': self.supercell_matrix.tolist()}
         return d

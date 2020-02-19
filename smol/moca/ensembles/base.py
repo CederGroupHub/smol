@@ -1,4 +1,7 @@
 import random
+from copy import deepcopy
+import json
+import numpy as np
 from math import exp
 from abc import ABC, abstractmethod
 from pymatgen.transformations.standard_transformations import \
@@ -28,10 +31,12 @@ class BaseEnsemble(ABC):
             sublattices (dict): optional
                 dictionary with keys identifying the active sublattices
                 (i.e. "anion" or the bits in that sublattice
-                "['Li+', 'Vacancy']"), the values should be a list with the
-                site indices for all sites corresponding to that sublattice in
-                the occupancy vector. All sites in a sublattice need to have
-                the same bits/species allowed.
+                "['Li+', 'Vacancy']"), the values should be a dictionary
+                with two items {'sites': array with the site indices for all
+                sites corresponding to that sublattice in the occupancy vector,
+                'bits': tuple of bits (allowed species) in sublattice}
+                All sites in a sublattice need to have the same bits/species
+                allowed.
             seed (int): optional
                 seed for random number generator
         """
@@ -45,17 +50,20 @@ class BaseEnsemble(ABC):
             initial_occupancy = processor.subspace.occupancy_from_structure(struct, scmatrix)  # noqa
 
         if sublattices is None:
-            sublattices = {str(bit): [i for i, b in
-                                      enumerate(initial_occupancy)
-                                      if b in bit]
-                           for bit in processor.unique_bits}
+            sublattices = {str(bits):
+                           {'sites': np.array([i for i, b in
+                                               enumerate(initial_occupancy)
+                                               if b in bits]),
+                            'bits': bits}
+                           for bits in processor.unique_bits}
 
         self.processor = processor
-        self.init_occupancy = initial_occupancy
         self.save_interval = save_interval
+        self.num_atoms = len(initial_occupancy)
+        self._init_occupancy = processor.encode_occupancy(initial_occupancy)
         self._sublattices = sublattices
-        self._occupancy = self.init_occupancy.copy()
-        self._energy = processor.compute_property(initial_occupancy)
+        self._occupancy = self._init_occupancy.copy()
+        self._energy = processor.compute_property(self._occupancy)
         self._step = 0
         self._ssteps = 0
         self._data = []
@@ -69,11 +77,15 @@ class BaseEnsemble(ABC):
 
     @property
     def occupancy(self):
-        return self._occupancy
+        return self.processor.decode_occupancy(self._occupancy)
+
+    @property
+    def initial_occupancy(self):
+        return self.processor.decode_occupancy(self._init_occupancy)
 
     @property
     def energy(self):
-        return self._energy
+        return deepcopy(self._energy)
 
     @property
     def current_structure(self):
@@ -95,12 +107,6 @@ class BaseEnsemble(ABC):
     def seed(self):
         return self._seed
 
-    def dump(self):
-        """
-        Write data into a json file
-        """
-        pass
-
     def run(self, iterations, sublattice_name=None):
         """
         Samples the ensembles for the given number of iterations. Sampling at
@@ -112,7 +118,7 @@ class BaseEnsemble(ABC):
         """
 
         write_loops = iterations//self.save_interval
-        if iterations % self.save_interval == 0:
+        if iterations % self.save_interval > 0:
             write_loops += 1
 
         start_step = self.current_step
@@ -124,37 +130,38 @@ class BaseEnsemble(ABC):
             # get a list of flips for all the no_interrupt attempts
 
             for i in range(no_interrupt):
-                flip = self._get_flip(sublattice_name)
-                success = self._attempt_flip(flip)
+                success = self._attempt_step(sublattice_name)
                 self._ssteps += success
                 self._step += 1
 
             self._save_data()
 
+    def reset(self):
+        """
+        Resets the ensemble by returning it to its initial state. This will
+        also clear the data.
+        """
+        self._occupancy = self._init_occupancy.copy()
+        self._step, self._ssteps = 0, 0
+        self._data = []
+
+    def dump(self, filename):
+        """
+        Write data into a text file in json format, and clear data
+        """
+        with open(filename, 'a') as fp:
+            json.dump(self.data, fp)
+
+        self._data = []
+
     @abstractmethod
-    def _attempt_flip(self, flip):
+    def _attempt_step(self, sublattice_name):
         """
         Attempts a MC step and returns 0, 1 based on whether the step was
         accepted or not.
         """
         pass
 
-    @abstractmethod
-    def _get_flip(self, sublattice_name=None):
-        """
-        Args:
-            length (int):
-                number of flips to obtain
-            sublattice_name (str): optional
-                name/key for a specific sublattice. If none, a random one is
-                picked for each flip.
-
-        Returns: array of flips
-            array
-        """
-        pass
-
-    @abstractmethod
     def _get_current_data(self):
         """
         Method to extract the ensembles data from the current state. Should
@@ -163,22 +170,23 @@ class BaseEnsemble(ABC):
         Returns: ensembles data
             dict
         """
-        pass
+        return {}
 
     @staticmethod
     def _accept(delta_e, beta=1.0):
         """
-        Evaluate metropolis criteria
+        Evaluate the metropolis acceptance criterion
 
         Args:
             delta_e (float):
-                energy change
+                potential change
             beta (float):
                 1/kBT
+
         Returns:
             bool
         """
-        return True if delta_e <= 0 else exp(-beta*delta_e) > random.random()
+        return True if delta_e < 0 else exp(-beta*delta_e) >= random.random()
 
     def _save_data(self):
         """
