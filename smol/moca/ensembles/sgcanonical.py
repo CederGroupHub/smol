@@ -6,7 +6,7 @@ simulations for fixed number of sites but variable concentration of species.
 import random
 import numpy as np
 from smol.moca.processor import ClusterExpansionProcessor
-from smol.moca.ensemble.canonical import CanonicalEnsemble
+from smol.moca.ensembles.canonical import CanonicalEnsemble
 
 
 class SGCanonicalEnsemble(CanonicalEnsemble):
