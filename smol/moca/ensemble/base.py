@@ -29,10 +29,12 @@ class BaseEnsemble(ABC):
             sublattices (dict): optional
                 dictionary with keys identifying the active sublattices
                 (i.e. "anion" or the bits in that sublattice
-                "['Li+', 'Vacancy']"), the values should be a list with the
-                site indices for all sites corresponding to that sublattice in
-                the occupancy vector. All sites in a sublattice need to have
-                the same bits/species allowed.
+                "['Li+', 'Vacancy']"), the values should be a dictionary
+                with two items {'sites': list with the site indices for all
+                sites corresponding to that sublattice in the occupancy vector,
+                'bits': tuple of bits (allowed species) in sublattice}
+                All sites in a sublattice need to have the same bits/species
+                allowed.
             seed (int): optional
                 seed for random number generator
         """
@@ -46,10 +48,11 @@ class BaseEnsemble(ABC):
             initial_occupancy = processor.subspace.occupancy_from_structure(struct, scmatrix)  # noqa
 
         if sublattices is None:
-            sublattices = {str(bit): [i for i, b in
-                                      enumerate(initial_occupancy)
-                                      if b in bit]
-                           for bit in processor.unique_bits}
+            sublattices = {str(bits): {'sites': [i for i, b in
+                                                 enumerate(initial_occupancy)
+                                                 if b in bits],
+                                       'bits': bits}
+                           for bits in processor.unique_bits}
 
         self.processor = processor
         self.save_interval = save_interval
@@ -119,8 +122,7 @@ class BaseEnsemble(ABC):
             # get a list of flips for all the no_interrupt attempts
 
             for i in range(no_interrupt):
-                flip = self._get_flip(sublattice_name)
-                success = self._attempt_flip(flip)
+                success = self._attempt_step(sublattice_name)
                 self._ssteps += success
                 self._step += 1
 
@@ -133,28 +135,12 @@ class BaseEnsemble(ABC):
         pass
 
     @abstractmethod
-    def _attempt_flip(self, flip):
+    def _attempt_step(self, sublattice_name):
         """
         Attempts a MC step and returns 0, 1 based on whether the step was
         accepted or not.
         """
         pass
-
-    @abstractmethod
-    def _get_flip(self, sublattice_name=None):
-        """
-        Args:
-            length (int):
-                number of flips to obtain
-            sublattice_name (str): optional
-                name/key for a specific sublattice. If none, a random one is
-                picked for each flip.
-
-        Returns: array of flips
-            array
-        """
-        pass
-
 
     def _get_current_data(self):
         """
@@ -173,7 +159,7 @@ class BaseEnsemble(ABC):
 
         Args:
             delta_e (float):
-                energy change
+                potential change
             beta (float):
                 1/kBT
         Returns:

@@ -1,6 +1,6 @@
 """
-Implementation of Canonical Ensemble Class for running Monte Carlo simulations
-for fixed concentration of species.
+Implementation of a Canonical Ensemble Class for running Monte Carlo
+simulations for fixed number of sites and fixed concentration of species.
 """
 
 import random
@@ -23,11 +23,13 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             processor (Processor Class):
                 A processor that can compute the change in a property given
                 a set of flips.
+            temperature (float):
+                Temperature of ensemble
+            save_interval (int):
+                interval of steps to save the current occupancy and property
             inital_occupancy (array):
                 Initial occupancy vector. If none is given then a random one
                 will be used.
-            save_interval (int):
-                interval of steps to save the current occupancy and property
             seed (int):
                 seed for random number generator
         """
@@ -63,17 +65,19 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
     def minimum_energy_structure(self):
         return self.processor.structure_from_occupancy(self._min_occupancy)
 
-    def _attempt_flip(self, flips):
+    def _attempt_step(self, sublattice_name=None):
         """
         Attempts flips corresponding to a canonical swap
+
         Args:
-            flips (list):
-                list with two tuples consisting of a site index and the encoded
-                specie to place at that site.
+            sublattice_name (str): optional
+                If only considering one sublattice.
 
         Returns: Flip acceptance
             bool
         """
+        flips = self._get_flips(sublattice_name)
+
         delta_e = self.processor.compute_property_change(self._occupancy,
                                                          flips)
         accept = self._accept(delta_e, self.beta)
@@ -88,9 +92,10 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
 
         return accept
 
-    def _get_flip(self, sublattice_name=None):
+    def _get_flips(self, sublattice_name=None):
         """
         Gets a possible canonical flip. A swap between two sites
+
         Args:
             sublattice_name (str): optional
                 If only considering one sublattice.
@@ -100,13 +105,14 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         if sublattice_name is None:
             sublattice_name = random.choice(list(self._sublattices.keys()))
 
-        ind1 = random.choice(self._sublattices[sublattice_name])
-        swap_options = [i for i in self._sublattices[sublattice_name]
-                        if self._occupancy[i] != self._occupancy[ind1]]
+        sites = self._sublattices[sublattice_name]['sites']
+        site1 = random.choice(sites)
+        swap_options = [i for i in sites
+                        if self._occupancy[i] != self._occupancy[site1]]
         if swap_options:
-            ind2 = random.choice(swap_options)
-            return ((ind1, self._occupancy[ind2]),
-                    (ind2, self._occupancy[ind1]))
+            site2 = random.choice(swap_options)
+            return ((site1, self._occupancy[site2]),
+                    (site2, self._occupancy[site1]))
         else:
             # inefficient, maybe re-call method?
             return tuple()

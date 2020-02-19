@@ -34,7 +34,7 @@ class ClusterExpansionProcessor(MSONable):
 
         # this can be used (maybe should) to check if a flip is valid
         expansion_bits = get_bits(cluster_expansion.expansion_structure)
-        self.unique_bits = np.unique(expansion_bits, axis=1)
+        self.unique_bits = tuple(set(tuple(bits)for bits in expansion_bits))
 
         self.bits = get_bits(self.structure)
         self.size = self.subspace.num_prims_from_matrix(supercell_matrix)
