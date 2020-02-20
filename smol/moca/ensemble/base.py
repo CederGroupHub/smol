@@ -1,5 +1,6 @@
 import random
 from copy import deepcopy
+import json
 import numpy as np
 from math import exp
 from abc import ABC, abstractmethod
@@ -144,11 +145,14 @@ class BaseEnsemble(ABC):
         self._step, self._ssteps = 0, 0
         self._data = []
 
-    def dump(self):
+    def dump(self, filename):
         """
-        Write data into a json file
+        Write data into a text file in json format, and clear data
         """
-        pass
+        with open(filename, 'a') as fp:
+            json.dump(self.data, fp)
+
+        self._data = []
 
     @abstractmethod
     def _attempt_step(self, sublattice_name):
