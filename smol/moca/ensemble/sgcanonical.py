@@ -48,14 +48,31 @@ class SGCanonicalEnsemble(CanonicalEnsemble):
 
         self.chem_pots = chemical_potentials
 
+    @property
+    def species_counts(self):
+        """
+        Counts of species. This excludes "static" species. Those with no
+        partial occupancy
+        """
+        counts = self._get_counts()
+        species_counts = {}
+
+        for name in self._sublattices.keys():
+            cons = {sp: count for sp, count
+                    in zip(self._sublattices[name]['bits'], counts[name])}
+            species_counts.update(cons)
+
+        return species_counts
+
     def _get_flips(self, sublattice_name=None):
         """
-        Gets a possible semi-grand canonical flip.
+        Gets a possible semi-grand canonical flip, and the corresponding
+        change in chemical potential
 
         Args:
             sublattice_name (str): optional
                 If only considering one sublattice.
-        Returns:
+        Returns: flip, delta_mu
             tuple
         """
         if sublattice_name is None:
@@ -65,13 +82,13 @@ class SGCanonicalEnsemble(CanonicalEnsemble):
 
         site = random.choice(sublattice['sites'])
         old_bit = self._occupancy[site]
-        choices = set(range(len(sublattice['bits']))) - old_bit
+        choices = set(range(len(sublattice['bits']))) - {old_bit}
         new_bit = random.choice(list(choices))
         old_species = sublattice['bits'][old_bit]
         new_species = sublattice['bits'][new_bit]
+        delta_mu = self.chem_pots[new_species] - self.chem_pots[old_species]
 
-        return (site, new_bit), (old_species, new_species)
-
+        return (site, new_bit), delta_mu
 
     def _attempt_step(self, sublattice_name=None):
         """
@@ -83,14 +100,11 @@ class SGCanonicalEnsemble(CanonicalEnsemble):
         Returns: Flip acceptance
             bool
         """
-
-        flip, species = self._get_flips(sublattice_name)
+        flip, delta_mu = self._get_flips(sublattice_name)
         delta_e = self.processor.compute_property_change(self._occupancy,
                                                          [flip])
 
-        delta_mu = self.chem_pots[species[1]] - self.chem_pots[species[0]]
-        delta_phi = delta_e - self.processor.size*delta_mu
-
+        delta_phi = delta_e - delta_mu
         accept = self._accept(delta_phi, self.beta)
 
         if accept:
@@ -101,6 +115,29 @@ class SGCanonicalEnsemble(CanonicalEnsemble):
                 self._min_occupancy = self._occupancy.copy()
 
         return accept
+
+    def _get_counts(self):
+        """
+        Get the total count of each species for current occupation
+
+        Returns: dict of sublattices with corresponding species concentrations
+            dict
+        """
+        counts = {}
+        for name, sublattice in self._sublattices.items():
+            occupancy = self._occupancy[sublattice['sites']]
+            counts[name] = [np.count_nonzero(occupancy == sp)
+                            for sp in range(len(sublattice['bits']))]
+        return counts
+
+    def _get_current_data(self):
+        """
+        Get ensemble specific data for current MC step
+        """
+        data = super()._get_current_data()
+        data['counts'] = self.species_counts
+
+        return data
 
     def as_dict(self) -> dict:
         """

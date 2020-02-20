@@ -1,5 +1,6 @@
 import random
 from copy import deepcopy
+import numpy as np
 from math import exp
 from abc import ABC, abstractmethod
 from pymatgen.transformations.standard_transformations import \
@@ -30,7 +31,7 @@ class BaseEnsemble(ABC):
                 dictionary with keys identifying the active sublattices
                 (i.e. "anion" or the bits in that sublattice
                 "['Li+', 'Vacancy']"), the values should be a dictionary
-                with two items {'sites': list with the site indices for all
+                with two items {'sites': array with the site indices for all
                 sites corresponding to that sublattice in the occupancy vector,
                 'bits': tuple of bits (allowed species) in sublattice}
                 All sites in a sublattice need to have the same bits/species
@@ -48,14 +49,16 @@ class BaseEnsemble(ABC):
             initial_occupancy = processor.subspace.occupancy_from_structure(struct, scmatrix)  # noqa
 
         if sublattices is None:
-            sublattices = {str(bits): {'sites': [i for i, b in
-                                                 enumerate(initial_occupancy)
-                                                 if b in bits],
-                                       'bits': bits}
+            sublattices = {str(bits):
+                           {'sites': np.array([i for i, b in
+                                               enumerate(initial_occupancy)
+                                               if b in bits]),
+                            'bits': bits}
                            for bits in processor.unique_bits}
 
         self.processor = processor
         self.save_interval = save_interval
+        self.num_atoms = len(initial_occupancy)
         self._init_occupancy = processor.encode_occupancy(initial_occupancy)
         self._sublattices = sublattices
         self._occupancy = self._init_occupancy.copy()
@@ -74,6 +77,10 @@ class BaseEnsemble(ABC):
     @property
     def occupancy(self):
         return self.processor.decode_occupancy(self._occupancy)
+
+    @property
+    def initial_occupancy(self):
+        return self.processor.decode_occupancy(self._init_occupancy)
 
     @property
     def energy(self):
@@ -128,6 +135,15 @@ class BaseEnsemble(ABC):
 
             self._save_data()
 
+    def reset(self):
+        """
+        Resets the ensemble by returning it to its initial state. This will
+        also clear the data.
+        """
+        self._occupancy = self._init_occupancy.copy()
+        self._step, self._ssteps = 0, 0
+        self._data = []
+
     def dump(self):
         """
         Write data into a json file
@@ -155,13 +171,14 @@ class BaseEnsemble(ABC):
     @staticmethod
     def _accept(delta_e, beta=1.0):
         """
-        Evaluate metropolis criteria
+        Evaluate the metropolis acceptance criterion
 
         Args:
             delta_e (float):
                 potential change
             beta (float):
                 1/kBT
+
         Returns:
             bool
         """
