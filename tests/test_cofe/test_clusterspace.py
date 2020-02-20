@@ -123,14 +123,39 @@ class TestClusterSubSpace(unittest.TestCase):
                   (0, 0, 0),
                   (0.5, 0, 0))
         s = Structure(s.lattice, species, coords)
-        self.assertRaises(ValueError, cs.remove_orbits, {2: [-1]})
-        self.assertRaises(ValueError, cs.remove_orbits, {1: [2]})
+        self.assertRaises(ValueError, cs.remove_orbits, [-1])
+        self.assertRaises(ValueError, cs.remove_orbits,
+                          [cs.n_orbits + 1])
+        self.assertRaises(ValueError, cs.remove_orbits, [0])
 
-        cs.remove_orbits({2: [0, 2, 4]})
+        cs.remove_orbits([3, 5, 7])
+
         expected = [1, 0.5, 0.25, 0, 0.5, 0.25, 0.125, 0, 0, 0, 0.25]
         self.assertEqual(len(cs.corr_from_structure(s)), 11)
         self.assertEqual(cs.n_orbits, 5)
         self.assertTrue(np.allclose(cs.corr_from_structure(s), expected))
+
+    def test_remove_bit_combos(self):
+        cs = ClusterSubspace.from_radii(self.structure, {2: 5})
+        s = self.structure.copy()
+        s.make_supercell([2, 1, 1])
+        species = ('Li', 'Ca', 'Li', 'Ca', 'Br', 'Br')
+        coords = ((0.125, 0.25, 0.25),
+                  (0.625, 0.25, 0.25),
+                  (0.375, 0.75, 0.75),
+                  (0.25, 0.5, 0.5),
+                  (0, 0, 0),
+                  (0.5, 0, 0))
+        s = Structure(s.lattice, species, coords)
+        remove = [9, 10, 18] #{4: [[0, 0], [0, 1]], 7: [[0, 0]]}
+        new_n_orderings = cs.n_bit_orderings - len(remove)
+
+        cs.remove_orbit_bit_combos(remove)
+        self.assertEqual(cs.n_bit_orderings, new_n_orderings)
+        expected = [1, 0.5, 0.25, 0, 0.5, 0, 0.375, 0, 0.0625,
+                    0, 0.25, 0.125, 0.125, 0, 0, 0.25, 0.125, 0, 0.1875]
+        self.assertTrue(np.allclose(cs.corr_from_structure(s), expected))
+        self.assertWarns(UserWarning, cs.remove_orbit_bit_combos, [9])
 
     def test_orbit_mappings_from_matrix(self):
         # check that all supercell_structure index groups map to the correct

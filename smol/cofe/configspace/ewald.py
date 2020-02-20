@@ -100,7 +100,7 @@ class EwaldTerm():
             # There seems to be an issue with SpacegroupAnalyzer such that
             # making a supercell can actually reduce the symmetry operations,
             # so we're going to group the ewald matrix by the equivalency in
-            # self.orbit_indices
+            # self.orbit_ids
             equiv_orb_inds = []
             ei = self.ewald_inds
             n_inds = len(self.ewald_matrix)

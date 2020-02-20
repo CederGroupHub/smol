@@ -9,8 +9,9 @@ space.
 """
 
 from __future__ import division
-import numpy as np
 from copy import deepcopy
+import warnings
+import numpy as np
 from monty.json import MSONable
 from pymatgen import Structure, PeriodicSite
 from pymatgen.analysis.structure_matcher import StructureMatcher,\
@@ -108,10 +109,7 @@ class ClusterSubspace(MSONable):
         self._external_terms = []
 
         # assign the cluster ids
-        n_orbs, n_bit_ords, n_clstr = self._assign_orbit_ids()
-        self.n_orbits = n_orbs
-        self.n_clusters = n_clstr
-        self.n_bit_orderings = n_bit_ords
+        self._assign_orbit_ids()
 
     @classmethod
     def from_radii(cls, structure, radii, ltol=0.2, stol=0.1, angle_tol=5,
@@ -394,7 +392,7 @@ class ClusterSubspace(MSONable):
                 p = [np.fromiter(map(lambda occu: orb.eval(bits, occu),
                                      c_occu[:]), dtype=np.float)
                      for bits in bit_list]
-                corr[orb.orb_b_id + i] = np.concatenate(p).mean()
+                corr[orb.bit_id + i] = np.concatenate(p).mean()
 
         return corr
 
@@ -411,39 +409,88 @@ class ClusterSubspace(MSONable):
         for orbit in self.iterorbits():
             orbit.transform_site_bases(new_basis, orthonormal)
 
-    def remove_orbits(self, orbit_indices):
+    def remove_orbits(self, orbit_ids):
         """
-        Removes orbits from cluster spaces. This is useful to prune a
-        ClusterExpansion by removing orbits with small associated ECI.
-        Note that this will remove a full orbit, which for the case of sites
-        with only two species is the same as removing a single correlation
-        vector element (only one ECI). For cases with sites having more than 2
-        species allowed per site there are more than one orbit functions (for
-        all the possible bit orderings) and removing an orbit will remove more
-        than one element in the correlation vector
+        Removes orbits from cluster spaces. It is helpful to print a
+        ClusterSubspace or ClusterExpansion to obtain orbit ids. After removing
+        orbits, orbit id and orbit bit id are re-assigned.
+
+        This is useful to prune a ClusterExpansion by removing orbits with
+        small associated ECI. Note that this will remove a full orbit, which
+        for the case of sites with only two species is the same as removing a
+        single correlation vector element (only one ECI). For cases with sites
+        having more than 2 species allowed per site there are more than one
+        orbit functions (for all the possible bit orderings) and removing an
+        orbit will remove more than one element in the correlation vector
+
         Args:
-            orbit_indices (dict):
-                dict of {size: [indices for orbits to be removed]}
+            orbit_ids (list):
+                list of orbit ids to be removed
         """
-        for key, orb_ids in orbit_indices.items():
-            if min(orb_ids) < 0:
-                raise ValueError('Index out of range. Negative indices are '
-                                 'not allowed.')
-            elif max(orb_ids) > len(self._orbits[key]) - 1:
-                raise ValueError('Index out of range. Total number of orbits '
-                                 f'of size {key} is: {len(self._orbits[key])}')
-            self._orbits[key] = [orbit for i, orbit
-                                 in enumerate(self._orbits[key])
-                                 if i not in orb_ids]
+
+        if min(orbit_ids) < 0:
+            raise ValueError('Index out of range. Negative inds are not '
+                             'allowed.')
+        elif min(orbit_ids) == 0:
+            raise ValueError('The empty orbit can not be removed.'
+                             'If you really want to do this remove the first'
+                             'column in your feature matrix before fitting.')
+        elif max(orbit_ids) > self.n_orbits - 1:
+            raise ValueError('Index out of range. Total number of orbits '
+                             f' is: {self.n_orbits}')
+
+        for size, orbits in self._orbits.items():
+            self._orbits[size] = [orbit for orbit in orbits
+                                  if orbit.id not in orbit_ids]
 
         # Re-assign ids
-        n_orbs, n_bit_ords, n_clstr = self._assign_orbit_ids()
-        self.n_orbits = n_orbs
-        self.n_clusters = n_clstr
-        self.n_bit_orderings = n_bit_ords
+        self._assign_orbit_ids()
 
         # Clear the cached supercell orbit mappings
         self._supercell_orb_inds = {}
+
+    # TODO change this to remove by bit_id, more simple when pruning
+    #  Remember to add the bit_id to the __str__ method as well....
+    def remove_orbit_bit_combos(self, orbit_bit_ids):
+        """
+        Removes a specific bit combo from an orbit. This allows more granular
+        removal of terms involved in fitting/evaluating a cluster expansion.
+        Similar to remove_orbits this is useful to prune a cluster expansion
+        and actually allows to remove a single term (ie one with small
+        associated ECI).
+        This procedure is perfectly well posed mathematically. The resultant
+        CE is still a valid function of configurations with all the necessary
+        symmetries from the underlying structure. Chemically however it is not
+        obvious what it means to remove certain combinations of an n-body
+        interaction term, and not the whole term itself, considering that each
+        bit combo does not represent a specific set of the n species, but the
+        specific set of n site functions.
+
+        Args:
+            orbit_bit_ids (list):
+                list of orbit bit ids to remove
+        """
+        empty_orbit_ids = []
+        bit_ids = np.array(orbit_bit_ids, dtype=int)
+
+        for orbit in self.iterorbits():
+            first_id = orbit.bit_id
+            last_id = orbit.bit_id + len(orbit.bit_combos)
+            to_remove = bit_ids[bit_ids >= first_id]
+            to_remove = to_remove[to_remove < last_id] - first_id
+            if to_remove.size > 0:
+                try:
+                    orbit.remove_bit_combos_by_inds(to_remove)
+                except RuntimeError:
+                    empty_orbit_ids.append(orbit.id)
+                    warnings.warn(f'All bit combos have been removed from '
+                                  f'orbit with id {orbit.id}. This orbit will '
+                                  f'be fully removed.')
+
+        if empty_orbit_ids:
+            self.remove_orbits(empty_orbit_ids)
+        else:
+            self._assign_orbit_ids()
 
     def copy(self):
         """Deep copy of instance"""
@@ -463,7 +510,9 @@ class ClusterSubspace(MSONable):
                 n_orbs, n_bit_ords, n_clstr = orbit.assign_ids(n_orbs,
                                                                n_bit_ords,
                                                                n_clstr)
-        return n_orbs, n_bit_ords, n_clstr
+        self.n_orbits = n_orbs
+        self.n_clusters = n_clstr
+        self.n_bit_orderings = n_bit_ords
 
     @staticmethod
     def _orbits_from_radii(expansion_struct, radii, symops, basis,
@@ -556,7 +605,7 @@ class ClusterSubspace(MSONable):
             inds = coord_list_mapping_pbc(tcoords.reshape((-1, 3)),
                                           supercell_fcoords,
                                           atol=SITE_TOL).reshape((tcs[0] * tcs[1], tcs[2]))  # noqa
-            # orbit_indices holds orbit, and 2d array of index groups that
+            # orbit_ids holds orbit, and 2d array of index groups that
             # correspond to the orbit
             # the 2d array may have some duplicates. This is due to
             # symetrically equivalent groups being matched to the same sites

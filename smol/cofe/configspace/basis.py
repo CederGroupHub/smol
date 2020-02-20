@@ -18,10 +18,6 @@ from numpy.polynomial.chebyshev import chebval
 from numpy.polynomial.legendre import legval
 
 
-class BasisNotImplemented(NotImplementedError):
-    pass
-
-
 class SiteBasis(ABC):
     """
     Class that represents the site function space using a specified basis.
@@ -279,7 +275,7 @@ def basis_factory(basis_name, *args, **kwargs):
         instance = basis_class(*args, **kwargs)
     except KeyError:
         available = _get_subclasses(SiteBasis)
-        raise BasisNotImplemented(f'{basis_name} is not implemented. '
+        raise NotImplementedError(f'{basis_name} is not implemented. '
                                   f'Choose one of {available}')
     return instance
 

@@ -140,6 +140,10 @@ class TestClusterExpansion(unittest.TestCase):
                                                normalized=True),
                                     np.dot(feature_matrix, eci)))
 
+    # TODO Write this test
+    def test_prune(self):
+        pass
+
     def test_constrain_dielectric(self):
         self.cs.add_external_term(EwaldTerm)
         ce = ClusterExpansion.from_structure_wrangler(self.sw,

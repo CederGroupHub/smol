@@ -13,28 +13,33 @@ from pymatgen import Structure
 from smol.cofe.configspace.clusterspace import ClusterSubspace
 from smol.cofe.wrangler import StructureWrangler
 from smol.cofe.regression.estimator import BaseEstimator, CVXEstimator
-from smol.exceptions import NotFittedError
 
 
 class ClusterExpansion(MSONable):
     """
-    Class for the ClusterExpansion proper needs a structure_wrangler to supply
-    fitting data and an estimator to provide the fitting method.
-    This is the class that is used to predict as well.
-    (i.e. to use in Monte Carlo and beyond)
+    This is the class you want to fit and use a cluster expansion. Look at
+    from_radii method for the easiest way to create an instance. If you want
+    more control consider using the from_structure_wrangler method. If you want
+    even more control then just use the constructor.
+
+    Class for the ClusterExpansion proper. This needs a ClusterSubspace and
+    a set of structures and properties. Also needs an estimator to provide the
+    fitting method. Unless previously computed ECI are provided instead.
+
+    The main methods to use this class are the fit method to fit the CE using
+    the provided structures (and or feature matrix) and the predict method to
+    predict the fitted property for new structures. The ClusterExpansion also
+    contains a few regression metrics methods to check the quality of the
+    fit.
+
+    This class is also used for Monte Carlo simulations to create a
+    ClusterExpansionProcessor.
     """
 
     def __init__(self, cluster_subspace, fit_structures, property_vector,
                  feature_matrix=None, supercell_matrices=None, weights=None,
                  ecis=None, estimator=None):
         """
-        Represents a cluster expansion. The main methods to use this class are
-        the fit method to fit the cluster expansion using the provided
-        structures (and or feature matrix) and the predict method to predict
-        the fitted property to new structures. The ClusterExpansion also
-        contains a few regression metrics methods to check the quality of the
-        fit.
-
         Args:
             cluster_subspace (ClusterSubspace):
                 A StructureWrangler object to provide the fitting data and
@@ -215,7 +220,7 @@ class ClusterExpansion(MSONable):
         if estimator is None and ecis is None:
             estimator = CVXEstimator()
 
-        return cls(structure_wrangler.cluster_subspace,
+        return cls(structure_wrangler.cluster_subspace.copy(),
                    fit_structures=structure_wrangler.refined_structures,
                    property_vector=structure_wrangler.normalized_properties,
                    feature_matrix=structure_wrangler.feature_matrix,
@@ -360,35 +365,33 @@ class ClusterExpansion(MSONable):
 
         return np.matmul(C.T, self.ecis)
 
-    # TODO implement this and add test.
     def prune(self, threshold=1E-5):
         """
-        Remove ECI's and orbits in the ClusterSubspaces that have ECI values
-        smaller than the given threshold
+        Remove ECI's (fitting parameters) and orbits in the ClusterSubspaces
+        that have ECI/parameter values smaller than the given threshold.
+
+        This will change the fits error metrics (ie RMSE) a little, but it
+        should not be much. If they change a lot then the threshold used is
+        probably to high and important ECI are being pruned.
+
+        This will not re-fit the ClusterExpansion. Note that if you re-fit
+        after pruning the ECI will probably change and hence also the fit
+        performance.
         """
-        pass
 
-    # TODO change this to  __str__
-    def print_ecis(self):
         if self.ecis is None:
-            raise NotFittedError('This ClusterExpansion has no ECIs available.'
-                                 ' If it has not been fitted yet, run '
-                                 'ClusterExpansion.fit to do so.'
-                                 'Otherwise you may have chosen an estimator '
-                                 'that does not provide them:'
-                                 f'{self.estimator}.')
+            raise RuntimeError('ClusterExpansion has no ECIs. Cannot prune.')
 
-        corr = np.zeros(self.subspace.n_bit_orderings)
-        corr[0] = 1  # zero point cluster
-        cluster_std = np.std(self.feature_matrix, axis=0)
-        for orbit in self.subspace.iterorbits():
-            print(orbit, len(orbit.bits) - 1, orbit.orb_b_id)
-            print('bit    eci    cluster_std    eci*cluster_std')
-            for i, bits in enumerate(orbit.bit_combos):
-                eci = self.ecis[orbit.orb_b_id + i]
-                c_std = cluster_std[orbit.orb_b_id + i]
-                print(bits, eci, c_std, eci * c_std)
-        print(self.ecis)
+        bit_ids = [i for i, eci in enumerate(self.ecis)
+                   if abs(eci) < threshold]
+        self.subspace.remove_orbit_bit_combos(bit_ids)
+
+        # Update necessary attributes
+        ids_compliment = list(set(range(len(self.ecis))) - set(bit_ids))
+        self.estimator.coef_ = self.estimator.coef_[ids_compliment]
+        self.ecis = self.estimator.coef_
+        self._feature_matrix = self.feature_matrix[:, ids_compliment]
+        self._rmse, self._mae, self._maxerr = None, None, None
 
     def __str__(self):
         corr = np.zeros(self.subspace.n_bit_orderings)
@@ -405,16 +408,17 @@ class ClusterExpansion(MSONable):
         s += f'        bit       eci\n'
         s += f'        {"[X]":<10}{ecis[0]:<4.3}\n'
         for orbit in self.subspace.iterorbits():
-            s += f'    [Orbit]  id: {orbit.orb_b_id:<3} size: ' \
+            s += f'    [Orbit]  id: {orbit.bit_id:<3} size: ' \
                  f'{len(orbit.bits):<3} radius: {orbit.radius:<4.3}\n'
-            s += f'        bit       eci     feature avg  feature std  ' \
+            s += f'        id    bit       eci     feature avg  feature std  '\
                  f'eci*std\n'
             for i, bits in enumerate(orbit.bit_combos):
-                eci = ecis[orbit.orb_b_id + i]
-                f_avg = feature_avg[orbit.orb_b_id + i]
-                f_std = feature_std[orbit.orb_b_id + i]
-                s += f'        {str(bits[0]):<10}{eci:<8.3f}{f_avg:<13.3f}' \
-                     f'{f_std:<13.3f}{eci*f_std:<.3f}\n'
+                eci = ecis[orbit.bit_id + i]
+                f_avg = feature_avg[orbit.bit_id + i]
+                f_std = feature_std[orbit.bit_id + i]
+                s += f'        {orbit.bit_id + i:<6}{str(bits[0]):<10}' \
+                     f'{eci:<8.3f}{f_avg:<13.3f}{f_std:<13.3f}' \
+                     f'{eci*f_std:<.3f}\n'
         return s
 
     # TODO save the estimator and parameters?

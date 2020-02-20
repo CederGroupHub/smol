@@ -40,6 +40,8 @@ class TestStructureWrangler(unittest.TestCase):
         len_filtered = len(self.sw.items)
         self.assertNotEqual(len_total, len_filtered)
 
+    # TODO these two are failing because of the change in kB, check why they
+    #  are off
     def test_weights_e_above_comp(self):
         self.sw._set_weights(self.sw.items, 'composition', temperature=1000)
         expected = np.array([0.85636844, 0.98816632, 1., 0.59208249, 1.,
