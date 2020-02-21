@@ -27,7 +27,8 @@ class BaseEnsemble(ABC):
                 interval of steps to save the current occupancy and property
             inital_occupancy (array):
                 Initial occupancy vector. If none is given then a random one
-                will be used.
+                will be used. The occupancy can be encoded according to the
+                processor or the species names directly.
             sublattices (dict): optional
                 dictionary with keys identifying the active sublattices
                 (i.e. "anion" or the bits in that sublattice
@@ -47,12 +48,15 @@ class BaseEnsemble(ABC):
             struct.make_supercell(scmatrix)
             odt = OrderDisorderedStructureTransformation()
             struct = odt.apply_transformation(struct)
-            initial_occupancy = processor.subspace.occupancy_from_structure(struct, scmatrix)  # noqa
+            initial_occupancy = processor.occupancy_from_structure(struct)
+        elif isinstance(initial_occupancy[0], str):
+            initial_occupancy = processor.encode_occupancy(initial_occupancy)
 
         if sublattices is None:
+            dec_occu = processor.decode_occupancy(initial_occupancy)
             sublattices = {str(bits):
                            {'sites': np.array([i for i, b in
-                                               enumerate(initial_occupancy)
+                                               enumerate(dec_occu)
                                                if b in bits]),
                             'bits': bits}
                            for bits in processor.unique_bits}
@@ -61,7 +65,7 @@ class BaseEnsemble(ABC):
         self.save_interval = save_interval
         self.num_atoms = len(initial_occupancy)
         self._sublattices = sublattices
-        self._init_occupancy = processor.encode_occupancy(initial_occupancy)
+        self._init_occupancy = initial_occupancy
         self._occupancy = self._init_occupancy.copy()
         self._energy = processor.compute_property(self._occupancy)
         self._step = 0

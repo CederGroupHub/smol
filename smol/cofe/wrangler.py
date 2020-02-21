@@ -221,7 +221,7 @@ class StructureWrangler(MSONable):
                 if verbose:
                     print(f'Unable to match {struct.composition} with energy '
                           f'{prop} to supercell_structure. Throwing out.\n'
-                          f'Error Message: {str(e)}.')
+                          f'Error Message: {str(e)}')
                 continue
             items.append({'structure': struct,
                           'refined_structure': refined_struct,

@@ -103,6 +103,23 @@ class ClusterExpansionProcessor(MSONable):
         occu = self.decode_occupancy(occu)
         return self.subspace.corr_from_occupancy(occu, self.orbit_inds)
 
+    def occupancy_from_structure(self, structure):
+        """
+        Gets the occupancy vector for a given structure. The structure must
+        strictly be a supercell of the prim according to the processor's
+        supercell matrix
+
+        Args:
+            structure (Structure):
+                A pymatgen structure (related to the cluster-expansion prim
+                by the supercell matrix passed to the processor)
+        Returns: encoded occupancy vector
+            list
+        """
+        occu = self.subspace.occupancy_from_structure(structure,
+                                                      self.supercell_matrix)
+        return self.encode_occupancy(occu)
+
     def structure_from_occupancy(self, occu):
         """
         Get pymatgen.Structure from an occupancy vector
