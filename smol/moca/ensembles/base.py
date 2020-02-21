@@ -60,8 +60,8 @@ class BaseEnsemble(ABC):
         self.processor = processor
         self.save_interval = save_interval
         self.num_atoms = len(initial_occupancy)
-        self._init_occupancy = processor.encode_occupancy(initial_occupancy)
         self._sublattices = sublattices
+        self._init_occupancy = processor.encode_occupancy(initial_occupancy)
         self._occupancy = self._init_occupancy.copy()
         self._energy = processor.compute_property(self._occupancy)
         self._step = 0
@@ -127,13 +127,11 @@ class BaseEnsemble(ABC):
             remaining = iterations - self.current_step + start_step
             no_interrupt = min(remaining, self.save_interval)
 
-            # get a list of flips for all the no_interrupt attempts
-
             for i in range(no_interrupt):
                 success = self._attempt_step(sublattice_name)
                 self._ssteps += success
-                self._step += 1
 
+            self._step += no_interrupt
             self._save_data()
 
     def reset(self):

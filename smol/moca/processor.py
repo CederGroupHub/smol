@@ -136,29 +136,24 @@ class ClusterExpansionProcessor(MSONable):
         occu = [bit[i] for i, bit in zip(enc_occu, self.bits)]
         return occu
 
-    def delta_corr(self, flips, occu,
-                   all_ewalds=np.zeros((0, 0, 0), dtype=np.float),
-                   ewald_inds=np.zeros((0, 0), dtype=np.int)):
+    def delta_corr(self, flips, occu):
         """
         Returns the *change* in the correlation vector from applying a list of
         flips. Flips is a list of (site, new_bit) tuples.
 
         Args:
-            flips:
-            occu:
-            all_ewalds:
-            ewald_inds:
-            debug:
+            flips (list):
+                list of tuples for (index of site, specie code to set)
+            occu (array):
+                encoded occupancy array
 
         Returns: change in correlation vector from flips
             array
         """
 
         new_occu = occu.copy()
-        delta_corr = np.zeros(self.n_orbit_functions + len(all_ewalds))
+        delta_corr = np.zeros(self.n_orbit_functions)
 
-        # this loop is candidate for optimization as well
-        # think of re-writing to just take the occu and the flips
         for f in flips:
             new_occu_f = new_occu.copy()
             new_occu_f[f[0]] = f[1]

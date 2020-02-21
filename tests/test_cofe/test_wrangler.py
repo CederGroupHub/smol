@@ -33,7 +33,8 @@ class TestStructureWrangler(unittest.TestCase):
         self.sw.update_features()
         self.assertEqual(shape[1] + 1, self.sw.feature_matrix.shape[1])
 
-    # TODO write a better test. One that actually checks the structures expected to be removed are removed
+    # TODO write a better test. One that actually checks the structures
+    #  expected to be removed are removed
     def test_filter_by_ewald(self):
         len_total = len(self.sw.items)
         self.sw.filter_by_ewald(1)
@@ -44,11 +45,11 @@ class TestStructureWrangler(unittest.TestCase):
     #  are off
     def test_weights_e_above_comp(self):
         self.sw._set_weights(self.sw.items, 'composition', temperature=1000)
-        expected = np.array([0.85636844, 0.98816632, 1., 0.59208249, 1.,
-                             0.92881806, 0.87907016, 0.94729116, 0.40489097, 0.82483607,
-                             0.81578342, 1., 0.89614741, 0.9289274, 0.81650053,
-                             0.6080106, 0.94848719, 0.92135005, 0.92326692, 0.83995068,
-                             1., 0.94663779, 1., 0.9414484, 1.])
+        expected = np.array([0.85637358, 0.98816678, 1., 0.59209449, 1.,
+                    0.92882071, 0.87907454, 0.94729315, 0.40490513, 0.82484222,
+                    0.81578984, 1., 0.89615121, 0.92893004, 0.81650693,
+                    0.6080223 , 0.94848913, 0.92135297, 0.92326977, 0.83995635,
+                    1., 0.94663979, 1., 0.9414506 , 1.])
         self.assertTrue(np.allclose(expected, self.sw.weights))
         sw = StructureWrangler(self.cs, ['composition', {'temperature': 1000}])
         sw.add_data(lno_data)
@@ -56,11 +57,11 @@ class TestStructureWrangler(unittest.TestCase):
 
     def test_weights_e_above_hull(self):
         self.sw._set_weights(self.sw.items, 'hull', temperature=1000)
-        expected = np.array([0.85636844, 0.98816632, 1., 0.56915087, 0.96126956,
-                             0.89284453, 0.84502339, 0.91060216, 0.40489097, 0.82483607,
-                             0.81578342, 1., 0.89614741, 0.9289274, 0.81650053,
-                             0.58818044, 0.91755243, 0.89130037, 0.89315472, 0.81255583,
-                             0.96738516, 0.91576335, 1., 0.9414484, 1.])
+        expected = np.array([0.85637358, 0.98816678, 1., 0.56916328, 0.96127103,
+           0.89284844, 0.84502889, 0.91060546, 0.40490513, 0.82484222,
+           0.81578984, 1., 0.89615121, 0.92893004, 0.81650693,
+           0.58819251, 0.91755548, 0.89130433, 0.89315862, 0.81256235,
+           0.9673864 , 0.91576647, 1., 0.9414506 , 1])
         self.assertTrue(np.allclose(expected, self.sw.weights))
         sw = StructureWrangler(self.cs, ['hull', {'temperature': 1000}])
         sw.add_data(lno_data)

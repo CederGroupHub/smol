@@ -28,6 +28,7 @@ class TestClusterExpansionProcessor(unittest.TestCase):
         test_struct.replace_species(ro)
         order = OrderDisorderedStructureTransformation(algo=2)
         test_struct = order.apply_transformation(test_struct)
+        self.test_struct = test_struct
         self.test_occu = self.ce.subspace.occupancy_from_structure(test_struct)
         self.enc_occu = self.pr.encode_occupancy(self.test_occu)
 
@@ -57,8 +58,16 @@ class TestClusterExpansionProcessor(unittest.TestCase):
         corr_i = self.pr.compute_correlation(self.enc_occu)
         self.assertTrue(np.allclose(dcorr, corr_f - corr_i))
 
+    # TODO this is failing structures are not the same getting the
+    #  occu_from_structure in csubspace can also be the cause of the problem
     def test_structure_from_occupancy(self):
-        pass
+        test_struct = self.pr.structure_from_occupancy(self.enc_occu)
+        self.assertTrue(test_struct == self.test_struct)
 
     def test_msonable(self):
-        pass
+        d = self.pr.as_dict()
+        pr = ClusterExpansionProcessor.from_dict(d)
+        self.assertTrue(self.pr.bits == pr.bits)
+        self.assertTrue(self.pr.structure == pr.structure)
+        self.assertEqual(self.pr.compute_property(self.enc_occu),
+                         pr.compute_property(self.enc_occu))

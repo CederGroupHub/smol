@@ -323,7 +323,7 @@ class ClusterSubspace(MSONable):
                                           f' unrecognized specie {sp}. ')
             occu.append(sp)
 
-        return tuple(occu)
+        return occu
 
     def scmatrix_from_structure(self, structure):
         """

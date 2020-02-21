@@ -77,7 +77,6 @@ def delta_ewald_corr_single_flip(np.int_t[:] final, np.int_t[:] init,
     cdef np.int_t[:, :] inds
     out = np.zeros(len(ewald_matrices))
     cdef np.float_t[:] o_view = out
-    # cdef np.float_t[:, :] m
     cdef double r, o
 
     # values of -1 are vacancies and hence don't have ewald indices
