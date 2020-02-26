@@ -50,6 +50,7 @@ class SiteBasis(ABC):
             self._domain = species
 
         self._functions = None
+        self._func_arr = None
 
     @property
     @abstractmethod
@@ -59,6 +60,14 @@ class SiteBasis(ABC):
         of basis functions
         """
         pass
+
+    @property
+    def function_array(self):
+        if self._func_arr is None:
+            self._func_arr = np.array([[f(self.encode(s))
+                                        for s in self.species]
+                                       for f in self._functions])
+        return self._func_arr
 
     @property
     def species(self):
@@ -173,6 +182,8 @@ class SiteBasis(ABC):
             g = g_factory(f, deepcopy(on_funs))
             on_funs.append(g)
         on_funs.pop(0)  # remove phi_0 = 1, since it is handled implicitly
+
+        self._func_arr = None # reset this
         self._functions = on_funs
 
 

@@ -66,6 +66,7 @@ class Orbit(MSONable):
         self._equiv = None
         self._symops = None
         self._bit_combos = None
+        self._basis_arrs = None
 
         # Create basecluster
         self.basecluster = Cluster(sites, lattice)
@@ -152,6 +153,16 @@ class Orbit(MSONable):
         return len(self.clusters)
 
     @property
+    def basis_arrays(self):
+        """
+        A tuple of all site function arrays for each site in orbit
+        """
+        if self._basis_arrs is None:
+            self._basis_arrs = tuple(sb.function_array
+                                     for sb in self.site_bases)
+        return self._basis_arrs
+
+    @property
     def basis_orthogonal(self):
         """ Test if the Orbit bases are orthogonal """
         return all(basis.is_orthogonal for basis in self.site_bases)
@@ -210,7 +221,8 @@ class Orbit(MSONable):
         """
         p = 1
         for i, (b, sp) in enumerate(zip(bits, species)):
-            p *= self.site_bases[i].eval(b, sp)
+            j = self.site_bases[i].species.index(sp)
+            p *= self.basis_arrays[i][b, j]
         return p
 
     def transform_site_bases(self, basis_name, orthonormal=False):
@@ -231,6 +243,7 @@ class Orbit(MSONable):
             new_bases.append(new_basis)
 
         self.site_bases = tuple(new_bases)
+        self._basis_arrs = None
 
     def assign_ids(self, orbit_id, orbit_bit_id, start_cluster_id):
         """
