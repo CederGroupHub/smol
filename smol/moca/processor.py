@@ -97,11 +97,18 @@ class ClusterExpansionProcessor(MSONable):
         Returns: Correlation vector
             array
         """
-        # This can be optimized by writing a separate corr_from_occu function
-        # that used only the encoded occu vector and has an optimized orbit
-        # eval loop (ie maybe some JIT or something like that...)
-        occu = self.decode_occupancy(occu)
-        return self.subspace.corr_from_occupancy(occu, self.orbit_inds)
+
+        # TODO this will probably fail for sites with different number of
+        #  species from indexing with different sized arrays....
+        corr = np.zeros(self.n_orbit_functions)
+        corr[0] = 1  # zero point cluster
+        for orb, inds in self.orbit_inds:
+            c_occu = occu[inds]
+            for i, bit_list in enumerate(orb.bit_combos):
+                p = np.prod(orb.bases_array[:, bit_list, c_occu], axis=-1)
+                corr[orb.bit_id + i] = p.mean()
+
+        return corr
 
     def occupancy_from_structure(self, structure):
         """

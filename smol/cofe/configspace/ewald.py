@@ -139,8 +139,6 @@ class EwaldTerm():
         return b_inds[:-1]
 
     def _get_ewald_eci(self, occu):
-        # Change occu to list of integers instead of species strings
-        occu = np.array([bit.index(sp) for bit, sp in zip(self.bits, occu)])
         inds = self._get_ewald_occu(occu)
         ecis = [np.sum(self.ewald_matrix[inds, :][:, inds])]  # noqa
 

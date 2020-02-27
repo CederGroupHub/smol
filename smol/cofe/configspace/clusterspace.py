@@ -229,10 +229,11 @@ class ClusterSubspace(MSONable):
         if scmatrix is None:
             scmatrix = self.scmatrix_from_structure(structure)
 
-        occu = self.occupancy_from_structure(structure, scmatrix)
-        orb_inds = self.supercell_orbit_mappings(scmatrix)
+        occu = self.occupancy_from_structure(structure, scmatrix, encode=True)
+        occu = np.array(occu, dtype=int)
 
-        corr = self.corr_from_occupancy(occu, orb_inds)
+        orb_inds = self.supercell_orbit_mappings(scmatrix)
+        corr = self.corr_from_encoding(occu, orb_inds)
 
         supercell_size = self.num_prims_from_matrix(scmatrix)
 
@@ -282,7 +283,7 @@ class ClusterSubspace(MSONable):
                 sites.append(site)
         return Structure.from_sites(sites)
 
-    def occupancy_from_structure(self, structure, scmatrix=None):
+    def occupancy_from_structure(self, structure, scmatrix=None, encode=False):
         """
         Returns a tuple of occupancies of each site in a the structure in the
         appropriate order set implicitly by the scmatrix that is found
@@ -296,8 +297,12 @@ class ClusterSubspace(MSONable):
             scmatrix (array): optional
                 super cell matrix relating the given structure and the
                 primitive structure
+            encode (bool): oprtional
+                If true the occupancy vector will have the index of the species
+                in the expansion structure bits, rather than the species name
 
-        Returns: occupancy vector for structure (species names ie ['Li+', ...]
+        Returns: occupancy vector for structure, species names ie ['Li+', ...]
+                 If encoded then [0, ...]
             array
         """
         if scmatrix is None:
@@ -321,7 +326,10 @@ class ClusterSubspace(MSONable):
             if sp not in bit:
                 raise StructureMatchError(f'A site in given structure has an'
                                           f' unrecognized specie {sp}. ')
-            occu.append(sp)
+            if encode:
+                occu.append(bit.index(sp))
+            else:
+                occu.append(sp)
 
         return occu
 
@@ -370,15 +378,14 @@ class ClusterSubspace(MSONable):
 
         return indices
 
-    def corr_from_occupancy(self, occu, orbit_indices):
+    def corr_from_encoding(self, enc_occu, orbit_indices):
         """
-        Each entry in the correlation vector corresponds to a particular
-        symmetrically distinct bit ordering
+        Correlation vector from encoded occupancy vector
 
         Args:
-            occu (array):
-                occupancy vector
-            orbit_indices (list(orbits, indices)):
+            enc_occu (array):
+                array of ints encoding occupancy
+            orbit_indices: (list(orbits, indices)):
                 list of tuples of orbits and their corresponding indices. This
                 should be obtained using supercell_orbit_mappings
 
@@ -387,9 +394,8 @@ class ClusterSubspace(MSONable):
         """
         corr = np.zeros(self.n_bit_orderings)
         corr[0] = 1  # zero point cluster
-        occu = np.array(occu)
         for orb, inds in orbit_indices:
-            c_occu = occu[inds]
+            c_occu = enc_occu[inds]
             for i, bit_list in enumerate(orb.bit_combos):
                 p = [np.fromiter(map(lambda occu: orb.eval(bits, occu),
                                      c_occu[:]), dtype=np.float)

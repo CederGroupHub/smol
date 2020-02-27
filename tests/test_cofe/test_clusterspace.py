@@ -6,7 +6,7 @@ from pymatgen import Lattice, Structure
 from pymatgen.util.coord import is_coord_subset_pbc
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe import ClusterSubspace
-from smol.cofe.configspace.utils import SITE_TOL
+from smol.cofe.configspace.utils import SITE_TOL, get_bits
 
 class TestClusterSubSpace(unittest.TestCase):
     def setUp(self) -> None:
@@ -18,6 +18,7 @@ class TestClusterSubSpace(unittest.TestCase):
         sf = SpacegroupAnalyzer(self.structure)
         self.symops = sf.get_symmetry_operations()
         self.cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5})
+        self.bits = get_bits(self.structure)
 
     def test_numbers(self):
         # Test the total generated orbits, orderings and clusters are as expected.
@@ -203,37 +204,47 @@ class TestClusterSubSpace(unittest.TestCase):
         b = cs.corr_from_structure(s)
         self.assertTrue(np.allclose(a, b))
 
+    def _encode_occu(self, occu, bits):
+        return np.array([bit.index(sp) for sp, bit in zip(occu, bits)])
+
     def test_vs_CASM_pairs(self):
         species = [{'Li':0.1}] * 3 + ['Br']
         coords = ((0.25, 0.25, 0.25), (0.75, 0.75, 0.75),
                   (0.5, 0.5, 0.5),  (0, 0, 0))
         structure = Structure(self.lattice, species, coords)
         cs = ClusterSubspace.from_radii(structure, {2: 6})
+        bits = get_bits(structure)
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
         orb_inds = cs.supercell_orbit_mappings(m)
 
         # last two clusters are switched from CASM output (and using occupancy basis)
         # all_li (ignore casm point term)
-        corr = cs.corr_from_occupancy(['Li', 'Li', 'Li'], orb_inds)
+        occu = self._encode_occu(['Li', 'Li', 'Li'], bits)
+        corr = cs.corr_from_encoding(occu, orb_inds)
         self.assertTrue(np.allclose(corr, np.array([1]*12)))
         # all_vacancy
-        corr = cs.corr_from_occupancy(['Vacancy', 'Vacancy', 'Vacancy'], orb_inds)
+        occu = self._encode_occu(['Vacancy', 'Vacancy', 'Vacancy'], bits)
+        corr = cs.corr_from_encoding(occu, orb_inds)
         self.assertTrue(np.allclose(corr,
                                     np.array([1]+[0]*11)))
         # octahedral
-        corr = cs.corr_from_occupancy(['Vacancy', 'Vacancy', 'Li'], orb_inds)
+        occu = self._encode_occu(['Vacancy', 'Vacancy', 'Li'], bits)
+        corr = cs.corr_from_encoding(occu, orb_inds)
         self.assertTrue(np.allclose(corr,
                                     [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1]))
         # tetrahedral
-        corr = cs.corr_from_occupancy(['Li', 'Li', 'Vacancy'], orb_inds)
+        occu = self._encode_occu(['Li', 'Li', 'Vacancy'], bits)
+        corr = cs.corr_from_encoding(occu, orb_inds)
         self.assertTrue(np.allclose(corr,
                                     [1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0]))
         # mixed
-        corr = cs.corr_from_occupancy(['Li', 'Vacancy', 'Li'], orb_inds)
+        occu = self._encode_occu(['Li', 'Vacancy', 'Li'], bits)
+        corr = cs.corr_from_encoding(occu, orb_inds)
         self.assertTrue(np.allclose(corr,
                                     [1, 0.5, 1, 0.5, 0, 0.5, 1, 0.5, 0, 0, 0.5, 1]))
         # single_tet
-        corr = cs.corr_from_occupancy(['Li', 'Vacancy', 'Vacancy'], orb_inds)
+        occu = self._encode_occu(['Li', 'Vacancy', 'Vacancy'], bits)
+        corr = cs.corr_from_encoding(occu, orb_inds)
         self.assertTrue(np.allclose(corr,
                                     [1, 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.5, 0]))
 
@@ -246,32 +257,38 @@ class TestClusterSubSpace(unittest.TestCase):
                   (0.5, 0.5, 0.5), (0, 0, 0))
         structure = Structure(self.lattice, species, coords)
         cs = ClusterSubspace.from_radii(structure, {2: 6, 3: 4.5})
+        bits = get_bits(structure)
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
         orb_inds = cs.supercell_orbit_mappings(m)
 
         # last two pair terms are switched from CASM output (and using occupancy basis)
         # all_vacancy (ignore casm point term)
-        corr = cs.corr_from_occupancy(['Vacancy', 'Vacancy', 'Vacancy'],
-                                      orb_inds)
+        occu = self._encode_occu(['Vacancy', 'Vacancy', 'Vacancy'], bits)
+        corr = cs.corr_from_encoding(occu, orb_inds)
         self.assertTrue(np.allclose(corr, np.array([1] + [0] * 18)))
         # all_li
-        corr = cs.corr_from_occupancy(['Li', 'Li', 'Li'], orb_inds)
+        occu = self._encode_occu(['Li', 'Li', 'Li'], bits)
+        corr = cs.corr_from_encoding(occu, orb_inds)
         self.assertTrue(np.allclose(corr, np.array([1] * 19)))
         # octahedral
-        corr = cs.corr_from_occupancy(['Vacancy', 'Vacancy', 'Li'], orb_inds)
+        occu = self._encode_occu(['Vacancy', 'Vacancy', 'Li'], bits)
+        corr = cs.corr_from_encoding(occu, orb_inds)
         self.assertTrue(np.allclose(corr,
                                     [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1]))
 
         # tetrahedral
-        corr = cs.corr_from_occupancy(['Li', 'Li', 'Vacancy'], orb_inds)
+        occu = self._encode_occu(['Li', 'Li', 'Vacancy'], bits)
+        corr = cs.corr_from_encoding(occu, orb_inds)
         self.assertTrue(np.allclose(corr,
                                     [1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0]))
         # mixed
-        corr = cs.corr_from_occupancy(['Li', 'Vacancy', 'Li'], orb_inds)
+        occu = self._encode_occu(['Li', 'Vacancy', 'Li'], bits)
+        corr = cs.corr_from_encoding(occu, orb_inds)
         self.assertTrue(np.allclose(corr,
                                     [1, 0.5, 1, 0.5, 0, 0.5, 1, 0.5, 0, 0, 0.5, 1, 0, 0, 0.5, 0.5, 0.5, 0.5, 1]))
         # single_tet
-        corr = cs.corr_from_occupancy(['Li', 'Vacancy', 'Vacancy'], orb_inds)
+        occu = self._encode_occu(['Li', 'Vacancy', 'Vacancy'], bits)
+        corr = cs.corr_from_encoding(occu, orb_inds)
         self.assertTrue(np.allclose(corr,
                                     [1, 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0, 0.5, 0.5, 0]))
 
@@ -281,11 +298,13 @@ class TestClusterSubSpace(unittest.TestCase):
         orb_inds = cs.supercell_orbit_mappings(m)
 
         # mixed
-        corr = cs.corr_from_occupancy(['Vacancy', 'Li', 'Li'], orb_inds)
+        occu = self._encode_occu(['Vacancy', 'Li', 'Li'], self.bits)
+        corr = cs.corr_from_encoding(occu, orb_inds)
         self.assertTrue(np.allclose(corr,
                                     [1, 0.5, 0, 1, 0, 0.5, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 1, 0, 0, 0.5, 0, 0, 0]))
         # Li_tet_ca_oct
-        corr = cs.corr_from_occupancy(['Vacancy', 'Li', 'Ca'], orb_inds)
+        occu = self._encode_occu(['Vacancy', 'Li', 'Ca'], self.bits)
+        corr = cs.corr_from_encoding(occu, orb_inds)
         self.assertTrue(np.allclose(corr,
                                     [1, 0.5, 0, 0, 1, 0, 0.5, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, 0.5, 0, 0]))
 

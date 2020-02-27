@@ -67,6 +67,7 @@ class Orbit(MSONable):
         self._symops = None
         self._bit_combos = None
         self._basis_arrs = None
+        self._bases_arr = None
 
         # Create basecluster
         self.basecluster = Cluster(sites, lattice)
@@ -158,9 +159,25 @@ class Orbit(MSONable):
         A tuple of all site function arrays for each site in orbit
         """
         if self._basis_arrs is None:
-            self._basis_arrs = tuple(sb.function_array
-                                     for sb in self.site_bases)
+            self._basis_arrs = tuple(sb.function_array for sb in self.site_bases)
         return self._basis_arrs
+
+    @property
+    def bases_array(self):
+        """
+        3D array with all basis arrays. Since each basis array can be of
+        different dimension the 3D array is the size of the largest array.
+        Smaller arrays are padded with ones. Doing this allows using numpy
+        fancy indexing which can be faster than for loops?
+        """
+        if self._bases_arr is None or self._basis_arrs is None:
+            max_dim = max(len(fa) for fa in self.basis_arrays)
+            self._bases_arr = np.ones((len(self.basis_arrays),
+                                        max_dim, max_dim + 1))
+            for i, fa in enumerate(self.basis_arrays):
+                j, k = fa.shape
+                self._bases_arr[i,:j,:k] = fa
+        return self._bases_arr
 
     @property
     def basis_orthogonal(self):
@@ -205,7 +222,7 @@ class Orbit(MSONable):
             raise RuntimeError(f'All bit_combos have been removed from orbit '
                                f'with id {self.id}')
 
-    def eval(self, bits, species):
+    def eval(self, bits, species_encoding):
         """
         Evaluates a cluster function defined for this orbit
 
@@ -213,16 +230,17 @@ class Orbit(MSONable):
             bits (list):
                 list of the cluster bits specifying which site basis function
                 to evaluate for the corresponding site.
-            species (list):
-                list of lists of species names for each site.
+            species_encoding (list):
+                list of lists of species encoding for each site. (index of
+                species in species bits)
 
         Returns: orbit function evaluated for the corresponding structure
             float
         """
         p = 1
-        for i, (b, sp) in enumerate(zip(bits, species)):
-            j = self.site_bases[i].species.index(sp)
-            p *= self.basis_arrays[i][b, j]
+        for i, (b, sp) in enumerate(zip(bits, species_encoding)):
+            p *= self.basis_arrays[i][b, sp]
+
         return p
 
     def transform_site_bases(self, basis_name, orthonormal=False):
@@ -243,7 +261,7 @@ class Orbit(MSONable):
             new_bases.append(new_basis)
 
         self.site_bases = tuple(new_bases)
-        self._basis_arrs = None
+        self._basis_arrs, self._bases_arr = None, None
 
     def assign_ids(self, orbit_id, orbit_bit_id, start_cluster_id):
         """

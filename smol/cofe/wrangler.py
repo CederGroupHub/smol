@@ -303,7 +303,9 @@ class StructureWrangler(MSONable):
             ewald_corr = []
             for struct in self.structures:
                 scmatrix = self._subspace.scmatrix_from_structure(struct)
-                occu = self._subspace.occupancy_from_structure(struct, scmatrix)  # noqa
+                occu = self._subspace.occupancy_from_structure(struct,
+                                                               scmatrix,
+                                                               encode=True)
                 supercell = self._subspace.structure.copy()
                 supercell.make_supercell(scmatrix)
                 orb_inds = self._subspace.supercell_orbit_mappings(scmatrix)
