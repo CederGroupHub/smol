@@ -98,16 +98,14 @@ class ClusterExpansionProcessor(MSONable):
             array
         """
 
-        # TODO this will probably fail for sites with different number of
-        #  species from indexing with different sized arrays....
         corr = np.zeros(self.n_orbit_functions)
         corr[0] = 1  # zero point cluster
         for orb, inds in self.orbit_inds:
             c_occu = occu[inds]
-            for i, bit_list in enumerate(orb.bit_combos):
-                p = np.prod(orb.bases_array[:, bit_list, c_occu], axis=-1)
-                corr[orb.bit_id + i] = p.mean()
-
+            for i, bits in enumerate(orb.bit_combos):
+                p = [np.prod(orb.bases_array[:, bit, c_occu], axis=(0, -1))
+                     for bit in bits]
+                corr[i + orb.bit_id] = np.concatenate(p).mean()
         return corr
 
     def occupancy_from_structure(self, structure):

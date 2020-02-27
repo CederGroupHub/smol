@@ -176,7 +176,7 @@ class Orbit(MSONable):
                                         max_dim, max_dim + 1))
             for i, fa in enumerate(self.basis_arrays):
                 j, k = fa.shape
-                self._bases_arr[i,:j,:k] = fa
+                self._bases_arr[i, :j, :k] = fa
         return self._bases_arr
 
     @property

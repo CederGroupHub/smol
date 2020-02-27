@@ -104,3 +104,20 @@ def delta_ewald_corr_single_flip(np.int_t[:] final, np.int_t[:] init,
         l += 1
 
     return out
+
+'''
+corr = np.zeros(self.n_orbit_functions)
+corr[0] = 1  # zero point cluster
+for orb, inds in self.orbit_inds:
+    c_occu = occu[inds]
+    for i, bits in enumerate(orb.bit_combos):
+        p = []
+        for bit in bits:
+            for oc in c_occu:
+                p1 = 1
+                for j, (b, sp) in enumerate(zip(bit, oc)):
+                    p1 *= orb.bases_array[j, b, sp]
+                p.append(p1)
+        corr[i + orb.bit_id] = np.mean(p)
+return corr
+'''
