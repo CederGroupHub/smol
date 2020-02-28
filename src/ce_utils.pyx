@@ -5,7 +5,6 @@ Utilities for manipulating coordinates or list of coordinates, under periodic
 boundary conditions or otherwise.
 """
 import numpy as np
-
 cimport numpy as np
 cimport cython
 
@@ -32,7 +31,7 @@ def delta_corr_single_flip(np.int_t[:] final, np.int_t[:] init,
     cdef np.float_t[:] o_view = out
     cdef double r, o
 
-    for sc_bits, sc_b_id, inds, r in clusters:
+    for sc_bits, sc_b_id, inds, r, _ in clusters:
         l = sc_b_id
         I = inds.shape[0] # cluster index
         K = inds.shape[1] # index within cluster
@@ -58,6 +57,51 @@ def delta_corr_single_flip(np.int_t[:] final, np.int_t[:] init,
                         o -= 1
 
             o_view[l] = o / r / (I * J)
+            l += 1
+
+    return out
+
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.initializedcheck(False)
+@cython.cdivision(True)
+def single_site_corr(np.int_t[:] occu_f,
+                     np.int_t[:] occu_i,
+                     int n_bit_orderings,
+                     clusters):
+    """
+    Counts number of rows of a that are present in b
+    Args:
+        final, init: inital and final occupancies
+        clusters: List of clusters that the flip can affect
+    Returns:
+        delta_corr vector from a single flip
+    """
+
+    cdef int i, j, k, I, J, K, l, id
+    cdef double p, pi, pf, r
+    cdef np.int_t[:, :] bits, inds
+    cdef np.float_t[:, :, :] bases
+    out = np.zeros(n_bit_orderings)
+    cdef np.float_t[:] o_view = out
+
+    for bit_combos, id, inds, r, bases in clusters:
+        l = id
+        I = inds.shape[0] # cluster index
+        K = inds.shape[1] # index within cluster
+        for bits in bit_combos:
+            J = bits.shape[0]
+            p = 0
+            for i in range(I):
+                for j in range(J):
+                    pf = 1
+                    pi = 1
+                    for k in range(K):
+                        pf *= bases[k, bits[j, k], occu_f[inds[i, k]]]
+                        pi *= bases[k, bits[j, k], occu_i[inds[i, k]]]
+                    p += (pf - pi)
+            o_view[l] = p / r / I*J
             l += 1
 
     return out
@@ -104,20 +148,3 @@ def delta_ewald_corr_single_flip(np.int_t[:] final, np.int_t[:] init,
         l += 1
 
     return out
-
-'''
-corr = np.zeros(self.n_orbit_functions)
-corr[0] = 1  # zero point cluster
-for orb, inds in self.orbit_inds:
-    c_occu = occu[inds]
-    for i, bits in enumerate(orb.bit_combos):
-        p = []
-        for bit in bits:
-            for oc in c_occu:
-                p1 = 1
-                for j, (b, sp) in enumerate(zip(bit, oc)):
-                    p1 *= orb.bases_array[j, b, sp]
-                p.append(p1)
-        corr[i + orb.bit_id] = np.mean(p)
-return corr
-'''

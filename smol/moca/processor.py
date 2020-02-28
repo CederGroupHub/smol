@@ -10,7 +10,7 @@ from monty.json import MSONable
 from pymatgen import Structure, PeriodicSite
 from smol.cofe import ClusterExpansion
 from smol.cofe.configspace.utils import get_bits
-from src.ce_utils import delta_corr_single_flip
+from src.ce_utils import delta_corr_single_flip, single_site_corr
 
 
 class ClusterExpansionProcessor(MSONable):
@@ -55,7 +55,8 @@ class ClusterExpansionProcessor(MSONable):
                 ratio = len(inds) / np.sum(in_inds)
                 self.orbits_by_sites[site_ind].append((orbit.bit_combos,
                                                        orbit.bit_id,
-                                                       inds[in_inds], ratio))
+                                                       inds[in_inds], ratio,
+                                                       orbit.bases_array))
 
     def compute_property(self, occu):
         """
@@ -158,7 +159,7 @@ class ClusterExpansionProcessor(MSONable):
         occu = [bit[i] for i, bit in zip(enc_occu, self.bits)]
         return occu
 
-    def delta_corr(self, flips, occu):
+    def delta_corr_old(self, flips, occu):
         """
         Returns the *change* in the correlation vector from applying a list of
         flips. Flips is a list of (site, new_bit) tuples.
@@ -183,6 +184,20 @@ class ClusterExpansionProcessor(MSONable):
                                                  self.n_orbit_functions,
                                                  self.orbits_by_sites[f[0]])
             new_occu = new_occu_f
+
+        return delta_corr
+
+    def delta_corr(self, flips, occu):
+        occu_i = occu.copy()
+        delta_corr = np.zeros(self.n_orbit_functions)
+
+        for f in flips:
+            occu_f = occu_i.copy()
+            occu_f[f[0]] = f[1]
+            delta_corr += single_site_corr(occu_f, occu_i,
+                                           self.n_orbit_functions,
+                                           self.orbits_by_sites[f[0]])
+            occu_i = occu_f
 
         return delta_corr
 

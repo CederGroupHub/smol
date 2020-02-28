@@ -10,12 +10,14 @@ class TestClusterExpansionProcessor(unittest.TestCase):
     def setUp(self) -> None:
         self.ce = ClusterExpansion.from_radii(lno_prim, {2: 5, 3: 4.1},
                                              ltol=0.15, stol=0.2,
-                                             angle_tol=5, supercell_size='O2-',
+                                             angle_tol=5,
+                                             supercell_size='O2-',
+                                             basis='sinusoid',
                                              data=lno_data)
         self.ce.fit()
         scmatrix = np.array([[3, 0, 0],
-                              [0, 2, 0],
-                              [0, 0, 1]])
+                             [0, 2, 0],
+                             [0, 0, 1]])
         self.pr = ClusterExpansionProcessor(self.ce, scmatrix)
         # create a test structure
         test_struct = lno_prim.copy()
@@ -34,10 +36,12 @@ class TestClusterExpansionProcessor(unittest.TestCase):
         self.enc_occu = self.pr.occupancy_from_structure(test_struct)
 
     def test_compute_property(self):
-        pass
+        self.assertTrue(np.isclose(self.ce.predict(self.test_struct),
+                         self.pr.compute_property(self.enc_occu)))
 
     def test_compute_correlation(self):
-        pass
+        self.assertTrue(np.allclose(self.ce.subspace.corr_from_structure(self.test_struct),
+                                    self.pr.compute_correlation(self.enc_occu)))
 
     def test_compute_property_change(self):
         flips = [(10, 1), (6, 0)]
