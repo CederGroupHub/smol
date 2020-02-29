@@ -5,6 +5,7 @@ Utilities for manipulating coordinates or list of coordinates, under periodic
 boundary conditions or otherwise.
 """
 import numpy as np
+from cython.parallel import prange, parallel
 cimport numpy as np
 cimport cython
 
@@ -13,84 +14,33 @@ cimport cython
 @cython.wraparound(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
-def delta_corr_single_flip(np.int_t[:] final, np.int_t[:] init,
-                           int n_bit_orderings, clusters):
-    """
-    Counts number of rows of a that are present in b
-    Args:
-        final, init: inital and final occupancies
-        clusters: List of clusters that the flip can affect
-    Returns:
-        delta_corr vector from a single flip
-    """
-
-    cdef int i, j, k, I, J, K, l
-    cdef bint ok
-    cdef np.int_t[:, :] b, inds
-    out = np.zeros(n_bit_orderings)
-    cdef np.float_t[:] o_view = out
-    cdef double r, o
-
-    for sc_bits, sc_b_id, inds, r, _ in clusters:
-        l = sc_b_id
-        I = inds.shape[0] # cluster index
-        K = inds.shape[1] # index within cluster
-        for b in sc_bits:
-            J = b.shape[0] # index within bit array
-            o = 0
-            for i in range(I):
-                for j in range(J):
-                    ok = True
-                    for k in range(K):
-                        if final[inds[i, k]] != b[j, k]:
-                            ok = False
-                            break
-                    if ok:
-                        o += 1
-
-                    ok = True
-                    for k in range(K):
-                        if init[inds[i, k]] != b[j, k]:
-                            ok = False
-                            break
-                    if ok:
-                        o -= 1
-
-            o_view[l] = o / r / (I * J)
-            l += 1
-
-    return out
-
-
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.initializedcheck(False)
-@cython.cdivision(True)
-def single_site_corr(np.int_t[:] occu_f,
+def delta_corr_single_flip(np.int_t[:] occu_f,
                      np.int_t[:] occu_i,
                      int n_bit_orderings,
-                     clusters):
+                     orbits):
     """
     Counts number of rows of a that are present in b
     Args:
         final, init: inital and final occupancies
-        clusters: List of clusters that the flip can affect
+        orbits: List of clusters that the flip can affect
     Returns:
         delta_corr vector from a single flip
     """
 
-    cdef int i, j, k, I, J, K, l, id
+    cdef int i, j, k, I, J, K, id, N, n
     cdef double p, pi, pf, r
-    cdef np.int_t[:, :] bits, inds
-    cdef np.float_t[:, :, :] bases
+    cdef const np.int_t[:, :] bits, inds
+    cdef const np.int_t[:, :, :] bit_combos
+    cdef const np.float_t[:, :, :] bases
     out = np.zeros(n_bit_orderings)
     cdef np.float_t[:] o_view = out
 
-    for bit_combos, id, inds, r, bases in clusters:
-        l = id
+    for bit_combos, id, inds, r, bases in orbits:
         I = inds.shape[0] # cluster index
         K = inds.shape[1] # index within cluster
-        for bits in bit_combos:
+        N = bit_combos.shape[0]
+        for n in range(N):
+            bits = bit_combos[n]
             J = bits.shape[0]
             p = 0
             for i in range(I):
@@ -101,8 +51,7 @@ def single_site_corr(np.int_t[:] occu_f,
                         pf *= bases[k, bits[j, k], occu_f[inds[i, k]]]
                         pi *= bases[k, bits[j, k], occu_i[inds[i, k]]]
                     p += (pf - pi)
-            o_view[l] = p / r / I*J
-            l += 1
+            o_view[id + n] = p / r / I*J
 
     return out
 

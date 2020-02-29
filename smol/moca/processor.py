@@ -10,7 +10,7 @@ from monty.json import MSONable
 from pymatgen import Structure, PeriodicSite
 from smol.cofe import ClusterExpansion
 from smol.cofe.configspace.utils import get_bits
-from src.ce_utils import delta_corr_single_flip, single_site_corr
+from src.ce_utils import delta_corr_single_flip
 
 
 class ClusterExpansionProcessor(MSONable):
@@ -167,9 +167,9 @@ class ClusterExpansionProcessor(MSONable):
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
-            delta_corr += single_site_corr(occu_f, occu_i,
-                                           self.n_orbit_functions,
-                                           self.orbits_by_sites[f[0]])
+            delta_corr += delta_corr_single_flip(occu_f, occu_i,
+                                                 self.n_orbit_functions,
+                                                 self.orbits_by_sites[f[0]])
             occu_i = occu_f
 
         return delta_corr
