@@ -6,8 +6,8 @@ simulations for fixed number of sites and fixed concentration of species.
 import random
 import numpy as np
 from monty.json import MSONable
+from smol.moca.ensembles.base import BaseEnsemble
 from smol.moca.processor import ClusterExpansionProcessor
-from smol.moca.ensemble.base import BaseEnsemble
 from smol.globals import kB
 
 

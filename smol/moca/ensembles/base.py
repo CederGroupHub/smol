@@ -27,7 +27,8 @@ class BaseEnsemble(ABC):
                 interval of steps to save the current occupancy and property
             inital_occupancy (array):
                 Initial occupancy vector. If none is given then a random one
-                will be used.
+                will be used. The occupancy can be encoded according to the
+                processor or the species names directly.
             sublattices (dict): optional
                 dictionary with keys identifying the active sublattices
                 (i.e. "anion" or the bits in that sublattice
@@ -47,12 +48,15 @@ class BaseEnsemble(ABC):
             struct.make_supercell(scmatrix)
             odt = OrderDisorderedStructureTransformation()
             struct = odt.apply_transformation(struct)
-            initial_occupancy = processor.subspace.occupancy_from_structure(struct, scmatrix)  # noqa
+            initial_occupancy = processor.occupancy_from_structure(struct)
+        elif isinstance(initial_occupancy[0], str):
+            initial_occupancy = processor.encode_occupancy(initial_occupancy)
 
         if sublattices is None:
+            dec_occu = processor.decode_occupancy(initial_occupancy)
             sublattices = {str(bits):
                            {'sites': np.array([i for i, b in
-                                               enumerate(initial_occupancy)
+                                               enumerate(dec_occu)
                                                if b in bits]),
                             'bits': bits}
                            for bits in processor.unique_bits}
@@ -60,8 +64,8 @@ class BaseEnsemble(ABC):
         self.processor = processor
         self.save_interval = save_interval
         self.num_atoms = len(initial_occupancy)
-        self._init_occupancy = processor.encode_occupancy(initial_occupancy)
         self._sublattices = sublattices
+        self._init_occupancy = initial_occupancy
         self._occupancy = self._init_occupancy.copy()
         self._energy = processor.compute_property(self._occupancy)
         self._step = 0
@@ -109,7 +113,7 @@ class BaseEnsemble(ABC):
 
     def run(self, iterations, sublattice_name=None):
         """
-        Samples the ensemble for the given number of iterations. Sampling at
+        Samples the ensembles for the given number of iterations. Sampling at
         the provided intervals???
 
         Args:
@@ -127,13 +131,11 @@ class BaseEnsemble(ABC):
             remaining = iterations - self.current_step + start_step
             no_interrupt = min(remaining, self.save_interval)
 
-            # get a list of flips for all the no_interrupt attempts
-
             for i in range(no_interrupt):
                 success = self._attempt_step(sublattice_name)
                 self._ssteps += success
-                self._step += 1
 
+            self._step += no_interrupt
             self._save_data()
 
     def reset(self):
@@ -164,10 +166,10 @@ class BaseEnsemble(ABC):
 
     def _get_current_data(self):
         """
-        Method to extract the ensemble data from the current state. Should
+        Method to extract the ensembles data from the current state. Should
         return a dict with current data.
 
-        Returns: ensemble data
+        Returns: ensembles data
             dict
         """
         return {}

@@ -103,6 +103,23 @@ class ClusterExpansionProcessor(MSONable):
         occu = self.decode_occupancy(occu)
         return self.subspace.corr_from_occupancy(occu, self.orbit_inds)
 
+    def occupancy_from_structure(self, structure):
+        """
+        Gets the occupancy vector for a given structure. The structure must
+        strictly be a supercell of the prim according to the processor's
+        supercell matrix
+
+        Args:
+            structure (Structure):
+                A pymatgen structure (related to the cluster-expansion prim
+                by the supercell matrix passed to the processor)
+        Returns: encoded occupancy vector
+            list
+        """
+        occu = self.subspace.occupancy_from_structure(structure,
+                                                      self.supercell_matrix)
+        return self.encode_occupancy(occu)
+
     def structure_from_occupancy(self, occu):
         """
         Get pymatgen.Structure from an occupancy vector
@@ -136,29 +153,24 @@ class ClusterExpansionProcessor(MSONable):
         occu = [bit[i] for i, bit in zip(enc_occu, self.bits)]
         return occu
 
-    def delta_corr(self, flips, occu,
-                   all_ewalds=np.zeros((0, 0, 0), dtype=np.float),
-                   ewald_inds=np.zeros((0, 0), dtype=np.int), debug=False):
+    def delta_corr(self, flips, occu):
         """
         Returns the *change* in the correlation vector from applying a list of
         flips. Flips is a list of (site, new_bit) tuples.
 
         Args:
-            flips:
-            occu:
-            all_ewalds:
-            ewald_inds:
-            debug:
+            flips (list):
+                list of tuples for (index of site, specie code to set)
+            occu (array):
+                encoded occupancy array
 
         Returns: change in correlation vector from flips
             array
         """
 
         new_occu = occu.copy()
-        delta_corr = np.zeros(self.n_orbit_functions + len(all_ewalds))
+        delta_corr = np.zeros(self.n_orbit_functions)
 
-        # this loop is candidate for optimization as well
-        # think of re-writing to just take the occu and the flips
         for f in flips:
             new_occu_f = new_occu.copy()
             new_occu_f[f[0]] = f[1]
@@ -166,11 +178,6 @@ class ClusterExpansionProcessor(MSONable):
                                                  self.n_orbit_functions,
                                                  self.orbits_by_sites[f[0]])
             new_occu = new_occu_f
-
-        if debug:
-            e = self.compute_correlation(new_occu)
-            de = e - self.compute_correlation(occu)
-            assert np.allclose(delta_corr, de)
 
         return delta_corr
 
