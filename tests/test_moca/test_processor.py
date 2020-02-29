@@ -43,6 +43,7 @@ class TestClusterExpansionProcessor(unittest.TestCase):
         self.assertTrue(np.allclose(self.ce.subspace.corr_from_structure(self.test_struct),
                                     self.pr.compute_correlation(self.enc_occu)))
 
+    # TODO check that this works for all bases and orthonormal
     def test_compute_property_change(self):
         flips = [(10, 1), (6, 0)]
         new_occu = self.enc_occu.copy()
@@ -63,6 +64,7 @@ class TestClusterExpansionProcessor(unittest.TestCase):
         self.assertTrue(all(o1 == o2 for o1, o2 in zip(self.test_occu,
                                                        occu)))
 
+    # TODO check that this works for all bases, and orthonormality
     def test_delta_corr(self):
         flips = [(10, 1), (6, 0)]
         new_occu = self.enc_occu.copy()
