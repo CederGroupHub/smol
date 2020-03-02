@@ -1,11 +1,10 @@
 # coding: utf-8
-
 """
 Utilities for manipulating coordinates or list of coordinates, under periodic
 boundary conditions or otherwise.
 """
+
 import numpy as np
-from cython.parallel import prange, parallel
 cimport numpy as np
 cimport cython
 
@@ -14,24 +13,30 @@ cimport cython
 @cython.wraparound(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
-def delta_corr_single_flip(np.int_t[:] occu_f,
-                     np.int_t[:] occu_i,
-                     int n_bit_orderings,
-                     orbits):
+def delta_corr_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,
+                           int n_bit_orderings, orbits):
     """
-    Counts number of rows of a that are present in b
+    Computes the correlation difference between adjacent occupancies.
+    (That differ by only a single flip)
     Args:
-        final, init: inital and final occupancies
-        orbits: List of clusters that the flip can affect
-    Returns:
-        delta_corr vector from a single flip
+        occu_f (np.array):
+            encoded occupancy vector with flip
+        occu_i (np.array):
+            encoded occupancy vector without flip
+        n_bit_orderings (int):
+            total number of bit orderings in expansion.
+        orbits:
+            Information of all orbits that include the flip site.
+
+    Returns: array
+        correlation vector difference
     """
 
     cdef int i, j, k, I, J, K, id, N, n
     cdef double p, pi, pf, r
-    cdef const np.int_t[:, :] bits, inds
-    cdef const np.int_t[:, :, :] bit_combos
-    cdef const np.float_t[:, :, :] bases
+    cdef const np.int_t[:, ::1] bits, inds
+    cdef const np.int_t[:, :, ::1] bit_combos
+    cdef const np.float_t[:, :, ::1] bases
     out = np.zeros(n_bit_orderings)
     cdef np.float_t[:] o_view = out
 

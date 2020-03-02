@@ -183,7 +183,7 @@ class SiteBasis(ABC):
             on_funs.append(g)
         on_funs.pop(0)  # remove phi_0 = 1, since it is handled implicitly
 
-        self._func_arr = None # reset this
+        self._func_arr = None  # reset this
         self._functions = on_funs
 
 

@@ -98,15 +98,7 @@ class ClusterExpansionProcessor(MSONable):
         Returns: Correlation vector
             array
         """
-        # this loop is failing for all except canonical basis
-        #corr = np.zeros(self.n_orbit_functions)
-        #corr[0] = 1  # zero point cluster
-        #for orb, inds in self.orbit_inds:
-            #c_occu = occu[inds]
-            #for i, bits in enumerate(orb.bit_combos):
-             #   p = [np.prod(orb.bases_array[:, bit, c_occu], axis=(0, -1))
-              #       for bit in bits]
-               # corr[i + orb.bit_id] = np.concatenate(p).mean()
+
         corr = self.subspace.corr_from_encoding(occu, self.orbit_inds)
         return corr
 

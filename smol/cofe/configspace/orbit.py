@@ -122,8 +122,6 @@ class Orbit(MSONable):
                     if new_bit not in new_bits:
                         new_bits.append(new_bit)
                 all_combos.append(new_bits)
-        #self._bit_combos = tuple(np.array(c, dtype=np.int)
-         #                            for c in all_combos)
         self._bit_combos = np.array([np.array(c, dtype=np.int)
                                      for c in all_combos])
         return self._bit_combos
@@ -162,7 +160,8 @@ class Orbit(MSONable):
         A tuple of all site function arrays for each site in orbit
         """
         if self._basis_arrs is None:
-            self._basis_arrs = tuple(sb.function_array for sb in self.site_bases)
+            self._basis_arrs = tuple(sb.function_array
+                                     for sb in self.site_bases)
         return self._basis_arrs
 
     @property
@@ -176,7 +175,7 @@ class Orbit(MSONable):
         if self._bases_arr is None or self._basis_arrs is None:
             max_dim = max(len(fa) for fa in self.basis_arrays)
             self._bases_arr = np.ones((len(self.basis_arrays),
-                                        max_dim, max_dim + 1))
+                                       max_dim, max_dim + 1))
             for i, fa in enumerate(self.basis_arrays):
                 j, k = fa.shape
                 self._bases_arr[i, :j, :k] = fa
@@ -184,7 +183,7 @@ class Orbit(MSONable):
 
     @property
     def basis_orthogonal(self):
-        """ Test if the Orbit bases are orthogonal """
+        """Test if the Orbit bases are orthogonal """
         return all(basis.is_orthogonal for basis in self.site_bases)
 
     @property
