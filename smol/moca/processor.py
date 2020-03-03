@@ -159,9 +159,10 @@ class ClusterExpansionProcessor(MSONable):
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
+            orbits = self.orbits_by_sites[f[0]]
             delta_corr += delta_corr_single_flip(occu_f, occu_i,
                                                  self.n_orbit_functions,
-                                                 self.orbits_by_sites[f[0]])
+                                                 orbits)
             occu_i = occu_f
 
         return delta_corr

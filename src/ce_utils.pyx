@@ -7,7 +7,7 @@ boundary conditions or otherwise.
 import numpy as np
 cimport numpy as np
 cimport cython
-
+from cython.parallel import prange, parallel
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -34,27 +34,26 @@ def delta_corr_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,
 
     cdef int i, j, k, I, J, K, id, N, n
     cdef double p, pi, pf, r
-    cdef const np.int_t[:, ::1] bits, inds
-    cdef const np.int_t[:, :, ::1] bit_combos
+    cdef const np.int_t[:, ::1] inds
+    cdef const np.int_t[:, :, ::1] bitcbs
     cdef const np.float_t[:, :, ::1] bases
     out = np.zeros(n_bit_orderings)
     cdef np.float_t[:] o_view = out
 
-    for bit_combos, id, inds, r, bases in orbits:
+    for bitcbs, id, inds, r, bases in orbits:
         I = inds.shape[0] # cluster index
         K = inds.shape[1] # index within cluster
-        N = bit_combos.shape[0]
+        N = bitcbs.shape[0]
         for n in range(N):
-            bits = bit_combos[n]
-            J = bits.shape[0]
+            J = bitcbs.shape[1]
             p = 0
             for i in range(I):
                 for j in range(J):
                     pf = 1
                     pi = 1
                     for k in range(K):
-                        pf *= bases[k, bits[j, k], occu_f[inds[i, k]]]
-                        pi *= bases[k, bits[j, k], occu_i[inds[i, k]]]
+                        pf *= bases[k, bitcbs[n, j, k], occu_f[inds[i, k]]]
+                        pi *= bases[k, bitcbs[n, j, k], occu_i[inds[i, k]]]
                     p += (pf - pi)
             o_view[id + n] = p / r / I*J
 
