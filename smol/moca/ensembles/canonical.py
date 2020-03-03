@@ -82,7 +82,8 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
            mc_iterations (int):
                number of Monte Carlo iterations to run at each temperature.
            cool_function (str):
-               A (monotonically decreasing) function to interpolate temperatures.
+               A (monotonically decreasing) function to interpolate
+               temperatures.
                If none is given, linear interpolation is used.
 
         Returns: (minimum energy, occupation)
@@ -99,10 +100,8 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             raise NotImplementedError('No other cooling functions implemented '
                                       'yet.')
 
-        T_original = self.temperature
         min_energy = self.minimum_energy
         min_occupancy = self.minimum_energy_occupancy
-
 
         for T in temperatures:
             self.temperature = T
@@ -112,7 +111,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         min_energy = self._min_energy
         min_occupancy = self.processor.decode_occupancy(self._min_occupancy)
         self.reset()  # should we do full reset or keep min energy?
-
+        # TODO Save annealing data?
         return min_energy, min_occupancy, data
 
     def reset(self):

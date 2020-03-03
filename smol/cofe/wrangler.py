@@ -111,7 +111,7 @@ class StructureWrangler(MSONable):
     """
     Class that handles (wrangles) input data structures and properties to fit
     in a cluster expansion. This class holds a ClusterSubspace used to compute
-    correlation vectors and produce feauter/design matrices used to fit the
+    correlation vectors and produce feature/design matrices used to fit the
     final ClusterExpansion.
     """
 

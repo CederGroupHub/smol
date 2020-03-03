@@ -7,9 +7,7 @@ inner product for a single site. Most commonly a uniform measure, but this
 can be changed to use "concentration dependent" bases.
 """
 
-from abc import ABC, abstractmethod
-from copy import deepcopy
-from itertools import combinations
+from abc import ABC
 import inspect
 import warnings
 from collections import OrderedDict
@@ -137,8 +135,8 @@ class SiteBasis(ABC):
         """Test if the basis is orthonormal"""
         prods = np.dot(np.dot(self.measure_array, self._func_arr.T).T,
                        self._func_arr.T)
-        I = np.eye(*prods.shape)
-        return np.allclose(I, prods)
+        identity = np.eye(*prods.shape)
+        return np.allclose(identity, prods)
 
     def orthonormalize(self):
         """
