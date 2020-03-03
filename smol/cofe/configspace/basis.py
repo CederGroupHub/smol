@@ -12,6 +12,7 @@ from copy import deepcopy
 from itertools import combinations
 import inspect
 import warnings
+from collections import OrderedDict
 from functools import partial
 import numpy as np
 from numpy.polynomial.chebyshev import chebval
@@ -28,7 +29,10 @@ class SiteBasis(ABC):
 
     Note that all SiteBasis in theory have the first basis function = 1, but
     this should not be defined since it is handled implicitly when computing
-    bit_combos using total no. species - 1 in the Orbit class
+    bit_combos using total no. species - 1 in the Orbit class.
+
+    Derived classes must define a list of functions self._functions used to
+    compute the function array
     """
 
     def __init__(self, species):
@@ -41,33 +45,38 @@ class SiteBasis(ABC):
                 probability is assumed.
         """
         if not isinstance(species, dict):
-            self._domain = {specie: 1 / len(species) for specie in species}
+            species = {specie: 1 / len(species) for specie in species}
         else:
             if not np.allclose(sum(species.values()), 1):
                 warnings.warn('The measure given does not sum to 1.'
                               'Are you sure this is what you want?',
                               RuntimeWarning)
-            self._domain = species
 
-        self._functions = None
+        self._domain = OrderedDict(species)
+        self._functions = None  # derived classes must properly define this.
         self._func_arr = None
-
-    @property
-    @abstractmethod
-    def functions(self):
-        """
-        This must be overloaded by subclasses and must return a tuple
-        of basis functions
-        """
-        pass
+        self._r_array = None  # array from QR in basis orthonormalization
 
     @property
     def function_array(self):
         if self._func_arr is None:
-            self._func_arr = np.array([[f(self.encode(s))
+            self._func_arr = np.array([[f(self._encode(s))
                                         for s in self.species]
-                                       for f in self._functions])
-        return self._func_arr
+                                       for f in [lambda x: 1.0] +
+                                       self._functions])
+        return self._func_arr[1:]
+
+    @property
+    def measure_array(self):
+        return np.diag(list(self._domain.values()))
+
+    @property
+    def measure_vector(self):
+        return np.array(list(self._domain.values()))
+
+    @property
+    def orthonormalization_array(self):
+        return self._r_array
 
     @property
     def species(self):
@@ -90,7 +99,6 @@ class SiteBasis(ABC):
         Returns:
             float: represents the associated measure with the give species
         """
-
         return self._domain[specie]
 
     def inner_prod(self, f, g):
@@ -104,87 +112,63 @@ class SiteBasis(ABC):
         Returns: float
             inner product result
         """
-        res = sum([self.measure(s)*f(self.encode(s))*g(self.encode(s))
+        res = sum([self.measure(s) * f(self._encode(s)) * g(self._encode(s))
                    for s in self.species])
         if abs(res) < 5E-15:  # Not sure what's causing these numerical issues
             res = 0.0
         return res
 
-    def encode(self, specie):
-        """
-        Possible mapping from species to another set (i.e. species names to
-        set of integers)
-
-        Args:
-            specie (str): specie name
-
-        Returns:
-            float/str encoding
-        """
-        return specie
-
-    def eval(self, fun_ind, specie):
-        """
-        Evaluates the site basis function for the given species.
-
-        Args:
-            fun_ind (int): basis function index
-            specie (str): specie name. must be in self.species
-
-        Returns: float
-
-        """
-        if specie not in self.species:
-            raise ValueError(f'{specie} is not in valid species: '
-                             f'{self.species}')
-
-        return self.functions[fun_ind](self.encode(specie))
-
     @property
     def is_orthogonal(self):
         """ Test if the basis is orthogonal """
         # add the implicit 0th function
-        functions = [lambda x: 1, *self.functions]
-        x_terms = all(self.inner_prod(f, g) == 0
-                      for f, g in combinations(functions, 2))
-        d_terms = all(self.inner_prod(f, f) != 0 for f in self.functions)
+        prods = np.dot(np.dot(self.measure_array, self._func_arr.T).T,
+                       self._func_arr.T)
+        d_terms = all(not np.isclose(prods[i, i], 0)
+                      for i in range(prods.shape[0]))
+        x_terms = all(np.isclose(prods[i, j], 0)
+                      for i in range(prods.shape[0])
+                      for j in range(prods.shape[1])
+                      if i != j)
         return x_terms and d_terms
 
     @property
     def is_orthonormal(self):
         """Test if the basis is orthonormal"""
-        d_terms = all(np.isclose(self.inner_prod(f, f), 1)
-                      for f in self.functions)
-        return d_terms and self.is_orthogonal
+        prods = np.dot(np.dot(self.measure_array, self._func_arr.T).T,
+                       self._func_arr.T)
+        I = np.eye(*prods.shape)
+        return np.allclose(I, prods)
 
     def orthonormalize(self):
         """
-        Returns an orthonormal basis function set based on the measure given
+        Computes an orthonormal basis function set based on the measure given
         (basis functions are also orthogonal to phi_0 = 1)
 
-        Its sort of black magic, there may be a better way to write this...
+        Modified GS-QR factorization of function array (here we are using
+        row vectors as opposed to the correct way of doing QR using columns.
+        Due to how the func_arr is saved (rows are vectors/functions) this
+        allows us to not sprinkle so many transposes.
         """
+        Q = np.zeros_like(self._func_arr)
+        R = np.zeros_like(self._func_arr)
+        V = self._func_arr.copy()
+        n = V.shape[0]
+        for i, phi in enumerate(V):
+            R[i, i] = np.sqrt(np.dot(self.measure_vector*phi, phi))
+            Q[i] = phi/R[i, i]
+            R[i, i+1:n] = np.dot(V[i+1:n], self.measure_vector*Q[i])
+            V[i+1:n] = V[i+1:n] - np.outer(R[i, i+1:n], Q[i])
 
-        on_funs = [lambda s: 1.0]
-        for f in self._functions:
-            def g_factory(f, on_funs):
+        self._r_array = R
+        self._func_arr = Q
 
-                def g_0(s):
-                    projs = sum(self.inner_prod(f, g)*g(s) for g in on_funs)
-                    return f(s) - projs
-
-                norm = np.sqrt(self.inner_prod(g_0, g_0))
-
-                def g_norm(s):
-                    return g_0(s)/norm
-                return g_norm
-
-            g = g_factory(f, deepcopy(on_funs))
-            on_funs.append(g)
-        on_funs.pop(0)  # remove phi_0 = 1, since it is handled implicitly
-
-        self._func_arr = None  # reset this
-        self._functions = on_funs
+    def _encode(self, specie):
+        """
+        Possible mapping from species to another set (i.e. species names to
+        set of integers)
+        """
+        return specie
 
 
 class IndicatorBasis(SiteBasis):
@@ -198,12 +182,9 @@ class IndicatorBasis(SiteBasis):
         def indicator(s, sp):
             return int(s == sp)
 
-        self._functions = tuple(partial(indicator, sp=sp)
-                                for sp in self.species[:-1])
-
-    @property
-    def functions(self):
-        return self._functions
+        self._functions = [partial(indicator, sp=sp)
+                           for sp in self.species[:-1]]
+        _ = self.function_array  # initialize function array (hacky sorry)
 
 
 class SinusoidBasis(SiteBasis):
@@ -222,15 +203,12 @@ class SinusoidBasis(SiteBasis):
             else:
                 return lambda s: -np.cos(2 * np.pi * a * s / m)
 
-        self._functions = tuple(fun_factory(n) for n in range(1, m))
-        self._encoding = {s: i for (i, s) in enumerate(species)}
+        self._functions = [fun_factory(n) for n in range(1, m)]
+        self.__encoding = {s: i for (i, s) in enumerate(species)}
+        _ = self.function_array  # initialize function array (hacky sorry)
 
-    def encode(self, specie):
-        return self._encoding[specie]
-
-    @property
-    def functions(self):
-        return self._functions
+    def _encode(self, specie):
+        return self.__encoding[specie]
 
 
 class NumpyPolyBasis(SiteBasis, ABC):
@@ -241,15 +219,16 @@ class NumpyPolyBasis(SiteBasis, ABC):
         super().__init__(species)
         m = len(species)
         enc = np.linspace(-1, 1, m)
-        self._encoding = {s: i for (s, i) in zip(species, enc)}
+        self.__encoding = {s: i for (s, i) in zip(species, enc)}
         funcs, coeffs = [], [1]
         for i in range(1, m):
             coeffs.append(0)
             funcs.append(partial(poly_fun, c=coeffs[::-1]))
-        self._functions = tuple(funcs)
+        self._functions = funcs
+        _ = self.function_array  # initialize function array (hacky sorry)
 
-    def encode(self, specie):
-        return self._encoding[specie]
+    def _encode(self, specie):
+        return self.__encoding[specie]
 
 
 class ChebyshevBasis(NumpyPolyBasis):
@@ -260,10 +239,6 @@ class ChebyshevBasis(NumpyPolyBasis):
     def __init__(self, species):
         super().__init__(species, chebval)
 
-    @property
-    def functions(self):
-        return self._functions
-
 
 class LegendreBasis(NumpyPolyBasis):
     """
@@ -272,10 +247,6 @@ class LegendreBasis(NumpyPolyBasis):
 
     def __init__(self, species):
         super().__init__(species, legval)
-
-    @property
-    def functions(self):
-        return self._functions
 
 
 def basis_factory(basis_name, *args, **kwargs):

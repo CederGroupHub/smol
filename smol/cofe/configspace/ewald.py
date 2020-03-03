@@ -14,8 +14,8 @@ from smol.cofe.configspace.utils import get_bits
 
 class EwaldTerm():
     """
-    Class cooked up to remove the functions required to fit an ewald term from
-    the supercel This concept can be extended to other terms, but then the best
+    Class cooked up to remove the functions required to fit an ewald term.
+    This concept can be extended to other terms, but then the best
     would probably be to write a base class for extra cluster expansion terms
     and then subclass that with any other terms people can cook up Baseclass
     could simply have an abstract classmethod the returns True if a structure
