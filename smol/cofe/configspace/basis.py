@@ -169,6 +169,12 @@ class SiteBasis(ABC):
         return specie
 
 
+# This is not defined within the class so the class can be pickled.
+def indicator(s, sp):
+    """An indicator function for elementary events-> a delta function"""
+    return int(s == sp)
+
+
 class IndicatorBasis(SiteBasis):
     """
     Indicator Basis. This basis as defined is not orthogonal.
@@ -177,12 +183,27 @@ class IndicatorBasis(SiteBasis):
     def __init__(self, species):
         super().__init__(species)
 
-        def indicator(s, sp):
-            return int(s == sp)
-
         self._functions = [partial(indicator, sp=sp)
                            for sp in self.species[:-1]]
         _ = self.function_array  # initialize function array (hacky sorry)
+
+
+# Same reasoning. Defined at module level to make pickling happy.
+def sinusoid(n, m):
+    """Sine or cosine based on AVvW sinusoid site basis"""
+    a = -(-n // 2)  # ceiling division
+    if n % 2 == 0:
+        return partial(sin_f, a=a, m=m)
+    else:
+        return partial(cos_f, a=a, m=m)
+
+
+def sin_f(s, a, m):
+    return -np.sin(2 * np.pi * a * s / m)
+
+
+def cos_f(s, a, m):
+    return -np.cos(2 * np.pi * a * s / m)
 
 
 class SinusoidBasis(SiteBasis):
@@ -194,14 +215,7 @@ class SinusoidBasis(SiteBasis):
         super().__init__(species)
         m = len(species)
 
-        def fun_factory(n):
-            a = -(-n//2)  # ceiling division
-            if n % 2 == 0:
-                return lambda s: -np.sin(2 * np.pi * a * s / m)
-            else:
-                return lambda s: -np.cos(2 * np.pi * a * s / m)
-
-        self._functions = [fun_factory(n) for n in range(1, m)]
+        self._functions = [sinusoid(n, m) for n in range(1, m)]
         self.__encoding = {s: i for (i, s) in enumerate(species)}
         _ = self.function_array  # initialize function array (hacky sorry)
 

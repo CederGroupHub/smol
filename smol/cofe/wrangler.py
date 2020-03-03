@@ -217,6 +217,7 @@ class StructureWrangler(MSONable):
 
         fun = partial(self._process_data, verbose=verbose)
         if nprocs == 1:
+            # if only one process do not bother creating a Pool
             items = list(map(fun, data))
         else:
             with Pool(processes=nprocs) as pool:
@@ -257,12 +258,9 @@ class StructureWrangler(MSONable):
 
     def _process_data(self, item, verbose):
         """
-
-        Args:
-            item
-
-        Returns:
-
+        Check if the structure for this data item can be matched to the cluster
+        subspace prim structure to obtain its supercell matrix, correlation,
+        and refined structure.
         """
         structure, property = item
         try:
