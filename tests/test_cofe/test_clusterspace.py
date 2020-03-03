@@ -8,6 +8,8 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe import ClusterSubspace
 from smol.cofe.configspace.utils import SITE_TOL, get_bits
 
+
+# TODO write tests for concentration based orthonormalize
 class TestClusterSubSpace(unittest.TestCase):
     def setUp(self) -> None:
         self.lattice = Lattice([[3, 3, 0], [0, 3, 3], [3, 0, 3]])

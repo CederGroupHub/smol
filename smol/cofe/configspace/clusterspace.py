@@ -21,7 +21,8 @@ from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc, \
     lattice_points_in_supercell, coord_list_mapping_pbc
 from smol.cofe.configspace import Orbit
 from smol.cofe.configspace.basis import basis_factory
-from smol.cofe.configspace.utils import SITE_TOL, get_bits
+from smol.cofe.configspace.utils import SITE_TOL, get_bits, \
+    get_bits_w_concentration
 from smol.exceptions import SymmetryError, StructureMatchError,\
     SYMMETRY_ERROR_MESSAGE
 
@@ -116,7 +117,7 @@ class ClusterSubspace(MSONable):
     @classmethod
     def from_radii(cls, structure, radii, ltol=0.2, stol=0.1, angle_tol=5,
                    supercell_size='volume', basis='indicator',
-                   orthonormal=False):
+                   orthonormal=False, use_concentration=False):
         """
         Creates a ClusterSubspace with orbits of the given size and radius
         smaller than or equal to the given radius.
@@ -151,7 +152,7 @@ class ClusterSubspace(MSONable):
                            or len(site.species) > 1]
         expansion_structure = Structure.from_sites(sites_to_expand)
         orbits = cls._orbits_from_radii(expansion_structure, radii, symops,
-                                        basis, orthonormal)
+                                        basis, orthonormal, use_concentration)
         return cls(structure=structure,
                    expansion_structure=expansion_structure, symops=symops,
                    orbits=orbits, ltol=ltol, stol=stol, angle_tol=angle_tol,
@@ -522,14 +523,18 @@ class ClusterSubspace(MSONable):
 
     @staticmethod
     def _orbits_from_radii(expansion_struct, radii, symops, basis,
-                           orthonormal):
+                           orthonormal, use_concentration):
         """
         Generates dictionary of {size: [Orbits]} given a dictionary of maximal
         cluster radii and symmetry operations to apply (not necessarily all the
         symmetries of the expansion_structure)
         """
 
-        bits = get_bits(expansion_struct)
+        if use_concentration:
+            bits = get_bits_w_concentration(expansion_struct)
+        else:
+            bits = get_bits(expansion_struct)
+
         nbits = np.array([len(b) - 1 for b in bits])
         site_bases = tuple(basis_factory(basis, bit) for bit in bits)
         if orthonormal:
