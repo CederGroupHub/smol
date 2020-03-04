@@ -138,9 +138,12 @@ class ClusterSubspace(MSONable):
             basis (str):
                 a string specifying the site basis functions
             orthonormal (bool):
-                wether to enforece an orthonormal basis. From the current
+                whether to enforce an orthonormal basis. From the current
                 available bases only the indicator basis is not orthogonal out
                 of the box
+            use_concentration (bool):
+                if true the concentrations in the prim structure will be used
+                to orthormalize site bases.
         Returns:
             ClusterSubSpace
         """
