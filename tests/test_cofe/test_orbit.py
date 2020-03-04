@@ -119,6 +119,13 @@ class TestOrbit(unittest.TestCase):
             bases = [basis_factory(basis, bit) for bit in self.bits]
             self._test_eval(bases)
 
+    def test_exceptions(self):
+        self.assertRaises(AttributeError, Orbit, self.coords[:3],
+                          self.lattice, [[0, 1], [0, 1]], self.bases, self.symops)
+        self.assertRaises(RuntimeError, self.orbit.remove_bit_combos_by_inds,
+                          [4])
+
+
     def test_repr(self):
         repr(self.orbit)
 

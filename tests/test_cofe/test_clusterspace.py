@@ -7,9 +7,8 @@ from pymatgen.util.coord import is_coord_subset_pbc
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe import ClusterSubspace
 from smol.cofe.configspace.utils import SITE_TOL, get_bits
+from smol.exceptions import *
 
-
-# TODO write tests for concentration based orthonormalize
 class TestClusterSubSpace(unittest.TestCase):
     def setUp(self) -> None:
         self.lattice = Lattice([[3, 3, 0], [0, 3, 3], [3, 0, 3]])
@@ -39,6 +38,40 @@ class TestClusterSubSpace(unittest.TestCase):
         orbits = [o for o in self.cs.iterorbits()]
         for o1, o2 in zip(orbits, self.cs.orbits):
             self.assertEqual(o1, o2)
+
+    def test_bases_ortho(self):
+        # test orthogonality, orthonormality of bases with uniform and
+        # concentration measure
+        self.assertFalse(self.cs.basis_orthogonal)
+        self.assertFalse(self.cs.basis_orthonormal)
+        cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5},
+                                        basis='Indicator', orthonormal=True)
+        self.assertTrue(cs.basis_orthogonal)
+        self.assertTrue(cs.basis_orthonormal)
+        cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5},
+                                        basis='sinusoid')
+        self.assertTrue(cs.basis_orthogonal)
+        # Not orthonormal w.r.t. to uniform measure...
+        self.assertFalse(cs.basis_orthonormal)
+        cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5},
+                                        basis='sinusoid', orthonormal=True)
+        self.assertTrue(cs.basis_orthonormal)
+        cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5},
+                                        basis='sinusoid',
+                                        use_concentration=True)
+        # Not orthogonal/normal wrt to concentration measure
+        self.assertFalse(cs.basis_orthogonal)
+        self.assertFalse(cs.basis_orthonormal)
+        cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5},
+                                        basis='sinusoid', orthonormal=True,
+                                        use_concentration=True)
+        self.assertTrue(cs.basis_orthogonal)
+        self.assertTrue(cs.basis_orthonormal)
+        cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5},
+                                        basis='indicator', orthonormal=True,
+                                        use_concentration=True)
+        self.assertTrue(cs.basis_orthogonal)
+        self.assertTrue(cs.basis_orthonormal)
 
     #  These can probably be improved to check odd and specific cases we want
     #  to watch out for
@@ -112,12 +145,15 @@ class TestClusterSubSpace(unittest.TestCase):
                     0, 0.25, 0.125, 0.125, 0, 0, 0.25, 0, 0.125, 0, 0.1875]
         self.assertTrue(np.allclose(cs.corr_from_structure(s), expected))
 
+        # Test occu_from_structure
+        occu = ['Vacancy', 'Li', 'Ca', 'Li', 'Vacancy', 'Ca', 'Br', 'Br']
+        self.assertTrue(all(s1 == s2 for s1, s2
+                            in zip(occu, cs.occupancy_from_structure(s))))
+
+        # shuffle sites and check correlation still works
         for _ in range(10):
             random.shuffle(s)
             self.assertTrue(np.allclose(cs.corr_from_structure(s), expected))
-
-    def test_occu_from_structure(self):
-        pass
 
     def test_remove_orbits(self):
         cs = ClusterSubspace.from_radii(self.structure, {2: 5})
@@ -135,9 +171,7 @@ class TestClusterSubSpace(unittest.TestCase):
         self.assertRaises(ValueError, cs.remove_orbits,
                           [cs.n_orbits + 1])
         self.assertRaises(ValueError, cs.remove_orbits, [0])
-
         cs.remove_orbits([3, 5, 7])
-
         expected = [1, 0.5, 0.25, 0, 0.5, 0.25, 0.125, 0, 0, 0, 0.25]
         self.assertEqual(len(cs.corr_from_structure(s)), 11)
         self.assertEqual(cs.n_orbits, 5)
@@ -345,6 +379,22 @@ class TestClusterSubSpace(unittest.TestCase):
                                     self.cs.corr_from_structure(s)))
         self.assertFalse(cs.basis_orthogonal)
         self.assertFalse(cs.basis_orthonormal)
+
+    def test_exceptions(self):
+        self.assertRaises(NotImplementedError, ClusterSubspace.from_radii,
+                          self.structure, {2: 5}, basis='blobs')
+        cs = ClusterSubspace.from_radii(self.structure, {2: 5})
+        s = self.structure.copy()
+        s.make_supercell([2, 1, 1])
+        species = ('X', 'Ca', 'Li', 'Ca', 'Br', 'Br')
+        coords = ((0.125, 0.25, 0.25),
+                  (0.625, 0.25, 0.25),
+                  (0.375, 0.75, 0.75),
+                  (0.25, 0.5, 0.5),
+                  (0, 0, 0),
+                  (0.5, 0, 0))
+        s = Structure(s.lattice, species, coords)
+        self.assertRaises(StructureMatchError, cs.corr_from_structure, s)
 
     def test_repr(self):
         repr(self.cs)

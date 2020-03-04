@@ -1,5 +1,4 @@
 import unittest
-from itertools import combinations
 import numpy as np
 from numpy.polynomial.chebyshev import chebval
 from numpy.polynomial.legendre import legval
@@ -105,6 +104,12 @@ class TestBasis(unittest.TestCase):
         self.assertFalse(b.is_orthogonal)
         b.orthonormalize()
         self.assertTrue(b.is_orthonormal)
+
+    def test_warning(self):
+        species = {'A': 1, 'B': 2, 'C': 1}
+        self.assertWarns(RuntimeWarning, basis.IndicatorBasis, species)
+        species = {'A': .1, 'B': .1, 'C': .1}
+        self.assertWarns(RuntimeWarning, basis.IndicatorBasis, species)
 
     def test_basis_factory(self):
         for name in available_bases:

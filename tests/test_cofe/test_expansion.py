@@ -140,9 +140,10 @@ class TestClusterExpansion(unittest.TestCase):
                                                normalized=True),
                                     np.dot(feature_matrix, eci)))
 
-    # TODO Write this test
+    # TODO Finish writing this test
     def test_prune(self):
-        pass
+        ce = ClusterExpansion.from_structure_wrangler(self.sw)
+        self.assertRaises(RuntimeError, ce.prune, ce)
 
     def test_constrain_dielectric(self):
         self.cs.add_external_term(EwaldTerm)
@@ -151,6 +152,25 @@ class TestClusterExpansion(unittest.TestCase):
         ce.fit()
         constrain_dielectric(ce, 5)
         self.assertEqual(ce.ecis[-1], 1/5)
+
+    def test_exceptions(self):
+        self.assertRaises(ValueError, ClusterExpansion, self.cs,
+                          self.sw.structures[:10], self.sw.properties[:5])
+        self.assertRaises(ValueError, ClusterExpansion, self.cs,
+                          self.sw.structures[:10], self.sw.properties[:10],
+                          weights=[1, 1, 1])
+        self.assertRaises(ValueError, ClusterExpansion, self.cs,
+                          self.sw.structures[:10], self.sw.properties[:10],
+                          supercell_matrices=[1, 1, 1])
+        self.assertRaises(AttributeError, ClusterExpansion, self.cs,
+                          self.sw.structures[:10], self.sw.properties[:10],
+                          estimator=None, ecis=None)
+
+    def test_print(self):
+        ce = ClusterExpansion.from_structure_wrangler(self.sw)
+        print(ce)
+        ce.fit()
+        print(ce)
 
     def test_msonable(self):
         ecis = np.ones((self.cs.n_bit_orderings))
