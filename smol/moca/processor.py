@@ -15,10 +15,11 @@ from src.ce_utils import delta_corr_single_flip
 
 class ClusterExpansionProcessor(MSONable):
     """
-    A processor used to generate Markov processes for sampling thermodynamic
-    properties from a cluster expansion hamiltonian. Think of this as fixed
-    size supercell optimized to calculate correlation vectors and local changes
-    to correlation vectors from site flips.
+    A processor allows an ensemble class to to generate Markov processes (chain
+    really) for sampling thermodynamic properties from a cluster expansion
+    Hamiltonian.
+    Think of this as fixed size supercell optimized to calculate correlation
+    vectors and local changes to correlation vectors from site flips.
     """
 
     def __init__(self, cluster_expansion, supercell_matrix):
