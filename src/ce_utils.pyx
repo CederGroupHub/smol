@@ -1,64 +1,61 @@
 # coding: utf-8
-
 """
 Utilities for manipulating coordinates or list of coordinates, under periodic
 boundary conditions or otherwise.
 """
-import numpy as np
 
+import numpy as np
 cimport numpy as np
 cimport cython
-
+from cython.parallel import prange, parallel
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
-def delta_corr_single_flip(np.int_t[:] final, np.int_t[:] init,
-                           int n_bit_orderings, clusters):
+def delta_corr_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,
+                           int n_bit_orderings, orbits):
     """
-    Counts number of rows of a that are present in b
+    Computes the correlation difference between adjacent occupancies.
+    (That differ by only a single flip)
     Args:
-        final, init: inital and final occupancies
-        clusters: List of clusters that the flip can affect
-    Returns:
-        delta_corr vector from a single flip
+        occu_f (np.array):
+            encoded occupancy vector with flip
+        occu_i (np.array):
+            encoded occupancy vector without flip
+        n_bit_orderings (int):
+            total number of bit orderings in expansion.
+        orbits:
+            Information of all orbits that include the flip site.
+
+    Returns: array
+        correlation vector difference
     """
 
-    cdef int i, j, k, I, J, K, l
-    cdef bint ok
-    cdef np.int_t[:, :] b, inds
+    cdef int i, j, k, I, J, K, id, N, n
+    cdef double p, pi, pf, r
+    cdef const np.int_t[:, ::1] inds
+    cdef const np.int_t[:, :, ::1] bitcbs
+    cdef const np.float_t[:, :, ::1] bases
     out = np.zeros(n_bit_orderings)
     cdef np.float_t[:] o_view = out
-    cdef double r, o
 
-    for sc_bits, sc_b_id, inds, r in clusters:
-        l = sc_b_id
+    for bitcbs, id, inds, r, bases in orbits:
         I = inds.shape[0] # cluster index
         K = inds.shape[1] # index within cluster
-        for b in sc_bits:
-            J = b.shape[0] # index within bit array
-            o = 0
+        N = bitcbs.shape[0]
+        for n in range(N):
+            J = bitcbs.shape[1]
+            p = 0
             for i in range(I):
                 for j in range(J):
-                    ok = True
+                    pf = 1
+                    pi = 1
                     for k in range(K):
-                        if final[inds[i, k]] != b[j, k]:
-                            ok = False
-                            break
-                    if ok:
-                        o += 1
-
-                    ok = True
-                    for k in range(K):
-                        if init[inds[i, k]] != b[j, k]:
-                            ok = False
-                            break
-                    if ok:
-                        o -= 1
-
-            o_view[l] = o / r / (I * J)
-            l += 1
+                        pf *= bases[k, bitcbs[n, j, k], occu_f[inds[i, k]]]
+                        pi *= bases[k, bitcbs[n, j, k], occu_i[inds[i, k]]]
+                    p += (pf - pi)
+            o_view[id + n] = p / r / I*J
 
     return out
 

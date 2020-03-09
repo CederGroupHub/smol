@@ -65,6 +65,64 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
     def minimum_energy_structure(self):
         return self.processor.structure_from_occupancy(self._min_occupancy)
 
+    def anneal(self, start_temperature, steps, mc_iterations,
+               cool_function=None):
+        """
+        Carries out a simulated annealing procedure for a total number of
+        temperatures given by "steps" interpolating between the start and end
+        temperature according to a cooling function
+
+        Args:
+           start_temperature (float):
+               Starting temperature. Must be higher than the current ensemble
+               temperature.
+           steps (int):
+               Number of temperatures to run MC simulations between start and
+               end temperatures.
+           mc_iterations (int):
+               number of Monte Carlo iterations to run at each temperature.
+           cool_function (str):
+               A (monotonically decreasing) function to interpolate
+               temperatures.
+               If none is given, linear interpolation is used.
+
+        Returns: (minimum energy, occupation)
+           tuple
+        """
+        if start_temperature < self.temperature:
+            raise ValueError(f'End temperature is greater than start '
+                             f'temperature {self.temperature} > '
+                             f'{start_temperature}.')
+        if cool_function is None:
+            temperatures = np.linspace(start_temperature, self.temperature,
+                                       steps)
+        else:
+            raise NotImplementedError('No other cooling functions implemented '
+                                      'yet.')
+
+        min_energy = self.minimum_energy
+        min_occupancy = self.minimum_energy_occupancy
+
+        for T in temperatures:
+            self.temperature = T
+            self.run(mc_iterations)
+
+        data = self.data
+        min_energy = self._min_energy
+        min_occupancy = self.processor.decode_occupancy(self._min_occupancy)
+        self.reset()  # should we do full reset or keep min energy?
+        # TODO Save annealing data?
+        return min_energy, min_occupancy, data
+
+    def reset(self):
+        """
+        Resets the ensemble by returning it to its initial state. This will
+        also clear the data.
+        """
+        super().reset()
+        self._min_energy = self.processor.compute_property(self._occupancy)
+        self._min_occupancy = self._occupancy
+
     def _attempt_step(self, sublattice_name=None):
         """
         Attempts flips corresponding to a canonical swap
@@ -77,7 +135,6 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             bool
         """
         flips = self._get_flips(sublattice_name)
-
         delta_e = self.processor.compute_property_change(self._occupancy,
                                                          flips)
         accept = self._accept(delta_e, self.beta)

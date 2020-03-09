@@ -3,6 +3,7 @@ A lot of random utilities that have no place to go.
 """
 
 from typing import Dict, Any
+from collections import OrderedDict
 
 SITE_TOL = 1e-6
 
@@ -14,11 +15,24 @@ def get_bits(structure):
     """
     all_bits = []
     for site in structure:
-        bits = []
-        for sp in sorted(site.species.keys()):
-            bits.append(str(sp))
+        bits = [str(sp) for sp in sorted(site.species.keys())]
         if site.species.num_atoms < 0.99:
             bits.append("Vacancy")
+        all_bits.append(bits)
+    return all_bits
+
+
+def get_bits_w_concentration(structure):
+    """
+    Same as above but returns list of dicts to include the concentration of
+    each species
+    """
+    all_bits = []
+    for site in structure:
+        bits = OrderedDict((str(sp), c) for sp, c
+                           in sorted(site.species.items()))
+        if site.species.num_atoms < 0.99:
+            bits["Vacancy"] = 1 - site.species.num_atoms
         all_bits.append(bits)
     return all_bits
 

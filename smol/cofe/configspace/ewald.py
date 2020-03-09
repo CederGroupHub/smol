@@ -14,8 +14,8 @@ from smol.cofe.configspace.utils import get_bits
 
 class EwaldTerm():
     """
-    Class cooked up to remove the functions required to fit an ewald term from
-    the supercel This concept can be extended to other terms, but then the best
+    Class cooked up to remove the functions required to fit an ewald term.
+    This concept can be extended to other terms, but then the best
     would probably be to write a base class for extra cluster expansion terms
     and then subclass that with any other terms people can cook up Baseclass
     could simply have an abstract classmethod the returns True if a structure
@@ -139,8 +139,6 @@ class EwaldTerm():
         return b_inds[:-1]
 
     def _get_ewald_eci(self, occu):
-        # Change occu to list of integers instead of species strings
-        occu = np.array([bit.index(sp) for bit, sp in zip(self.bits, occu)])
         inds = self._get_ewald_occu(occu)
         ecis = [np.sum(self.ewald_matrix[inds, :][:, inds])]  # noqa
 

@@ -52,7 +52,10 @@ extensions = [Extension("src.ce_utils",
                         ["src/ce_utils"+ext],
                         language='c',
                         include_path=[numpy.get_include()],
-                        include_dirs=['src/'])]
+                        include_dirs=['src/'],
+                        # extra_compile_args=['-fopenmp'],
+                        # extra_link_args=['-fopenmp']
+                        )]
 
 if USE_CYTHON:
     from Cython.Build import cythonize

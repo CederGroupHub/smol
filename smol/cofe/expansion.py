@@ -403,7 +403,7 @@ class ClusterExpansion(MSONable):
             f'{self.prim_structure.composition} Num fit structures: ' \
             f'{len(self.property_vector)} ' \
             f'Num orbit functions: {self.subspace.n_bit_orderings}\n'
-        ecis = len(corr)*[None, ] if self.ecis is None else self.ecis
+        ecis = len(corr)*[0.0, ] if self.ecis is None else self.ecis
         s += f'    [Orbit]  id: {str(0):<3}\n'
         s += f'        bit       eci\n'
         s += f'        {"[X]":<10}{ecis[0]:<4.3}\n'

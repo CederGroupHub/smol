@@ -25,7 +25,17 @@ class TestStructureWrangler(unittest.TestCase):
         sw.remove_all_data()
         sw.add_data(lno_data, weights=weights)
         self.assertTrue(np.all(w == 1 for w in sw.weights))
+        sw.remove_all_data()
+        self.assertRaises(AttributeError, sw.add_data, lno_data, weights='bla')
 
+    # makes tests hang, need to figure out how to avoid that
+    #def test_add_data_parallel(self):
+     #   from multiprocessing import cpu_count
+      #  if cpu_count() < 2:
+       #     return
+        #sw = StructureWrangler(self.cs)
+        #sw.add_data(lno_data, weights='hull', nprocs=4)
+        #self.assertTrue(np.all([w is not None for w in sw.weights]))
 
     def test_update_features(self):
         shape = self.sw.feature_matrix.shape
@@ -41,8 +51,6 @@ class TestStructureWrangler(unittest.TestCase):
         len_filtered = len(self.sw.items)
         self.assertNotEqual(len_total, len_filtered)
 
-    # TODO these two are failing because of the change in kB, check why they
-    #  are off
     def test_weights_e_above_comp(self):
         self.sw._set_weights(self.sw.items, 'composition', temperature=1000)
         expected = np.array([0.85637358, 0.98816678, 1., 0.59209449, 1.,

@@ -56,14 +56,10 @@ class Cluster(MSONable):
         return id + 1
 
     def __eq__(self, other):
-        try:
-            if self.sites.shape != other.sites.shape:
-                return False
-            othersites = other.sites + np.round(self.centroid - other.centroid)
-            return is_coord_subset(self.sites, othersites, atol=SITE_TOL)
-        except AttributeError as e:
-            print(str(e))
-            raise NotImplementedError
+        if self.sites.shape != other.sites.shape:
+            return False
+        othersites = other.sites + np.round(self.centroid - other.centroid)
+        return is_coord_subset(self.sites, othersites, atol=SITE_TOL)
 
     def __neq__(self, other):
         return not self.__eq__(other)

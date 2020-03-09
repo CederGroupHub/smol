@@ -73,9 +73,10 @@ class TestOrbit(unittest.TestCase):
         self.assertTrue(orbit1.basis_orthonormal)
 
     def _test_eval(self, bases):
-        for s1, s2 in combinations_with_replacement(self.bits[0], 2):
+        occu = list(range(len(self.bits[0])))
+        for s1, s2 in combinations_with_replacement(occu, 2):
             for i, j in combinations_with_replacement([0, 1], 2):
-                self.assertEqual(bases[0].eval(i, s1)*bases[1].eval(j, s2),
+                self.assertEqual(bases[0].function_array[i, s1]*bases[1].function_array[j, s2],
                                  self.orbit.eval([i,j], [s1, s2]))
 
     def test_remove_bit_combo(self):
@@ -117,6 +118,13 @@ class TestOrbit(unittest.TestCase):
             self.orbit.transform_site_bases(basis)
             bases = [basis_factory(basis, bit) for bit in self.bits]
             self._test_eval(bases)
+
+    def test_exceptions(self):
+        self.assertRaises(AttributeError, Orbit, self.coords[:3],
+                          self.lattice, [[0, 1], [0, 1]], self.bases, self.symops)
+        self.assertRaises(RuntimeError, self.orbit.remove_bit_combos_by_inds,
+                          [4])
+
 
     def test_repr(self):
         repr(self.orbit)

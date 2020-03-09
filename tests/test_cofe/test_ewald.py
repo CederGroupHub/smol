@@ -24,7 +24,7 @@ class TestEwald(unittest.TestCase):
         s = Structure(supercell.lattice, ['Ca2+', 'Li+', 'Li+', 'Br-', 'Br-', 'Br-', 'Br-'],
                       [[0.125, 1, 0.25], [0.125, 0.5, 0.25], [0.375, 0.5, 0.75], [0, 0, 0], [0, 0.5, 1],
                        [0.5, 1, 0], [0.5, 0.5, 0]])
-        occu = cs.occupancy_from_structure(s)
+        occu = cs.occupancy_from_structure(s, encode=True)
         ew = EwaldTerm(supercell, orb_inds, eta=0.15)
         self.assertAlmostEqual(ew._get_ewald_eci(occu)[0],
                                EwaldSummation(s, eta=ew._ewald._eta).total_energy, places=5)

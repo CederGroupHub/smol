@@ -8,6 +8,7 @@ from collections import defaultdict
 import warnings
 from collections.abc import Sequence
 from functools import partial
+from multiprocessing import Pool, cpu_count
 import numpy as np
 from monty.json import MSONable
 from pymatgen import Composition, Structure
@@ -111,7 +112,7 @@ class StructureWrangler(MSONable):
     """
     Class that handles (wrangles) input data structures and properties to fit
     in a cluster expansion. This class holds a ClusterSubspace used to compute
-    correlation vectors and produce feauter/design matrices used to fit the
+    correlation vectors and produce feature/design matrices used to fit the
     final ClusterExpansion.
     """
 
@@ -191,7 +192,7 @@ class StructureWrangler(MSONable):
         if len(weights) > 0 and weights[0] is not None:
             return np.array(weights)
 
-    def add_data(self, data, weights=None, verbose=False):
+    def add_data(self, data, weights=None, verbose=False, nprocs=1):
         """
         Add data to Structure Wrangler, computes correlation vector and if
         successful adds data otherwise it ignores that structure.
@@ -199,36 +200,30 @@ class StructureWrangler(MSONable):
         Args
             data (list):
                 list of (structure, property) data
-            verbose (bool):
-                if True then print structures that fail in StructureMatcher
             weights (str, list/tuple or array):
                 str specifying type of weights (i.e. 'hull') OR
                 list/tuple with two elements (name, kwargs) were name specifies
                 the type of weights as above, and kwargs are a dict of
                 keyword arguments to obtain the weights OR
                 array directly specifying the weights
+            verbose (bool):
+                if True then print structures that fail in StructureMatcher
+            nprocs (int):
+                number of processes to run data processing on. 0 defaults to
+                maximum number of processors.
         """
-        items = []
+        if nprocs == 0 or nprocs > cpu_count():
+            nprocs = cpu_count()
 
-        for i, (struct, prop) in enumerate(data):
-            try:
-                scmatrix = self._subspace.scmatrix_from_structure(struct)
-                size = self._subspace.num_prims_from_matrix(scmatrix)
-                fm_row = self._subspace.corr_from_structure(struct, scmatrix)
-                refined_struct = self._subspace.refine_structure(struct,
-                                                                 scmatrix)
-            except StructureMatchError as e:
-                if verbose:
-                    print(f'Unable to match {struct.composition} with energy '
-                          f'{prop} to supercell_structure. Throwing out.\n'
-                          f'Error Message: {str(e)}')
-                continue
-            items.append({'structure': struct,
-                          'refined_structure': refined_struct,
-                          'property': prop,
-                          'scmatrix': scmatrix,
-                          'features': fm_row,
-                          'size': size})
+        fun = partial(self._process_data, verbose=verbose)
+        if nprocs == 1:
+            # if only one process do not bother creating a Pool
+            items = list(map(fun, data))
+        else:
+            with Pool(processes=nprocs) as pool:
+                pool = Pool(processes=nprocs)
+                items = pool.map(fun, data, chunksize=len(data)//nprocs)
+        items = [i for i in items if i is not None]  # clean up failed structs
 
         if self.weight_type is not None:
             self._set_weights(items, self.weight_type, **self.weight_kwargs)
@@ -260,6 +255,29 @@ class StructureWrangler(MSONable):
     def remove_all_data(self):
         """Removes all data from Wrangler"""
         self._items = []
+
+    def _process_data(self, item, verbose):
+        """
+        Check if the structure for this data item can be matched to the cluster
+        subspace prim structure to obtain its supercell matrix, correlation,
+        and refined structure.
+        """
+        structure, property = item
+        try:
+            scmatrix = self._subspace.scmatrix_from_structure(structure)
+            size = self._subspace.num_prims_from_matrix(scmatrix)
+            fm_row = self._subspace.corr_from_structure(structure, scmatrix)
+            refined_struct = self._subspace.refine_structure(structure,
+                                                             scmatrix)
+        except StructureMatchError as e:
+            if verbose:
+                print(f'Unable to match {structure.composition} with energy '
+                      f'{property} to supercell_structure. Throwing out.\n'
+                      f'Error Message: {str(e)}.')
+            return
+        return {'structure': structure, 'refined_structure': refined_struct,
+                'property': property, 'scmatrix': scmatrix, 'features': fm_row,
+                'size': size}
 
     def _set_weights(self, items, weights, **kwargs):
         """Set the weight_type for each data point"""
@@ -303,7 +321,9 @@ class StructureWrangler(MSONable):
             ewald_corr = []
             for struct in self.structures:
                 scmatrix = self._subspace.scmatrix_from_structure(struct)
-                occu = self._subspace.occupancy_from_structure(struct, scmatrix)  # noqa
+                occu = self._subspace.occupancy_from_structure(struct,
+                                                               scmatrix,
+                                                               encode=True)
                 supercell = self._subspace.structure.copy()
                 supercell.make_supercell(scmatrix)
                 orb_inds = self._subspace.supercell_orbit_mappings(scmatrix)

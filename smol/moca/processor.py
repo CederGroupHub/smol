@@ -55,7 +55,8 @@ class ClusterExpansionProcessor(MSONable):
                 ratio = len(inds) / np.sum(in_inds)
                 self.orbits_by_sites[site_ind].append((orbit.bit_combos,
                                                        orbit.bit_id,
-                                                       inds[in_inds], ratio))
+                                                       inds[in_inds], ratio,
+                                                       orbit.bases_array))
 
     def compute_property(self, occu):
         """
@@ -97,11 +98,9 @@ class ClusterExpansionProcessor(MSONable):
         Returns: Correlation vector
             array
         """
-        # This can be optimized by writing a separate corr_from_occu function
-        # that used only the encoded occu vector and has an optimized orbit
-        # eval loop (ie maybe some JIT or something like that...)
-        occu = self.decode_occupancy(occu)
-        return self.subspace.corr_from_occupancy(occu, self.orbit_inds)
+
+        corr = self.subspace.corr_from_encoding(occu, self.orbit_inds)
+        return corr
 
     def occupancy_from_structure(self, structure):
         """
@@ -154,30 +153,17 @@ class ClusterExpansionProcessor(MSONable):
         return occu
 
     def delta_corr(self, flips, occu):
-        """
-        Returns the *change* in the correlation vector from applying a list of
-        flips. Flips is a list of (site, new_bit) tuples.
-
-        Args:
-            flips (list):
-                list of tuples for (index of site, specie code to set)
-            occu (array):
-                encoded occupancy array
-
-        Returns: change in correlation vector from flips
-            array
-        """
-
-        new_occu = occu.copy()
+        occu_i = occu.copy()
         delta_corr = np.zeros(self.n_orbit_functions)
 
         for f in flips:
-            new_occu_f = new_occu.copy()
-            new_occu_f[f[0]] = f[1]
-            delta_corr += delta_corr_single_flip(new_occu_f, new_occu,
+            occu_f = occu_i.copy()
+            occu_f[f[0]] = f[1]
+            orbits = self.orbits_by_sites[f[0]]
+            delta_corr += delta_corr_single_flip(occu_f, occu_i,
                                                  self.n_orbit_functions,
-                                                 self.orbits_by_sites[f[0]])
-            new_occu = new_occu_f
+                                                 orbits)
+            occu_i = occu_f
 
         return delta_corr
 

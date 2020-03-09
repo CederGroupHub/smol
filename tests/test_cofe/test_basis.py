@@ -1,5 +1,4 @@
 import unittest
-from itertools import combinations
 import numpy as np
 from numpy.polynomial.chebyshev import chebval
 from numpy.polynomial.legendre import legval
@@ -30,9 +29,11 @@ class TestBasis(unittest.TestCase):
         b = basis.IndicatorBasis(self.species.keys())
         self.assertFalse(b.is_orthogonal)
 
+        #eval(self, fun_ind, specie):
         # test evaluation of basis functions
-        for i, sp in enumerate(list(self.species.keys())[:-1]):
-            self.assertEqual(b.eval(i, sp), 1)
+        n = len(self.species) - 1
+        for i in range(n):
+            self.assertEqual(b.function_array[i, i], 1)
 
         self._test_basis_uniform_measure(basis.IndicatorBasis)
         self._test_measure(basis.IndicatorBasis)
@@ -50,7 +51,7 @@ class TestBasis(unittest.TestCase):
             a = -(-n//2)
             f = lambda s: -np.sin(2*np.pi*a*s/m) if n % 2 == 0 else -np.cos(2*np.pi*a*s/m)
             for i, sp in enumerate(self.species):
-                self.assertEqual(b.eval(n-1, sp), f(i))
+                self.assertEqual(b.function_array[n-1, i], f(i))
 
         self._test_basis_uniform_measure(basis.SinusoidBasis)
         self._test_measure(basis.SinusoidBasis)
@@ -71,8 +72,8 @@ class TestBasis(unittest.TestCase):
         fun_range = np.linspace(-1, 1, m)
         for n in range(m-1):
             coeffs.append(0)
-            for x, sp in zip(fun_range, self.species):
-                self.assertEqual(b.eval(n, sp), chebval(x, c=coeffs[::-1]))
+            for sp, x in enumerate(fun_range):
+                self.assertEqual(b.function_array[n, sp], chebval(x, c=coeffs[::-1]))
 
         self._test_basis_uniform_measure(basis.ChebyshevBasis)
         self._test_measure(basis.ChebyshevBasis)
@@ -93,8 +94,9 @@ class TestBasis(unittest.TestCase):
         fun_range = np.linspace(-1, 1, m)
         for n in range(m-1):
             coeffs.append(0)
-            for x, sp in zip(fun_range, self.species):
-                self.assertEqual(b.eval(n, sp), legval(x, c=coeffs[::-1]))
+            for sp, x in enumerate(fun_range):
+                self.assertEqual(b.function_array[n, sp],
+                                 legval(x, c=coeffs[::-1]))
 
         self._test_basis_uniform_measure(basis.LegendreBasis)
         self._test_measure(basis.LegendreBasis)
@@ -102,6 +104,12 @@ class TestBasis(unittest.TestCase):
         self.assertFalse(b.is_orthogonal)
         b.orthonormalize()
         self.assertTrue(b.is_orthonormal)
+
+    def test_warning(self):
+        species = {'A': 1, 'B': 2, 'C': 1}
+        self.assertWarns(RuntimeWarning, basis.IndicatorBasis, species)
+        species = {'A': .1, 'B': .1, 'C': .1}
+        self.assertWarns(RuntimeWarning, basis.IndicatorBasis, species)
 
     def test_basis_factory(self):
         for name in available_bases:
