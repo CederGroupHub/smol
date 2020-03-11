@@ -221,7 +221,6 @@ class StructureWrangler(MSONable):
             items = list(map(fun, data))
         else:
             with Pool(processes=nprocs) as pool:
-                pool = Pool(processes=nprocs)
                 items = pool.map(fun, data, chunksize=len(data)//nprocs)
         items = [i for i in items if i is not None]  # clean up failed structs
 
