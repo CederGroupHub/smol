@@ -18,7 +18,7 @@ def get_bits(structure):
         bits = [str(sp) for sp in sorted(site.species.keys())]
         if site.species.num_atoms < 0.99:
             bits.append("Vacancy")
-        all_bits.append(bits)
+        all_bits.append(tuple(bits))
     return all_bits
 
 

@@ -53,11 +53,10 @@ class BaseEnsemble(ABC):
             initial_occupancy = processor.encode_occupancy(initial_occupancy)
 
         if sublattices is None:
-            dec_occu = processor.decode_occupancy(initial_occupancy)
             sublattices = {str(bits):
                            {'sites': np.array([i for i, b in
-                                               enumerate(dec_occu)
-                                               if b in bits]),
+                                               enumerate(processor.bits)
+                                               if b == bits]),
                             'bits': bits}
                            for bits in processor.unique_bits}
 

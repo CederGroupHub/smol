@@ -153,7 +153,7 @@ class ClusterExpansionProcessor(MSONable):
         occu = [bit[i] for i, bit in zip(enc_occu, self.bits)]
         return occu
 
-    def delta_corr(self, flips, occu):
+    def delta_corr(self, flips, occu, debug=False):
         occu_i = occu.copy()
         delta_corr = np.zeros(self.n_orbit_functions)
 
