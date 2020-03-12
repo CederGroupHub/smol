@@ -55,7 +55,7 @@ def delta_corr_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,
                         pf *= bases[k, bits[j, k], occu_f[inds[i, k]]]
                         pi *= bases[k, bits[j, k], occu_i[inds[i, k]]]
                     p += (pf - pi)
-            o_view[n] = p / r / I*J
+            o_view[n] = p / r / (I*J)
             n += 1
 
     return out

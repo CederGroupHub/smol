@@ -3070,7 +3070,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_delta_corr_single_flip(CYTHON_UNUSED Py
  *                         pf *= bases[k, bits[j, k], occu_f[inds[i, k]]]
  *                         pi *= bases[k, bits[j, k], occu_i[inds[i, k]]]             # <<<<<<<<<<<<<<
  *                     p += (pf - pi)
- *             o_view[n] = p / r / I*J
+ *             o_view[n] = p / r / (I*J)
  */
             __pyx_t_36 = __pyx_v_j;
             __pyx_t_37 = __pyx_v_k;
@@ -3087,7 +3087,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_delta_corr_single_flip(CYTHON_UNUSED Py
  *                         pf *= bases[k, bits[j, k], occu_f[inds[i, k]]]
  *                         pi *= bases[k, bits[j, k], occu_i[inds[i, k]]]
  *                     p += (pf - pi)             # <<<<<<<<<<<<<<
- *             o_view[n] = p / r / I*J
+ *             o_view[n] = p / r / (I*J)
  *             n += 1
  */
           __pyx_v_p = (__pyx_v_p + (__pyx_v_pf - __pyx_v_pi));
@@ -3097,16 +3097,16 @@ static PyObject *__pyx_pf_3src_8ce_utils_delta_corr_single_flip(CYTHON_UNUSED Py
       /* "src/ce_utils.pyx":58
  *                         pi *= bases[k, bits[j, k], occu_i[inds[i, k]]]
  *                     p += (pf - pi)
- *             o_view[n] = p / r / I*J             # <<<<<<<<<<<<<<
+ *             o_view[n] = p / r / (I*J)             # <<<<<<<<<<<<<<
  *             n += 1
  * 
  */
       __pyx_t_44 = __pyx_v_n;
-      *((__pyx_t_5numpy_float_t *) ( /* dim=0 */ (__pyx_v_o_view.data + __pyx_t_44 * __pyx_v_o_view.strides[0]) )) = (((__pyx_v_p / __pyx_v_r) / __pyx_v_I) * __pyx_v_J);
+      *((__pyx_t_5numpy_float_t *) ( /* dim=0 */ (__pyx_v_o_view.data + __pyx_t_44 * __pyx_v_o_view.strides[0]) )) = ((__pyx_v_p / __pyx_v_r) / (__pyx_v_I * __pyx_v_J));
 
       /* "src/ce_utils.pyx":59
  *                     p += (pf - pi)
- *             o_view[n] = p / r / I*J
+ *             o_view[n] = p / r / (I*J)
  *             n += 1             # <<<<<<<<<<<<<<
  * 
  *     return out
