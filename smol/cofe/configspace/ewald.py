@@ -140,11 +140,11 @@ class EwaldTerm():
 
     def _get_ewald_eci(self, occu):
         inds = self._get_ewald_occu(occu)
-        ecis = [np.sum(self.ewald_matrix[inds, :][:, inds])]  # noqa
+        ecis = [np.sum(self.ewald_matrix[inds, :][:, inds])]
 
         if self.use_inv_r:
             for m in self.partial_ems:
-                ecis.append(np.sum(m[inds, :][:, inds]))  # noqa
+                ecis.append(np.sum(m[inds, :][:, inds]))
 
         return np.array(ecis)
 

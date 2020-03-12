@@ -25,7 +25,7 @@ from smol.cofe.configspace.utils import SITE_TOL, get_bits, \
     get_bits_w_concentration
 from smol.exceptions import SymmetryError, StructureMatchError,\
     SYMMETRY_ERROR_MESSAGE
-
+from src.ce_utils import corr_from_occupancy
 
 class ClusterSubspace(MSONable):
     """
@@ -237,18 +237,21 @@ class ClusterSubspace(MSONable):
         occu = np.array(occu, dtype=int)
 
         orb_inds = self.supercell_orbit_mappings(scmatrix)
-        corr = self.corr_from_encoding(occu, orb_inds)
-
+        # Create a list of tuples with necessary information to compute corr
+        orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
+                      for orb, inds in orb_inds]
+        corr = corr_from_occupancy(occu, self.n_bit_orderings, orbit_list)
         supercell_size = self.num_prims_from_matrix(scmatrix)
 
         # get extra terms. This is for the Ewald term
         # The interface for extra terms can be much improved...if anyone cares
-        supercell = self.structure.copy()
-        supercell.make_supercell(scmatrix)
-        extras = [term.corr_from_occu(occu, supercell, orb_inds,
-                                      *args, **kwargs)/supercell_size
-                  for term, args, kwargs in self._external_terms]
-        corr = np.concatenate([corr, *extras])
+        if self.external_terms:
+            supercell = self.structure.copy()
+            supercell.make_supercell(scmatrix)
+            extras = [term.corr_from_occu(occu, supercell, orb_inds,
+                                          *args, **kwargs)/supercell_size
+                      for term, args, kwargs in self._external_terms]
+            corr = np.concatenate([corr, *extras])
 
         if extensive:
             corr *= supercell_size
@@ -337,6 +340,7 @@ class ClusterSubspace(MSONable):
 
         return occu
 
+    #TODO cache matrices
     def scmatrix_from_structure(self, structure):
         """
         Obtain the supercell_structure matrix to convert given structure to
@@ -382,31 +386,6 @@ class ClusterSubspace(MSONable):
 
         return indices
 
-    def corr_from_encoding(self, enc_occu, orbit_indices):
-        """
-        Correlation vector from encoded occupancy vector
-
-        Args:
-            enc_occu (array):
-                array of ints encoding occupancy
-            orbit_indices: (list(orbits, indices)):
-                list of tuples of orbits and their corresponding indices. This
-                should be obtained using supercell_orbit_mappings
-
-        Returns: correlation vector
-            array
-        """
-        corr = np.zeros(self.n_bit_orderings)
-        corr[0] = 1  # zero point cluster
-        for orb, inds in orbit_indices:
-            c_occu = enc_occu[inds]
-            for i, bit_list in enumerate(orb.bit_combos):
-                p = [np.fromiter(map(lambda occu: orb.eval(bits, occu),
-                                     c_occu[:]), dtype=np.float)
-                     for bits in bit_list]
-                corr[orb.bit_id + i] = np.concatenate(p).mean()
-
-        return corr
 
     def change_site_bases(self, new_basis, orthonormal=False):
         """

@@ -9,15 +9,64 @@ cimport numpy as np
 cimport cython
 from cython.parallel import prange, parallel
 
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.initializedcheck(False)
+@cython.cdivision(True)
+def corr_from_occupancy(np.int_t[:] occu, int n_bit_orderings, orbit_list):
+    """
+    Computes the correlation vector for a given encoded occupancy vector
+    Args:
+        occu (np.array):
+            encoded occupancy vector
+        n_bit_orderings (int):
+            total number of bit orderings in expansion.
+        orbits:
+            Information of all orbits that include the flip site.
+            (bit_combos, orbit id, site indices, bases array)
+
+    Returns: array
+        correlation vector difference
+    """
+
+    cdef int i, j, k, I, J, K, id, n
+    cdef double p, pi
+    cdef const np.int_t[:, ::1] inds
+    cdef const np.int_t[:, ::1] bits
+    cdef const np.float_t[:, :, ::1] bases
+    out = np.zeros(n_bit_orderings)
+    cdef np.float_t[:] o_view = out
+    o_view[0] = 1  # empty cluster
+
+    for id, combos, bases, inds in orbit_list:
+        I = inds.shape[0] # cluster index
+        K = inds.shape[1] # index within cluster
+        n = id
+        for bits in combos:
+            J = bits.shape[0]
+            p = 0
+            for i in range(I):
+                for j in range(J):
+                    pi = 1
+                    for k in range(K):
+                        pi *= bases[k, bits[j, k], occu[inds[i, k]]]
+                    p += pi
+            o_view[n] = p / (I*J)
+            n += 1
+
+    return out
+
+
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
 def delta_corr_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,
-                           int n_bit_orderings, orbits):
+                           int n_bit_orderings, site_orbit_list):
     """
-    Computes the correlation difference between adjacent occupancies.
-    (That differ by only a single flip)
+    Computes the correlation difference between two occupancy
+    vectors.
     Args:
         occu_f (np.array):
             encoded occupancy vector with flip
@@ -25,8 +74,11 @@ def delta_corr_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,
             encoded occupancy vector without flip
         n_bit_orderings (int):
             total number of bit orderings in expansion.
-        orbits:
+        site_orbit_list:
             Information of all orbits that include the flip site.
+            List of tuples each with
+            (bit_combos, orbit id, site indices, ratio, bases array)
+
 
     Returns: array
         correlation vector difference
@@ -40,7 +92,7 @@ def delta_corr_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,
     out = np.zeros(n_bit_orderings)
     cdef np.float_t[:] o_view = out
 
-    for combos, id, inds, r, bases in orbits:
+    for id, r, combos, bases, inds in site_orbit_list:
         I = inds.shape[0] # cluster index
         K = inds.shape[1] # index within cluster
         n = id
