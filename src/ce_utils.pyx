@@ -32,30 +32,31 @@ def delta_corr_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,
         correlation vector difference
     """
 
-    cdef int i, j, k, I, J, K, id, N, n
+    cdef int i, j, k, I, J, K, id, n
     cdef double p, pi, pf, r
     cdef const np.int_t[:, ::1] inds
-    cdef const np.int_t[:, :, ::1] bitcbs
+    cdef const np.int_t[:, ::1] bits
     cdef const np.float_t[:, :, ::1] bases
     out = np.zeros(n_bit_orderings)
     cdef np.float_t[:] o_view = out
 
-    for bitcbs, id, inds, r, bases in orbits:
+    for combos, id, inds, r, bases in orbits:
         I = inds.shape[0] # cluster index
         K = inds.shape[1] # index within cluster
-        N = bitcbs.shape[0]
-        for n in range(N):
-            J = bitcbs.shape[1]
+        n = id
+        for bits in combos:
+            J = bits.shape[0]
             p = 0
             for i in range(I):
                 for j in range(J):
                     pf = 1
                     pi = 1
                     for k in range(K):
-                        pf *= bases[k, bitcbs[n, j, k], occu_f[inds[i, k]]]
-                        pi *= bases[k, bitcbs[n, j, k], occu_i[inds[i, k]]]
+                        pf *= bases[k, bits[j, k], occu_f[inds[i, k]]]
+                        pi *= bases[k, bits[j, k], occu_i[inds[i, k]]]
                     p += (pf - pi)
-            o_view[id + n] = p / r / I*J
+            o_view[n] = p / r / I*J
+            n += 1
 
     return out
 
