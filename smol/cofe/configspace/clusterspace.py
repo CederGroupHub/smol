@@ -241,20 +241,20 @@ class ClusterSubspace(MSONable):
         orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
                       for orb, inds in orb_inds]
         corr = corr_from_occupancy(occu, self.n_bit_orderings, orbit_list)
-        supercell_size = self.num_prims_from_matrix(scmatrix)
 
         # get extra terms. This is for the Ewald term
         # The interface for extra terms can be much improved...if anyone cares
         if self.external_terms:
             supercell = self.structure.copy()
             supercell.make_supercell(scmatrix)
+            supercell_size = self.num_prims_from_matrix(scmatrix)
             extras = [term.corr_from_occu(occu, supercell, orb_inds,
                                           *args, **kwargs)/supercell_size
                       for term, args, kwargs in self._external_terms]
             corr = np.concatenate([corr, *extras])
 
         if extensive:
-            corr *= supercell_size
+            corr *= self.num_prims_from_matrix(scmatrix)
 
         return corr
 
