@@ -13,6 +13,8 @@ class TestClusterExpansionProcessor(unittest.TestCase):
                                              angle_tol=5,
                                              supercell_size='O2-',
                                              basis='sinusoid',
+                                             orthonormal=True,
+                                             use_concentration=True,
                                              data=lno_data)
         self.ce.fit()
         scmatrix = np.array([[3, 0, 0],

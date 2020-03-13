@@ -118,8 +118,9 @@ class ClusterExpansion(MSONable):
     @classmethod
     def from_radii(cls, structure, radii, ltol=0.2, stol=0.1, angle_tol=5,
                    supercell_size='volume', basis='indicator',
-                   orthonormal=False, external_terms=None, estimator=None,
-                   ecis=None, data=None, verbose=False, weights=None):
+                   orthonormal=False, use_concentration=False,
+                   external_terms=None, estimator=None, ecis=None, data=None,
+                   verbose=False, weights=None):
         """
         This convenience method creates a ClusterExpansion in one go (with no
         need to create the underlying objects necessary) This is the quickest
@@ -144,6 +145,9 @@ class ClusterExpansion(MSONable):
                 available bases only the sinusoid basis is orthogonal out
                 of the box for any number of species. Legendre and Chebyshev
                 are orthogonal for only 2 species out of the box.
+            use_concentration (bool):
+                if true the concentrations in the prim structure will be used
+                to orthormalize site bases.
             external_terms (object):
                 any external terms to add to the cluster subspace
                 Currently only an EwaldTerm.
@@ -171,7 +175,7 @@ class ClusterExpansion(MSONable):
 
         subspace = ClusterSubspace.from_radii(structure, radii, ltol, stol,
                                               angle_tol, supercell_size, basis,
-                                              orthonormal)
+                                              orthonormal, use_concentration)
         if external_terms is not None:
             # at some point we should loop through this if more than 1 term
             kwargs = {}

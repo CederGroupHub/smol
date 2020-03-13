@@ -122,8 +122,7 @@ class Orbit(MSONable):
                     if new_bit not in new_bits:
                         new_bits.append(new_bit)
                 all_combos.append(new_bits)
-        self._bit_combos = np.array([np.array(c, dtype=np.int)
-                                     for c in all_combos])
+        self._bit_combos = tuple(np.array(c, dtype=np.int) for c in all_combos)
         return self._bit_combos
 
     @property

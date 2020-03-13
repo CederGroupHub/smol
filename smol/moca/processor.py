@@ -10,15 +10,16 @@ from monty.json import MSONable
 from pymatgen import Structure, PeriodicSite
 from smol.cofe import ClusterExpansion
 from smol.cofe.configspace.utils import get_bits
-from src.ce_utils import delta_corr_single_flip
+from src.ce_utils import corr_from_occupancy, delta_corr_single_flip
 
 
 class ClusterExpansionProcessor(MSONable):
     """
-    A processor used to generate Markov processes for sampling thermodynamic
-    properties from a cluster expansion hamiltonian. Think of this as fixed
-    size supercell optimized to calculate correlation vectors and local changes
-    to correlation vectors from site flips.
+    A processor allows an ensemble class to to generate Markov processes (chain
+    really) for sampling thermodynamic properties from a cluster expansion
+    Hamiltonian.
+    Think of this as fixed size supercell optimized to calculate correlation
+    vectors and local changes to correlation vectors from site flips.
     """
 
     def __init__(self, cluster_expansion, supercell_matrix):
@@ -39,9 +40,11 @@ class ClusterExpansionProcessor(MSONable):
         self.bits = get_bits(self.structure)
         self.size = self.subspace.num_prims_from_matrix(supercell_matrix)
         self.n_orbit_functions = self.subspace.n_bit_orderings
-        self.orbit_inds = self.subspace.supercell_orbit_mappings(supercell_matrix)  # noqa
+        orbit_inds = self.subspace.supercell_orbit_mappings(supercell_matrix)
 
-        # Create a dictionary of orbits by site index and information
+        # List of orbit information and supercell site indices to compute corr
+        self.orbit_list = []
+        # Dictionary of orbits by site index and information
         # necessary to compute local changes in correlation vectors from flips
         self.orbits_by_sites = defaultdict(list)
         # Store the orbits grouped by site index in the structure,
@@ -49,14 +52,16 @@ class ClusterExpansionProcessor(MSONable):
         # where only the rows with the site index are stored. The ratio is
         # needed because the correlations are averages over the full inds
         # array.
-        for orbit, inds in self.orbit_inds:
+        for orbit, inds in orbit_inds:
+            self.orbit_list.append((orbit.bit_id, orbit.bit_combos,
+                                    orbit.bases_array, inds))
             for site_ind in np.unique(inds):
                 in_inds = np.any(inds == site_ind, axis=-1)
                 ratio = len(inds) / np.sum(in_inds)
-                self.orbits_by_sites[site_ind].append((orbit.bit_combos,
-                                                       orbit.bit_id,
-                                                       inds[in_inds], ratio,
-                                                       orbit.bases_array))
+                self.orbits_by_sites[site_ind].append((orbit.bit_id, ratio,
+                                                       orbit.bit_combos,
+                                                       orbit.bases_array,
+                                                       inds[in_inds]))
 
     def compute_property(self, occu):
         """
@@ -98,9 +103,8 @@ class ClusterExpansionProcessor(MSONable):
         Returns: Correlation vector
             array
         """
-
-        corr = self.subspace.corr_from_encoding(occu, self.orbit_inds)
-        return corr
+        return corr_from_occupancy(occu, self.n_orbit_functions,
+                                   self.orbit_list)
 
     def occupancy_from_structure(self, structure):
         """
@@ -152,10 +156,9 @@ class ClusterExpansionProcessor(MSONable):
         occu = [bit[i] for i, bit in zip(enc_occu, self.bits)]
         return occu
 
-    def delta_corr(self, flips, occu):
+    def delta_corr(self, flips, occu, debug=False):
         occu_i = occu.copy()
         delta_corr = np.zeros(self.n_orbit_functions)
-
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
