@@ -14,7 +14,7 @@ from cython.parallel import prange, parallel
 @cython.wraparound(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
-def corr_from_occupancy(np.int_t[:] occu, int n_bit_orderings, orbit_list):
+def corr_from_occupancy(np.int_t[::1] occu, int n_bit_orderings, orbit_list):
     """
     Computes the correlation vector for a given encoded occupancy vector
     Args:
@@ -62,7 +62,7 @@ def corr_from_occupancy(np.int_t[:] occu, int n_bit_orderings, orbit_list):
 @cython.wraparound(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
-def delta_corr_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,
+def delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,
                            int n_bit_orderings, site_orbit_list):
     """
     Computes the correlation difference between two occupancy

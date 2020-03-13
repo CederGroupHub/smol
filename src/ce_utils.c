@@ -1941,6 +1941,9 @@ static int __Pyx_ValidateAndInit_memviewslice(
                 PyObject *original_obj);
 
 /* ObjectToMemviewSlice.proto */
+static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_dc_nn___pyx_t_5numpy_int_t(PyObject *, int writable_flag);
+
+/* ObjectToMemviewSlice.proto */
 static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_5numpy_int_t(PyObject *, int writable_flag);
 
 /* ObjectToMemviewSlice.proto */
@@ -2574,14 +2577,14 @@ static PyObject *__pyx_codeobj__38;
 /* "src/ce_utils.pyx":17
  * @cython.initializedcheck(False)
  * @cython.cdivision(True)
- * def corr_from_occupancy(np.int_t[:] occu, int n_bit_orderings, orbit_list):             # <<<<<<<<<<<<<<
+ * def corr_from_occupancy(np.int_t[::1] occu, int n_bit_orderings, orbit_list):             # <<<<<<<<<<<<<<
  *     """
- *     Computes the correlation vector for a given occupancy
+ *     Computes the correlation vector for a given encoded occupancy vector
  */
 
 /* Python wrapper */
 static PyObject *__pyx_pw_3src_8ce_utils_1corr_from_occupancy(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3src_8ce_utils_corr_from_occupancy[] = "\n    Computes the correlation vector for a given occupancy\n    Args:\n        occu (np.array):\n            encoded occupancy vector with flip\n        n_bit_orderings (int):\n            total number of bit orderings in expansion.\n        orbits:\n            Information of all orbits that include the flip site.\n            (bit_combos, orbit id, site indices, bases array)\n\n    Returns: array\n        correlation vector difference\n    ";
+static char __pyx_doc_3src_8ce_utils_corr_from_occupancy[] = "\n    Computes the correlation vector for a given encoded occupancy vector\n    Args:\n        occu (np.array):\n            encoded occupancy vector\n        n_bit_orderings (int):\n            total number of bit orderings in expansion.\n        orbits:\n            Information of all orbits that include the flip site.\n            (bit_combos, orbit id, site indices, bases array)\n\n    Returns: array\n        correlation vector difference\n    ";
 static PyMethodDef __pyx_mdef_3src_8ce_utils_1corr_from_occupancy = {"corr_from_occupancy", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_3src_8ce_utils_1corr_from_occupancy, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_8ce_utils_corr_from_occupancy};
 static PyObject *__pyx_pw_3src_8ce_utils_1corr_from_occupancy(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_occu = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -2634,7 +2637,7 @@ static PyObject *__pyx_pw_3src_8ce_utils_1corr_from_occupancy(PyObject *__pyx_se
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
     }
-    __pyx_v_occu = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_5numpy_int_t(values[0], PyBUF_WRITABLE); if (unlikely(!__pyx_v_occu.memview)) __PYX_ERR(0, 17, __pyx_L3_error)
+    __pyx_v_occu = __Pyx_PyObject_to_MemoryviewSlice_dc_nn___pyx_t_5numpy_int_t(values[0], PyBUF_WRITABLE); if (unlikely(!__pyx_v_occu.memview)) __PYX_ERR(0, 17, __pyx_L3_error)
     __pyx_v_n_bit_orderings = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_n_bit_orderings == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 17, __pyx_L3_error)
     __pyx_v_orbit_list = values[2];
   }
@@ -3044,7 +3047,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_corr_from_occupancy(CYTHON_UNUSED PyObj
             __pyx_t_31 = (*((__pyx_t_5numpy_int_t const  *) ( /* dim=1 */ ((char *) (((__pyx_t_5numpy_int_t const  *) ( /* dim=0 */ (__pyx_v_inds.data + __pyx_t_29 * __pyx_v_inds.strides[0]) )) + __pyx_t_30)) )));
             __pyx_t_32 = __pyx_v_k;
             __pyx_t_33 = (*((__pyx_t_5numpy_int_t const  *) ( /* dim=1 */ ((char *) (((__pyx_t_5numpy_int_t const  *) ( /* dim=0 */ (__pyx_v_bits.data + __pyx_t_27 * __pyx_v_bits.strides[0]) )) + __pyx_t_28)) )));
-            __pyx_t_34 = (*((__pyx_t_5numpy_int_t *) ( /* dim=0 */ (__pyx_v_occu.data + __pyx_t_31 * __pyx_v_occu.strides[0]) )));
+            __pyx_t_34 = (*((__pyx_t_5numpy_int_t *) ( /* dim=0 */ ((char *) (((__pyx_t_5numpy_int_t *) __pyx_v_occu.data) + __pyx_t_31)) )));
             __pyx_v_pi = (__pyx_v_pi * (*((__pyx_t_5numpy_float_t const  *) ( /* dim=2 */ ((char *) (((__pyx_t_5numpy_float_t const  *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_bases.data + __pyx_t_32 * __pyx_v_bases.strides[0]) ) + __pyx_t_33 * __pyx_v_bases.strides[1]) )) + __pyx_t_34)) ))));
           }
 
@@ -3113,9 +3116,9 @@ static PyObject *__pyx_pf_3src_8ce_utils_corr_from_occupancy(CYTHON_UNUSED PyObj
   /* "src/ce_utils.pyx":17
  * @cython.initializedcheck(False)
  * @cython.cdivision(True)
- * def corr_from_occupancy(np.int_t[:] occu, int n_bit_orderings, orbit_list):             # <<<<<<<<<<<<<<
+ * def corr_from_occupancy(np.int_t[::1] occu, int n_bit_orderings, orbit_list):             # <<<<<<<<<<<<<<
  *     """
- *     Computes the correlation vector for a given occupancy
+ *     Computes the correlation vector for a given encoded occupancy vector
  */
 
   /* function exit code */
@@ -3149,7 +3152,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_corr_from_occupancy(CYTHON_UNUSED PyObj
 /* "src/ce_utils.pyx":65
  * @cython.initializedcheck(False)
  * @cython.cdivision(True)
- * def delta_corr_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,             # <<<<<<<<<<<<<<
+ * def delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,             # <<<<<<<<<<<<<<
  *                            int n_bit_orderings, site_orbit_list):
  *     """
  */
@@ -3219,8 +3222,8 @@ static PyObject *__pyx_pw_3src_8ce_utils_3delta_corr_single_flip(PyObject *__pyx
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
       values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
     }
-    __pyx_v_occu_f = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_5numpy_int_t(values[0], PyBUF_WRITABLE); if (unlikely(!__pyx_v_occu_f.memview)) __PYX_ERR(0, 65, __pyx_L3_error)
-    __pyx_v_occu_i = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_5numpy_int_t(values[1], PyBUF_WRITABLE); if (unlikely(!__pyx_v_occu_i.memview)) __PYX_ERR(0, 65, __pyx_L3_error)
+    __pyx_v_occu_f = __Pyx_PyObject_to_MemoryviewSlice_dc_nn___pyx_t_5numpy_int_t(values[0], PyBUF_WRITABLE); if (unlikely(!__pyx_v_occu_f.memview)) __PYX_ERR(0, 65, __pyx_L3_error)
+    __pyx_v_occu_i = __Pyx_PyObject_to_MemoryviewSlice_dc_nn___pyx_t_5numpy_int_t(values[1], PyBUF_WRITABLE); if (unlikely(!__pyx_v_occu_i.memview)) __PYX_ERR(0, 65, __pyx_L3_error)
     __pyx_v_n_bit_orderings = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_n_bit_orderings == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 66, __pyx_L3_error)
     __pyx_v_site_orbit_list = values[3];
   }
@@ -3646,7 +3649,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_2delta_corr_single_flip(CYTHON_UNUSED P
             __pyx_t_32 = (*((__pyx_t_5numpy_int_t const  *) ( /* dim=1 */ ((char *) (((__pyx_t_5numpy_int_t const  *) ( /* dim=0 */ (__pyx_v_inds.data + __pyx_t_30 * __pyx_v_inds.strides[0]) )) + __pyx_t_31)) )));
             __pyx_t_33 = __pyx_v_k;
             __pyx_t_34 = (*((__pyx_t_5numpy_int_t const  *) ( /* dim=1 */ ((char *) (((__pyx_t_5numpy_int_t const  *) ( /* dim=0 */ (__pyx_v_bits.data + __pyx_t_28 * __pyx_v_bits.strides[0]) )) + __pyx_t_29)) )));
-            __pyx_t_35 = (*((__pyx_t_5numpy_int_t *) ( /* dim=0 */ (__pyx_v_occu_f.data + __pyx_t_32 * __pyx_v_occu_f.strides[0]) )));
+            __pyx_t_35 = (*((__pyx_t_5numpy_int_t *) ( /* dim=0 */ ((char *) (((__pyx_t_5numpy_int_t *) __pyx_v_occu_f.data) + __pyx_t_32)) )));
             __pyx_v_pf = (__pyx_v_pf * (*((__pyx_t_5numpy_float_t const  *) ( /* dim=2 */ ((char *) (((__pyx_t_5numpy_float_t const  *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_bases.data + __pyx_t_33 * __pyx_v_bases.strides[0]) ) + __pyx_t_34 * __pyx_v_bases.strides[1]) )) + __pyx_t_35)) ))));
 
             /* "src/ce_utils.pyx":108
@@ -3663,7 +3666,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_2delta_corr_single_flip(CYTHON_UNUSED P
             __pyx_t_40 = (*((__pyx_t_5numpy_int_t const  *) ( /* dim=1 */ ((char *) (((__pyx_t_5numpy_int_t const  *) ( /* dim=0 */ (__pyx_v_inds.data + __pyx_t_38 * __pyx_v_inds.strides[0]) )) + __pyx_t_39)) )));
             __pyx_t_41 = __pyx_v_k;
             __pyx_t_42 = (*((__pyx_t_5numpy_int_t const  *) ( /* dim=1 */ ((char *) (((__pyx_t_5numpy_int_t const  *) ( /* dim=0 */ (__pyx_v_bits.data + __pyx_t_36 * __pyx_v_bits.strides[0]) )) + __pyx_t_37)) )));
-            __pyx_t_43 = (*((__pyx_t_5numpy_int_t *) ( /* dim=0 */ (__pyx_v_occu_i.data + __pyx_t_40 * __pyx_v_occu_i.strides[0]) )));
+            __pyx_t_43 = (*((__pyx_t_5numpy_int_t *) ( /* dim=0 */ ((char *) (((__pyx_t_5numpy_int_t *) __pyx_v_occu_i.data) + __pyx_t_40)) )));
             __pyx_v_pi = (__pyx_v_pi * (*((__pyx_t_5numpy_float_t const  *) ( /* dim=2 */ ((char *) (((__pyx_t_5numpy_float_t const  *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_bases.data + __pyx_t_41 * __pyx_v_bases.strides[0]) ) + __pyx_t_42 * __pyx_v_bases.strides[1]) )) + __pyx_t_43)) ))));
           }
 
@@ -3732,7 +3735,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_2delta_corr_single_flip(CYTHON_UNUSED P
   /* "src/ce_utils.pyx":65
  * @cython.initializedcheck(False)
  * @cython.cdivision(True)
- * def delta_corr_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,             # <<<<<<<<<<<<<<
+ * def delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,             # <<<<<<<<<<<<<<
  *                            int n_bit_orderings, site_orbit_list):
  *     """
  */
@@ -20747,9 +20750,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "src/ce_utils.pyx":17
  * @cython.initializedcheck(False)
  * @cython.cdivision(True)
- * def corr_from_occupancy(np.int_t[:] occu, int n_bit_orderings, orbit_list):             # <<<<<<<<<<<<<<
+ * def corr_from_occupancy(np.int_t[::1] occu, int n_bit_orderings, orbit_list):             # <<<<<<<<<<<<<<
  *     """
- *     Computes the correlation vector for a given occupancy
+ *     Computes the correlation vector for a given encoded occupancy vector
  */
   __pyx_tuple__26 = PyTuple_Pack(19, __pyx_n_s_occu, __pyx_n_s_n_bit_orderings, __pyx_n_s_orbit_list, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_k, __pyx_n_s_I, __pyx_n_s_J, __pyx_n_s_K, __pyx_n_s_id, __pyx_n_s_n, __pyx_n_s_p, __pyx_n_s_pi, __pyx_n_s_inds, __pyx_n_s_bits, __pyx_n_s_bases, __pyx_n_s_out, __pyx_n_s_o_view, __pyx_n_s_combos); if (unlikely(!__pyx_tuple__26)) __PYX_ERR(0, 17, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__26);
@@ -20759,7 +20762,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "src/ce_utils.pyx":65
  * @cython.initializedcheck(False)
  * @cython.cdivision(True)
- * def delta_corr_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,             # <<<<<<<<<<<<<<
+ * def delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,             # <<<<<<<<<<<<<<
  *                            int n_bit_orderings, site_orbit_list):
  *     """
  */
@@ -21234,9 +21237,9 @@ if (!__Pyx_RefNanny) {
   /* "src/ce_utils.pyx":17
  * @cython.initializedcheck(False)
  * @cython.cdivision(True)
- * def corr_from_occupancy(np.int_t[:] occu, int n_bit_orderings, orbit_list):             # <<<<<<<<<<<<<<
+ * def corr_from_occupancy(np.int_t[::1] occu, int n_bit_orderings, orbit_list):             # <<<<<<<<<<<<<<
  *     """
- *     Computes the correlation vector for a given occupancy
+ *     Computes the correlation vector for a given encoded occupancy vector
  */
   __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_3src_8ce_utils_1corr_from_occupancy, NULL, __pyx_n_s_src_ce_utils); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 17, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -21246,7 +21249,7 @@ if (!__Pyx_RefNanny) {
   /* "src/ce_utils.pyx":65
  * @cython.initializedcheck(False)
  * @cython.cdivision(True)
- * def delta_corr_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,             # <<<<<<<<<<<<<<
+ * def delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,             # <<<<<<<<<<<<<<
  *                            int n_bit_orderings, site_orbit_list):
  *     """
  */
@@ -24497,17 +24500,17 @@ no_fail:
 }
 
 /* ObjectToMemviewSlice */
-  static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_5numpy_int_t(PyObject *obj, int writable_flag) {
+  static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_dc_nn___pyx_t_5numpy_int_t(PyObject *obj, int writable_flag) {
     __Pyx_memviewslice result = { 0, 0, { 0 }, { 0 }, { 0 } };
     __Pyx_BufFmt_StackElem stack[1];
-    int axes_specs[] = { (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_STRIDED) };
+    int axes_specs[] = { (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_CONTIG) };
     int retcode;
     if (obj == Py_None) {
         result.memview = (struct __pyx_memoryview_obj *) Py_None;
         return result;
     }
-    retcode = __Pyx_ValidateAndInit_memviewslice(axes_specs, 0,
-                                                 PyBUF_RECORDS_RO | writable_flag, 1,
+    retcode = __Pyx_ValidateAndInit_memviewslice(axes_specs, __Pyx_IS_C_CONTIG,
+                                                 (PyBUF_C_CONTIGUOUS | PyBUF_FORMAT) | writable_flag, 1,
                                                  &__Pyx_TypeInfo_nn___pyx_t_5numpy_int_t, stack,
                                                  &result, obj);
     if (unlikely(retcode == -1))
@@ -24540,6 +24543,29 @@ __pyx_fail:
         }\
         return (target_type) value;\
     }
+
+/* ObjectToMemviewSlice */
+  static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_5numpy_int_t(PyObject *obj, int writable_flag) {
+    __Pyx_memviewslice result = { 0, 0, { 0 }, { 0 }, { 0 } };
+    __Pyx_BufFmt_StackElem stack[1];
+    int axes_specs[] = { (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_STRIDED) };
+    int retcode;
+    if (obj == Py_None) {
+        result.memview = (struct __pyx_memoryview_obj *) Py_None;
+        return result;
+    }
+    retcode = __Pyx_ValidateAndInit_memviewslice(axes_specs, 0,
+                                                 PyBUF_RECORDS_RO | writable_flag, 1,
+                                                 &__Pyx_TypeInfo_nn___pyx_t_5numpy_int_t, stack,
+                                                 &result, obj);
+    if (unlikely(retcode == -1))
+        goto __pyx_fail;
+    return result;
+__pyx_fail:
+    result.memview = NULL;
+    result.data = NULL;
+    return result;
+}
 
 /* ObjectToMemviewSlice */
   static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_dsdsds_nn___pyx_t_5numpy_float_t(PyObject *obj, int writable_flag) {
