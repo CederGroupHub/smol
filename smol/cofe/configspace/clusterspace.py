@@ -27,6 +27,7 @@ from smol.exceptions import SymmetryError, StructureMatchError,\
     SYMMETRY_ERROR_MESSAGE
 from src.ce_utils import corr_from_occupancy
 
+
 class ClusterSubspace(MSONable):
     """
     Holds a structure, its expansion structure and a list of Orbits.
@@ -340,7 +341,6 @@ class ClusterSubspace(MSONable):
 
         return occu
 
-    #TODO cache matrices
     def scmatrix_from_structure(self, structure):
         """
         Obtain the supercell_structure matrix to convert given structure to
@@ -385,7 +385,6 @@ class ClusterSubspace(MSONable):
             self._supercell_orb_inds[scm] = indices
 
         return indices
-
 
     def change_site_bases(self, new_basis, orthonormal=False):
         """
