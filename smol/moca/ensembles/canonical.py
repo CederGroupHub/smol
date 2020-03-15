@@ -5,6 +5,7 @@ simulations for fixed number of sites and fixed concentration of species.
 
 import random
 import numpy as np
+from multiprocessing import Pool, cpu_count
 from monty.json import MSONable
 from smol.moca.ensembles.base import BaseEnsemble
 from smol.moca.processor import ClusterExpansionProcessor
@@ -70,7 +71,8 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         """
         Carries out a simulated annealing procedure for a total number of
         temperatures given by "steps" interpolating between the start and end
-        temperature according to a cooling function
+        temperature according to a cooling function. The start temperature is
+        the temperature set for the ensemble.
 
         Args:
            start_temperature (float):
@@ -102,17 +104,19 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
 
         min_energy = self.minimum_energy
         min_occupancy = self.minimum_energy_occupancy
+        anneal_data = {}
 
         for T in temperatures:
             self.temperature = T
             self.run(mc_iterations)
+            anneal_data[T] = self.data
+            self._data = []
 
-        data = self.data
         min_energy = self._min_energy
         min_occupancy = self.processor.decode_occupancy(self._min_occupancy)
         self.reset()  # should we do full reset or keep min energy?
         # TODO Save annealing data?
-        return min_energy, min_occupancy, data
+        return min_energy, min_occupancy, anneal_data
 
     def reset(self):
         """
