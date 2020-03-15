@@ -218,11 +218,11 @@ class StructureWrangler(MSONable):
         fun = partial(self._process_data, verbose=verbose)
         if nprocs == 1:
             # if only one process do not bother creating a Pool
-            items = list(map(fun, data))
+            items = [item for item in map(fun, data) if item is not None]
         else:
-            with Pool(processes=nprocs) as pool:
-                items = pool.map(fun, data, chunksize=len(data)//nprocs)
-        items = [i for i in items if i is not None]  # clean up failed structs
+            with Pool(processes=nprocs) as p:
+                items = [item for item in p.imap(fun, data, len(data)//nprocs)
+                         if item is not None]
 
         if self.weight_type is not None:
             self._set_weights(items, self.weight_type, **self.weight_kwargs)
