@@ -240,6 +240,19 @@ class StructureWrangler(MSONable):
 
         self._items += items
 
+    def change_subspace(self, cluster_subspace):
+        """
+        Will swap out the cluster subspace and update features accordingly.
+        This is a faster operation than creating a new one. Can also be useful
+        to create a copy and the change the subspace.
+
+        Args:
+            cluster_subspace:
+                New subspace
+        """
+        self._subspace = cluster_subspace
+        self.update_features()
+
     def update_features(self):
         """
         Update the features/feature matrix for the data held. This is useful
