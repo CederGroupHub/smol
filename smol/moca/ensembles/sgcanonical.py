@@ -11,7 +11,13 @@ from smol.moca.ensembles.canonical import CanonicalEnsemble
 
 class SGCanonicalEnsemble(CanonicalEnsemble):
     """
-    A Semi-Grand Canonical Ensemble for Monte Carlo Simulations
+    A Semi-Grand Canonical Ensemble for Monte Carlo Simulations where species
+    chemical potentials are predefined. Note that int the SGEnsemble
+    implemented in this way, only the differences in chemical potentials with
+    respect to a reference species on each sublattice are fixed, and not the
+    absolute values. To obtain the absolute values you must calculate the
+    reference chemical potential and then simply subtract it from the given
+    values.
     """
 
     def __init__(self, processor, temperature, chemical_potentials,
@@ -24,7 +30,9 @@ class SGCanonicalEnsemble(CanonicalEnsemble):
             temperature (float):
                 Temperature of ensemble
             chemical_potentials (dict):
-                dictionary with species names and chemical potential
+                dictionary with species names and chemical potentials. If the
+                chemical potential for one species is not zero (reference), one
+                will be chosen and all other values will be shifted accordingly
             save_interval (int):
                 interval of steps to save the current occupancy and property
             inital_occupancy (array):
@@ -46,7 +54,25 @@ class SGCanonicalEnsemble(CanonicalEnsemble):
                                  f'potentials is not a specie in the expansion'
                                  f': {species}')
 
-        self.chem_pots = chemical_potentials
+        # Add chemical potentials to sublattice dictionary
+        for sublattice in self._sublattices.values():
+            sublattice['mu'] = {sp : mu for sp, mu
+                                in chemical_potentials.items()
+                                if sp in sublattice['bits']}
+            # If no reference species is set, then set and recenter others
+            mus = list(sublattice['mu'].values())
+            if not any([mu == 0 for mu in mus]):
+                ref_mu = mus[0]
+                sublattice['mu'] = {sp: mu - ref_mu for sp, mu
+                                    in sublattice['mu'].items()}
+
+    @property
+    def chemical_potentials(self):
+        """Relative chemical potentials. Reference species have 0"""
+        chem_pots = {}
+        for sublattice in self._sublattices.values():
+            chem_pots.update(sublattice['mu'])
+        return chem_pots
 
     @property
     def species_counts(self):
@@ -86,7 +112,7 @@ class SGCanonicalEnsemble(CanonicalEnsemble):
         new_bit = random.choice(list(choices))
         old_species = sublattice['bits'][old_bit]
         new_species = sublattice['bits'][new_bit]
-        delta_mu = self.chem_pots[new_species] - self.chem_pots[old_species]
+        delta_mu = sublattice['mu'][new_species] - sublattice['mu'][old_species]  # noqa
 
         return (site, new_bit), delta_mu
 
@@ -147,7 +173,7 @@ class SGCanonicalEnsemble(CanonicalEnsemble):
             MSONable dict
         """
         d = super().as_dict()
-        d['chem_pots'] = self.chem_pots
+        d['chem_pots'] = self.chemical_potentials
         return d
 
     @classmethod
