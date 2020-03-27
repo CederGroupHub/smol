@@ -8,7 +8,7 @@ import numpy as np
 from multiprocessing import Pool, cpu_count
 from monty.json import MSONable
 from smol.moca.ensembles.base import BaseEnsemble
-from smol.moca.processor import ClusterExpansionProcessor
+from smol.moca.processor import CExpansionProcessor
 from smol.globals import kB
 
 
@@ -213,7 +213,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         """
         Creates a CanonicalEnsemble from MSONable dict representation
         """
-        eb = cls(ClusterExpansionProcessor.from_dict(d['processor']),
+        eb = cls(CExpansionProcessor.from_dict(d['processor']),
                  temperature=d['temperature'],
                  save_interval=d['save_interval'],
                  initial_occupancy=d['initial_occupancy'],

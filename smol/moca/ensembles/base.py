@@ -35,7 +35,7 @@ class BaseEnsemble(ABC):
                 "['Li+', 'Vacancy']"), the values should be a dictionary
                 with two items {'sites': array with the site indices for all
                 sites corresponding to that sublattice in the occupancy vector,
-                'bits': tuple of bits (allowed species) in sublattice}
+                'species': OrderedDict of allowed species in sublattice}
                 All sites in a sublattice need to have the same bits/species
                 allowed.
             seed (int): optional
@@ -56,8 +56,8 @@ class BaseEnsemble(ABC):
             sublattices = {str(bits):
                            {'sites': np.array([i for i, b in
                                                enumerate(processor.bits)
-                                               if b == bits]),
-                            'bits': bits}
+                                               if b == tuple(bits.keys())]),
+                            'species': bits}
                            for bits in processor.unique_bits}
 
         self.processor = processor
@@ -101,6 +101,10 @@ class BaseEnsemble(ABC):
     @property
     def accepted_steps(self):
         return self._ssteps
+
+    @property
+    def acceptance_ratio(self):
+        return self.accepted_steps/self.current_step
 
     @property
     def data(self):

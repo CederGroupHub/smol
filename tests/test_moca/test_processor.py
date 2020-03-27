@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 from pymatgen.transformations.standard_transformations import \
     OrderDisorderedStructureTransformation
-from smol.moca import ClusterExpansionProcessor
+from smol.moca import CExpansionProcessor
 from smol.cofe import ClusterExpansion, StructureWrangler, ClusterSubspace
 from tests.data import lno_prim, lno_data
 
@@ -20,7 +20,7 @@ class TestClusterExpansionProcessor(unittest.TestCase):
         scmatrix = np.array([[3, 0, 0],
                              [0, 2, 0],
                              [0, 0, 1]])
-        self.pr = ClusterExpansionProcessor(self.ce, scmatrix)
+        self.pr = CExpansionProcessor(self.ce, scmatrix)
         # create a test structure
         test_struct = lno_prim.copy()
         test_struct.replace_species({"Li+": {"Li+": 2},
@@ -89,7 +89,7 @@ class TestClusterExpansionProcessor(unittest.TestCase):
 
     def test_msonable(self):
         d = self.pr.as_dict()
-        pr = ClusterExpansionProcessor.from_dict(d)
+        pr = CExpansionProcessor.from_dict(d)
         self.assertTrue(self.pr.bits == pr.bits)
         self.assertTrue(self.pr.structure == pr.structure)
         self.assertEqual(self.pr.compute_property(self.enc_occu),
