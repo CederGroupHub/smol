@@ -53,7 +53,7 @@ class BaseEnsemble(ABC):
             initial_occupancy = processor.encode_occupancy(initial_occupancy)
 
         if sublattices is None:
-            sublattices = {str(bits):
+            sublattices = {str(dict(bits)):
                            {'sites': np.array([i for i, b in
                                                enumerate(processor.bits)
                                                if b == tuple(bits.keys())]),
@@ -63,10 +63,11 @@ class BaseEnsemble(ABC):
         self.processor = processor
         self.save_interval = save_interval
         self.num_atoms = len(initial_occupancy)
+        self._prod_start = 0
         self._sublattices = sublattices
         self._init_occupancy = initial_occupancy
         self._occupancy = self._init_occupancy.copy()
-        self._energy = processor.compute_property(self._occupancy)
+        self._property = processor.compute_property(self._occupancy)
         self._step = 0
         self._ssteps = 0
         self._data = []
@@ -87,8 +88,8 @@ class BaseEnsemble(ABC):
         return self.processor.decode_occupancy(self._init_occupancy)
 
     @property
-    def energy(self):
-        return deepcopy(self._energy)
+    def current_property(self):
+        return deepcopy(self._property)
 
     @property
     def current_structure(self):
@@ -105,6 +106,14 @@ class BaseEnsemble(ABC):
     @property
     def acceptance_ratio(self):
         return self.accepted_steps/self.current_step
+
+    @property
+    def production_start(self):
+        return self._prod_start*self.save_interval
+
+    @production_start.setter
+    def production_start(self, val):
+        self._prod_start = val//self.save_interval
 
     @property
     def data(self):

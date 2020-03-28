@@ -4,13 +4,146 @@ simulations for fixed number of sites but variable concentration of species.
 """
 
 import random
+from abc import ABCMeta, abstractmethod
 from math import exp
+from collections import defaultdict
 import numpy as np
 from smol.moca.processor import CExpansionProcessor
 from smol.moca.ensembles.canonical import CanonicalEnsemble
 
 
-class SGCanonicalEnsemble(CanonicalEnsemble):
+class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
+    """
+    Semi-Grand Canonical Base Ensemble. Total number of species are fixed but
+    composition of "active" (with partial occupancies) sublattices is allowed
+    to change.
+    """
+
+    def __init__(self, processor, temperature, save_interval,
+                 initial_occupancy=None, seed=None):
+        """
+        Args:
+            processor (Processor Class):
+                A processor that can compute the change in a property given
+                a set of flips.
+            temperature (float):
+                Temperature of ensemble
+            save_interval (int):
+                interval of steps to save the current occupancy and property
+            inital_occupancy (array):
+                Initial occupancy vector. If none is given then a random one
+                will be used.
+            seed (int):
+                seed for random number generator
+        """
+
+        super().__init__(processor, temperature, save_interval,
+                         initial_occupancy=initial_occupancy, seed=seed)
+
+    @property
+    def species_counts(self):
+        """
+        Counts of species. This excludes "static" species. Those with no
+        partial occupancy
+        """
+        counts = self._get_counts()
+        species_counts = {}
+
+        for name in self._sublattices.keys():
+            cons = {sp: count for sp, count
+                    in zip(self._sublattices[name]['species'], counts[name])}
+            species_counts.update(cons)
+
+        return species_counts
+
+    @property
+    def compositions(self):
+        """
+        Composition for each "active" sublattice
+        """
+        comps = self._get_sublattice_comps()
+        return tuple(comps.values())
+
+    @property
+    def composition_samples(self):
+        n = len(self.data[self._prod_start:])
+        comp_samples = tuple({sp: np.empty(n) for sp in comps}
+                             for comps in self.compositions)
+        for i, sample in enumerate(self.data[self._prod_start:]):
+            for j, sublat_comps in enumerate(sample['compositions']):
+                for sp, comp in sublat_comps.items():
+                    comp_samples[j][sp][i] = comp
+        return comp_samples
+
+    @property
+    def average_compositions(self):
+        return tuple({sp: comp.mean() for sp, comp in comps.items()}
+                     for comps in self.composition_samples)
+
+    def _get_flips(self, sublattice_name=None):
+        """
+        Gets a possible semi-grand canonical flip, and the corresponding
+        change in chemical potential
+
+        Args:
+            sublattice_name (str): optional
+                If only considering one sublattice.
+        Returns: flip, delta_mu
+            tuple
+        """
+        if sublattice_name is None:
+            sublattice_name = random.choice(list(self._sublattices.keys()))
+
+        sublattice = self._sublattices[sublattice_name]
+        species = tuple(sublattice['species'].keys())
+
+        site = random.choice(sublattice['sites'])
+        old_bit = self._occupancy[site]
+        choices = set(range(len(species))) - {old_bit}
+        new_bit = random.choice(list(choices))
+        old_species = species[old_bit]
+        new_species = species[new_bit]
+
+        return (site, new_bit), sublattice, new_species, old_species
+
+    def _get_counts(self):
+        """
+        Get the total count of each species for current occupation
+
+        Returns: dict of sublattices with corresponding species concentrations
+            dict
+        """
+        counts = {}
+        for name, sublattice in self._sublattices.items():
+            occupancy = self._occupancy[sublattice['sites']]
+            counts[name] = [len(occupancy[occupancy == i]) for i
+                            in range(len(sublattice['species']))]
+        return counts
+
+    def _get_sublattice_comps(self):
+        """
+        Get the current composition (species concentration) for each
+        sublattice.
+        """
+        composition = {}
+        counts = self._get_counts()
+        for name, sublattice in self._sublattices.items():
+            occupancy = self._occupancy[sublattice['sites']]
+            composition[name] = {sp: ct/len(occupancy) for sp, ct
+                                 in zip(sublattice['species'], counts[name])}
+        return composition
+
+    def _get_current_data(self):
+        """
+        Get ensemble specific data for current MC step
+        """
+        data = super()._get_current_data()
+        data['counts'] = self.species_counts
+        data['compositions'] = self.compositions
+        return data
+
+
+class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
     """
     A Semi-Grand Canonical Ensemble for Monte Carlo Simulations where species
     chemical potentials are predefined. Note that in the SGC Ensemble
@@ -56,16 +189,15 @@ class SGCanonicalEnsemble(CanonicalEnsemble):
                                  f': {species}')
 
         # Add chemical potentials to sublattice dictionary
-        for sublattice in self._sublattices.values():
-            sublattice['mu'] = {sp : mu for sp, mu
-                                in chemical_potentials.items()
-                                if sp in sublattice['species']}
+        for sublatt in self._sublattices.values():
+            sublatt['mu'] = {sp: mu for sp, mu in chemical_potentials.items()
+                             if sp in sublatt['species']}
             # If no reference species is set, then set and recenter others
-            mus = list(sublattice['mu'].values())
+            mus = list(sublatt['mu'].values())
             if not any([mu == 0 for mu in mus]):
                 ref_mu = mus[0]
-                sublattice['mu'] = {sp: mu - ref_mu for sp, mu
-                                    in sublattice['mu'].items()}
+                sublatt['mu'] = {sp: mu - ref_mu for sp, mu
+                                 in sublatt['mu'].items()}
 
     @property
     def chemical_potentials(self):
@@ -74,49 +206,6 @@ class SGCanonicalEnsemble(CanonicalEnsemble):
         for sublattice in self._sublattices.values():
             chem_pots.update(sublattice['mu'])
         return chem_pots
-
-    @property
-    def species_counts(self):
-        """
-        Counts of species. This excludes "static" species. Those with no
-        partial occupancy
-        """
-        counts = self._get_counts()
-        species_counts = {}
-
-        for name in self._sublattices.keys():
-            cons = {sp: count for sp, count
-                    in zip(self._sublattices[name]['species'], counts[name])}
-            species_counts.update(cons)
-
-        return species_counts
-
-    def _get_flips(self, sublattice_name=None):
-        """
-        Gets a possible semi-grand canonical flip, and the corresponding
-        change in chemical potential
-
-        Args:
-            sublattice_name (str): optional
-                If only considering one sublattice.
-        Returns: flip, delta_mu
-            tuple
-        """
-        if sublattice_name is None:
-            sublattice_name = random.choice(list(self._sublattices.keys()))
-
-        sublattice = self._sublattices[sublattice_name]
-        species = tuple(sublattice['species'].keys())
-
-        site = random.choice(sublattice['sites'])
-        old_bit = self._occupancy[site]
-        choices = set(range(len(species))) - {old_bit}
-        new_bit = random.choice(list(choices))
-        old_species = species[old_bit]
-        new_species = species[new_bit]
-        delta_mu = sublattice['mu'][new_species] - sublattice['mu'][old_species]  # noqa
-
-        return (site, new_bit), delta_mu
 
     def _attempt_step(self, sublattice_name=None):
         """
@@ -128,44 +217,21 @@ class SGCanonicalEnsemble(CanonicalEnsemble):
         Returns: Flip acceptance
             bool
         """
-        flip, delta_mu = self._get_flips(sublattice_name)
+        flip, sublattice, new_sp, old_sp = self._get_flips(sublattice_name)
         delta_e = self.processor.compute_property_change(self._occupancy,
                                                          [flip])
-
+        delta_mu = sublattice['mu'][new_sp] - sublattice['mu'][old_sp]
         delta_phi = delta_e - delta_mu
         accept = self._accept(delta_phi, self.beta)
 
         if accept:
-            self._energy += delta_e
+            self._property += delta_e
             self._occupancy[flip[0]] = flip[1]
-            if self._energy < self._min_energy:
-                self._min_energy = self._energy
+            if self._property < self._min_energy:
+                self._min_energy = self._property
                 self._min_occupancy = self._occupancy.copy()
 
         return accept
-
-    def _get_counts(self):
-        """
-        Get the total count of each species for current occupation
-
-        Returns: dict of sublattices with corresponding species concentrations
-            dict
-        """
-        counts = {}
-        for name, sublattice in self._sublattices.items():
-            occupancy = self._occupancy[sublattice['sites']]
-            counts[name] = [np.count_nonzero(occupancy == sp)
-                            for sp in range(len(sublattice['species']))]
-        return counts
-
-    def _get_current_data(self):
-        """
-        Get ensemble specific data for current MC step
-        """
-        data = super()._get_current_data()
-        data['counts'] = self.species_counts
-
-        return data
 
     def as_dict(self) -> dict:
         """
@@ -195,12 +261,12 @@ class SGCanonicalEnsemble(CanonicalEnsemble):
         eb._data = d['_data']
         eb._step = d['_step']
         eb._ssteps = d['_ssteps']
-        eb._energy = d['_energy']
+        eb._property = d['_energy']
         eb._occupancy = np.array(d['_occupancy'])
         return eb
 
 
-class fSGCanonicalEnsemble(CanonicalEnsemble):
+class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
     """
     A Semi-Grand Canonical Ensemble for Monte Carlo simulations where the
     species fugacity ratios are set constant. This implicitly sets the chemical
@@ -241,10 +307,10 @@ class fSGCanonicalEnsemble(CanonicalEnsemble):
         if fugacity_fractions is not None:
             # check that species are valid
             species = [sp for sps in processor.unique_bits for sp in sps]
-            for sublattice in fugacity_fractions:
-                if sum([f for f in sublattice.values()]) != 1:
+            for sublatt in fugacity_fractions:
+                if sum([f for f in sublatt.values()]) != 1:
                     raise ValueError(f'Fugacity ratios must add to one.')
-                for sp in sublattice.keys():
+                for sp in sublatt.keys():
                     if sp not in species:
                         raise ValueError(f'Species {sp} in provided fugacity '
                                          f'ratios is not a species in the'
@@ -254,53 +320,10 @@ class fSGCanonicalEnsemble(CanonicalEnsemble):
             # Note that in the strange cases where you want sublattices
             # with the same allowed species but different concentrations this
             # will mess it up and give both of them the first dictionary...
-            for sublattice in self._sublattices.values():
+            for sublatt in self._sublattices.values():
                 ind = [sl.keys() for sl
-                       in fugacity_fractions].index(sublattice['species'].keys())
-                sublattice['species'] = fugacity_fractions[ind]
-
-    @property
-    def species_counts(self):
-        """
-        Counts of species. This excludes "static" species. Those with no
-        partial occupancy
-        """
-        counts = self._get_counts()
-        species_counts = {}
-
-        for name in self._sublattices.keys():
-            cons = {sp: count for sp, count
-                    in zip(self._sublattices[name]['species'], counts[name])}
-            species_counts.update(cons)
-
-        return species_counts
-
-    def _get_flips(self, sublattice_name=None):
-        """
-        Gets a possible semi-grand canonical flip, and the corresponding
-        fugacity fraction ratio
-
-        Args:
-            sublattice_name (str): optional
-                If only considering one sublattice.
-        Returns: flip, ratio
-            tuple
-        """
-        if sublattice_name is None:
-            sublattice_name = random.choice(list(self._sublattices.keys()))
-
-        sublattice = self._sublattices[sublattice_name]
-        species = tuple(sublattice['species'].keys())
-
-        site = random.choice(sublattice['sites'])
-        old_bit = self._occupancy[site]
-        choices = set(range(len(species))) - {old_bit}
-        new_bit = random.choice(list(choices))
-        old_species = species[old_bit]
-        new_species = species[new_bit]
-        ratio = sublattice['species'][new_species]/sublattice['species'][old_species]  # noqa
-
-        return (site, new_bit), ratio
+                       in fugacity_fractions].index(sublatt['species'].keys())
+                sublatt['species'] = fugacity_fractions[ind]
 
     def _attempt_step(self, sublattice_name=None):
         """
@@ -312,17 +335,17 @@ class fSGCanonicalEnsemble(CanonicalEnsemble):
         Returns: Flip acceptance
             bool
         """
-        flip, ratio = self._get_flips(sublattice_name)
+        flip, sublattice, new_sp, old_sp = self._get_flips(sublattice_name)
         delta_e = self.processor.compute_property_change(self._occupancy,
                                                          [flip])
-
+        ratio = sublattice['species'][new_sp]/sublattice['species'][old_sp]
         accept = self._accept(delta_e, ratio, self.beta)
 
         if accept:
-            self._energy += delta_e
+            self._property += delta_e
             self._occupancy[flip[0]] = flip[1]
-            if self._energy < self._min_energy:
-                self._min_energy = self._energy
+            if self._property < self._min_energy:
+                self._min_energy = self._property
                 self._min_occupancy = self._occupancy.copy()
 
         return accept
@@ -340,29 +363,6 @@ class fSGCanonicalEnsemble(CanonicalEnsemble):
         """
         condition = ratio*exp(-beta*delta_e)
         return True if condition >= 1 else condition >= random.random()
-
-    def _get_counts(self):
-        """
-        Get the total count of each species for current occupation
-
-        Returns: dict of sublattices with corresponding species concentrations
-            dict
-        """
-        counts = {}
-        for name, sublattice in self._sublattices.items():
-            occupancy = self._occupancy[sublattice['sites']]
-            counts[name] = [np.count_nonzero(occupancy == sp)
-                            for sp in range(len(sublattice['species']))]
-        return counts
-
-    def _get_current_data(self):
-        """
-        Get ensemble specific data for current MC step
-        """
-        data = super()._get_current_data()
-        data['counts'] = self.species_counts
-
-        return data
 
     def as_dict(self) -> dict:
         """
@@ -390,6 +390,6 @@ class fSGCanonicalEnsemble(CanonicalEnsemble):
         eb._data = d['_data']
         eb._step = d['_step']
         eb._ssteps = d['_ssteps']
-        eb._energy = d['_energy']
+        eb._property = d['_energy']
         eb._occupancy = np.array(d['_occupancy'])
         return eb

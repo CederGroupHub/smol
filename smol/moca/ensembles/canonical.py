@@ -5,7 +5,6 @@ simulations for fixed number of sites and fixed concentration of species.
 
 import random
 import numpy as np
-from multiprocessing import Pool, cpu_count
 from monty.json import MSONable
 from smol.moca.ensembles.base import BaseEnsemble
 from smol.moca.processor import CExpansionProcessor
@@ -38,7 +37,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         super().__init__(processor, initial_occupancy=initial_occupancy,
                          save_interval=save_interval, seed=seed)
         self.temperature = temperature
-        self._min_energy = self._energy
+        self._min_energy = self._property
         self._min_occupancy = self._init_occupancy
 
     @property
@@ -53,6 +52,23 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
     @property
     def beta(self):
         return self._beta
+
+    @property
+    def current_energy(self):
+        return self.current_property
+
+    @property
+    def average_energy(self):
+        return self.energy_samples.mean()
+
+    @property
+    def energy_variance(self):
+        return self.energy_samples.var()
+
+    @property
+    def energy_samples(self):
+        return np.array([d['energy'] for d
+                         in self.data[self.production_start:]])
 
     @property
     def minimum_energy(self):
@@ -144,11 +160,11 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         accept = self._accept(delta_e, self.beta)
 
         if accept:
-            self._energy += delta_e
+            self._property += delta_e
             for f in flips:
                 self._occupancy[f[0]] = f[1]
-            if self._energy < self._min_energy:
-                self._min_energy = self._energy
+            if self._property < self._min_energy:
+                self._min_energy = self._property
                 self._min_occupancy = self._occupancy.copy()
 
         return accept
@@ -182,7 +198,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         """
         Get ensemble specific data for current MC step
         """
-        return {'energy': self.energy, 'occupancy': self.occupancy}
+        return {'energy': self.current_energy, 'occupancy': self.occupancy}
 
     def as_dict(self) -> dict:
         """
@@ -204,7 +220,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
              '_data': self.data,
              '_step': self.current_step,
              '_ssteps': self.accepted_steps,
-             '_energy': self.energy,
+             '_energy': self.current_energy,
              '_occupancy': self._occupancy.tolist()}
         return d
 
@@ -224,6 +240,6 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         eb._data = d['_data']
         eb._step = d['_step']
         eb._ssteps = d['_ssteps']
-        eb._energy = d['_energy']
+        eb._property = d['_energy']
         eb._occupancy = np.array(d['_occupancy'])
         return eb

@@ -7,7 +7,7 @@ from __future__ import division
 
 from .processor import CExpansionProcessor
 from .ensembles.canonical import CanonicalEnsemble
-from .ensembles.sgcanonical import SGCanonicalEnsemble, fSGCanonicalEnsemble
+from .ensembles.sgcanonical import MuSemiGrandEnsemble, FuSemiGrandEnsemble
 
 __all__ = ['CExpansionProcessor', 'CanonicalEnsemble',
-           'SGCanonicalEnsemble', 'fSGCanonicalEnsemble']
+           'MuSemiGrandEnsemble', 'FuSemiGrandEnsemble']
