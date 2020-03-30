@@ -1,5 +1,6 @@
 import random
 from copy import deepcopy
+import os
 import json
 import numpy as np
 from math import exp
@@ -164,7 +165,9 @@ class BaseEnsemble(ABC):
         Write data into a text file in json format, and clear data
         """
         with open(filename, 'a') as fp:
-            json.dump(self.data, fp)
+            for d in self.data:
+                json.dump(self.data, fp)
+                fp.write(os.linesep)
 
         self._data = []
 
