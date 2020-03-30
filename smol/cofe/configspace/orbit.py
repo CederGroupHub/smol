@@ -70,8 +70,9 @@ class Orbit(MSONable):
         self._bases_arr = None
 
         # Create basecluster
-        self.basecluster = Cluster(sites, lattice)
-        self.radius = self.basecluster.radius
+        self.base_cluster = Cluster(sites, lattice)
+        self.radius = self.base_cluster.radius
+        self.size = self.base_cluster.size
         self.lattice = lattice
 
     @property
@@ -87,12 +88,12 @@ class Orbit(MSONable):
             return self._symops
         self._symops = []
         for symop in self.structure_symops:
-            new_sites = symop.operate_multi(self.basecluster.sites)
-            c = Cluster(new_sites, self.basecluster.lattice)
-            if c == self.basecluster:
-                recenter = np.round(self.basecluster.centroid - c.centroid)
+            new_sites = symop.operate_multi(self.base_cluster.sites)
+            c = Cluster(new_sites, self.base_cluster.lattice)
+            if c == self.base_cluster:
+                recenter = np.round(self.base_cluster.centroid - c.centroid)
                 c_sites = c.sites + recenter
-                mapping = tuple(coord_list_mapping(self.basecluster.sites,
+                mapping = tuple(coord_list_mapping(self.base_cluster.sites,
                                                    c_sites, atol=SITE_TOL))
                 self._symops.append((symop, mapping))
         if len(self._symops) * self.multiplicity != len(self.structure_symops):
@@ -132,9 +133,9 @@ class Orbit(MSONable):
         """
         if self._equiv:
             return self._equiv
-        equiv = [self.basecluster]
+        equiv = [self.base_cluster]
         for symop in self.structure_symops:
-            new_sites = symop.operate_multi(self.basecluster.sites)
+            new_sites = symop.operate_multi(self.base_cluster.sites)
             c = Cluster(new_sites, self.lattice)
             if c not in equiv:
                 equiv.append(c)
@@ -288,7 +289,7 @@ class Orbit(MSONable):
         try:
             # when performing Orbit in list, this ordering stops the
             # equivalent structures from generating
-            return any(self.basecluster == cluster
+            return any(self.base_cluster == cluster
                        for cluster in other.clusters)
         except AttributeError as e:
             print(e.message)
@@ -301,14 +302,14 @@ class Orbit(MSONable):
         return f'[Orbit] id: {self.id:<4} bit_id: {self.bit_id:<4}' \
                f'multiplicity: {self.multiplicity:<4}' \
                f' no. symops: {len(self.cluster_symops):<4} ' \
-               f'{str(self.basecluster)}'
+               f'{str(self.base_cluster)}'
 
     def __repr__(self):
         return _repr(self, orb_id=self.id,
                      orb_b_id=self.bit_id,
                      radius=self.radius,
                      lattice=self.lattice,
-                     basecluster=self.basecluster)
+                     basecluster=self.base_cluster)
 
     @classmethod
     def from_dict(cls, d):
@@ -331,7 +332,7 @@ class Orbit(MSONable):
         """
         d = {"@module": self.__class__.__module__,
              "@class": self.__class__.__name__,
-             "sites": self.basecluster.sites.tolist(),
+             "sites": self.base_cluster.sites.tolist(),
              "lattice": self.lattice.as_dict(),
              "bits": self.bits,
              "site_bases": [(sb.__class__.__name__[:-5].lower(),

@@ -544,10 +544,10 @@ class ClusterSubspace(MSONable):
                     continue
                 for n in all_neighbors:
                     p = n[0]
-                    if is_coord_subset([p], orbit.basecluster.sites,
+                    if is_coord_subset([p], orbit.base_cluster.sites,
                                        atol=SITE_TOL):
                         continue
-                    new_sites = np.concatenate([orbit.basecluster.sites, [p]])
+                    new_sites = np.concatenate([orbit.base_cluster.sites, [p]])
                     new_orbit = Orbit(new_sites, expansion_struct.lattice,
                                       orbit.bits + [np.arange(nbits[n[2]])],
                                       orbit.site_bases + [site_bases[n[2]]],

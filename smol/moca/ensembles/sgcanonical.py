@@ -6,7 +6,6 @@ simulations for fixed number of sites but variable concentration of species.
 import random
 from abc import ABCMeta, abstractmethod
 from math import exp
-from collections import defaultdict
 import numpy as np
 from smol.moca.processor import CExpansionProcessor
 from smol.moca.ensembles.canonical import CanonicalEnsemble
@@ -78,6 +77,11 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
     @property
     def average_compositions(self):
         return tuple({sp: comp.mean() for sp, comp in comps.items()}
+                     for comps in self.composition_samples)
+
+    @property
+    def composition_variance(self):
+        return tuple({sp: comp.var() for sp, comp in comps.items()}
                      for comps in self.composition_samples)
 
     def _get_flips(self, sublattice_name=None):
