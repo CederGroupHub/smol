@@ -84,6 +84,14 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
         return tuple({sp: comp.var() for sp, comp in comps.items()}
                      for comps in self.composition_samples)
 
+    @abstractmethod
+    def _attempt_step(self, sublattice_name):
+        """
+        Attempts a MC step and returns 0, 1 based on whether the step was
+        accepted or not.
+        """
+        pass
+
     def _get_flips(self, sublattice_name=None):
         """
         Gets a possible semi-grand canonical flip, and the corresponding
