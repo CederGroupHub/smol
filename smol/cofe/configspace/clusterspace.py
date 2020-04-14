@@ -168,6 +168,11 @@ class ClusterSubspace(MSONable):
         return [orbit for key, orbits
                 in sorted(self._orbits.items()) for orbit in orbits]
 
+    @property
+    def orbits_by_size(self):
+        """Dictionary of orbits with key being the size"""
+        return self._orbits
+
     def iterorbits(self):
         """Orbit generator, yields orbits"""
         for key, orbits in sorted(self._orbits.items()):
