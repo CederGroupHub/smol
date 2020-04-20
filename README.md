@@ -18,7 +18,7 @@ If you need to re-cythonize (in case you changed a .pyx file while developing or
     python setup.py develop --use-cython
 
 #### Contributing
-Pretty please consider contributing if you have even the slightest idea. The very best softer comes from collaborative efforts.
+Pretty please consider contributing if you have even the slightest idea. The very best software comes from collaborative efforts.
 
 * In case you have an idea, recommendation, problem or found a bug, but nothing actually down on code, use the issue tracker here.
 
