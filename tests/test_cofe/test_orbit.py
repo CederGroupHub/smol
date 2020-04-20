@@ -31,13 +31,13 @@ class TestOrbit(unittest.TestCase):
                           [[0, 1]], self.bases, self.symops)
 
     def test_basecluster(self):
-        self.assertEqual(self.orbit.basecluster, self.basecluster)
+        self.assertEqual(self.orbit.base_cluster, self.basecluster)
 
     def test_clusters(self):
         self.assertEqual(len(self.orbit.clusters), 4)
         self.assertEqual(self.orbit.clusters[0], self.basecluster)
         for cluster in self.orbit.clusters[1:]:
-            self.assertNotEqual(self.orbit.basecluster, cluster)
+            self.assertNotEqual(self.orbit.base_cluster, cluster)
 
     def test_multiplicity(self):
         self.assertEqual(self.orbit.multiplicity, 4)

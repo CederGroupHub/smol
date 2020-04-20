@@ -5,15 +5,15 @@ the use a cluster expansion hamiltonian to run Monte Carlo based simulations.
 """
 
 import numpy as np
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from monty.json import MSONable
 from pymatgen import Structure, PeriodicSite
 from smol.cofe import ClusterExpansion
-from smol.cofe.configspace.utils import get_bits
+from smol.cofe.configspace.utils import get_bits, get_bits_w_concentration
 from src.ce_utils import corr_from_occupancy, delta_corr_single_flip
 
 
-class ClusterExpansionProcessor(MSONable):
+class CExpansionProcessor(MSONable):
     """
     A processor allows an ensemble class to to generate Markov processes (chain
     really) for sampling thermodynamic properties from a cluster expansion
@@ -34,8 +34,9 @@ class ClusterExpansionProcessor(MSONable):
         self.supercell_matrix = supercell_matrix
 
         # this can be used (maybe should) to check if a flip is valid
-        expansion_bits = get_bits(cluster_expansion.expansion_structure)
-        self.unique_bits = tuple(set(tuple(bits)for bits in expansion_bits))
+        exp_bits = get_bits_w_concentration(cluster_expansion.expansion_structure)  # noqa
+        self.unique_bits = tuple(OrderedDict(bits) for bits in
+                                 set(tuple(bits.items()) for bits in exp_bits))
 
         self.bits = get_bits(self.structure)
         self.size = self.subspace.num_prims_from_matrix(supercell_matrix)

@@ -1,5 +1,6 @@
 import random
 from copy import deepcopy
+import os
 import json
 import numpy as np
 from math import exp
@@ -35,7 +36,7 @@ class BaseEnsemble(ABC):
                 "['Li+', 'Vacancy']"), the values should be a dictionary
                 with two items {'sites': array with the site indices for all
                 sites corresponding to that sublattice in the occupancy vector,
-                'bits': tuple of bits (allowed species) in sublattice}
+                'species': OrderedDict of allowed species in sublattice}
                 All sites in a sublattice need to have the same bits/species
                 allowed.
             seed (int): optional
@@ -53,20 +54,21 @@ class BaseEnsemble(ABC):
             initial_occupancy = processor.encode_occupancy(initial_occupancy)
 
         if sublattices is None:
-            sublattices = {str(bits):
+            sublattices = {str(dict(bits)):
                            {'sites': np.array([i for i, b in
                                                enumerate(processor.bits)
-                                               if b == bits]),
-                            'bits': bits}
+                                               if b == tuple(bits.keys())]),
+                            'species': bits}
                            for bits in processor.unique_bits}
 
         self.processor = processor
         self.save_interval = save_interval
         self.num_atoms = len(initial_occupancy)
+        self._prod_start = 0
         self._sublattices = sublattices
         self._init_occupancy = initial_occupancy
         self._occupancy = self._init_occupancy.copy()
-        self._energy = processor.compute_property(self._occupancy)
+        self._property = processor.compute_property(self._occupancy)
         self._step = 0
         self._ssteps = 0
         self._data = []
@@ -87,8 +89,8 @@ class BaseEnsemble(ABC):
         return self.processor.decode_occupancy(self._init_occupancy)
 
     @property
-    def energy(self):
-        return deepcopy(self._energy)
+    def current_property(self):
+        return deepcopy(self._property)
 
     @property
     def current_structure(self):
@@ -101,6 +103,18 @@ class BaseEnsemble(ABC):
     @property
     def accepted_steps(self):
         return self._ssteps
+
+    @property
+    def acceptance_ratio(self):
+        return self.accepted_steps/self.current_step
+
+    @property
+    def production_start(self):
+        return self._prod_start*self.save_interval
+
+    @production_start.setter
+    def production_start(self, val):
+        self._prod_start = val//self.save_interval
 
     @property
     def data(self):
@@ -151,7 +165,9 @@ class BaseEnsemble(ABC):
         Write data into a text file in json format, and clear data
         """
         with open(filename, 'a') as fp:
-            json.dump(self.data, fp)
+            for d in self.data:
+                json.dump(self.data, fp)
+                fp.write(os.linesep)
 
         self._data = []
 
