@@ -117,10 +117,10 @@ def delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,
 @cython.wraparound(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
-def delta_ewald_corr_single_flip(np.int_t[:] final, np.int_t[:] init,
-                                 int n_bit_orderings, clusters, int ind, int bit,
-                                 np.float_t[:, :, :] ewald_matrices,
-                                 np.int_t[:, :] ewald_inds, double size):
+def delta_ewald_single_flip(np.int_t[:] final, np.int_t[:] init,
+                            int n_bit_orderings, clusters, int ind, int bit,
+                            np.float_t[:, :, :] ewald_matrices,
+                            np.int_t[:, :] ewald_inds, double size):
 
     cdef int i, j, k, I, J, K, l, add, sub
     cdef bint ok

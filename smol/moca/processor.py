@@ -2,6 +2,8 @@
 Implementation of a processor for a fixed size Super Cell optimized to compute
 correlation vectors and local changes in correlation vectors. This class allows
 the use a cluster expansion hamiltonian to run Monte Carlo based simulations.
+If you are using a Hamiltonian with an Ewald summation electrostatic term, you
+should use the EwaldCEProcessor class.
 """
 
 import numpy as np
@@ -9,8 +11,10 @@ from collections import defaultdict, OrderedDict
 from monty.json import MSONable
 from pymatgen import Structure, PeriodicSite
 from smol.cofe import ClusterExpansion
+from smol.cofe.configspace import EwaldTerm
 from smol.cofe.configspace.utils import get_bits, get_bits_w_concentration
-from src.ce_utils import corr_from_occupancy, delta_corr_single_flip
+from src.ce_utils import corr_from_occupancy, delta_corr_single_flip, \
+    delta_ewald_single_flip
 
 
 class CEProcessor(MSONable):
@@ -23,6 +27,14 @@ class CEProcessor(MSONable):
     """
 
     def __init__(self, cluster_expansion, supercell_matrix):
+        """
+        Args:
+            cluster_expansion (ClusterExpansion):
+                A fitted cluster expansion representing a Hamiltonian
+            supercell_matrix (array):
+                An array representing the supercell matrix with respect to the
+                Cluster Expansion prim structure.
+        """
 
         # the only reason to keep the CE is for the MSONable from_dict
         self.cluster_expansion = cluster_expansion
@@ -41,7 +53,7 @@ class CEProcessor(MSONable):
         self.bits = get_bits(self.structure)
         self.size = self.subspace.num_prims_from_matrix(supercell_matrix)
         self.n_orbit_functions = self.subspace.n_bit_orderings
-        orbit_inds = self.subspace.supercell_orbit_mappings(supercell_matrix)
+        self.orbit_inds = self.subspace.supercell_orbit_mappings(supercell_matrix)  #noqa
 
         # List of orbit information and supercell site indices to compute corr
         self.orbit_list = []
@@ -53,7 +65,7 @@ class CEProcessor(MSONable):
         # where only the rows with the site index are stored. The ratio is
         # needed because the correlations are averages over the full inds
         # array.
-        for orbit, inds in orbit_inds:
+        for orbit, inds in self.orbit_inds:
             self.orbit_list.append((orbit.bit_id, orbit.bit_combos,
                                     orbit.bases_array, inds))
             for site_ind in np.unique(inds):
@@ -157,7 +169,23 @@ class CEProcessor(MSONable):
         occu = [bit[i] for i, bit in zip(enc_occu, self.bits)]
         return occu
 
-    def delta_corr(self, flips, occu, debug=False):
+    def delta_corr(self, flips, occu):
+        """
+        Computes the change in the correlation vector from a list of site
+        flips
+        Args:
+            flips list(tuple):
+                list of tuples with two elements. Each tuple represents a
+                single flip where the first element is the index of the site
+                in the occupancy vector and the second element is the index
+                for the new species to place at that site.
+            occu (array):
+                encoded occupancy array
+
+        Returns:
+            array
+        """
+
         occu_i = occu.copy()
         delta_corr = np.zeros(self.n_orbit_functions)
         for f in flips:
@@ -192,3 +220,91 @@ class CEProcessor(MSONable):
              'supercell_matrix': self.supercell_matrix.tolist()}
         return d
 
+
+class EwaldCEProcessor(CEProcessor):
+    """
+    A subclass of the CEProcessor class that handles changes in an additional
+    Ewald Summetion terms from single site flips.
+    Make sure that the ClusterExpansion object used has an Ewald Term,
+    otherwise this will not work.
+    """
+
+    def __init__(self, cluster_expansion, supercell_matrix):
+        """
+        Args:
+            cluster_expansion (ClusterExpansion):
+                A fitted cluster expansion representing a Hamiltonian
+            supercell_matrix (array):
+                An array representing the supercell matrix with respect to the
+                Cluster Expansion prim structure.
+        """
+
+        super().__init__(cluster_expansion, supercell_matrix)
+
+        if len(cluster_expansion.subspace.external_terms) != 1:
+            raise AttributeError('The provided ClusterExpansion must have only'
+                                 'one external term being an EwaldTerm')
+        term, args, kwargs = cluster_expansion.subspace.external_terms[0]
+        if term != EwaldTerm:
+            raise TypeError('The external term in the provided '
+                            'ClusterExpansion must be an EwaldTerm')
+
+        self.ewald = term(self.structure, self.orbit_inds, *args, **kwargs)
+
+    def compute_correlation(self, occu):
+        """
+        Computes the correlation vector for a given occupancy vector.
+        Each entry in the correlation vector corresponds to a particular
+        symmetrically distinct bit ordering. The last value of the correlation
+        is the ewald summation value.
+
+        Args:
+            occu (array):
+                encoded occupation vector
+
+        Returns: Correlation vector
+            array
+        """
+
+        ce_corr = corr_from_occupancy(occu, self.n_orbit_functions,
+                                   self.orbit_list)
+
+        ewald_corr = self.ewald.get_ewald_eci(occu)/self.size
+        return np.concatenate([ce_corr, ewald_corr])
+
+    def delta_corr(self, flips, occu, debug=False):
+        """
+        Computes the change in the correlation vector from a list of site
+        flips
+
+        Args:
+            flips list(tuple):
+                 list of tuples with two elements. Each tuple represents a
+                 single flip where the first element is the index of the site
+                 in the occupancy vector and the second element is the index
+                 for the new species to place at that site.
+            occu (array):
+                encoded occupancy array
+
+        Returns:
+            array
+        """
+        occu_i = occu.copy()
+        delta_corr = np.zeros(self.n_orbit_functions + 1)
+        for f in flips:
+            occu_f = occu_i.copy()
+            occu_f[f[0]] = f[1]
+            orbits = self.orbits_by_sites[f[0]]
+            delta_corr[:-1] += delta_corr_single_flip(occu_f, occu_i,
+                                                      self.n_orbit_functions,
+                                                      orbits)
+            delta_corr[-1] += delta_ewald_single_flip(occu_f, occu_i,
+                                                      self.n_orbit_functions,
+                                                      orbits,
+                                                      f[0], f[1],
+                                                      self.ewald.all_ewalds,
+                                                      self.ewald.ewald_inds,
+                                                      self.size)
+            occu_i = occu_f
+
+        return delta_corr
