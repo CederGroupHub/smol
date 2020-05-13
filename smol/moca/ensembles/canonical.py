@@ -7,7 +7,7 @@ import random
 import numpy as np
 from monty.json import MSONable
 from smol.moca.ensembles.base import BaseEnsemble
-from smol.moca.processor import CExpansionProcessor
+from smol.moca.processor import CEProcessor
 from smol.globals import kB
 
 
@@ -229,7 +229,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         """
         Creates a CanonicalEnsemble from MSONable dict representation
         """
-        eb = cls(CExpansionProcessor.from_dict(d['processor']),
+        eb = cls(CEProcessor.from_dict(d['processor']),
                  temperature=d['temperature'],
                  save_interval=d['save_interval'],
                  initial_occupancy=d['initial_occupancy'],

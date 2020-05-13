@@ -26,7 +26,7 @@ class TestEwald(unittest.TestCase):
                        [0.5, 1, 0], [0.5, 0.5, 0]])
         occu = cs.occupancy_from_structure(s, encode=True)
         ew = EwaldTerm(supercell, orb_inds, eta=0.15)
-        self.assertAlmostEqual(ew._get_ewald_eci(occu)[0],
+        self.assertAlmostEqual(ew.get_ewald_eci(occu)[0],
                                EwaldSummation(s, eta=ew._ewald._eta).total_energy, places=5)
         self.assertIsNotNone(ew.partial_ems)  # these need to be improved to check actual values
         self.assertIsNotNone(ew.all_ewalds)

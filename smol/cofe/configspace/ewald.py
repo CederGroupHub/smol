@@ -75,7 +75,7 @@ class EwaldTerm():
     def corr_from_occu(cls, occu, structure, orbit_indices, eta=None,
                        use_inv_r=False):
         et = cls(structure, orbit_indices, eta, use_inv_r)
-        return et._get_ewald_eci(occu)
+        return et.get_ewald_eci(occu)
 
     @property
     def all_ewalds(self):
@@ -138,11 +138,13 @@ class EwaldTerm():
         b_inds[i_inds] = True
         return b_inds[:-1]
 
-    def _get_ewald_eci(self, occu):
+    # This naming is misleading since these are not the coefficient(s), but
+    # but rather the features. Should change this...
+    def get_ewald_eci(self, occu):
         inds = self._get_ewald_occu(occu)
         ecis = [np.sum(self.ewald_matrix[inds, :][:, inds])]
 
-        if self.use_inv_r:
+        if self.use_inv_r:  # should figure out if this is ever used, ow remove
             for m in self.partial_ems:
                 ecis.append(np.sum(m[inds, :][:, inds]))
 
