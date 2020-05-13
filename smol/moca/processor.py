@@ -53,7 +53,7 @@ class CEProcessor(MSONable):
         self.bits = get_bits(self.structure)
         self.size = self.subspace.num_prims_from_matrix(supercell_matrix)
         self.n_orbit_functions = self.subspace.n_bit_orderings
-        self.orbit_inds = self.subspace.supercell_orbit_mappings(supercell_matrix)  #noqa
+        self.orbit_inds = self.subspace.supercell_orbit_mappings(supercell_matrix)  # noqa
 
         # List of orbit information and supercell site indices to compute corr
         self.orbit_list = []
@@ -267,9 +267,9 @@ class EwaldCEProcessor(CEProcessor):
         """
 
         ce_corr = corr_from_occupancy(occu, self.n_orbit_functions,
-                                   self.orbit_list)
-
+                                      self.orbit_list)
         ewald_corr = self.ewald.get_ewald_eci(occu)/self.size
+
         return np.concatenate([ce_corr, ewald_corr])
 
     def delta_corr(self, flips, occu, debug=False):
