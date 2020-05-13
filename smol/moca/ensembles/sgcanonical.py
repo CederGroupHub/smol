@@ -7,7 +7,7 @@ import random
 from abc import ABCMeta, abstractmethod
 from math import exp
 import numpy as np
-from smol.moca.processor import CExpansionProcessor
+from smol.moca.processor import CEProcessor
 from smol.moca.ensembles.canonical import CanonicalEnsemble
 
 
@@ -261,7 +261,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
         """
         Creates a CanonicalEnsemble from MSONable dict representation
         """
-        eb = cls(CExpansionProcessor.from_dict(d['processor']),
+        eb = cls(CEProcessor.from_dict(d['processor']),
                  temperature=d['temperature'],
                  chemical_potentials=d['chem_pots'],
                  save_interval=d['save_interval'],
@@ -391,7 +391,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
         """
         Creates a CanonicalEnsemble from MSONable dict representation
         """
-        eb = cls(CExpansionProcessor.from_dict(d['processor']),
+        eb = cls(CEProcessor.from_dict(d['processor']),
                  temperature=d['temperature'],
                  save_interval=d['save_interval'],
                  initial_occupancy=d['initial_occupancy'],

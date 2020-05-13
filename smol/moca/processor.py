@@ -13,10 +13,10 @@ from smol.cofe.configspace.utils import get_bits, get_bits_w_concentration
 from src.ce_utils import corr_from_occupancy, delta_corr_single_flip
 
 
-class CExpansionProcessor(MSONable):
+class CEProcessor(MSONable):
     """
-    A processor allows an ensemble class to to generate Markov processes (chain
-    really) for sampling thermodynamic properties from a cluster expansion
+    A processor allows an ensemble class to generate a Markov chain
+    for sampling thermodynamic properties from a cluster expansion
     Hamiltonian.
     Think of this as fixed size supercell optimized to calculate correlation
     vectors and local changes to correlation vectors from site flips.
@@ -191,3 +191,4 @@ class CExpansionProcessor(MSONable):
              'cluster_expansion': self.cluster_expansion.as_dict(),
              'supercell_matrix': self.supercell_matrix.tolist()}
         return d
+
