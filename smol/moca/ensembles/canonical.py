@@ -108,7 +108,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
            tuple
         """
         if start_temperature < self.temperature:
-            raise ValueError(f'End temperature is greater than start '
+            raise ValueError('End temperature is greater than start '
                              f'temperature {self.temperature} > '
                              f'{start_temperature}.')
         if cool_function is None:

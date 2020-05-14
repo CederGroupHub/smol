@@ -337,7 +337,7 @@ class ClusterSubspace(MSONable):
             else:
                 sp = 'Vacancy'
             if sp not in bit:
-                raise StructureMatchError(f'A site in given structure has an'
+                raise StructureMatchError('A site in given structure has an'
                                           f' unrecognized specie {sp}. ')
             if encode:
                 occu.append(bit.index(sp))
@@ -476,9 +476,9 @@ class ClusterSubspace(MSONable):
                     orbit.remove_bit_combos_by_inds(to_remove)
                 except RuntimeError:
                     empty_orbit_ids.append(orbit.id)
-                    warnings.warn(f'All bit combos have been removed from '
+                    warnings.warn('All bit combos have been removed from '
                                   f'orbit with id {orbit.id}. This orbit will '
-                                  f'be fully removed.')
+                                  'be fully removed.')
 
         if empty_orbit_ids:
             self.remove_orbits(empty_orbit_ids)
@@ -616,9 +616,9 @@ class ClusterSubspace(MSONable):
     def __str__(self):
         s = f'ClusterBasis: [Prim Composition] {self.structure.composition}\n'
         for size, orbits in self._orbits.items():
-            s += "    size: {}\n".format(size)
+            s += f'    size: {size}\n'
             for orbit in orbits:
-                s += "    {}\n".format(orbit)
+                s += f'    {orbit}\n'
         return s
 
     @classmethod

@@ -203,7 +203,7 @@ class Orbit(MSONable):
                 bit_combos.append(bit_combo)
 
         if not bit_combos:
-            raise RuntimeError(f'All bit_combos have been removed from orbit '
+            raise RuntimeError('All bit_combos have been removed from orbit '
                                f'with id {self.id}')
 
         self._bit_combos = tuple(bit_combos)
@@ -221,7 +221,7 @@ class Orbit(MSONable):
                                  if i not in inds)
 
         if not self.bit_combos:
-            raise RuntimeError(f'All bit_combos have been removed from orbit '
+            raise RuntimeError('All bit_combos have been removed from orbit '
                                f'with id {self.id}')
 
     def eval(self, bits, species_encoding):

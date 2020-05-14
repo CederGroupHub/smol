@@ -77,20 +77,20 @@ class ClusterExpansion(MSONable):
 
         # Check the shape of all input
         if len(fit_structures) != len(property_vector):
-            raise ValueError(f'Number of provided fit structures '
+            raise ValueError('Number of provided fit structures '
                              f'{len(fit_structures)} does not '
-                             f'correspond to property vector of shape '
+                             'correspond to property vector of shape '
                              f'{property_vector.shape}')
         if weights is not None and len(weights) != len(property_vector):
-            raise ValueError(f'Provided weights of length '
+            raise ValueError('Provided weights of length '
                              f'{len(weights)} do not match the '
                              f'{len(fit_structures)} fit structures provided.')
         if supercell_matrices is not None:
             if len(supercell_matrices) != len(property_vector):
-                raise ValueError(f'Provided list of supercell matrices of '
+                raise ValueError('Provided list of supercell matrices of '
                                  f'length {len(supercell_matrices)} does not '
                                  f'correspond to the {len(fit_structures)} fit'
-                                 f' structures provided.')
+                                 ' structures provided.')
         else:
             supercell_matrices = len(fit_structures)*[None, ]
 
@@ -189,8 +189,8 @@ class ClusterExpansion(MSONable):
             wrangler.add_data(data, verbose=verbose, weights=weights)
         elif isinstance(weights, str):
             if weights not in wrangler.get_weights.keys():
-                raise AttributeError(f'Weight str provided {weights} is not'
-                                     f'valid. Choose one of '
+                raise AttributeError('Weight str provided {weights} is not'
+                                     'valid. Choose one of '
                                      f'{wrangler.weights.keys()}')
             wrangler.weight_type = weights
         if estimator is None and ecis is None:
@@ -312,7 +312,7 @@ class ClusterExpansion(MSONable):
         try:
             self.ecis = self.estimator.coef_
         except AttributeError:
-            warnings.warn(f'The provided estimator does not provide fit '
+            warnings.warn('The provided estimator does not provide fit '
                           f'coefficients for ECIS: {self.estimator}')
 
         # reset fit metrics
@@ -403,19 +403,19 @@ class ClusterExpansion(MSONable):
         # This might need to be redefined to take "expectation" using measure
         feature_avg = np.average(self.feature_matrix, axis=0)
         feature_std = np.std(self.feature_matrix, axis=0)
-        s = f'ClusterExpansion:\n    Prim Composition: ' \
+        s = 'ClusterExpansion:\n    Prim Composition: ' \
             f'{self.prim_structure.composition} Num fit structures: ' \
             f'{len(self.property_vector)} ' \
             f'Num orbit functions: {self.subspace.n_bit_orderings}\n'
         ecis = len(corr)*[0.0, ] if self.ecis is None else self.ecis
         s += f'    [Orbit]  id: {str(0):<3}\n'
-        s += f'        bit       eci\n'
+        s += '        bit       eci\n'
         s += f'        {"[X]":<10}{ecis[0]:<4.3}\n'
         for orbit in self.subspace.iterorbits():
             s += f'    [Orbit]  id: {orbit.bit_id:<3} size: ' \
                  f'{len(orbit.bits):<3} radius: {orbit.radius:<4.3}\n'
-            s += f'        id    bit       eci     feature avg  feature std  '\
-                 f'eci*std\n'
+            s += '        id    bit       eci     feature avg  feature std  '\
+                 'eci*std\n'
             for i, bits in enumerate(orbit.bit_combos):
                 eci = ecis[orbit.bit_id + i]
                 f_avg = feature_avg[orbit.bit_id + i]

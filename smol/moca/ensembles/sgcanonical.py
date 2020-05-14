@@ -197,7 +197,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
         for sp in chemical_potentials.keys():
             if sp not in species:
                 raise ValueError(f'Species {sp} in provided chemical '
-                                 f'potentials is not a specie in the expansion'
+                                 'potentials is not a specie in the expansion'
                                  f': {species}')
 
         # Add chemical potentials to sublattice dictionary
@@ -321,11 +321,11 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
             species = [sp for sps in processor.unique_bits for sp in sps]
             for sublatt in fugacity_fractions:
                 if sum([f for f in sublatt.values()]) != 1:
-                    raise ValueError(f'Fugacity ratios must add to one.')
+                    raise ValueError('Fugacity ratios must add to one.')
                 for sp in sublatt.keys():
                     if sp not in species:
                         raise ValueError(f'Species {sp} in provided fugacity '
-                                         f'ratios is not a species in the'
+                                         'ratios is not a species in the'
                                          f'expansion: {species}')
 
             # Add fugacities to sublattice dictionary

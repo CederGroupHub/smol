@@ -222,10 +222,10 @@ class StructureWrangler(MSONable):
         if weights is not None:
             kwargs = {}
             if self.weight_type in self.get_weights.keys():
-                warnings.warn(f'Argument <weights> has been provided but the '
-                              f'type of weights is already set to '
-                              f'\'{self.weight_type}\'. Make sure this is what'
-                              f'you want.')
+                warnings.warn('Argument <weights> has been provided but the '
+                              'type of weights is already set to '
+                              f'{self.weight_type}. Make sure this is what'
+                              'you want.')
             if isinstance(weights, Sequence) and not isinstance(weights, str):
                 weights, kwargs = weights
             self._set_weights(items, weights, **kwargs)
