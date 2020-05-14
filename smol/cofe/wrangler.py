@@ -8,7 +8,6 @@ from collections import defaultdict
 import warnings
 from collections.abc import Sequence
 from functools import partial
-from multiprocessing import Pool, cpu_count
 import numpy as np
 from monty.json import MSONable
 from pymatgen import Composition, Structure
@@ -192,7 +191,7 @@ class StructureWrangler(MSONable):
         if len(weights) > 0 and weights[0] is not None:
             return np.array(weights)
 
-    def add_data(self, data, weights=None, verbose=False, nprocs=1):
+    def add_data(self, data, weights=None, verbose=False):
         """
         Add data to Structure Wrangler, computes correlation vector and if
         successful adds data otherwise it ignores that structure.
@@ -212,17 +211,10 @@ class StructureWrangler(MSONable):
                 number of processes to run data processing on. 0 defaults to
                 maximum number of processors.
         """
-        if nprocs == 0 or nprocs > cpu_count():
-            nprocs = cpu_count()
 
-        fun = partial(self._process_data, verbose=verbose)
-        if nprocs == 1:
-            # if only one process do not bother creating a Pool
-            items = [item for item in map(fun, data) if item is not None]
-        else:
-            with Pool(processes=nprocs) as p:
-                items = [item for item in p.imap(fun, data, len(data)//nprocs)
-                         if item is not None]
+        items = [itm for itm in map(lambda d: self._process_data(d, verbose),
+                                    data)
+                 if itm is not None]
 
         if self.weight_type is not None:
             self._set_weights(items, self.weight_type, **self.weight_kwargs)
@@ -274,6 +266,7 @@ class StructureWrangler(MSONable):
         subspace prim structure to obtain its supercell matrix, correlation,
         and refined structure.
         """
+        print(item, verbose)
         structure, property = item
         try:
             scmatrix = self._subspace.scmatrix_from_structure(structure)
