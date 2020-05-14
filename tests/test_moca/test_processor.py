@@ -79,6 +79,25 @@ class TestCEProcessor(unittest.TestCase):
         corr_i = self.pr.compute_correlation(self.enc_occu)
         self.assertTrue(np.allclose(dcorr, corr_f - corr_i))
 
+    def test_delta_corr_indicator(self):
+        cs = self.ce.subspace.copy()
+        cs.change_site_bases('indicator')
+        ce = ClusterExpansion(cs, self.ce._structures,
+                              self.ce.property_vector,
+                              feature_matrix=self.ce._feature_matrix,
+                              supercell_matrices=self.ce._scmatrices,
+                              estimator=self.ce.estimator)
+        ce.fit()
+        pr = CEProcessor(ce, self.pr.supercell_matrix, optimize_indicator=True)
+        flips = [(10, 1), (6, 0)]
+        new_occu = self.enc_occu.copy()
+        new_occu[flips[0][0]] = flips[0][1]
+        new_occu[flips[1][0]] = flips[1][1]
+        dcorr = pr.delta_corr(flips, self.enc_occu)
+        corr_f = pr.compute_correlation(new_occu)
+        corr_i = pr.compute_correlation(self.enc_occu)
+        self.assertTrue(np.allclose(dcorr, corr_f - corr_i))
+
     def test_structure_from_occupancy(self):
         # The structures do pass as equal by direct == comparison, but as long
         # as the correlation vectors and predicted energy are the same we

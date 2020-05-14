@@ -7,7 +7,7 @@ boundary conditions or otherwise.
 import numpy as np
 cimport numpy as np
 cimport cython
-from cython.parallel import prange, parallel
+#from cython.parallel import prange, parallel
 
 
 @cython.boundscheck(False)
@@ -62,8 +62,8 @@ def corr_from_occupancy(np.int_t[::1] occu, int n_bit_orderings, orbit_list):
 @cython.wraparound(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
-def delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,
-                           int n_bit_orderings, site_orbit_list):
+def general_delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,
+                                   int n_bit_orderings, site_orbit_list):
     """
     Computes the correlation difference between two occupancy
     vectors.
@@ -152,5 +152,59 @@ def delta_ewald_single_flip(np.int_t[:] final, np.int_t[:] init,
 
         o_view[l] = o / size
         l += 1
+
+    return out
+
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.initializedcheck(False)
+@cython.cdivision(True)
+def indicator_delta_corr_single_flip(np.int_t[:] final, np.int_t[:] init,
+                                     int n_bit_orderings, site_orbit_list):
+    """
+    Counts number of rows of a that are present in b
+    Args:
+        final, init: inital and final occupancies
+        clusters: List of clusters that the flip can affect
+    Returns:
+        delta_corr vector from a single flip
+    """
+
+    cdef int i, j, k, I, J, K, l
+    cdef bint ok
+    cdef np.int_t[:, :] b, inds
+    out = np.zeros(n_bit_orderings)
+    cdef np.float_t[:] o_view = out
+    cdef np.float_t[:, :] m
+    cdef double r, o
+
+    for id, r, combos, _, inds in site_orbit_list:
+        l = id
+        I = inds.shape[0] # cluster index
+        K = inds.shape[1] # index within cluster
+        for b in combos:
+            J = b.shape[0] # index within bit array
+            o = 0
+            for i in range(I):
+                for j in range(J):
+                    ok = True
+                    for k in range(K):
+                        if final[inds[i, k]] != b[j, k]:
+                            ok = False
+                            break
+                    if ok:
+                        o += 1
+
+                    ok = True
+                    for k in range(K):
+                        if init[inds[i, k]] != b[j, k]:
+                            ok = False
+                            break
+                    if ok:
+                        o -= 1
+
+            o_view[l] = o / r / (I * J)
+            l += 1
 
     return out

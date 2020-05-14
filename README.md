@@ -18,9 +18,9 @@ If you need to re-cythonize (in case you changed a .pyx file while developing or
     python setup.py develop --use-cython
 
 #### Contributing
-Pretty please consider contributing if you have even the slightest idea. The very best software comes from collaborative efforts.
+Please consider contributing if you have even the slightest idea. The very best software comes from collaborative efforts.
 
-* In case you have an idea, recommendation, problem or found a bug, but nothing actually down on code, use the issue tracker here.
+* In case you have an idea, recommendation, problem or found a bug, but nothing actually down on code, use the [issue tracker](https://github.com/CederGroupHub/smol/issues).
 
 * If you have lovely bits of code you want to contribute then please fork + pull request [github-flow](https://guides.github.com/introduction/flow/) or [git-flow](https://nvie.com/posts/a-successful-git-branching-model/) style.
 

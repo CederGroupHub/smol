@@ -13,8 +13,8 @@ from pymatgen import Structure, PeriodicSite
 from smol.cofe import ClusterExpansion
 from smol.cofe.configspace import EwaldTerm
 from smol.cofe.configspace.utils import get_bits, get_bits_w_concentration
-from src.ce_utils import corr_from_occupancy, delta_corr_single_flip, \
-    delta_ewald_single_flip
+from src.ce_utils import corr_from_occupancy, general_delta_corr_single_flip, \
+    delta_ewald_single_flip, indicator_delta_corr_single_flip
 
 
 class CEProcessor(MSONable):
@@ -26,7 +26,8 @@ class CEProcessor(MSONable):
     vectors and local changes to correlation vectors from site flips.
     """
 
-    def __init__(self, cluster_expansion, supercell_matrix):
+    def __init__(self, cluster_expansion, supercell_matrix,
+                 optimize_indicator=False):
         """
         Args:
             cluster_expansion (ClusterExpansion):
@@ -34,7 +35,15 @@ class CEProcessor(MSONable):
             supercell_matrix (array):
                 An array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
+            optimize_indicator (bool):
+                When using an indicator basis, set the delta_corr function to
+                the indicator optimize function. This can make MC steps faster.
         """
+
+        # set the dcorr_single_flip function
+        self.dcorr_single_flip = indicator_delta_corr_single_flip \
+            if optimize_indicator \
+            else general_delta_corr_single_flip
 
         # the only reason to keep the CE is for the MSONable from_dict
         self.cluster_expansion = cluster_expansion
@@ -192,7 +201,7 @@ class CEProcessor(MSONable):
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
             orbits = self.orbits_by_sites[f[0]]
-            delta_corr += delta_corr_single_flip(occu_f, occu_i,
+            delta_corr += self.dcorr_single_flip(occu_f, occu_i,
                                                  self.n_orbit_functions,
                                                  orbits)
             occu_i = occu_f
@@ -229,7 +238,8 @@ class EwaldCEProcessor(CEProcessor):
     otherwise this will not work.
     """
 
-    def __init__(self, cluster_expansion, supercell_matrix):
+    def __init__(self, cluster_expansion, supercell_matrix,
+                 optimize_indicator=False):
         """
         Args:
             cluster_expansion (ClusterExpansion):
@@ -237,6 +247,9 @@ class EwaldCEProcessor(CEProcessor):
             supercell_matrix (array):
                 An array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
+            optimize_indicator (bool):
+                When using an indicator basis, set the delta_corr function to
+                the indicator optimize function. This can make MC steps faster.
         """
 
         super().__init__(cluster_expansion, supercell_matrix)
@@ -295,7 +308,7 @@ class EwaldCEProcessor(CEProcessor):
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
             orbits = self.orbits_by_sites[f[0]]
-            delta_corr[:-1] += delta_corr_single_flip(occu_f, occu_i,
+            delta_corr[:-1] += self.dcorr_single_flip(occu_f, occu_i,
                                                       self.n_orbit_functions,
                                                       orbits)
             delta_corr[-1] += delta_ewald_single_flip(occu_f, occu_i,
