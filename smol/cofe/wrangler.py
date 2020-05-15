@@ -266,7 +266,6 @@ class StructureWrangler(MSONable):
         subspace prim structure to obtain its supercell matrix, correlation,
         and refined structure.
         """
-        print(item, verbose)
         structure, property = item
         try:
             scmatrix = self._subspace.scmatrix_from_structure(structure)
