@@ -28,15 +28,6 @@ class TestStructureWrangler(unittest.TestCase):
         sw.remove_all_data()
         self.assertRaises(AttributeError, sw.add_data, lno_data, weights='bla')
 
-    # makes tests hang, need to figure out how to avoid that
-    #def test_add_data_parallel(self):
-     #   from multiprocessing import cpu_count
-      #  if cpu_count() < 2:
-       #     return
-        #sw = StructureWrangler(self.cs)
-        #sw.add_data(lno_data, weights='hull', nprocs=4)
-        #self.assertTrue(np.all([w is not None for w in sw.weights]))
-
     def test_update_features(self):
         shape = self.sw.feature_matrix.shape
         self.cs.add_external_term(EwaldTerm)
