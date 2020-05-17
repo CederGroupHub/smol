@@ -42,6 +42,10 @@ class TestStructureWrangler(unittest.TestCase):
         self.sw.filter_by_ewald(1)
         len_filtered = len(self.sw.items)
         self.assertNotEqual(len_total, len_filtered)
+        self.assertEqual(self.sw.metadata['applied_filters'][0]['Ewald']['nstructs_removed'],
+                         len_total - len_filtered)
+        self.assertEqual(self.sw.metadata['applied_filters'][0]['Ewald']['nstructs_total'],
+                         len_total)
 
     def test_weights_e_above_comp(self):
         sw = StructureWrangler(self.cs, weights='composition',
