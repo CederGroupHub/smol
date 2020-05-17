@@ -188,7 +188,7 @@ class ClusterExpansion(MSONable):
         if data is not None:
             wrangler.add_data(data, verbose=verbose, weights=weights)
         elif isinstance(weights, str):
-            if weights not in wrangler.get_weights.keys():
+            if weights not in wrangler.get_weight.keys():
                 raise AttributeError('Weight str provided {weights} is not'
                                      'valid. Choose one of '
                                      f'{wrangler.weights.keys()}')
