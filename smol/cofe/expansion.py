@@ -5,14 +5,10 @@ a corresponding property (most usually energy).
 """
 
 from __future__ import division
-import warnings
 import numpy as np
-from collections.abc import Sequence
 from monty.json import MSONable
 from pymatgen import Structure
 from smol.cofe.configspace.clusterspace import ClusterSubspace
-from smol.cofe.wrangler import StructureWrangler
-from smol.cofe.regression.estimator import BaseEstimator, CVXEstimator
 
 
 class ClusterExpansion(MSONable):
@@ -36,27 +32,28 @@ class ClusterExpansion(MSONable):
     functions with small eci.
     """
 
-    def __init__(self, cluster_subspace, ecis):
+    def __init__(self, cluster_subspace, ecis, feature_matrix):
         """
         Args:
             cluster_subspace (ClusterSubspace):
                 A StructureWrangler object to provide the fitting data and
                 processing
-            fit_structures (list):
-                list of structures used to fit the cluster expansion
             ecis (array):
                 ecis for cluster expansion. Make sure the supplied eci
                 correspond to the correlation vector terms (length and order)
+            feature_matrix (array)
+                the feature matrix used in fitting the given eci
         """
 
         self._subspace = cluster_subspace
+        self.feature_matrix = feature_matrix
         self.ecis = ecis
         self.metadata = {}
 
     @property
     def prim_structure(self):
         """Primitive structure which the Expansion is based on """
-        return self.subspace.structure
+        return self.cluster_subspace.structure
 
     @property
     def expansion_structure(self):
@@ -64,39 +61,37 @@ class ClusterExpansion(MSONable):
         Expansion structure with only sites included in the
         expansion (i.e. sites with partial occupancies)
         """
-        return self.subspace.exp_structure
+        return self.cluster_subspace.exp_structure
 
     @property
-    def subspace(self):
+    def cluster_subspace(self):
         return self._subspace
 
-    def predict(self, structures, normalized=False):
+    def predict(self, structures, normalize=False):
         """
         Predict the fitted property for a given set of structures.
 
         Args:
             structures (list or Structure):
                 Structures to predict from
-            normalized (bool):
+            normalize (bool):
                 Whether to return the predicted property normalized by
                 the prim cell size.
         Returns:
             array
         """
         if isinstance(structures, Structure):
-            corrs = self.subspace.corr_from_structure(structures,
-                                                      normalized=normalized)
+            corrs = self.cluster_subspace.corr_from_structure(structures, normalized=normalize)  # noqa
         else:
-            corrs = [self.subspace.corr_from_structure(structure,
-                                                       normalized=normalized)
+            corrs = [self.cluster_subspace.corr_from_structure(structure, normalized=normalize)  # noqa
                      for structure in structures]
-
-        return self.estimator.predict(np.array(corrs))
+        return np.dot(np.array(corrs), self.ecis)
 
     # This needs further testing. For out-of-training structures
     # the predictions do not always match with those using the original eci
     # with which the fit was done.
-    def convert_eci(self, new_basis, orthonormal=False):
+    def convert_eci(self, new_basis, fit_structures, supercell_matrices,
+                    orthonormal=False):
         """
         Numerically converts the eci of the cluster expansion to eci in a
         new basis.
@@ -104,23 +99,26 @@ class ClusterExpansion(MSONable):
         Args:
             new_basis (str):
                 name of basis to convert coefficients into.
+            fit_structures (list):
+                list of pymatgen.Structure used to fit the eci
+            supercell_matrices (list):
+                list of supercell matrices for the corresponding fit structures
             orthonormal (bool):
                 option to make new basis orthonormal
 
         Returns: coefficients converted into new_basis
             array
         """
-        subspace = self.subspace.copy()
+        subspace = self.cluster_subspace.copy()
         subspace.change_site_bases(new_basis, orthonormal=orthonormal)
-        feature_matrix = np.array([subspace.corr_from_structure(s, m)
-                                   for s, m in zip(self._structures,
-                                                   self._scmatrices)])
+        new_feature_matrix = np.array([subspace.corr_from_structure(s, m)
+                                       for s, m in zip(fit_structures,
+                                                       supercell_matrices)])
         C = np.matmul(self.feature_matrix.T,
-                      np.linalg.pinv(feature_matrix.T))
-
+                      np.linalg.pinv(new_feature_matrix.T))
         return np.matmul(C.T, self.ecis)
 
-    def prune(self, threshold=1E-5):
+    def prune(self, threshold=0):
         """
         Remove ECI's (fitting parameters) and orbits in the ClusterSubspaces
         that have ECI/parameter values smaller than the given threshold.
@@ -134,35 +132,29 @@ class ClusterExpansion(MSONable):
         performance.
         """
 
-        if self.ecis is None:
-            raise RuntimeError('ClusterExpansion has no ECIs. Cannot prune.')
-
         bit_ids = [i for i, eci in enumerate(self.ecis)
                    if abs(eci) < threshold]
-        self.subspace.remove_orbit_bit_combos(bit_ids)
-
+        self.cluster_subspace.remove_orbit_bit_combos(bit_ids)
         # Update necessary attributes
         ids_compliment = list(set(range(len(self.ecis))) - set(bit_ids))
-        self.estimator.coef_ = self.estimator.coef_[ids_compliment]
-        self.ecis = self.estimator.coef_
-        self._feature_matrix = self.feature_matrix[:, ids_compliment]
-        self._rmse, self._mae, self._maxerr = None, None, None
+        self.ecis = self.eci[ids_compliment]
+        self.feature_matrix = self.feature_matrix[:, ids_compliment]
 
     def __str__(self):
-        corr = np.zeros(self.subspace.n_bit_orderings)
+        corr = np.zeros(self.cluster_subspace.n_bit_orderings)
         corr[0] = 1  # zero point cluster
         # This might need to be redefined to take "expectation" using measure
         feature_avg = np.average(self.feature_matrix, axis=0)
         feature_std = np.std(self.feature_matrix, axis=0)
         s = 'ClusterExpansion:\n    Prim Composition: ' \
-            f'{self.prim_structure.composition} Num fit structures: ' \
-            f'{len(self.property_vector)} ' \
-            f'Num orbit functions: {self.subspace.n_bit_orderings}\n'
+            f'{self.prim_structure.composition}\n Num fit structures: ' \
+            f'{self.feature_matrix.shape[0]}\n' \
+            f'Num orbit functions: {self.cluster_subspace.n_bit_orderings}\n'
         ecis = len(corr)*[0.0, ] if self.ecis is None else self.ecis
         s += f'    [Orbit]  id: {str(0):<3}\n'
         s += '        bit       eci\n'
         s += f'        {"[X]":<10}{ecis[0]:<4.3}\n'
-        for orbit in self.subspace.iterorbits():
+        for orbit in self.cluster_subspace.iterorbits():
             s += f'    [Orbit]  id: {orbit.bit_id:<3} size: ' \
                  f'{len(orbit.bits):<3} radius: {orbit.radius:<4.3}\n'
             s += '        id    bit       eci     feature avg  feature std  '\
@@ -176,18 +168,15 @@ class ClusterExpansion(MSONable):
                      f'{eci*f_std:<.3f}\n'
         return s
 
-    # TODO save the estimator and parameters?
     @classmethod
     def from_dict(cls, d):
         """
         Creates ClusterExpansion from serialized MSONable dict
         """
-        structures = [Structure.from_dict(ds) for ds in d['fit_structures']]
-        return cls(ClusterSubspace.from_dict(d['cluster_subspace']),
-                   fit_structures=structures,
-                   feature_matrix=np.array(d['feature_matrix']),
-                   property_vector=np.array(d['property_vector']),
-                   ecis=d['ecis'])
+        ce = cls(ClusterSubspace.from_dict(d['cluster_subspace']),
+                 ecis=d['ecis'], feature_matrix=np.array(d['feature_matrix']))
+        ce.metadata = d['metadata']
+        return ce
 
     def as_dict(self):
         """
@@ -196,14 +185,10 @@ class ClusterExpansion(MSONable):
         Returns:
             MSONable dict
         """
-        structures = [struct.as_dict() for struct in self._structures]
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
-             'cluster_subspace': self.subspace.as_dict(),
-             'fit_structures': structures,
-             'feature_matrix': self.feature_matrix.tolist(),
-             'property_vector': self.property_vector.tolist(),
-             'estimator': self.estimator.__class__.__name__,
+             'cluster_subspace': self.cluster_subspace.as_dict(),
              'ecis': self.ecis.tolist(),
-             'metadata' : self.metadata}
+             'feature_matrix': self.feature_matrix.tolist(),
+             'metadata': self.metadata}
         return d
