@@ -7,9 +7,6 @@ composition for a given set of structures
 
 from __future__ import division
 from collections import defaultdict
-import warnings
-from types import MethodType
-from functools import partial
 import numpy as np
 from monty.json import MSONable
 from pymatgen import Composition, Structure

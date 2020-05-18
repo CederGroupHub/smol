@@ -38,6 +38,8 @@ class CEProcessor(MSONable):
             optimize_indicator (bool):
                 When using an indicator basis, set the delta_corr function to
                 the indicator optimize function. This can make MC steps faster.
+                Make sure your cluster expansion was indeed fit with an
+                indicator basis set, otherwise your MC results are no good.
         """
 
         # set the dcorr_single_flip function
@@ -49,7 +51,7 @@ class CEProcessor(MSONable):
         self.cluster_expansion = cluster_expansion
 
         self.ecis = cluster_expansion.ecis.copy()
-        self.subspace = cluster_expansion.subspace
+        self.subspace = cluster_expansion.cluster_subspace
         self.structure = self.subspace.structure.copy()
         self.structure.make_supercell(supercell_matrix)
         self.supercell_matrix = supercell_matrix
@@ -254,15 +256,15 @@ class EwaldCEProcessor(CEProcessor):
 
         super().__init__(cluster_expansion, supercell_matrix)
 
-        if len(cluster_expansion.subspace.external_terms) != 1:
+        if len(cluster_expansion.cluster_subspace.external_terms) != 1:
             raise AttributeError('The provided ClusterExpansion must have only'
                                  'one external term being an EwaldTerm')
-        term, args, kwargs = cluster_expansion.subspace.external_terms[0]
+        term, args, kwrg = cluster_expansion.cluster_subspace.external_terms[0]
         if term != EwaldTerm:
             raise TypeError('The external term in the provided '
                             'ClusterExpansion must be an EwaldTerm')
 
-        self.ewald = term(self.structure, self.orbit_inds, *args, **kwargs)
+        self.ewald = term(self.structure, self.orbit_inds, *args, **kwrg)
 
     def compute_correlation(self, occu):
         """

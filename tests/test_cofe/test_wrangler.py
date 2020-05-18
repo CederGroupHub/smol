@@ -21,7 +21,7 @@ class TestStructureWrangler(unittest.TestCase):
         self.sw.add_data(struct, {'energy': energy}, weights={'random': 3.0})
 
     def test_add_data(self):
-        self.assertTrue(all(w == 2.0 for w in self.sw.get_weights('random')))
+        self.assertTrue(all(w == 2.0 for w in self.sw.get_weights('random')[:-1]))
         self.assertTrue(len(self.sw.get_weights('random')) == self.sw.num_structures)
         self.assertTrue(self.sw.get_weights('random')[-1] == 3.0)
         self.assertRaises(AttributeError, self.sw.add_properties, 'test',

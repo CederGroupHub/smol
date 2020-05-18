@@ -44,7 +44,7 @@ class BaseEnsemble(ABC):
         """
 
         if initial_occupancy is None:
-            struct = processor.subspace.structure.copy()
+            struct = processor.cluster_subspace.structure.copy()
             scmatrix = processor.supercell_matrix
             struct.make_supercell(scmatrix)
             odt = OrderDisorderedStructureTransformation(algo=2)

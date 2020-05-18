@@ -29,12 +29,13 @@ class TestCEvicet(unittest.TestCase):
         # exactly opposite. But the first eci should be equal to the average
         # of fit data, and the sum of squares of eci should be the same.
         ecis = np.linalg.lstsq(self.sw.feature_matrix,
-                              self.sw.normalized_properties,
+                              self.sw.get_property_vector('energy', True),
                               rcond=None)[0]
         self.assertTrue(np.isclose(icet_eci[0], ecis[0]))
         self.assertTrue(np.isclose(sum(icet_eci**2), sum(ecis**2)))
         # Now test that predictions match
-        ce = ClusterExpansion(self.cs, ecis=ecis)
+        ce = ClusterExpansion(self.cs, ecis=ecis,
+                              feature_matrix=self.sw.feature_matrix)
         test_structs = [i['structure'] for i in icet_test_structs]
         self.assertTrue(np.allclose(icet_predictions,
-                                    ce.predict(test_structs, normalized=True)))
+                                    ce.predict(test_structs, normalize=True)))

@@ -10,19 +10,25 @@ from tests.data import lno_prim, lno_data
 
 class TestCEProcessor(unittest.TestCase):
     def setUp(self) -> None:
-        self.ce = ClusterExpansion.from_radii(lno_prim, {2: 5, 3: 4.1},
-                                             ltol=0.15, stol=0.2,
-                                             angle_tol=5,
-                                             supercell_size='O2-',
-                                             basis='sinusoid',
-                                             orthonormal=True,
-                                             use_concentration=True,
-                                             data=lno_data)
-        self.ce.fit()
+        cs = ClusterSubspace.from_radii(lno_prim, {2: 5, 3: 4.1},
+                                         ltol=0.15, stol=0.2,
+                                         angle_tol=5,
+                                         supercell_size='O2-',
+                                         basis='sinusoid',
+                                         orthonormal=True,
+                                         use_concentration=True)
+        self.sw = StructureWrangler(cs)
+        for struct, energy in lno_data:
+            self.sw.add_data(struct, {'energy': energy})
+        ecis = np.linalg.lstsq(self.sw.feature_matrix,
+                               self.sw.get_property_vector('energy', True),
+                               rcond=None)[0]
+        self.ce = ClusterExpansion(cs, ecis, self.sw.feature_matrix)
         scmatrix = np.array([[3, 0, 0],
                              [0, 2, 0],
                              [0, 0, 1]])
         self.pr = CEProcessor(self.ce, scmatrix)
+
         # create a test structure
         test_struct = lno_prim.copy()
         test_struct.replace_species({"Li+": {"Li+": 2},
@@ -35,8 +41,8 @@ class TestCEProcessor(unittest.TestCase):
         order = OrderDisorderedStructureTransformation(algo=2)
         test_struct = order.apply_transformation(test_struct)
         self.test_struct = test_struct
-        self.test_occu = self.ce.subspace.occupancy_from_structure(test_struct,
-                                                                   scmatrix)
+        self.test_occu = self.ce.cluster_subspace.occupancy_from_structure(test_struct,
+                                                                           scmatrix)
         self.enc_occu = self.pr.occupancy_from_structure(test_struct)
 
     def test_compute_property(self):
@@ -44,7 +50,7 @@ class TestCEProcessor(unittest.TestCase):
                          self.pr.compute_property(self.enc_occu)))
 
     def test_compute_correlation(self):
-        self.assertTrue(np.allclose(self.ce.subspace.corr_from_structure(self.test_struct),
+        self.assertTrue(np.allclose(self.ce.cluster_subspace.corr_from_structure(self.test_struct),
                                     self.pr.compute_correlation(self.enc_occu)))
 
     # TODO check that this works for all bases and orthonormal
@@ -80,14 +86,18 @@ class TestCEProcessor(unittest.TestCase):
         self.assertTrue(np.allclose(dcorr, corr_f - corr_i))
 
     def test_delta_corr_indicator(self):
-        cs = self.ce.subspace.copy()
+        cs = self.ce.cluster_subspace.copy()
         cs.change_site_bases('indicator')
-        ce = ClusterExpansion(cs, self.ce._structures,
-                              self.ce.property_vector,
-                              feature_matrix=self.ce._feature_matrix,
-                              supercell_matrices=self.ce._scmatrices,
-                              estimator=self.ce.estimator)
-        ce.fit()
+        sw = StructureWrangler(cs)
+        for struct, energy, matrix in zip(self.sw.structures,
+                                  self.sw.get_property_vector('energy'),
+                                  self.sw.supercell_matrices):
+            sw.add_data(struct, {'energy': energy}, supercell_matrix=matrix)
+
+        ecis = np.linalg.lstsq(sw.feature_matrix,
+                               sw.get_property_vector('energy', True),
+                               rcond=None)[0]
+        ce = ClusterExpansion(cs, ecis, sw.feature_matrix)
         pr = CEProcessor(ce, self.pr.supercell_matrix, optimize_indicator=True)
         flips = [(10, 1), (6, 0)]
         new_occu = self.enc_occu.copy()
@@ -103,10 +113,10 @@ class TestCEProcessor(unittest.TestCase):
         # as the correlation vectors and predicted energy are the same we
         # should be all good.
         test_struct = self.pr.structure_from_occupancy(self.enc_occu)
-        self.assertTrue(np.allclose(self.ce.subspace.corr_from_structure(test_struct),
-                                    self.ce.subspace.corr_from_structure(self.test_struct)))
-        self.assertEqual(self.ce.predict(test_struct, normalized=True),
-                         self.ce.predict(self.test_struct, normalized=True))
+        self.assertTrue(np.allclose(self.ce.cluster_subspace.corr_from_structure(test_struct),
+                                    self.ce.cluster_subspace.corr_from_structure(self.test_struct)))
+        self.assertEqual(self.ce.predict(test_struct, normalize=True),
+                         self.ce.predict(self.test_struct, normalize=True))
 
     def test_msonable(self):
         d = self.pr.as_dict()
@@ -119,16 +129,21 @@ class TestCEProcessor(unittest.TestCase):
 
 class TestEwaldCEProcessor(unittest.TestCase):
     def setUp(self) -> None:
-        self.ce = ClusterExpansion.from_radii(lno_prim, {2: 5, 3: 4.1},
-                                             ltol=0.15, stol=0.2,
-                                             angle_tol=5,
-                                             supercell_size='O2-',
-                                             external_terms=[EwaldTerm, {}],
-                                             basis='sinusoid',
-                                             orthonormal=True,
-                                             use_concentration=True,
-                                             data=lno_data)
-        self.ce.fit()
+        cs = ClusterSubspace.from_radii(lno_prim, {2: 5, 3: 4.1},
+                                         ltol=0.15, stol=0.2,
+                                         angle_tol=5,
+                                         supercell_size='O2-',
+                                         basis='sinusoid',
+                                         orthonormal=True,
+                                         use_concentration=True)
+        cs.add_external_term(EwaldTerm)
+        self.sw = StructureWrangler(cs)
+        for struct, energy in lno_data:
+            self.sw.add_data(struct, {'energy': energy})
+        ecis = np.linalg.lstsq(self.sw.feature_matrix,
+                               self.sw.get_property_vector('energy', True),
+                               rcond=None)[0]
+        self.ce = ClusterExpansion(cs, ecis, self.sw.feature_matrix)
         scmatrix = np.array([[3, 0, 0],
                              [0, 2, 0],
                              [0, 0, 1]])
@@ -145,8 +160,8 @@ class TestEwaldCEProcessor(unittest.TestCase):
         order = OrderDisorderedStructureTransformation(algo=2)
         test_struct = order.apply_transformation(test_struct)
         self.test_struct = test_struct
-        self.test_occu = self.ce.subspace.occupancy_from_structure(test_struct,
-                                                                   scmatrix)
+        self.test_occu = self.ce.cluster_subspace.occupancy_from_structure(test_struct,
+                                                                           scmatrix)
         self.enc_occu = self.pr.occupancy_from_structure(test_struct)
 
     # TODO check that this works for all bases and orthonormal

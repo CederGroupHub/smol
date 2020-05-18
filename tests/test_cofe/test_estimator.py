@@ -2,10 +2,12 @@ import unittest
 import numpy as np
 from pymatgen import Structure, Lattice
 from pymatgen.transformations.advanced_transformations import EnumerateStructureTransformation
-from smol.cofe import ClusterSubspace
-from smol.cofe.regression import CVXEstimator
+from smol.cofe import ClusterSubspace, ClusterExpansion
+from smol.cofe.configspace import EwaldTerm
+from smol.cofe.regression import CVXEstimator, constrain_dielectric
 
 
+#TODO implement these
 class TestEstimator(unittest.TestCase):
     def setUp(self) -> None:
         self.lattice = Lattice([[3, 3, 0],[0, 3, 3],[3, 0, 3]])
@@ -14,6 +16,15 @@ class TestEstimator(unittest.TestCase):
                   (0.5, 0.5, 0.5),  (0, 0, 0))
         self.structure = Structure(self.lattice, species, coords)
         self.structure.make_supercell([[2, 1, 1]])
+
+    def test_constrain_dielectric(self):
+        pass
+        '''self.ce.cluster_subspace.add_external_term(EwaldTerm)
+        ce = ClusterExpansion.from_structure_wrangler(self.sw,
+                                                      estimator=CVXEstimator())
+        ce.fit()
+        constrain_dielectric(ce, 5)
+        self.assertEqual(ce.ecis[-1], 1/5)'''
 
     def test_CVX(self):
         pass
