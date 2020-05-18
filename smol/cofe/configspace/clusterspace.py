@@ -529,7 +529,7 @@ class ClusterSubspace(MSONable):
         for bit, nbit, site, sbasis in zip(bits, nbits, expansion_struct,
                                            site_bases):
             new_orbit = Orbit([site.frac_coords], expansion_struct.lattice,
-                              [np.arange(nbit)], [sbasis], symops)
+                              [list(range(nbit))], [sbasis], symops)
             if new_orbit not in new_orbits:
                 new_orbits.append(new_orbit)
 
@@ -550,7 +550,7 @@ class ClusterSubspace(MSONable):
                         continue
                     new_sites = np.concatenate([orbit.base_cluster.sites, [p]])
                     new_orbit = Orbit(new_sites, expansion_struct.lattice,
-                                      orbit.bits + [np.arange(nbits[n[2]])],
+                                      orbit.bits + [list(range(nbits[n[2]]))],
                                       orbit.site_bases + [site_bases[n[2]]],
                                       symops)
                     if new_orbit.radius > radius + 1e-8:
