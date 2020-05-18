@@ -5,12 +5,20 @@ from pymatgen import Structure
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')
 
+# Synthetic ClusterExpansion FCC binary data
+with open(os.path.join(DATA_DIR, 'synthetic-CE-fccbinary-sinebasis.json'), 'r') as f:
+    synthetic_CE_binary = json.load(f)
+    synthetic_CE_binary['data'] = [(Structure.from_dict(s[0]), s[1])
+                                   for s in synthetic_CE_binary['data']]
+
+# LNO example data
 with open(os.path.join(DATA_DIR, 'lno_prim.json'), 'r') as f:
     lno_prim = Structure.from_dict(json.load(f))
 
 with open(os.path.join(DATA_DIR, 'lno_fitting_data.json'), 'r') as f:
     lno_data = [(Structure.from_dict(x['s']), x['toten']) for x in json.load(f)]
 
+# icet AuPt benchmark data
 with open(os.path.join(DATA_DIR, 'icet_aupd', 'aupd_prim.json'), 'r') as f:
     aupt_prim = Structure.from_dict(json.load(f))
 

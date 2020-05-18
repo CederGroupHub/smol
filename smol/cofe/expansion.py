@@ -137,7 +137,7 @@ class ClusterExpansion(MSONable):
         self.cluster_subspace.remove_orbit_bit_combos(bit_ids)
         # Update necessary attributes
         ids_compliment = list(set(range(len(self.ecis))) - set(bit_ids))
-        self.ecis = self.eci[ids_compliment]
+        self.ecis = self.ecis[ids_compliment]
         self.feature_matrix = self.feature_matrix[:, ids_compliment]
 
     def __str__(self):
