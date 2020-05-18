@@ -38,10 +38,8 @@ class ClusterSubspace(MSONable):
     You probably want to generate from ClusterSubspace.from_radii, which will
     auto-generate the orbits, unless you want more control over them.
 
-    This is probably the class you're looking for to start defining the
-    structure and cluster terms for your cluster expansion with more control
-    than just calling the ClusterExpansion.from_radii method, which
-    automatically creates the ClusterSubspace by calling its own from_radii
+    This is the class you're looking for to start defining the structure and
+    orbit/cluster terms for your cluster expansion.
     """
 
     def __init__(self, structure, expansion_structure, symops, orbits,
@@ -53,8 +51,7 @@ class ClusterSubspace(MSONable):
                 cell. Includes all species regardless of partial occupation.
             expansion_structure (pymatgen.Structure):
                 Structure including only sites that will be included in the
-                Cluster space.
-                (partial occupancy)
+                Cluster space. (those with partial occupancy)
             symops (list(pymatgen.Symmop)):
                 list of Symmops for the given structure.
             orbits (dict(size: list(Orbit))):

@@ -36,9 +36,7 @@ class ClusterExpansion(MSONable):
     functions with small eci.
     """
 
-    def __init__(self, cluster_subspace, fit_structures, property_vector,
-                 feature_matrix=None, supercell_matrices=None, weights=None,
-                 ecis=None, estimator=None):
+    def __init__(self, cluster_subspace, ecis):
         """
         Args:
             cluster_subspace (ClusterSubspace):
@@ -53,21 +51,20 @@ class ClusterExpansion(MSONable):
 
         self._subspace = cluster_subspace
         self.ecis = ecis
-
         self.metadata = {}
 
     @property
     def prim_structure(self):
-        """ Copy of primitive structure which the Expansion is based on """
-        return self.subspace.structure.copy()
+        """Primitive structure which the Expansion is based on """
+        return self.subspace.structure
 
     @property
     def expansion_structure(self):
         """
-        Copy of the expansion structure with only sites included in the
+        Expansion structure with only sites included in the
         expansion (i.e. sites with partial occupancies)
         """
-        return self.subspace.exp_structure.copy()
+        return self.subspace.exp_structure
 
     @property
     def subspace(self):
@@ -86,13 +83,12 @@ class ClusterExpansion(MSONable):
         Returns:
             array
         """
-        extensive = not normalized
         if isinstance(structures, Structure):
             corrs = self.subspace.corr_from_structure(structures,
-                                                      extensive=extensive)
+                                                      normalized=normalized)
         else:
             corrs = [self.subspace.corr_from_structure(structure,
-                                                       extensive=extensive)
+                                                       normalized=normalized)
                      for structure in structures]
 
         return self.estimator.predict(np.array(corrs))

@@ -1,6 +1,8 @@
 """
 Implementation of a StructureWrangler and additional functions used to
 preprocess and check (wrangle) fitting data of structures and properties.
+Also functions to obtain weights by energy above hull or energy above
+composition for a given set of structures
 """
 
 from __future__ import division
@@ -18,143 +20,86 @@ from smol.exceptions import StructureMatchError
 from smol.globals import kB
 
 
-def weights_e_above_comp(wrangler, temperature=2000):
+def weights_energy_above_composition(structures, energies, temperature=2000):
     """
     Computes weights for structure energy above the minimum reduced composition
     energy.
-
     Args:
-        wrangler (StructureWrangler):
-            A StructureWrangler to obtain structures and energies
+        structures (list):
+            list of pymatgen.Structures
+        energies (array):
+            energies of corresponding structures.
         temperature (float):
             temperature to used in boltzmann weight
 
     Returns: weights for each structure.
         array
     """
-    e_above_comp = _energies_above_composition(wrangler.structures,
-                                               wrangler.properties)
+    e_above_comp = _energies_above_composition(structures, energies)
     return np.exp(-e_above_comp / (kB * temperature))
 
 
-def weights_e_above_hull(wrangler, temperature=2000):
+def weights_energy_above_hull(structures, energies, cs_structure,
+                              temperature=2000):
     """
     Computes weights for structure energy above the hull of all given
     structures
 
     Args:
-        wrangler (StructureWrangler):
-            A StructureWrangler to obtain structures and energies
+        structures (list):
+            list of pymatgen.Structures
+        energies (array):
+            energies of corresponding structures.
+        cs_structure (Structure):
+            The pymatgen.Structure used to define the cluster subspace
         temperature (float):
-            temperature to used in boltzmann weight
+            temperature to used in boltzmann weight.
 
     Returns: weights for each structure.
         array
     """
-    e_above_hull = _energies_above_hull(wrangler.structures,
-                                        wrangler.properties,
-                                        wrangler.cluster_subspace.structure)
+    e_above_hull = _energies_above_hull(structures, energies, cs_structure)
     return np.exp(-e_above_hull / (kB * temperature))
 
 
-def _energies_above_composition(structures, energies):
-    """
-    Computes structure energies above reduced composition
-    """
-
-    min_e = defaultdict(lambda: np.inf)
-    for s, e in zip(structures, energies):
-        comp = s.composition.reduced_composition
-        if e / len(s) < min_e[comp]:
-            min_e[comp] = e / len(s)
-    e_above = []
-    for s, e in zip(structures, energies):
-        comp = s.composition.reduced_composition
-        e_above.append(e / len(s) - min_e[comp])
-    return np.array(e_above)
-
-
-def _energies_above_hull(structures, energies, ce_structure):
-    """
-    Computes energies above hull constructed from phase diagram of the
-    given structures
-    """
-    pd = _pd(structures, energies, ce_structure)
-    e_above_hull = []
-    for s, e in zip(structures, energies):
-        entry = PDEntry(s.composition.element_composition, e)
-        e_above_hull.append(pd.get_e_above_hull(entry))
-    return np.array(e_above_hull)
-
-
-def _pd(structures, energies, cs_structure):
-    """
-    Generate a phase diagram with the structures and energies
-    """
-    entries = []
-
-    for s, e in zip(structures, energies):
-        entries.append(PDEntry(s.composition.element_composition, e))
-
-    max_e = max(entries, key=lambda e: e.energy_per_atom).energy_per_atom
-    max_e += 1000
-    for el in cs_structure.composition.keys():
-        entry = PDEntry(Composition({el: 1}).element_composition, max_e)
-        entries.append(entry)
-
-    return PhaseDiagram(entries)
-
-
-# TODO should allow a bunch of properties saved by keys...
 class StructureWrangler(MSONable):
     """
     Class that handles (wrangles) input data structures and properties to fit
     in a cluster expansion. This class holds a ClusterSubspace used to compute
     correlation vectors and produce feature/design matrices used to fit the
     final ClusterExpansion.
+    This class is meant to take all input training data in the form of
+    (structure, properties) where the properties represent the target
+    material property for the given structure that will be used to train
+    the cluster expansion.
+    The class takes care of returning the fitting data as a cluster
+    correlation feature matrix. Weights for each structure can also be
+    provided see the above functions to weight by energy above hull or
+    energy above composition.
+    This class also has methods to check/prepare/filter the data. A metadata
+    dictionary is used to keep track of applied filters, but users can also use
+    it to save any other pertinent information that will be saved with using
+    as_dict for future reference.
     """
-    weight_funs = {'composition': weights_e_above_comp,
-                   'hull': weights_e_above_hull}
 
-    def __init__(self, cluster_subspace, weights=None, **weight_kwargs):
+    def __init__(self, cluster_subspace):
         """
-        This class is meant to take all input training data in the form of
-        (structure, property) where the property is usually (lets be honest
-        always) the energy for the given structure.
-        The class takes care of returning the fitting data as a cluster
-        correlation design matrix.
-        This class also has methods to check/prepare/filter the data, hence
-        the name Wrangler from datawrangler.
-
         Args:
             cluster_subspace (ClusterSubspace):
                 A ClusterSubspace object that will be used to fit a
                 ClusterExpansion with the provided data.
-            weights (str):
-                str specifying type of weights (current: 'hull', 'composition')
-            weight_kwargs:
-                key word arguments for the type of weights specified
         """
         self._subspace = cluster_subspace
-
-        if weights is not None:
-            if weights not in self.weight_funs.keys():
-                raise ValueError(f'{weights} is not an available weight '
-                                 ' function. Choose one of '
-                                 f'{list(self.weight_funs.keys())}.')
-            weight_partial = partial(self.weight_funs[weights], **weight_kwargs)
-            self.get_weights = MethodType(weight_partial, self)
-
         self._items = []
-        self._metadata = {'weights': weights, 'applied_filters': []}
+        self._metadata = {'applied_filters': []}
 
     @property
     def cluster_subspace(self):
         return self._subspace
 
     @property
-    def items(self):
-        return self._items
+    def num_structures(self):
+        return len(self._items)
 
     @property
     def structures(self):
@@ -163,14 +108,6 @@ class StructureWrangler(MSONable):
     @property
     def refined_structures(self):
         return [i['refined_structure'] for i in self._items]
-
-    @property
-    def properties(self):
-        return np.array([i['property'] for i in self._items])
-
-    @property
-    def normalized_properties(self):
-        return self.properties / self.sizes
 
     @property
     def supercell_matrices(self):
@@ -185,23 +122,73 @@ class StructureWrangler(MSONable):
         return np.array([i['size'] for i in self._items])
 
     @property
-    def weights(self):
-        weights = [item.get('weight') for item in self._items
-                   if item.get('weight') is not None]
-        if len(weights) == len(self._items):
-            return np.array(weights)
-        elif self._metadata['weights'] is not None:
-            # (re)compute weights if data was added
-            weights = self.get_weights()
-            for item, weight in zip(self._items, weights):
-                item['weight'] = weight
-            return weights
-
-    @property
     def metadata(self):
         return self._metadata
 
-    def add_data(self, structure, property, weight=None, verbose=False):
+    def add_properties(self, key, property_vector):
+        """
+        Add another property to structures already in the wrangler. The length
+        of the property vector must match the number of structures contained,
+        and should be in the same order.
+        Args:
+            key (str):
+                name of property
+            property_vector (array):
+                array with the property for each structure
+        """
+        if self.num_structures != len(property_vector):
+            raise AttributeError('Length of property_vector must match number'
+                                 f'of structures {len(property_vector)} != '
+                                 f'{self.num_structures}.')
+        for property, item in zip(property_vector, self._items):
+            item['properties'][key] = property
+
+    def get_property_vector(self, key, normalize=False):
+        """
+        Gets the property target vector that can be used to fit the
+        corresponding correlation feature matrix in a cluster expansion
+        Args:
+            key (str):
+                name of the property
+            normalize (bool): optional
+                to normalize by prim size. If the property sought is not
+                already normalized, you need to normalize before fitting a CE
+        """
+        properties = np.array([i['properties'][key] for i in self._items])
+        if normalize:
+            properties /= self.sizes
+
+        return properties
+
+    def get_weights(self, key):
+        """
+        Gets the weights specified by the given key
+        Args:
+            key (str):
+                name of corresponding weights
+        """
+        return np.array([i['weights'][key] for i in self._items])
+
+    def add_weights(self, key, weights):
+        """
+        Add weights to structures already in the wrangler. The length
+        of the given weights must match the number of structures contained,
+        and should be in the same order.
+        Args:
+            key (str):
+                name describing weights
+            weights (array):
+                array with the weight for each structure
+        """
+        if self.num_structures != len(weights):
+            raise AttributeError('Length of weights must match number of '
+                                 f'structures {len(weights)} != '
+                                 f'{self.num_structures}.')
+        for weight, item in zip(weights, self._items):
+            item['weights'][key] = weight
+
+    def add_data(self, structure, properties, weights=None, verbose=False,
+                 supercell_matrix=None):
         """
         Add a structure and measured property to Structure Wrangler.
         The property should be extensive (i.e. not normalized per atom or unit
@@ -214,27 +201,29 @@ class StructureWrangler(MSONable):
         Args
             structure (pymatgen.Structure):
                 A fit structure
-            property (float):
-                Fit property for the given structure. (usually energy)
-            weight (float):
-                the weight given to the structure when doing the fit. Only use
-                this if weight_type was not specified when instantiating. If a
-                weight_type was given when instantiating the class, the
-                provided weight will be ignored.
+            properties (dict):
+                A dictionary with a key describing the property and the target
+                value for the corresponding structure. For example if only a
+                single property {'energy': -85.3} but can also add more than
+                one i.e. {'total_energy': -85.3, 'formation_energy': -25.6}.
+                You are free to make up the keys for each property but make
+                sure you are consistent for all structures that you add.
+            weights (dict):
+                The weight given to the structure when doing the fit. The key
+                must match at least one of the given properties.
             verbose (bool):
-                if True then print structures that fail in StructureMatcher
+                if True then print structures that fail in StructureMatcher.
+            supercell_matrix (array): optional
+                If the corresponding structure has already been matched to the
+                clustersubspace prim structure, passing the supercell_matrix
+                will use that instead of trying to re-match. If using this
+                the user is responsible to have the correct supercell_matrix,
+                Here you are the cause of your own bugs...
         """
 
-        item = self._process_structure(structure, property, verbose)
-
+        item = self._process_structure(structure, properties, weights, verbose,
+                                       supercell_matrix)
         if item is not None:
-            if weight is not None:
-                if self._metadata['weights'] is None:
-                    item['weight'] = weight
-                else:
-                    warnings.warn(f"Weight type: {self.metadata['weights']} is"
-                                  ' already specified. The provided weight '
-                                  'will be ignored.')
             self._items.append(item)
 
     def change_subspace(self, cluster_subspace):
@@ -264,28 +253,6 @@ class StructureWrangler(MSONable):
     def remove_all_data(self):
         """Removes all data from Wrangler"""
         self._items = []
-
-    def _process_structure(self, structure, property, verbose):
-        """
-        Check if the structure for this data item can be matched to the cluster
-        subspace prim structure to obtain its supercell matrix, correlation,
-        and refined structure.
-        """
-        try:
-            scmatrix = self._subspace.scmatrix_from_structure(structure)
-            size = self._subspace.num_prims_from_matrix(scmatrix)
-            fm_row = self._subspace.corr_from_structure(structure, scmatrix)
-            refined_struct = self._subspace.refine_structure(structure,
-                                                             scmatrix)
-        except StructureMatchError as e:
-            if verbose:
-                print(f'Unable to match {structure.composition} with energy '
-                      f'{property} to supercell_structure. Throwing out.\n'
-                      f'Error Message: {str(e)}.')
-            return
-        return {'structure': structure, 'refined_structure': refined_struct,
-                'property': property, 'scmatrix': scmatrix, 'features': fm_row,
-                'size': size}
 
     def filter_by_ewald(self, max_ewald, verbose=False):
         """
@@ -350,14 +317,15 @@ class StructureWrangler(MSONable):
         sw = cls(cluster_subspace=ClusterSubspace.from_dict(d['_subspace']))
         items = []
         for item in d['items']:
-            items.append({'property': item['property'],
+            items.append({'properties': item['properties'],
                           'structure':
                               Structure.from_dict(item['structure']),
                           'refined_structure':
                               Structure.from_dict(item['refined_structure']),
                           'scmatrix': np.array(item['scmatrix']),
                           'features': np.array(item['features']),
-                          'size': item['size']})
+                          'size': item['size'],
+                          'weights': item['weights']})
         sw._items = items
         sw._metadata = d['metadata']
         return sw
@@ -371,17 +339,90 @@ class StructureWrangler(MSONable):
         """
         s_items = []
         for item in self._items:
-            s_items.append({'property': item['property'],
+            s_items.append({'properties': item['properties'],
                             'structure': item['structure'].as_dict(),
                             'refined_structure':
                                 item['refined_structure'].as_dict(),
                             'scmatrix': item['scmatrix'].tolist(),
                             'features': item['features'].tolist(),
-                            'size': item['size']})
-
+                            'size': item['size'],
+                            'weights': item['weights']})
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
              '_subspace': self._subspace.as_dict(),
              'items': s_items,
              'metadata': self.metadata}
         return d
+
+    def _process_structure(self, structure, properties, weights, verbose,
+                           scmatrix):
+        """
+        Check if the structure for this data item can be matched to the cluster
+        subspace prim structure to obtain its supercell matrix, correlation,
+        and refined structure.
+        """
+        try:
+            if scmatrix is None:
+                scmatrix = self._subspace.scmatrix_from_structure(structure)
+            size = self._subspace.num_prims_from_matrix(scmatrix)
+            fm_row = self._subspace.corr_from_structure(structure, scmatrix)
+            refined_struct = self._subspace.refine_structure(structure,
+                                                             scmatrix)
+            weights = {} if weights is None else weights
+        except StructureMatchError as e:
+            if verbose:
+                print(f'Unable to match {structure.composition} with energy '
+                      f'{property} to supercell_structure. Throwing out.\n'
+                      f'Error Message: {str(e)}.')
+            return
+        return {'structure': structure, 'refined_structure': refined_struct,
+                'properties': properties, 'weights': weights,
+                'scmatrix': scmatrix, 'features': fm_row, 'size': size}
+
+
+def _energies_above_hull(structures, energies, ce_structure):
+    """
+    Computes energies above hull constructed from phase diagram of the
+    given structures
+    """
+    pd = _pd(structures, energies, ce_structure)
+    e_above_hull = []
+    for s, e in zip(structures, energies):
+        entry = PDEntry(s.composition.element_composition, e)
+        e_above_hull.append(pd.get_e_above_hull(entry))
+    return np.array(e_above_hull)
+
+
+def _pd(structures, energies, cs_structure):
+    """
+    Generate a phase diagram with the structures and energies
+    """
+    entries = []
+
+    for s, e in zip(structures, energies):
+        entries.append(PDEntry(s.composition.element_composition, e))
+
+    max_e = max(entries, key=lambda e: e.energy_per_atom).energy_per_atom
+    max_e += 1000
+    for el in cs_structure.composition.keys():
+        entry = PDEntry(Composition({el: 1}).element_composition, max_e)
+        entries.append(entry)
+
+    return PhaseDiagram(entries)
+
+
+def _energies_above_composition(structures, energies):
+    """
+    Computes structure energies above reduced composition
+    """
+
+    min_e = defaultdict(lambda: np.inf)
+    for s, e in zip(structures, energies):
+        comp = s.composition.reduced_composition
+        if e / len(s) < min_e[comp]:
+            min_e[comp] = e / len(s)
+    e_above = []
+    for s, e in zip(structures, energies):
+        comp = s.composition.reduced_composition
+        e_above.append(e / len(s) - min_e[comp])
+    return np.array(e_above)

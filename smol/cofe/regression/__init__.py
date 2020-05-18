@@ -2,7 +2,6 @@
 This module contains functionality necessary for fitting Cluster Expansions
 and testing the performance of the fit
 """
-# TODO think of adding a metrics module
 
 from .estimator import CVXEstimator, BaseEstimator
 

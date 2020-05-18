@@ -6,58 +6,16 @@ from smol.cofe.regression import constrain_dielectric
 from smol.cofe.regression.estimator import CVXEstimator, BaseEstimator
 from tests.data import lno_prim, lno_data
 
-# Probably should also add fitting to synthetic data.
-# i.e. using from pymatgen.transformations.advanced_transformations import
-# EnumerateStructureTransformation
+#TODO Change this to synthetic data fitting to synthetic data. Test on binary, ternary
+#Add another test file to test vs pyabinitio binary, ternary structure
 class TestClusterExpansion(unittest.TestCase):
     def setUp(self) -> None:
         self.cs = ClusterSubspace.from_radii(lno_prim, {2: 5, 3: 4.1},
                                              ltol=0.15, stol=0.2,
                                              angle_tol=5, supercell_size='O2-')
         self.sw = StructureWrangler(self.cs)
-        self.sw.add_data(lno_data)
-
-    def test_from_radii(self):
-        # Test with numpy because CVXEstimator gives slightly  different ECIs
-        # for same parameters
-        estimator = BaseEstimator()
-        estimator._solve = lambda X, y: np.linalg.lstsq(X, y, rcond=None)[0]
-        weights = ['hull', {'temperature': 50}]
-        ce = ClusterExpansion.from_radii(lno_prim, {2: 5, 3: 4.1},
-                                         ltol=0.15, stol=0.2,
-                                         angle_tol=5, supercell_size='O2-',
-                                         data=lno_data, estimator=estimator,
-                                         weights=weights)
-        ce.fit()
-        ce1 = ClusterExpansion.from_radii(lno_prim, {2: 5, 3: 4.1},
-                                         ltol=0.15, stol=0.2,
-                                         angle_tol=5, supercell_size='O2-',
-                                         estimator=estimator, data=lno_data,
-                                         weights=weights)
-
-        ce1.fit()
-
-        ce2 = ClusterExpansion.from_radii(lno_prim, {2: 5, 3: 4.1},
-                                         ltol=0.15, stol=0.2,
-                                         angle_tol=5, supercell_size='O2-',
-                                         ecis=ce.ecis)
-        test_structs = self.sw.structures[:10]
-
-        self.assertTrue(np.allclose(ce.predict(test_structs),
-                                    ce1.predict(test_structs)))
-        self.assertTrue(np.array_equal(ce.predict(test_structs),
-                                       ce2.predict(test_structs)))
-
-        ce3 = ClusterExpansion.from_radii(lno_prim, {2: 5, 3: 4.1},
-                                          ltol=0.15, stol=0.2,
-                                          angle_tol=5, supercell_size='O2-',
-                                          external_terms=[EwaldTerm,
-                                                          {'eta': None}],
-                                          data=lno_data,
-                                          weights=weights)
-        ce3.fit()
-        self.assertEqual(len(ce3.ecis[:-1]), len(ce.ecis))
-        self.assertEqual(len(ce3.predict(test_structs)), len(test_structs))
+        for struct, energy in lno_data:
+            self.sw.add_data(struct, energy)
 
     def test_cvxestimator(self):
         estimator = CVXEstimator()

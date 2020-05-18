@@ -10,9 +10,9 @@ from tests.data import (icet_eci, icet_predictions, icet_fit_structs,
 class TestCEvicet(unittest.TestCase):
     def setUp(self) -> None:
         self.cs = ClusterSubspace.from_radii(aupt_prim,
-                                         {2: 13.5, 3: 6.0, 4: 5.5},
-                                         supercell_size='num_sites',
-                                         basis='sinusoid')
+                                             {2: 13.5, 3: 6.0, 4: 5.5},
+                                             supercell_size='num_sites',
+                                             basis='sinusoid')
         self.sw = StructureWrangler(self.cs)
         # Make this quicker so structure matcher does not slow things down
         self.sw._items = icet_fit_structs
@@ -34,9 +34,7 @@ class TestCEvicet(unittest.TestCase):
         self.assertTrue(np.isclose(icet_eci[0], ecis[0]))
         self.assertTrue(np.isclose(sum(icet_eci**2), sum(ecis**2)))
         # Now test that predictions match
-        ce = ClusterExpansion(self.cs, self.sw.structures,
-                              self.sw.normalized_properties,
-                              ecis=ecis)
+        ce = ClusterExpansion(self.cs, ecis=ecis)
         test_structs = [i['structure'] for i in icet_test_structs]
         self.assertTrue(np.allclose(icet_predictions,
                                     ce.predict(test_structs, normalized=True)))
