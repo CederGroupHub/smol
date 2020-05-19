@@ -1,4 +1,5 @@
 import unittest
+import json
 from itertools import combinations
 import numpy as np
 from pymatgen import Structure, Lattice
@@ -62,4 +63,6 @@ class TestCluster(unittest.TestCase):
     def test_msonable(self):
         d = self.cluster.as_dict()
         self.assertEqual(self.cluster, Cluster.from_dict(d))
+        j = json.dumps(d)
+        json.loads(j)
 

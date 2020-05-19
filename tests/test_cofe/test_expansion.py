@@ -1,9 +1,7 @@
 import unittest
+import json
 import numpy as np
 from smol.cofe import StructureWrangler, ClusterSubspace, ClusterExpansion
-from smol.cofe.configspace import EwaldTerm
-from smol.cofe.regression import constrain_dielectric
-from smol.cofe.regression.estimator import CVXEstimator, BaseEstimator
 from tests.data import synthetic_CE_binary
 
 
@@ -85,3 +83,5 @@ class TestClusterExpansionBinary(unittest.TestCase):
         self.assertTrue(np.array_equal(self.ce.ecis, ce1.ecis))
         self.assertIsInstance(self.ce.cluster_subspace, ClusterSubspace)
         self.assertEqual(ce1.metadata, self.ce.metadata)
+        j = json.dumps(d)
+        json.loads(j)

@@ -1,5 +1,6 @@
 import unittest
 from itertools import combinations_with_replacement
+import json
 import numpy as np
 from pymatgen import Lattice, Structure
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
@@ -135,3 +136,5 @@ class TestOrbit(unittest.TestCase):
     def test_msonable(self):
         d = self.orbit.as_dict()
         self.assertEqual(self.orbit, Orbit.from_dict(d))
+        j = json.dumps(d)
+        json.loads(j)

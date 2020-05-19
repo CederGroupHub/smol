@@ -2,6 +2,7 @@ import unittest
 import random
 import numpy as np
 from itertools import combinations
+import json
 from pymatgen import Lattice, Structure
 from pymatgen.util.coord import is_coord_subset_pbc
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
@@ -430,3 +431,6 @@ class TestClusterSubSpace(unittest.TestCase):
         d['external_terms'][0]['@module'] = module
         d['external_terms'][0]['@class'] = 'Blab'
         self.assertWarns(RuntimeWarning, ClusterSubspace.from_dict, d)
+        # test if serializable
+        j = json.dumps(d)
+        json.loads(j)

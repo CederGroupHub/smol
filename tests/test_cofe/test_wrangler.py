@@ -1,5 +1,5 @@
 import unittest
-import warnings
+import json
 import numpy as np
 from smol.cofe import (StructureWrangler, ClusterSubspace,
                        weights_energy_above_hull,
@@ -112,3 +112,5 @@ class TestStructureWrangler(unittest.TestCase):
         self.assertTrue(all([s1 == s2 for s1, s2 in zip(sw.refined_structures, self.sw.refined_structures)]))
         self.assertTrue(np.array_equal(sw.feature_matrix, self.sw.feature_matrix))
         self.assertEqual(sw.metadata, self.sw.metadata)
+        j = json.dumps(d)
+        json.loads(j)
