@@ -9,10 +9,11 @@ W. D. Richards, et al., Energy Environ. Sci., 2016, 9, 3272–3278
 import numpy as np
 from pymatgen import Structure, PeriodicSite
 from pymatgen.analysis.ewald import EwaldSummation
+from monty.json import MSONable
 from smol.cofe.configspace.utils import get_bits
 
 
-class EwaldTerm():
+class EwaldTerm(MSONable):
     """
     This class can be used as an external term added to a ClusterSubspace
     using the add_external_term method. Doing so allows to introduce Ewald
@@ -92,3 +93,20 @@ class EwaldTerm():
         ewald_structure = Structure.from_sites(ewald_sites)
 
         return ewald_structure, ewald_inds
+
+    def as_dict(self) -> dict:
+        """
+        Make this a json serializable dict
+        """
+        d = {'@module': self.__class__.__module__,
+             '@class': self.__class__.__name__,
+             'eta': self.eta}
+        return d
+
+    @classmethod
+    def from_dict(cls, d):
+        """
+        Create EwaldTerm from msonable dict
+        (Over-kill here since only self.eta is saved, plus its optional
+        """
+        return cls(eta=d['eta'])

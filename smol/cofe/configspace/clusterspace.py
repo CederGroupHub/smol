@@ -10,6 +10,7 @@ space.
 
 from __future__ import division
 from copy import deepcopy
+from importlib import import_module
 import warnings
 import numpy as np
 from monty.json import MSONable
@@ -194,12 +195,16 @@ class ClusterSubspace(MSONable):
 
     @property
     def external_terms(self):
+        """
+        List of external terms to be fitted together with the cluster
+        correlations. External term classes must be MSONable.
+        """
         return self._external_terms
 
     def add_external_term(self, term):
         """
         Add an external term (e.g. an Ewald term) to the cluster expansion
-        terms.
+        terms. External term classes must be MSONable.
         """
         for added_term in self.external_terms:
             if type(term) == type(added_term):
@@ -633,9 +638,20 @@ class ClusterSubspace(MSONable):
                  expansion_structure=exp_structure,
                  orbits=orbits, symops=symops,
                  **d['structure_matcher_kwargs'])
-        # TODO implement dis
-        # _subspace._external_terms = [ExternalTerm.from_dict(et_d)
-        # for et_d in d['external_terms']]
+        for term in d['external_terms']:
+            try:
+                module = import_module(term['@module'])
+                term_class = getattr(module, term['@class'])
+                cs.add_external_term(term_class.from_dict(term))
+            except AttributeError:
+                warnings.warn(f"{term['@class']} was not found in "
+                              f"{term['@module']}. You will need to add this "
+                              " yourself. ", RuntimeWarning)
+            except ImportError:
+                warnings.warn(f"Module {term['@module']} for class "
+                              f"{term['@class']} was not found. "
+                              "You will have to add this yourself.",
+                              ImportWarning)
         return cs
 
     def as_dict(self):
@@ -653,7 +669,7 @@ class ClusterSubspace(MSONable):
              'symops': [so.as_dict() for so in self.symops],
              'orbits': {s: [o.as_dict() for o in v]
                         for s, v in self._orbits.items()},
-             'structure_matcher_kwargs': self.structure_matcher_kwargs
-             # 'external_terms': [et.as_dict() for et in self.external_terms]
+             'structure_matcher_kwargs': self.structure_matcher_kwargs,
+             'external_terms': [et.as_dict() for et in self.external_terms]
              }
         return d

@@ -6,6 +6,7 @@ from pymatgen import Lattice, Structure
 from pymatgen.util.coord import is_coord_subset_pbc
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe import ClusterSubspace
+from smol.cofe.extern import EwaldTerm
 from smol.cofe.configspace.utils import SITE_TOL, get_bits
 from smol.exceptions import *
 from src.ce_utils import corr_from_occupancy
@@ -235,9 +236,11 @@ class TestClusterSubSpace(unittest.TestCase):
         m = np.array([[2, 0, 0], [0, 2, 0], [0, 1, 1]])
         supercell = self.structure.copy()
         supercell.make_supercell(m)
-        s = Structure(supercell.lattice, ['Ca', 'Li', 'Li', 'Br', 'Br', 'Br', 'Br'],
-                      [[0.125, 1, 0.25], [0.125, 0.5, 0.25], [0.375, 0.5, 0.75],
-                       [0, 0, 0], [0, 0.5, 1], [0.5, 1, 0], [0.5, 0.5, 0]])
+        s = Structure(supercell.lattice,
+                      ['Ca', 'Li', 'Li', 'Br', 'Br', 'Br', 'Br'],
+                      [[0.125, 1, 0.25], [0.125, 0.5, 0.25],
+                       [0.375, 0.5, 0.75], [0, 0, 0], [0, 0.5, 1],
+                       [0.5, 1, 0], [0.5, 0.5, 0]])
         cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5})
         a = cs.corr_from_structure(s)
         s.make_supercell([2, 1, 1])
@@ -304,7 +307,7 @@ class TestClusterSubSpace(unittest.TestCase):
 
         orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
                       for orb, inds in cs.supercell_orbit_mappings(m)]
-        # last two pair terms are switched from CASM output (and using occupancy basis)
+        # last two pair terms are switched from CASM output (occupancy basis)
         # all_vacancy (ignore casm point term)
         occu = self._encode_occu(['Vacancy', 'Vacancy', 'Vacancy'], bits)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
@@ -415,3 +418,15 @@ class TestClusterSubSpace(unittest.TestCase):
         self.assertEqual(cs.n_bit_orderings, 124)
         self.assertEqual(cs.n_clusters, 377)
         self.assertEqual(str(cs), str(self.cs))
+        self.cs.add_external_term(EwaldTerm(eta=3))
+        d = self.cs.as_dict()
+        cs = ClusterSubspace.from_dict(d)
+        self.assertEqual(len(cs.external_terms), 1)
+        self.assertTrue(isinstance(cs.external_terms[0], EwaldTerm))
+        self.assertEqual(cs.external_terms[0].eta, 3)
+        module = d['external_terms'][0]['@module']
+        d['external_terms'][0]['@module'] = 'smol.blab'
+        self.assertWarns(ImportWarning, ClusterSubspace.from_dict, d)
+        d['external_terms'][0]['@module'] = module
+        d['external_terms'][0]['@class'] = 'Blab'
+        self.assertWarns(RuntimeWarning, ClusterSubspace.from_dict, d)
