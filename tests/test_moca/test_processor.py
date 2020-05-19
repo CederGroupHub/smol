@@ -8,6 +8,10 @@ from smol.cofe.configspace import EwaldTerm
 from tests.data import lno_prim, lno_data
 
 
+# TODO test with all synthetic data binary/ternary/electrostatic
+# TODO check that delta_corr gives same values for random sympos shuffles of same structure
+# TODO check that delta_corr works for all bases and orthonormal combos
+
 class TestCEProcessor(unittest.TestCase):
     def setUp(self) -> None:
         cs = ClusterSubspace.from_radii(lno_prim, {2: 5, 3: 4.1},
@@ -44,6 +48,12 @@ class TestCEProcessor(unittest.TestCase):
         self.test_occu = self.ce.cluster_subspace.occupancy_from_structure(test_struct,
                                                                            scmatrix)
         self.enc_occu = self.pr.occupancy_from_structure(test_struct)
+        self.sublattices = []
+        for bits in self.pr.unique_bits:
+            sites = np.array([i for i, b in enumerate(self.pr.bits)
+                              if b == tuple(bits.keys())])
+            self.sublattices.append({'bits': list(range(len(bits))),
+                                     'sites': sites})
 
     def test_compute_property(self):
         self.assertTrue(np.isclose(self.ce.predict(self.test_struct),
@@ -53,16 +63,23 @@ class TestCEProcessor(unittest.TestCase):
         self.assertTrue(np.allclose(self.ce.cluster_subspace.corr_from_structure(self.test_struct),
                                     self.pr.compute_correlation(self.enc_occu)))
 
-    # TODO check that this works for all bases and orthonormal
     def test_compute_property_change(self):
-        flips = [(10, 1), (6, 0)]
-        new_occu = self.enc_occu.copy()
-        new_occu[flips[0][0]] = flips[0][1]
-        new_occu[flips[1][0]] = flips[1][1]
-        prop_f = self.pr.compute_property(new_occu)
-        prop_i = self.pr.compute_property(self.enc_occu)
-        dprop = self.pr.compute_property_change(self.enc_occu, flips)
-        self.assertTrue(np.allclose(dprop, prop_f - prop_i))
+        occu = self.enc_occu.copy()
+        for i in range(50):
+            sublatt = np.random.choice(self.sublattices)
+            site = np.random.choice(sublatt['sites'])
+            new_bit = np.random.choice(sublatt['bits'])
+            new_occu = occu.copy()
+            new_occu[site] = new_bit
+            prop_f = self.pr.compute_property(new_occu)
+            prop_i = self.pr.compute_property(occu)
+            dprop = self.pr.compute_property_change(occu, [(site, new_bit)])
+            self.assertTrue(np.allclose(dprop, prop_f - prop_i))
+            # Test reverse matches forward
+            old_bit = occu[site]
+            rdprop = self.pr.compute_property_change(new_occu, [(site,
+                                                                 old_bit)])
+            self.assertEqual(dprop, -1*rdprop)
 
     def test_encode_property(self):
         enc_occu = self.pr.encode_occupancy(self.test_occu)
@@ -74,16 +91,23 @@ class TestCEProcessor(unittest.TestCase):
         self.assertTrue(all(o1 == o2 for o1, o2 in zip(self.test_occu,
                                                        occu)))
 
-    # TODO check that this works for all bases, and orthonormality
     def test_delta_corr(self):
-        flips = [(10, 1), (6, 0)]
-        new_occu = self.enc_occu.copy()
-        new_occu[flips[0][0]] = flips[0][1]
-        new_occu[flips[1][0]] = flips[1][1]
-        dcorr = self.pr.delta_corr(flips, self.enc_occu)
-        corr_f = self.pr.compute_correlation(new_occu)
-        corr_i = self.pr.compute_correlation(self.enc_occu)
-        self.assertTrue(np.allclose(dcorr, corr_f - corr_i))
+        occu = self.enc_occu.copy()
+        for i in range(50):
+            sublatt = np.random.choice(self.sublattices)
+            site = np.random.choice(sublatt['sites'])
+            new_bit = np.random.choice(sublatt['bits'])
+            new_occu = occu.copy()
+            new_occu[site] = new_bit
+            # Test forward
+            dcorr = self.pr.delta_corr([(site, new_bit)], occu)
+            corr_f = self.pr.compute_correlation(new_occu)
+            corr_i = self.pr.compute_correlation(occu)
+            self.assertTrue(np.allclose(dcorr, corr_f - corr_i))
+            # Test reverse matches forward
+            old_bit = occu[site]
+            rdcorr = self.pr.delta_corr([(site, old_bit)], new_occu)
+            self.assertTrue(np.allclose(dcorr, -1*rdcorr))
 
     def test_delta_corr_indicator(self):
         cs = self.ce.cluster_subspace.copy()
@@ -99,14 +123,22 @@ class TestCEProcessor(unittest.TestCase):
                                rcond=None)[0]
         ce = ClusterExpansion(cs, ecis, sw.feature_matrix)
         pr = CEProcessor(ce, self.pr.supercell_matrix, optimize_indicator=True)
-        flips = [(10, 1), (6, 0)]
-        new_occu = self.enc_occu.copy()
-        new_occu[flips[0][0]] = flips[0][1]
-        new_occu[flips[1][0]] = flips[1][1]
-        dcorr = pr.delta_corr(flips, self.enc_occu)
-        corr_f = pr.compute_correlation(new_occu)
-        corr_i = pr.compute_correlation(self.enc_occu)
-        self.assertTrue(np.allclose(dcorr, corr_f - corr_i))
+        occu = self.enc_occu.copy()
+        for i in range(50):
+            sublatt = np.random.choice(self.sublattices)
+            site = np.random.choice(sublatt['sites'])
+            new_bit = np.random.choice(sublatt['bits'])
+            new_occu = occu.copy()
+            new_occu[site] = new_bit
+            # Test forward
+            dcorr = pr.delta_corr([(site, new_bit)], occu)
+            corr_f = pr.compute_correlation(new_occu)
+            corr_i = pr.compute_correlation(occu)
+            self.assertTrue(np.allclose(dcorr, corr_f - corr_i))
+            # Test reverse matches forward
+            old_bit = occu[site]
+            rdcorr = pr.delta_corr([(site, old_bit)], new_occu)
+            self.assertTrue(np.allclose(dcorr, -1*rdcorr))
 
     def test_structure_from_occupancy(self):
         # The structures do pass as equal by direct == comparison, but as long
@@ -163,25 +195,45 @@ class TestEwaldCEProcessor(unittest.TestCase):
         self.test_occu = self.ce.cluster_subspace.occupancy_from_structure(test_struct,
                                                                            scmatrix)
         self.enc_occu = self.pr.occupancy_from_structure(test_struct)
+        self.sublattices = []
+        for bits in self.pr.unique_bits:
+            sites = np.array([i for i, b in enumerate(self.pr.bits)
+                              if b == tuple(bits.keys())])
+            self.sublattices.append({'bits': list(range(len(bits))),
+                                     'sites': sites})
 
-    # TODO check that this works for all bases and orthonormal
     def test_compute_property_change(self):
-        flips = [(10, 1), (6, 0)]
-        new_occu = self.enc_occu.copy()
-        new_occu[flips[0][0]] = flips[0][1]
-        new_occu[flips[1][0]] = flips[1][1]
-        prop_f = self.pr.compute_property(new_occu)
-        prop_i = self.pr.compute_property(self.enc_occu)
-        dprop = self.pr.compute_property_change(self.enc_occu, flips)
-        self.assertTrue(np.allclose(dprop, prop_f - prop_i))
+        occu = self.enc_occu.copy()
+        for i in range(50):
+            sublatt = np.random.choice(self.sublattices)
+            site = np.random.choice(sublatt['sites'])
+            new_bit = np.random.choice(sublatt['bits'])
+            new_occu = occu.copy()
+            new_occu[site] = new_bit
+            prop_f = self.pr.compute_property(new_occu)
+            prop_i = self.pr.compute_property(occu)
+            dprop = self.pr.compute_property_change(occu, [(site, new_bit)])
+            self.assertTrue(np.allclose(dprop, prop_f - prop_i))
+            # Test reverse matches forward
+            old_bit = occu[site]
+            rdprop = self.pr.compute_property_change(new_occu, [(site,
+                                                                 old_bit)])
+            self.assertTrue(np.isclose(dprop, -1.0*rdprop))
 
-    # TODO check that this works for all bases, and orthonormality
     def test_delta_corr(self):
-        flips = [(10, 1), (6, 0)]
-        new_occu = self.enc_occu.copy()
-        new_occu[flips[0][0]] = flips[0][1]
-        new_occu[flips[1][0]] = flips[1][1]
-        dcorr = self.pr.delta_corr(flips, self.enc_occu)
-        corr_f = self.pr.compute_correlation(new_occu)
-        corr_i = self.pr.compute_correlation(self.enc_occu)
-        self.assertTrue(np.allclose(dcorr, corr_f - corr_i))
+        occu = self.enc_occu.copy()
+        for i in range(50):
+            sublatt = np.random.choice(self.sublattices)
+            site = np.random.choice(sublatt['sites'])
+            new_bit = np.random.choice(sublatt['bits'])
+            new_occu = occu.copy()
+            new_occu[site] = new_bit
+            # Test forward
+            dcorr = self.pr.delta_corr([(site, new_bit)], occu)
+            corr_f = self.pr.compute_correlation(new_occu)
+            corr_i = self.pr.compute_correlation(occu)
+            self.assertTrue(np.allclose(dcorr, corr_f - corr_i))
+            # Test reverse matches forward
+            old_bit = occu[site]
+            rdcorr = self.pr.delta_corr([(site, old_bit)], new_occu)
+            self.assertTrue(np.allclose(dcorr, -1*rdcorr))
