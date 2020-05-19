@@ -10,11 +10,13 @@ import numpy as np
 from collections import defaultdict, OrderedDict
 from monty.json import MSONable
 from pymatgen import Structure, PeriodicSite
+from pymatgen.analysis.ewald import EwaldSummation
 from smol.cofe import ClusterExpansion
 from smol.cofe.configspace import EwaldTerm
 from smol.cofe.configspace.utils import get_bits, get_bits_w_concentration
-from src.ce_utils import corr_from_occupancy, general_delta_corr_single_flip, \
-    delta_ewald_single_flip, indicator_delta_corr_single_flip
+from src.ce_utils import (corr_from_occupancy, general_delta_corr_single_flip,
+                          delta_ewald_single_flip,
+                          indicator_delta_corr_single_flip)
 
 
 class CEProcessor(MSONable):
@@ -43,6 +45,7 @@ class CEProcessor(MSONable):
         """
 
         # set the dcorr_single_flip function
+        self.indicator_opt = optimize_indicator
         self.dcorr_single_flip = indicator_delta_corr_single_flip \
             if optimize_indicator \
             else general_delta_corr_single_flip
@@ -216,7 +219,8 @@ class CEProcessor(MSONable):
         Creates CEProcessor from serialized MSONable dict
         """
         return cls(ClusterExpansion.from_dict(d['cluster_expansion']),
-                   np.array(d['supercell_matrix']))
+                   np.array(d['supercell_matrix']),
+                   optimize_indicator=d['indicator'])
 
     def as_dict(self) -> dict:
         """
@@ -228,15 +232,16 @@ class CEProcessor(MSONable):
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
              'cluster_expansion': self.cluster_expansion.as_dict(),
-             'supercell_matrix': self.supercell_matrix.tolist()}
+             'supercell_matrix': self.supercell_matrix.tolist(),
+             'indicator': self.indicator_opt}
         return d
 
 
 class EwaldCEProcessor(CEProcessor):
     """
     A subclass of the CEProcessor class that handles changes in an additional
-    Ewald Summetion terms from single site flips.
-    Make sure that the ClusterExpansion object used has an Ewald Term,
+    Ewald Summation term from single site flips.
+    Make sure that the ClusterExpansion object used has an EwaldTerm,
     otherwise this will not work.
     """
 
@@ -256,15 +261,26 @@ class EwaldCEProcessor(CEProcessor):
 
         super().__init__(cluster_expansion, supercell_matrix)
 
-        if len(cluster_expansion.cluster_subspace.external_terms) != 1:
+        n_terms = len(cluster_expansion.cluster_subspace.external_terms)
+        if n_terms != 1:
             raise AttributeError('The provided ClusterExpansion must have only'
-                                 'one external term being an EwaldTerm')
-        term, args, kwrg = cluster_expansion.cluster_subspace.external_terms[0]
-        if term != EwaldTerm:
+                                 ' one external term (an EwaldTerm). The one '
+                                 f'provided has {n_terms} external terms.')
+        self._ewald_term = cluster_expansion.cluster_subspace.external_terms[0]
+        if not isinstance(self._ewald_term, EwaldTerm):
             raise TypeError('The external term in the provided '
-                            'ClusterExpansion must be an EwaldTerm')
+                            'ClusterExpansion must be an EwaldTerm.')
 
-        self.ewald = term(self.structure, self.orbit_inds, *args, **kwrg)
+        # Set up Ewald Summation
+        struct, inds = self._ewald_term._get_ewald_structure(self.structure)
+        self._ewald_structure, self._ewald_inds = struct, inds
+        self._ewald = EwaldSummation(struct, self._ewald_term.eta)
+        # This line extending the ewald matrix by one dimension is done only
+        # to use the original cython delta_ewald function that took additional
+        # matrices for partial_ems when using the legacy inv_r=True option
+        # This hassle can be removed if the delta_ewald cython function is
+        # updated accordingly
+        self._all_ewalds = np.array([self._ewald.total_energy_matrix])
 
     def compute_correlation(self, occu):
         """
@@ -283,9 +299,8 @@ class EwaldCEProcessor(CEProcessor):
 
         ce_corr = corr_from_occupancy(occu, self.n_orbit_functions,
                                       self.orbit_list)
-        ewald_corr = self.ewald.get_ewald_eci(occu)/self.size
-
-        return np.concatenate([ce_corr, ewald_corr])
+        ewald_corr = self._ewald_correlation(occu)
+        return np.append(ce_corr, ewald_corr)
 
     def delta_corr(self, flips, occu, debug=False):
         """
@@ -317,9 +332,20 @@ class EwaldCEProcessor(CEProcessor):
                                                       self.n_orbit_functions,
                                                       orbits,
                                                       f[0], f[1],
-                                                      self.ewald.all_ewalds,
-                                                      self.ewald.ewald_inds,
+                                                      self._all_ewalds,
+                                                      self._ewald_inds,
                                                       self.size)
             occu_i = occu_f
 
         return delta_corr
+
+    def _ewald_correlation(self, occu):
+        """
+        Computes the normalized by prim electrostatic interaction energy
+        """
+        num_ewald_sites = len(self._ewald_structure)
+        matrix = self._ewald.total_energy_matrix
+        ew_occu = self._ewald_term._get_ewald_occu(occu, num_ewald_sites,
+                                                   self._ewald_inds)
+        interactions = np.sum(matrix[ew_occu, :][:, ew_occu])
+        return interactions/self.size

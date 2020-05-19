@@ -196,12 +196,16 @@ class ClusterSubspace(MSONable):
     def external_terms(self):
         return self._external_terms
 
-    def add_external_term(self, term, *args, **kwargs):
+    def add_external_term(self, term):
         """
         Add an external term (e.g. an Ewald term) to the cluster expansion
         terms.
         """
-        self._external_terms.append((term, args, kwargs))
+        for added_term in self.external_terms:
+            if type(term) == type(added_term):
+                raise ValueError('This ClusterSubspaces already has an '
+                                 f'{type(term)}.')
+        self._external_terms.append(term)
 
     def num_prims_from_matrix(self, scmatrix):
         """
@@ -244,15 +248,12 @@ class ClusterSubspace(MSONable):
                       for orb, inds in orb_inds]
         corr = corr_from_occupancy(occu, self.n_bit_orderings, orbit_list)
 
-        # get extra terms. This is for the Ewald term
-        # The interface for extra terms can be much improved...if anyone cares
         if self.external_terms:
             supercell = self.structure.copy()
             supercell.make_supercell(scmatrix)
-            supercell_size = self.num_prims_from_matrix(scmatrix)
-            extras = [term.corr_from_occu(occu, supercell, orb_inds,
-                                          *args, **kwargs)/supercell_size
-                      for term, args, kwargs in self._external_terms]
+            size = self.num_prims_from_matrix(scmatrix)
+            extras = [term.corr_from_occupancy(occu, supercell, size)
+                      for term in self._external_terms]
             corr = np.concatenate([corr, *extras])
 
         if not normalized:

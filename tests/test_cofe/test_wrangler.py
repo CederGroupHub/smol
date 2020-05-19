@@ -31,7 +31,7 @@ class TestStructureWrangler(unittest.TestCase):
 
     def test_update_features(self):
         shape = self.sw.feature_matrix.shape
-        self.cs.add_external_term(EwaldTerm)
+        self.cs.add_external_term(EwaldTerm())
         self.sw.update_features()
         self.assertEqual(shape[1] + 1, self.sw.feature_matrix.shape[1])
 

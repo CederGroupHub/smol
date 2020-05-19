@@ -201,8 +201,8 @@ class StructureWrangler(MSONable):
             properties (dict):
                 A dictionary with a key describing the property and the target
                 value for the corresponding structure. For example if only a
-                single property {'energy': -85.3} but can also add more than
-                one i.e. {'total_energy': -85.3, 'formation_energy': -25.6}.
+                single property {'energy': value} but can also add more than
+                one i.e. {'total_energy': value1, 'formation_energy': value2}.
                 You are free to make up the keys for each property but make
                 sure you are consistent for all structures that you add.
             weights (dict):
@@ -262,13 +262,11 @@ class StructureWrangler(MSONable):
 
         Args:
             max_ewald (float):
-                Ewald threshold
+                Ewald threshold. The maximum Ewald energy, normalized by prim
         """
         ewald_corr = None
-        for term, args, kwargs in self._subspace.external_terms:
-            if term.__name__ == 'EwaldTerm':
-                if 'use_inv_r' in kwargs.keys() and kwargs['use_inv_r']:
-                    raise NotImplementedError('cant use inv_r with max_ewald')
+        for term in self._subspace.external_terms:
+            if isinstance(term, EwaldTerm):
                 ewald_corr = [i['features'][-1] for i in self._items]
         if ewald_corr is None:
             ewald_corr = []
@@ -279,24 +277,24 @@ class StructureWrangler(MSONable):
                                                                encode=True)
                 supercell = self._subspace.structure.copy()
                 supercell.make_supercell(scmatrix)
-                orb_inds = self._subspace.supercell_orbit_mappings(scmatrix)
-                term = EwaldTerm.corr_from_occu(occu, supercell, orb_inds)
+                size = self._subspace.num_prims_from_matrix(scmatrix)
+                term = EwaldTerm().corr_from_occupancy(occu, supercell, size)
                 ewald_corr.append(term)
 
         min_e = defaultdict(lambda: np.inf)
-        for ecorr, item in zip(ewald_corr, self._items):
+        for corr, item in zip(ewald_corr, self._items):
             c = item['structure'].composition.reduced_composition
-            if ecorr < min_e[c]:
-                min_e[c] = ecorr
+            if corr < min_e[c]:
+                min_e[c] = corr
 
         items = []
-        for ecorr, item in zip(ewald_corr, self._items):
+        for corr, item in zip(ewald_corr, self._items):
             mine = min_e[item['structure'].composition.reduced_composition]
-            r_e = ecorr - mine
+            r_e = corr - mine
             if r_e > max_ewald:
                 if verbose:
                     print(f'Skipping {item["structure"].composition} '
-                          f'ewald energy is {r_e}')
+                          f'Ewald interaction energy is {r_e}.')
             else:
                 items.append(item)
         removed = len(self._items) - len(items)

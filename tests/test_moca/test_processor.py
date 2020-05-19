@@ -136,7 +136,7 @@ class TestEwaldCEProcessor(unittest.TestCase):
                                          basis='sinusoid',
                                          orthonormal=True,
                                          use_concentration=True)
-        cs.add_external_term(EwaldTerm)
+        cs.add_external_term(EwaldTerm())
         self.sw = StructureWrangler(cs)
         for struct, energy in lno_data:
             self.sw.add_data(struct, {'energy': energy})

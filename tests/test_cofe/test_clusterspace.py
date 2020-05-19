@@ -258,7 +258,7 @@ class TestClusterSubSpace(unittest.TestCase):
         orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
                       for orb, inds in cs.supercell_orbit_mappings(m)]
 
-        # last two clusters are switched from CASM output (and using occupancy basis)
+        # last two clusters are switched from CASM output (occupancy basis)
         # all_li (ignore casm point term)
         occu = self._encode_occu(['Li', 'Li', 'Li'], bits)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
