@@ -1,10 +1,5 @@
 import unittest
-import numpy as np
 from pymatgen import Structure, Lattice
-from pymatgen.transformations.advanced_transformations import EnumerateStructureTransformation
-from smol.cofe import ClusterSubspace, ClusterExpansion
-from smol.cofe.configspace import EwaldTerm
-from smol.cofe.regression import CVXEstimator, constrain_dielectric
 
 
 #TODO implement these
