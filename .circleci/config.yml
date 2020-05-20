@@ -1,6 +1,4 @@
 version: 2.1
-orbs:
-  coverage-reporter: codacy/coverage-reporter@9.0.0
 jobs:
   build:
     docker:
@@ -25,9 +23,7 @@ jobs:
             pip install -r requirements.txt
             pip install -q --upgrade pip
             pip install -r requirements.txt
-            pip install -q coverage
-            pip install -q codacy-coverage
-            pip install pytest coverage
+            pip install -q pytest
 
       - save_cache:
           paths:
@@ -40,16 +36,16 @@ jobs:
           command: |
             . venv/bin/activate
             pip install --quiet -e .
-            coverage run -m pytest tests
-            coverage xml
-
-      - store_artifacts:
-          path: coverage_reports
-          destination: coverage_reports
+            pytest tests
 
   build-cython:
     docker:
       - image: circleci/python:3.7.3
+
+    parameters:
+      codacy-token:
+        type: string
+        default: ${CODACY_PROJECT_TOKEN}
 
     working_directory: ~/smol
 
@@ -69,9 +65,7 @@ jobs:
             . venv/bin/activate
             pip install -q --upgrade pip
             pip install -r requirements.txt
-            pip install -q coverage
-            pip install -q codacy-coverage
-            pip install cython pytest coverage
+            pip install -q coverage cython pytest
 
       - save_cache:
           paths:
@@ -85,6 +79,8 @@ jobs:
             . venv/bin/activate
             python setup.py --quiet install --use-cython
             coverage run -m pytest tests
+            coverage.xml
+            bash <(curl -Ls https://coverage.codacy.com/get.sh) coverage.xml << parameters.codacy-token >>
 
       - coverage-reporter/send_report:
             coverage-reports: 'coverage.xml,coverage.info'
@@ -127,7 +123,7 @@ jobs:
             # echo "--- Done ---"
 
 workflows:
-  version: 2
+  version: 2.1
   build_and_test:
     jobs:
       - build
