@@ -79,7 +79,7 @@ jobs:
             . venv/bin/activate
             python setup.py --quiet install --use-cython
             coverage run -m pytest tests
-            coverage.xml
+            coverage xml
             bash <(curl -Ls https://coverage.codacy.com/get.sh) coverage.xml << parameters.codacy-token >>
 
   style-check:
