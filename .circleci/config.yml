@@ -80,7 +80,8 @@ jobs:
             python setup.py --quiet install --use-cython
             coverage run -m pytest tests
             coverage xml
-            bash <(curl -Ls https://coverage.codacy.com/get.sh) coverage.xml << parameters.codacy-token >>
+            export CODACY_PROJECT_TOKEN=<< parameters.project-token >>
+            bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r coverage.xml
 
   style-check:
     docker:
