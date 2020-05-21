@@ -2,14 +2,15 @@ import unittest
 import json
 import numpy as np
 from smol.cofe import StructureWrangler, ClusterSubspace, ClusterExpansion
-from tests.data import synthetic_CE_binary
+from smol.cofe.extern import EwaldTerm
+from tests.data import synthetic_CE_binary, synthetic_CEewald_binary
 
 
 # TODO add tests with synthetic ternary dataset
-# TODO add tests with synthetic dataset that includes ewald-like energy
 
 
 class TestClusterExpansionBinary(unittest.TestCase):
+    """Test cluster expansion on a synthetic CE binary dataset"""
     def setUp(self) -> None:
         cs = ClusterSubspace.from_dict(synthetic_CE_binary['cluster_subspace'])
         self.sw = StructureWrangler(cs)
@@ -73,7 +74,7 @@ class TestClusterExpansionBinary(unittest.TestCase):
         self.assertTrue(np.equal(ce.feature_matrix, new_feature_matrix).all())
 
     def test_print(self):
-        print(self.ce)
+        _ = str(self.ce)
 
     def test_msonable(self):
         # ce.print_ecis()
@@ -85,3 +86,49 @@ class TestClusterExpansionBinary(unittest.TestCase):
         self.assertEqual(ce1.metadata, self.ce.metadata)
         j = json.dumps(d)
         json.loads(j)
+
+
+class TestClusterExpansionEwaldBinary(unittest.TestCase):
+    """Test cluster expansion on a synthetic CE + Ewald binary dataset"""
+    def setUp(self) -> None:
+        self.dataset = synthetic_CEewald_binary
+        self.cs = ClusterSubspace.from_dict(self.dataset['cluster_subspace'])
+
+        num_structs = len(self.dataset['data'])
+        self.train_ids = np.random.choice(range(num_structs), size=num_structs//5,
+                                          replace=False)
+        self.test_ids = np.array(list(set(range(num_structs)) - set(self.train_ids)))
+
+    def test_ewald_only(self):
+        data = self.dataset['ewald_data']
+        cs = ClusterSubspace.from_radii(self.cs.structure,
+                                        radii={2: 0},
+                                        basis='sinusoid')
+        self.assertEqual(len(cs.orbits), 1)
+        cs.add_external_term(EwaldTerm())
+        ecis = self._test_predictions(cs, data)
+        self.assertAlmostEqual(ecis[-1], 1, places=10)
+
+    def test_ce_ewald(self):
+        data = self.dataset['data']
+        cs = ClusterSubspace.from_dict(self.dataset['cluster_subspace'])
+        cs.add_external_term(EwaldTerm())
+        _ = self._test_predictions(cs, data)
+
+    def _test_predictions(self, cs, data):
+        sw = StructureWrangler(cs)
+        for i in self.train_ids:
+            struct, energy = data[i]
+            sw.add_data(struct, {'energy': energy})
+        ecis = np.linalg.lstsq(sw.feature_matrix,
+                               sw.get_property_vector('energy', True),
+                               rcond=None)[0]
+        ce = ClusterExpansion(cs, ecis, sw.feature_matrix)
+        test_structs = [data[i][0] for i in self.test_ids]
+        test_energies = np.array([data[i][1] for i in self.test_ids])
+        preds = ce.predict(sw.structures)
+        self.assertTrue(np.allclose(preds, sw.get_property_vector('energy')))
+        preds = ce.predict(test_structs)
+        self.assertTrue(np.allclose(preds, test_energies))
+
+        return ecis
