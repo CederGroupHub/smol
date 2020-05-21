@@ -1,8 +1,10 @@
 # SMoL
 ## Statistical Mechanics on Lattices
+![Codacy Badge](https://img.shields.io/codacy/grade/f6180b5223f346d2ac9dcf9a4bcc62d9?style=for-the-badge)
 ![CircleCI](https://img.shields.io/circleci/build/gh/CederGroupHub/smol/master?logo=circleci&style=for-the-badge&token=96d0d7a959e1e12044ff45daa43218ae7fa4303e)
+![Codacy Badge](https://img.shields.io/codacy/coverage/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge)
 
-Lighthweight but caffeinated implementations of computational methods for statistical mechanical calculations of configurational states for crystalline material systems.
+Lighthweight but caffeinated Python implementations of computational methods for statistical mechanical calculations of configurational states for crystalline material systems.
 
 ### Installing
 As any python package from source, go to the top level directory and type:
