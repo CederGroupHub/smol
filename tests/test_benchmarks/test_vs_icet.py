@@ -7,6 +7,7 @@ from smol.cofe import StructureWrangler, ClusterSubspace, ClusterExpansion
 from tests.data import (icet_eci, icet_predictions, icet_fit_structs,
                         icet_test_structs, aupt_prim)
 
+
 class TestCEvicet(unittest.TestCase):
     def setUp(self) -> None:
         self.cs = ClusterSubspace.from_radii(aupt_prim,
@@ -14,8 +15,9 @@ class TestCEvicet(unittest.TestCase):
                                              supercell_size='num_sites',
                                              basis='sinusoid')
         self.sw = StructureWrangler(self.cs)
-        # Make this quicker so structure matcher does not slow things down
-        self.sw._items = icet_fit_structs
+        for item in icet_fit_structs:
+            self.sw.add_data(item['structure'], item['properties'],
+                             supercell_matrix=item['scmatrix'])
         self.sw.update_features()
 
     def test_subspace(self):
