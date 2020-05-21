@@ -8,8 +8,6 @@ from smol.cofe.extern import EwaldTerm
 from tests.data import lno_prim, lno_data
 
 
-# TODO test adding data with passing supercells and site mappings
-
 class TestStructureWrangler(unittest.TestCase):
     def setUp(self) -> None:
         self.cs = ClusterSubspace.from_radii(lno_prim, {2: 5, 3: 4.1},
@@ -30,6 +28,35 @@ class TestStructureWrangler(unittest.TestCase):
                           self.sw.sizes[:-2])
         self.sw.add_properties('normalized_energy',
                                self.sw.get_property_vector('energy', normalize=True))
+        items = self.sw._items
+        self.sw.remove_all_data()
+        self.assertEqual(len(self.sw.structures), 0)
+        # Test passing supercell matrices
+        for item in items:
+            self.sw.add_data(item['structure'], item['properties'],
+                             supercell_matrix=item['scmatrix'])
+        self.assertEqual(len(self.sw.structures), len(items))
+        self.sw.remove_all_data()
+        self.assertEqual(len(self.sw.structures), 0)
+        # Test passing site mappings
+        for item in items:
+            self.sw.add_data(item['structure'], item['properties'],
+                             site_mapping=item['mapping'])
+        self.assertEqual(len(self.sw.structures), len(items))
+        self.sw.remove_all_data()
+        # test passing both
+        for item in items:
+            self.sw.add_data(item['structure'], item['properties'],
+                             supercell_matrix=item['scmatrix'],
+                             site_mapping=item['mapping'])
+        self.assertEqual(len(self.sw.structures), len(items))
+
+    def test_remove_structure(self):
+        total = len(self.sw.structures)
+        s = self.sw.structures[np.random.randint(0, total)]
+        self.sw.remove_structure(s)
+        self.assertEqual(len(self.sw.structures), total - 1)
+        self.assertRaises(ValueError, self.sw.remove_structure, s)
 
     def test_update_features(self):
         shape = self.sw.feature_matrix.shape
