@@ -4,9 +4,11 @@ import numpy as np
 from smol.cofe import (StructureWrangler, ClusterSubspace,
                        weights_energy_above_hull,
                        weights_energy_above_composition)
-from smol.cofe.configspace import EwaldTerm
+from smol.cofe.extern import EwaldTerm
 from tests.data import lno_prim, lno_data
 
+
+# TODO test adding data with passing supercells and site mappings
 
 class TestStructureWrangler(unittest.TestCase):
     def setUp(self) -> None:
@@ -112,5 +114,10 @@ class TestStructureWrangler(unittest.TestCase):
         self.assertTrue(all([s1 == s2 for s1, s2 in zip(sw.refined_structures, self.sw.refined_structures)]))
         self.assertTrue(np.array_equal(sw.feature_matrix, self.sw.feature_matrix))
         self.assertEqual(sw.metadata, self.sw.metadata)
+        self.assertTrue(all(i1['mapping'] == i1['mapping'] for i1, i2 in
+                            zip(self.sw._items, sw._items)))
+        self.assertTrue(all(np.array_equal(m1, m2) for m1, m2 in
+                            zip(self.sw.supercell_matrices,
+                                sw.supercell_matrices)))
         j = json.dumps(d)
         json.loads(j)

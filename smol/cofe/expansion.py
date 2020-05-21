@@ -114,7 +114,8 @@ class ClusterExpansion(MSONable):
         """
         subspace = self.cluster_subspace.copy()
         subspace.change_site_bases(new_basis, orthonormal=orthonormal)
-        new_feature_matrix = np.array([subspace.corr_from_structure(s, m)
+        new_feature_matrix = np.array([subspace.corr_from_structure(s,
+                                                                    scmatrix=m)
                                        for s, m in zip(fit_structures,
                                                        supercell_matrices)])
         C = np.matmul(self.feature_matrix.T,

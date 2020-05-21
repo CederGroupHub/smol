@@ -4,7 +4,7 @@ from pymatgen.transformations.standard_transformations import \
     OrderDisorderedStructureTransformation
 from smol.moca import CEProcessor, EwaldCEProcessor
 from smol.cofe import ClusterExpansion, StructureWrangler, ClusterSubspace
-from smol.cofe.configspace import EwaldTerm
+from smol.cofe.extern import EwaldTerm
 from tests.data import lno_prim, lno_data
 
 
@@ -46,7 +46,7 @@ class TestCEProcessor(unittest.TestCase):
         test_struct = order.apply_transformation(test_struct)
         self.test_struct = test_struct
         self.test_occu = self.ce.cluster_subspace.occupancy_from_structure(test_struct,
-                                                                           scmatrix)
+                                                                           scmatrix=scmatrix)
         self.enc_occu = self.pr.occupancy_from_structure(test_struct)
         self.sublattices = []
         for bits in self.pr.unique_bits:
@@ -193,7 +193,7 @@ class TestEwaldCEProcessor(unittest.TestCase):
         test_struct = order.apply_transformation(test_struct)
         self.test_struct = test_struct
         self.test_occu = self.ce.cluster_subspace.occupancy_from_structure(test_struct,
-                                                                           scmatrix)
+                                                                           scmatrix=scmatrix)
         self.enc_occu = self.pr.occupancy_from_structure(test_struct)
         self.sublattices = []
         for bits in self.pr.unique_bits:

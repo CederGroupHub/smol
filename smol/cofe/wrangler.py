@@ -11,7 +11,7 @@ import numpy as np
 from monty.json import MSONable
 from pymatgen import Composition, Structure
 from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
-from smol.cofe.configspace import EwaldTerm
+from smol.cofe.extern import EwaldTerm
 from smol.cofe.configspace.clusterspace import ClusterSubspace
 from smol.exceptions import StructureMatchError
 from smol.globals import kB
@@ -104,11 +104,15 @@ class StructureWrangler(MSONable):
 
     @property
     def refined_structures(self):
-        return [i['refined_structure'] for i in self._items]
+        return [i['ref_structure'] for i in self._items]
 
     @property
     def supercell_matrices(self):
         return np.array([i['scmatrix'] for i in self._items])
+
+    @property
+    def structure_site_mappings(self):
+        return [i['mapping'] for i in self._items]
 
     @property
     def feature_matrix(self):
@@ -185,7 +189,7 @@ class StructureWrangler(MSONable):
             item['weights'][key] = weight
 
     def add_data(self, structure, properties, weights=None, verbose=False,
-                 supercell_matrix=None):
+                 supercell_matrix=None, site_mapping=None):
         """
         Add a structure and measured property to Structure Wrangler.
         The property should ideally be extensive (i.e. not normalized per atom
@@ -215,11 +219,16 @@ class StructureWrangler(MSONable):
                 clustersubspace prim structure, passing the supercell_matrix
                 will use that instead of trying to re-match. If using this
                 the user is responsible to have the correct supercell_matrix,
-                Here you are the cause of your own bugs...
+                Here you are the cause of your own bugs.
+            site_mapping (list): optional
+                Site mapping as obtained by StructureMatcher.get_mapping
+                such that the elements of site_mapping represent the indices
+                of the matching sites to the prim structure. I you pass this
+                option you are fully responsible that the mappings are correct!
         """
 
         item = self._process_structure(structure, properties, weights, verbose,
-                                       supercell_matrix)
+                                       supercell_matrix, site_mapping)
         if item is not None:
             self._items.append(item)
 
@@ -244,8 +253,12 @@ class StructureWrangler(MSONable):
         the Wrangler.
         """
         for item in self._items:
-            struct, mat = item['structure'], item['scmatrix']
-            item['features'] = self._subspace.corr_from_structure(struct, mat)
+            struct = item['structure']
+            mat = item['scmatrix']
+            map = item['mapping']
+            item['features'] = self._subspace.corr_from_structure(struct,
+                                                                  scmatrix=mat,
+                                                                  site_mapping=map)  # noqa
 
     def remove_all_data(self):
         """Removes all data from Wrangler."""
@@ -270,14 +283,15 @@ class StructureWrangler(MSONable):
                 ewald_corr = [i['features'][-1] for i in self._items]
         if ewald_corr is None:
             ewald_corr = []
-            for struct in self.structures:
-                scmatrix = self._subspace.scmatrix_from_structure(struct)
+            for item in self._items:
+                struct = item['structure']
+                matrix = item['scmatrix']
                 occu = self._subspace.occupancy_from_structure(struct,
-                                                               scmatrix,
-                                                               encode=True)
+                                                               encode=True,
+                                                               scmatrix=matrix)
                 supercell = self._subspace.structure.copy()
-                supercell.make_supercell(scmatrix)
-                size = self._subspace.num_prims_from_matrix(scmatrix)
+                supercell.make_supercell(matrix)
+                size = self._subspace.num_prims_from_matrix(matrix)
                 term = EwaldTerm().corr_from_occupancy(occu, supercell, size)
                 ewald_corr.append(term)
 
@@ -315,9 +329,10 @@ class StructureWrangler(MSONable):
             items.append({'properties': item['properties'],
                           'structure':
                               Structure.from_dict(item['structure']),
-                          'refined_structure':
-                              Structure.from_dict(item['refined_structure']),
+                          'ref_structure':
+                              Structure.from_dict(item['ref_structure']),
                           'scmatrix': np.array(item['scmatrix']),
+                          'mapping': item['mapping'],
                           'features': np.array(item['features']),
                           'size': item['size'],
                           'weights': item['weights']})
@@ -336,10 +351,11 @@ class StructureWrangler(MSONable):
         for item in self._items:
             s_items.append({'properties': item['properties'],
                             'structure': item['structure'].as_dict(),
-                            'refined_structure':
-                                item['refined_structure'].as_dict(),
+                            'ref_structure':
+                                item['ref_structure'].as_dict(),
                             'scmatrix': item['scmatrix'].tolist(),
                             'features': item['features'].tolist(),
+                            'mapping': item['mapping'],
                             'size': item['size'],
                             'weights': item['weights']})
         d = {'@module': self.__class__.__module__,
@@ -350,7 +366,7 @@ class StructureWrangler(MSONable):
         return d
 
     def _process_structure(self, structure, properties, weights, verbose,
-                           scmatrix):
+                           scmatrix, smapping):
         """
         Check if the structure for this data item can be matched to the cluster
         subspace prim structure to obtain its supercell matrix, correlation,
@@ -360,7 +376,14 @@ class StructureWrangler(MSONable):
             if scmatrix is None:
                 scmatrix = self._subspace.scmatrix_from_structure(structure)
             size = self._subspace.num_prims_from_matrix(scmatrix)
-            fm_row = self._subspace.corr_from_structure(structure, scmatrix)
+            if smapping is None:
+                supercell = self._subspace.structure.copy()
+                supercell.make_supercell(scmatrix)
+                smapping = self._subspace.structure_site_mapping(supercell,
+                                                                 structure)
+            fm_row = self._subspace.corr_from_structure(structure,
+                                                        scmatrix=scmatrix,
+                                                        site_mapping=smapping)  # noqa
             refined_struct = self._subspace.refine_structure(structure,
                                                              scmatrix)
             weights = {} if weights is None else weights
@@ -370,9 +393,10 @@ class StructureWrangler(MSONable):
                       f'{property} to supercell_structure. Throwing out.\n'
                       f'Error Message: {str(e)}.')
             return
-        return {'structure': structure, 'refined_structure': refined_struct,
+        return {'structure': structure, 'ref_structure': refined_struct,
                 'properties': properties, 'weights': weights,
-                'scmatrix': scmatrix, 'features': fm_row, 'size': size}
+                'scmatrix': scmatrix, 'mapping': smapping,
+                'features': fm_row, 'size': size}
 
 
 def _energies_above_hull(structures, energies, ce_structure):

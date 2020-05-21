@@ -3,9 +3,7 @@ import numpy as np
 from pymatgen import Structure, Lattice
 from pymatgen.analysis.ewald import EwaldSummation
 from smol.cofe import ClusterSubspace
-from smol.cofe.configspace import EwaldTerm
-
-# TODO these tests can be much improved
+from smol.cofe.extern import EwaldTerm
 
 
 class TestEwald(unittest.TestCase):

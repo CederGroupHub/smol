@@ -223,7 +223,8 @@ class ClusterSubspace(MSONable):
         """
         return int(round(np.abs(np.linalg.det(scmatrix))))
 
-    def corr_from_structure(self, structure, scmatrix=None, normalized=True):
+    def corr_from_structure(self, structure, normalized=True, scmatrix=None,
+                            site_mapping=None):
         """
         Returns the correlation vector for a given structure. To do this the
         correct supercell matrix of the prim necessary needs to be found to
@@ -234,12 +235,18 @@ class ClusterSubspace(MSONable):
         Args:
             structure (pymatgen.Structure):
                 structure to compute correlation from
+            normalized (bool):
+                return the correlation vector normalized by the prim cell size
             scmatrix (array): optional
                 supercell matrix relating the prim structure to the given
                 structure. Passing this if it has already been matched will
-                make things much quicker.
-            normalized (bool):
-                return the correlation vector normalized by the prim cell size
+                make things much quicker. You are responsible that it is
+                correct.
+            site_mapping (list): optional
+                Site mapping as obtained by StructureMatcher.get_mapping
+                such that the elements of site_mapping represent the indices
+                of the matching sites to the prim structure. I you pass this
+                option you are fully responsible that the mappings are correct!
 
         Returns: correlation vector for given structure
             array
@@ -248,7 +255,9 @@ class ClusterSubspace(MSONable):
         if scmatrix is None:
             scmatrix = self.scmatrix_from_structure(structure)
 
-        occu = self.occupancy_from_structure(structure, scmatrix, encode=True)
+        occu = self.occupancy_from_structure(structure, encode=True,
+                                             scmatrix=scmatrix,
+                                             site_mapping=site_mapping)
         occu = np.array(occu, dtype=int)
 
         orb_inds = self.supercell_orbit_mappings(scmatrix)
@@ -270,7 +279,7 @@ class ClusterSubspace(MSONable):
 
         return corr
 
-    def refine_structure(self, structure, scmatrix=None):
+    def refine_structure(self, structure, scmatrix=None, site_mapping=None):
         """
         Refine a (relaxed) structure to a perfect supercell structure of the
         the prim structure (aka the corresponding unrelaxed structure).
@@ -281,7 +290,12 @@ class ClusterSubspace(MSONable):
             scmatrix (array): optional
                 supercell matrix relating the prim structure to the given
                 structure. Passing this if it has already been matched will
-                make things much quicker.
+                make things much quicker. You are responsible.
+            site_mapping (list): optional
+                Site mapping as obtained by StructureMatcher.get_mapping
+                such that the elements of site_mapping represent the indices
+                of the matching sites to the prim structure. Again you are
+                responsible.
 
         Returns: Structure
             Refined Structure
@@ -289,7 +303,8 @@ class ClusterSubspace(MSONable):
         if scmatrix is None:
             scmatrix = self.scmatrix_from_structure(structure)
 
-        occu = self.occupancy_from_structure(structure, scmatrix)
+        occu = self.occupancy_from_structure(structure, scmatrix=scmatrix,
+                                             site_mapping=site_mapping)
 
         supercell_structure = self.structure.copy()
         supercell_structure.make_supercell(scmatrix)
@@ -302,7 +317,8 @@ class ClusterSubspace(MSONable):
                 sites.append(site)
         return Structure.from_sites(sites)
 
-    def occupancy_from_structure(self, structure, scmatrix=None, encode=False):
+    def occupancy_from_structure(self, structure, encode=False, scmatrix=None,
+                                 site_mapping=None):
         """
         Returns a tuple of occupancies of each site in a the structure in the
         appropriate order set implicitly by the scmatrix that is found
@@ -313,12 +329,20 @@ class ClusterSubspace(MSONable):
         Args:
             structure (pymatgen.Structure):
                 structure to obtain a occupancy vector for
-            scmatrix (array): optional
-                super cell matrix relating the given structure and the
-                primitive structure
             encode (bool): oprtional
                 If true the occupancy vector will have the index of the species
                 in the expansion structure bits, rather than the species name
+            scmatrix (array): optional
+                Super cell matrix relating the given structure and the
+                primitive structure. I you pass the supercell you fully are
+                responsible that it is the correct one! This prevents running
+                the _scmatcher (supercell structure matcher)
+            site_mapping (list): optional
+                Site mapping as obtained by StructureMatcher.get_mapping
+                such that the elements of site_mapping represent the indices
+                of the matching sites to the prim structure. I you pass this
+                option you are fully responsible that the mappings are correct!
+                This prevents running _site_matcher to get the mappings.
 
         Returns: occupancy vector for structure, species names ie ['Li+', ...]
                  If encoded then [0, ...]
@@ -330,7 +354,8 @@ class ClusterSubspace(MSONable):
         supercell = self.structure.copy()
         supercell.make_supercell(scmatrix)
 
-        mapping = self._structure_site_mapping(supercell, structure)
+        if site_mapping is None:
+            site_mapping = self.structure_site_mapping(supercell, structure)
 
         occu = []  # np.zeros(len(self.supercell_structure), dtype=np.int)
 
@@ -338,8 +363,8 @@ class ClusterSubspace(MSONable):
             # rather than starting with all vacancies and looping
             # only over mapping, explicitly loop over everything to
             # catch vacancies on improper sites
-            if i in mapping:
-                sp = str(structure[mapping.index(i)].specie)
+            if i in site_mapping:
+                sp = str(structure[site_mapping.index(i)].specie)
             else:
                 sp = 'Vacancy'
             if sp not in bit:
@@ -349,7 +374,6 @@ class ClusterSubspace(MSONable):
                 occu.append(bit.index(sp))
             else:
                 occu.append(sp)
-
         return occu
 
     def scmatrix_from_structure(self, structure):
@@ -571,7 +595,7 @@ class ClusterSubspace(MSONable):
             orbits[size] = sorted(new_orbits, key=lambda x: (np.round(x.radius, 6), -x.multiplicity))  # noqa
         return orbits
 
-    def _structure_site_mapping(self, supercell, structure):
+    def structure_site_mapping(self, supercell, structure):
         """
         Returns the mapping between sites in the given structure and a prim
         supercell of the corresponding size.
@@ -580,7 +604,7 @@ class ClusterSubspace(MSONable):
         mapping = self._site_matcher.get_mapping(supercell, structure)
         if mapping is None:
             raise StructureMatchError('Mapping could not be found from '
-                                      'structure')
+                                      'structure.')
         return mapping.tolist()
 
     def _gen_orbit_indices(self, scmatrix):
@@ -657,7 +681,6 @@ class ClusterSubspace(MSONable):
                               f"{term['@class']} was not found. "
                               "You will have to add this yourself.",
                               ImportWarning)
-        cs._supercell_orb_inds = d['_supercell_orb_inds']
         return cs
 
     def as_dict(self):
@@ -676,7 +699,5 @@ class ClusterSubspace(MSONable):
              'orbits': {s: [o.as_dict() for o in v]
                         for s, v in self._orbits.items()},
              'structure_matcher_kwargs': self.structure_matcher_kwargs,
-             'external_terms': [et.as_dict() for et in self.external_terms],
-             '_supercell_orb_inds': self._supercell_orb_inds
-             }
+             'external_terms': [et.as_dict() for et in self.external_terms]}
         return d

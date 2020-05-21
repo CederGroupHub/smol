@@ -115,22 +115,26 @@ class TestClusterSubSpace(unittest.TestCase):
 
     def test_refine_structure(self):
         lattice = Lattice([[2.95, 3, 0], [0, 3, 2.9], [3, 0, 3]])
-        structure = Structure(lattice, ['Li', ] * 2 + ['Ca'] + ['Br'], self.coords)
+        structure = Structure(lattice, ['Li', ]*2 + ['Ca'] + ['Br'],
+                              self.coords)
         structure.make_supercell(2)
         ref_structure = self.cs.refine_structure(structure)
         prim_ref = ref_structure.get_primitive_structure()
 
-        # This is failing in pymatgen 2020.1.10, since lattice matrices are not the same,
-        # but still equivalent
+        # This is failing in pymatgen 2020.1.10, since lattice matrices are not
+        # the same, but still equivalent
         # self.assertEqual(self.lattice, structure.lattice)
-        self.assertTrue(np.allclose(self.lattice.parameters, prim_ref.lattice.parameters))
+        self.assertTrue(np.allclose(self.lattice.parameters,
+                                    prim_ref.lattice.parameters))
         self.assertTrue(np.allclose(self.cs.corr_from_structure(structure),
                                     self.cs.corr_from_structure(ref_structure)))
 
     def test_corr_from_structure(self):
-        structure = Structure(self.lattice, ['Li',] * 2 + ['Ca'] + ['Br'], self.coords)
+        structure = Structure(self.lattice, ['Li',] * 2 + ['Ca'] + ['Br'],
+                              self.coords)
         corr = self.cs.corr_from_structure(structure)
-        self.assertEqual(len(corr), self.cs.n_bit_orderings + len(self.cs.external_terms))
+        self.assertEqual(len(corr),
+                         self.cs.n_bit_orderings + len(self.cs.external_terms))
         self.assertEqual(corr[0], 1)
 
         cs = ClusterSubspace.from_radii(self.structure, {2: 5},
@@ -330,23 +334,27 @@ class TestClusterSubSpace(unittest.TestCase):
         occu = self._encode_occu(['Vacancy', 'Vacancy', 'Li'], bits)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
-                                    [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1]))
+                                    [1, 0, 1, 0, 0, 0, 1, 0, 0, 0,
+                                     0, 1, 0, 0, 0, 0, 0, 0, 1]))
 
         # tetrahedral
         occu = self._encode_occu(['Li', 'Li', 'Vacancy'], bits)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
-                                    [1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0]))
+                                    [1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1,
+                                     0, 0, 1, 0, 0, 1, 1, 0]))
         # mixed
         occu = self._encode_occu(['Li', 'Vacancy', 'Li'], bits)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
-                                    [1, 0.5, 1, 0.5, 0, 0.5, 1, 0.5, 0, 0, 0.5, 1, 0, 0, 0.5, 0.5, 0.5, 0.5, 1]))
+                                    [1, 0.5, 1, 0.5, 0, 0.5, 1, 0.5, 0, 0,
+                                     0.5, 1, 0, 0, 0.5, 0.5, 0.5, 0.5, 1]))
         # single_tet
         occu = self._encode_occu(['Li', 'Vacancy', 'Vacancy'], bits)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
-                                    [1, 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0, 0.5, 0.5, 0]))
+                                    [1, 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0,
+                                     0.5, 0, 0, 0, 0, 0, 0.5, 0.5, 0]))
 
     def test_vs_CASM_multicomp(self):
         cs = ClusterSubspace.from_radii(self.structure, {2: 5},
@@ -359,12 +367,14 @@ class TestClusterSubSpace(unittest.TestCase):
         occu = self._encode_occu(['Vacancy', 'Li', 'Li'], self.bits)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
-                                    [1, 0.5, 0, 1, 0, 0.5, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 1, 0, 0, 0.5, 0, 0, 0]))
+                                    [1, 0.5, 0, 1, 0, 0.5, 0, 0, 0, 0, 0,
+                                     0, 0.5, 0, 0, 1, 0, 0, 0.5, 0, 0, 0]))
         # Li_tet_ca_oct
         occu = self._encode_occu(['Vacancy', 'Li', 'Ca'], self.bits)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
-                                    [1, 0.5, 0, 0, 1, 0, 0.5, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, 0.5, 0, 0]))
+                                    [1, 0.5, 0, 0, 1, 0, 0.5, 0, 0, 0, 0,
+                                     0, 0.5, 0, 0, 0, 0, 1, 0, 0.5, 0, 0]))
 
     def test_copy(self):
         cs = self.cs.copy()

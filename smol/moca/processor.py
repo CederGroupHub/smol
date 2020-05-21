@@ -14,7 +14,7 @@ from monty.json import MSONable
 from pymatgen import Structure, PeriodicSite
 from pymatgen.analysis.ewald import EwaldSummation
 from smol.cofe import ClusterExpansion
-from smol.cofe.configspace import EwaldTerm
+from smol.cofe.extern import EwaldTerm
 from smol.cofe.configspace.utils import get_bits, get_bits_w_concentration
 from src.ce_utils import (corr_from_occupancy, general_delta_corr_single_flip,
                           delta_ewald_single_flip,
@@ -108,7 +108,7 @@ class CEProcessor(MSONable):
     def compute_property_change(self, occu, flips):
         """
         Compute change in property from a set of flips.
-        
+
         Args:
             occu (array):
                 encoded occupancy array
@@ -150,7 +150,7 @@ class CEProcessor(MSONable):
             list
         """
         occu = self.subspace.occupancy_from_structure(structure,
-                                                      self.supercell_matrix)
+                                                      scmatrix=self.supercell_matrix)  # noqa
         return self.encode_occupancy(occu)
 
     def structure_from_occupancy(self, occu):

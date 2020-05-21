@@ -80,7 +80,6 @@ class TestClusterExpansionBinary(unittest.TestCase):
         _ = str(self.ce)
 
     def test_msonable(self):
-        # ce.print_ecis()
         self.ce.metadata['somethingimportant'] = 75
         d = self.ce.as_dict()
         ce1 = ClusterExpansion.from_dict(d)
