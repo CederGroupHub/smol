@@ -14,7 +14,7 @@ from pymatgen.transformations.standard_transformations import \
 
 class BaseEnsemble(ABC):
     """
-    Base Class for Monte Carlo Ensembles.
+    Abstract Base Class for Monte Carlo Ensembles.
     """
 
     def __init__(self, processor, save_interval, initial_occupancy=None,

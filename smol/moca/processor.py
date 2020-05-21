@@ -302,7 +302,7 @@ class EwaldCEProcessor(CEProcessor):
         ewald_corr = self._ewald_correlation(occu)
         return np.append(ce_corr, ewald_corr)
 
-    def delta_corr(self, flips, occu, debug=False):
+    def delta_corr(self, flips, occu):
         """
         Computes the change in the correlation vector from a list of site
         flips

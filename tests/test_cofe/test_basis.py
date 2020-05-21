@@ -50,7 +50,7 @@ class TestBasis(unittest.TestCase):
         for n in range(1, len(self.species)):
             a = -(-n//2)
             f = lambda s: -np.sin(2*np.pi*a*s/m) if n % 2 == 0 else -np.cos(2*np.pi*a*s/m)
-            for i, sp in enumerate(self.species):
+            for i, _ in enumerate(self.species):
                 self.assertEqual(b.function_array[n-1, i], f(i))
 
         self._test_basis_uniform_measure(basis.SinusoidBasis)

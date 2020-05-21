@@ -52,7 +52,7 @@ class ClusterExpansion(MSONable):
 
     @property
     def prim_structure(self):
-        """Primitive structure which the Expansion is based on """
+        """Primitive structure which the Expansion is based on."""
         return self.cluster_subspace.structure
 
     @property
@@ -141,6 +141,7 @@ class ClusterExpansion(MSONable):
         self.feature_matrix = self.feature_matrix[:, ids_compliment]
 
     def __str__(self):
+        """Pretty string for printing."""
         corr = np.zeros(self.cluster_subspace.n_bit_orderings)
         corr[0] = 1  # zero point cluster
         # This might need to be redefined to take "expectation" using measure

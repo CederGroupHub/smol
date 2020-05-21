@@ -1,7 +1,6 @@
 """
 Definitions for site functions spaces. The product of single site functions
 make up a cluster/orbit function used to obtain correlation vectors.
-
 Site function spaces include the basis functions and measure that defines the
 inner product for a single site. Most commonly a uniform measure, but this
 can be changed to use "concentration dependent" bases.

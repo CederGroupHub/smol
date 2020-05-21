@@ -1,19 +1,19 @@
- 
-# coding: utf-8
+ # coding: utf-8
 # Copyright (c)
 # Distributed under the terms of the MIT License.
 
-"""Setup.py for SMoL"""
+"""Setup.py for SMoL."""
 
 import sys
 import platform
 
 from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext as _build_ext
-import numpy  # this can be put in a function like build_ext to check import and then cythonize
+
 
 class build_ext(_build_ext):
     """Extension builder that checks for numpy before install."""
+
     def finalize_options(self):
         """Override finalize_options."""
         _build_ext.finalize_options(self)
@@ -84,12 +84,12 @@ setup(
     maintainer_email="above@beep.com",
     #url="",
     license="MIT",
-    description="Computational methods for statistical mechanical and thermodynamics"
-    			"calculations of crystalline materials systems.",
+    description="Computational methods for statistical mechanical and"
+                "thermodynamics calculations of crystalline materials systems.",
     long_description=long_desc,
     long_description_content_type='text/markdown',
-    keywords=["materials", "science","structure", "analysis", "phase", "diagrams",
-    		  "crystal", "clusters", "montecarlo", "inference"],  
+    keywords=["materials", "science", "structure", "analysis", "phase",
+              "diagrams", "crystal", "clusters", "Monte Carlo", "inference"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.5",

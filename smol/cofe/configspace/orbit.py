@@ -183,12 +183,12 @@ class Orbit(MSONable):
 
     @property
     def basis_orthogonal(self):
-        """Test if the Orbit bases are orthogonal """
+        """Test if the Orbit bases are orthogonal."""
         return all(basis.is_orthogonal for basis in self.site_bases)
 
     @property
     def basis_orthonormal(self):
-        """Test if the orbit bases are orthonormal"""
+        """Test if the orbit bases are orthonormal."""
         return all(basis.is_orthonormal for basis in self.site_bases)
 
     def remove_bit_combo(self, bits):
@@ -286,6 +286,7 @@ class Orbit(MSONable):
         return orbit_id + 1, orbit_bit_id + len(self.bit_combos), c_id
 
     def __eq__(self, other):
+        """Check equality of orbits."""
         try:
             # when performing Orbit in list, this ordering stops the
             # equivalent structures from generating
@@ -296,15 +297,18 @@ class Orbit(MSONable):
             raise NotImplementedError
 
     def __neq__(self, other):
+        """Negation of orbit equality."""
         return not self.__eq__(other)
 
     def __str__(self):
+        """Pretty strings for pretty things."""
         return f'[Orbit] id: {self.id:<4} bit_id: {self.bit_id:<4}' \
                f'multiplicity: {self.multiplicity:<4}' \
                f' no. symops: {len(self.cluster_symops):<4} ' \
                f'{str(self.base_cluster)}'
 
     def __repr__(self):
+        """Representation."""
         return _repr(self, orb_id=self.id,
                      orb_b_id=self.bit_id,
                      radius=self.radius,

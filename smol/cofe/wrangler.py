@@ -137,8 +137,8 @@ class StructureWrangler(MSONable):
             raise AttributeError('Length of property_vector must match number'
                                  f'of structures {len(property_vector)} != '
                                  f'{self.num_structures}.')
-        for property, item in zip(property_vector, self._items):
-            item['properties'][key] = property
+        for prop, item in zip(property_vector, self._items):
+            item['properties'][key] = prop
 
     def get_property_vector(self, key, normalize=False):
         """
@@ -248,7 +248,7 @@ class StructureWrangler(MSONable):
             item['features'] = self._subspace.corr_from_structure(struct, mat)
 
     def remove_all_data(self):
-        """Removes all data from Wrangler"""
+        """Removes all data from Wrangler."""
         self._items = []
 
     def filter_by_ewald(self, max_ewald, verbose=False):
