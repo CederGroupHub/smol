@@ -9,7 +9,7 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe import ClusterSubspace
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.configspace.utils import SITE_TOL, get_bits
-from smol.exceptions import *
+from smol.exceptions import StructureMatchError
 from src.ce_utils import corr_from_occupancy
 
 
@@ -248,7 +248,8 @@ class TestClusterSubSpace(unittest.TestCase):
         b = cs.corr_from_structure(s)
         self.assertTrue(np.allclose(a, b))
 
-    def _encode_occu(self, occu, bits):
+    @staticmethod
+    def _encode_occu(occu, bits):
         return np.array([bit.index(sp) for sp, bit in zip(occu, bits)])
 
     def test_vs_CASM_pairs(self):
@@ -296,7 +297,7 @@ class TestClusterSubSpace(unittest.TestCase):
 
     def test_vs_CASM_triplets(self):
         """
-        test vs casm generated correlation with occupancy basis
+        Test vs casm generated correlation with occupancy basis
         """
         species = [{'Li': 0.1}] * 3 + ['Br']
         coords = ((0.25, 0.25, 0.25), (0.75, 0.75, 0.75),

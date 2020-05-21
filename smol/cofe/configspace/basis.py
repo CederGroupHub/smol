@@ -118,7 +118,7 @@ class SiteBasis(ABC):
 
     @property
     def is_orthogonal(self):
-        """ Test if the basis is orthogonal """
+        """ Test if the basis is orthogonal. """
         # add the implicit 0th function
         prods = np.dot(np.dot(self.measure_array, self._func_arr.T).T,
                        self._func_arr.T)
@@ -132,7 +132,7 @@ class SiteBasis(ABC):
 
     @property
     def is_orthonormal(self):
-        """Test if the basis is orthonormal"""
+        """ Test if the basis is orthonormal. """
         prods = np.dot(np.dot(self.measure_array, self._func_arr.T).T,
                        self._func_arr.T)
         identity = np.eye(*prods.shape)
@@ -171,7 +171,7 @@ class SiteBasis(ABC):
 
 # This is not defined within the class so the class can be pickled.
 def indicator(s, sp):
-    """An indicator function for elementary events-> a delta function"""
+    """ A singleton indicator function for elementary events. """
     return int(s == sp)
 
 
@@ -190,7 +190,7 @@ class IndicatorBasis(SiteBasis):
 
 # Same reasoning. Defined at module level to make pickling happy.
 def sinusoid(n, m):
-    """Sine or cosine based on AVvW sinusoid site basis"""
+    """ Sine or cosine based on AVvW sinusoid site basis. """
     a = -(-n // 2)  # ceiling division
     if n % 2 == 0:
         return partial(sin_f, a=a, m=m)
@@ -228,12 +228,22 @@ class NumpyPolyBasis(SiteBasis, ABC):
     Abstract class to quickly write polynomial basis included in Numpy
     """
     def __init__(self, species, poly_fun):
+        """
+        Args:
+            species (tuple/dict):
+                Species. If dict, the species should be the keys and
+                the value should should correspond to the probability measure
+                associated to that specie. If a tuple is given a uniform
+                probability is assumed.
+            poly_fun (function):
+                A numpy polynomial eval function (i.e. chebval)
+        """
         super().__init__(species)
         m = len(species)
         enc = np.linspace(-1, 1, m)
         self.__encoding = {s: i for (s, i) in zip(species, enc)}
         funcs, coeffs = [], [1]
-        for i in range(1, m):
+        for _ in range(1, m):
             coeffs.append(0)
             funcs.append(partial(poly_fun, c=coeffs[::-1]))
         self._functions = funcs
@@ -249,6 +259,14 @@ class ChebyshevBasis(NumpyPolyBasis):
     """
 
     def __init__(self, species):
+        """
+        Args:
+            species (tuple/dict):
+                Species. If dict, the species should be the keys and
+                the value should should correspond to the probability measure
+                associated to that specie. If a tuple is given a uniform
+                probability is assumed.
+        """
         super().__init__(species, chebval)
 
 
@@ -258,11 +276,19 @@ class LegendreBasis(NumpyPolyBasis):
     """
 
     def __init__(self, species):
+        """
+        Args:
+            species (tuple/dict):
+                Species. If dict, the species should be the keys and
+                the value should should correspond to the probability measure
+                associated to that specie. If a tuple is given a uniform
+                probability is assumed.
+        """
         super().__init__(species, legval)
 
 
 def basis_factory(basis_name, *args, **kwargs):
-    """Tries to return an instance of a Basis class defined in basis.py"""
+    """ Tries to return an instance of a Basis class defined in basis.py. """
     try:
         class_name = basis_name.capitalize() + 'Basis'
         basis_class = globals()[class_name]
@@ -277,7 +303,7 @@ def basis_factory(basis_name, *args, **kwargs):
 def _get_subclasses(base_class):
     """
     Gets all non-abstract classes that inherit from the given base class in
-    a module This is used to obtain all the available basis functions.
+    a module. This is used to obtain all the available basis functions.
     """
     sub_classes = []
     for c in base_class.__subclasses__():

@@ -15,17 +15,18 @@ import warnings
 import numpy as np
 from monty.json import MSONable
 from pymatgen import Structure, PeriodicSite
-from pymatgen.analysis.structure_matcher import StructureMatcher,\
-     OrderDisorderElementComparator  # , FrameworkComparator
+from pymatgen.analysis.structure_matcher import (StructureMatcher,
+                                                 OrderDisorderElementComparator)  # noqa , FrameworkComparator
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
-from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc, \
-    lattice_points_in_supercell, coord_list_mapping_pbc
+from pymatgen.util.coord import (is_coord_subset, is_coord_subset_pbc,
+                                 lattice_points_in_supercell,
+                                 coord_list_mapping_pbc)
 from smol.cofe.configspace import Orbit
 from smol.cofe.configspace.basis import basis_factory
-from smol.cofe.configspace.utils import SITE_TOL, get_bits, \
-    get_bits_w_concentration
-from smol.exceptions import SymmetryError, StructureMatchError,\
-    SYMMETRY_ERROR_MESSAGE
+from smol.cofe.configspace.utils import (SITE_TOL, get_bits,
+                                         get_bits_w_concentration)
+from smol.exceptions import (SymmetryError, StructureMatchError,
+                             SYMMETRY_ERROR_MESSAGE)
 from src.ce_utils import corr_from_occupancy
 
 
@@ -162,18 +163,18 @@ class ClusterSubspace(MSONable):
 
     @property
     def orbits(self):
-        """Returns a list of all orbits sorted by size"""
+        """ Returns a list of all orbits sorted by size. """
         return [orbit for key, orbits
                 in sorted(self._orbits.items()) for orbit in orbits]
 
     @property
     def orbits_by_size(self):
-        """Dictionary of orbits with key being the size"""
+        """ Dictionary of orbits with key being the size. """
         return self._orbits
 
     def iterorbits(self):
-        """Orbit generator, yields orbits"""
-        for key, orbits in sorted(self._orbits.items()):
+        """ Orbit generator, yields orbits. """
+        for _, orbits in sorted(self._orbits.items()):
             for orbit in orbits:
                 yield orbit
 
@@ -207,15 +208,16 @@ class ClusterSubspace(MSONable):
         terms. External term classes must be MSONable.
         """
         for added_term in self.external_terms:
-            if type(term) == type(added_term):
+            if isinstance(term, type(added_term)):
                 raise ValueError('This ClusterSubspaces already has an '
                                  f'{type(term)}.')
         self._external_terms.append(term)
 
-    def num_prims_from_matrix(self, scmatrix):
+    @staticmethod
+    def num_prims_from_matrix(scmatrix):
         """
         Return the number of prim cells in the super cell corresponding to
-        the given matrix
+        the given matrix.
         """
         return int(round(np.abs(np.linalg.det(scmatrix))))
 
@@ -488,7 +490,7 @@ class ClusterSubspace(MSONable):
             self._assign_orbit_ids()
 
     def copy(self):
-        """Deep copy of instance"""
+        """ Deep copy of instance. """
         return deepcopy(self)
 
     def _assign_orbit_ids(self):
@@ -532,14 +534,14 @@ class ClusterSubspace(MSONable):
         orbits = {}
         new_orbits = []
 
-        for bit, nbit, site, sbasis in zip(bits, nbits, expansion_struct,
-                                           site_bases):
+        for nbit, site, sbasis in zip(nbits, expansion_struct, site_bases):
             new_orbit = Orbit([site.frac_coords], expansion_struct.lattice,
                               [list(range(nbit))], [sbasis], symops)
             if new_orbit not in new_orbits:
                 new_orbits.append(new_orbit)
 
-        orbits[1] = sorted(new_orbits, key=lambda x: (np.round(x.radius, 6), -x.multiplicity))  # noqa
+        orbits[1] = sorted(new_orbits,
+                           key=lambda x: (np.round(x.radius, 6), -x.multiplicity))  # noqa
 
         all_neighbors = expansion_struct.lattice.get_points_in_sphere(expansion_struct.frac_coords,  # noqa
                                                                       [0.5, 0.5, 0.5],  # noqa
@@ -616,6 +618,7 @@ class ClusterSubspace(MSONable):
         return orbit_indices
 
     def __str__(self):
+        """ Convert class into pretty string for printing. """
         s = f'ClusterBasis: [Prim Composition] {self.structure.composition}\n'
         for size, orbits in self._orbits.items():
             s += f'    size: {size}\n'

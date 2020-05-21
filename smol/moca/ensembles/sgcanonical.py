@@ -213,7 +213,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
 
     @property
     def chemical_potentials(self):
-        """Relative chemical potentials. Reference species have 0"""
+        """ Relative chemical potentials. Reference species have 0. """
         chem_pots = {}
         for sublattice in self._sublattices.values():
             chem_pots.update(sublattice['mu'])
@@ -259,7 +259,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
     @classmethod
     def from_dict(cls, d):
         """
-        Creates a CanonicalEnsemble from MSONable dict representation
+        Creates a CanonicalEnsemble from MSONable dict representation.
         """
         eb = cls(CEProcessor.from_dict(d['processor']),
                  temperature=d['temperature'],
@@ -389,7 +389,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
     @classmethod
     def from_dict(cls, d):
         """
-        Creates a CanonicalEnsemble from MSONable dict representation
+        Creates a CanonicalEnsemble from MSONable dict representation.
         """
         eb = cls(CEProcessor.from_dict(d['processor']),
                  temperature=d['temperature'],

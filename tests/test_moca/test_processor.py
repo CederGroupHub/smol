@@ -65,7 +65,7 @@ class TestCEProcessor(unittest.TestCase):
 
     def test_compute_property_change(self):
         occu = self.enc_occu.copy()
-        for i in range(50):
+        for _ in range(50):
             sublatt = np.random.choice(self.sublattices)
             site = np.random.choice(sublatt['sites'])
             new_bit = np.random.choice(sublatt['bits'])
@@ -93,7 +93,7 @@ class TestCEProcessor(unittest.TestCase):
 
     def test_delta_corr(self):
         occu = self.enc_occu.copy()
-        for i in range(50):
+        for _ in range(50):
             sublatt = np.random.choice(self.sublattices)
             site = np.random.choice(sublatt['sites'])
             new_bit = np.random.choice(sublatt['bits'])
@@ -124,7 +124,7 @@ class TestCEProcessor(unittest.TestCase):
         ce = ClusterExpansion(cs, ecis, sw.feature_matrix)
         pr = CEProcessor(ce, self.pr.supercell_matrix, optimize_indicator=True)
         occu = self.enc_occu.copy()
-        for i in range(50):
+        for _ in range(50):
             sublatt = np.random.choice(self.sublattices)
             site = np.random.choice(sublatt['sites'])
             new_bit = np.random.choice(sublatt['bits'])
@@ -204,7 +204,7 @@ class TestEwaldCEProcessor(unittest.TestCase):
 
     def test_compute_property_change(self):
         occu = self.enc_occu.copy()
-        for i in range(50):
+        for _ in range(50):
             sublatt = np.random.choice(self.sublattices)
             site = np.random.choice(sublatt['sites'])
             new_bit = np.random.choice(sublatt['bits'])
@@ -222,7 +222,7 @@ class TestEwaldCEProcessor(unittest.TestCase):
 
     def test_delta_corr(self):
         occu = self.enc_occu.copy()
-        for i in range(50):
+        for _ in range(50):
             sublatt = np.random.choice(self.sublattices)
             site = np.random.choice(sublatt['sites'])
             new_bit = np.random.choice(sublatt['bits'])

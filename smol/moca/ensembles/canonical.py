@@ -227,7 +227,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
     @classmethod
     def from_dict(cls, d):
         """
-        Creates a CanonicalEnsemble from MSONable dict representation
+        Creates a CanonicalEnsemble from MSONable dict representation.
         """
         eb = cls(CEProcessor.from_dict(d['processor']),
                  temperature=d['temperature'],

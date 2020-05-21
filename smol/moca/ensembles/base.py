@@ -144,7 +144,7 @@ class BaseEnsemble(ABC):
             remaining = iterations - self.current_step + start_step
             no_interrupt = min(remaining, self.save_interval)
 
-            for i in range(no_interrupt):
+            for _ in range(no_interrupt):
                 success = self._attempt_step(sublattice_name)
                 self._ssteps += success
 
@@ -166,13 +166,13 @@ class BaseEnsemble(ABC):
         """
         with open(filename, 'a') as fp:
             for d in self.data:
-                json.dump(self.data, fp)
+                json.dump(d, fp)
                 fp.write(os.linesep)
 
         self._data = []
 
     @abstractmethod
-    def _attempt_step(self, sublattice_name):
+    def _attempt_step(self, sublattice_name=None):
         """
         Attempts a MC step and returns 0, 1 based on whether the step was
         accepted or not.
@@ -207,7 +207,8 @@ class BaseEnsemble(ABC):
 
     def _save_data(self):
         """
-        Save the current sample and properties
+        Save the current sample and properties.
+
         Args:
             step (int):
                 Current montecarlo step

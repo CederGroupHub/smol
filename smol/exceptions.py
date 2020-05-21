@@ -23,13 +23,13 @@ class NotFittedError(ValueError, AttributeError):
 class SymmetryError(ValueError):
     """
     Exception class to raise when symmetry of a structure are not compatible
-    with a set of given symops
+    with a set of given symops.
     """
     pass
 
 
 class StructureMatchError(RuntimeError):
     """
-    Raised when a pymatgen StructureMatcher returns None
+    Raised when a pymatgen StructureMatcher returns None.
     """
     pass
