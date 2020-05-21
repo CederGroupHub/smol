@@ -22,13 +22,24 @@ class EwaldTerm(MSONable):
     and reduce complexity (number of orbits) required to fit ionic materials.
     """
 
-    def __init__(self, eta=None):
+    def __init__(self, eta=None, real_space_cut=None, recip_space_cut=None,):
         """
+        Input parameters are standard input parameters to pymatgen
+        EwaldSummation. See class documentation for more information.
         Args:
             eta (float):
-                parameter to override the EwaldSummation default eta.
+                Parameter to override the EwaldSummation default screening
+                parameter eta. If not given it is determined automatically.
+            real_space_cut (float):
+                Real space cutoff radius. Determined automagically if not
+                given.
+            recip_space_cut (float):
+                Reciprocal space cutoff radius. Determined automagically if not
+                given.
         """
         self.eta = eta
+        self.real_space_cut = real_space_cut
+        self.recip_space_cut = recip_space_cut
 
     def corr_from_occupancy(self, occu, structure, size):
         """
@@ -49,7 +60,8 @@ class EwaldTerm(MSONable):
             float
         """
         ewald_structure, ewald_inds = self._get_ewald_structure(structure)
-        ewald = EwaldSummation(ewald_structure, eta=self.eta)
+        ewald = EwaldSummation(ewald_structure, self.real_space_cut,
+                               self.recip_space_cut, eta=self.eta)
         ewald_matrix = ewald.total_energy_matrix
         ew_occu = self._get_ewald_occu(occu, len(ewald_structure), ewald_inds)
         return np.array([np.sum(ewald_matrix[ew_occu, :][:, ew_occu])])/size
@@ -96,17 +108,20 @@ class EwaldTerm(MSONable):
 
     def as_dict(self) -> dict:
         """
-        Make this a json serializable dict
+        Make this a json serializable dict.
         """
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
-             'eta': self.eta}
+             'eta': self.eta,
+             'real_space_cut': self.real_space_cut,
+             'recip_space_cut': self.recip_space_cut}
         return d
 
     @classmethod
     def from_dict(cls, d):
         """
         Create EwaldTerm from msonable dict
-        (Over-kill here since only self.eta is saved, plus its optional
+        (Over-kill here since only EWaldSummation params are saved)
         """
-        return cls(eta=d['eta'])
+        return cls(eta=d['eta'], real_space_cut=d['real_space_cut'],
+                   recip_space_cut=d['recip_space_cut'])

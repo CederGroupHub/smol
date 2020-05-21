@@ -26,12 +26,12 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             temperature (float):
                 Temperature of ensemble
             save_interval (int):
-                interval of steps to save the current occupancy and property
+                Interval of steps to save the current occupancy and property
             inital_occupancy (array):
                 Initial occupancy vector. If none is given then a random one
                 will be used.
             seed (int):
-                seed for random number generator
+                Seed for random number generator.
         """
 
         super().__init__(processor, initial_occupancy=initial_occupancy,
@@ -145,7 +145,9 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
 
     def _attempt_step(self, sublattice_name=None):
         """
-        Attempts flips corresponding to a canonical swap
+        Attempts flips corresponding to an elementary canonical swap.
+        Will pick a sublattice at random and then a canonical swap at random
+        from that sublattice.
 
         Args:
             sublattice_name (str): optional
@@ -171,7 +173,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
 
     def _get_flips(self, sublattice_name=None):
         """
-        Gets a possible canonical flip. A swap between two sites
+        Gets a possible canonical flip. A swap between two sites.
 
         Args:
             sublattice_name (str): optional
@@ -202,7 +204,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
 
     def as_dict(self) -> dict:
         """
-        Json-serialization dict representation
+        Json-serialization dict representation.
 
         Returns:
             MSONable dict

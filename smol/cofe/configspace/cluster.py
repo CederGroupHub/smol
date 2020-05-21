@@ -1,7 +1,7 @@
 """
 Implementation of the Cluster class, which represents a group of sites of a
-given lattice. Aka the building blocks for a cluster basis of functions over
-configurational space
+given lattice. These are the building blocks for a cluster basis of functions
+over configurational space.
 """
 
 from __future__ import division
@@ -15,7 +15,10 @@ from smol.cofe.configspace.utils import SITE_TOL, _repr
 
 class Cluster(MSONable):
     """
-    An undecorated (no occupancies) cluster
+    An undecorated (no occupancies) cluster. Represented simply by a list of
+    sites, its centroid, and the underlying lattice.
+    You probably never need to instantiate this class directly. Look at
+    ClusterSubspace to create orbits and clusters necessary for a CE.
     """
 
     def __init__(self, sites, lattice):

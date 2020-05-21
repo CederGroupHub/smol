@@ -2,7 +2,7 @@
 Implementation of a StructureWrangler and additional functions used to
 preprocess and check (wrangle) fitting data of structures and properties.
 Also functions to obtain weights by energy above hull or energy above
-composition for a given set of structures
+composition for a given set of structures.
 """
 
 from __future__ import division
@@ -188,12 +188,12 @@ class StructureWrangler(MSONable):
                  supercell_matrix=None):
         """
         Add a structure and measured property to Structure Wrangler.
-        The property should be extensive (i.e. not normalized per atom or unit
-        cell, etc)
+        The property should ideally be extensive (i.e. not normalized per atom
+        or unit cell, etc).
         Will attempt to computes correlation vector and if successful will
         add the structure otherwise it ignores that structure. Usually failures
-        are caused by the Structure Matcher. If using verbose, the errors
-        will be printed out.
+        are caused by the Structure Matcher in the given ClusterSubspace.
+        If using verbose, the errors will be printed out.
 
         Args
             structure (pymatgen.Structure):
@@ -307,7 +307,7 @@ class StructureWrangler(MSONable):
     @classmethod
     def from_dict(cls, d):
         """
-        Creates Structure Wrangler from serialized MSONable dict
+        Creates Structure Wrangler from serialized MSONable dict.
         """
         sw = cls(cluster_subspace=ClusterSubspace.from_dict(d['_subspace']))
         items = []
@@ -327,7 +327,7 @@ class StructureWrangler(MSONable):
 
     def as_dict(self):
         """
-        Json-serialization dict representation
+        Json-serialization dict representation.
 
         Returns:
             MSONable dict
@@ -378,7 +378,7 @@ class StructureWrangler(MSONable):
 def _energies_above_hull(structures, energies, ce_structure):
     """
     Computes energies above hull constructed from phase diagram of the
-    given structures
+    given structures.
     """
     pd = _pd(structures, energies, ce_structure)
     e_above_hull = []
@@ -390,7 +390,7 @@ def _energies_above_hull(structures, energies, ce_structure):
 
 def _pd(structures, energies, cs_structure):
     """
-    Generate a phase diagram with the structures and energies
+    Generate a phase diagram with the structures and energies.
     """
     entries = []
 
@@ -408,7 +408,7 @@ def _pd(structures, energies, cs_structure):
 
 def _energies_above_composition(structures, energies):
     """
-    Computes structure energies above reduced composition
+    Computes structure energies above reduced composition.
     """
 
     min_e = defaultdict(lambda: np.inf)

@@ -11,7 +11,7 @@ SITE_TOL = 1e-6
 def get_bits(structure):
     """
     Helper method to compute list of species on each site.
-    Includes vacancies
+    Includes vacancies.
     """
     all_bits = []
     for site in structure:
@@ -25,7 +25,7 @@ def get_bits(structure):
 def get_bits_w_concentration(structure):
     """
     Same as above but returns list of dicts to include the concentration of
-    each species
+    each species.
     """
     all_bits = []
     for site in structure:

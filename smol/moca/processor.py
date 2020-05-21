@@ -1,9 +1,11 @@
 """
-Implementation of a processor for a fixed size Super Cell optimized to compute
-correlation vectors and local changes in correlation vectors. This class allows
-the use a cluster expansion hamiltonian to run Monte Carlo based simulations.
+Implementation of processor classes for a fixed size super cell. A processor is
+optimized to compute correlation vectors and local changes in correlation
+vectors. This class allows the use a cluster expansion hamiltonian to run
+Monte Carlo based simulations.
 If you are using a Hamiltonian with an Ewald summation electrostatic term, you
-should use the EwaldCEProcessor class.
+should use the EwaldCEProcessor class to handle changes in the electrostatic
+interaction energy.
 """
 
 import numpy as np
@@ -93,7 +95,7 @@ class CEProcessor(MSONable):
     def compute_property(self, occu):
         """
         Computes the total value of the property corresponding to the CE
-        for the given occupancy vector
+        for the given occupancy array
 
         Args:
             occu (array):
@@ -105,7 +107,8 @@ class CEProcessor(MSONable):
 
     def compute_property_change(self, occu, flips):
         """
-        Compute change in property from a set of flips
+        Compute change in property from a set of flips.
+        
         Args:
             occu (array):
                 encoded occupancy array
@@ -119,13 +122,13 @@ class CEProcessor(MSONable):
 
     def compute_correlation(self, occu):
         """
-        Computes the correlation vector for a given occupancy vector.
+        Computes the correlation vector for a given occupancy array.
         Each entry in the correlation vector corresponds to a particular
         symmetrically distinct bit ordering.
 
         Args:
             occu (array):
-                encoded occupation vector
+                encoded occupation array
 
         Returns: Correlation vector
             array
@@ -135,7 +138,7 @@ class CEProcessor(MSONable):
 
     def occupancy_from_structure(self, structure):
         """
-        Gets the occupancy vector for a given structure. The structure must
+        Gets the occupancy array for a given structure. The structure must
         strictly be a supercell of the prim according to the processor's
         supercell matrix
 
@@ -143,7 +146,7 @@ class CEProcessor(MSONable):
             structure (Structure):
                 A pymatgen structure (related to the cluster-expansion prim
                 by the supercell matrix passed to the processor)
-        Returns: encoded occupancy vector
+        Returns: encoded occupancy array
             list
         """
         occu = self.subspace.occupancy_from_structure(structure,
@@ -152,7 +155,7 @@ class CEProcessor(MSONable):
 
     def structure_from_occupancy(self, occu):
         """
-        Get pymatgen.Structure from an occupancy vector
+        Get pymatgen.Structure from an occupancy array.
 
         Args:
             occu (array):
@@ -171,14 +174,14 @@ class CEProcessor(MSONable):
 
     def encode_occupancy(self, occu):
         """
-        Encode occupancy vector of species str to ints.
+        Encode occupancy array of species str to ints.
         """
         ec_occu = np.array([bit.index(sp) for bit, sp in zip(self.bits, occu)])
         return ec_occu
 
     def decode_occupancy(self, enc_occu):
         """
-        Decode encoded occupancy vector of int to species str
+        Decode encoded occupancy array of int to species str.
         """
         occu = [bit[i] for i, bit in zip(enc_occu, self.bits)]
         return occu
@@ -186,12 +189,13 @@ class CEProcessor(MSONable):
     def delta_corr(self, flips, occu):
         """
         Computes the change in the correlation vector from a list of site
-        flips
+        flips.
+
         Args:
             flips list(tuple):
                 list of tuples with two elements. Each tuple represents a
                 single flip where the first element is the index of the site
-                in the occupancy vector and the second element is the index
+                in the occupancy array and the second element is the index
                 for the new species to place at that site.
             occu (array):
                 encoded occupancy array
@@ -224,7 +228,7 @@ class CEProcessor(MSONable):
 
     def as_dict(self) -> dict:
         """
-        Json-serialization dict representation
+        Json-serialization dict representation.
 
         Returns:
             MSONable dict
@@ -239,8 +243,8 @@ class CEProcessor(MSONable):
 
 class EwaldCEProcessor(CEProcessor):
     """
-    A subclass of the CEProcessor class that handles changes in an additional
-    Ewald Summation term from single site flips.
+    A subclass of the CEProcessor class that handles changes for the
+    electrostatic interaction energy in an additional Ewald Summation term.
     Make sure that the ClusterExpansion object used has an EwaldTerm,
     otherwise this will not work.
     """
@@ -284,7 +288,7 @@ class EwaldCEProcessor(CEProcessor):
 
     def compute_correlation(self, occu):
         """
-        Computes the correlation vector for a given occupancy vector.
+        Computes the correlation vector for a given occupancy array.
         Each entry in the correlation vector corresponds to a particular
         symmetrically distinct bit ordering. The last value of the correlation
         is the ewald summation value.
@@ -311,7 +315,7 @@ class EwaldCEProcessor(CEProcessor):
             flips list(tuple):
                  list of tuples with two elements. Each tuple represents a
                  single flip where the first element is the index of the site
-                 in the occupancy vector and the second element is the index
+                 in the occupancy array and the second element is the index
                  for the new species to place at that site.
             occu (array):
                 encoded occupancy array

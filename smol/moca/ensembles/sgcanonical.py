@@ -13,9 +13,12 @@ from smol.moca.ensembles.canonical import CanonicalEnsemble
 
 class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
     """
-    Semi-Grand Canonical Base Ensemble. Total number of species are fixed but
-    composition of "active" (with partial occupancies) sublattices is allowed
-    to change.
+    Abstract Semi-Grand Canonical Base Ensemble. Total number of species are
+    fixed but composition of "active" (with partial occupancies) sublattices is
+    allowed to change.
+
+    This class can not be instantiated. See MuSemiGrandEnsemble and
+    FuSemiGrandEnsemble below.
     """
 
     def __init__(self, processor, temperature, save_interval,
@@ -204,6 +207,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
         for sublatt in self._sublattices.values():
             sublatt['mu'] = {sp: mu for sp, mu in chemical_potentials.items()
                              if sp in sublatt['species']}
+            # TODO probably remove this since it really doesn't affect results
             # If no reference species is set, then set and recenter others
             mus = list(sublatt['mu'].values())
             if not any([mu == 0 for mu in mus]):
@@ -221,7 +225,8 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
 
     def _attempt_step(self, sublattice_name=None):
         """
-        Attempts flips corresponding to a canonical swap
+        Attempts flips corresponding to a semi canonical swap (a single site
+        identity flip).
         Args:
             sublattice_name (str): optional
                 If only considering one sublattice.
@@ -339,7 +344,8 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
 
     def _attempt_step(self, sublattice_name=None):
         """
-        Attempts flips corresponding to a canonical swap
+        Attempts flips corresponding to a canonical swap.
+
         Args:
             sublattice_name (str): optional
                 If only considering one sublattice.
@@ -365,7 +371,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
     @staticmethod
     def _accept(delta_e, ratio, beta=1.0):
         """
-        Fugacity based Semi-Grand Canonical Metropolis acceptance criteria
+        Fugacity based Semi-Grand Canonical Metropolis acceptance criteria.
 
         Args:
             ratio: ratio of fugacity fractions for new and old configuration
@@ -378,7 +384,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
 
     def as_dict(self) -> dict:
         """
-        Json-serialization dict representation
+        Json-serialization dict representation.
 
         Returns:
             MSONable dict

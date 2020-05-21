@@ -1,7 +1,10 @@
 """
 This module implements the ClusterExpansion class, which holds the necessary
-attributes to fit a set of orbit functions to a dataset of structures and
-a corresponding property (most usually energy).
+attributes to represent a CE and predict the property for new structures.
+The class also allows to prune a CE to remove low importance orbits function
+terms and speed up Monte Carlo runs.
+Also has numerical ECI conversion to other basis sets, but has not been
+strongly tested.
 """
 
 from __future__ import division
@@ -172,7 +175,7 @@ class ClusterExpansion(MSONable):
     @classmethod
     def from_dict(cls, d):
         """
-        Creates ClusterExpansion from serialized MSONable dict
+        Creates ClusterExpansion from serialized MSONable dict.
         """
         ce = cls(ClusterSubspace.from_dict(d['cluster_subspace']),
                  ecis=d['ecis'], feature_matrix=np.array(d['feature_matrix']))
@@ -181,7 +184,7 @@ class ClusterExpansion(MSONable):
 
     def as_dict(self):
         """
-        Json-serialization dict representation
+        Json-serialization dict representation.
 
         Returns:
             MSONable dict

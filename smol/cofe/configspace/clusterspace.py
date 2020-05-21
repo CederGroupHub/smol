@@ -1,11 +1,10 @@
 """
 This Module implements the ClusterSubspace class necessary to define the terms
 to be included in a cluster expansion. A cluster subspace is a finite set of
-clusters, more precisely orbits, that define/represent vectors which span
-a subspace of the total configurational space of a given lattice system. The
-site functions defined for the sites in the orbits make up the cluster/orbit
-functions that span the corresponding function space over the configurational
-space.
+clusters, more precisely orbits that contain symmetrically equivalent clusters,
+that are used to define orbit/cluster basis functions which span a subspace of
+the total function space over the configurational space of a given lattice
+system.
 """
 
 from __future__ import division
@@ -38,7 +37,7 @@ class ClusterSubspace(MSONable):
     functions that are to be considered in the fit.
 
     You probably want to generate from ClusterSubspace.from_radii, which will
-    auto-generate the orbits, unless you want more control over them.
+    auto-generate the orbits from radius cutoffs.
 
     This is the class you're looking for to start defining the structure and
     orbit/cluster terms for your cluster expansion.
@@ -271,7 +270,7 @@ class ClusterSubspace(MSONable):
     def refine_structure(self, structure, scmatrix=None):
         """
         Refine a (relaxed) structure to a perfect supercell structure of the
-        the prim structure (aka the corresponding unrelaxed structure)
+        the prim structure (aka the corresponding unrelaxed structure).
 
         Args:
             structure (pymatgen.Structure):
@@ -496,7 +495,7 @@ class ClusterSubspace(MSONable):
     def _assign_orbit_ids(self):
         """
         Assigns unique id's to each orbit based on all its orbit functions and
-        all clusters in the prim structure that are in each orbit
+        all clusters in the prim structure that are in each orbit.
         """
         n_clstr = 1
         n_bit_ords = 1
@@ -517,7 +516,7 @@ class ClusterSubspace(MSONable):
         """
         Generates dictionary of {size: [Orbits]} given a dictionary of maximal
         cluster radii and symmetry operations to apply (not necessarily all the
-        symmetries of the expansion_structure)
+        symmetries of the expansion_structure).
         """
 
         if use_concentration:
@@ -629,7 +628,7 @@ class ClusterSubspace(MSONable):
     @classmethod
     def from_dict(cls, d):
         """
-        Creates ClusterSubspace from serialized MSONable dict
+        Creates ClusterSubspace from serialized MSONable dict.
         """
 
         symops = [SymmOp.from_dict(so_d) for so_d in d['symops']]
@@ -659,7 +658,7 @@ class ClusterSubspace(MSONable):
 
     def as_dict(self):
         """
-        Json-serialization dict representation
+        Json-serialization dict representation.
 
         Returns:
             MSONable dict

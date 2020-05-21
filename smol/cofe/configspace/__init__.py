@@ -8,4 +8,4 @@ from .orbit import Orbit
 from smol.cofe.extern.ewald import EwaldTerm
 
 
-__all__ = ['Cluster', 'Orbit', 'EwaldTerm']
+__all__ = ['Cluster', 'Orbit']

@@ -95,7 +95,7 @@ class TestClusterExpansionEwaldBinary(unittest.TestCase):
     """
     Test cluster expansion on a synthetic CE + Ewald binary dataset
     """
-    
+
     def setUp(self) -> None:
         self.dataset = synthetic_CEewald_binary
         self.cs = ClusterSubspace.from_dict(self.dataset['cluster_subspace'])

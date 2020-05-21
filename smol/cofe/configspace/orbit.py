@@ -19,12 +19,14 @@ from .basis import basis_factory
 class Orbit(MSONable):
     """
     An Orbit represents a set of clusters that are symmetrically equivalent
-    (when undecorated).
-    This usually includes translational and structure symmetry of the
+    (when undecorated). The class also includes the possible orderings on the
+    clusters in the orbit.
+    An orbit usually includes translational and structure symmetry of the
     underlying lattice. But this is not a hard requirement any set of symmetry
     operations can be passed to the constructor. (regardless an orbit should at
     a minimum have translational symmetry).
-    Also includes the possible orderings on the clusters
+    You probably never need to instantiate this class directly. Look at
+    ClusterSubspace to create orbits and clusters necessary for a CE.
     """
 
     def __init__(self, sites, lattice, bits, site_bases, structure_symops):
@@ -104,7 +106,7 @@ class Orbit(MSONable):
     def bit_combos(self):
         """
         List of lists, each inner list is of symmetrically equivalent bit
-        orderings
+        orderings.
         """
         if self._bit_combos is not None:
             return self._bit_combos
@@ -129,7 +131,7 @@ class Orbit(MSONable):
     @property
     def clusters(self):
         """
-        Returns symmetrically equivalent clusters
+        Returns symmetrically equivalent clusters.
         """
         if self._equiv:
             return self._equiv
@@ -157,7 +159,7 @@ class Orbit(MSONable):
     @property
     def basis_arrays(self):
         """
-        A tuple of all site function arrays for each site in orbit
+        A tuple of all site function arrays for each site in orbit.
         """
         if self._basis_arrs is None:
             self._basis_arrs = tuple(sb.function_array
@@ -194,7 +196,7 @@ class Orbit(MSONable):
     def remove_bit_combo(self, bits):
         """
         Removes bit_combos from orbit. Only a single set bits in the bit combo
-        (symmetrically equivalent bit orderings) needs to be passed
+        (symmetrically equivalent bit orderings) needs to be passed.
         """
         bit_combos = []
 
@@ -210,7 +212,7 @@ class Orbit(MSONable):
 
     def remove_bit_combos_by_inds(self, inds):
         """
-        Remove a bit combos by their indices in the bit_combo list
+        Remove a bit combos by their indices in the bit_combo list.
         """
 
         if max(inds) > len(self.bit_combos) - 1:
@@ -226,7 +228,7 @@ class Orbit(MSONable):
 
     def eval(self, bits, species_encoding):
         """
-        Evaluates a cluster function defined for this orbit
+        Evaluates a cluster function defined for this orbit.
 
         Args:
             bits (list):
@@ -247,7 +249,7 @@ class Orbit(MSONable):
 
     def transform_site_bases(self, basis_name, orthonormal=False):
         """
-        Transforms the Orbits site bases to new set of bases
+        Transforms the Orbits site bases to new basis set.
 
         Args:
             basis_name (str):
@@ -268,7 +270,7 @@ class Orbit(MSONable):
     def assign_ids(self, orbit_id, orbit_bit_id, start_cluster_id):
         """
         Used to assign unique orbit and cluster id's when creating a cluster
-        _subspace.
+        subspace.
 
         Args:
             orbit_id (int): orbit id

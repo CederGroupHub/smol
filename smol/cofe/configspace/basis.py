@@ -176,7 +176,8 @@ def indicator(s, sp):
 
 class IndicatorBasis(SiteBasis):
     """
-    Indicator Basis. This basis as defined is not orthogonal.
+    Indicator Basis. This basis as defined is not orthogonal for any number
+    of species.
     """
 
     def __init__(self, species):
@@ -207,7 +208,9 @@ def cos_f(s, a, m):
 
 class SinusoidBasis(SiteBasis):
     """
-    Sinusoid (Sine/cosine basis) as proposed by A.VdW.
+    Sinusoid (Sine/cosine basis) as proposed by A. Van der Ven.
+    A. van de Walle, Calphad. 33, 266–278 (2009).
+    This basis is properly orthogonal for any number of allowed species.
     """
 
     def __init__(self, species):
@@ -254,7 +257,9 @@ class NumpyPolyBasis(SiteBasis, ABC):
 
 class ChebyshevBasis(NumpyPolyBasis):
     """
-    Chebyshev Polynomial Basis
+    Chebyshev Polynomial Basis. Note that as implemented here, this basis
+    will not be orthogonal for more than 2 species. But can be orthonormalized
+    calling the orthonormalize method.
     """
 
     def __init__(self, species):
@@ -271,7 +276,9 @@ class ChebyshevBasis(NumpyPolyBasis):
 
 class LegendreBasis(NumpyPolyBasis):
     """
-    Legendre Polynomial Basis
+    Legendre Polynomial Basis. Note that as implemented here, this basis
+    will not be orthogonal for more than 2 species. But can be orthonormalized
+    calling the orthonormalize method.
     """
 
     def __init__(self, species):
