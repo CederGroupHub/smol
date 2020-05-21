@@ -42,11 +42,6 @@ jobs:
     docker:
       - image: circleci/python:3.7.3
 
-    parameters:
-      codacy-token:
-        type: string
-        default: ${CODACY_PROJECT_TOKEN}
-
     working_directory: ~/smol
 
     steps:
@@ -80,8 +75,10 @@ jobs:
             python setup.py --quiet install --use-cython
             coverage run -m pytest tests
             coverage xml
-            export CODACY_PROJECT_TOKEN=<< parameters.codacy-token >>
-            bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l Python -r coverage.xml
+
+      - coverage-reporter/send_report:
+          coverage-reports: 'coverage.xml'
+          project-token: $CODACY_PROJECT_TOKEN
 
   style-check:
     docker:
@@ -118,6 +115,9 @@ jobs:
             # echo "pylint checks..."
             # pylint --exit-zero smol
             # echo "--- Done ---"
+
+orbs:
+  coverage-reporter: codacy/coverage-reporter@9.0.0
 
 workflows:
   version: 2.1
