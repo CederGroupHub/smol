@@ -170,6 +170,15 @@ class StructureWrangler(MSONable):
         """
         return np.array([i['weights'][key] for i in self._items])
 
+    def remove_structure(self, structure):
+        """Will remove the corresponding structure and associated data."""
+        try:
+            index = self.structures.index(structure)
+            del self._items[index]
+        except ValueError:
+            raise ValueError(f'Structure {structure} was not found. '
+                             'Nothing has been removed.')
+
     def add_weights(self, key, weights):
         """
         Add weights to structures already in the wrangler. The length
