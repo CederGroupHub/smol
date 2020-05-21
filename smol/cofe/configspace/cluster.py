@@ -56,18 +56,18 @@ class Cluster(MSONable):
         return cluster_id + 1
 
     def __eq__(self, other):
-        """ Check equivalency of clusters considering symmetry. """
+        """Check equivalency of clusters considering symmetry."""
         if self.sites.shape != other.sites.shape:
             return False
         othersites = other.sites + np.round(self.centroid - other.centroid)
         return is_coord_subset(self.sites, othersites, atol=SITE_TOL)
 
     def __neq__(self, other):
-        """ Non equivalency. """
+        """Non equivalency."""
         return not self.__eq__(other)
 
     def __str__(self):
-        """ Pretty print a cluster. """
+        """Pretty print a cluster."""
         points = str(np.round(self.sites, 2))
         points = points.replace('\n', ' ').ljust(len(self.sites)*21)
         centroid = str(np.round(self.centroid, 2))
@@ -75,7 +75,7 @@ class Cluster(MSONable):
                 f'Centroid: {centroid:<18} Points: {points}')
 
     def __repr__(self):
-        """ Pretty representation. """
+        """Pretty representation."""
         return _repr(self, c_id=self.id, radius=self.radius,
                      centroid=self.centroid, lattice=self.lattice)
 

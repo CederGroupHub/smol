@@ -163,17 +163,17 @@ class ClusterSubspace(MSONable):
 
     @property
     def orbits(self):
-        """ Returns a list of all orbits sorted by size. """
+        """Returns a list of all orbits sorted by size."""
         return [orbit for key, orbits
                 in sorted(self._orbits.items()) for orbit in orbits]
 
     @property
     def orbits_by_size(self):
-        """ Dictionary of orbits with key being the size. """
+        """Dictionary of orbits with key being the size."""
         return self._orbits
 
     def iterorbits(self):
-        """ Orbit generator, yields orbits. """
+        """Orbit generator, yields orbits."""
         for _, orbits in sorted(self._orbits.items()):
             for orbit in orbits:
                 yield orbit
@@ -490,7 +490,7 @@ class ClusterSubspace(MSONable):
             self._assign_orbit_ids()
 
     def copy(self):
-        """ Deep copy of instance. """
+        """Deep copy of instance."""
         return deepcopy(self)
 
     def _assign_orbit_ids(self):
@@ -618,7 +618,7 @@ class ClusterSubspace(MSONable):
         return orbit_indices
 
     def __str__(self):
-        """ Convert class into pretty string for printing. """
+        """Convert class into pretty string for printing."""
         s = f'ClusterBasis: [Prim Composition] {self.structure.composition}\n'
         for size, orbits in self._orbits.items():
             s += f'    size: {size}\n'

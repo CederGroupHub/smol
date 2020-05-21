@@ -213,7 +213,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
 
     @property
     def chemical_potentials(self):
-        """ Relative chemical potentials. Reference species have 0. """
+        """Relative chemical potentials. Reference species have 0."""
         chem_pots = {}
         for sublattice in self._sublattices.values():
             chem_pots.update(sublattice['mu'])

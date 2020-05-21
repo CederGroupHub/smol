@@ -118,7 +118,7 @@ class SiteBasis(ABC):
 
     @property
     def is_orthogonal(self):
-        """ Test if the basis is orthogonal. """
+        """Test if the basis is orthogonal."""
         # add the implicit 0th function
         prods = np.dot(np.dot(self.measure_array, self._func_arr.T).T,
                        self._func_arr.T)
@@ -132,7 +132,7 @@ class SiteBasis(ABC):
 
     @property
     def is_orthonormal(self):
-        """ Test if the basis is orthonormal. """
+        """Test if the basis is orthonormal."""
         prods = np.dot(np.dot(self.measure_array, self._func_arr.T).T,
                        self._func_arr.T)
         identity = np.eye(*prods.shape)
@@ -171,7 +171,7 @@ class SiteBasis(ABC):
 
 # This is not defined within the class so the class can be pickled.
 def indicator(s, sp):
-    """ A singleton indicator function for elementary events. """
+    """A singleton indicator function for elementary events."""
     return int(s == sp)
 
 
@@ -190,7 +190,7 @@ class IndicatorBasis(SiteBasis):
 
 # Same reasoning. Defined at module level to make pickling happy.
 def sinusoid(n, m):
-    """ Sine or cosine based on AVvW sinusoid site basis. """
+    """Sine or cosine based on AVvW sinusoid site basis."""
     a = -(-n // 2)  # ceiling division
     if n % 2 == 0:
         return partial(sin_f, a=a, m=m)
@@ -288,7 +288,7 @@ class LegendreBasis(NumpyPolyBasis):
 
 
 def basis_factory(basis_name, *args, **kwargs):
-    """ Tries to return an instance of a Basis class defined in basis.py. """
+    """Tries to return an instance of a Basis class defined in basis.py."""
     try:
         class_name = basis_name.capitalize() + 'Basis'
         basis_class = globals()[class_name]

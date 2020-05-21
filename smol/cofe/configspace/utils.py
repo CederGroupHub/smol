@@ -37,9 +37,9 @@ def get_bits_w_concentration(structure):
     return all_bits
 
 
-def _repr(object: object, **fields: Dict[str, Any]) -> str:
+def _repr(instance: object, **fields: Dict[str, Any]) -> str:
     """
-    A helper function for repr overloading in classes
+    A helper function for repr overloading in classes.
     """
     attrs = []
 
@@ -47,7 +47,7 @@ def _repr(object: object, **fields: Dict[str, Any]) -> str:
         attrs.append(f'{key}={field!r}')
 
     if len(attrs) == 0:
-        return f"<{object.__class__.__name__}" \
-               f"{hex(id(object))}({','.join(attrs)})>"
+        return f"<{instance.__class__.__name__}" \
+               f"{hex(id(instance))}({','.join(attrs)})>"
     else:
-        return f"<{object.__class__.__name__} {hex(id(object))}>"
+        return f"<{instance.__class__.__name__} {hex(id(instance))}>"
