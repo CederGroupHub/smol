@@ -12,6 +12,8 @@ from smol.cofe.configspace.utils import SITE_TOL, get_bits
 from smol.exceptions import StructureMatchError
 from src.ce_utils import corr_from_occupancy
 
+# TODO test correlations for ternary and for applications of symops to structure
+
 
 class TestClusterSubSpace(unittest.TestCase):
     def setUp(self) -> None:
@@ -131,7 +133,8 @@ class TestClusterSubSpace(unittest.TestCase):
         self.assertEqual(len(corr), self.cs.n_bit_orderings + len(self.cs.external_terms))
         self.assertEqual(corr[0], 1)
 
-        cs = ClusterSubspace.from_radii(self.structure, {2: 5})
+        cs = ClusterSubspace.from_radii(self.structure, {2: 5},
+                                        basis='indicator')
 
         # make an ordered supercell_structure
         s = self.structure.copy()
@@ -160,7 +163,8 @@ class TestClusterSubSpace(unittest.TestCase):
             self.assertTrue(np.allclose(cs.corr_from_structure(s), expected))
 
     def test_remove_orbits(self):
-        cs = ClusterSubspace.from_radii(self.structure, {2: 5})
+        cs = ClusterSubspace.from_radii(self.structure, {2: 5},
+                                        basis='indicator')
         s = self.structure.copy()
         s.make_supercell([2, 1, 1])
         species = ('Li', 'Ca', 'Li', 'Ca', 'Br', 'Br')
@@ -182,7 +186,8 @@ class TestClusterSubSpace(unittest.TestCase):
         self.assertTrue(np.allclose(cs.corr_from_structure(s), expected))
 
     def test_remove_bit_combos(self):
-        cs = ClusterSubspace.from_radii(self.structure, {2: 5})
+        cs = ClusterSubspace.from_radii(self.structure, {2: 5},
+                                        basis='indicator')
         s = self.structure.copy()
         s.make_supercell([2, 1, 1])
         species = ('Li', 'Ca', 'Li', 'Ca', 'Br', 'Br')
@@ -242,7 +247,8 @@ class TestClusterSubSpace(unittest.TestCase):
                       [[0.125, 1, 0.25], [0.125, 0.5, 0.25],
                        [0.375, 0.5, 0.75], [0, 0, 0], [0, 0.5, 1],
                        [0.5, 1, 0], [0.5, 0.5, 0]])
-        cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5})
+        cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5},
+                                        basis='indicator')
         a = cs.corr_from_structure(s)
         s.make_supercell([2, 1, 1])
         b = cs.corr_from_structure(s)
@@ -257,7 +263,8 @@ class TestClusterSubSpace(unittest.TestCase):
         coords = ((0.25, 0.25, 0.25), (0.75, 0.75, 0.75),
                   (0.5, 0.5, 0.5),  (0, 0, 0))
         structure = Structure(self.lattice, species, coords)
-        cs = ClusterSubspace.from_radii(structure, {2: 6})
+        cs = ClusterSubspace.from_radii(structure, {2: 6},
+                                         basis='indicator')
         bits = get_bits(structure)
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
         orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
@@ -303,7 +310,8 @@ class TestClusterSubSpace(unittest.TestCase):
         coords = ((0.25, 0.25, 0.25), (0.75, 0.75, 0.75),
                   (0.5, 0.5, 0.5), (0, 0, 0))
         structure = Structure(self.lattice, species, coords)
-        cs = ClusterSubspace.from_radii(structure, {2: 6, 3: 4.5})
+        cs = ClusterSubspace.from_radii(structure, {2: 6, 3: 4.5},
+                                        basis='indicator')
         bits = get_bits(structure)
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 
@@ -341,7 +349,8 @@ class TestClusterSubSpace(unittest.TestCase):
                                     [1, 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0, 0.5, 0.5, 0]))
 
     def test_vs_CASM_multicomp(self):
-        cs = ClusterSubspace.from_radii(self.structure, {2: 5})
+        cs = ClusterSubspace.from_radii(self.structure, {2: 5},
+                                        basis='indicator')
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 
         orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
@@ -420,6 +429,8 @@ class TestClusterSubSpace(unittest.TestCase):
         self.assertEqual(cs.n_bit_orderings, 124)
         self.assertEqual(cs.n_clusters, 377)
         self.assertEqual(str(cs), str(self.cs))
+        # checked that the cached orbit index mappings where properly kept
+        self.assertEqual(cs._supercell_orb_inds, self.cs._supercell_orb_inds)
         self.cs.add_external_term(EwaldTerm(eta=3))
         d = self.cs.as_dict()
         cs = ClusterSubspace.from_dict(d)

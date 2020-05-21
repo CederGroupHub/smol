@@ -107,8 +107,11 @@ class ClusterSubspace(MSONable):
                                               **matcher_kwargs)
 
         self._orbits = orbits
+        self._external_terms = []  # List will hold external terms (i.e. Ewald)
+        # Dict to cache orbit index mappings, this prevents doing another
+        # structure match with the _site_matcher for structures that have
+        # already been matched
         self._supercell_orb_inds = {}
-        self._external_terms = []
 
         # assign the cluster ids
         self._assign_orbit_ids()
@@ -654,6 +657,7 @@ class ClusterSubspace(MSONable):
                               f"{term['@class']} was not found. "
                               "You will have to add this yourself.",
                               ImportWarning)
+        cs._supercell_orb_inds = d['_supercell_orb_inds']
         return cs
 
     def as_dict(self):
@@ -672,6 +676,7 @@ class ClusterSubspace(MSONable):
              'orbits': {s: [o.as_dict() for o in v]
                         for s, v in self._orbits.items()},
              'structure_matcher_kwargs': self.structure_matcher_kwargs,
-             'external_terms': [et.as_dict() for et in self.external_terms]
+             'external_terms': [et.as_dict() for et in self.external_terms],
+             '_supercell_orb_inds': self._supercell_orb_inds
              }
         return d

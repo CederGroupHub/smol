@@ -126,7 +126,6 @@ class TestOrbit(unittest.TestCase):
         self.assertRaises(RuntimeError, self.orbit.remove_bit_combos_by_inds,
                           [4])
 
-
     def test_repr(self):
         repr(self.orbit)
 
