@@ -9,6 +9,7 @@ import platform
 
 from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext as _build_ext
+import numpy
 
 
 class build_ext(_build_ext):
@@ -22,7 +23,6 @@ class build_ext(_build_ext):
         if hasattr(builtins, '__NUMPY_SETUP__'):
             del builtins.__NUMPY_SETUP__
         import importlib
-        import numpy
         importlib.reload(numpy)
         self.include_dirs.append(numpy.get_include())
 

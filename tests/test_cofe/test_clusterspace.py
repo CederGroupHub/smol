@@ -297,7 +297,7 @@ class TestClusterSubSpace(unittest.TestCase):
 
     def test_vs_CASM_triplets(self):
         """
-        Test vs casm generated correlation with occupancy basis
+        Test vs casm generated correlation with occupancy basis.
         """
         species = [{'Li': 0.1}] * 3 + ['Br']
         coords = ((0.25, 0.25, 0.25), (0.75, 0.75, 0.75),

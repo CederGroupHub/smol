@@ -10,7 +10,10 @@ from tests.data import synthetic_CE_binary, synthetic_CEewald_binary
 
 
 class TestClusterExpansionBinary(unittest.TestCase):
-    """Test cluster expansion on a synthetic CE binary dataset"""
+    """
+    Test cluster expansion on a synthetic CE binary dataset
+    """
+
     def setUp(self) -> None:
         cs = ClusterSubspace.from_dict(synthetic_CE_binary['cluster_subspace'])
         self.sw = StructureWrangler(cs)
@@ -89,7 +92,10 @@ class TestClusterExpansionBinary(unittest.TestCase):
 
 
 class TestClusterExpansionEwaldBinary(unittest.TestCase):
-    """Test cluster expansion on a synthetic CE + Ewald binary dataset"""
+    """
+    Test cluster expansion on a synthetic CE + Ewald binary dataset
+    """
+    
     def setUp(self) -> None:
         self.dataset = synthetic_CEewald_binary
         self.cs = ClusterSubspace.from_dict(self.dataset['cluster_subspace'])
