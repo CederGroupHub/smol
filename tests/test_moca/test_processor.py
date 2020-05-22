@@ -12,6 +12,14 @@ from tests.data import lno_prim, lno_data
 # TODO check that delta_corr gives same values for random sympos shuffles of same structure
 # TODO check that delta_corr works for all bases and orthonormal combos
 
+rtol = 0.0  # relative tolerance to check property change functions
+atol = 1E-12  # absolute tolerance to check property change functions
+
+# Note that for delta_corr_ewald the forward and back check is not strictly
+# equal but close to within the above tolerances. If energy drift is ever
+# suspected start by looking at the delta_corr_ewald
+
+
 class TestCEProcessor(unittest.TestCase):
     def setUp(self) -> None:
         cs = ClusterSubspace.from_radii(lno_prim, {2: 5, 3: 4.1},
@@ -74,7 +82,9 @@ class TestCEProcessor(unittest.TestCase):
             prop_f = self.pr.compute_property(new_occu)
             prop_i = self.pr.compute_property(occu)
             dprop = self.pr.compute_property_change(occu, [(site, new_bit)])
-            self.assertTrue(np.allclose(dprop, prop_f - prop_i))
+            # Check with some tight tolerances.
+            self.assertTrue(np.allclose(dprop, prop_f - prop_i,
+                                        rtol=rtol, atol=atol))
             # Test reverse matches forward
             old_bit = occu[site]
             rdprop = self.pr.compute_property_change(new_occu, [(site,
@@ -103,11 +113,13 @@ class TestCEProcessor(unittest.TestCase):
             dcorr = self.pr.delta_corr([(site, new_bit)], occu)
             corr_f = self.pr.compute_correlation(new_occu)
             corr_i = self.pr.compute_correlation(occu)
-            self.assertTrue(np.allclose(dcorr, corr_f - corr_i))
+
+            self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
+                                        rtol=rtol, atol=atol))
             # Test reverse matches forward
             old_bit = occu[site]
             rdcorr = self.pr.delta_corr([(site, old_bit)], new_occu)
-            self.assertTrue(np.allclose(dcorr, -1*rdcorr))
+            self.assertTrue(np.array_equal(dcorr, -1*rdcorr))
 
     def test_delta_corr_indicator(self):
         cs = self.ce.cluster_subspace.copy()
@@ -134,11 +146,13 @@ class TestCEProcessor(unittest.TestCase):
             dcorr = pr.delta_corr([(site, new_bit)], occu)
             corr_f = pr.compute_correlation(new_occu)
             corr_i = pr.compute_correlation(occu)
-            self.assertTrue(np.allclose(dcorr, corr_f - corr_i))
+            self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
+                                        rtol=rtol, atol=atol))
             # Test reverse matches forward
             old_bit = occu[site]
             rdcorr = pr.delta_corr([(site, old_bit)], new_occu)
-            self.assertTrue(np.allclose(dcorr, -1*rdcorr))
+            self.assertTrue(np.allclose(dcorr, -1*rdcorr,
+                                        rtol=rtol, atol=atol))
 
     def test_structure_from_occupancy(self):
         # The structures do pass as equal by direct == comparison, but as long
@@ -213,12 +227,14 @@ class TestEwaldCEProcessor(unittest.TestCase):
             prop_f = self.pr.compute_property(new_occu)
             prop_i = self.pr.compute_property(occu)
             dprop = self.pr.compute_property_change(occu, [(site, new_bit)])
-            self.assertTrue(np.allclose(dprop, prop_f - prop_i))
+            self.assertTrue(np.allclose(dprop, prop_f - prop_i,
+                                        rtol=rtol, atol=atol))
             # Test reverse matches forward
             old_bit = occu[site]
             rdprop = self.pr.compute_property_change(new_occu, [(site,
                                                                  old_bit)])
-            self.assertTrue(np.isclose(dprop, -1.0*rdprop))
+            self.assertTrue(np.isclose(dprop, -1.0*rdprop,
+                                       rtol=rtol, atol=atol))
 
     def test_delta_corr(self):
         occu = self.enc_occu.copy()
@@ -232,8 +248,10 @@ class TestEwaldCEProcessor(unittest.TestCase):
             dcorr = self.pr.delta_corr([(site, new_bit)], occu)
             corr_f = self.pr.compute_correlation(new_occu)
             corr_i = self.pr.compute_correlation(occu)
-            self.assertTrue(np.allclose(dcorr, corr_f - corr_i))
+            self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
+                                        rtol=rtol, atol=atol))
             # Test reverse matches forward
             old_bit = occu[site]
             rdcorr = self.pr.delta_corr([(site, old_bit)], new_occu)
-            self.assertTrue(np.allclose(dcorr, -1*rdcorr))
+            self.assertTrue(np.allclose(dcorr, -1*rdcorr,
+                                        rtol=rtol, atol=atol))
