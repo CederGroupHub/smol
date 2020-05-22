@@ -32,6 +32,25 @@ with open(os.path.join(DATA_DIR, 'lno_prim.json'), 'r') as f:
 with open(os.path.join(DATA_DIR, 'lno_fitting_data.json'), 'r') as f:
     lno_data = [(Structure.from_dict(x['s']), x['toten']) for x in json.load(f)]
 
+# Pyabinitio benchmark datasets
+with open(os.path.join(DATA_DIR, 'pyabinitio-LiMn3OF.json'), 'r') as f:
+    pyabinitio_LiMn3OF_dataset = json.load(f)
+    pyabinitio_LiMn3OF_dataset['prim'] = Structure.from_dict(pyabinitio_LiMn3OF_dataset['prim'])
+    pyabinitio_LiMn3OF_dataset['ecis'] = np.array(pyabinitio_LiMn3OF_dataset['ecis'])
+    pyabinitio_LiMn3OF_dataset['feature_matrix'] = np.array(pyabinitio_LiMn3OF_dataset['feature_matrix'])
+    for item in pyabinitio_LiMn3OF_dataset['data']:
+        item['structure'] = Structure.from_dict(item['structure'])
+        item['scmatrix'] = np.array(item['scmatrix'])
+
+with open(os.path.join(DATA_DIR, 'pyabinitio-LiNi2Mn4OF.json'), 'r') as f:
+    pyabinitio_LiNi2Mn4OF_dataset = json.load(f)
+    pyabinitio_LiNi2Mn4OF_dataset['prim'] = Structure.from_dict(pyabinitio_LiNi2Mn4OF_dataset['prim'])
+    pyabinitio_LiNi2Mn4OF_dataset['ecis'] = np.array(pyabinitio_LiNi2Mn4OF_dataset['ecis'])
+    pyabinitio_LiNi2Mn4OF_dataset['feature_matrix'] = np.array(pyabinitio_LiNi2Mn4OF_dataset['feature_matrix'])
+    for item in pyabinitio_LiNi2Mn4OF_dataset['data']:
+        item['structure'] = Structure.from_dict(item['structure'])
+        item['scmatrix'] = np.array(item['scmatrix'])
+
 # icet AuPd benchmark data
 with open(os.path.join(DATA_DIR, 'icet_aupd', 'aupd_prim.json'), 'r') as f:
     aupt_prim = Structure.from_dict(json.load(f))

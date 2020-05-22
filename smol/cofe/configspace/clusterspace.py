@@ -690,7 +690,8 @@ class ClusterSubspace(MSONable):
         Returns:
             MSONable dict
         """
-
+        # TODO save cached _supercell_orb_inds by orbit id, probably will
+        #  speed up reusing an subspace from_dict
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
              'structure': self.structure.as_dict(),

@@ -100,7 +100,8 @@ class TestClusterExpansionEwaldBinary(unittest.TestCase):
         self.cs = ClusterSubspace.from_dict(self.dataset['cluster_subspace'])
 
         num_structs = len(self.dataset['data'])
-        self.train_ids = np.random.choice(range(num_structs), size=num_structs//5,
+        self.train_ids = np.random.choice(range(num_structs),
+                                          size=num_structs//5,
                                           replace=False)
         self.test_ids = np.array(list(set(range(num_structs)) - set(self.train_ids)))
 
