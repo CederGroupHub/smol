@@ -7,7 +7,7 @@ import numpy as np
 from pymatgen import Composition
 from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
 from cvxopt import matrix, solvers
-from smol.regression import BaseEstimator
+from smol.learn import BaseEstimator
 
 
 # TODO gspreserve solve need to fix calls to e_above_hull was in the

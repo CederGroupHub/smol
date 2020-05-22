@@ -24,9 +24,9 @@ class ClusterExpansion(MSONable):
     of the fit with a set of test structures not used in training.
 
     Although this is purely optional and does not change the class performance,
-    it is also recommended you save some information about regression metrics
+    it is also recommended you save some information about learn metrics
     such as CV score, test/train rmse, or anything to quantify the "goodness"
-    in the metadata dictionary. See for example regression metrics in
+    in the metadata dictionary. See for example learn metrics in
     sklearn.metrics for many useful methods to get this quantities.
 
     This class is also used for Monte Carlo simulations to create a

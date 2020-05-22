@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 from smol.exceptions import NotFittedError
 
+
 class BaseEstimator(ABC):
     """
     A simple estimator class to use different 'in-house'  solvers to fit a
@@ -34,5 +35,5 @@ class BaseEstimator(ABC):
 
     @abstractmethod
     def _solve(self, feature_matrix, target_vector, *args, **kwargs):
-        """Solve for the regression coefficients."""
+        """Solve for the learn coefficients."""
         pass
