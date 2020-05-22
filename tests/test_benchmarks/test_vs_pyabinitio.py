@@ -1,10 +1,8 @@
-"""
-Test vs results from pyabinitio.cluster_expansion module
-"""
+"""Test vs results from pyabinitio.cluster_expansion module."""
 
 import unittest
 import numpy as np
-from smol.cofe import StructureWrangler, ClusterSubspace, ClusterExpansion
+from smol.cofe import StructureWrangler, ClusterSubspace
 from smol.cofe.extern import EwaldTerm
 from tests.data import pyabinitio_LiMn3OF_dataset, pyabinitio_LiNi2Mn4OF_dataset
 
