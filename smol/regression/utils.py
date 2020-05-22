@@ -1,6 +1,4 @@
-"""
-Some utilities to polish ClusterExpansion fits
-"""
+"""Some utility functions to polish Cluster Expansion fits."""
 
 
 def constrain_dielectric(max_dielectric, ewald_ind=-1):
@@ -8,8 +6,8 @@ def constrain_dielectric(max_dielectric, ewald_ind=-1):
     Decorator to enforce that a fit method fitting a cluster expansion that
     contains an EwaldTerm to constrain the dielectric constant to be positive
     and below the supplied value.
-    If the dielectric (inverse of the ewald eci) is negative or above the max
-    dieletric, the decorator will force the given fit_method to refit to the
+    If the dielectric (inverse of the Ewald eci) is negative or above the max
+    dielectric, the decorator will force the given fit_method to refit to the
     target vector with the Ewald interactions times the max dielectric
     subtracted out.
 

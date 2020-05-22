@@ -18,9 +18,6 @@ class TestConstrainDielectric(unittest.TestCase):
         self.ecis = np.linalg.lstsq(self.sw.feature_matrix,
                                     self.sw.get_property_vector('energy',True),
                                     rcond=None)[0]
-        preds = np.dot(self.sw.feature_matrix, self.ecis)
-        sdiffs = (self.sw.get_property_vector('energy', True) - preds)**2
-        self.rmse = np.sqrt(sdiffs.mean())
 
     def test_runtime(self):
         fit = lambda X, y: np.linalg.lstsq(X, y, rcond=None)[0]

@@ -1,48 +1,44 @@
-"""
-Solvers aka functions that fit a linear model and are used to define the fit
-method of the Estimator to be used for a ClusterExpansion
+"""L1 regularization least squares solver."""
 
-If your solver is simple enough then just write the Subclass here, otherwise
-make a seperate file and import the Estimator in the __init__.py file
-(ie see solve_gs_preserve)
-"""
 import numpy as np
 import warnings
-from smol.exceptions import NotFittedError
+import math
+from cvxopt import matrix, spdiag, mul, div, sqrt
+from cvxopt import blas, lapack, solvers
+from smol.regression.base import BaseEstimator
 
 
-class BaseEstimator:
+class WDRLasso(BaseEstimator):
     """
-    A simple estimator class to use different 'in-house'  solvers to fit a
-    cluster-expansion. This should be used to create specific estimator classes
-    by inheriting. New classes simple need to implement the solve method.
-    The methods have the same signatures as most Scikit-learn regressors, such
-    that those can be directly used instead of this to fit a cluster-expansion
-    The base estimator does not fit. It only has a predict function for
-    Expansions where the user supplies the ecis.
+    Estimator implementing the written l1regs cvx based solver. Written
+    by WD Richards. This is not tested, so use at your own risk.
     """
 
     def __init__(self):
-        self.coef_ = None
+        super().__init__()
         self.mus = None
         self.cvs = None
 
-    def _solve(self, X, y, *args, **kwargs):
-        '''This needs to be overloaded in derived classes'''
-        msg = f'No solve method specified: self._solve: {self._solve}'
-        raise AttributeError(msg)
+    def fit(self, feature_matrix, target_vector, sample_weight=None, mu=None):
+        """Fit the estimator."""
+        if mu is None:
+            mu = self._get_optimum_mu(feature_matrix, target_vector,
+                                      sample_weight)
+        super().fit(feature_matrix, target_vector,
+                    sample_weight=sample_weight, mu=mu)
 
-    def fit(self, X, y, sample_weight=None, *args, **kwargs):
-        if sample_weight is not None:
-            X = X * sample_weight[:, None] ** 0.5
-            y = y * sample_weight ** 0.5
+    def _solve(self, feature_matrix, target_vector, mu):
+        """
+        X and y should already have been adjusted to account for weighting.
+        """
 
-        self.coef_ = self._solve(X, y, *args, **kwargs)
+        # Maybe its cleaner to use importlib to try and import these?
+        solvers.options['show_progress'] = False
+        from cvxopt import matrix
 
-    def predict(self, X):
-        if self.coef_ is None:
-            raise NotFittedError
-        return np.dot(X, self.coef_)
+        X1 = matrix(feature_matrix)
+        b = matrix(target_vector * mu)
+        return (np.array(l1regls(X1, b)) / mu).flatten()
 
     def _calc_cv_score(self, mu, X, y, weights, k=5):
         """
@@ -77,29 +73,6 @@ class BaseEstimator:
         cv = 1 - ssr / np.sum((y - np.average(y)) ** 2)
         return cv
 
-
-class CVXEstimator(BaseEstimator):
-    """
-    Estimator implementing the written l1regs cvx based solver
-    """
-
-    def __init__(self):
-        super().__init__()
-
-    def _solve(self, X, y, mu):
-        """
-        X and y should already have been adjusted to account for weighting
-        """
-
-        # Maybe its cleaner to use importlib to try and import these?
-        from .l1regls import l1regls, solvers
-        solvers.options['show_progress'] = False
-        from cvxopt import matrix
-
-        X1 = matrix(X)
-        b = matrix(y * mu)
-        return (np.array(l1regls(X1, b)) / mu).flatten()
-
     def _get_optimum_mu(self, X, y, weights, k=5, min_mu=0.1, max_mu=6):
         """
         Finds the value of mu that maximizes the cv score
@@ -126,11 +99,126 @@ class CVXEstimator(BaseEstimator):
         self.cvs = cvs
         return mus[np.nanargmax(cvs)]
 
-    def fit(self, X, y, sample_weight=None, mu=None, *args, **kwargs):
-        if sample_weight is not None:
-            X = X * sample_weight[:, None] ** 0.5
-            y = y * sample_weight ** 0.5
 
-        if mu is None:
-            mu = self._get_optimum_mu(X, y, sample_weight)
-        self.coef_ = self._solve(X, y, mu, *args, **kwargs)
+def l1regls(A, b):
+    """
+    Returns the solution of l1-norm regularized least-squares problem
+        minimize || A*x - b ||_2^2  + || x ||_1.
+    """
+
+    m, n = A.size
+    q = matrix(1.0, (2*n, 1))
+    q[:n] = -2.0*A.T*b
+
+    def P(u, v, alpha=1.0, beta=0.0):
+        """
+            v := alpha * 2.0 * [ A'*A, 0; 0, 0 ] * u + beta * v
+        """
+        v *= beta
+        v[:n] += alpha*2.0*A.T*(A*u[:n])
+
+    def G(u, v, alpha=1.0, beta=0.0, trans='N'):
+        """
+            v := alpha*[I, -I; -I, -I] * u + beta * v  (trans = 'N' or 'T')
+        """
+
+        v *= beta
+        v[:n] += alpha*(u[:n] - u[n:])
+        v[n:] += alpha*(-u[:n] - u[n:])
+
+    h = matrix(0.0, (2*n, 1))
+
+    # Customized solver for the KKT system
+    #
+    #     [  2.0*A'*A  0    I      -I     ] [x[:n] ]     [bx[:n] ]
+    #     [  0         0   -I      -I     ] [x[n:] ]  =  [bx[n:] ].
+    #     [  I        -I   -D1^-1   0     ] [zl[:n]]     [bzl[:n]]
+    #     [ -I        -I    0      -D2^-1 ] [zl[n:]]     [bzl[n:]]
+    #
+    # where D1 = W['di'][:n]**2, D2 = W['di'][:n]**2.
+    #
+    # We first eliminate zl and x[n:]:
+    #
+    #     ( 2*A'*A + 4*D1*D2*(D1+D2)^-1 ) * x[:n] =
+    #         bx[:n] - (D2-D1)*(D1+D2)^-1 * bx[n:] +
+    #         D1 * ( I + (D2-D1)*(D1+D2)^-1 ) * bzl[:n] -
+    #         D2 * ( I - (D2-D1)*(D1+D2)^-1 ) * bzl[n:]
+    #
+    #     x[n:] = (D1+D2)^-1 * ( bx[n:] - D1*bzl[:n]  - D2*bzl[n:] )
+    #         - (D2-D1)*(D1+D2)^-1 * x[:n]
+    #
+    #     zl[:n] = D1 * ( x[:n] - x[n:] - bzl[:n] )
+    #     zl[n:] = D2 * (-x[:n] - x[n:] - bzl[n:] ).
+    #
+    # The first equation has the form
+    #
+    #     (A'*A + D)*x[:n]  =  rhs
+    #
+    # and is equivalent to
+    #
+    #     [ D    A' ] [ x:n] ]  = [ rhs ]
+    #     [ A   -I  ] [ v    ]    [ 0   ].
+    #
+    # It can be solved as
+    #
+    #     ( A*D^-1*A' + I ) * v = A * D^-1 * rhs
+    #     x[:n] = D^-1 * ( rhs - A'*v ).
+
+    S = matrix(0.0, (m, m))
+    # Asc = matrix(0.0, (m, n))
+    v = matrix(0.0, (m, 1))
+
+    def Fkkt(W):
+        # Factor
+        #
+        #     S = A*D^-1*A' + I
+        #
+        # where D = 2*D1*D2*(D1+D2)^-1, D1 = d[:n]**-2, D2 = d[n:]**-2.
+
+        d1, d2 = W['di'][:n]**2, W['di'][n:]**2
+
+        # ds is square root of diagonal of D
+        ds = math.sqrt(2.0)*div(mul(W['di'][:n], W['di'][n:]), sqrt(d1 + d2))
+        d3 = div(d2 - d1, d1 + d2)
+
+        # Asc = A*diag(d)^-1/2
+        Asc = A * spdiag(ds**-1)
+
+        # S = I + A * D^-1 * A'
+        blas.syrk(Asc, S)
+        S[::m+1] += 1.0
+        lapack.potrf(S)
+
+        def g(x, y, z):
+            x[:n] = 0.5 * (x[:n] - mul(d3, x[n:]) +
+                           mul(d1, z[:n] + mul(d3, z[:n])) -
+                           mul(d2, z[n:] - mul(d3, z[n:])))
+            x[:n] = div(x[:n], ds)
+
+            # Solve
+            #
+            #     S * v = 0.5 * A * D^-1 * ( bx[:n] -
+            #         (D2-D1)*(D1+D2)^-1 * bx[n:] +
+            #         D1 * ( I + (D2-D1)*(D1+D2)^-1 ) * bzl[:n] -
+            #         D2 * ( I - (D2-D1)*(D1+D2)^-1 ) * bzl[n:] )
+
+            blas.gemv(Asc, x, v)
+            lapack.potrs(S, v)
+
+            # x[:n] = D^-1 * ( rhs - A'*v ).
+            blas.gemv(Asc, v, x, alpha=-1.0, beta=1.0, trans='T')
+            x[:n] = div(x[:n], ds)
+
+            # x[n:] = (D1+D2)^-1 * ( bx[n:] - D1*bzl[:n]  - D2*bzl[n:] )
+            #         - (D2-D1)*(D1+D2)^-1 * x[:n]
+            x[n:] = div(x[n:] - mul(d1, z[:n]) - mul(d2, z[n:]), d1+d2)\
+                - mul(d3, x[:n])
+
+            # zl[:n] = D1^1/2 * (  x[:n] - x[n:] - bzl[:n] )
+            # zl[n:] = D2^1/2 * ( -x[:n] - x[n:] - bzl[n:] ).
+            z[:n] = mul(W['di'][:n], x[:n] - x[n:] - z[:n])
+            z[n:] = mul(W['di'][n:], -x[:n] - x[n:] - z[n:])
+
+        return g
+
+    return solvers.coneqp(P, q, G, h, kktsolver=Fkkt)['x'][:n]
