@@ -54,10 +54,9 @@ class CEProcessor(MSONable):
 
         # the only reason to keep the CE is for the MSONable from_dict
         self.cluster_expansion = cluster_expansion
-
-        self.ecis = cluster_expansion.ecis.copy()
-        self.subspace = cluster_expansion.cluster_subspace
-        self.structure = self.subspace.structure.copy()
+        self._subspace = cluster_expansion.cluster_subspace
+        self._ecis = cluster_expansion.ecis
+        self.structure = self._subspace.structure.copy()
         self.structure.make_supercell(supercell_matrix)
         self.supercell_matrix = supercell_matrix
 
@@ -67,9 +66,9 @@ class CEProcessor(MSONable):
                                  set(tuple(bits.items()) for bits in exp_bits))
 
         self.bits = get_bits(self.structure)
-        self.size = self.subspace.num_prims_from_matrix(supercell_matrix)
-        self.n_orbit_functions = self.subspace.n_bit_orderings
-        self.orbit_inds = self.subspace.supercell_orbit_mappings(supercell_matrix)  # noqa
+        self.size = self._subspace.num_prims_from_matrix(supercell_matrix)
+        self.n_orbit_functions = self._subspace.n_bit_orderings
+        self.orbit_inds = self._subspace.supercell_orbit_mappings(supercell_matrix)  # noqa
 
         # List of orbit information and supercell site indices to compute corr
         self.orbit_list = []
@@ -103,7 +102,7 @@ class CEProcessor(MSONable):
         Returns: predicted property
             float
         """
-        return np.dot(self.compute_correlation(occu), self.ecis) * self.size
+        return np.dot(self.compute_correlation(occu), self._ecis) * self.size
 
     def compute_property_change(self, occu, flips):
         """
@@ -118,7 +117,7 @@ class CEProcessor(MSONable):
         Returns:
             float
         """
-        return np.dot(self.delta_corr(flips, occu), self.ecis) * self.size
+        return np.dot(self.delta_corr(flips, occu), self._ecis) * self.size
 
     def compute_correlation(self, occu):
         """
@@ -149,8 +148,8 @@ class CEProcessor(MSONable):
         Returns: encoded occupancy array
             list
         """
-        occu = self.subspace.occupancy_from_structure(structure,
-                                                      scmatrix=self.supercell_matrix)  # noqa
+        occu = self._subspace.occupancy_from_structure(structure,
+                                                       scmatrix=self.supercell_matrix)  # noqa
         return self.encode_occupancy(occu)
 
     def structure_from_occupancy(self, occu):
