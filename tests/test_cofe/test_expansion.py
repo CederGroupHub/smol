@@ -57,7 +57,7 @@ class TestClusterExpansionBinary(unittest.TestCase):
 
     def test_prune(self):
         cs = ClusterSubspace.from_dict(synthetic_CE_binary['cluster_subspace'])
-        ce = ClusterExpansion(cs, self.ce.ecis.copy(), self.ce.feature_matrix)
+        ce = ClusterExpansion(cs, self.ce.ecis.copy(), self.ce._feat_matrix)
         thresh = 8E-3
         ce.prune(threshold=thresh)
         ids = [i for i, eci in enumerate(self.ce.ecis) if abs(eci) >= thresh]
@@ -69,12 +69,12 @@ class TestClusterExpansionBinary(unittest.TestCase):
                                     np.dot(self.sw.feature_matrix[:, ids],
                                            new_ecis)))
         # check the updated feature matrix is correct
-        self.assertTrue(np.equal(ce.feature_matrix,
+        self.assertTrue(np.equal(ce._feat_matrix,
                                self.sw.feature_matrix[:, ids]).all())
         # check that recomputing features produces whats expected
         new_feature_matrix = np.array([cs.corr_from_structure(s)
                                        for s in self.sw.structures])
-        self.assertTrue(np.equal(ce.feature_matrix, new_feature_matrix).all())
+        self.assertTrue(np.equal(ce._feat_matrix, new_feature_matrix).all())
 
     def test_print(self):
         _ = str(self.ce)

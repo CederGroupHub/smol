@@ -49,7 +49,7 @@ class ClusterExpansion(MSONable):
         """
 
         self._subspace = cluster_subspace
-        self.feature_matrix = feature_matrix
+        self._feat_matrix = feature_matrix
         self.ecis = ecis
         self.metadata = {}
 
@@ -118,7 +118,7 @@ class ClusterExpansion(MSONable):
                                                                     scmatrix=m)
                                        for s, m in zip(fit_structures,
                                                        supercell_matrices)])
-        C = np.matmul(self.feature_matrix.T,
+        C = np.matmul(self._feat_matrix.T,
                       np.linalg.pinv(new_feature_matrix.T))
         return np.matmul(C.T, self.ecis)
 
@@ -142,18 +142,18 @@ class ClusterExpansion(MSONable):
         # Update necessary attributes
         ids_compliment = list(set(range(len(self.ecis))) - set(bit_ids))
         self.ecis = self.ecis[ids_compliment]
-        self.feature_matrix = self.feature_matrix[:, ids_compliment]
+        self._feat_matrix = self._feat_matrix[:, ids_compliment]
 
     def __str__(self):
         """Pretty string for printing."""
         corr = np.zeros(self.cluster_subspace.n_bit_orderings)
         corr[0] = 1  # zero point cluster
         # This might need to be redefined to take "expectation" using measure
-        feature_avg = np.average(self.feature_matrix, axis=0)
-        feature_std = np.std(self.feature_matrix, axis=0)
+        feature_avg = np.average(self._feat_matrix, axis=0)
+        feature_std = np.std(self._feat_matrix, axis=0)
         s = 'ClusterExpansion:\n    Prim Composition: ' \
             f'{self.prim_structure.composition}\n Num fit structures: ' \
-            f'{self.feature_matrix.shape[0]}\n' \
+            f'{self._feat_matrix.shape[0]}\n' \
             f'Num orbit functions: {self.cluster_subspace.n_bit_orderings}\n'
         ecis = len(corr)*[0.0, ] if self.ecis is None else self.ecis
         s += f'    [Orbit]  id: {str(0):<3}\n'
@@ -194,6 +194,6 @@ class ClusterExpansion(MSONable):
              '@class': self.__class__.__name__,
              'cluster_subspace': self.cluster_subspace.as_dict(),
              'ecis': self.ecis.tolist(),
-             'feature_matrix': self.feature_matrix.tolist(),
+             'feature_matrix': self._feat_matrix.tolist(),
              'metadata': self.metadata}
         return d

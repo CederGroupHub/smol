@@ -68,28 +68,28 @@ class CEProcessor(MSONable):
         self.bits = get_bits(self.structure)
         self.size = self._subspace.num_prims_from_matrix(supercell_matrix)
         self.n_orbit_functions = self._subspace.n_bit_orderings
-        self.orbit_inds = self._subspace.supercell_orbit_mappings(supercell_matrix)  # noqa
+        self._orbit_inds = self._subspace.supercell_orbit_mappings(supercell_matrix)  # noqa
 
         # List of orbit information and supercell site indices to compute corr
-        self.orbit_list = []
+        self._orbit_list = []
         # Dictionary of orbits by site index and information
         # necessary to compute local changes in correlation vectors from flips
-        self.orbits_by_sites = defaultdict(list)
+        self._orbits_by_sites = defaultdict(list)
         # Store the orbits grouped by site index in the structure,
         # to be used by delta_corr. We also store a reduced index array,
         # where only the rows with the site index are stored. The ratio is
         # needed because the correlations are averages over the full inds
         # array.
-        for orbit, inds in self.orbit_inds:
-            self.orbit_list.append((orbit.bit_id, orbit.bit_combos,
-                                    orbit.bases_array, inds))
+        for orbit, inds in self._orbit_inds:
+            self._orbit_list.append((orbit.bit_id, orbit.bit_combos,
+                                     orbit.bases_array, inds))
             for site_ind in np.unique(inds):
                 in_inds = np.any(inds == site_ind, axis=-1)
                 ratio = len(inds) / np.sum(in_inds)
-                self.orbits_by_sites[site_ind].append((orbit.bit_id, ratio,
-                                                       orbit.bit_combos,
-                                                       orbit.bases_array,
-                                                       inds[in_inds]))
+                self._orbits_by_sites[site_ind].append((orbit.bit_id, ratio,
+                                                        orbit.bit_combos,
+                                                        orbit.bases_array,
+                                                        inds[in_inds]))
 
     def compute_property(self, occu):
         """
@@ -133,7 +133,7 @@ class CEProcessor(MSONable):
             array
         """
         return corr_from_occupancy(occu, self.n_orbit_functions,
-                                   self.orbit_list)
+                                   self._orbit_list)
 
     def occupancy_from_structure(self, structure):
         """
@@ -208,7 +208,7 @@ class CEProcessor(MSONable):
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
-            orbits = self.orbits_by_sites[f[0]]
+            orbits = self._orbits_by_sites[f[0]]
             delta_corr += self.dcorr_single_flip(occu_f, occu_i,
                                                  self.n_orbit_functions,
                                                  orbits)
@@ -301,7 +301,7 @@ class EwaldCEProcessor(CEProcessor):
         """
 
         ce_corr = corr_from_occupancy(occu, self.n_orbit_functions,
-                                      self.orbit_list)
+                                      self._orbit_list)
         ewald_corr = self._ewald_correlation(occu)
         return np.append(ce_corr, ewald_corr)
 
@@ -327,7 +327,7 @@ class EwaldCEProcessor(CEProcessor):
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
-            orbits = self.orbits_by_sites[f[0]]
+            orbits = self._orbits_by_sites[f[0]]
             delta_corr[:-1] += self.dcorr_single_flip(occu_f, occu_i,
                                                       self.n_orbit_functions,
                                                       orbits)
