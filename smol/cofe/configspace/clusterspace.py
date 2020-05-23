@@ -412,7 +412,8 @@ class ClusterSubspace(MSONable):
         """
 
         # np.arrays are not hashable and can't be used as dict keys.
-        scm = tuple(sorted(tuple(s) for s in scmatrix))
+        scmatrix = np.array(scmatrix)
+        scm = tuple(sorted(tuple(s.tolist()) for s in scmatrix))
         indices = self._supercell_orb_inds.get(scm)
 
         if indices is None:
@@ -681,6 +682,15 @@ class ClusterSubspace(MSONable):
                               f"{term['@class']} was not found. "
                               "You will have to add this yourself.",
                               ImportWarning)
+        # just in case orbits are not in order
+        orb_ids = [o.id for o in cs.orbits]
+        _supercell_orb_inds = {}
+        for scm, orb_inds in d['_supercell_orb_inds']:
+            scm = tuple(tuple(s) for s in scm)
+            _supercell_orb_inds[scm] = [(cs.orbits[orb_ids.index(o_id)],
+                                        np.array(ind)) for o_id, ind
+                                        in orb_inds]
+        cs._supercell_orb_inds = _supercell_orb_inds
         return cs
 
     def as_dict(self):
@@ -690,8 +700,9 @@ class ClusterSubspace(MSONable):
         Returns:
             MSONable dict
         """
-        # TODO save cached _supercell_orb_inds by orbit id, probably will
-        #  speed up reusing an subspace from_dict
+        _supercell_orb_inds = [(scm, [(orb.id, ind.tolist()) for orb, ind
+                               in orb_inds]) for scm, orb_inds
+                               in self._supercell_orb_inds.items()]
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
              'structure': self.structure.as_dict(),
@@ -700,5 +711,6 @@ class ClusterSubspace(MSONable):
              'orbits': {s: [o.as_dict() for o in v]
                         for s, v in self._orbits.items()},
              'structure_matcher_kwargs': self.structure_matcher_kwargs,
-             'external_terms': [et.as_dict() for et in self.external_terms]}
+             'external_terms': [et.as_dict() for et in self.external_terms],
+             '_supercell_orb_inds': _supercell_orb_inds}
         return d

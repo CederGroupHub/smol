@@ -30,7 +30,8 @@ class TestClusterSubSpace(unittest.TestCase):
         self.bits = get_bits(self.structure)
 
     def test_numbers(self):
-        # Test the total generated orbits, orderings and clusters are as expected.
+        # Test the total generated orbits, orderings and clusters are
+        # as expected.
         self.assertEqual(self.cs.n_orbits, 27)
         self.assertEqual(self.cs.n_bit_orderings, 124)
         self.assertEqual(self.cs.n_clusters, 377)
@@ -433,6 +434,18 @@ class TestClusterSubSpace(unittest.TestCase):
         str(self.cs)
 
     def test_msonable(self):
+        # get corr for a few supercells to cache their orbit indices
+        struct = Structure(self.lattice, ['Li',]*2 + ['Ca'] + ['Br'],
+                              self.coords)
+        struct1 = struct.copy()
+        struct1.make_supercell(2)
+        struct2 = struct1.copy()
+        # TODO all symops after 1 make finding supercell step fail this needs
+        #  to be checked!
+        struct2.apply_operation(self.cs.symops[1])
+        for s in (struct, struct1, struct2):
+            _ = self.cs.corr_from_structure(s)
+        self.assertNotEqual(len(self.cs._supercell_orb_inds), 0)
         d = self.cs.as_dict()
         cs = ClusterSubspace.from_dict(d)
         self.assertEqual(cs.n_orbits, 27)
@@ -440,7 +453,15 @@ class TestClusterSubSpace(unittest.TestCase):
         self.assertEqual(cs.n_clusters, 377)
         self.assertEqual(str(cs), str(self.cs))
         # checked that the cached orbit index mappings where properly kept
-        self.assertEqual(cs._supercell_orb_inds, self.cs._supercell_orb_inds)
+        for scm, orb_inds in cs._supercell_orb_inds.items():
+            self.assertTrue(scm in self.cs._supercell_orb_inds)
+            for orb_inds1, orb_inds2 in zip(orb_inds,
+                                            self.cs._supercell_orb_inds[scm]):
+                self.assertEqual(orb_inds1[0].id, orb_inds1[0].id)
+                self.assertEqual(orb_inds1[0].radius, orb_inds1[0].radius)
+                self.assertTrue(np.array_equal(orb_inds1[1], orb_inds2[1]))
+        self.assertTrue(np.array_equal(self.cs.corr_from_structure(struct2),
+                                       cs.corr_from_structure(struct2)))
         self.cs.add_external_term(EwaldTerm(eta=3))
         d = self.cs.as_dict()
         cs = ClusterSubspace.from_dict(d)
