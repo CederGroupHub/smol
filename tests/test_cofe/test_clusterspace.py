@@ -24,9 +24,11 @@ class TestClusterSubSpace(unittest.TestCase):
         self.structure = Structure(self.lattice, self.species, self.coords)
         sf = SpacegroupAnalyzer(self.structure)
         self.symops = sf.get_symmetry_operations()
-        self.cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5},
-                                             basis='Indicator',
-                                             orthonormal=False)
+        self.cs = ClusterSubspace.from_radii(self.structure,
+                                             radii={2: 6, 3: 5},
+                                             basis='indicator',
+                                             orthonormal=False,
+                                             supercell_size='volume')
         self.bits = get_bits(self.structure)
 
     def test_numbers(self):
@@ -253,7 +255,8 @@ class TestClusterSubSpace(unittest.TestCase):
                        [0.375, 0.5, 0.75], [0, 0, 0], [0, 0.5, 1],
                        [0.5, 1, 0], [0.5, 0.5, 0]])
         cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5},
-                                        basis='indicator')
+                                        basis='indicator',
+                                        supercell_size='volume')
         a = cs.corr_from_structure(s)
         s.make_supercell([2, 1, 1])
         b = cs.corr_from_structure(s)
@@ -443,11 +446,12 @@ class TestClusterSubSpace(unittest.TestCase):
         # TODO all symops after 1 make finding supercell step fail this needs
         #  to be checked!
         struct2.apply_operation(self.cs.symops[1])
-        for s in (struct, struct1, struct2):
+        for s in (struct, struct1, struct2):  # run this to cache orb indices
             _ = self.cs.corr_from_structure(s)
         self.assertNotEqual(len(self.cs._supercell_orb_inds), 0)
         d = self.cs.as_dict()
         cs = ClusterSubspace.from_dict(d)
+        self.assertEqual(cs.as_dict(), d)
         self.assertEqual(cs.n_orbits, 27)
         self.assertEqual(cs.n_bit_orderings, 124)
         self.assertEqual(cs.n_clusters, 377)
@@ -462,9 +466,11 @@ class TestClusterSubSpace(unittest.TestCase):
                 self.assertTrue(np.array_equal(orb_inds1[1], orb_inds2[1]))
         self.assertTrue(np.array_equal(self.cs.corr_from_structure(struct2),
                                        cs.corr_from_structure(struct2)))
+        # Check external terms are kept
         self.cs.add_external_term(EwaldTerm(eta=3))
         d = self.cs.as_dict()
         cs = ClusterSubspace.from_dict(d)
+        self.assertEqual(cs.as_dict(), d)
         self.assertEqual(len(cs.external_terms), 1)
         self.assertTrue(isinstance(cs.external_terms[0], EwaldTerm))
         self.assertEqual(cs.external_terms[0].eta, 3)

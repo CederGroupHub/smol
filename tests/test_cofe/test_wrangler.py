@@ -10,7 +10,7 @@ from tests.data import lno_prim, lno_data
 
 class TestStructureWrangler(unittest.TestCase):
     def setUp(self) -> None:
-        self.cs = ClusterSubspace.from_radii(lno_prim, {2: 5, 3: 4.1},
+        self.cs = ClusterSubspace.from_radii(lno_prim, radii={2: 5, 3: 4.1},
                                              ltol=0.15, stol=0.2,
                                              angle_tol=5, supercell_size='O2-')
         self.sw = StructureWrangler(self.cs)
@@ -19,6 +19,7 @@ class TestStructureWrangler(unittest.TestCase):
                              weights={'random': 2.0})
         struct, energy = lno_data[-1]
         self.sw.add_data(struct, {'energy': energy}, weights={'random': 3.0})
+        print('TOTAAAAL', len(self.sw.structures))
 
     def test_add_data(self):
         self.assertTrue(all(w == 2.0 for w in self.sw.get_weights('random')[:-1]))
@@ -73,7 +74,7 @@ class TestStructureWrangler(unittest.TestCase):
                     0.92882071, 0.87907454, 0.94729315, 0.40490513, 0.82484222,
                     0.81578984, 1., 0.89615121, 0.92893004, 0.81650693,
                     0.6080223 , 0.94848913, 0.92135297, 0.92326977, 0.83995635,
-                    1., 0.94663979, 1., 0.9414506 , 1.])
+                    1., 0.94663979, 1., 0.9414506, 1.])
         self.assertTrue(np.allclose(expected, self.sw.get_weights('comp')))
         sc_matrices = self.sw.supercell_matrices
         num_structs = self.sw.num_structures

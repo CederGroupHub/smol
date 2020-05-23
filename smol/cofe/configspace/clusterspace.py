@@ -15,7 +15,8 @@ import numpy as np
 from monty.json import MSONable
 from pymatgen import Structure, PeriodicSite
 from pymatgen.analysis.structure_matcher import (StructureMatcher,
-                                                 OrderDisorderElementComparator)  # noqa , FrameworkComparator
+                                                 OrderDisorderElementComparator,  # noqa
+                                                 FrameworkComparator)
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.util.coord import (is_coord_subset, is_coord_subset_pbc,
                                  lattice_points_in_supercell,
@@ -44,7 +45,7 @@ class ClusterSubspace(MSONable):
     """
 
     def __init__(self, structure, expansion_structure, symops, orbits,
-                 **matcher_kwargs):
+                 supercell_matcher=None, site_matcher=None, **matcher_kwargs):
         """
         Args:
             structure (pymatgen.Structure):
@@ -60,8 +61,8 @@ class ClusterSubspace(MSONable):
                 Orbits as values.
             matcher_kwargs:
                 ltol, stol, angle_tol, supercell_size: parameters to pass
-                through to the StructureMatcher. Structures that don't match to
-                the primitive cell under these tolerances won't be included
+                through to the StructureMatchers. Structures that don't match
+                to the primitive cell under these tolerances won't be included
                 in the expansion. Easiest option for supercell_size is usually
                 to use a species that has a constant amount per formula unit.
         """
@@ -70,41 +71,43 @@ class ClusterSubspace(MSONable):
         self.exp_structure = expansion_structure
         self.symops = symops
 
-        # TODO remove this maybe pass the structure matcher as people wanted
-        self.structure_matcher_kwargs = matcher_kwargs
-
-        # test that all the found symmetry operations map back to the input
-        # structure otherwise you can get weird subset/superset bugs
+        # Test that all the found symmetry operations map back to the input
+        # structure otherwise you can get weird subset/superset bugs.
         fc = self.structure.frac_coords
         for op in self.symops:
             if not is_coord_subset_pbc(op.operate_multi(fc), fc, SITE_TOL):
                 raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
 
-        comparator = OrderDisorderElementComparator()
-        # Doesn't seem to change success rate for matching structures, but may
-        # be a good option to try if it is failing.
-        # comparator = FrameworkComparator()
-
         # This structure matcher is used to determine if a given (supercell)
         # structure matches the prim structure by retrieving the matrix
-        # relating them. Only the "get_supercell_matrix" method is used
-        self._scmatcher = StructureMatcher(primitive_cell=False,
-                                           attempt_supercell=True,
-                                           allow_subset=True,
-                                           comparator=comparator,
-                                           scale=True,
-                                           **matcher_kwargs)
+        # relating them. Only the "get_supercell_matrix" method is used.
+        if supercell_matcher is None:
+            # Doesn't seem to change success rate for matching structures,
+            # but may be a good option to try if it is failing.
+            comparator = FrameworkComparator()
+            comparator = OrderDisorderElementComparator()
+            self._sc_matcher = StructureMatcher(primitive_cell=False,
+                                                attempt_supercell=True,
+                                                allow_subset=True,
+                                                comparator=comparator,
+                                                scale=True,
+                                                **matcher_kwargs)
+        else:
+            self._sc_matcher = supercell_matcher
 
         # This structure matcher is used to find the mapping between the sites
         # of a given supercell structure and the sites in the appropriate sized
         # supercell of the prim structure. Only "get_mapping" method is used.
-        site_comparator = OrderDisorderElementComparator()
-        self._site_matcher = StructureMatcher(primitive_cell=False,
-                                              attempt_supercell=False,
-                                              allow_subset=True,
-                                              comparator=site_comparator,
-                                              scale=True,
-                                              **matcher_kwargs)
+        if site_matcher is None:
+            site_comparator = OrderDisorderElementComparator()
+            self._site_matcher = StructureMatcher(primitive_cell=False,
+                                                  attempt_supercell=False,
+                                                  allow_subset=True,
+                                                  comparator=site_comparator,
+                                                  scale=True,
+                                                  **matcher_kwargs)
+        else:
+            self._site_matcher = site_matcher
 
         self._orbits = orbits
         self._external_terms = []  # List will hold external terms (i.e. Ewald)
@@ -117,9 +120,9 @@ class ClusterSubspace(MSONable):
         self._assign_orbit_ids()
 
     @classmethod
-    def from_radii(cls, structure, radii, ltol=0.2, stol=0.1, angle_tol=5,
-                   supercell_size='volume', basis='indicator',
-                   orthonormal=False, use_concentration=False):
+    def from_radii(cls, structure, radii, basis='indicator', orthonormal=False,
+                   use_concentration=False, supercell_matcher=None,
+                   site_matcher=None, **matcher_kwargs):
         """
         Creates a ClusterSubspace with orbits of the given size and radius
         smaller than or equal to the given radius.
@@ -132,11 +135,6 @@ class ClusterSubspace(MSONable):
             radii:
                 dict of {cluster_size: max_radius}. Radii should be strictly
                 decreasing. Typically something like {2:5, 3:4}
-            ltol, stol, angle_tol, supercell_size: parameters to pass through
-                to the StructureMatcher. Structures that don't match to the
-                primitive cell under these tolerances won't be included in the
-                expansion. Easiest option for supercell_size is usually to use
-                a species that has a constant amount per formula unit.
             basis (str):
                 a string specifying the site basis functions
             orthonormal (bool):
@@ -146,22 +144,41 @@ class ClusterSubspace(MSONable):
             use_concentration (bool):
                 if true the concentrations in the prim structure will be used
                 to orthormalize site bases.
+            supercell_matcher (StructureMatcher): optional
+                A StructureMatcher class to be used to find supercell matrices
+                relating the prim structure to other structures. If you pass
+                this directly you should know how to set the matcher up other
+                wise matching your relaxed structures will fail, alot.
+            site_matcher (StructureMatcher): optional
+                A StructureMatcher class to be used to find site mappings
+                relating the sites of a given structure to an appropriate
+                supercell of the prim structure . If you pass this directly you
+                should know how to set the matcher up other wise matching your
+                relaxed structures will fail, alot.
+            matcher_kwargs: optional
+                ltol, stol, angle_tol, supercell_size. Parameters to pass
+                through to the StructureMatchers. Structures that don't match
+                to the primitive cell under these tolerances won't be included
+                in the expansion. Easiest option for supercell_size is usually
+                to use a species that has a constant amount per formula unit.
         Returns:
             ClusterSubSpace
         """
 
+        # get symmetry operations of prim structure.
         symops = SpacegroupAnalyzer(structure).get_symmetry_operations()
-        # get the sites to expand over
+        # get the active sites (partial occupancy) to expand over.
         sites_to_expand = [site for site in structure
                            if site.species.num_atoms < 0.99
                            or len(site.species) > 1]
         expansion_structure = Structure.from_sites(sites_to_expand)
+        # get orbits within given cutoffs
         orbits = cls._orbits_from_radii(expansion_structure, radii, symops,
                                         basis, orthonormal, use_concentration)
         return cls(structure=structure,
                    expansion_structure=expansion_structure, symops=symops,
-                   orbits=orbits, ltol=ltol, stol=stol, angle_tol=angle_tol,
-                   supercell_size=supercell_size)
+                   orbits=orbits, supercell_matcher=supercell_matcher,
+                   site_matcher=site_matcher, **matcher_kwargs)
 
     @property
     def orbits(self):
@@ -387,8 +404,8 @@ class ClusterSubspace(MSONable):
         Returns: supercell matrix relating passed structure and prim structure.
             array
         """
-        scmatrix = self._scmatcher.get_supercell_matrix(structure,
-                                                        self.structure)
+        scmatrix = self._sc_matcher.get_supercell_matrix(structure,
+                                                         self.structure)
         if scmatrix is None:
             raise StructureMatchError('Supercell could not be found from '
                                       'structure')
@@ -539,40 +556,37 @@ class ClusterSubspace(MSONable):
         self.n_bit_orderings = n_bit_ords
 
     @staticmethod
-    def _orbits_from_radii(expansion_struct, radii, symops, basis,
-                           orthonormal, use_concentration):
+    def _orbits_from_radii(exp_struct, radii, symops, basis, orthonm,
+                           use_contn):
         """
         Generates dictionary of {size: [Orbits]} given a dictionary of maximal
         cluster radii and symmetry operations to apply (not necessarily all the
         symmetries of the expansion_structure).
         """
 
-        if use_concentration:
-            bits = get_bits_w_concentration(expansion_struct)
+        if use_contn:
+            bits = get_bits_w_concentration(exp_struct)
         else:
-            bits = get_bits(expansion_struct)
+            bits = get_bits(exp_struct)
 
         nbits = np.array([len(b) - 1 for b in bits])
         site_bases = tuple(basis_factory(basis, bit) for bit in bits)
-        if orthonormal:
+        if orthonm:
             for basis in site_bases:
                 basis.orthonormalize()
 
         orbits = {}
         new_orbits = []
-
-        for nbit, site, sbasis in zip(nbits, expansion_struct, site_bases):
-            new_orbit = Orbit([site.frac_coords], expansion_struct.lattice,
+        for nbit, site, sbasis in zip(nbits, exp_struct, site_bases):
+            new_orbit = Orbit([site.frac_coords], exp_struct.lattice,
                               [list(range(nbit))], [sbasis], symops)
             if new_orbit not in new_orbits:
                 new_orbits.append(new_orbit)
 
-        orbits[1] = sorted(new_orbits,
-                           key=lambda x: (np.round(x.radius, 6), -x.multiplicity))  # noqa
-
-        all_neighbors = expansion_struct.lattice.get_points_in_sphere(expansion_struct.frac_coords,  # noqa
-                                                                      [0.5, 0.5, 0.5],  # noqa
-                                                                      max(radii.values()) + sum(expansion_struct.lattice.abc) / 2)  # noqa
+        orbits[1] = sorted(new_orbits, key=lambda x: (np.round(x.radius, 6), -x.multiplicity))  # noqa
+        all_neighbors = exp_struct.lattice.get_points_in_sphere(exp_struct.frac_coords,  # noqa
+                                                                [0.5, 0.5, 0.5],  # noqa
+                                                                max(radii.values()) + sum(exp_struct.lattice.abc) / 2)  # noqa
         for size, radius in sorted(radii.items()):
             new_orbits = []
             for orbit in orbits[size-1]:
@@ -584,7 +598,7 @@ class ClusterSubspace(MSONable):
                                        atol=SITE_TOL):
                         continue
                     new_sites = np.concatenate([orbit.base_cluster.sites, [p]])
-                    new_orbit = Orbit(new_sites, expansion_struct.lattice,
+                    new_orbit = Orbit(new_sites, exp_struct.lattice,
                                       orbit.bits + [list(range(nbits[n[2]]))],
                                       orbit.site_bases + [site_bases[n[2]]],
                                       symops)
@@ -664,10 +678,16 @@ class ClusterSubspace(MSONable):
                   for s, v in d['orbits'].items()}
         structure = Structure.from_dict(d['structure'])
         exp_structure = Structure.from_dict(d['expansion_structure'])
+        sc_matcher = StructureMatcher.from_dict(d['sc_matcher'])
+        site_matcher = StructureMatcher.from_dict(d['site_matcher'])
         cs = cls(structure=structure,
                  expansion_structure=exp_structure,
                  orbits=orbits, symops=symops,
-                 **d['structure_matcher_kwargs'])
+                 supercell_matcher=sc_matcher,
+                 site_matcher=site_matcher)
+
+        # attempt to recreate external terms. This can be much improved if
+        # a base class is used.
         for term in d['external_terms']:
             try:
                 module = import_module(term['@module'])
@@ -682,6 +702,7 @@ class ClusterSubspace(MSONable):
                               f"{term['@class']} was not found. "
                               "You will have to add this yourself.",
                               ImportWarning)
+        # re-create supercell orb inds cache
         # just in case orbits are not in order
         orb_ids = [o.id for o in cs.orbits]
         _supercell_orb_inds = {}
@@ -700,6 +721,7 @@ class ClusterSubspace(MSONable):
         Returns:
             MSONable dict
         """
+        # modify cached sc orb inds so it can be serialized
         _supercell_orb_inds = [(scm, [(orb.id, ind.tolist()) for orb, ind
                                in orb_inds]) for scm, orb_inds
                                in self._supercell_orb_inds.items()]
@@ -710,7 +732,8 @@ class ClusterSubspace(MSONable):
              'symops': [so.as_dict() for so in self.symops],
              'orbits': {s: [o.as_dict() for o in v]
                         for s, v in self._orbits.items()},
-             'structure_matcher_kwargs': self.structure_matcher_kwargs,
+             'sc_matcher': self._sc_matcher.as_dict(),
+             'site_matcher': self._site_matcher.as_dict(),
              'external_terms': [et.as_dict() for et in self.external_terms],
              '_supercell_orb_inds': _supercell_orb_inds}
         return d

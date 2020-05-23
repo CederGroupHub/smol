@@ -18,7 +18,9 @@ class TestEwald(unittest.TestCase):
         self.structure.add_oxidation_state_by_element({'Br': -1,
                                                        'Ca': 2,
                                                        'Li': 1})
-        cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5})
+        cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5},
+                                        basis='indicator',
+                                        supercell_size='volume')
         m = np.array([[2, 0, 0], [0, 2, 0], [0, 1, 1]])
         supercell = cs.structure.copy()
         supercell.make_supercell(m)
