@@ -6,6 +6,8 @@ inner product for a single site. Most commonly a uniform measure, but this
 can be changed to use "concentration dependent" bases.
 """
 
+__author__ = "Luis Barroso-Luque"
+
 from abc import ABC
 import inspect
 import warnings

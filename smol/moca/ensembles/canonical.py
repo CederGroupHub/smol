@@ -3,6 +3,8 @@ Implementation of a Canonical Ensemble Class for running Monte Carlo
 simulations for fixed number of sites and fixed concentration of species.
 """
 
+__author__ = "Luis Barroso-Luque"
+
 import random
 import numpy as np
 from monty.json import MSONable

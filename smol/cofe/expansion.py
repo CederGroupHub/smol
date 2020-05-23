@@ -7,7 +7,8 @@ Also has numerical ECI conversion to other basis sets, but has not been
 strongly tested.
 """
 
-from __future__ import division
+__author__ = "Luis Barroso-Luque"
+
 import numpy as np
 from monty.json import MSONable
 from pymatgen import Structure

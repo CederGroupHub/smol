@@ -2,6 +2,8 @@
 A lot of random utilities that have no place to go.
 """
 
+__author__ = "Luis Barroso-Luque, William Davidson Richard"
+
 from typing import Dict, Any
 from collections import OrderedDict
 

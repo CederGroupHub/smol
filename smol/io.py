@@ -3,6 +3,8 @@ Input and output functions. Can also at some point add input and output for
 other CE code packages to make it easier to translate work.
 """
 
+__author__ = "Luis Barroso-Luque"
+
 import json
 from monty.json import MSONable, MontyEncoder, MontyDecoder
 

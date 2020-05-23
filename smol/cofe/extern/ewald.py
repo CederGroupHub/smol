@@ -6,6 +6,8 @@ Chapter 4.6 of W.D. Richard's thesis.
 W. D. Richards, et al., Energy Environ. Sci., 2016, 9, 3272–3278
 """
 
+__author__ = "Luis Barroso-Luque, William Davidson Richard"
+
 import numpy as np
 from pymatgen import Structure, PeriodicSite
 from pymatgen.analysis.ewald import EwaldSummation

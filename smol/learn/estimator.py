@@ -1,5 +1,7 @@
 """L1 regularization least squares solver."""
 
+__author__ = "William Davidson Richard"
+
 import numpy as np
 import warnings
 import math

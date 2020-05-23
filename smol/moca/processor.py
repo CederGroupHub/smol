@@ -8,6 +8,8 @@ should use the EwaldCEProcessor class to handle changes in the electrostatic
 interaction energy.
 """
 
+__author__ = "Luis Barroso-Luque"
+
 import numpy as np
 from collections import defaultdict, OrderedDict
 from monty.json import MSONable

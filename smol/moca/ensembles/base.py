@@ -1,3 +1,7 @@
+"""Abstract Base class for Monte Carlo Ensembles."""
+
+__author__ = "Luis Barroso-Luque"
+
 import random
 from copy import deepcopy
 import os

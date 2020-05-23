@@ -3,16 +3,16 @@ Implementation of an orbit. A set of symmetrically equivalent (with respect to
 the given undecorated lattice symmetry) clusters.
 """
 
-from __future__ import division
+__author__ = "Luis Barroso-Luque, William Davidson Richard"
+
 import itertools
 import numpy as np
 from monty.json import MSONable
 from pymatgen import Lattice, SymmOp
 from pymatgen.util.coord import coord_list_mapping
-
-from .cluster import Cluster
 from smol.cofe.configspace.utils import SITE_TOL, _repr
 from smol.exceptions import SymmetryError, SYMMETRY_ERROR_MESSAGE
+from .cluster import Cluster
 from .basis import basis_factory
 
 

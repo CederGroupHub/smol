@@ -4,7 +4,8 @@ given lattice. These are the building blocks for a cluster basis of functions
 over configurational space.
 """
 
-from __future__ import division
+__author__ = "Luis Barroso-Luque, William Davidson Richard"
+
 import numpy as np
 from monty.json import MSONable
 from pymatgen.util.coord import is_coord_subset

@@ -7,7 +7,8 @@ the total function space over the configurational space of a given lattice
 system.
 """
 
-from __future__ import division
+__author__ = "Luis Barroso-Luque, William Davidson Richard"
+
 from copy import deepcopy
 from importlib import import_module
 import warnings

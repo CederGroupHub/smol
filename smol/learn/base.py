@@ -1,3 +1,6 @@
+
+__author__ = "Luis Barroso-Luque"
+
 from abc import ABC, abstractmethod
 import numpy as np
 from smol.exceptions import NotFittedError

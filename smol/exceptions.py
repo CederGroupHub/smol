@@ -1,5 +1,5 @@
 """
-Definitions of specific exceptions raised elsewhere in module
+Definitions of specific exceptions raised elsewhere in module,
 """
 
 

@@ -1,7 +1,10 @@
 """
-Implementation of a Semi-Grand Canonical Ensemble Class for running Monte Carlo
-simulations for fixed number of sites but variable concentration of species.
+Implementation of a Semi-Grand Canonical Ensemble Classes for running Monte
+Carlo simulations for fixed number of sites but variable concentration of
+species.
 """
+
+__author__ = "Luis Barroso-Luque"
 
 import random
 from abc import ABCMeta, abstractmethod

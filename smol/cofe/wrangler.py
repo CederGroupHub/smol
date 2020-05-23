@@ -5,7 +5,9 @@ Also functions to obtain weights by energy above hull or energy above
 composition for a given set of structures.
 """
 
-from __future__ import division
+__author__ = "Luis Barroso-Luque"
+__credits__ = "William Davidson Richard"
+
 from collections import defaultdict
 import numpy as np
 from monty.json import MSONable

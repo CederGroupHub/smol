@@ -1,5 +1,8 @@
 """Some utility functions to polish Cluster Expansion fits."""
 
+__author__ = "Luis Barroso-Luque"
+__credits__ = "William Davidson Richard"
+
 
 def constrain_dielectric(max_dielectric, ewald_ind=-1):
     """
