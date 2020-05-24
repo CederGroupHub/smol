@@ -1,6 +1,4 @@
-"""
-A lot of random utilities that have no place to go.
-"""
+"""A lot of random utilities that have no place to go."""
 
 __author__ = "Luis Barroso-Luque, William Davidson Richard"
 
@@ -11,8 +9,7 @@ SITE_TOL = 1e-6
 
 
 def get_bits(structure):
-    """
-    Helper method to compute list of species on each site.
+    """Helper method to compute list of species on each site.
     Includes vacancies.
     """
     all_bits = []
@@ -25,8 +22,7 @@ def get_bits(structure):
 
 
 def get_bits_w_concentration(structure):
-    """
-    Same as above but returns list of dicts to include the concentration of
+    """Same as above but returns list of dicts to include the concentration of
     each species.
     """
     all_bits = []
@@ -40,9 +36,7 @@ def get_bits_w_concentration(structure):
 
 
 def _repr(instance: object, **fields: Dict[str, Any]) -> str:
-    """
-    A helper function for repr overloading in classes.
-    """
+    """A helper function for repr overloading in classes."""
     attrs = []
 
     for key, field in fields.items():

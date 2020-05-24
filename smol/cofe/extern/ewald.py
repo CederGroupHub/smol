@@ -1,4 +1,5 @@
-"""
+"""Implementation of EwaldTerm.
+
 Provides the functionality to fit an Ewald term as an additional feature in a
 cluster expansion as proposed refs below to improve convergence of expansions
 of ionic materials.
@@ -16,7 +17,8 @@ from smol.cofe.configspace.utils import get_bits
 
 
 class EwaldTerm(MSONable):
-    """
+    """EwaldTerm Class that can be added to a ClusterSubspace.
+
     This class can be used as an external term added to a ClusterSubspace
     using the add_external_term method. Doing so allows to introduce Ewald
     electrostatic interaction energies as an additional feature to include
@@ -25,9 +27,9 @@ class EwaldTerm(MSONable):
     """
 
     def __init__(self, eta=None, real_space_cut=None, recip_space_cut=None,):
-        """
-        Input parameters are standard input parameters to pymatgen
+        """Input parameters are standard input parameters to pymatgen
         EwaldSummation. See class documentation for more information.
+
         Args:
             eta (float):
                 Parameter to override the EwaldSummation default screening
@@ -44,9 +46,9 @@ class EwaldTerm(MSONable):
         self.recip_space_cut = recip_space_cut
 
     def corr_from_occupancy(self, occu, structure, size):
-        """
-        Obtains the Ewald interaction energy normalized by the given size
-        (which should be the size of the given structure in terms of prims)
+        """Obtains the Ewald interaction energy normalized by the given size.
+
+        (The size of the given structure in terms of prims.)
         The computed electrostatic interactions do not include the charged
         cell energy (which is only important for charged structures). See
         the pymatgen EwaldSummation class for further details.
@@ -111,6 +113,9 @@ class EwaldTerm(MSONable):
     def as_dict(self) -> dict:
         """
         Make this a json serializable dict.
+
+        Returns:
+            dict: msonable dict
         """
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
@@ -121,9 +126,8 @@ class EwaldTerm(MSONable):
 
     @classmethod
     def from_dict(cls, d):
-        """
-        Create EwaldTerm from msonable dict
-        (Over-kill here since only EWaldSummation params are saved)
+        """Create EwaldTerm from msonable dict.
+        (Over-kill here since only EWaldSummation params are saved).
         """
         return cls(eta=d['eta'], real_space_cut=d['real_space_cut'],
                    recip_space_cut=d['recip_space_cut'])

@@ -1,7 +1,7 @@
-"""
-Implementation of the Cluster class, which represents a group of sites of a
-given lattice. These are the building blocks for a cluster basis of functions
-over configurational space.
+"""Implementation of the Cluster class.
+
+Represents a group of sites of a given lattice. These are the building blocks
+for a cluster basis of functions over configurational space.
 """
 
 __author__ = "Luis Barroso-Luque, William Davidson Richard"
@@ -15,11 +15,20 @@ from smol.cofe.configspace.utils import SITE_TOL, _repr
 
 
 class Cluster(MSONable):
-    """
-    An undecorated (no occupancies) cluster. Represented simply by a list of
-    sites, its centroid, and the underlying lattice.
+    """An undecorated (no occupancies) cluster.
+
+    Represented simply by a list of sites, its centroid, and the underlying
+    lattice.
+
     You probably never need to instantiate this class directly. Look at
     ClusterSubspace to create orbits and clusters necessary for a CE.
+
+    Attributes:
+        sites (list): list of fractional coordinates of each site.
+        lattice (Lattice): underlying lattice of cluster.
+        centroid (float): goemetric centroid of included sites.
+        id (int): id of cluster.
+            Used to identify the cluster in a given ClusterSubspace.
     """
 
     def __init__(self, sites, lattice):
@@ -27,7 +36,7 @@ class Cluster(MSONable):
         Args:
             sites (list):
                 list of frac coords for the sites
-            lattice (pymatgen.Lattice):
+            lattice (Lattice):
                 pymatgen Lattice object
         """
         sites = np.array(sites)
@@ -44,10 +53,13 @@ class Cluster(MSONable):
 
     @property
     def size(self):
+        """Number of sites in the cluster."""
         return len(self.sites)
 
     @property
     def radius(self):
+        """Maximum distance between 2 sites in cluster."""
+        # Maybe rename to diameter?
         coords = self.lattice.get_cartesian_coords(self.sites)
         all_d2 = np.sum((coords[None, :, :] - coords[:, None, :])**2, axis=-1)
         return np.max(all_d2) ** 0.5

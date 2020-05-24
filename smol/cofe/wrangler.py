@@ -1,6 +1,8 @@
-"""
-Implementation of a StructureWrangler and additional functions used to
-preprocess and check (wrangle) fitting data of structures and properties.
+"""Implementation of a StructureWrangler and functions to obtain fit weights.
+
+Includes functions used to preprocess and check (wrangle) fitting data of
+structures and properties.
+
 Also functions to obtain weights by energy above hull or energy above
 composition for a given set of structures.
 """
@@ -20,9 +22,9 @@ from smol.globals import kB
 
 
 def weights_energy_above_composition(structures, energies, temperature=2000):
-    """
-    Computes weights for structure energy above the minimum reduced composition
-    energy.
+    """Computes weights for structure energy above the minimum reduced
+    composition energy.
+
     Args:
         structures (list):
             list of pymatgen.Structures
@@ -40,8 +42,7 @@ def weights_energy_above_composition(structures, energies, temperature=2000):
 
 def weights_energy_above_hull(structures, energies, cs_structure,
                               temperature=2000):
-    """
-    Computes weights for structure energy above the hull of all given
+    """Computes weights for structure energy above the hull of all given
     structures
 
     Args:
@@ -62,19 +63,23 @@ def weights_energy_above_hull(structures, energies, cs_structure,
 
 
 class StructureWrangler(MSONable):
-    """
+    """Class to create fitting data to fit ECI for a cluster expansion.
+
     Class that handles (wrangles) input data structures and properties to fit
     in a cluster expansion. This class holds a ClusterSubspace used to compute
     correlation vectors and produce feature/design matrices used to fit the
     final ClusterExpansion.
+
     This class is meant to take all input training data in the form of
     (structure, properties) where the properties represent the target
     material property for the given structure that will be used to train
     the cluster expansion.
+
     The class takes care of returning the fitting data as a cluster
     correlation feature matrix. Weights for each structure can also be
     provided see the above functions to weight by energy above hull or
     energy above composition.
+
     This class also has methods to check/prepare/filter the data. A metadata
     dictionary is used to keep track of applied filters, but users can also use
     it to save any other pertinent information that will be saved with using
@@ -94,45 +99,116 @@ class StructureWrangler(MSONable):
 
     @property
     def cluster_subspace(self):
+        """The underlying ClusterSubspace used to compute features."""
         return self._subspace
 
     @property
     def num_structures(self):
+        """Number of structures added (correctly matched to prim)."""
         return len(self._items)
 
     @property
     def structures(self):
+        """List of included structures."""
         return [i['structure'] for i in self._items]
 
     @property
     def refined_structures(self):
+        """List of refined structures."""
         return [i['ref_structure'] for i in self._items]
 
     @property
     def supercell_matrices(self):
+        """List of supercell matrices relating each structure to prim."""
         return np.array([i['scmatrix'] for i in self._items])
 
     @property
     def structure_site_mappings(self):
+        """List of site mappings for each structure to prim."""
         return [i['mapping'] for i in self._items]
 
     @property
     def feature_matrix(self):
+        """Feature matrix. Rows are structures, Columns are correlations."""
         return np.array([i['features'] for i in self._items])
 
     @property
     def sizes(self):
+        """Size of each structure in terms of number of prims."""
         return np.array([i['size'] for i in self._items])
 
     @property
     def metadata(self):
+        """Dictionary to save applied filters, etc."""
         return self._metadata
 
-    def add_properties(self, key, property_vector):
+    def add_data(self, structure, properties, weights=None, verbose=False,
+                 supercell_matrix=None, site_mapping=None):
+        """Add a structure and measured property to Structure Wrangler.
+        The property should ideally be extensive (i.e. not normalized per atom
+        or unit cell, etc).
+
+        Will attempt to computes correlation vector and if successful will
+        add the structure otherwise it ignores that structure. Usually failures
+        are caused by the Structure Matcher in the given ClusterSubspace.
+        If using verbose, the errors will be printed out.
+
+        Args
+            structure (pymatgen.Structure):
+                A fit structure
+            properties (dict):
+                A dictionary with a key describing the property and the target
+                value for the corresponding structure. For example if only a
+                single property {'energy': value} but can also add more than
+                one i.e. {'total_energy': value1, 'formation_energy': value2}.
+                You are free to make up the keys for each property but make
+                sure you are consistent for all structures that you add.
+            weights (dict):
+                The weight given to the structure when doing the fit. The key
+                must match at least one of the given properties.
+            verbose (bool):
+                if True then print structures that fail in StructureMatcher.
+            supercell_matrix (array): optional
+                If the corresponding structure has already been matched to the
+                clustersubspace prim structure, passing the supercell_matrix
+                will use that instead of trying to re-match. If using this
+                the user is responsible to have the correct supercell_matrix,
+                Here you are the cause of your own bugs.
+            site_mapping (list): optional
+                Site mapping as obtained by StructureMatcher.get_mapping
+                such that the elements of site_mapping represent the indices
+                of the matching sites to the prim structure. I you pass this
+                option you are fully responsible that the mappings are correct!
         """
-        Add another property to structures already in the wrangler. The length
-        of the property vector must match the number of structures contained,
+        item = self._process_structure(structure, properties, weights, verbose,
+                                       supercell_matrix, site_mapping)
+        if item is not None:
+            self._items.append(item)
+
+    def add_weights(self, key, weights):
+        """Add weights to structures already in the wrangler. The length
+        of the given weights must match the number of structures contained,
         and should be in the same order.
+
+        Args:
+            key (str):
+                name describing weights
+            weights (array):
+                array with the weight for each structure
+        """
+        if self.num_structures != len(weights):
+            raise AttributeError('Length of weights must match number of '
+                                 f'structures {len(weights)} != '
+                                 f'{self.num_structures}.')
+        for weight, item in zip(weights, self._items):
+            item['weights'][key] = weight
+
+    def add_properties(self, key, property_vector):
+        """Add another property to structures already in the wrangler.
+        The length of the property vector must match the number of structures
+        contained, and should be in the same order such that the property
+        corresponds to the correct structure.
+
         Args:
             key (str):
                 name of property
@@ -180,68 +256,6 @@ class StructureWrangler(MSONable):
         except ValueError:
             raise ValueError(f'Structure {structure} was not found. '
                              'Nothing has been removed.')
-
-    def add_weights(self, key, weights):
-        """
-        Add weights to structures already in the wrangler. The length
-        of the given weights must match the number of structures contained,
-        and should be in the same order.
-        Args:
-            key (str):
-                name describing weights
-            weights (array):
-                array with the weight for each structure
-        """
-        if self.num_structures != len(weights):
-            raise AttributeError('Length of weights must match number of '
-                                 f'structures {len(weights)} != '
-                                 f'{self.num_structures}.')
-        for weight, item in zip(weights, self._items):
-            item['weights'][key] = weight
-
-    def add_data(self, structure, properties, weights=None, verbose=False,
-                 supercell_matrix=None, site_mapping=None):
-        """
-        Add a structure and measured property to Structure Wrangler.
-        The property should ideally be extensive (i.e. not normalized per atom
-        or unit cell, etc).
-        Will attempt to computes correlation vector and if successful will
-        add the structure otherwise it ignores that structure. Usually failures
-        are caused by the Structure Matcher in the given ClusterSubspace.
-        If using verbose, the errors will be printed out.
-
-        Args
-            structure (pymatgen.Structure):
-                A fit structure
-            properties (dict):
-                A dictionary with a key describing the property and the target
-                value for the corresponding structure. For example if only a
-                single property {'energy': value} but can also add more than
-                one i.e. {'total_energy': value1, 'formation_energy': value2}.
-                You are free to make up the keys for each property but make
-                sure you are consistent for all structures that you add.
-            weights (dict):
-                The weight given to the structure when doing the fit. The key
-                must match at least one of the given properties.
-            verbose (bool):
-                if True then print structures that fail in StructureMatcher.
-            supercell_matrix (array): optional
-                If the corresponding structure has already been matched to the
-                clustersubspace prim structure, passing the supercell_matrix
-                will use that instead of trying to re-match. If using this
-                the user is responsible to have the correct supercell_matrix,
-                Here you are the cause of your own bugs.
-            site_mapping (list): optional
-                Site mapping as obtained by StructureMatcher.get_mapping
-                such that the elements of site_mapping represent the indices
-                of the matching sites to the prim structure. I you pass this
-                option you are fully responsible that the mappings are correct!
-        """
-
-        item = self._process_structure(structure, properties, weights, verbose,
-                                       supercell_matrix, site_mapping)
-        if item is not None:
-            self._items.append(item)
 
     def change_subspace(self, cluster_subspace):
         """
@@ -331,9 +345,8 @@ class StructureWrangler(MSONable):
 
     @classmethod
     def from_dict(cls, d):
-        """
-        Creates Structure Wrangler from serialized MSONable dict.
-        """
+        """Creates Structure Wrangler from serialized MSONable dict."""
+
         sw = cls(cluster_subspace=ClusterSubspace.from_dict(d['_subspace']))
         items = []
         for item in d['_items']:
@@ -352,8 +365,7 @@ class StructureWrangler(MSONable):
         return sw
 
     def as_dict(self):
-        """
-        Json-serialization dict representation.
+        """Json-serialization dict representation.
 
         Returns:
             MSONable dict
@@ -378,10 +390,9 @@ class StructureWrangler(MSONable):
 
     def _process_structure(self, structure, properties, weights, verbose,
                            scmatrix, smapping):
-        """
-        Check if the structure for this data item can be matched to the cluster
-        subspace prim structure to obtain its supercell matrix, correlation,
-        and refined structure.
+        """Check if the structure for this data item can be matched to the
+        cluster subspace prim structure to obtain its supercell matrix,
+        correlation, and refined structure.
         """
         try:
             if scmatrix is None:
@@ -411,8 +422,7 @@ class StructureWrangler(MSONable):
 
 
 def _energies_above_hull(structures, energies, ce_structure):
-    """
-    Computes energies above hull constructed from phase diagram of the
+    """Computes energies above hull constructed from phase diagram of the
     given structures.
     """
     pd = _pd(structures, energies, ce_structure)
@@ -424,9 +434,8 @@ def _energies_above_hull(structures, energies, ce_structure):
 
 
 def _pd(structures, energies, cs_structure):
-    """
-    Generate a phase diagram with the structures and energies.
-    """
+    """Generate a phase diagram with the structures and energies."""
+
     entries = []
 
     for s, e in zip(structures, energies):
@@ -442,9 +451,7 @@ def _pd(structures, energies, cs_structure):
 
 
 def _energies_above_composition(structures, energies):
-    """
-    Computes structure energies above reduced composition.
-    """
+    """Computes structure energies above reduced composition."""
 
     min_e = defaultdict(lambda: np.inf)
     for s, e in zip(structures, energies):

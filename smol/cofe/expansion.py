@@ -1,8 +1,11 @@
-"""
-This module implements the ClusterExpansion class, which holds the necessary
-attributes to represent a CE and predict the property for new structures.
+"""This module implements the ClusterExpansion class.
+
+A ClusterExpansion holds the necessary attributes to represent a CE and predict
+the property for new structures.
+
 The class also allows to prune a CE to remove low importance orbits function
 terms and speed up Monte Carlo runs.
+
 Also has numerical ECI conversion to other basis sets, but has not been
 strongly tested.
 """
@@ -16,9 +19,9 @@ from smol.cofe.configspace.clusterspace import ClusterSubspace
 
 
 class ClusterExpansion(MSONable):
-    """
-    Class for the ClusterExpansion proper. This needs a ClusterSubspace and
-    and a corresponding set of ECI
+    """Class for the ClusterExpansion proper.
+
+    This needs a ClusterSubspace and a corresponding set of ECI from a fit.
 
     The main method to use this the predict method to predict the fitted
     property for new structures. This can be used to compare the accuracy
@@ -61,9 +64,8 @@ class ClusterExpansion(MSONable):
 
     @property
     def expansion_structure(self):
-        """
-        Expansion structure with only sites included in the
-        expansion (i.e. sites with partial occupancies)
+        """Expansion structure with only sites included in the expansion.
+        (i.e. sites with partial occupancies)
         """
         return self.cluster_subspace.exp_structure
 
@@ -72,8 +74,7 @@ class ClusterExpansion(MSONable):
         return self._subspace
 
     def predict(self, structures, normalize=False):
-        """
-        Predict the fitted property for a given set of structures.
+        """Predict the fitted property for a given set of structures.
 
         Args:
             structures (list or Structure):
@@ -96,8 +97,7 @@ class ClusterExpansion(MSONable):
     # with which the fit was done.
     def convert_eci(self, new_basis, fit_structures, supercell_matrices,
                     orthonormal=False):
-        """
-        Numerically converts the eci of the cluster expansion to eci in a
+        """Numerically converts the eci of the cluster expansion to eci in a
         new basis.
 
         Args:
@@ -110,8 +110,8 @@ class ClusterExpansion(MSONable):
             orthonormal (bool):
                 option to make new basis orthonormal
 
-        Returns: coefficients converted into new_basis
-            array
+        Returns:
+            array: coefficients converted into new_basis
         """
         subspace = self.cluster_subspace.copy()
         subspace.change_site_bases(new_basis, orthonormal=orthonormal)
@@ -124,8 +124,7 @@ class ClusterExpansion(MSONable):
         return np.matmul(C.T, self.ecis)
 
     def prune(self, threshold=0):
-        """
-        Remove ECI's (fitting parameters) and orbits in the ClusterSubspaces
+        """Remove ECI's (fitting parameters) and orbits in the ClusterSubspaces
         that have ECI/parameter values smaller than the given threshold.
 
         This will change the fits error metrics (ie RMSE) a little, but it

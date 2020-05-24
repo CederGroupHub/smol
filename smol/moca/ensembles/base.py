@@ -25,7 +25,7 @@ class BaseEnsemble(ABC):
                  sublattices=None, seed=None):
         """
         Args:
-            processor (Processor Class):
+            processor (Processor):
                 A processor that can compute the change in a property given
                 a set of flips.
             save_interval (int):

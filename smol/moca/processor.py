@@ -1,8 +1,9 @@
-"""
-Implementation of processor classes for a fixed size super cell. A processor is
-optimized to compute correlation vectors and local changes in correlation
-vectors. This class allows the use a cluster expansion hamiltonian to run
-Monte Carlo based simulations.
+"""Implementation of processor classes for a fixed size super cell.
+
+A processor is optimized to compute correlation vectors and local changes in
+correlation vectors. This class allows the use a cluster expansion hamiltonian
+to run Monte Carlo based simulations.
+
 If you are using a Hamiltonian with an Ewald summation electrostatic term, you
 should use the EwaldCEProcessor class to handle changes in the electrostatic
 interaction energy.

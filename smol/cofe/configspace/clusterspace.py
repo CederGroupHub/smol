@@ -1,10 +1,10 @@
-"""
-This Module implements the ClusterSubspace class necessary to define the terms
-to be included in a cluster expansion. A cluster subspace is a finite set of
-clusters, more precisely orbits that contain symmetrically equivalent clusters,
-that are used to define orbit/cluster basis functions which span a subspace of
-the total function space over the configurational space of a given lattice
-system.
+"""Implements the ClusterSubspace class.
+
+A ClusterSubspace is necessary to define the terms to be included in a cluster
+expansion. A cluster subspace is a finite set of clusters, more precisely
+orbits that contain symmetrically equivalent clusters, that are used to define
+orbit/cluster basis functions which span a subspace of the total function space
+over the configurational space of a given lattice system.
 """
 
 __author__ = "Luis Barroso-Luque, William Davidson Richard"
@@ -15,10 +15,10 @@ import warnings
 import numpy as np
 from monty.json import MSONable
 from pymatgen import Structure, PeriodicSite
+from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.analysis.structure_matcher import (StructureMatcher,
                                                  OrderDisorderElementComparator,  # noqa
                                                  FrameworkComparator)
-from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.util.coord import (is_coord_subset, is_coord_subset_pbc,
                                  lattice_points_in_supercell,
                                  coord_list_mapping_pbc)
@@ -49,17 +49,28 @@ class ClusterSubspace(MSONable):
                  supercell_matcher=None, site_matcher=None, **matcher_kwargs):
         """
         Args:
-            structure (pymatgen.Structure):
+            structure (Structure):
                 Structure to define the cluster space. Typically the primitive
                 cell. Includes all species regardless of partial occupation.
-            expansion_structure (pymatgen.Structure):
+            expansion_structure (Structure):
                 Structure including only sites that will be included in the
                 Cluster space. (those with partial occupancy)
-            symops (list(pymatgen.Symmop)):
+            symops (list of Symmop):
                 list of Symmops for the given structure.
-            orbits (dict(size: list(Orbit))):
-                dictionary with size (number of sites) as keys and list of
+            orbits (dict): {size: list of Orbits}
+                Dictionary with size (number of sites) as keys and list of
                 Orbits as values.
+            supercell_matcher (StructureMatcher): (optional)
+                A StructureMatcher class to be used to find supercell matrices
+                relating the prim structure to other structures. If you pass
+                this directly you should know how to set the matcher up other
+                wise matching your relaxed structures will fail, alot.
+            site_matcher (StructureMatcher): (optional)
+                A StructureMatcher class to be used to find site mappings
+                relating the sites of a given structure to an appropriate
+                supercell of the prim structure . If you pass this directly you
+                should know how to set the matcher up other wise matching your
+                relaxed structures will fail, alot.
             matcher_kwargs:
                 ltol, stol, angle_tol, supercell_size: parameters to pass
                 through to the StructureMatchers. Structures that don't match
@@ -130,33 +141,33 @@ class ClusterSubspace(MSONable):
         This is the best (and the only easy) way to create one.
 
         Args:
-            structure:
-                disordered structure to build a cluster expansion for.
+            structure (Structure):
+                Disordered structure to build a cluster expansion for.
                 Typically the primitive cell
-            radii:
+            radii (dict):
                 dict of {cluster_size: max_radius}. Radii should be strictly
                 decreasing. Typically something like {2:5, 3:4}
             basis (str):
-                a string specifying the site basis functions
+                A string specifying the site basis functions
             orthonormal (bool):
-                whether to enforce an orthonormal basis. From the current
+                Whether to enforce an orthonormal basis. From the current
                 available bases only the indicator basis is not orthogonal out
                 of the box
             use_concentration (bool):
-                if true the concentrations in the prim structure will be used
+                If true the concentrations in the prim structure will be used
                 to orthormalize site bases.
-            supercell_matcher (StructureMatcher): optional
+            supercell_matcher (StructureMatcher): (optional)
                 A StructureMatcher class to be used to find supercell matrices
                 relating the prim structure to other structures. If you pass
                 this directly you should know how to set the matcher up other
                 wise matching your relaxed structures will fail, alot.
-            site_matcher (StructureMatcher): optional
+            site_matcher (StructureMatcher): (optional)
                 A StructureMatcher class to be used to find site mappings
                 relating the sites of a given structure to an appropriate
                 supercell of the prim structure . If you pass this directly you
                 should know how to set the matcher up other wise matching your
                 relaxed structures will fail, alot.
-            matcher_kwargs: optional
+            matcher_kwargs:
                 ltol, stol, angle_tol, supercell_size. Parameters to pass
                 through to the StructureMatchers. Structures that don't match
                 to the primitive cell under these tolerances won't be included
@@ -251,7 +262,7 @@ class ClusterSubspace(MSONable):
         corresponding cluster functions.
 
         Args:
-            structure (pymatgen.Structure):
+            structure (Structure):
                 structure to compute correlation from
             normalized (bool):
                 return the correlation vector normalized by the prim cell size
@@ -303,7 +314,7 @@ class ClusterSubspace(MSONable):
         the prim structure (aka the corresponding unrelaxed structure).
 
         Args:
-            structure (pymatgen.Structure):
+            structure (Structure):
                 structure to refine to a perfect multiple of the prim
             scmatrix (array): optional
                 supercell matrix relating the prim structure to the given
@@ -345,7 +356,7 @@ class ClusterSubspace(MSONable):
         used here as in the instance of the processor class for the simulation.
 
         Args:
-            structure (pymatgen.Structure):
+            structure (Structure):
                 structure to obtain a occupancy vector for
             encode (bool): oprtional
                 If true the occupancy vector will have the index of the species
@@ -400,7 +411,7 @@ class ClusterSubspace(MSONable):
         prim structure.
 
         Args:
-            structure (pymatgen.Structure)
+            structure (Structure)
 
         Returns: supercell matrix relating passed structure and prim structure.
             array
