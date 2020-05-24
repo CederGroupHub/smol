@@ -411,9 +411,9 @@ class StructureWrangler(MSONable):
             weights = {} if weights is None else weights
         except StructureMatchError as e:
             if verbose:
-                print(f'Unable to match {structure.composition} with energy '
-                      f'{property} to supercell_structure. Throwing out.\n'
-                      f'Error Message: {str(e)}.')
+                print(f'Unable to match {structure.composition} with'
+                      f'properties {properties} to supercell_structure.'
+                      f'Throwing out.\n Error Message: {str(e)}.')
             return
         return {'structure': structure, 'ref_structure': refined_struct,
                 'properties': properties, 'weights': weights,
