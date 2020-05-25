@@ -67,7 +67,7 @@ class TestStructureWrangler(unittest.TestCase):
 
     def test_weights_e_above_comp(self):
         weights = weights_energy_above_composition(self.sw.structures,
-                                                   self.sw.get_property_vector('energy'),
+                                                   self.sw.get_property_vector('energy', False),
                                                    temperature=1000)
         self.sw.add_weights('comp', weights)
         expected = np.array([0.85637358, 0.98816678, 1., 0.59209449, 1.,
@@ -92,7 +92,7 @@ class TestStructureWrangler(unittest.TestCase):
 
     def test_weights_e_above_hull(self):
         weights = weights_energy_above_hull(self.sw.structures,
-                                            self.sw.get_property_vector('energy'),
+                                            self.sw.get_property_vector('energy', False),
                                             self.cs.structure,
                                             temperature=1000)
         self.sw.add_weights('hull', weights)
