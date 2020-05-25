@@ -1,5 +1,4 @@
-"""
-Implementation of a Canonical Ensemble Class for running Monte Carlo
+"""Implementation of a Canonical Ensemble Class for running Monte Carlo
 simulations for fixed number of sites and fixed concentration of species.
 """
 
@@ -18,18 +17,18 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
     A Canonical Ensemble class to run Monte Carlo Simulations
     """
 
-    def __init__(self, processor, temperature, save_interval,
+    def __init__(self, processor, temperature, sample_interval,
                  initial_occupancy=None, seed=None):
         """
         Args:
-            processor (Processor Class):
+            processor (Processor):
                 A processor that can compute the change in a property given
                 a set of flips.
             temperature (float):
                 Temperature of ensemble
-            save_interval (int):
+            sample_interval (int):
                 Interval of steps to save the current occupancy and property
-            inital_occupancy (array):
+            inital_occupancy (ndarray):
                 Initial occupancy vector. If none is given then a random one
                 will be used.
             seed (int):
@@ -37,7 +36,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         """
 
         super().__init__(processor, initial_occupancy=initial_occupancy,
-                         save_interval=save_interval, seed=seed)
+                         sample_interval=sample_interval, seed=seed)
         self.temperature = temperature
         self._min_energy = self._property
         self._min_occupancy = self._init_occupancy
@@ -215,7 +214,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
              '@class': self.__class__.__name__,
              'processor': self.processor.as_dict(),
              'temperature': self.temperature,
-             'save_interval': self.save_interval,
+             'sample_interval': self.sample_interval,
              'initial_occupancy': self.occupancy,
              'seed': self.seed,
              '_min_energy': self.minimum_energy,
@@ -235,7 +234,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         """
         eb = cls(CEProcessor.from_dict(d['processor']),
                  temperature=d['temperature'],
-                 save_interval=d['save_interval'],
+                 sample_interval=d['sample_interval'],
                  initial_occupancy=d['initial_occupancy'],
                  seed=d['seed'])
         eb._min_energy = d['_min_energy']

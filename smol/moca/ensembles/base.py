@@ -21,16 +21,16 @@ class BaseEnsemble(ABC):
     Abstract Base Class for Monte Carlo Ensembles.
     """
 
-    def __init__(self, processor, save_interval, initial_occupancy=None,
+    def __init__(self, processor, sample_interval, initial_occupancy=None,
                  sublattices=None, seed=None):
         """
         Args:
             processor (Processor):
                 A processor that can compute the change in a property given
                 a set of flips.
-            save_interval (int):
+            sample_interval (int):
                 interval of steps to save the current occupancy and property
-            inital_occupancy (array):
+            initial_occupancy (ndarray):
                 Initial occupancy vector. If none is given then a random one
                 will be used. The occupancy can be encoded according to the
                 processor or the species names directly.
@@ -66,7 +66,7 @@ class BaseEnsemble(ABC):
                            for bits in processor.unique_bits}
 
         self.processor = processor
-        self.save_interval = save_interval
+        self.sample_interval = sample_interval
         self.num_atoms = len(initial_occupancy)
         self._prod_start = 0
         self._sublattices = sublattices
@@ -114,11 +114,11 @@ class BaseEnsemble(ABC):
 
     @property
     def production_start(self):
-        return self._prod_start*self.save_interval
+        return self._prod_start*self.sample_interval
 
     @production_start.setter
     def production_start(self, val):
-        self._prod_start = val//self.save_interval
+        self._prod_start = val//self.sample_interval
 
     @property
     def data(self):
@@ -138,15 +138,15 @@ class BaseEnsemble(ABC):
                 Total number of monte carlo steps to attempt
         """
 
-        write_loops = iterations//self.save_interval
-        if iterations % self.save_interval > 0:
+        write_loops = iterations//self.sample_interval
+        if iterations % self.sample_interval > 0:
             write_loops += 1
 
         start_step = self.current_step
 
         for _ in range(write_loops):
             remaining = iterations - self.current_step + start_step
-            no_interrupt = min(remaining, self.save_interval)
+            no_interrupt = min(remaining, self.sample_interval)
 
             for _ in range(no_interrupt):
                 success = self._attempt_step(sublattice_name)

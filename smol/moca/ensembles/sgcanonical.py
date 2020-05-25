@@ -1,7 +1,10 @@
-"""
-Implementation of a Semi-Grand Canonical Ensemble Classes for running Monte
+"""Implementation of a Semi-Grand Canonical Ensemble Classes for running Monte
 Carlo simulations for fixed number of sites but variable concentration of
 species.
+
+Two classes are different SGC ensembles implemented:
+* MuSemiGrandEnsemble - for which relative chemical potentials are fixed
+* FuSemiGrandEnsemble - for which relative fugacity fractions are fixed.
 """
 
 __author__ = "Luis Barroso-Luque"
@@ -24,7 +27,7 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
     FuSemiGrandEnsemble below.
     """
 
-    def __init__(self, processor, temperature, save_interval,
+    def __init__(self, processor, temperature, sample_interval,
                  initial_occupancy=None, seed=None):
         """
         Args:
@@ -33,7 +36,7 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
                 a set of flips.
             temperature (float):
                 Temperature of ensemble
-            save_interval (int):
+            sample_interval (int):
                 interval of steps to save the current occupancy and property
             inital_occupancy (array):
                 Initial occupancy vector. If none is given then a random one
@@ -42,7 +45,7 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
                 seed for random number generator
         """
 
-        super().__init__(processor, temperature, save_interval,
+        super().__init__(processor, temperature, sample_interval,
                          initial_occupancy=initial_occupancy, seed=seed)
 
     @property
@@ -173,7 +176,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
     """
 
     def __init__(self, processor, temperature, chemical_potentials,
-                 save_interval, initial_occupancy=None, seed=None):
+                 sample_interval, initial_occupancy=None, seed=None):
         """
         Args:
             processor (Processor Class):
@@ -185,7 +188,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
                 dictionary with species names and chemical potentials. If the
                 chemical potential for one species is not zero (reference), one
                 will be chosen and all other values will be shifted accordingly
-            save_interval (int):
+            sample_interval (int):
                 interval of steps to save the current occupancy and property
             inital_occupancy (array):
                 Initial occupancy vector. If none is given then a random one
@@ -194,7 +197,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
                 seed for random number generator
         """
 
-        super().__init__(processor, temperature, save_interval,
+        super().__init__(processor, temperature, sample_interval,
                          initial_occupancy=initial_occupancy,
                          seed=seed)
 
@@ -272,7 +275,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
         eb = cls(CEProcessor.from_dict(d['processor']),
                  temperature=d['temperature'],
                  chemical_potentials=d['chem_pots'],
-                 save_interval=d['save_interval'],
+                 sample_interval=d['sample_interval'],
                  initial_occupancy=d['initial_occupancy'],
                  seed=d['seed'])
         eb._min_energy = d['_min_energy']
@@ -297,7 +300,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
     temperature the corresponding chemical potentials can then be calculated.
     """
 
-    def __init__(self, processor, temperature, save_interval,
+    def __init__(self, processor, temperature, sample_interval,
                  fugacity_fractions=None, initial_occupancy=None, seed=None):
         """
         Args:
@@ -306,7 +309,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
                 a set of flips.
             temperature (float):
                 Temperature of ensemble
-            save_interval (int):
+            sample_interval (int):
                 interval of steps to save the current occupancy and property
             fugacity_fractions (list/tuple of dicts): optional
                 dictionary of species name and fugacity fraction for each
@@ -320,7 +323,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
                 seed for random number generator
         """
 
-        super().__init__(processor, temperature, save_interval,
+        super().__init__(processor, temperature, sample_interval,
                          initial_occupancy=initial_occupancy,
                          seed=seed)
 
@@ -402,7 +405,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
         """
         eb = cls(CEProcessor.from_dict(d['processor']),
                  temperature=d['temperature'],
-                 save_interval=d['save_interval'],
+                 sample_interval=d['sample_interval'],
                  initial_occupancy=d['initial_occupancy'],
                  seed=d['seed'])
         eb._min_energy = d['_min_energy']

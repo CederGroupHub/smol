@@ -39,7 +39,7 @@ class CEProcessor(MSONable):
         Args:
             cluster_expansion (ClusterExpansion):
                 A fitted cluster expansion representing a Hamiltonian
-            supercell_matrix (array):
+            supercell_matrix (ndarray):
                 An array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
             optimize_indicator (bool):
