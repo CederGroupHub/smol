@@ -85,12 +85,8 @@ class BaseEnsemble(ABC):
         random.seed(seed)
 
     @property
-    def occupancy(self):
+    def current_occupancy(self):
         return self.processor.decode_occupancy(self._occupancy)
-
-    @property
-    def initial_occupancy(self):
-        return self.processor.decode_occupancy(self._init_occupancy)
 
     @property
     def current_property(self):
@@ -103,6 +99,14 @@ class BaseEnsemble(ABC):
     @property
     def current_step(self):
         return self._step
+
+    @property
+    def initial_occupancy(self):
+        return self.processor.decode_occupancy(self._init_occupancy)
+
+    @property
+    def initial_structure(self):
+        return self.processor.structure_from_occupancy(self._init_occupancy)
 
     @property
     def accepted_steps(self):

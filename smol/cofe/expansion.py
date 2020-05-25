@@ -179,7 +179,8 @@ class ClusterExpansion(MSONable):
         Creates ClusterExpansion from serialized MSONable dict.
         """
         ce = cls(ClusterSubspace.from_dict(d['cluster_subspace']),
-                 ecis=d['ecis'], feature_matrix=np.array(d['feature_matrix']))
+                 ecis=np.array(d['ecis']),
+                 feature_matrix=np.array(d['feature_matrix']))
         ce.metadata = d['metadata']
         return ce
 

@@ -194,14 +194,14 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             return ((site1, self._occupancy[site2]),
                     (site2, self._occupancy[site1]))
         else:
-            # inefficient, maybe re-call method?
+            # inefficient, maybe re-call method? infinite recursion problem
             return tuple()
 
     def _get_current_data(self):
         """
         Get ensemble specific data for current MC step
         """
-        return {'energy': self.current_energy, 'occupancy': self.occupancy}
+        return {'energy': self.current_energy, 'occupancy': self.current_occupancy}
 
     def as_dict(self) -> dict:
         """
@@ -215,7 +215,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
              'processor': self.processor.as_dict(),
              'temperature': self.temperature,
              'sample_interval': self.sample_interval,
-             'initial_occupancy': self.occupancy,
+             'initial_occupancy': self.current_occupancy,
              'seed': self.seed,
              '_min_energy': self.minimum_energy,
              '_min_occupancy': self._min_occupancy.tolist(),
