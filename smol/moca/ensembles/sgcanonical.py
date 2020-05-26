@@ -49,10 +49,10 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
                          initial_occupancy=initial_occupancy, seed=seed)
 
     @property
-    def species_counts(self):
+    def current_species_counts(self):
         """
-        Counts of species. This excludes "static" species. Those with no
-        partial occupancy
+        Counts of species. This excludes species in "static" sublattices.
+        Those with no partial occupancy.
         """
         counts = self._get_counts()
         species_counts = {}
@@ -65,7 +65,7 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
         return species_counts
 
     @property
-    def compositions(self):
+    def current_sublattice_compositions(self):
         """
         Composition for each "active" sublattice
         """
@@ -73,10 +73,10 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
         return tuple(comps.values())
 
     @property
-    def composition_samples(self):
+    def sublattice_composition_samples(self):
         n = len(self.data[self._prod_start:])
         comp_samples = tuple({sp: np.empty(n) for sp in comps}
-                             for comps in self.compositions)
+                             for comps in self.current_sublattice_compositions)
         for i, sample in enumerate(self.data[self._prod_start:]):
             for j, sublat_comps in enumerate(sample['compositions']):
                 for sp, comp in sublat_comps.items():
@@ -84,14 +84,14 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
         return comp_samples
 
     @property
-    def average_compositions(self):
+    def average_sublattice_compositions(self):
         return tuple({sp: comp.mean() for sp, comp in comps.items()}
-                     for comps in self.composition_samples)
+                     for comps in self.sublattice_composition_samples)
 
     @property
-    def composition_variance(self):
+    def sublattice_composition_variance(self):
         return tuple({sp: comp.var() for sp, comp in comps.items()}
-                     for comps in self.composition_samples)
+                     for comps in self.sublattice_composition_samples)
 
     @abstractmethod
     def _attempt_step(self, sublattice_name):
@@ -109,7 +109,7 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
         Args:
             sublattice_name (str): optional
                 If only considering one sublattice.
-        Returns: flip, delta_mu
+        Returns: flip
             tuple
         """
         if sublattice_name is None:
@@ -159,8 +159,8 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
         Get ensemble specific data for current MC step
         """
         data = super()._get_current_data()
-        data['counts'] = self.species_counts
-        data['compositions'] = self.compositions
+        data['counts'] = self.current_species_counts
+        data['compositions'] = self.current_sublattice_compositions
         return data
 
 

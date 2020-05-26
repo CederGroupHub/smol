@@ -1,4 +1,3 @@
-
 import unittest
 import os
 import json
@@ -60,7 +59,6 @@ class TestCanonicalEnsemble(unittest.TestCase):
             flips = self.ensemble._get_flips()
             if flips:
                 self.assertEqual(len(flips), 2)
-                print(self.init_encoc)
                 self.assertEqual(self.init_encoc[flips[0][0]],
                                  flips[1][1])
                 self.assertEqual(self.init_encoc[flips[1][0]],

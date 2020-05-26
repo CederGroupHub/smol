@@ -8,7 +8,7 @@ uniform measure, but this can be changed to use "concentration" biased bases.
 
 __author__ = "Luis Barroso-Luque"
 
-from typing import Callable
+# from typing import Callable
 from abc import ABC
 import inspect
 import warnings

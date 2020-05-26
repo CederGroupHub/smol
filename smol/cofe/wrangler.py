@@ -223,10 +223,10 @@ class StructureWrangler(MSONable):
         if self.num_structures != len(property_vector):
             raise AttributeError('Length of property_vector must match number'
                                  f'of structures {len(property_vector)} != '
-                                 f'{self.num_structures}.')   
+                                 f'{self.num_structures}.')
         if normalized:
             property_vector *= self.sizes
-        
+
         for prop, item in zip(property_vector, self._items):
             item['properties'][key] = prop
 

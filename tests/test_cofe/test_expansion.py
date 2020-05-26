@@ -34,10 +34,10 @@ class TestClusterExpansionBinary(unittest.TestCase):
     def test_predict_train(self):
         preds = self.ce.predict(self.sw.structures)
         self.assertTrue(np.allclose(preds,
-                                    self.sw.get_property_vector('energy')))
+                                    self.sw.get_property_vector('energy', False)))
         preds = self.ce.predict(self.sw.structures, normalize=True)
         self.assertTrue(np.allclose(preds,
-                                    self.sw.get_property_vector('energy', True)))
+                                    self.sw.get_property_vector('energy')))
 
     def test_predict_test(self):
         preds = self.ce.predict(self.test_structs)
@@ -133,7 +133,8 @@ class TestClusterExpansionEwaldBinary(unittest.TestCase):
         test_structs = [data[i][0] for i in self.test_ids]
         test_energies = np.array([data[i][1] for i in self.test_ids])
         preds = ce.predict(sw.structures)
-        self.assertTrue(np.allclose(preds, sw.get_property_vector('energy')))
+        self.assertTrue(np.allclose(preds,
+                                    sw.get_property_vector('energy', False)))
         preds = ce.predict(test_structs)
         self.assertTrue(np.allclose(preds, test_energies))
 
