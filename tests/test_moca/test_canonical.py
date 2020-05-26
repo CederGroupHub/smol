@@ -32,6 +32,12 @@ class TestCanonicalEnsemble(unittest.TestCase):
                                           sample_interval=self.sample_interval,
                                           initial_occupancy=self.init_occu)
 
+    def test_bad_occupancy(self):
+        self.assertRaises(ValueError, CanonicalEnsemble, self.pr,
+                          temperature=1000,
+                          sample_interval=self.sample_interval,
+                          initial_occupancy=[0, 1, 1, 0])
+
     def test_run(self):
         energy = self.ensemble.current_energy
         self.assertEqual(self.ensemble.data, [])

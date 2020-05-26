@@ -9,8 +9,7 @@ import json
 import numpy as np
 from math import exp
 from abc import ABC, abstractmethod
-from pymatgen.transformations.standard_transformations import \
-    OrderDisorderedStructureTransformation
+
 
 # TODO it would be great to use the design paradigm of observers to extract
 #  a variety of information during a montecarlo run
@@ -21,7 +20,7 @@ class BaseEnsemble(ABC):
     Abstract Base Class for Monte Carlo Ensembles.
     """
 
-    def __init__(self, processor, sample_interval, initial_occupancy=None,
+    def __init__(self, processor, sample_interval, initial_occupancy,
                  sublattices=None, seed=None):
         """
         Args:
@@ -30,10 +29,9 @@ class BaseEnsemble(ABC):
                 a set of flips.
             sample_interval (int):
                 interval of steps to save the current occupancy and property
-            initial_occupancy (ndarray):
-                Initial occupancy vector. If none is given then a random one
-                will be used. The occupancy can be encoded according to the
-                processor or the species names directly.
+            initial_occupancy (ndarray or list):
+                Initial occupancy vector. The occupancy can be encoded
+                according to the processor or the species names directly.
             sublattices (dict): optional
                 dictionary with keys identifying the active sublattices
                 (i.e. "anion" or the bits in that sublattice
@@ -46,15 +44,11 @@ class BaseEnsemble(ABC):
             seed (int): optional
                 seed for random number generator
         """
+        if len(initial_occupancy) != len(processor.structure):
+            raise ValueError('The given initial occupancy does not match '
+                             'the underlying processor size')
 
-        if initial_occupancy is None:
-            struct = processor.cluster_expansion.cluster_subspace.structure.copy()  # noqa
-            scmatrix = processor.supercell_matrix
-            struct.make_supercell(scmatrix)
-            odt = OrderDisorderedStructureTransformation(algo=2)
-            struct = odt.apply_transformation(struct)
-            initial_occupancy = processor.occupancy_from_structure(struct)
-        elif isinstance(initial_occupancy[0], str):
+        if isinstance(initial_occupancy[0], str):
             initial_occupancy = processor.encode_occupancy(initial_occupancy)
 
         if sublattices is None:

@@ -28,9 +28,9 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
                 Temperature of ensemble
             sample_interval (int):
                 Interval of steps to save the current occupancy and property
-            inital_occupancy (ndarray):
-                Initial occupancy vector. If none is given then a random one
-                will be used.
+            initial_occupancy (ndarray or list):
+                Initial occupancy vector. The occupancy can be encoded
+                according to the processor or the species names directly.
             seed (int):
                 Seed for random number generator.
         """
