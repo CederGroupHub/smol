@@ -10,6 +10,8 @@ from tests.data import (pyabinitio_LiMn3OF_dataset,
                         pyabinitio_LiNi2Mn4OF_dataset, lno_prim, lno_data,
                         lno_gc_run_10000)
 
+# TODO test montecarlo with a ternary.
+
 
 class TestvsPyabinitio(unittest.TestCase):
     def test_ionic_binary(self):
