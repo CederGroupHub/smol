@@ -72,3 +72,6 @@ with open(os.path.join(DATA_DIR, 'icet_aupd', 'test_structs.json'), 'r') as f:
     for item in icet_test_structs:
         item['structure'] = Structure.from_dict(item['structure'])
         item['scmatrix'] = np.array(item['scmatrix'])
+
+with open(os.path.join(DATA_DIR, 'icet_aupd', 'sgc_run.json')) as f:
+    icet_sgc_run_10000its = json.load(f)
