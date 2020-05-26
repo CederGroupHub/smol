@@ -41,7 +41,6 @@ class TestCanonicalEnsemble(unittest.TestCase):
         if self.ensemble.accepted_steps > 0:
             self.assertFalse(np.array_equal(self.ensemble.energy_samples,
                              energy*np.ones_like(self.ensemble.energy_samples)))
-            self.assertNotEqual(self.ensemble.energy_variance, 0.0)
 
     def test_attempt_step(self):
         for _ in range(100):

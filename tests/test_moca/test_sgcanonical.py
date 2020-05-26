@@ -28,7 +28,7 @@ class TestMuSemiGrandEnsemble(unittest.TestCase):
         self.init_encoc = np.random.randint(0, 2, size=self.n_atoms)
         self.init_occu = self.pr.decode_occupancy(self.init_encoc)
         self.sample_interval = 200
-        self.chem_pots = {'Na+': -0.1, 'Cl-': 0}
+        self.chem_pots = {'Na+': -0.05, 'Cl-': 0}
         self.ensemble = MuSemiGrandEnsemble(self.pr,
                                             temperature=1000,
                                             chemical_potentials=self.chem_pots,
@@ -45,25 +45,30 @@ class TestMuSemiGrandEnsemble(unittest.TestCase):
         if self.ensemble.accepted_steps > 0:
             self.assertFalse(np.array_equal(self.ensemble.energy_samples,
                              energy*np.ones_like(self.ensemble.energy_samples)))
-            self.assertNotEqual(self.ensemble.energy_variance, 0.0)
 
         # check that extreme values of chem pots give expected compositoins
-        chem_pots = {'Na+': -100, 'Cl-': 0}
+        chem_pots = {'Na+': 100.0, 'Cl-': 0.0}
         ensemble = MuSemiGrandEnsemble(self.pr,
                                        temperature=1000,
                                        chemical_potentials=chem_pots,
                                        sample_interval=self.sample_interval,
                                        initial_occupancy=self.init_occu)
         ensemble.run(1000)
-        # assert the composition is almost all pure
-        chem_pots = {'Na+': 100, 'Cl-': 0}
+        expected = {'Na+': 1.0, 'Cl-': 0.0}
+        actual = ensemble.average_composition
+        for sp, val in actual.items():
+            self.assertAlmostEqual(val, expected[sp])
+        chem_pots = {'Na+': -100.0, 'Cl-': 0.0}
         ensemble = MuSemiGrandEnsemble(self.pr,
                                        temperature=1000,
                                        chemical_potentials=chem_pots,
                                        sample_interval=self.sample_interval,
                                        initial_occupancy=self.init_occu)
         ensemble.run(1000)
-        # assert the composition is almost all pure
+        expected = {'Na+': 0.0, 'Cl-': 1.0}
+        actual = ensemble.average_composition
+        for sp, val in actual.items():
+            self.assertAlmostEqual(val, expected[sp])
 
     def test_bad_species_chem_pots(self):
         chem_pots = {'Blab': -100, 'Cl-': 0}
@@ -105,7 +110,9 @@ class TestMuSemiGrandEnsemble(unittest.TestCase):
         self.assertEqual(d['energy'], self.ensemble.current_energy)
         self.assertEqual(d['occupancy'], self.ensemble.current_occupancy)
         self.assertEqual(d['counts'], self.ensemble.current_species_counts)
-        self.assertEqual(d['compositions'],
+        self.assertEqual(d['composition'],
+                         self.ensemble.current_composition)
+        self.assertEqual(d['sublattice_compositions'],
                          self.ensemble.current_sublattice_compositions)
 
     def test_dump(self):
@@ -164,15 +171,28 @@ class TestFuSemiGrandEnsemble(unittest.TestCase):
         if self.ensemble.accepted_steps > 0:
             self.assertFalse(np.array_equal(self.ensemble.energy_samples,
                                             energy*np.ones_like(self.ensemble.energy_samples)))
-            self.assertNotEqual(self.ensemble.energy_variance, 0.0)
 
         # check that hight T limit gives correct compositions
         ensemble = FuSemiGrandEnsemble(self.pr,
-                                       temperature=100000,
+                                       temperature=1E10,  # ridiculously high?
                                        sample_interval=self.sample_interval,
                                        initial_occupancy=self.init_occu)
-        ensemble.run(1000)
-        #self.assertAlmostEqual(0.5, ensemble.)
+        ensemble.run(10000)
+        expected = {'Na+': 0.5, 'Cl-': 0.5}
+        actual = ensemble.average_composition
+        for sp, val in actual.items():
+            self.assertAlmostEqual(val, expected[sp], places=1)
+
+        expected = {'Na+': 0.1, 'Cl-': 0.9}
+        ensemble = FuSemiGrandEnsemble(self.pr,
+                                       temperature=1E10,
+                                       fugacity_fractions=[expected],
+                                       sample_interval=self.sample_interval,
+                                       initial_occupancy=self.init_occu)
+        ensemble.run(10000)
+        actual = ensemble.average_composition
+        for sp, val in actual.items():
+            self.assertAlmostEqual(val, expected[sp], places=1)
 
     def test_bad_species_fug_fracts(self):
         fug_fracs = {'Blab': 0.1, 'Cl-': 0.9}
@@ -219,7 +239,8 @@ class TestFuSemiGrandEnsemble(unittest.TestCase):
         self.assertEqual(d['energy'], self.ensemble.current_energy)
         self.assertEqual(d['occupancy'], self.ensemble.current_occupancy)
         self.assertEqual(d['counts'], self.ensemble.current_species_counts)
-        self.assertEqual(d['compositions'],
+        self.assertEqual(d['composition'], self.ensemble.current_composition)
+        self.assertEqual(d['sublattice_compositions'],
                          self.ensemble.current_sublattice_compositions)
 
     def test_dump(self):

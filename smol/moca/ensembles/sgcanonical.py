@@ -9,6 +9,7 @@ Two classes are different SGC ensembles implemented:
 
 __author__ = "Luis Barroso-Luque"
 
+from collections import defaultdict
 import random
 from abc import ABCMeta, abstractmethod
 from math import exp
@@ -65,31 +66,63 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
         return species_counts
 
     @property
+    def current_composition(self):
+        """Composition of all active sites. Excludes inactive sites."""
+        comps = defaultdict(lambda: 0)
+        sublatt_comps = self.current_sublattice_compositions
+        for sub_comp in sublatt_comps:
+            for sp, val in sub_comp.items():
+                comps[sp] += val
+        return {sp: val/len(sublatt_comps) for sp, val in comps.items()}
+
+    @property
+    def composition_samples(self):
+        """Samples of all active site compositions."""
+        n = len(self.data[self._prod_start:])
+        comp_samples = {sp: np.empty(n) for sp in self.current_composition}
+        for i, sample in enumerate(self.data[self._prod_start:]):
+            for sp, comp in sample['composition'].items():
+                comp_samples[sp][i] = comp
+        return comp_samples
+
+    @property
+    def average_composition(self):
+        """Average composition of all active sites."""
+        return {sp: comp.mean() for sp, comp
+                in self.composition_samples.items()}
+
+    @property
+    def sublattice_composition_variance(self):
+        """Composition variance."""
+        return {sp: comp.var() for sp, comp in self.composition_samples}
+
+    @property
     def current_sublattice_compositions(self):
-        """
-        Composition for each "active" sublattice
-        """
+        """Composition for each "active" sublattice."""
         comps = self._get_sublattice_comps()
         return tuple(comps.values())
 
     @property
     def sublattice_composition_samples(self):
+        """Samples of sublattice compositions"""
         n = len(self.data[self._prod_start:])
         comp_samples = tuple({sp: np.empty(n) for sp in comps}
                              for comps in self.current_sublattice_compositions)
         for i, sample in enumerate(self.data[self._prod_start:]):
-            for j, sublat_comps in enumerate(sample['compositions']):
+            for j, sublat_comps in enumerate(sample['sublattice_compositions']):  # noqa
                 for sp, comp in sublat_comps.items():
                     comp_samples[j][sp][i] = comp
         return comp_samples
 
     @property
     def average_sublattice_compositions(self):
+        """Average sublattice compositions."""
         return tuple({sp: comp.mean() for sp, comp in comps.items()}
                      for comps in self.sublattice_composition_samples)
 
     @property
     def sublattice_composition_variance(self):
+        """sublattice composition variance."""
         return tuple({sp: comp.var() for sp, comp in comps.items()}
                      for comps in self.sublattice_composition_samples)
 
@@ -160,7 +193,8 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
         """
         data = super()._get_current_data()
         data['counts'] = self.current_species_counts
-        data['compositions'] = self.current_sublattice_compositions
+        data['composition'] = self.current_composition
+        data['sublattice_compositions'] = self.current_sublattice_compositions
         return data
 
 
