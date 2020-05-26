@@ -144,20 +144,20 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         self._min_energy = self.processor.compute_property(self._occupancy)
         self._min_occupancy = self._occupancy
 
-    def _attempt_step(self, sublattice_name=None):
+    def _attempt_step(self, sublattices=None):
         """
         Attempts flips corresponding to an elementary canonical swap.
         Will pick a sublattice at random and then a canonical swap at random
         from that sublattice.
 
         Args:
-            sublattice_name (str): optional
+            sublattices (list of str): optional
                 If only considering one sublattice.
 
         Returns: Flip acceptance
             bool
         """
-        flips = self._get_flips(sublattice_name)
+        flips = self._get_flips(sublattices)
         delta_e = self.processor.compute_property_change(self._occupancy,
                                                          flips)
         accept = self._accept(delta_e, self.beta)
@@ -172,19 +172,20 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
 
         return accept
 
-    def _get_flips(self, sublattice_name=None):
+    def _get_flips(self, sublattices=None):
         """
         Gets a possible canonical flip. A swap between two sites.
 
         Args:
-            sublattice_name (str): optional
+            sublattices (list of str): optional
                 If only considering one sublattice.
         Returns:
             tuple
         """
-        if sublattice_name is None:
-            sublattice_name = random.choice(list(self._sublattices.keys()))
+        if sublattices is None:
+            sublattices = self.sublattices
 
+        sublattice_name = random.choice(sublattices)
         sites = self._sublattices[sublattice_name]['sites']
         site1 = random.choice(sites)
         swap_options = [i for i in sites

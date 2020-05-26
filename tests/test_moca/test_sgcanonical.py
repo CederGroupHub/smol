@@ -76,6 +76,11 @@ class TestMuSemiGrandEnsemble(unittest.TestCase):
                           temperature=1000, chemical_potentials=chem_pots,
                           sample_interval=self.sample_interval,
                           initial_occupancy=self.init_occu)
+        chem_pots = {'Na+': -100}
+        self.assertRaises(ValueError, MuSemiGrandEnsemble, self.pr,
+                          temperature=1000, chemical_potentials=chem_pots,
+                          sample_interval=self.sample_interval,
+                          initial_occupancy=self.init_occu)
 
     def test_attempt_step(self):
         for _ in range(100):

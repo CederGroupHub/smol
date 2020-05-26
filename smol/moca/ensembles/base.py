@@ -52,7 +52,7 @@ class BaseEnsemble(ABC):
             initial_occupancy = processor.encode_occupancy(initial_occupancy)
 
         if sublattices is None:
-            sublattices = {str(dict(bits)):
+            sublattices = {'/'.join(bits.keys()):
                            {'sites': np.array([i for i, b in
                                                enumerate(processor.bits)
                                                if b == tuple(bits.keys())]),
@@ -77,6 +77,14 @@ class BaseEnsemble(ABC):
 
         self._seed = seed
         random.seed(seed)
+
+    @property
+    def sublattices(self):
+        """
+        Names of sublattices.
+        Useful if allowing bits only from certain sublattices is needed.
+        """
+        return list(self._sublattices.keys())
 
     @property
     def current_occupancy(self):
@@ -126,14 +134,16 @@ class BaseEnsemble(ABC):
     def seed(self):
         return self._seed
 
-    def run(self, iterations, sublattice_name=None):
+    def run(self, iterations, sublattices=None):
         """
         Samples the ensembles for the given number of iterations. Sampling at
-        the provided intervals???
+        the set intervals.
 
         Args:
             iterations (int):
                 Total number of monte carlo steps to attempt
+            sublattices (list of str):
+                List of sublattice names to consider in site flips.
         """
 
         write_loops = iterations//self.sample_interval
@@ -147,7 +157,7 @@ class BaseEnsemble(ABC):
             no_interrupt = min(remaining, self.sample_interval)
 
             for _ in range(no_interrupt):
-                success = self._attempt_step(sublattice_name)
+                success = self._attempt_step(sublattices)
                 self._ssteps += success
 
             self._step += no_interrupt
@@ -174,7 +184,7 @@ class BaseEnsemble(ABC):
         self._data = []
 
     @abstractmethod
-    def _attempt_step(self, sublattice_name=None):
+    def _attempt_step(self, sublattices=None):
         """
         Attempts a MC step and returns 0, 1 based on whether the step was
         accepted or not.

@@ -127,27 +127,28 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
                      for comps in self.sublattice_composition_samples)
 
     @abstractmethod
-    def _attempt_step(self, sublattice_name):
+    def _attempt_step(self, sublattices):
         """
         Attempts a MC step and returns 0, 1 based on whether the step was
         accepted or not.
         """
         pass
 
-    def _get_flips(self, sublattice_name=None):
+    def _get_flips(self, sublattices=None):
         """
         Gets a possible semi-grand canonical flip, and the corresponding
         change in chemical potential
 
         Args:
-            sublattice_name (str): optional
-                If only considering one sublattice.
+            sublattices (list of str): optional
+                If only considering a subset of the active sublattices.
         Returns: flip
             tuple
         """
-        if sublattice_name is None:
-            sublattice_name = random.choice(list(self._sublattices.keys()))
+        if sublattices is None:
+            sublattices = self.sublattices
 
+        sublattice_name = random.choice(sublattices)
         sublattice = self._sublattices[sublattice_name]
         species = tuple(sublattice['species'].keys())
 
@@ -242,12 +243,16 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
                 raise ValueError(f'Species {sp} in provided chemical '
                                  'potentials is not a specie in the expansion'
                                  f': {species}')
+        for sp in species:
+            if sp not in chemical_potentials.keys():
+                raise ValueError(f'Species {sp} was not assigned a chemical '
+                                 ' potential, a value must be provided.')
 
         # Add chemical potentials to sublattice dictionary
         for sublatt in self._sublattices.values():
             sublatt['mu'] = {sp: mu for sp, mu in chemical_potentials.items()
                              if sp in sublatt['species']}
-            # TODO probably remove this since it really doesn't affect results
+            # This can be removed since it really doesn't affect results...
             # If no reference species is set, then set and recenter others
             mus = list(sublatt['mu'].values())
             if not any([mu == 0 for mu in mus]):
@@ -263,18 +268,18 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
             chem_pots.update(sublattice['mu'])
         return chem_pots
 
-    def _attempt_step(self, sublattice_name=None):
+    def _attempt_step(self, sublattices=None):
         """
         Attempts flips corresponding to a semi canonical swap (a single site
         identity flip).
         Args:
-            sublattice_name (str): optional
-                If only considering one sublattice.
+            sublattices (list of str): optional
+                If only considering a subset of the active sublattices.
 
-        Returns: Flip acceptance
-            bool
+        Returns:
+            bool: Flip acceptance
         """
-        flip, sublattice, new_sp, old_sp = self._get_flips(sublattice_name)
+        flip, sublattice, new_sp, old_sp = self._get_flips(sublattices)
         delta_e = self.processor.compute_property_change(self._occupancy,
                                                          [flip])
         delta_mu = sublattice['mu'][new_sp] - sublattice['mu'][old_sp]
@@ -382,18 +387,18 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
                        in fugacity_fractions].index(sublatt['species'].keys())
                 sublatt['species'] = fugacity_fractions[ind]
 
-    def _attempt_step(self, sublattice_name=None):
+    def _attempt_step(self, sublattices=None):
         """
         Attempts flips corresponding to a canonical swap.
 
         Args:
-            sublattice_name (str): optional
+            sublattices (list of str): optional
                 If only considering one sublattice.
 
         Returns: Flip acceptance
             bool
         """
-        flip, sublattice, new_sp, old_sp = self._get_flips(sublattice_name)
+        flip, sublattice, new_sp, old_sp = self._get_flips(sublattices)
         delta_e = self.processor.compute_property_change(self._occupancy,
                                                          [flip])
         ratio = sublattice['species'][new_sp]/sublattice['species'][old_sp]
