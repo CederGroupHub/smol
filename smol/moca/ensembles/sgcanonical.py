@@ -39,7 +39,7 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
                 Temperature of ensemble
             sample_interval (int):
                 interval of steps to save the current occupancy and property
-            inital_occupancy (array):
+            inital_occupancy (ndarray):
                 Initial occupancy vector. If none is given then a random one
                 will be used.
             seed (int):
@@ -92,7 +92,7 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
                 in self.composition_samples.items()}
 
     @property
-    def sublattice_composition_variance(self):
+    def composition_variance(self):
         """Composition variance."""
         return {sp: comp.var() for sp, comp in self.composition_samples}
 

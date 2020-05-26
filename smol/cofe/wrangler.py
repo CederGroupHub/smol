@@ -288,10 +288,10 @@ class StructureWrangler(MSONable):
         for item in self._items:
             struct = item['structure']
             mat = item['scmatrix']
-            map = item['mapping']
+            mapp = item['mapping']
             item['features'] = self._subspace.corr_from_structure(struct,
                                                                   scmatrix=mat,
-                                                                  site_mapping=map)  # noqa
+                                                                  site_mapping=mapp)  # noqa
 
     def remove_all_data(self):
         """Removes all data from Wrangler."""

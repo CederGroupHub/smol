@@ -7,11 +7,12 @@ import numpy as np
 from pymatgen import Composition
 from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
 from cvxopt import matrix, solvers
-from smol.learn import BaseEstimator
-
+from .base import BaseEstimator
 
 # TODO gspreserve solve need to fix calls to e_above_hull was in the
-# ECI_gen megaclass from before
+#  this is really broken
+
+
 class GSPreserveEstimator(BaseEstimator):
     """
     Estimator implementing WH's gs preserve fit.

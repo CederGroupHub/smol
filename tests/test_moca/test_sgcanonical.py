@@ -103,7 +103,7 @@ class TestMuSemiGrandEnsemble(unittest.TestCase):
         comps = self.ensemble._get_sublattice_comps()
         for name, comp in comps.items():
             self.assertEqual(sum(c for c in comp.values()), 1.0)
-        
+
     def test_get_current_data(self):
         self.ensemble.run(100)
         d = self.ensemble._get_current_data()
@@ -219,7 +219,7 @@ class TestFuSemiGrandEnsemble(unittest.TestCase):
                 self.assertEqual(energy, self.ensemble.current_energy)
 
     def test_get_flips(self):
-        flip, sublat, sp_old, sp_new = self.ensemble._get_flips()
+        _, sublat, sp_old, sp_new = self.ensemble._get_flips()
         self.assertTrue(sp_old in sublat['species'])
         self.assertTrue(sp_new in sublat['species'])
 

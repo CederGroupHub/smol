@@ -20,8 +20,12 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install -r requirements.txt
             pip install -q --upgrade pip
+            # need to use latest pymatgen, eventually change it back in
+            # next release
+            git clone https://github.com/materialsproject/pymatgen.git
+            cd pymatgen
+            pip install . & cd ..
             pip install -r requirements.txt
             pip install -q pytest
 
@@ -64,6 +68,11 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             pip install -q --upgrade pip
+            # need to use latest pymatgen, eventually change it back in
+            # next release
+            git clone https://github.com/materialsproject/pymatgen.git
+            cd pymatgen
+            pip install . & cd ..
             pip install -r requirements.txt
             pip install -q coverage cython pytest
 
