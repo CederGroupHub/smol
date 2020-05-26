@@ -205,8 +205,7 @@ class CEProcessor(MSONable):
         Returns:
             array
         """
-
-        occu_i = occu.copy()
+        occu_i = occu
         delta_corr = np.zeros(self.n_orbit_functions)
         for f in flips:
             occu_f = occu_i.copy()
@@ -325,7 +324,7 @@ class EwaldCEProcessor(CEProcessor):
         Returns:
             array
         """
-        occu_i = occu.copy()
+        occu_i = occu
         delta_corr = np.zeros(self.n_orbit_functions + 1)
         for f in flips:
             occu_f = occu_i.copy()

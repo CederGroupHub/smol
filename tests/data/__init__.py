@@ -32,6 +32,9 @@ with open(os.path.join(DATA_DIR, 'lno_prim.json'), 'r') as f:
 with open(os.path.join(DATA_DIR, 'lno_fitting_data.json'), 'r') as f:
     lno_data = [(Structure.from_dict(x['s']), x['toten']) for x in json.load(f)]
 
+with open(os.path.join(DATA_DIR, 'lno_gc_run.json'), 'r') as f:
+    lno_gc_run_10000 = json.load(f)
+
 # Pyabinitio benchmark datasets
 with open(os.path.join(DATA_DIR, 'pyabinitio-LiMn3OF.json'), 'r') as f:
     pyabinitio_LiMn3OF_dataset = json.load(f)
