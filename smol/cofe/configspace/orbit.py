@@ -345,7 +345,7 @@ class Orbit(MSONable):
              "@class": self.__class__.__name__,
              "sites": self.base_cluster.sites.tolist(),
              "lattice": self.lattice.as_dict(),
-             "bits": self.bits,
+             "bits": [i.tolist() for i in self.bits], 
              "site_bases": [(sb.__class__.__name__[:-5].lower(),
                              sb.species) for sb in self.site_bases],
              "structure_symops": [so.as_dict() for so in self.structure_symops]
