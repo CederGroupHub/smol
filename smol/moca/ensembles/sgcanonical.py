@@ -29,7 +29,7 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
     """
 
     def __init__(self, processor, temperature, sample_interval,
-                 initial_occupancy=None, seed=None):
+                 initial_occupancy, seed=None):
         """
         Args:
             processor (Processor Class):
@@ -211,7 +211,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
     """
 
     def __init__(self, processor, temperature, chemical_potentials,
-                 sample_interval, initial_occupancy=None, seed=None):
+                 sample_interval, initial_occupancy, seed=None):
         """
         Args:
             processor (Processor Class):
@@ -340,7 +340,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
     """
 
     def __init__(self, processor, temperature, sample_interval,
-                 fugacity_fractions=None, initial_occupancy=None, seed=None):
+                 initial_occupancy, fugacity_fractions=None, seed=None):
         """
         Args:
             processor (Processor Class):
@@ -350,14 +350,14 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
                 Temperature of ensemble
             sample_interval (int):
                 interval of steps to save the current occupancy and property
+            inital_occupancy (list or array):
+                Initial occupancy vector. If none is given then a random one
+                will be used.
             fugacity_fractions (list/tuple of dicts): optional
                 dictionary of species name and fugacity fraction for each
                 sublattice (ie think of it as the sublattice concentrations
                 for random structure). If not given this will be taken from the
                 prim structure used in the CE.
-            inital_occupancy (array):
-                Initial occupancy vector. If none is given then a random one
-                will be used.
             seed (int):
                 seed for random number generator
         """

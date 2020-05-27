@@ -18,7 +18,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
     """
 
     def __init__(self, processor, temperature, sample_interval,
-                 initial_occupancy=None, seed=None):
+                 initial_occupancy, seed=None):
         """
         Args:
             processor (Processor):

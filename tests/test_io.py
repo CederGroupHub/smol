@@ -20,7 +20,8 @@ class TestSaveLoadWork(unittest.TestCase):
         ecis = np.ones(cls.cs.n_bit_orderings)
         cls.ce = ClusterExpansion(cls.cs, ecis, cls.sw.feature_matrix)
         cls.pr = CEProcessor(cls.ce, 2 * np.eye(3))
-        cls.en = CanonicalEnsemble(cls.pr, 500, 100)
+        cls.en = CanonicalEnsemble(cls.pr, 500, 100,
+                                   np.zeros((len(cls.pr.structure)), dtype=int))
         cls.en.run(100)
         cls.file_path = './test_save_work.mson'
 
