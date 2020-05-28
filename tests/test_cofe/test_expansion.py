@@ -62,8 +62,9 @@ class TestClusterExpansionBinary(unittest.TestCase):
         ce.prune(threshold=thresh)
         ids = [i for i, eci in enumerate(self.ce.ecis) if abs(eci) >= thresh]
         new_ecis = self.ce.ecis[abs(self.ce.ecis) >= thresh]
-        self.assertTrue(len(ce.ecis) == len(new_ecis))
-        self.assertTrue(ce.cluster_subspace.n_orbits, len(new_ecis))
+        self.assertEqual(len(ce.ecis), len(new_ecis))
+        self.assertEqual(ce.cluster_subspace.n_orbits, len(new_ecis))
+        self.assertEqual(len(ce.eci_orbit_ids), len(new_ecis))
         # check new predictions
         self.assertTrue(np.allclose(ce.predict(self.sw.structures, normalize=True),
                                     np.dot(self.sw.feature_matrix[:, ids],

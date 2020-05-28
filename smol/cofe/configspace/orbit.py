@@ -91,29 +91,17 @@ class Orbit(MSONable):
         self.lattice = lattice
 
     @property
-    def cluster_symops(self):
-        """Symmetry operations that map a cluster to its periodic image.
+    def n_bit_orderings(self):
+        """Number of symmetrically distinct bit orderings in the Orbit."""
+        return len(self.bit_combos)
 
-        Each element is a tuple of (pymatgen.core.operations.Symop, mapping)
-        where mapping is a tuple such that
-        Symop.operate(sites) = sites[mapping]
-        (after translation back to unit cell)
+    @property
+    def multiplicity(self):
         """
-        if self._symops:
-            return self._symops
-        self._symops = []
-        for symop in self.structure_symops:
-            new_sites = symop.operate_multi(self.base_cluster.sites)
-            c = Cluster(new_sites, self.base_cluster.lattice)
-            if c == self.base_cluster:
-                recenter = np.round(self.base_cluster.centroid - c.centroid)
-                c_sites = c.sites + recenter
-                mapping = tuple(coord_list_mapping(self.base_cluster.sites,
-                                                   c_sites, atol=SITE_TOL))
-                self._symops.append((symop, mapping))
-        if len(self._symops) * self.multiplicity != len(self.structure_symops):
-            raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
-        return self._symops
+        Number of clusters in the given sites of the lattice object that are in
+        the orbit.
+        """
+        return len(self.clusters)
 
     @property
     def bit_combos(self):
@@ -162,12 +150,29 @@ class Orbit(MSONable):
         return equiv
 
     @property
-    def multiplicity(self):
+    def cluster_symops(self):
+        """Symmetry operations that map a cluster to its periodic image.
+
+        Each element is a tuple of (pymatgen.core.operations.Symop, mapping)
+        where mapping is a tuple such that
+        Symop.operate(sites) = sites[mapping]
+        (after translation back to unit cell)
         """
-        Number of clusters in the given sites of the lattice object that are in
-        the orbit.
-        """
-        return len(self.clusters)
+        if self._symops:
+            return self._symops
+        self._symops = []
+        for symop in self.structure_symops:
+            new_sites = symop.operate_multi(self.base_cluster.sites)
+            c = Cluster(new_sites, self.base_cluster.lattice)
+            if c == self.base_cluster:
+                recenter = np.round(self.base_cluster.centroid - c.centroid)
+                c_sites = c.sites + recenter
+                mapping = tuple(coord_list_mapping(self.base_cluster.sites,
+                                                   c_sites, atol=SITE_TOL))
+                self._symops.append((symop, mapping))
+        if len(self._symops) * self.multiplicity != len(self.structure_symops):
+            raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
+        return self._symops
 
     @property
     def basis_arrays(self):

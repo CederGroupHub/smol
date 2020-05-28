@@ -45,17 +45,18 @@ class ClusterExpansion(MSONable):
             cluster_subspace (ClusterSubspace):
                 A StructureWrangler object to provide the fitting data and
                 processing
-            ecis (array):
+            ecis (ndarray):
                 ecis for cluster expansion. Make sure the supplied eci
                 correspond to the correlation vector terms (length and order)
-            feature_matrix (array)
+            feature_matrix (ndarray)
                 the feature matrix used in fitting the given eci
         """
 
-        self._subspace = cluster_subspace
-        self._feat_matrix = feature_matrix
         self.ecis = ecis
         self.metadata = {}
+        self._subspace = cluster_subspace
+        self._feat_matrix = feature_matrix
+        self._eci_orbit_ids = None
 
     @property
     def prim_structure(self):
@@ -72,6 +73,19 @@ class ClusterExpansion(MSONable):
     @property
     def cluster_subspace(self):
         return self._subspace
+
+    @property
+    def eci_orbit_ids(self):
+        """Orbit ids corresponding to each ECI in the Cluster Expansion.
+
+        If the Cluster Expansion includes external terms these are not included
+        in the list since they are not associated with any orbit.
+        """
+        if self._eci_orbit_ids is None:
+            self._eci_orbit_ids = [0]
+            for orbit in self._subspace.iterorbits():
+                self._eci_orbit_ids += orbit.n_bit_orderings*[orbit.id, ]
+        return self._eci_orbit_ids
 
     def predict(self, structures, normalize=False):
         """Predict the fitted property for a given set of structures.
@@ -91,6 +105,28 @@ class ClusterExpansion(MSONable):
             corrs = [self.cluster_subspace.corr_from_structure(structure, normalized=normalize)  # noqa
                      for structure in structures]
         return np.dot(np.array(corrs), self.ecis)
+
+    def prune(self, threshold=0):
+        """Remove ECI's (fitting parameters) and orbits in the ClusterSubspaces
+        that have ECI/parameter values smaller than the given threshold.
+
+        This will change the fits error metrics (ie RMSE) a little, but it
+        should not be much. If they change a lot then the threshold used is
+        probably to high and important ECI are being pruned.
+
+        This will not re-fit the ClusterExpansion. Note that if you re-fit
+        after pruning the ECI will probably change and hence also the fit
+        performance.
+        """
+
+        bit_ids = [i for i, eci in enumerate(self.ecis)
+                   if abs(eci) < threshold]
+        self.cluster_subspace.remove_orbit_bit_combos(bit_ids)
+        # Update necessary attributes
+        ids_compliment = list(set(range(len(self.ecis))) - set(bit_ids))
+        self.ecis = self.ecis[ids_compliment]
+        self._eci_orbit_ids = None # reset this
+        self._feat_matrix = self._feat_matrix[:, ids_compliment]
 
     # This needs further testing. For out-of-training structures
     # the predictions do not always match with those using the original eci
@@ -122,27 +158,6 @@ class ClusterExpansion(MSONable):
         C = np.matmul(self._feat_matrix.T,
                       np.linalg.pinv(new_feature_matrix.T))
         return np.matmul(C.T, self.ecis)
-
-    def prune(self, threshold=0):
-        """Remove ECI's (fitting parameters) and orbits in the ClusterSubspaces
-        that have ECI/parameter values smaller than the given threshold.
-
-        This will change the fits error metrics (ie RMSE) a little, but it
-        should not be much. If they change a lot then the threshold used is
-        probably to high and important ECI are being pruned.
-
-        This will not re-fit the ClusterExpansion. Note that if you re-fit
-        after pruning the ECI will probably change and hence also the fit
-        performance.
-        """
-
-        bit_ids = [i for i, eci in enumerate(self.ecis)
-                   if abs(eci) < threshold]
-        self.cluster_subspace.remove_orbit_bit_combos(bit_ids)
-        # Update necessary attributes
-        ids_compliment = list(set(range(len(self.ecis))) - set(bit_ids))
-        self.ecis = self.ecis[ids_compliment]
-        self._feat_matrix = self._feat_matrix[:, ids_compliment]
 
     def __str__(self):
         """Pretty string for printing."""

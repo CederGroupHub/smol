@@ -153,8 +153,9 @@ class ClusterSubspace(MSONable):
                 available bases only the indicator basis is not orthogonal out
                 of the box
             use_concentration (bool):
-                If true the concentrations in the prim structure will be used
-                to orthormalize site bases.
+                If true the concentrations in the prim structure sites will be
+                used to orthormalize site bases. This gives gives a cluster
+                subspace centered about the prim composition.
             supercell_matcher (StructureMatcher): (optional)
                 A StructureMatcher class to be used to find supercell matrices
                 relating the prim structure to other structures. If you pass
@@ -194,19 +195,19 @@ class ClusterSubspace(MSONable):
     @property
     def orbits(self):
         """Returns a list of all orbits sorted by size."""
-        return [orbit for key, orbits
+        return [orbit for _, orbits
                 in sorted(self._orbits.items()) for orbit in orbits]
-
-    @property
-    def orbits_by_size(self):
-        """Dictionary of orbits with key being the size."""
-        return self._orbits
 
     def iterorbits(self):
         """Orbit generator, yields orbits."""
         for _, orbits in sorted(self._orbits.items()):
             for orbit in orbits:
                 yield orbit
+
+    @property
+    def orbits_by_size(self):
+        """Dictionary of orbits with key being the size."""
+        return self._orbits
 
     @property
     def basis_orthogonal(self):
@@ -469,7 +470,7 @@ class ClusterSubspace(MSONable):
         """
         Removes orbits from cluster spaces. It is helpful to print a
         ClusterSubspace or ClusterExpansion to obtain orbit ids. After removing
-        orbits, orbit id and orbit bit id are re-assigned.
+        orbits, orbit id and orbit bit_id are re-assigned.
 
         This is useful to prune a ClusterExpansion by removing orbits with
         small associated ECI. Note that this will remove a full orbit, which
@@ -512,6 +513,7 @@ class ClusterSubspace(MSONable):
         Similar to remove_orbits this is useful to prune a cluster expansion
         and actually allows to remove a single term (ie one with small
         associated ECI).
+
         This procedure is perfectly well posed mathematically. The resultant
         CE is still a valid function of configurations with all the necessary
         symmetries from the underlying structure. Chemically however it is not
@@ -529,7 +531,7 @@ class ClusterSubspace(MSONable):
 
         for orbit in self.iterorbits():
             first_id = orbit.bit_id
-            last_id = orbit.bit_id + len(orbit.bit_combos)
+            last_id = orbit.bit_id + orbit.n_bit_orderings
             to_remove = bit_ids[bit_ids >= first_id]
             to_remove = to_remove[to_remove < last_id] - first_id
             if to_remove.size > 0:

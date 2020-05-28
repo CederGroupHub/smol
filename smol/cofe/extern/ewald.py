@@ -93,12 +93,12 @@ class EwaldTerm(MSONable):
         Returns:
             Structure, array
         """
-        struct_bits = get_site_domains(structure)
-        nbits = np.array([len(b) - 1 for b in struct_bits])
+        site_doms = get_site_domains(structure)
+        nbits = np.array([len(b) - 1 for b in site_doms])
         ewald_inds, ewald_sites = [], []
-        for bits, site in zip(struct_bits, structure):
+        for dom, site in zip(site_doms, structure):
             inds = np.zeros(max(nbits) + 1) - 1
-            for i, b in enumerate(bits):
+            for i, b in enumerate(dom):
                 if b == 'Vacancy':  # skip vacancies
                     continue
                 inds[i] = len(ewald_sites)

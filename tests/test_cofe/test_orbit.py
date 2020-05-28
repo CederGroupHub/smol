@@ -55,12 +55,12 @@ class TestOrbit(unittest.TestCase):
         self.assertNotEqual(orbit2, self.orbit)
 
     def test_bit_combos(self):
-        bit_combos = self.orbit.bit_combos # orbit with two symmetrically equivalent sites
-        self.assertEqual(len(bit_combos), 3)
+        # orbit with two symmetrically equivalent sites
+        self.assertEqual(self.orbit.n_bit_orderings, 3)
         orbit = Orbit(self.coords[1:3], self.lattice, [[0, 1], [0, 1]],
                       self.bases, self.symops)
-        bit_combos = orbit.bit_combos  # orbit with two symmetrically distinct sites
-        self.assertEqual(len(bit_combos), 4)
+        # orbit with two symmetrically distinct sites
+        self.assertEqual(orbit.n_bit_orderings, 4)
 
     def test_is_orthonormal(self):
         self.assertFalse(self.orbit.basis_orthogonal)
