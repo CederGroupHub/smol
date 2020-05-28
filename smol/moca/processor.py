@@ -18,7 +18,7 @@ from pymatgen import Structure, PeriodicSite
 from pymatgen.analysis.ewald import EwaldSummation
 from smol.cofe import ClusterExpansion
 from smol.cofe.extern import EwaldTerm
-from smol.cofe.configspace.utils import get_bits, get_bits_w_concentration
+from smol.cofe.configspace.utils import get_site_domains
 from src.ce_utils import (corr_from_occupancy, general_delta_corr_single_flip,
                           delta_ewald_single_flip,
                           indicator_delta_corr_single_flip)
@@ -49,30 +49,31 @@ class CEProcessor(MSONable):
                 indicator basis set, otherwise your MC results are no good.
         """
 
-        # set the dcorr_single_flip function
-        self.indicator_opt = optimize_indicator
-        self.dcorr_single_flip = indicator_delta_corr_single_flip \
-            if optimize_indicator \
-            else general_delta_corr_single_flip
-
         # the only reason to keep the CE is for the MSONable from_dict
         self.cluster_expansion = cluster_expansion
-        self._subspace = cluster_expansion.cluster_subspace
-        self._ecis = cluster_expansion.ecis
-        self.structure = self._subspace.structure.copy()
+        self.ecis = cluster_expansion.ecis
+        self.subspace = cluster_expansion.cluster_subspace
+        self.structure = self.subspace.structure.copy()
         self.structure.make_supercell(supercell_matrix)
         self.supercell_matrix = supercell_matrix
 
         # this can be used (maybe should) to check if a flip is valid
-        exp_bits = get_bits_w_concentration(cluster_expansion.expansion_structure)  # noqa
-        self.unique_bits = tuple(OrderedDict(bits) for bits in
-                                 set(tuple(bits.items()) for bits in exp_bits))
+        domains = get_site_domains(cluster_expansion.expansion_structure,
+                                   include_measure=True)
+        self.unique_site_domains = tuple(OrderedDict(doms) for doms in
+                                         set(tuple(doms.items()) for doms in domains))  # noqa
 
-        self.bits = get_bits(self.structure)
-        self.size = self._subspace.num_prims_from_matrix(supercell_matrix)
-        self.n_orbit_functions = self._subspace.n_bit_orderings
-        self._orbit_inds = self._subspace.supercell_orbit_mappings(supercell_matrix)  # noqa
+        self.allowed_species = get_site_domains(self.structure)
+        self.size = self.subspace.num_prims_from_matrix(supercell_matrix)
+        self.n_orbit_functions = self.subspace.n_bit_orderings
 
+        # set the dcorr_single_flip function
+        self.indicator_opt = optimize_indicator
+        self._dcorr_single_flip = indicator_delta_corr_single_flip \
+            if optimize_indicator \
+            else general_delta_corr_single_flip
+
+        self._orbit_inds = self.subspace.supercell_orbit_mappings(supercell_matrix)  # noqa
         # List of orbit information and supercell site indices to compute corr
         self._orbit_list = []
         # Dictionary of orbits by site index and information
@@ -105,7 +106,7 @@ class CEProcessor(MSONable):
         Returns: predicted property
             float
         """
-        return np.dot(self.compute_correlation(occu), self._ecis) * self.size
+        return np.dot(self.compute_correlation(occu), self.ecis) * self.size
 
     def compute_property_change(self, occu, flips):
         """
@@ -120,7 +121,7 @@ class CEProcessor(MSONable):
         Returns:
             float
         """
-        return np.dot(self.delta_corr(flips, occu), self._ecis) * self.size
+        return np.dot(self.delta_corr(flips, occu), self.ecis) * self.size
 
     def compute_correlation(self, occu):
         """
@@ -151,8 +152,8 @@ class CEProcessor(MSONable):
         Returns: encoded occupancy array
             list
         """
-        occu = self._subspace.occupancy_from_structure(structure,
-                                                       scmatrix=self.supercell_matrix)  # noqa
+        occu = self.subspace.occupancy_from_structure(structure,
+                                                      scmatrix=self.supercell_matrix)  # noqa
         return self.encode_occupancy(occu)
 
     def structure_from_occupancy(self, occu):
@@ -178,15 +179,16 @@ class CEProcessor(MSONable):
         """
         Encode occupancy array of species str to ints.
         """
-        ec_occu = np.array([bit.index(sp) for bit, sp in zip(self.bits, occu)])
-        return ec_occu
+        return np.array([species.index(sp) for species, sp
+                        in zip(self.allowed_species, occu)])
 
     def decode_occupancy(self, enc_occu):
         """
         Decode encoded occupancy array of int to species str.
         """
-        occu = [bit[i] for i, bit in zip(enc_occu, self.bits)]
-        return occu
+
+        return [species[i] for i, species in
+                zip(enc_occu, self.allowed_species)]
 
     def delta_corr(self, flips, occu):
         """
@@ -211,9 +213,9 @@ class CEProcessor(MSONable):
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
             orbits = self._orbits_by_sites[f[0]]
-            delta_corr += self.dcorr_single_flip(occu_f, occu_i,
-                                                 self.n_orbit_functions,
-                                                 orbits)
+            delta_corr += self._dcorr_single_flip(occu_f, occu_i,
+                                                  self.n_orbit_functions,
+                                                  orbits)
             occu_i = occu_f
 
         return delta_corr
@@ -330,9 +332,9 @@ class EwaldCEProcessor(CEProcessor):
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
             orbits = self._orbits_by_sites[f[0]]
-            delta_corr[:-1] += self.dcorr_single_flip(occu_f, occu_i,
-                                                      self.n_orbit_functions,
-                                                      orbits)
+            delta_corr[:-1] += self._dcorr_single_flip(occu_f, occu_i,
+                                                       self.n_orbit_functions,
+                                                       orbits)
             delta_corr[-1] += delta_ewald_single_flip(occu_f, occu_i,
                                                       self.n_orbit_functions,
                                                       orbits,

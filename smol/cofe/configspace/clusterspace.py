@@ -24,8 +24,7 @@ from pymatgen.util.coord import (is_coord_subset, is_coord_subset_pbc,
                                  coord_list_mapping_pbc)
 from smol.cofe.configspace import Orbit
 from smol.cofe.configspace.basis import basis_factory
-from smol.cofe.configspace.utils import (SITE_TOL, get_bits,
-                                         get_bits_w_concentration)
+from smol.cofe.configspace.utils import SITE_TOL, get_site_domains
 from smol.exceptions import (SymmetryError, StructureMatchError,
                              SYMMETRY_ERROR_MESSAGE)
 from src.ce_utils import corr_from_occupancy
@@ -284,9 +283,10 @@ class ClusterSubspace(MSONable):
         if scmatrix is None:
             scmatrix = self.scmatrix_from_structure(structure)
 
-        occu = self.occupancy_from_structure(structure, encode=True,
+        occu = self.occupancy_from_structure(structure,
                                              scmatrix=scmatrix,
-                                             site_mapping=site_mapping)
+                                             site_mapping=site_mapping,
+                                             encode=True)
         occu = np.array(occu, dtype=int)
 
         orb_inds = self.supercell_orbit_mappings(scmatrix)
@@ -346,8 +346,8 @@ class ClusterSubspace(MSONable):
                 sites.append(site)
         return Structure.from_sites(sites)
 
-    def occupancy_from_structure(self, structure, encode=False, scmatrix=None,
-                                 site_mapping=None):
+    def occupancy_from_structure(self, structure, scmatrix=None,
+                                 site_mapping=None, encode=False):
         """
         Returns a tuple of occupancies of each site in a the structure in the
         appropriate order set implicitly by the scmatrix that is found
@@ -358,9 +358,6 @@ class ClusterSubspace(MSONable):
         Args:
             structure (Structure):
                 structure to obtain a occupancy vector for
-            encode (bool): oprtional
-                If true the occupancy vector will have the index of the species
-                in the expansion structure bits, rather than the species name
             scmatrix (array): optional
                 Super cell matrix relating the given structure and the
                 primitive structure. I you pass the supercell you fully are
@@ -372,6 +369,10 @@ class ClusterSubspace(MSONable):
                 of the matching sites to the prim structure. I you pass this
                 option you are fully responsible that the mappings are correct!
                 This prevents running _site_matcher to get the mappings.
+            encode (bool): oprtional
+                If true the occupancy vector will have the index of the species
+                in the expansion structure site domains, rather than the
+                species name.
 
         Returns: occupancy vector for structure, species names ie ['Li+', ...]
                  If encoded then [0, ...]
@@ -388,7 +389,7 @@ class ClusterSubspace(MSONable):
 
         occu = []  # np.zeros(len(self.supercell_structure), dtype=np.int)
 
-        for i, bit in enumerate(get_bits(supercell)):
+        for i, domain in enumerate(get_site_domains(supercell)):
             # rather than starting with all vacancies and looping
             # only over mapping, explicitly loop over everything to
             # catch vacancies on improper sites
@@ -396,11 +397,11 @@ class ClusterSubspace(MSONable):
                 sp = str(structure[site_mapping.index(i)].specie)
             else:
                 sp = 'Vacancy'
-            if sp not in bit:
+            if sp not in domain:
                 raise StructureMatchError('A site in given structure has an'
                                           f' unrecognized specie {sp}. ')
             if encode:
-                occu.append(bit.index(sp))
+                occu.append(domain.index(sp))
             else:
                 occu.append(sp)
         return occu
@@ -568,22 +569,18 @@ class ClusterSubspace(MSONable):
         self.n_bit_orderings = n_bit_ords
 
     @staticmethod
-    def _orbits_from_radii(exp_struct, radii, symops, basis, orthonm,
-                           use_contn):
+    def _orbits_from_radii(exp_struct, radii, symops, basis, orthonorm,
+                           use_conc):
         """
         Generates dictionary of {size: [Orbits]} given a dictionary of maximal
         cluster radii and symmetry operations to apply (not necessarily all the
         symmetries of the expansion_structure).
         """
 
-        if use_contn:
-            bits = get_bits_w_concentration(exp_struct)
-        else:
-            bits = get_bits(exp_struct)
-
-        nbits = np.array([len(b) - 1 for b in bits])
-        site_bases = tuple(basis_factory(basis, bit) for bit in bits)
-        if orthonm:
+        domains = get_site_domains(exp_struct, include_measure=use_conc)
+        nbits = np.array([len(b) - 1 for b in domains])
+        site_bases = tuple(basis_factory(basis, domain) for domain in domains)
+        if orthonorm:
             for basis in site_bases:
                 basis.orthonormalize()
 

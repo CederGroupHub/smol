@@ -1,4 +1,5 @@
 import unittest
+import json
 import numpy as np
 from pymatgen.transformations.standard_transformations import \
     OrderDisorderedStructureTransformation
@@ -57,11 +58,12 @@ class TestCEProcessor(unittest.TestCase):
                                                                            scmatrix=scmatrix)
         self.enc_occu = self.pr.occupancy_from_structure(test_struct)
         self.sublattices = []
-        for bits in self.pr.unique_bits:
-            sites = np.array([i for i, b in enumerate(self.pr.bits)
-                              if b == tuple(bits.keys())])
-            self.sublattices.append({'bits': list(range(len(bits))),
+        for doms in self.pr.unique_site_domains:
+            sites = np.array([i for i, b in enumerate(self.pr.allowed_species)
+                              if b == list(doms.keys())])
+            self.sublattices.append({'doms': list(range(len(doms))),
                                      'sites': sites})
+        print(self.sublattices)
 
     def test_compute_property(self):
         self.assertTrue(np.isclose(self.ce.predict(self.test_struct),
@@ -76,19 +78,19 @@ class TestCEProcessor(unittest.TestCase):
         for _ in range(50):
             sublatt = np.random.choice(self.sublattices)
             site = np.random.choice(sublatt['sites'])
-            new_bit = np.random.choice(sublatt['bits'])
+            new_sp = np.random.choice(sublatt['doms'])
             new_occu = occu.copy()
-            new_occu[site] = new_bit
+            new_occu[site] = new_sp
             prop_f = self.pr.compute_property(new_occu)
             prop_i = self.pr.compute_property(occu)
-            dprop = self.pr.compute_property_change(occu, [(site, new_bit)])
+            dprop = self.pr.compute_property_change(occu, [(site, new_sp)])
             # Check with some tight tolerances.
             self.assertTrue(np.allclose(dprop, prop_f - prop_i,
                                         rtol=rtol, atol=atol))
             # Test reverse matches forward
-            old_bit = occu[site]
+            old_sp = occu[site]
             rdprop = self.pr.compute_property_change(new_occu, [(site,
-                                                                 old_bit)])
+                                                                 old_sp)])
             self.assertEqual(dprop, -1*rdprop)
 
     def test_encode_property(self):
@@ -106,19 +108,19 @@ class TestCEProcessor(unittest.TestCase):
         for _ in range(50):
             sublatt = np.random.choice(self.sublattices)
             site = np.random.choice(sublatt['sites'])
-            new_bit = np.random.choice(sublatt['bits'])
+            new_sp = np.random.choice(sublatt['doms'])
             new_occu = occu.copy()
-            new_occu[site] = new_bit
+            new_occu[site] = new_sp
             # Test forward
-            dcorr = self.pr.delta_corr([(site, new_bit)], occu)
+            dcorr = self.pr.delta_corr([(site, new_sp)], occu)
             corr_f = self.pr.compute_correlation(new_occu)
             corr_i = self.pr.compute_correlation(occu)
 
             self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
                                         rtol=rtol, atol=atol))
             # Test reverse matches forward
-            old_bit = occu[site]
-            rdcorr = self.pr.delta_corr([(site, old_bit)], new_occu)
+            old_sp = occu[site]
+            rdcorr = self.pr.delta_corr([(site, old_sp)], new_occu)
             self.assertTrue(np.array_equal(dcorr, -1*rdcorr))
 
     def test_delta_corr_indicator(self):
@@ -139,18 +141,18 @@ class TestCEProcessor(unittest.TestCase):
         for _ in range(50):
             sublatt = np.random.choice(self.sublattices)
             site = np.random.choice(sublatt['sites'])
-            new_bit = np.random.choice(sublatt['bits'])
+            new_sp = np.random.choice(sublatt['doms'])
             new_occu = occu.copy()
-            new_occu[site] = new_bit
+            new_occu[site] = new_sp
             # Test forward
-            dcorr = pr.delta_corr([(site, new_bit)], occu)
+            dcorr = pr.delta_corr([(site, new_sp)], occu)
             corr_f = pr.compute_correlation(new_occu)
             corr_i = pr.compute_correlation(occu)
             self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
                                         rtol=rtol, atol=atol))
             # Test reverse matches forward
-            old_bit = occu[site]
-            rdcorr = pr.delta_corr([(site, old_bit)], new_occu)
+            old_sp = occu[site]
+            rdcorr = pr.delta_corr([(site, old_sp)], new_occu)
             self.assertTrue(np.allclose(dcorr, -1*rdcorr,
                                         rtol=rtol, atol=atol))
 
@@ -167,10 +169,11 @@ class TestCEProcessor(unittest.TestCase):
     def test_msonable(self):
         d = self.pr.as_dict()
         pr = CEProcessor.from_dict(d)
-        self.assertTrue(self.pr.bits == pr.bits)
-        self.assertTrue(self.pr.structure == pr.structure)
+        self.assertEqual(pr.as_dict(), d)
         self.assertEqual(self.pr.compute_property(self.enc_occu),
                          pr.compute_property(self.enc_occu))
+        j = json.dumps(d)
+        _ = json.loads(j)
 
 
 class TestEwaldCEProcessor(unittest.TestCase):
@@ -210,10 +213,10 @@ class TestEwaldCEProcessor(unittest.TestCase):
                                                                            scmatrix=scmatrix)
         self.enc_occu = self.pr.occupancy_from_structure(test_struct)
         self.sublattices = []
-        for bits in self.pr.unique_bits:
-            sites = np.array([i for i, b in enumerate(self.pr.bits)
-                              if b == tuple(bits.keys())])
-            self.sublattices.append({'bits': list(range(len(bits))),
+        for doms in self.pr.unique_site_domains:
+            sites = np.array([i for i, b in enumerate(self.pr.allowed_species)
+                              if b == list(doms.keys())])
+            self.sublattices.append({'doms': list(range(len(doms))),
                                      'sites': sites})
 
     def test_compute_property_change(self):
@@ -221,18 +224,18 @@ class TestEwaldCEProcessor(unittest.TestCase):
         for _ in range(50):
             sublatt = np.random.choice(self.sublattices)
             site = np.random.choice(sublatt['sites'])
-            new_bit = np.random.choice(sublatt['bits'])
+            new_sp = np.random.choice(sublatt['doms'])
             new_occu = occu.copy()
-            new_occu[site] = new_bit
+            new_occu[site] = new_sp
             prop_f = self.pr.compute_property(new_occu)
             prop_i = self.pr.compute_property(occu)
-            dprop = self.pr.compute_property_change(occu, [(site, new_bit)])
+            dprop = self.pr.compute_property_change(occu, [(site, new_sp)])
             self.assertTrue(np.allclose(dprop, prop_f - prop_i,
                                         rtol=rtol, atol=atol))
             # Test reverse matches forward
-            old_bit = occu[site]
+            old_sp = occu[site]
             rdprop = self.pr.compute_property_change(new_occu, [(site,
-                                                                 old_bit)])
+                                                                 old_sp)])
             self.assertTrue(np.isclose(dprop, -1.0*rdprop,
                                        rtol=rtol, atol=atol))
 
@@ -241,17 +244,17 @@ class TestEwaldCEProcessor(unittest.TestCase):
         for _ in range(50):
             sublatt = np.random.choice(self.sublattices)
             site = np.random.choice(sublatt['sites'])
-            new_bit = np.random.choice(sublatt['bits'])
+            new_sp = np.random.choice(sublatt['doms'])
             new_occu = occu.copy()
-            new_occu[site] = new_bit
+            new_occu[site] = new_sp
             # Test forward
-            dcorr = self.pr.delta_corr([(site, new_bit)], occu)
+            dcorr = self.pr.delta_corr([(site, new_sp)], occu)
             corr_f = self.pr.compute_correlation(new_occu)
             corr_i = self.pr.compute_correlation(occu)
             self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
                                         rtol=rtol, atol=atol))
             # Test reverse matches forward
-            old_bit = occu[site]
-            rdcorr = self.pr.delta_corr([(site, old_bit)], new_occu)
+            old_sp = occu[site]
+            rdcorr = self.pr.delta_corr([(site, old_sp)], new_occu)
             self.assertTrue(np.allclose(dcorr, -1*rdcorr,
                                         rtol=rtol, atol=atol))
