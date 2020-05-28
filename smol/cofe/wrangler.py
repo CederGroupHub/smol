@@ -422,8 +422,8 @@ class StructureWrangler(MSONable):
         except StructureMatchError as e:
             if verbose:
                 print(f'Unable to match {structure.composition} with '
-                      f'properties {properties} to supercell_structure.'
-                      f'Throwing out.\n Error Message: {str(e)}.')
+                      f'properties {properties} to supercell_structure. '
+                      f'Throwing out.\n Error Message: {str(e)}')
             return
         return {'structure': structure, 'ref_structure': refined_struct,
                 'properties': properties, 'weights': weights,

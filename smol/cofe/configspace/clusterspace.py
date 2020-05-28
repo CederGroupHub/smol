@@ -93,14 +93,11 @@ class ClusterSubspace(MSONable):
         # structure matches the prim structure by retrieving the matrix
         # relating them. Only the "get_supercell_matrix" method is used.
         if supercell_matcher is None:
-            # Doesn't seem to change success rate for matching structures,
-            # but may be a good option to try if it is failing.
-            comparator = FrameworkComparator()
-            comparator = OrderDisorderElementComparator()
+            sc_comparator = FrameworkComparator()
             self._sc_matcher = StructureMatcher(primitive_cell=False,
                                                 attempt_supercell=True,
                                                 allow_subset=True,
-                                                comparator=comparator,
+                                                comparator=sc_comparator,
                                                 scale=True,
                                                 **matcher_kwargs)
         else:
@@ -400,7 +397,7 @@ class ClusterSubspace(MSONable):
                 sp = 'Vacancy'
             if sp not in domain:
                 raise StructureMatchError('A site in given structure has an'
-                                          f' unrecognized specie {sp}. ')
+                                          f' unrecognized species {sp}.')
             if encode:
                 occu.append(domain.index(sp))
             else:
