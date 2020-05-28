@@ -686,7 +686,7 @@ class ClusterSubspace(MSONable):
         """
 
         symops = [SymmOp.from_dict(so_d) for so_d in d['symops']]
-        orbits = {s: [Orbit.from_dict(o) for o in v]
+        orbits = {int(s): [Orbit.from_dict(o) for o in v]
                   for s, v in d['orbits'].items()}
         structure = Structure.from_dict(d['structure'])
         exp_structure = Structure.from_dict(d['expansion_structure'])
