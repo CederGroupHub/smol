@@ -10,6 +10,8 @@ crystalline material systems.
 
 ### Installing & Running
 1. `Clone` the repository.
+    * The `master` branch is the stable version of the code. The `develop`
+    branch has the newest tested version, but may have more lingering bugs.
 2. Go to the top level directory of the cloned repo and type:
 
         pip install .
@@ -17,7 +19,7 @@ crystalline material systems.
 to help you get started.
 
 ### Contributing & Developing
-Please consider contributing even the smallest slightest idea.
+Please consider contributing even the smallest idea.
 The very best software comes from collaborative efforts.
 
 In case you have an idea, recommendation, problem or found a bug, but nothing
@@ -25,25 +27,9 @@ actually down on code, use the [issue tracker](https://github.com/CederGroupHub/
 
 If you have lovely bits of code you want to contribute then please fork + pull
 request [github-flow](https://guides.github.com/introduction/flow/) or
-[git-flow](https://nvie.com/posts/a-successful-git-branching-model/) style:
-
-1. `Fork` the repository.
-2. In order to have changes available without having to re-install the package,
-type in the top level directory:
-
-        python setup.py develop
-3. If at any point you need to re-cythonize (in case you changed a .pyx file
-while developing or the .c files have gone missing) use:
-
-        python setup.py develop --use-cython
-
-4. Once you have changes worth sharing open a `pull request` to the `develop`
-branch. You should make sure your work does not break any of the unittests, and
-if you implemented new functionality you should write tests for it.
-You are also encouraged to start a pull request before you fully done with your
-work, if you others to see what you are doing and possibly give feedback or
-comments. If you open a pull request that is a work in progress use [WIP] in
-the title.
+[git-flow](https://nvie.com/posts/a-successful-git-branching-model/) style.
+See the contributing
+[file](https://github.com/CederGroupHub/smol/CONTRIBUTING.md) for further information.
 
 #### Credits
 Feel free to add yourself here for your contributions :)
