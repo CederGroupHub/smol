@@ -32,15 +32,15 @@ class TestClusterExpansionBinary(unittest.TestCase):
         self.ce = ClusterExpansion(cs, ecis, self.sw.feature_matrix)
 
     def test_predict_train(self):
-        preds = self.ce.predict(self.sw.structures)
+        preds = [self.ce.predict(s) for s in self.sw.structures]
         self.assertTrue(np.allclose(preds,
                                     self.sw.get_property_vector('energy', False)))
-        preds = self.ce.predict(self.sw.structures, normalize=True)
+        preds = [self.ce.predict(s, True) for s in self.sw.structures]
         self.assertTrue(np.allclose(preds,
                                     self.sw.get_property_vector('energy')))
 
     def test_predict_test(self):
-        preds = self.ce.predict(self.test_structs)
+        preds = [self.ce.predict(s) for s in self.test_structs]
         self.assertTrue(np.allclose(preds, self.test_energies))
 
     def test_convert_eci(self):
@@ -66,7 +66,8 @@ class TestClusterExpansionBinary(unittest.TestCase):
         self.assertEqual(ce.cluster_subspace.n_orbits, len(new_ecis))
         self.assertEqual(len(ce.eci_orbit_ids), len(new_ecis))
         # check new predictions
-        self.assertTrue(np.allclose(ce.predict(self.sw.structures, normalize=True),
+        preds = [ce.predict(s, normalize=True) for s in self.sw.structures]
+        self.assertTrue(np.allclose(preds,
                                     np.dot(self.sw.feature_matrix[:, ids],
                                            new_ecis)))
         # check the updated feature matrix is correct
@@ -133,10 +134,10 @@ class TestClusterExpansionEwaldBinary(unittest.TestCase):
         ce = ClusterExpansion(cs, ecis, sw.feature_matrix)
         test_structs = [data[i][0] for i in self.test_ids]
         test_energies = np.array([data[i][1] for i in self.test_ids])
-        preds = ce.predict(sw.structures)
+        preds = [ce.predict(s) for s in sw.structures]
         self.assertTrue(np.allclose(preds,
                                     sw.get_property_vector('energy', False)))
-        preds = ce.predict(test_structs)
+        preds = [ce.predict(s) for s in test_structs]
         self.assertTrue(np.allclose(preds, test_energies))
 
         return ecis

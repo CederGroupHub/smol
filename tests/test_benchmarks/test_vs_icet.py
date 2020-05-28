@@ -44,8 +44,8 @@ class TestCEvicet(unittest.TestCase):
         ce = ClusterExpansion(self.cs, ecis=self.ecis,
                               feature_matrix=self.sw.feature_matrix)
         test_structs = [i['structure'] for i in icet_test_structs]
-        self.assertTrue(np.allclose(icet_predictions,
-                                    ce.predict(test_structs, normalize=True)))
+        preds = [ce.predict(s, normalize=True) for s in test_structs]
+        self.assertTrue(np.allclose(icet_predictions, preds))
 
     def test_sgc_montecarlo(self):
         sc_matrix = 3*np.array([[-1, 1, 1], [1, -1, 1], [1, 1, -1]])

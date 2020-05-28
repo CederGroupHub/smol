@@ -87,11 +87,11 @@ class ClusterExpansion(MSONable):
                 self._eci_orbit_ids += orbit.n_bit_orderings*[orbit.id, ]
         return self._eci_orbit_ids
 
-    def predict(self, structures, normalize=False):
+    def predict(self, structure, normalize=False):
         """Predict the fitted property for a given set of structures.
 
         Args:
-            structures (list or Structure):
+            structure (Structure):
                 Structures to predict from
             normalize (bool):
                 Whether to return the predicted property normalized by
@@ -99,11 +99,9 @@ class ClusterExpansion(MSONable):
         Returns:
             array
         """
-        if isinstance(structures, Structure):
-            corrs = self.cluster_subspace.corr_from_structure(structures, normalized=normalize)  # noqa
-        else:
-            corrs = [self.cluster_subspace.corr_from_structure(structure, normalized=normalize)  # noqa
-                     for structure in structures]
+
+        corrs = self.cluster_subspace.corr_from_structure(structure,
+                                                          normalized=normalize)
         return np.dot(np.array(corrs), self.ecis)
 
     def prune(self, threshold=0):
