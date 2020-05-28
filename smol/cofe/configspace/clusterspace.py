@@ -17,8 +17,7 @@ from monty.json import MSONable
 from pymatgen import Structure, PeriodicSite
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.analysis.structure_matcher import (StructureMatcher,
-                                                 OrderDisorderElementComparator,  # noqa
-                                                 FrameworkComparator)
+                                                 OrderDisorderElementComparator)  # noqa
 from pymatgen.util.coord import (is_coord_subset, is_coord_subset_pbc,
                                  lattice_points_in_supercell,
                                  coord_list_mapping_pbc)
@@ -93,7 +92,7 @@ class ClusterSubspace(MSONable):
         # structure matches the prim structure by retrieving the matrix
         # relating them. Only the "get_supercell_matrix" method is used.
         if supercell_matcher is None:
-            sc_comparator = FrameworkComparator()
+            sc_comparator = OrderDisorderElementComparator()
             self._sc_matcher = StructureMatcher(primitive_cell=False,
                                                 attempt_supercell=True,
                                                 allow_subset=True,
