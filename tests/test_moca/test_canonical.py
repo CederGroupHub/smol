@@ -86,7 +86,7 @@ class TestCanonicalEnsemble(unittest.TestCase):
     def test_reset(self):
         self.ensemble.run(1000)
         self.assertTrue(self.ensemble.data)
-        self.assertNotEquals(self.ensemble.current_step, 0)
+        self.assertNotEqual(self.ensemble.current_step, 0)
         self.ensemble.reset()
         self.assertEqual(self.ensemble.current_step, 0)
         self.assertEqual(self.ensemble.accepted_steps, 0)
