@@ -34,13 +34,13 @@ class BaseEnsemble(ABC):
                 according to the processor or the species names directly.
             sublattices (dict): optional
                 dictionary with keys identifying the active sublattices
-                (i.e. "anion" or the bits in that sublattice
-                "['Li+', 'Vacancy']"), the values should be a dictionary
+                (i.e. "anion" or the allowed species in that sublattice
+                "Li+/Vacancy". The values should be a dictionary
                 with two items {'sites': array with the site indices for all
                 sites corresponding to that sublattice in the occupancy vector,
-                'species': OrderedDict of allowed species in sublattice}
-                All sites in a sublattice need to have the same bits/species
-                allowed.
+                'site_domain': OrderedDict of allowed species in sublattice}
+                All sites in a sublattice need to have the same set of allowed
+                species.
             seed (int): optional
                 seed for random number generator
         """
@@ -52,12 +52,12 @@ class BaseEnsemble(ABC):
             initial_occupancy = processor.encode_occupancy(initial_occupancy)
 
         if sublattices is None:
-            sublattices = {'/'.join(bits.keys()):
-                           {'sites': np.array([i for i, b in
-                                               enumerate(processor.bits)
-                                               if b == tuple(bits.keys())]),
-                            'species': bits}
-                           for bits in processor.unique_bits}
+            sublattices = {'/'.join(domain.keys()):
+                           {'sites': np.array([i for i, sp in
+                                        enumerate(processor.allowed_species)  # noqa
+                                               if sp == list(domain.keys())]),
+                            'domain': domain}
+                           for domain in processor.unique_site_domains}
 
         self.processor = processor
         self.sample_interval = sample_interval
@@ -81,8 +81,8 @@ class BaseEnsemble(ABC):
     @property
     def sublattices(self):
         """
-        Names of sublattices.
-        Useful if allowing bits only from certain sublattices is needed.
+        Names of sublattices. Useful if allowing flips only from certain
+        sublattices is needed.
         """
         return list(self._sublattices.keys())
 

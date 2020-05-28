@@ -96,8 +96,8 @@ class TestMuSemiGrandEnsemble(unittest.TestCase):
 
     def test_get_flips(self):
         flip, sublat, sp_old, sp_new = self.ensemble._get_flips()
-        self.assertTrue(sp_old in sublat['species'])
-        self.assertTrue(sp_new in sublat['species'])
+        self.assertTrue(sp_old in sublat['domain'])
+        self.assertTrue(sp_new in sublat['domain'])
 
     def test_get_counts_comps(self):
         self.ensemble.run(1000)
@@ -225,8 +225,8 @@ class TestFuSemiGrandEnsemble(unittest.TestCase):
 
     def test_get_flips(self):
         _, sublat, sp_old, sp_new = self.ensemble._get_flips()
-        self.assertTrue(sp_old in sublat['species'])
-        self.assertTrue(sp_new in sublat['species'])
+        self.assertTrue(sp_old in sublat['domain'])
+        self.assertTrue(sp_new in sublat['domain'])
 
     def test_get_counts_comps(self):
         self.ensemble.run(1000)
