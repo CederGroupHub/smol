@@ -3,6 +3,8 @@
 __author__ = "Luis Barroso-Luque"
 __credits__ = "William Davidson Richard"
 
+from functools import wraps
+
 
 def constrain_dielectric(max_dielectric, ewald_ind=-1):
     """Decorator to enforce that a fit method fitting a cluster expansion that
@@ -25,6 +27,7 @@ def constrain_dielectric(max_dielectric, ewald_ind=-1):
         ewald_ind (int):
             Index of column of Ewald interaction features in the feature matrix
     """
+
     def decorate_fit_method(fit_method):
         """
         Args:
@@ -33,6 +36,7 @@ def constrain_dielectric(max_dielectric, ewald_ind=-1):
                 Must take the feature matrix X and target vector y as first
                 arguments. (i.e. fit_method(X, y, *args, **kwargs)
         """
+        @wraps(fit_method)
         def wrapped(X, y, *args, **kwargs):
             ecis = fit_method(X, y, *args, **kwargs)
             if ecis[ewald_ind] < 1.0 / max_dielectric:
