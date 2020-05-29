@@ -14,7 +14,6 @@ __author__ = "Luis Barroso-Luque"
 
 import numpy as np
 from monty.json import MSONable
-from pymatgen import Structure
 from smol.cofe.configspace.clusterspace import ClusterSubspace
 
 
@@ -123,7 +122,7 @@ class ClusterExpansion(MSONable):
         # Update necessary attributes
         ids_compliment = list(set(range(len(self.ecis))) - set(bit_ids))
         self.ecis = self.ecis[ids_compliment]
-        self._eci_orbit_ids = None # reset this
+        self._eci_orbit_ids = None  # reset this
         self._feat_matrix = self._feat_matrix[:, ids_compliment]
 
     # This needs further testing. For out-of-training structures

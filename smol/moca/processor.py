@@ -220,15 +220,6 @@ class CEProcessor(MSONable):
 
         return delta_corr
 
-    @classmethod
-    def from_dict(cls, d):
-        """
-        Creates CEProcessor from serialized MSONable dict
-        """
-        return cls(ClusterExpansion.from_dict(d['cluster_expansion']),
-                   np.array(d['supercell_matrix']),
-                   optimize_indicator=d['indicator'])
-
     def as_dict(self) -> dict:
         """
         Json-serialization dict representation.
@@ -242,6 +233,15 @@ class CEProcessor(MSONable):
              'supercell_matrix': self.supercell_matrix.tolist(),
              'indicator': self.indicator_opt}
         return d
+
+    @classmethod
+    def from_dict(cls, d):
+        """
+        Creates CEProcessor from serialized MSONable dict
+        """
+        return cls(ClusterExpansion.from_dict(d['cluster_expansion']),
+                   np.array(d['supercell_matrix']),
+                   optimize_indicator=d['indicator'])
 
 
 class EwaldCEProcessor(CEProcessor):
@@ -266,7 +266,8 @@ class EwaldCEProcessor(CEProcessor):
                 the indicator optimize function. This can make MC steps faster.
         """
 
-        super().__init__(cluster_expansion, supercell_matrix)
+        super().__init__(cluster_expansion, supercell_matrix,
+                         optimize_indicator)
 
         n_terms = len(cluster_expansion.cluster_subspace.external_terms)
         if n_terms != 1:
@@ -278,16 +279,38 @@ class EwaldCEProcessor(CEProcessor):
             raise TypeError('The external term in the provided '
                             'ClusterExpansion must be an EwaldTerm.')
 
-        # Set up Ewald Summation
+        # Set up ewald structure and indices
         struct, inds = self._ewald_term._get_ewald_structure(self.structure)
-        self._ewald_structure, self._ewald_inds = struct, inds
-        self._ewald = EwaldSummation(struct, self._ewald_term.eta)
+        self._ewald_structure = struct
+        self._ewald_inds = inds
+        # Lazy set up Ewald Summation since it can be slow
+        self.__ewald = None
+        self.__all_ewalds = None
+
+    @property
+    def ewald_summation(self):
+        """A pymatgen EwaldSummation object."""
+        if self.__ewald is None:
+            self.__ewald = EwaldSummation(self._ewald_structure,
+                                          self._ewald_term.eta)
+        return self.__ewald
+
+    @property
+    def ewald_interactions(self):
+        """Electrostatic interaction matrix.
+        For charged cell the interactions assume the system is embedded in a
+        charge compensating background, however the interactions do not include
+        any corrections for the background charge. For more details look at
+        https://doi.org/10.1017/CBO9780511805769.034 (pp. 499–511).
+        """
+        if self.__all_ewalds is None:
+            self.__all_ewalds = self.ewald_summation.total_energy_matrix
         # This line extending the ewald matrix by one dimension is done only
         # to use the original cython delta_ewald function that took additional
         # matrices for partial_ems when using the legacy inv_r=True option
         # This hassle can be removed if the delta_ewald cython function is
         # updated accordingly
-        self._all_ewalds = np.array([self._ewald.total_energy_matrix])
+        return np.array([self.__all_ewalds])
 
     def compute_correlation(self, occu):
         """
@@ -339,7 +362,7 @@ class EwaldCEProcessor(CEProcessor):
                                                       self.n_orbit_functions,
                                                       orbits,
                                                       f[0], f[1],
-                                                      self._all_ewalds,
+                                                      self.ewald_interactions,
                                                       self._ewald_inds,
                                                       self.size)
             occu_i = occu_f
@@ -351,8 +374,25 @@ class EwaldCEProcessor(CEProcessor):
         Computes the normalized by prim electrostatic interaction energy
         """
         num_ewald_sites = len(self._ewald_structure)
-        matrix = self._ewald.total_energy_matrix
+        matrix = self.ewald_summation.total_energy_matrix
         ew_occu = self._ewald_term._get_ewald_occu(occu, num_ewald_sites,
                                                    self._ewald_inds)
         interactions = np.sum(matrix[ew_occu, :][:, ew_occu])
         return interactions/self.size
+
+    # TODO saving ewaldsummation
+    # It would be nice to save the ewaldsummation since creating it again takes
+    # some time....but need pymatgen to be MSONable
+    # def as_dict(self) -> dict:
+    #    d = super().as_dict()
+    #    d['_ewald'] = self.ewald_summation.as_dict()
+
+    #   return d
+
+    # @classmethod
+    # def from_dict(cls, d):
+    #    pr = cls(ClusterExpansion.from_dict(d['cluster_expansion']),
+    #             np.array(d['supercell_matrix']),
+    #             optimize_indicator=d['indicator'])
+    #    pr.__ewald = EwaldSummation.as_dict()  # this is not part of pymatgen!
+    #    # yet....
