@@ -10,6 +10,7 @@ composition for a given set of structures.
 __author__ = "Luis Barroso-Luque"
 __credits__ = "William Davidson Richard"
 
+import warnings
 from collections import defaultdict
 import numpy as np
 from monty.json import MSONable
@@ -319,6 +320,10 @@ class StructureWrangler(MSONable):
             max_ewald (float):
                 Ewald threshold. The maximum Ewald energy, normalized by prim
         """
+        warnings.warn('the filter_by_ewald method is going to be deprecated.\n'
+                      'The functionality will still be available but with '
+                      'a different interface', category=DeprecationWarning,
+                      stacklevel=2)
         ewald_corr = None
         for term in self._subspace.external_terms:
             if isinstance(term, EwaldTerm):
