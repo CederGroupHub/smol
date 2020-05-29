@@ -48,6 +48,17 @@ class TestCanonicalEnsemble(unittest.TestCase):
             self.assertFalse(np.array_equal(self.ensemble.energy_samples,
                              energy*np.ones_like(self.ensemble.energy_samples)))
 
+    def test_restrict_sites(self):
+        restrict = np.random.choice(range(self.ensemble.num_atoms), size=4)
+        current_occu = self.ensemble._occupancy.copy()
+        self.ensemble.restrict_sites(restrict)
+        self.assertEqual(self.ensemble.restricted_sites, list(restrict))
+        self.ensemble.run(1000)
+        self.assertTrue(np.array_equal(current_occu[restrict],
+                                       self.ensemble._occupancy[restrict]))
+        self.ensemble.reset_restricted_sites()
+        self.assertEqual(self.ensemble.restricted_sites, [])
+
     def test_attempt_step(self):
         for _ in range(100):
             occu = self.ensemble.current_occupancy

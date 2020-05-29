@@ -4,6 +4,7 @@ simulations for fixed number of sites and fixed concentration of species.
 
 __author__ = "Luis Barroso-Luque"
 
+from copy import deepcopy
 import random
 import numpy as np
 from monty.json import MSONable
@@ -186,7 +187,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             sublattices = self.sublattices
 
         sublattice_name = random.choice(sublattices)
-        sites = self._sublattices[sublattice_name]['sites']
+        sites = self._active_sublatts[sublattice_name]['sites']
         site1 = random.choice(sites)
         swap_options = [i for i in sites
                         if self._occupancy[i] != self._occupancy[site1]]
@@ -208,6 +209,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
     def as_dict(self) -> dict:
         """
         Json-serialization dict representation.
+        Note this will not save or load any restrictions on active sites.
 
         Returns:
             MSONable dict
@@ -242,6 +244,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         eb._min_energy = d['_min_energy']
         eb._min_occupancy = np.array(d['_min_occupancy'])
         eb._sublattices = d['_sublattices']
+        eb._active_sublatts = deepcopy(d['_sublattices'])
         eb._data = d['_data']
         eb._step = d['_step']
         eb._ssteps = d['_ssteps']

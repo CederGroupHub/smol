@@ -64,12 +64,14 @@ class BaseEnsemble(ABC):
         self.num_atoms = len(initial_occupancy)
         self._prod_start = 0
         self._sublattices = sublattices
+        self._active_sublatts = deepcopy(sublattices)
         self._init_occupancy = initial_occupancy
         self._occupancy = self._init_occupancy.copy()
         self._property = processor.compute_property(self._occupancy)
         self._step = 0
         self._ssteps = 0
         self._data = []
+        self.restricted_sites = []
 
         # Set and save the seed for random. This allows reproducible results.
         if seed is None:
@@ -133,6 +135,31 @@ class BaseEnsemble(ABC):
     @property
     def seed(self):
         return self._seed
+
+    def restrict_sites(self, sites):
+        """
+        Restrict (freeze) the given sites from being flipped during a Monte
+        Carlo run.
+
+        If some of the given indices refer to inactive sites, there will be
+        no effect.
+
+        Args:
+            sites (Sequence):
+                indices of sites in the occupancy string to restrict.
+        """
+
+        for sublatt in self._active_sublatts.values():
+            sublatt['sites'] = np.array([i for i in sublatt['sites']
+                                         if i not in sites])
+        self.restricted_sites += [i for i in sites
+                                  if i not in self.restricted_sites]
+
+    def reset_restricted_sites(self):
+        """Will unfreeze all previously restricted sites."""
+
+        self._active_sublatts = deepcopy(self._sublattices)
+        self.restricted_sites = []
 
     def run(self, iterations, sublattices=None):
         """

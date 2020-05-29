@@ -10,6 +10,7 @@ Two classes are different SGC ensembles implemented:
 __author__ = "Luis Barroso-Luque"
 
 from collections import defaultdict
+from copy import deepcopy
 import random
 from abc import ABCMeta, abstractmethod
 from math import exp
@@ -149,7 +150,7 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
             sublattices = self.sublattices
 
         sublattice_name = random.choice(sublattices)
-        sublattice = self._sublattices[sublattice_name]
+        sublattice = self._active_sublatts[sublattice_name]
         species = tuple(sublattice['domain'].keys())
 
         site = random.choice(sublattice['sites'])
@@ -259,6 +260,8 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
                 ref_mu = mus[0]
                 sublatt['mu'] = {sp: mu - ref_mu for sp, mu
                                  in sublatt['mu'].items()}
+        # recopy active_sublatts to include chem pot info
+        self._active_sublatts = deepcopy(self._sublattices)
 
     @property
     def chemical_potentials(self):
@@ -387,6 +390,9 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
                 ind = [sl.keys() for sl
                        in fugacity_fractions].index(sublatt['domain'].keys())
                 sublatt['domain'] = fugacity_fractions[ind]
+
+        # recopy active_sublatts to include fugacity info
+        self._active_sublatts = deepcopy(self._sublattices)
 
     def _attempt_step(self, sublattices=None):
         """

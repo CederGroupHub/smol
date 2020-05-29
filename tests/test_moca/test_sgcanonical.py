@@ -70,6 +70,17 @@ class TestMuSemiGrandEnsemble(unittest.TestCase):
         for sp, val in actual.items():
             self.assertAlmostEqual(val, expected[sp])
 
+    def test_restrict_sites(self):
+        restrict = np.random.choice(range(self.ensemble.num_atoms), size=4)
+        current_occu = self.ensemble._occupancy.copy()
+        self.ensemble.restrict_sites(restrict)
+        self.assertEqual(self.ensemble.restricted_sites, list(restrict))
+        self.ensemble.run(1000)
+        self.assertTrue(np.array_equal(current_occu[restrict],
+                                       self.ensemble._occupancy[restrict]))
+        self.ensemble.reset_restricted_sites()
+        self.assertEqual(self.ensemble.restricted_sites, [])
+
     def test_bad_species_chem_pots(self):
         chem_pots = {'Blab': -100, 'Cl-': 0}
         self.assertRaises(ValueError, MuSemiGrandEnsemble, self.pr,
@@ -104,7 +115,7 @@ class TestMuSemiGrandEnsemble(unittest.TestCase):
         counts = self.ensemble._get_counts()
         for name, count in counts.items():
             self.assertEqual(sum(count),
-                             len(self.ensemble._sublattices[name]['sites']))
+                             len(self.ensemble._active_sublatts[name]['sites']))
         comps = self.ensemble._get_sublattice_comps()
         for name, comp in comps.items():
             self.assertEqual(sum(c for c in comp.values()), 1.0)
@@ -137,8 +148,8 @@ class TestMuSemiGrandEnsemble(unittest.TestCase):
         s = json.dumps(d, cls=MontyEncoder)
         ensemble1 = json.loads(s, cls=MontyDecoder)
         self.assertEqual(ensemble.as_dict(), d)
-        # TODO without MontyEncoder, fails because something still has an
-        #  numpy array in its as_dict
+        # TODO without MontyEncoder, fails because _sublattices have numpy
+        #  arrays
         # json.dumps(d)
 
 
@@ -199,6 +210,17 @@ class TestFuSemiGrandEnsemble(unittest.TestCase):
         for sp, val in actual.items():
             self.assertAlmostEqual(val, expected[sp], places=1)
 
+    def test_restrict_sites(self):
+        restrict = np.random.choice(range(self.ensemble.num_atoms), size=4)
+        current_occu = self.ensemble._occupancy.copy()
+        self.ensemble.restrict_sites(restrict)
+        self.assertEqual(self.ensemble.restricted_sites, list(restrict))
+        self.ensemble.run(1000)
+        self.assertTrue(np.array_equal(current_occu[restrict],
+                                       self.ensemble._occupancy[restrict]))
+        self.ensemble.reset_restricted_sites()
+        self.assertEqual(self.ensemble.restricted_sites, [])
+
     def test_bad_species_fug_fracts(self):
         fug_fracs = {'Blab': 0.1, 'Cl-': 0.9}
         self.assertRaises(ValueError, FuSemiGrandEnsemble, self.pr,
@@ -233,7 +255,7 @@ class TestFuSemiGrandEnsemble(unittest.TestCase):
         counts = self.ensemble._get_counts()
         for name, count in counts.items():
             self.assertEqual(sum(count),
-                             len(self.ensemble._sublattices[name]['sites']))
+                             len(self.ensemble._active_sublatts[name]['sites']))
         comps = self.ensemble._get_sublattice_comps()
         for name, comp in comps.items():
             self.assertEqual(sum(c for c in comp.values()), 1.0)
@@ -265,6 +287,6 @@ class TestFuSemiGrandEnsemble(unittest.TestCase):
         s = json.dumps(d, cls=MontyEncoder)
         ensemble1 = json.loads(s, cls=MontyDecoder)
         self.assertEqual(ensemble.as_dict(), d)
-        # TODO without MontyEncoder, fails because something still has an
-        #  numpy array in its as_dict
+        # TODO without MontyEncoder, fails because _sublattices have numpy
+        #  arrays
         # json.dumps(d)
