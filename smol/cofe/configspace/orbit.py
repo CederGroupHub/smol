@@ -45,7 +45,7 @@ class Orbit(MSONable):
     def __init__(self, sites, lattice, bits, site_bases, structure_symops):
         """
         Args:
-            sites (list):
+            sites (list or ndarray):
                 list of frac coords for the sites
             lattice (pymatgen.Lattice):
                 A lattice object for the given sites
