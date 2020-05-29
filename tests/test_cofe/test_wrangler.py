@@ -9,17 +9,32 @@ from tests.data import lno_prim, lno_data
 
 
 class TestStructureWrangler(unittest.TestCase):
-    def setUp(self) -> None:
-        self.cs = ClusterSubspace.from_radii(lno_prim, radii={2: 5, 3: 4.1},
-                                             ltol=0.15, stol=0.2,
-                                             angle_tol=5, supercell_size='O2-')
-        self.sw = StructureWrangler(self.cs)
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.cs = ClusterSubspace.from_radii(lno_prim, radii={2: 5, 3: 4.1},
+                                            ltol=0.15, stol=0.2,
+                                            angle_tol=5, supercell_size='O2-')
+        cls.sw = StructureWrangler(cls.cs)
+
+    def setUp(self):
+        self.sw.remove_all_data()
         for struct, energy in lno_data[:-1]:
             self.sw.add_data(struct, {'energy': energy},
-                             weights={'random': 2.0})
+                            weights={'random': 2.0})
         struct, energy = lno_data[-1]
         self.sw.add_data(struct, {'energy': energy}, weights={'random': 3.0})
-        print('TOTAAAAL', len(self.sw.structures))
+
+    def test_properties(self):
+        self.assertEqual(self.sw.feature_matrix.shape,
+                         (self.sw.num_structures, self.cs.n_bit_orderings))
+        self.assertEqual(len(self.sw.occupancy_strings),
+                         self.sw.num_structures)
+        num_prim_sits = len(self.cs.structure)
+        for struct, occu, size in zip(self.sw.structures,
+                                      self.sw.occupancy_strings,
+                                      self.sw.sizes):
+            self.assertTrue(len(struct) <= len(occu))  # < with vacancies
+            self.assertTrue(size*num_prim_sits, len(occu))
 
     def test_add_data(self):
         self.assertTrue(all(w == 2.0 for w in self.sw.get_weights('random')[:-1]))

@@ -345,16 +345,17 @@ class ClusterSubspace(MSONable):
 
     def occupancy_from_structure(self, structure, scmatrix=None,
                                  site_mapping=None, encode=False):
-        """
+        """Occupancy string for a given structure.
+
         Returns a tuple of occupancies of each site in a the structure in the
-        appropriate order set implicitly by the scmatrix that is found
+        appropriate order set implicitly by the supercell matrix that is found.
         This function is useful to obtain an initial occupancy for a Monte
         Carlo simulation (make sure that the same supercell matrix is being
         used here as in the instance of the processor class for the simulation.
 
         Args:
             structure (Structure):
-                structure to obtain a occupancy vector for
+                structure to obtain a occupancy string for
             scmatrix (array): optional
                 Super cell matrix relating the given structure and the
                 primitive structure. I you pass the supercell you fully are
@@ -367,13 +368,13 @@ class ClusterSubspace(MSONable):
                 option you are fully responsible that the mappings are correct!
                 This prevents running _site_matcher to get the mappings.
             encode (bool): oprtional
-                If true the occupancy vector will have the index of the species
+                If true the occupancy string will have the index of the species
                 in the expansion structure site domains, rather than the
                 species name.
 
-        Returns: occupancy vector for structure, species names ie ['Li+', ...]
-                 If encoded then [0, ...]
-            array
+        Returns:
+            list: occupancy string for structure, species names ie ['Li+', ...]
+                  If encoded then code for each species ie [0, ...]
         """
         if scmatrix is None:
             scmatrix = self.scmatrix_from_structure(structure)
@@ -548,6 +549,18 @@ class ClusterSubspace(MSONable):
         """Deep copy of instance."""
         return deepcopy(self)
 
+    def structure_site_mapping(self, supercell, structure):
+        """
+        Returns the mapping between sites in the given structure and a prim
+        supercell of the corresponding size.
+        """
+
+        mapping = self._site_matcher.get_mapping(supercell, structure)
+        if mapping is None:
+            raise StructureMatchError('Mapping could not be found from '
+                                      'structure.')
+        return mapping.tolist()
+
     def _assign_orbit_ids(self):
         """
         Assigns unique id's to each orbit based on all its orbit functions and
@@ -616,18 +629,6 @@ class ClusterSubspace(MSONable):
 
             orbits[size] = sorted(new_orbits, key=lambda x: (np.round(x.radius, 6), -x.multiplicity))  # noqa
         return orbits
-
-    def structure_site_mapping(self, supercell, structure):
-        """
-        Returns the mapping between sites in the given structure and a prim
-        supercell of the corresponding size.
-        """
-
-        mapping = self._site_matcher.get_mapping(supercell, structure)
-        if mapping is None:
-            raise StructureMatchError('Mapping could not be found from '
-                                      'structure.')
-        return mapping.tolist()
 
     def _gen_orbit_indices(self, scmatrix):
         """

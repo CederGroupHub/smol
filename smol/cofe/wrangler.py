@@ -118,16 +118,6 @@ class StructureWrangler(MSONable):
         return [i['ref_structure'] for i in self._items]
 
     @property
-    def supercell_matrices(self):
-        """List of supercell matrices relating each structure to prim."""
-        return np.array([i['scmatrix'] for i in self._items])
-
-    @property
-    def structure_site_mappings(self):
-        """List of site mappings for each structure to prim."""
-        return [i['mapping'] for i in self._items]
-
-    @property
     def feature_matrix(self):
         """Feature matrix. Rows are structures, Columns are correlations."""
         return np.array([i['features'] for i in self._items])
@@ -136,6 +126,25 @@ class StructureWrangler(MSONable):
     def sizes(self):
         """Size of each structure in terms of number of prims."""
         return np.array([i['size'] for i in self._items])
+
+    @property
+    def occupancy_strings(self):
+        """The occupancy string for each of the structures in the wrangler."""
+        occupancies = [self._subspace.occupancy_from_structure(i['structure'],
+                                                               i['scmatrix'],
+                                                               i['mapping'])
+                       for i in self._items]
+        return occupancies
+
+    @property
+    def supercell_matrices(self):
+        """List of supercell matrices relating each structure to prim."""
+        return np.array([i['scmatrix'] for i in self._items])
+
+    @property
+    def structure_site_mappings(self):
+        """List of site mappings for each structure to prim."""
+        return [i['mapping'] for i in self._items]
 
     @property
     def metadata(self):
@@ -154,7 +163,7 @@ class StructureWrangler(MSONable):
         If using verbose, the errors will be printed out.
 
         Args
-            structure (pymatgen.Structure):
+            structure (Structure):
                 A fit structure
             properties (dict):
                 A dictionary with a key describing the property and the target
@@ -319,9 +328,11 @@ class StructureWrangler(MSONable):
             for item in self._items:
                 struct = item['structure']
                 matrix = item['scmatrix']
+                mapp = item['mapping']
                 occu = self._subspace.occupancy_from_structure(struct,
                                                                encode=True,
-                                                               scmatrix=matrix)
+                                                               scmatrix=matrix,
+                                                               site_mapping=mapp)  # noqa
                 supercell = self._subspace.structure.copy()
                 supercell.make_supercell(matrix)
                 size = self._subspace.num_prims_from_matrix(matrix)
