@@ -106,7 +106,7 @@ class TestMuSemiGrandEnsemble(unittest.TestCase):
                 self.assertEqual(energy, self.ensemble.current_energy)
 
     def test_get_flips(self):
-        flip, sublat, sp_old, sp_new = self.ensemble._get_flips()
+        _, sublat, sp_old, sp_new = self.ensemble._get_flips()
         self.assertTrue(sp_old in sublat['domain'])
         self.assertTrue(sp_new in sublat['domain'])
 
@@ -147,7 +147,8 @@ class TestMuSemiGrandEnsemble(unittest.TestCase):
         self.assertEqual(d, ensemble.as_dict())
         s = json.dumps(d, cls=MontyEncoder)
         ensemble1 = json.loads(s, cls=MontyDecoder)
-        self.assertEqual(ensemble.as_dict(), d)
+        # this can be improved failing for full dict due to array comparison
+        self.assertEqual(ensemble1.as_dict()['processor'], d['processor'])
         # TODO without MontyEncoder, fails because _sublattices have numpy
         #  arrays
         # json.dumps(d)

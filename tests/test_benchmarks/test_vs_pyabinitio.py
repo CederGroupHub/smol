@@ -87,7 +87,7 @@ class TestvsPyabinitio(unittest.TestCase):
         sample_interval = 100
         temp = lno_gc_run_10000['temperature']
         for pr in (processor, processor_ind):
-            ens = CanonicalEnsemble(processor_ind, temperature=temp,
+            ens = CanonicalEnsemble(pr, temperature=temp,
                                     sample_interval=sample_interval,
                                     initial_occupancy=init_occu)
             ens.run(iterations)

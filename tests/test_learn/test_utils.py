@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from smol.cofe import ClusterSubspace, StructureWrangler, ClusterExpansion
+from smol.cofe import ClusterSubspace, StructureWrangler
 from smol.cofe.extern import EwaldTerm
 from smol.learn.utils import constrain_dielectric
 from tests.data import lno_prim, lno_data

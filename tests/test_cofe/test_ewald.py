@@ -33,4 +33,4 @@ class TestEwald(unittest.TestCase):
         ew = EwaldTerm(eta=0.15)
         self.assertAlmostEqual(ew.corr_from_occupancy(occu, supercell, 1),
                                EwaldSummation(s, eta=ew.eta).total_energy, places=5)
-        s, i = ew._get_ewald_structure(supercell)
+        _, _ = ew._get_ewald_structure(supercell)

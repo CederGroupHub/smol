@@ -39,4 +39,4 @@ class BaseEstimator(ABC):
     @abstractmethod
     def _solve(self, feature_matrix, target_vector, *args, **kwargs):
         """Solve for the learn coefficients."""
-        pass
+        return

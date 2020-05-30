@@ -36,7 +36,6 @@ class WDRLasso(BaseEstimator):
 
         # Maybe its cleaner to use importlib to try and import these?
         solvers.options['show_progress'] = False
-        from cvxopt import matrix
 
         X1 = matrix(feature_matrix)
         b = matrix(target_vector * mu)

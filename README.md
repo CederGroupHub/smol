@@ -9,13 +9,15 @@ for statistical mechanical calculations of configurational states for
 crystalline material systems.
 
 ### Installing & Running
-1. `Clone` the repository.
-    * The `master` branch is the stable version of the code. The `develop`
+1.  `Clone` the repository.
+    -   The `master` branch is the stable version of the code. The `develop`
     branch has the newest tested version, but may have more lingering bugs.
-2. Go to the top level directory of the cloned repo and type:
+
+2.  Go to the top level directory of the cloned repo and type:
 
         pip install .
-3. See the [example notebooks](https://github.com/CederGroupHub/smol/tree/master/examples)
+
+3.  See the [example notebooks](https://github.com/CederGroupHub/smol/tree/master/examples)
 to help you get started.
 
 ### Contributing & Developing
@@ -33,5 +35,5 @@ See the contributing
 
 #### Credits
 Feel free to add yourself here for your contributions :)
-*   Will Richards - A good amount of the Cluster Expansion code is based on Will's cluster expansion module in the pyabinitio repository.
-*   Daniil Kitcheav - The pyabinitio benchark test data and the LNO example data was computed by Daniil.
+-   Will Richards - A good amount of the Cluster Expansion code is based on Will's cluster expansion module in the pyabinitio repository.
+-   Daniil Kitcheav - The pyabinitio benchark test data and the LNO example data was computed by Daniil.

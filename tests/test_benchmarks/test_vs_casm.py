@@ -28,10 +28,10 @@ class TestvsCASM(unittest.TestCase):
                                       ltol=0.1, stol=0.1, angle_tol=5)
 
         # create the StructureWrangler
-        cls.sw = wrangler = StructureWrangler(cls.cs)
+        cls.sw = StructureWrangler(cls.cs)
         # cheat adding the data to make things quicker
         cls.sw._items += fit_items
-        
+
     def test_subspace(self):
         orbits_by_size = self.fit_data['orbits_by_size']
         self.assertEqual(len(self.fit_data['ecis']), self.cs.n_bit_orderings)

@@ -128,12 +128,12 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
                      for comps in self.sublattice_composition_samples)
 
     @abstractmethod
-    def _attempt_step(self, sublattices):
+    def _attempt_step(self, sublattices=None):
         """
         Attempts a MC step and returns 0, 1 based on whether the step was
         accepted or not.
         """
-        pass
+        return
 
     def _get_flips(self, sublattices=None):
         """

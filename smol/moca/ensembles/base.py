@@ -216,7 +216,7 @@ class BaseEnsemble(ABC):
         Attempts a MC step and returns 0, 1 based on whether the step was
         accepted or not.
         """
-        pass
+        return
 
     def _get_current_data(self):
         """
@@ -226,7 +226,7 @@ class BaseEnsemble(ABC):
         Returns: ensembles data
             dict
         """
-        return {}
+        return {'occupancy': self.current_occupancy}
 
     @staticmethod
     def _accept(delta_e, beta=1.0):

@@ -203,8 +203,9 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         """
         Get ensemble specific data for current MC step
         """
-        return {'energy': self.current_energy,
-                'occupancy': self.current_occupancy}
+        data = super()._get_current_data()
+        data['energy'] = self.current_energy
+        return data
 
     def as_dict(self) -> dict:
         """
