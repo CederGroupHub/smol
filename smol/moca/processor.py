@@ -11,6 +11,7 @@ interaction energy.
 
 __author__ = "Luis Barroso-Luque"
 
+from abc import ABCMeta, abstractmethod
 import numpy as np
 from collections import defaultdict, OrderedDict
 from monty.json import MSONable
@@ -24,7 +25,54 @@ from src.ce_utils import (corr_from_occupancy, general_delta_corr_single_flip,
                           indicator_delta_corr_single_flip)
 
 
-class CEProcessor(MSONable):
+class BaseProcessor(MSONable, metaclass=ABCMeta):
+    """Abstract base class for processors.
+    A processor is used to provide a quick way to calculated energy differences
+    (probability ratio's) between two adjacent configurational states.
+    """
+
+    @abstractmethod
+    def compute_property_change(self, occu, flips):
+        """
+        Computes the change of a property between the given occupancy and
+        the occupancy with the given set of flips applied.
+        Args:
+            occu (array):
+                encoded occupancy array
+            flips (list):
+                list of tuples for (index of site, specie code to set)
+
+        Returns:
+            float: property difference between inital and final states
+        """
+        return
+
+    def as_dict(self) -> dict:
+        """
+        Json-serialization dict representation.
+
+        Returns:
+            MSONable dict
+        """
+        d = {'@module': self.__class__.__module__,
+             '@class': self.__class__.__name__}
+        return d
+
+    @classmethod
+    def from_dict(cls, d):
+        """
+        Creates CEProcessor from serialized MSONable dict
+        """
+        # is this good design?
+        try:
+            for derived in cls.__subclasses__():
+                if derived.__name__ == d['@class']:
+                    return derived.from_dict(d)
+        except KeyError:
+            raise NameError(f"Unable to instantiate {d['@class']}.")
+
+
+class CEProcessor(BaseProcessor):
     """
     A processor allows an ensemble class to generate a Markov chain
     for sampling thermodynamic properties from a cluster expansion
@@ -103,8 +151,8 @@ class CEProcessor(MSONable):
         Args:
             occu (array):
                 encoded occupancy array
-        Returns: predicted property
-            float
+        Returns:
+            float: predicted property
         """
         return np.dot(self.compute_correlation(occu), self.ecis) * self.size
 
@@ -119,7 +167,7 @@ class CEProcessor(MSONable):
                 list of tuples for (index of site, specie code to set)
 
         Returns:
-            float
+            float:  property difference between inital and final states
         """
         return np.dot(self.delta_corr(flips, occu), self.ecis) * self.size
 
@@ -244,7 +292,7 @@ class CEProcessor(MSONable):
                    optimize_indicator=d['indicator'])
 
 
-class EwaldCEProcessor(CEProcessor):
+class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
     """
     A subclass of the CEProcessor class that handles changes for the
     electrostatic interaction energy in an additional Ewald Summation term.

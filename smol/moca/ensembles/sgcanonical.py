@@ -15,7 +15,7 @@ import random
 from abc import ABCMeta, abstractmethod
 from math import exp
 import numpy as np
-from smol.moca.processor import CEProcessor
+from smol.moca.processor import BaseProcessor
 from smol.moca.ensembles.canonical import CanonicalEnsemble
 
 
@@ -314,16 +314,19 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
         """
         Creates a CanonicalEnsemble from MSONable dict representation.
         """
-        eb = cls(CEProcessor.from_dict(d['processor']),
+        eb = cls(BaseProcessor.from_dict(d['processor']),
                  temperature=d['temperature'],
                  chemical_potentials=d['chem_pots'],
                  sample_interval=d['sample_interval'],
                  initial_occupancy=d['initial_occupancy'],
                  seed=d['seed'])
+
         eb._min_energy = d['_min_energy']
         eb._min_occupancy = np.array(d['_min_occupancy'])
         eb._sublattices = d['_sublattices']
-        eb._data = d['_data']
+        eb._active_sublatts = d['_active_sublatts']
+        eb.restricted_sites = d['restricted_sites']
+        eb._data = d['data']
         eb._step = d['_step']
         eb._ssteps = d['_ssteps']
         eb._property = d['_energy']
@@ -369,6 +372,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
                          initial_occupancy=initial_occupancy,
                          seed=seed)
 
+        # TODO remove option to pass fugacity fractions, always use the prim
         if fugacity_fractions is not None:
             # check that species are valid
             species = [sp for sps in processor.unique_site_domains
@@ -434,22 +438,12 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
         condition = ratio*exp(-beta*delta_e)
         return True if condition >= 1 else condition >= random.random()
 
-    def as_dict(self) -> dict:
-        """
-        Json-serialization dict representation.
-
-        Returns:
-            MSONable dict
-        """
-        d = super().as_dict()
-        return d
-
     @classmethod
     def from_dict(cls, d):
         """
         Creates a CanonicalEnsemble from MSONable dict representation.
         """
-        eb = cls(CEProcessor.from_dict(d['processor']),
+        eb = cls(BaseProcessor.from_dict(d['processor']),
                  temperature=d['temperature'],
                  sample_interval=d['sample_interval'],
                  initial_occupancy=d['initial_occupancy'],
@@ -457,7 +451,9 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
         eb._min_energy = d['_min_energy']
         eb._min_occupancy = np.array(d['_min_occupancy'])
         eb._sublattices = d['_sublattices']
-        eb._data = d['_data']
+        eb._active_sublatts = d['_active_sublatts']
+        eb.restricted_sites = d['restricted_sites']
+        eb._data = d['data']
         eb._step = d['_step']
         eb._ssteps = d['_ssteps']
         eb._property = d['_energy']

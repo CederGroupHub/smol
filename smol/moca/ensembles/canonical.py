@@ -4,12 +4,11 @@ simulations for fixed number of sites and fixed concentration of species.
 
 __author__ = "Luis Barroso-Luque"
 
-from copy import deepcopy
 import random
 import numpy as np
 from monty.json import MSONable
 from smol.moca.ensembles.base import BaseEnsemble
-from smol.moca.processor import CEProcessor
+from smol.moca.processor import BaseProcessor
 from smol.globals import kB
 
 
@@ -70,7 +69,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
     @property
     def energy_samples(self):
         return np.array([d['energy'] for d
-                         in self.data[self.production_start:]])
+                         in self.data[self._prod_start:]])
 
     @property
     def minimum_energy(self):
@@ -225,7 +224,9 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
              '_min_energy': self.minimum_energy,
              '_min_occupancy': self._min_occupancy.tolist(),
              '_sublattices': self._sublattices,
-             '_data': self.data,
+             '_active_sublatts': self._active_sublatts,
+             'restricted_sites': self.restricted_sites,
+             'data': self.data,
              '_step': self.current_step,
              '_ssteps': self.accepted_steps,
              '_energy': self.current_energy,
@@ -237,7 +238,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         """
         Creates a CanonicalEnsemble from MSONable dict representation.
         """
-        eb = cls(CEProcessor.from_dict(d['processor']),
+        eb = cls(BaseProcessor.from_dict(d['processor']),
                  temperature=d['temperature'],
                  sample_interval=d['sample_interval'],
                  initial_occupancy=d['initial_occupancy'],
@@ -245,8 +246,9 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         eb._min_energy = d['_min_energy']
         eb._min_occupancy = np.array(d['_min_occupancy'])
         eb._sublattices = d['_sublattices']
-        eb._active_sublatts = deepcopy(d['_sublattices'])
-        eb._data = d['_data']
+        eb._active_sublatts = d['_active_sublatts']
+        eb.restricted_sites = d['restricted_sites']
+        eb._data = d['data']
         eb._step = d['_step']
         eb._ssteps = d['_ssteps']
         eb._property = d['_energy']

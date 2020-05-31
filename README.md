@@ -1,5 +1,7 @@
-# SMoL
-## Statistical Mechanics on Lattices
+#  smol
+
+### Statistical Mechanics on Lattices
+
 ![CircleCI](https://img.shields.io/circleci/build/gh/CederGroupHub/smol/master?logo=circleci&style=for-the-badge&token=96d0d7a959e1e12044ff45daa43218ae7fa4303e)
 ![Codacy Badge](https://img.shields.io/codacy/coverage/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge)
 ![Codacy Badge](https://img.shields.io/codacy/grade/f6180b5223f346d2ac9dcf9a4bcc62d9?style=for-the-badge)
@@ -8,7 +10,7 @@ Lighthweight but caffeinated Python implementations of computational methods
 for statistical mechanical calculations of configurational states for
 crystalline material systems.
 
-### Installing & Running
+#### Installing & Running
 1.  `Clone` the repository.
     -   The `master` branch is the stable version of the code. The `develop`
     branch has the newest tested version, but may have more lingering bugs.
@@ -20,7 +22,7 @@ crystalline material systems.
 3.  See the [example notebooks](https://github.com/CederGroupHub/smol/tree/master/examples)
 to help you get started.
 
-### Contributing & Developing
+#### Contributing & Developing
 Please consider contributing even the smallest idea.
 The very best software comes from collaborative efforts.
 

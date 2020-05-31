@@ -62,12 +62,13 @@ class BaseEnsemble(ABC):
         self.processor = processor
         self.sample_interval = sample_interval
         self.num_atoms = len(initial_occupancy)
-        self._prod_start = 0
+
         self._sublattices = sublattices
         self._active_sublatts = deepcopy(sublattices)
         self._init_occupancy = initial_occupancy
         self._occupancy = self._init_occupancy.copy()
         self._property = processor.compute_property(self._occupancy)
+        self._prod_start = 0
         self._step = 0
         self._ssteps = 0
         self._data = []
