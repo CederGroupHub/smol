@@ -1,10 +1,11 @@
-"""
-Implementation of the Cluster class, which represents a group of sites of a
-given lattice. Aka the building blocks for a cluster basis of functions over
-configurational space
+"""Implementation of the Cluster class.
+
+Represents a group of sites of a given lattice. These are the building blocks
+for a cluster basis of functions over configurational space.
 """
 
-from __future__ import division
+__author__ = "Luis Barroso-Luque, William Davidson Richard"
+
 import numpy as np
 from monty.json import MSONable
 from pymatgen.util.coord import is_coord_subset
@@ -14,8 +15,20 @@ from smol.cofe.configspace.utils import SITE_TOL, _repr
 
 
 class Cluster(MSONable):
-    """
-    An undecorated (no occupancies) cluster
+    """An undecorated (no occupancies) cluster.
+
+    Represented simply by a list of sites, its centroid, and the underlying
+    lattice.
+
+    You probably never need to instantiate this class directly. Look at
+    ClusterSubspace to create orbits and clusters necessary for a CE.
+
+    Attributes:
+        sites (list): list of fractional coordinates of each site.
+        lattice (Lattice): underlying lattice of cluster.
+        centroid (float): goemetric centroid of included sites.
+        id (int): id of cluster.
+            Used to identify the cluster in a given ClusterSubspace.
     """
 
     def __init__(self, sites, lattice):
@@ -23,7 +36,7 @@ class Cluster(MSONable):
         Args:
             sites (list):
                 list of frac coords for the sites
-            lattice (pymatgen.Lattice):
+            lattice (Lattice):
                 pymatgen Lattice object
         """
         sites = np.array(sites)
@@ -40,31 +53,37 @@ class Cluster(MSONable):
 
     @property
     def size(self):
+        """Number of sites in the cluster."""
         return len(self.sites)
 
     @property
     def radius(self):
+        """Maximum distance between 2 sites in cluster."""
+        # Maybe rename to diameter?
         coords = self.lattice.get_cartesian_coords(self.sites)
         all_d2 = np.sum((coords[None, :, :] - coords[:, None, :])**2, axis=-1)
         return np.max(all_d2) ** 0.5
 
-    def assign_ids(self, id):
+    def assign_ids(self, cluster_id):
         """
         Method to recursively assign ids to clusters after initialization.
         """
-        self.id = id
-        return id + 1
+        self.id = cluster_id
+        return cluster_id + 1
 
     def __eq__(self, other):
+        """Check equivalency of clusters considering symmetry."""
         if self.sites.shape != other.sites.shape:
             return False
         othersites = other.sites + np.round(self.centroid - other.centroid)
         return is_coord_subset(self.sites, othersites, atol=SITE_TOL)
 
     def __neq__(self, other):
+        """Non equivalency."""
         return not self.__eq__(other)
 
     def __str__(self):
+        """Pretty print a cluster."""
         points = str(np.round(self.sites, 2))
         points = points.replace('\n', ' ').ljust(len(self.sites)*21)
         centroid = str(np.round(self.centroid, 2))
@@ -72,6 +91,7 @@ class Cluster(MSONable):
                 f'Centroid: {centroid:<18} Points: {points}')
 
     def __repr__(self):
+        """Pretty representation."""
         return _repr(self, c_id=self.id, radius=self.radius,
                      centroid=self.centroid, lattice=self.lattice)
 
@@ -84,7 +104,7 @@ class Cluster(MSONable):
 
     def as_dict(self):
         """
-        Json-serialization dict representation
+        Json-serialization dict representation.
 
         Returns:
             MSONable dict

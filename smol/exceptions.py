@@ -1,5 +1,5 @@
 """
-Definitions of specific exceptions raised elsewhere in module
+Definitions of specific exceptions raised elsewhere in module,
 """
 
 
@@ -13,7 +13,7 @@ SYMMETRY_ERROR_MESSAGE = ("Error in calculating symmetry operations."
 
 class NotFittedError(ValueError, AttributeError):
     """
-    Exception class to raise if regression is used before fitting.
+    Exception class to raise if learn is used before fitting.
     This class inherits from both ValueError and AttributeError to help with
     exception handling and backward compatibility.
     """
@@ -23,13 +23,13 @@ class NotFittedError(ValueError, AttributeError):
 class SymmetryError(ValueError):
     """
     Exception class to raise when symmetry of a structure are not compatible
-    with a set of given symops
+    with a set of given symops.
     """
     pass
 
 
 class StructureMatchError(RuntimeError):
     """
-    Raised when a pymatgen StructureMatcher returns None
+    Raised when a pymatgen StructureMatcher returns None.
     """
     pass

@@ -1,4 +1,5 @@
 import unittest
+import json
 from itertools import combinations
 import numpy as np
 from pymatgen import Structure, Lattice
@@ -34,7 +35,7 @@ class TestCluster(unittest.TestCase):
         self.assertEqual(self.cluster.radius, radius)
 
     def test_periodicity(self):
-        """Test periodicity of clusters"""
+        """Test periodicity of clusters."""
         c1 = np.array([0.25, 0.25, 0.25])
         c2 = np.array([0.75, 0.75, -1.25])
         c3 = np.array([0.75, 0.75, 0.75])
@@ -44,7 +45,7 @@ class TestCluster(unittest.TestCase):
         self.assertEqual(clust1, clust2)
 
     def test_edge_case(self):
-        """Test edge case handling"""
+        """Test edge case handling."""
         c1 = np.array([0.25, 0.25, 0.25])
         c2 = np.array([0, 0, 1])
         c3 = np.array([0.25, 1.25, -0.75])
@@ -62,4 +63,6 @@ class TestCluster(unittest.TestCase):
     def test_msonable(self):
         d = self.cluster.as_dict()
         self.assertEqual(self.cluster, Cluster.from_dict(d))
+        j = json.dumps(d)
+        json.loads(j)
 

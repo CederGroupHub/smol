@@ -1,13 +1,14 @@
-"""
-Implementation of a Canonical Ensemble Class for running Monte Carlo
+"""Implementation of a Canonical Ensemble Class for running Monte Carlo
 simulations for fixed number of sites and fixed concentration of species.
 """
+
+__author__ = "Luis Barroso-Luque"
 
 import random
 import numpy as np
 from monty.json import MSONable
 from smol.moca.ensembles.base import BaseEnsemble
-from smol.moca.processor import CEProcessor
+from smol.moca.processor import BaseProcessor
 from smol.globals import kB
 
 
@@ -16,26 +17,26 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
     A Canonical Ensemble class to run Monte Carlo Simulations
     """
 
-    def __init__(self, processor, temperature, save_interval,
-                 initial_occupancy=None, seed=None):
+    def __init__(self, processor, temperature, sample_interval,
+                 initial_occupancy, seed=None):
         """
         Args:
-            processor (Processor Class):
+            processor (Processor):
                 A processor that can compute the change in a property given
                 a set of flips.
             temperature (float):
                 Temperature of ensemble
-            save_interval (int):
-                interval of steps to save the current occupancy and property
-            inital_occupancy (array):
-                Initial occupancy vector. If none is given then a random one
-                will be used.
+            sample_interval (int):
+                Interval of steps to save the current occupancy and property
+            initial_occupancy (ndarray or list):
+                Initial occupancy vector. The occupancy can be encoded
+                according to the processor or the species names directly.
             seed (int):
-                seed for random number generator
+                Seed for random number generator.
         """
 
         super().__init__(processor, initial_occupancy=initial_occupancy,
-                         save_interval=save_interval, seed=seed)
+                         sample_interval=sample_interval, seed=seed)
         self.temperature = temperature
         self._min_energy = self._property
         self._min_occupancy = self._init_occupancy
@@ -68,7 +69,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
     @property
     def energy_samples(self):
         return np.array([d['energy'] for d
-                         in self.data[self.production_start:]])
+                         in self.data[self._prod_start:]])
 
     @property
     def minimum_energy(self):
@@ -108,7 +109,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
            tuple
         """
         if start_temperature < self.temperature:
-            raise ValueError(f'End temperature is greater than start '
+            raise ValueError('End temperature is greater than start '
                              f'temperature {self.temperature} > '
                              f'{start_temperature}.')
         if cool_function is None:
@@ -143,18 +144,20 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         self._min_energy = self.processor.compute_property(self._occupancy)
         self._min_occupancy = self._occupancy
 
-    def _attempt_step(self, sublattice_name=None):
+    def _attempt_step(self, sublattices=None):
         """
-        Attempts flips corresponding to a canonical swap
+        Attempts flips corresponding to an elementary canonical swap.
+        Will pick a sublattice at random and then a canonical swap at random
+        from that sublattice.
 
         Args:
-            sublattice_name (str): optional
+            sublattices (list of str): optional
                 If only considering one sublattice.
 
         Returns: Flip acceptance
             bool
         """
-        flips = self._get_flips(sublattice_name)
+        flips = self._get_flips(sublattices)
         delta_e = self.processor.compute_property_change(self._occupancy,
                                                          flips)
         accept = self._accept(delta_e, self.beta)
@@ -169,20 +172,21 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
 
         return accept
 
-    def _get_flips(self, sublattice_name=None):
+    def _get_flips(self, sublattices=None):
         """
-        Gets a possible canonical flip. A swap between two sites
+        Gets a possible canonical flip. A swap between two sites.
 
         Args:
-            sublattice_name (str): optional
+            sublattices (list of str): optional
                 If only considering one sublattice.
         Returns:
             tuple
         """
-        if sublattice_name is None:
-            sublattice_name = random.choice(list(self._sublattices.keys()))
+        if sublattices is None:
+            sublattices = self.sublattices
 
-        sites = self._sublattices[sublattice_name]['sites']
+        sublattice_name = random.choice(sublattices)
+        sites = self._active_sublatts[sublattice_name]['sites']
         site1 = random.choice(sites)
         swap_options = [i for i in sites
                         if self._occupancy[i] != self._occupancy[site1]]
@@ -191,18 +195,21 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             return ((site1, self._occupancy[site2]),
                     (site2, self._occupancy[site1]))
         else:
-            # inefficient, maybe re-call method?
+            # inefficient, maybe re-call method? infinite recursion problem
             return tuple()
 
     def _get_current_data(self):
         """
         Get ensemble specific data for current MC step
         """
-        return {'energy': self.current_energy, 'occupancy': self.occupancy}
+        data = super()._get_current_data()
+        data['energy'] = self.current_energy
+        return data
 
     def as_dict(self) -> dict:
         """
-        Json-serialization dict representation
+        Json-serialization dict representation.
+        Note this will not save or load any restrictions on active sites.
 
         Returns:
             MSONable dict
@@ -211,13 +218,15 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
              '@class': self.__class__.__name__,
              'processor': self.processor.as_dict(),
              'temperature': self.temperature,
-             'save_interval': self.save_interval,
-             'initial_occupancy': self.occupancy,
+             'sample_interval': self.sample_interval,
+             'initial_occupancy': self.current_occupancy,
              'seed': self.seed,
              '_min_energy': self.minimum_energy,
              '_min_occupancy': self._min_occupancy.tolist(),
              '_sublattices': self._sublattices,
-             '_data': self.data,
+             '_active_sublatts': self._active_sublatts,
+             'restricted_sites': self.restricted_sites,
+             'data': self.data,
              '_step': self.current_step,
              '_ssteps': self.accepted_steps,
              '_energy': self.current_energy,
@@ -227,17 +236,19 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
     @classmethod
     def from_dict(cls, d):
         """
-        Creates a CanonicalEnsemble from MSONable dict representation
+        Creates a CanonicalEnsemble from MSONable dict representation.
         """
-        eb = cls(CEProcessor.from_dict(d['processor']),
+        eb = cls(BaseProcessor.from_dict(d['processor']),
                  temperature=d['temperature'],
-                 save_interval=d['save_interval'],
+                 sample_interval=d['sample_interval'],
                  initial_occupancy=d['initial_occupancy'],
                  seed=d['seed'])
         eb._min_energy = d['_min_energy']
         eb._min_occupancy = np.array(d['_min_occupancy'])
         eb._sublattices = d['_sublattices']
-        eb._data = d['_data']
+        eb._active_sublatts = d['_active_sublatts']
+        eb.restricted_sites = d['restricted_sites']
+        eb._data = d['data']
         eb._step = d['_step']
         eb._ssteps = d['_ssteps']
         eb._property = d['_energy']
