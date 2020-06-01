@@ -55,6 +55,11 @@ with the stability of the code.
 
         -   New tests should be put in the `/tests/` directory, and follow standard
         Python `unittest` naming.
+    -   You should also check your code conforms with standard python style by
+        installing `flake8` (use pip). Then from the top level directory,
+        
+                flake8 smol
+        
     -   You are also encouraged to start a pull request before you're fully done
     with your work when you want others to see what you are doing and possibly
     get feedback or comments. If you open a pull request that is a work in
