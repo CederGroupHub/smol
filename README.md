@@ -33,7 +33,8 @@ If you have lovely bits of code you want to contribute then please fork + pull
 request [github-flow](https://guides.github.com/introduction/flow/) or
 [git-flow](https://nvie.com/posts/a-successful-git-branching-model/) style.
 See the contributing
-[file](https://github.com/CederGroupHub/smol/CONTRIBUTING.md) for further information.
+[file](https://github.com/CederGroupHub/smol/blob/master/CONTRIBUTING.md) for
+further information.
 
 #### Credits
 Feel free to add yourself here for your contributions :)
