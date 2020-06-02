@@ -2239,6 +2239,7 @@ static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_mode[] = "mode";
 static const char __pyx_k_name[] = "name";
 static const char __pyx_k_ndim[] = "ndim";
+static const char __pyx_k_o_id[] = "o_id";
 static const char __pyx_k_occu[] = "occu";
 static const char __pyx_k_pack[] = "pack";
 static const char __pyx_k_size[] = "size";
@@ -2438,6 +2439,7 @@ static PyObject *__pyx_n_s_numpy;
 static PyObject *__pyx_kp_s_numpy_core_multiarray_failed_to;
 static PyObject *__pyx_kp_s_numpy_core_umath_failed_to_impor;
 static PyObject *__pyx_n_s_o;
+static PyObject *__pyx_n_s_o_id;
 static PyObject *__pyx_n_s_o_view;
 static PyObject *__pyx_n_s_obj;
 static PyObject *__pyx_n_s_occu;
@@ -2674,7 +2676,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_corr_from_occupancy(CYTHON_UNUSED PyObj
   int __pyx_v_I;
   int __pyx_v_J;
   int __pyx_v_K;
-  int __pyx_v_id;
+  int __pyx_v_o_id;
   int __pyx_v_n;
   double __pyx_v_p;
   double __pyx_v_pi;
@@ -2773,7 +2775,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_corr_from_occupancy(CYTHON_UNUSED PyObj
  *     cdef np.float_t[:] o_view = out
  *     o_view[0] = 1  # empty cluster             # <<<<<<<<<<<<<<
  * 
- *     for id, combos, bases, inds in orbit_list:
+ *     for o_id, combos, bases, inds in orbit_list:
  */
   __pyx_t_6 = 0;
   *((__pyx_t_5numpy_float_t *) ( /* dim=0 */ (__pyx_v_o_view.data + __pyx_t_6 * __pyx_v_o_view.strides[0]) )) = 1.0;
@@ -2781,7 +2783,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_corr_from_occupancy(CYTHON_UNUSED PyObj
   /* "src/ce_utils.pyx":42
  *     o_view[0] = 1  # empty cluster
  * 
- *     for id, combos, bases, inds in orbit_list:             # <<<<<<<<<<<<<<
+ *     for o_id, combos, bases, inds in orbit_list:             # <<<<<<<<<<<<<<
  *         I = inds.shape[0] # cluster index
  *         K = inds.shape[1] # index within cluster
  */
@@ -2889,7 +2891,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_corr_from_occupancy(CYTHON_UNUSED PyObj
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     __pyx_t_15 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_nn___pyx_t_5numpy_int_t__const__(__pyx_t_10, 0); if (unlikely(!__pyx_t_15.memview)) __PYX_ERR(0, 42, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __pyx_v_id = __pyx_t_13;
+    __pyx_v_o_id = __pyx_t_13;
     __Pyx_XDECREF_SET(__pyx_v_combos, __pyx_t_4);
     __pyx_t_4 = 0;
     __PYX_XDEC_MEMVIEW(&__pyx_v_bases, 1);
@@ -2903,18 +2905,18 @@ static PyObject *__pyx_pf_3src_8ce_utils_corr_from_occupancy(CYTHON_UNUSED PyObj
 
     /* "src/ce_utils.pyx":43
  * 
- *     for id, combos, bases, inds in orbit_list:
+ *     for o_id, combos, bases, inds in orbit_list:
  *         I = inds.shape[0] # cluster index             # <<<<<<<<<<<<<<
  *         K = inds.shape[1] # index within cluster
- *         n = id
+ *         n = o_id
  */
     __pyx_v_I = (__pyx_v_inds.shape[0]);
 
     /* "src/ce_utils.pyx":44
- *     for id, combos, bases, inds in orbit_list:
+ *     for o_id, combos, bases, inds in orbit_list:
  *         I = inds.shape[0] # cluster index
  *         K = inds.shape[1] # index within cluster             # <<<<<<<<<<<<<<
- *         n = id
+ *         n = o_id
  *         for bits in combos:
  */
     __pyx_v_K = (__pyx_v_inds.shape[1]);
@@ -2922,15 +2924,15 @@ static PyObject *__pyx_pf_3src_8ce_utils_corr_from_occupancy(CYTHON_UNUSED PyObj
     /* "src/ce_utils.pyx":45
  *         I = inds.shape[0] # cluster index
  *         K = inds.shape[1] # index within cluster
- *         n = id             # <<<<<<<<<<<<<<
+ *         n = o_id             # <<<<<<<<<<<<<<
  *         for bits in combos:
  *             J = bits.shape[0]
  */
-    __pyx_v_n = __pyx_v_id;
+    __pyx_v_n = __pyx_v_o_id;
 
     /* "src/ce_utils.pyx":46
  *         K = inds.shape[1] # index within cluster
- *         n = id
+ *         n = o_id
  *         for bits in combos:             # <<<<<<<<<<<<<<
  *             J = bits.shape[0]
  *             p = 0
@@ -2982,7 +2984,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_corr_from_occupancy(CYTHON_UNUSED PyObj
       __pyx_t_18.data = NULL;
 
       /* "src/ce_utils.pyx":47
- *         n = id
+ *         n = o_id
  *         for bits in combos:
  *             J = bits.shape[0]             # <<<<<<<<<<<<<<
  *             p = 0
@@ -3094,7 +3096,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_corr_from_occupancy(CYTHON_UNUSED PyObj
 
       /* "src/ce_utils.pyx":46
  *         K = inds.shape[1] # index within cluster
- *         n = id
+ *         n = o_id
  *         for bits in combos:             # <<<<<<<<<<<<<<
  *             J = bits.shape[0]
  *             p = 0
@@ -3105,7 +3107,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_corr_from_occupancy(CYTHON_UNUSED PyObj
     /* "src/ce_utils.pyx":42
  *     o_view[0] = 1  # empty cluster
  * 
- *     for id, combos, bases, inds in orbit_list:             # <<<<<<<<<<<<<<
+ *     for o_id, combos, bases, inds in orbit_list:             # <<<<<<<<<<<<<<
  *         I = inds.shape[0] # cluster index
  *         K = inds.shape[1] # index within cluster
  */
@@ -3260,7 +3262,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_2general_delta_corr_single_flip(CYTHON_
   int __pyx_v_I;
   int __pyx_v_J;
   int __pyx_v_K;
-  int __pyx_v_id;
+  int __pyx_v_o_id;
   int __pyx_v_n;
   double __pyx_v_p;
   double __pyx_v_pi;
@@ -3358,7 +3360,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_2general_delta_corr_single_flip(CYTHON_
  *     out = np.zeros(n_bit_orderings)
  *     cdef np.float_t[:] o_view = out             # <<<<<<<<<<<<<<
  * 
- *     for id, r, combos, bases, inds in site_orbit_list:
+ *     for o_id, r, combos, bases, inds in site_orbit_list:
  */
   __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_5numpy_float_t(__pyx_v_out, PyBUF_WRITABLE); if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 93, __pyx_L1_error)
   __pyx_v_o_view = __pyx_t_5;
@@ -3368,7 +3370,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_2general_delta_corr_single_flip(CYTHON_
   /* "src/ce_utils.pyx":95
  *     cdef np.float_t[:] o_view = out
  * 
- *     for id, r, combos, bases, inds in site_orbit_list:             # <<<<<<<<<<<<<<
+ *     for o_id, r, combos, bases, inds in site_orbit_list:             # <<<<<<<<<<<<<<
  *         I = inds.shape[0] # cluster index
  *         K = inds.shape[1] # index within cluster
  */
@@ -3481,7 +3483,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_2general_delta_corr_single_flip(CYTHON_
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     __pyx_t_16 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_nn___pyx_t_5numpy_int_t__const__(__pyx_t_10, 0); if (unlikely(!__pyx_t_16.memview)) __PYX_ERR(0, 95, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __pyx_v_id = __pyx_t_13;
+    __pyx_v_o_id = __pyx_t_13;
     __pyx_v_r = __pyx_t_14;
     __Pyx_XDECREF_SET(__pyx_v_combos, __pyx_t_8);
     __pyx_t_8 = 0;
@@ -3496,18 +3498,18 @@ static PyObject *__pyx_pf_3src_8ce_utils_2general_delta_corr_single_flip(CYTHON_
 
     /* "src/ce_utils.pyx":96
  * 
- *     for id, r, combos, bases, inds in site_orbit_list:
+ *     for o_id, r, combos, bases, inds in site_orbit_list:
  *         I = inds.shape[0] # cluster index             # <<<<<<<<<<<<<<
  *         K = inds.shape[1] # index within cluster
- *         n = id
+ *         n = o_id
  */
     __pyx_v_I = (__pyx_v_inds.shape[0]);
 
     /* "src/ce_utils.pyx":97
- *     for id, r, combos, bases, inds in site_orbit_list:
+ *     for o_id, r, combos, bases, inds in site_orbit_list:
  *         I = inds.shape[0] # cluster index
  *         K = inds.shape[1] # index within cluster             # <<<<<<<<<<<<<<
- *         n = id
+ *         n = o_id
  *         for bits in combos:
  */
     __pyx_v_K = (__pyx_v_inds.shape[1]);
@@ -3515,15 +3517,15 @@ static PyObject *__pyx_pf_3src_8ce_utils_2general_delta_corr_single_flip(CYTHON_
     /* "src/ce_utils.pyx":98
  *         I = inds.shape[0] # cluster index
  *         K = inds.shape[1] # index within cluster
- *         n = id             # <<<<<<<<<<<<<<
+ *         n = o_id             # <<<<<<<<<<<<<<
  *         for bits in combos:
  *             J = bits.shape[0]
  */
-    __pyx_v_n = __pyx_v_id;
+    __pyx_v_n = __pyx_v_o_id;
 
     /* "src/ce_utils.pyx":99
  *         K = inds.shape[1] # index within cluster
- *         n = id
+ *         n = o_id
  *         for bits in combos:             # <<<<<<<<<<<<<<
  *             J = bits.shape[0]
  *             p = 0
@@ -3575,7 +3577,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_2general_delta_corr_single_flip(CYTHON_
       __pyx_t_19.data = NULL;
 
       /* "src/ce_utils.pyx":100
- *         n = id
+ *         n = o_id
  *         for bits in combos:
  *             J = bits.shape[0]             # <<<<<<<<<<<<<<
  *             p = 0
@@ -3713,7 +3715,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_2general_delta_corr_single_flip(CYTHON_
 
       /* "src/ce_utils.pyx":99
  *         K = inds.shape[1] # index within cluster
- *         n = id
+ *         n = o_id
  *         for bits in combos:             # <<<<<<<<<<<<<<
  *             J = bits.shape[0]
  *             p = 0
@@ -3724,7 +3726,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_2general_delta_corr_single_flip(CYTHON_
     /* "src/ce_utils.pyx":95
  *     cdef np.float_t[:] o_view = out
  * 
- *     for id, r, combos, bases, inds in site_orbit_list:             # <<<<<<<<<<<<<<
+ *     for o_id, r, combos, bases, inds in site_orbit_list:             # <<<<<<<<<<<<<<
  *         I = inds.shape[0] # cluster index
  *         K = inds.shape[1] # index within cluster
  */
@@ -4436,7 +4438,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_6indicator_delta_corr_single_flip(CYTHO
   __Pyx_memviewslice __pyx_v_o_view = { 0, 0, { 0 }, { 0 }, { 0 } };
   double __pyx_v_r;
   double __pyx_v_o;
-  PyObject *__pyx_v_id = NULL;
+  PyObject *__pyx_v_o_id = NULL;
   PyObject *__pyx_v_combos = NULL;
   CYTHON_UNUSED PyObject *__pyx_v__ = NULL;
   PyObject *__pyx_r = NULL;
@@ -4528,8 +4530,8 @@ static PyObject *__pyx_pf_3src_8ce_utils_6indicator_delta_corr_single_flip(CYTHO
   /* "src/ce_utils.pyx":182
  *     cdef double r, o
  * 
- *     for id, r, combos, _, inds in site_orbit_list:             # <<<<<<<<<<<<<<
- *         l = id
+ *     for o_id, r, combos, _, inds in site_orbit_list:             # <<<<<<<<<<<<<<
+ *         l = o_id
  *         I = inds.shape[0] # cluster index
  */
   if (likely(PyList_CheckExact(__pyx_v_site_orbit_list)) || PyTuple_CheckExact(__pyx_v_site_orbit_list)) {
@@ -4637,7 +4639,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_6indicator_delta_corr_single_flip(CYTHO
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_t_14 = __Pyx_PyObject_to_MemoryviewSlice_dsds_nn___pyx_t_5numpy_int_t(__pyx_t_10, PyBUF_WRITABLE); if (unlikely(!__pyx_t_14.memview)) __PYX_ERR(0, 182, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __Pyx_XDECREF_SET(__pyx_v_id, __pyx_t_2);
+    __Pyx_XDECREF_SET(__pyx_v_o_id, __pyx_t_2);
     __pyx_t_2 = 0;
     __pyx_v_r = __pyx_t_13;
     __Pyx_XDECREF_SET(__pyx_v_combos, __pyx_t_8);
@@ -4651,17 +4653,17 @@ static PyObject *__pyx_pf_3src_8ce_utils_6indicator_delta_corr_single_flip(CYTHO
 
     /* "src/ce_utils.pyx":183
  * 
- *     for id, r, combos, _, inds in site_orbit_list:
- *         l = id             # <<<<<<<<<<<<<<
+ *     for o_id, r, combos, _, inds in site_orbit_list:
+ *         l = o_id             # <<<<<<<<<<<<<<
  *         I = inds.shape[0] # cluster index
  *         K = inds.shape[1] # index within cluster
  */
-    __pyx_t_15 = __Pyx_PyInt_As_int(__pyx_v_id); if (unlikely((__pyx_t_15 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 183, __pyx_L1_error)
+    __pyx_t_15 = __Pyx_PyInt_As_int(__pyx_v_o_id); if (unlikely((__pyx_t_15 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 183, __pyx_L1_error)
     __pyx_v_l = __pyx_t_15;
 
     /* "src/ce_utils.pyx":184
- *     for id, r, combos, _, inds in site_orbit_list:
- *         l = id
+ *     for o_id, r, combos, _, inds in site_orbit_list:
+ *         l = o_id
  *         I = inds.shape[0] # cluster index             # <<<<<<<<<<<<<<
  *         K = inds.shape[1] # index within cluster
  *         for b in combos:
@@ -4669,7 +4671,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_6indicator_delta_corr_single_flip(CYTHO
     __pyx_v_I = (__pyx_v_inds.shape[0]);
 
     /* "src/ce_utils.pyx":185
- *         l = id
+ *         l = o_id
  *         I = inds.shape[0] # cluster index
  *         K = inds.shape[1] # index within cluster             # <<<<<<<<<<<<<<
  *         for b in combos:
@@ -4992,8 +4994,8 @@ static PyObject *__pyx_pf_3src_8ce_utils_6indicator_delta_corr_single_flip(CYTHO
     /* "src/ce_utils.pyx":182
  *     cdef double r, o
  * 
- *     for id, r, combos, _, inds in site_orbit_list:             # <<<<<<<<<<<<<<
- *         l = id
+ *     for o_id, r, combos, _, inds in site_orbit_list:             # <<<<<<<<<<<<<<
+ *         l = o_id
  *         I = inds.shape[0] # cluster index
  */
   }
@@ -5036,7 +5038,7 @@ static PyObject *__pyx_pf_3src_8ce_utils_6indicator_delta_corr_single_flip(CYTHO
   __PYX_XDEC_MEMVIEW(&__pyx_v_inds, 1);
   __Pyx_XDECREF(__pyx_v_out);
   __PYX_XDEC_MEMVIEW(&__pyx_v_o_view, 1);
-  __Pyx_XDECREF(__pyx_v_id);
+  __Pyx_XDECREF(__pyx_v_o_id);
   __Pyx_XDECREF(__pyx_v_combos);
   __Pyx_XDECREF(__pyx_v__);
   __PYX_XDEC_MEMVIEW(&__pyx_v_final, 1);
@@ -21142,6 +21144,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_numpy_core_multiarray_failed_to, __pyx_k_numpy_core_multiarray_failed_to, sizeof(__pyx_k_numpy_core_multiarray_failed_to), 0, 0, 1, 0},
   {&__pyx_kp_s_numpy_core_umath_failed_to_impor, __pyx_k_numpy_core_umath_failed_to_impor, sizeof(__pyx_k_numpy_core_umath_failed_to_impor), 0, 0, 1, 0},
   {&__pyx_n_s_o, __pyx_k_o, sizeof(__pyx_k_o), 0, 0, 1, 1},
+  {&__pyx_n_s_o_id, __pyx_k_o_id, sizeof(__pyx_k_o_id), 0, 0, 1, 1},
   {&__pyx_n_s_o_view, __pyx_k_o_view, sizeof(__pyx_k_o_view), 0, 0, 1, 1},
   {&__pyx_n_s_obj, __pyx_k_obj, sizeof(__pyx_k_obj), 0, 0, 1, 1},
   {&__pyx_n_s_occu, __pyx_k_occu, sizeof(__pyx_k_occu), 0, 0, 1, 1},
@@ -21489,7 +21492,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     """
  *     Computes the correlation vector for a given encoded occupancy vector
  */
-  __pyx_tuple__26 = PyTuple_Pack(19, __pyx_n_s_occu, __pyx_n_s_n_bit_orderings, __pyx_n_s_orbit_list, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_k, __pyx_n_s_I, __pyx_n_s_J, __pyx_n_s_K, __pyx_n_s_id, __pyx_n_s_n, __pyx_n_s_p, __pyx_n_s_pi, __pyx_n_s_inds, __pyx_n_s_bits, __pyx_n_s_bases, __pyx_n_s_out, __pyx_n_s_o_view, __pyx_n_s_combos); if (unlikely(!__pyx_tuple__26)) __PYX_ERR(0, 17, __pyx_L1_error)
+  __pyx_tuple__26 = PyTuple_Pack(19, __pyx_n_s_occu, __pyx_n_s_n_bit_orderings, __pyx_n_s_orbit_list, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_k, __pyx_n_s_I, __pyx_n_s_J, __pyx_n_s_K, __pyx_n_s_o_id, __pyx_n_s_n, __pyx_n_s_p, __pyx_n_s_pi, __pyx_n_s_inds, __pyx_n_s_bits, __pyx_n_s_bases, __pyx_n_s_out, __pyx_n_s_o_view, __pyx_n_s_combos); if (unlikely(!__pyx_tuple__26)) __PYX_ERR(0, 17, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__26);
   __Pyx_GIVEREF(__pyx_tuple__26);
   __pyx_codeobj__27 = (PyObject*)__Pyx_PyCode_New(3, 0, 19, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__26, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_ce_utils_pyx, __pyx_n_s_corr_from_occupancy, 17, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__27)) __PYX_ERR(0, 17, __pyx_L1_error)
@@ -21501,7 +21504,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *                                    int n_bit_orderings, site_orbit_list):
  *     """
  */
-  __pyx_tuple__28 = PyTuple_Pack(22, __pyx_n_s_occu_f, __pyx_n_s_occu_i, __pyx_n_s_n_bit_orderings, __pyx_n_s_site_orbit_list, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_k, __pyx_n_s_I, __pyx_n_s_J, __pyx_n_s_K, __pyx_n_s_id, __pyx_n_s_n, __pyx_n_s_p, __pyx_n_s_pi, __pyx_n_s_pf, __pyx_n_s_r, __pyx_n_s_inds, __pyx_n_s_bits, __pyx_n_s_bases, __pyx_n_s_out, __pyx_n_s_o_view, __pyx_n_s_combos); if (unlikely(!__pyx_tuple__28)) __PYX_ERR(0, 65, __pyx_L1_error)
+  __pyx_tuple__28 = PyTuple_Pack(22, __pyx_n_s_occu_f, __pyx_n_s_occu_i, __pyx_n_s_n_bit_orderings, __pyx_n_s_site_orbit_list, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_k, __pyx_n_s_I, __pyx_n_s_J, __pyx_n_s_K, __pyx_n_s_o_id, __pyx_n_s_n, __pyx_n_s_p, __pyx_n_s_pi, __pyx_n_s_pf, __pyx_n_s_r, __pyx_n_s_inds, __pyx_n_s_bits, __pyx_n_s_bases, __pyx_n_s_out, __pyx_n_s_o_view, __pyx_n_s_combos); if (unlikely(!__pyx_tuple__28)) __PYX_ERR(0, 65, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__28);
   __Pyx_GIVEREF(__pyx_tuple__28);
   __pyx_codeobj__29 = (PyObject*)__Pyx_PyCode_New(4, 0, 22, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__28, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_ce_utils_pyx, __pyx_n_s_general_delta_corr_single_flip, 65, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__29)) __PYX_ERR(0, 65, __pyx_L1_error)
@@ -21525,7 +21528,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *                                      int n_bit_orderings, site_orbit_list):
  *     """
  */
-  __pyx_tuple__33 = PyTuple_Pack(22, __pyx_n_s_final, __pyx_n_s_init, __pyx_n_s_n_bit_orderings, __pyx_n_s_site_orbit_list, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_k, __pyx_n_s_I, __pyx_n_s_J, __pyx_n_s_K, __pyx_n_s_l, __pyx_n_s_ok, __pyx_n_s_b, __pyx_n_s_inds, __pyx_n_s_out, __pyx_n_s_o_view, __pyx_n_s_m, __pyx_n_s_r, __pyx_n_s_o, __pyx_n_s_id, __pyx_n_s_combos, __pyx_n_s__32); if (unlikely(!__pyx_tuple__33)) __PYX_ERR(0, 163, __pyx_L1_error)
+  __pyx_tuple__33 = PyTuple_Pack(22, __pyx_n_s_final, __pyx_n_s_init, __pyx_n_s_n_bit_orderings, __pyx_n_s_site_orbit_list, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_k, __pyx_n_s_I, __pyx_n_s_J, __pyx_n_s_K, __pyx_n_s_l, __pyx_n_s_ok, __pyx_n_s_b, __pyx_n_s_inds, __pyx_n_s_out, __pyx_n_s_o_view, __pyx_n_s_m, __pyx_n_s_r, __pyx_n_s_o, __pyx_n_s_o_id, __pyx_n_s_combos, __pyx_n_s__32); if (unlikely(!__pyx_tuple__33)) __PYX_ERR(0, 163, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__33);
   __Pyx_GIVEREF(__pyx_tuple__33);
   __pyx_codeobj__34 = (PyObject*)__Pyx_PyCode_New(4, 0, 22, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__33, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_ce_utils_pyx, __pyx_n_s_indicator_delta_corr_single_flip, 163, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__34)) __PYX_ERR(0, 163, __pyx_L1_error)

@@ -30,7 +30,7 @@ def corr_from_occupancy(np.int_t[::1] occu, int n_bit_orderings, orbit_list):
         correlation vector difference
     """
 
-    cdef int i, j, k, I, J, K, id, n
+    cdef int i, j, k, I, J, K, o_id, n
     cdef double p, pi
     cdef const np.int_t[:, ::1] inds
     cdef const np.int_t[:, ::1] bits
@@ -39,10 +39,10 @@ def corr_from_occupancy(np.int_t[::1] occu, int n_bit_orderings, orbit_list):
     cdef np.float_t[:] o_view = out
     o_view[0] = 1  # empty cluster
 
-    for id, combos, bases, inds in orbit_list:
+    for o_id, combos, bases, inds in orbit_list:
         I = inds.shape[0] # cluster index
         K = inds.shape[1] # index within cluster
-        n = id
+        n = o_id
         for bits in combos:
             J = bits.shape[0]
             p = 0
@@ -84,7 +84,7 @@ def general_delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,
         correlation vector difference
     """
 
-    cdef int i, j, k, I, J, K, id, n
+    cdef int i, j, k, I, J, K, o_id, n
     cdef double p, pi, pf, r
     cdef const np.int_t[:, ::1] inds
     cdef const np.int_t[:, ::1] bits
@@ -92,10 +92,10 @@ def general_delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,
     out = np.zeros(n_bit_orderings)
     cdef np.float_t[:] o_view = out
 
-    for id, r, combos, bases, inds in site_orbit_list:
+    for o_id, r, combos, bases, inds in site_orbit_list:
         I = inds.shape[0] # cluster index
         K = inds.shape[1] # index within cluster
-        n = id
+        n = o_id
         for bits in combos:
             J = bits.shape[0]
             p = 0
@@ -179,8 +179,8 @@ def indicator_delta_corr_single_flip(np.int_t[:] final, np.int_t[:] init,
     cdef np.float_t[:, :] m
     cdef double r, o
 
-    for id, r, combos, _, inds in site_orbit_list:
-        l = id
+    for o_id, r, combos, _, inds in site_orbit_list:
+        l = o_id
         I = inds.shape[0] # cluster index
         K = inds.shape[1] # index within cluster
         for b in combos:
