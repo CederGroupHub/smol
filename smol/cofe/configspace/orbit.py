@@ -316,10 +316,11 @@ class Orbit(MSONable):
 
     def __str__(self):
         """Pretty strings for pretty things."""
-        return f'[Orbit] id: {self.id:<4} bit_id: {self.bit_id:<4}' \
+        return f'[Orbit] id: {self.id:<3}' \
+               f'orderings: {self.n_bit_orderings:<4}' \
                f'multiplicity: {self.multiplicity:<4}' \
-               f' no. symops: {len(self.cluster_symops):<4} ' \
-               f'{str(self.base_cluster)}'
+               f' no. symops: {len(self.cluster_symops):<4}\n' \
+               f'              {str(self.base_cluster)}'
 
     def __repr__(self):
         """Representation."""

@@ -684,10 +684,11 @@ class ClusterSubspace(MSONable):
     def __str__(self):
         """Convert class into pretty string for printing."""
         s = f'ClusterBasis: [Prim Composition] {self.structure.composition}\n'
+        s += '    [Size] 0\n      [Orbit] id: 0  orderings: 1\n'
         for size, orbits in self._orbits.items():
-            s += f'    size: {size}\n'
+            s += f'    [Size] {size}\n'
             for orbit in orbits:
-                s += f'    {orbit}\n'
+                s += f'      {orbit}\n'
         return s
 
     @classmethod
