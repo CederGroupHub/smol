@@ -109,6 +109,18 @@ class StructureWrangler(MSONable):
         return len(self._items)
 
     @property
+    def available_properties(self):
+        """List of properties that have been added."""
+        return list(set(p for i in self._items
+                        for p in i['properties'].keys()))
+
+    @property
+    def available_weights(self):
+        """List of weights that have been added."""
+        return list(set(p for i in self._items
+                        for p in i['weights'].keys()))
+
+    @property
     def structures(self):
         """List of included structures."""
         return [i['structure'] for i in self._items]
