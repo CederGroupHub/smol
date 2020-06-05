@@ -38,6 +38,11 @@ class TestClusterSubSpace(unittest.TestCase):
         self.assertEqual(self.cs.n_bit_orderings, 124)
         self.assertEqual(self.cs.n_clusters, 377)
 
+    def test_func_orbit_ids(self):
+        self.assertEqual(len(self.cs.function_orbit_ids), 124)
+        self.assertEqual(len(set(self.cs.function_orbit_ids)),
+                         27)
+
     def test_orbits(self):
         self.assertEqual(len(self.cs.orbits) + 1, self.cs.n_orbits)  # +1 for empty cluster
         for o1, o2 in combinations(self.cs.orbits, 2):
@@ -190,6 +195,7 @@ class TestClusterSubSpace(unittest.TestCase):
         expected = [1, 0.5, 0.25, 0, 0.5, 0.25, 0.125, 0, 0, 0, 0.25]
         self.assertEqual(len(cs.corr_from_structure(s)), 11)
         self.assertEqual(cs.n_orbits, 5)
+        self.assertEqual(len(set(cs.function_orbit_ids)), 5)
         self.assertTrue(np.allclose(cs.corr_from_structure(s), expected))
 
     def test_remove_bit_combos(self):
