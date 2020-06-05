@@ -87,7 +87,7 @@ class Cluster(MSONable):
         points = str(np.round(self.sites, 2))
         points = points.replace('\n', ' ').ljust(len(self.sites)*21)
         centroid = str(np.round(self.centroid, 2))
-        return (f'[Cluster] id: {self.id:<4} Radius: {self.radius:<5.3} '
+        return (f'[Base Cluster] Radius: {self.radius:<5.3} '
                 f'Centroid: {centroid:<18} Points: {points}')
 
     def __repr__(self):

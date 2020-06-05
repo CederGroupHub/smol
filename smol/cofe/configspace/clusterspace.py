@@ -117,6 +117,7 @@ class ClusterSubspace(MSONable):
             self._site_matcher = site_matcher
 
         self._orbits = orbits
+        self._func_orbit_ids = None
         self._external_terms = []  # List will hold external terms (i.e. Ewald)
         # Dict to cache orbit index mappings, this prevents doing another
         # structure match with the _site_matcher for structures that have
@@ -228,6 +229,20 @@ class ClusterSubspace(MSONable):
         correlations. External term classes must be MSONable.
         """
         return self._external_terms
+
+    @property
+    def function_orbit_ids(self):
+        """Orbit ids corresponding to each correlation function in the
+        Subspace.
+
+        If the Cluster Subspace includes external terms these are not included
+        in the list since they are not associated with any orbit.
+        """
+        if self._func_orbit_ids is None:
+            self._func_orbit_ids = [0]
+            for orbit in self.iterorbits():
+                self._func_orbit_ids += orbit.n_bit_orderings * [orbit.id, ]
+        return self._func_orbit_ids
 
     def add_external_term(self, term):
         """
@@ -497,9 +512,8 @@ class ClusterSubspace(MSONable):
             self._orbits[size] = [orbit for orbit in orbits
                                   if orbit.id not in orbit_ids]
 
-        # Re-assign ids
-        self._assign_orbit_ids()
-
+        self._assign_orbit_ids()  # Re-assign ids
+        self._func_orbit_ids = None  # reset func ids
         # Clear the cached supercell orbit mappings
         self._supercell_orb_inds = {}
 
@@ -543,7 +557,8 @@ class ClusterSubspace(MSONable):
         if empty_orbit_ids:
             self.remove_orbits(empty_orbit_ids)
         else:
-            self._assign_orbit_ids()
+            self._assign_orbit_ids()  # Re-assign ids
+            self._func_orbit_ids = None  # reset func ids
 
     def copy(self):
         """Deep copy of instance."""
@@ -669,10 +684,11 @@ class ClusterSubspace(MSONable):
     def __str__(self):
         """Convert class into pretty string for printing."""
         s = f'ClusterBasis: [Prim Composition] {self.structure.composition}\n'
+        s += '    [Size] 0\n      [Orbit] id: 0  orderings: 1\n'
         for size, orbits in self._orbits.items():
-            s += f'    size: {size}\n'
+            s += f'    [Size] {size}\n'
             for orbit in orbits:
-                s += f'    {orbit}\n'
+                s += f'      {orbit}\n'
         return s
 
     @classmethod
