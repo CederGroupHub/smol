@@ -40,6 +40,8 @@ class TestStructureWrangler(unittest.TestCase):
         self.assertTrue(all(w == 2.0 for w in self.sw.get_weights('random')[:-1]))
         self.assertTrue(len(self.sw.get_weights('random')) == self.sw.num_structures)
         self.assertTrue(self.sw.get_weights('random')[-1] == 3.0)
+        self.assertEqual(self.sw.available_properties, ['energy'])
+        self.assertEqual(self.sw.available_weights, ['random'])
         self.assertRaises(AttributeError, self.sw.add_properties, 'test',
                           self.sw.sizes[:-2])
         self.sw.add_properties('normalized_energy',
