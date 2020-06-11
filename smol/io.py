@@ -14,7 +14,8 @@ from monty.json import MSONable, MontyEncoder, MontyDecoder
 
 
 def save_work(file_path, *msonables):
-    """
+    """Save msonable classes used in a CE and/or MC workflow.
+
     Save a set of unique MSONable objects used in a workflow for a cluster
     expansion and/or monte carlo run as a json dictionary.
 
@@ -38,9 +39,7 @@ def save_work(file_path, *msonables):
 
 
 def load_work(file_path):
-    """
-    Load a dictionary of with the save_work function and instantiate the
-    MSONable objects.
+    """Load a dictionary and instantiate the MSONable objects.
 
     Args:
         file_path (str):

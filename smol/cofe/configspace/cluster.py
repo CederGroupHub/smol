@@ -32,7 +32,8 @@ class Cluster(MSONable):
     """
 
     def __init__(self, sites, lattice):
-        """
+        """Initialize Cluster.
+
         Args:
             sites (list):
                 list of frac coords for the sites
@@ -47,27 +48,25 @@ class Cluster(MSONable):
         self.lattice = lattice
         self.id = None
 
-    @staticmethod
-    def from_sites(sites):
-        return Cluster([s.frac_coords for s in sites], sites[0].lattice)
+    @classmethod
+    def from_sites(cls, sites):
+        """Create a cluster from a list of pymatgen Sites."""
+        return cls([s.frac_coords for s in sites], sites[0].lattice)
 
     @property
     def size(self):
-        """Number of sites in the cluster."""
+        """Get number of sites in the cluster."""
         return len(self.sites)
 
     @property
     def radius(self):
-        """Maximum distance between 2 sites in cluster."""
-        # Maybe rename to diameter?
+        """Get maximum distance between 2 sites in cluster."""
         coords = self.lattice.get_cartesian_coords(self.sites)
         all_d2 = np.sum((coords[None, :, :] - coords[:, None, :])**2, axis=-1)
         return np.max(all_d2) ** 0.5
 
     def assign_ids(self, cluster_id):
-        """
-        Method to recursively assign ids to clusters after initialization.
-        """
+        """Recursively assign ids to clusters after initialization."""
         self.id = cluster_id
         return cluster_id + 1
 
@@ -97,14 +96,11 @@ class Cluster(MSONable):
 
     @classmethod
     def from_dict(cls, d):
-        """
-        Creates a cluster from serialized dict
-        """
+        """Create a cluster from serialized dict."""
         return cls(d['sites'], Lattice.from_dict(d['lattice']))
 
     def as_dict(self):
-        """
-        Json-serialization dict representation.
+        """Get json-serialization dict representation.
 
         Returns:
             MSONable dict

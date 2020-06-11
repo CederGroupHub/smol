@@ -23,8 +23,7 @@ from smol.globals import kB
 
 
 def weights_energy_above_composition(structures, energies, temperature=2000):
-    """Computes weights for structure energy above the minimum reduced
-    composition energy.
+    """Compute weights for energy above the minimum reduced composition energy.
 
     Args:
         structures (list):
@@ -43,8 +42,7 @@ def weights_energy_above_composition(structures, energies, temperature=2000):
 
 def weights_energy_above_hull(structures, energies, cs_structure,
                               temperature=2000):
-    """Computes weights for structure energy above the hull of all given
-    structures
+    """Compute weights for structure energy above the hull of given structures.
 
     Args:
         structures (list):
@@ -88,7 +86,8 @@ class StructureWrangler(MSONable):
     """
 
     def __init__(self, cluster_subspace):
-        """
+        """Initialize a StructureWrangler.
+
         Args:
             cluster_subspace (ClusterSubspace):
                 A ClusterSubspace object that will be used to fit a
@@ -100,49 +99,52 @@ class StructureWrangler(MSONable):
 
     @property
     def cluster_subspace(self):
-        """The underlying ClusterSubspace used to compute features."""
+        """Get the underlying ClusterSubspace used to compute features."""
         return self._subspace
 
     @property
     def num_structures(self):
-        """Number of structures added (correctly matched to prim)."""
+        """Get number of structures added (correctly matched to prim)."""
         return len(self._items)
 
     @property
     def available_properties(self):
-        """List of properties that have been added."""
+        """Get list of properties that have been added."""
         return list(set(p for i in self._items
                         for p in i['properties'].keys()))
 
     @property
     def available_weights(self):
-        """List of weights that have been added."""
+        """Get list of weights that have been added."""
         return list(set(p for i in self._items
                         for p in i['weights'].keys()))
 
     @property
     def structures(self):
-        """List of included structures."""
+        """Get list of included structures."""
         return [i['structure'] for i in self._items]
 
     @property
     def refined_structures(self):
-        """List of refined structures."""
+        """Get list of refined structures."""
         return [i['ref_structure'] for i in self._items]
 
     @property
     def feature_matrix(self):
-        """Feature matrix. Rows are structures, Columns are correlations."""
+        """Get feature matrix.
+
+        Rows are structures, Columns are correlations.
+        """
         return np.array([i['features'] for i in self._items])
 
     @property
     def sizes(self):
-        """Size of each structure in terms of number of prims."""
+        """Get sizes of each structure in terms of number of prims."""
         return np.array([i['size'] for i in self._items])
 
     @property
     def occupancy_strings(self):
-        """The occupancy string for each of the structures in the wrangler."""
+        """Get occupancy strings for each of the structures in the wrangler."""
         occupancies = [self._subspace.occupancy_from_structure(i['structure'],
                                                                i['scmatrix'],
                                                                i['mapping'])
@@ -151,24 +153,26 @@ class StructureWrangler(MSONable):
 
     @property
     def supercell_matrices(self):
-        """List of supercell matrices relating each structure to prim."""
+        """Get list of supercell matrices relating each structure to prim."""
         return np.array([i['scmatrix'] for i in self._items])
 
     @property
     def structure_site_mappings(self):
-        """List of site mappings for each structure to prim."""
+        """Get list of site mappings for each structure to prim."""
         return [i['mapping'] for i in self._items]
 
     @property
     def metadata(self):
-        """Dictionary to save applied filters, etc."""
+        """Get dictionary to save applied filters, etc."""
         return self._metadata
 
     def add_data(self, structure, properties, normalized=False, weights=None,
                  verbose=False, supercell_matrix=None, site_mapping=None):
         """Add a structure and measured property to Structure Wrangler.
-        The property should ideally be extensive (i.e. not normalized per atom
-        or unit cell, etc).
+
+        The property are usually extensive (i.e. not normalized per atom
+        or unit cell, directly from DFT). If not extensive then set normalized
+        to True.
 
         Will attempt to computes correlation vector and if successful will
         add the structure otherwise it ignores that structure. Usually failures
@@ -211,9 +215,10 @@ class StructureWrangler(MSONable):
             self._items.append(item)
 
     def add_weights(self, key, weights):
-        """Add weights to structures already in the wrangler. The length
-        of the given weights must match the number of structures contained,
-        and should be in the same order.
+        """Add weights to structures already in the wrangler.
+
+        The length of the given weights must match the number of structures
+        contained, and should be in the same order.
 
         Args:
             key (str):
@@ -230,6 +235,7 @@ class StructureWrangler(MSONable):
 
     def add_properties(self, key, property_vector, normalized=False):
         """Add another property to structures already in the wrangler.
+
         The length of the property vector must match the number of structures
         contained, and should be in the same order such that the property
         corresponds to the correct structure.
@@ -253,9 +259,12 @@ class StructureWrangler(MSONable):
             item['properties'][key] = prop
 
     def get_property_vector(self, key, normalize=True):
-        """
-        Gets the property target vector that can be used to fit the
-        corresponding correlation feature matrix in a cluster expansion
+        """Get the property target vector.
+
+        The targent vector that be used to fit the corresponding correlation
+        feature matrix in a cluster expansion. It should always be properly
+        normalized when used for a fit.
+
         Args:
             key (str):
                 Name of the property
@@ -270,8 +279,8 @@ class StructureWrangler(MSONable):
         return properties
 
     def get_weights(self, key):
-        """
-        Gets the weights specified by the given key
+        """Get the weights specified by the given key.
+
         Args:
             key (str):
                 Name of corresponding weights
@@ -279,7 +288,7 @@ class StructureWrangler(MSONable):
         return np.array([i['weights'][key] for i in self._items])
 
     def remove_structure(self, structure):
-        """Will remove the corresponding structure and associated data."""
+        """Remove a given structure and associated data."""
         try:
             index = self.structures.index(structure)
             del self._items[index]
@@ -288,7 +297,8 @@ class StructureWrangler(MSONable):
                              'Nothing has been removed.')
 
     def change_subspace(self, cluster_subspace):
-        """
+        """Change the underlying cluster subspace.
+
         Will swap out the cluster subspace and update features accordingly.
         This is a faster operation than creating a new one. Can also be useful
         to create a copy and the change the subspace.
@@ -301,11 +311,11 @@ class StructureWrangler(MSONable):
         self.update_features()
 
     def update_features(self):
-        """
-        Update the features/feature matrix for the data held. This is useful
-        when something is changed in the cluster_subspace after
+        """Update the features/feature matrix for the data held.
+
+        This is useful when something is changed in the cluster_subspace after
         creating the Wrangler, for example added an Ewald term after creating
-        the Wrangler.
+        the Wrangler. This will prevent having to match structures and such.
         """
         for item in self._items:
             struct = item['structure']
@@ -316,11 +326,12 @@ class StructureWrangler(MSONable):
                                                                   site_mapping=mapp)  # noqa
 
     def remove_all_data(self):
-        """Removes all data from Wrangler."""
+        """Remove all data from Wrangler."""
         self._items = []
 
     def filter_by_ewald(self, max_ewald, verbose=False):
-        """
+        """Filter structures by electrostatic interaction energy.
+
         Filter the input structures to only use those with low electrostatic
         energies (no large charge separation in cell). This energy is
         referenced to the lowest value at that composition. Note that this is
@@ -381,8 +392,7 @@ class StructureWrangler(MSONable):
 
     @classmethod
     def from_dict(cls, d):
-        """Creates Structure Wrangler from serialized MSONable dict."""
-
+        """Create Structure Wrangler from serialized MSONable dict."""
         sw = cls(cluster_subspace=ClusterSubspace.from_dict(d['_subspace']))
         items = []
         for item in d['_items']:
@@ -401,7 +411,7 @@ class StructureWrangler(MSONable):
         return sw
 
     def as_dict(self):
-        """Json-serialization dict representation.
+        """Get Json-serialization dict representation.
 
         Returns:
             MSONable dict
@@ -426,7 +436,9 @@ class StructureWrangler(MSONable):
 
     def _process_structure(self, structure, properties, normalized, weights,
                            verbose, scmatrix, smapping):
-        """Check if the structure for this data item can be matched to the
+        """Process a structure to be added to wrangler.
+
+        Checks if the structure for this data item can be matched to the
         cluster subspace prim structure to obtain its supercell matrix,
         correlation, and refined structure.
         """
@@ -460,8 +472,9 @@ class StructureWrangler(MSONable):
 
 
 def _energies_above_hull(structures, energies, ce_structure):
-    """Computes energies above hull constructed from phase diagram of the
-    given structures.
+    """Compute energies above hull.
+
+    Hull is constructed from phase diagram of the given structures.
     """
     pd = _pd(structures, energies, ce_structure)
     e_above_hull = []
@@ -473,7 +486,6 @@ def _energies_above_hull(structures, energies, ce_structure):
 
 def _pd(structures, energies, cs_structure):
     """Generate a phase diagram with the structures and energies."""
-
     entries = []
 
     for s, e in zip(structures, energies):
@@ -489,8 +501,7 @@ def _pd(structures, energies, cs_structure):
 
 
 def _energies_above_composition(structures, energies):
-    """Computes structure energies above reduced composition."""
-
+    """Compute structure energies above reduced composition."""
     min_e = defaultdict(lambda: np.inf)
     for s, e in zip(structures, energies):
         comp = s.composition.reduced_composition

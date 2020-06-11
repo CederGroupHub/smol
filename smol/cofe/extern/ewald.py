@@ -27,7 +27,9 @@ class EwaldTerm(MSONable):
     """
 
     def __init__(self, eta=None, real_space_cut=None, recip_space_cut=None,):
-        """Input parameters are standard input parameters to pymatgen
+        """Initialize EwaldTerm.
+
+        Input parameters are standard input parameters to pymatgen
         EwaldSummation. See class documentation for more information.
 
         Args:
@@ -46,12 +48,13 @@ class EwaldTerm(MSONable):
         self.recip_space_cut = recip_space_cut
 
     def corr_from_occupancy(self, occu, structure, size):
-        """Obtains the Ewald interaction energy normalized by the given size.
+        """Obtain the Ewald interaction energy normalized by the given size.
 
-        (The size of the given structure in terms of prims.)
+        The size of the given structure in terms of prims.
         The computed electrostatic interactions do not include the charged
         cell energy (which is only important for charged structures). See
         the pymatgen EwaldSummation class for further details.
+
         Args:
             occu (array):
                 occupation vector for the given structure
@@ -83,10 +86,11 @@ class EwaldTerm(MSONable):
 
     @staticmethod
     def _get_ewald_structure(structure):
-        """
-        Gets the structure contributing to Ewald summation (removes vacancies)
-        and the corresponding indices to those sites from the original
-        structure
+        """Get the structure contributing to Ewald summation.
+
+        Removes vacancies and the corresponding indices to those sites from the
+        original structure
+
         Args:
             structure:
                 Structure to compute Ewald interaction energy from
@@ -127,7 +131,8 @@ class EwaldTerm(MSONable):
     @classmethod
     def from_dict(cls, d):
         """Create EwaldTerm from msonable dict.
-        (Over-kill here since only EWaldSummation params are saved).
+
+        (Over-kill here since only EwaldSummation params are saved).
         """
         return cls(eta=d['eta'], real_space_cut=d['real_space_cut'],
                    recip_space_cut=d['recip_space_cut'])

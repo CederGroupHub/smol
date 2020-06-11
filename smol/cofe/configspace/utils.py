@@ -1,4 +1,4 @@
-"""A few random utilities that have no place to go?"""
+"""A few random utilities that have no place to go."""
 
 __author__ = "Luis Barroso-Luque"
 
@@ -9,12 +9,14 @@ SITE_TOL = 1e-6
 
 
 def get_site_domains(structure, include_measure=False):
-    """
+    """Get site domains for sites in a disordered structure.
+
     Helper method to obtain the single site domains for the sites in a
     structure. The single site domains are represented by the allowed species
     for each site (with an optional measure/concentration for disordered sites)
-    Vacancies are included in sites where the site element composition is not
-    1 (i.e. the total occupation is not 1)
+
+    Vacancies are included in sites where the site element composition does not
+    sum to 1 (i.e. the total occupation is not 1)
 
     Args:
         structure (Structure):
@@ -45,7 +47,10 @@ def get_site_domains(structure, include_measure=False):
 
 
 def _repr(instance: object, **fields: Dict[str, Any]) -> str:
-    """A helper function for repr overloading in classes."""
+    """Create object representation.
+
+    A helper function for repr overloading in classes.
+    """
     attrs = []
 
     for key, field in fields.items():

@@ -20,7 +20,7 @@ from numpy.polynomial.legendre import legval
 
 
 class SiteBasis(ABC):
-    """Abstract base class to represent a site function space.
+    """Abstract base class to represent the basis for a site function space.
 
     This abstract class must by derived from for specific bases to represent a
     site function space.
@@ -36,7 +36,8 @@ class SiteBasis(ABC):
     """
 
     def __init__(self, species):
-        """
+        """Initialize a SiteBasis.
+
         Args:
             species (tuple or dict):
                 Species. If dict, the species should be the keys and
@@ -59,7 +60,7 @@ class SiteBasis(ABC):
 
     @property
     def function_array(self):
-        """Array with the non-constant site functions as rows."""
+        """Get array with the non-constant site functions as rows."""
         if self._func_arr is None:
             self._func_arr = np.array([[f(self._encode(s))
                                         for s in self.species]
@@ -69,27 +70,28 @@ class SiteBasis(ABC):
 
     @property
     def measure_array(self):
-        """Diagonal array with site species measures."""
+        """Get diagonal array with site species measures."""
         return np.diag(list(self._domain.values()))
 
     @property
     def measure_vector(self):
-        """Vector of site species measures."""
+        """Get vector of site species measures."""
         return np.array(list(self._domain.values()))
 
     @property
     def orthonormalization_array(self):
-        """R array from QR factorization."""
+        """Get R array from QR factorization."""
         return self._r_array
 
     @property
     def species(self):
-        """List of site species."""
+        """Get list of allowed site species."""
         return list(self._domain.keys())
 
     @property
     def site_space(self):
-        """ Dict of the site probability space.
+        """Get dict of the site probability space.
+
         The site space refers to the probability space represented by the
         allowed species and their respective probabilities (concentration)
         over which the site functions are defined.
@@ -97,7 +99,7 @@ class SiteBasis(ABC):
         return self._domain
 
     def measure(self, species):
-        """Site Probability measure of a species
+        """Get the site probability measure of a species.
 
         Args:
             specie (str): specie name
@@ -108,7 +110,8 @@ class SiteBasis(ABC):
         return self._domain[species]
 
     def inner_prod(self, f, g):
-        """
+        """Compute inner product of two functions in space.
+
         Compute the inner product of two functions over probability the space
         spanned by basis.
 
@@ -172,16 +175,16 @@ class SiteBasis(ABC):
         self._func_arr = Q
 
     def _encode(self, specie):
-        """
-        Possible mapping from species to another set (i.e. species names to
-        set of integers)
-        """
+        """Encode species to another set (i.e. species names to integers)."""
         return specie
 
 
 # This is not defined within the class so the class can be pickled.
 def indicator(s, sp):
-    """A singleton indicator function for elementary events."""
+    """Check if s == p.
+
+    singleton indicator function for elementary events.
+    """
     return int(s == sp)
 
 
@@ -192,6 +195,15 @@ class IndicatorBasis(SiteBasis):
     """
 
     def __init__(self, species):
+        """Intialize an indicator basis set.
+
+        Args:
+            species (tuple or dict):
+                Species. If dict, the species should be the keys and
+                the value should should correspond to the probability measure
+                associated to that specie. If a tuple is given a uniform
+                probability is assumed.
+        """
         super().__init__(species)
 
         self._functions = [partial(indicator, sp=sp)
@@ -210,23 +222,27 @@ def sinusoid(n, m):
 
 
 def sin_f(s, a, m):
+    """Return basis function for even indices."""
     return -np.sin(2 * np.pi * a * s / m)
 
 
 def cos_f(s, a, m):
+    """Return basis function for odd indices."""
     return -np.cos(2 * np.pi * a * s / m)
 
 
 class SinusoidBasis(SiteBasis):
-    """Sinusoid (Sine/cosine basis) as proposed by A. Van der Ven.
+    """Sinusoid (Sine/cosine basis) as proposed by A. van de Walle.
 
     A. van de Walle, Calphad. 33, 266–278 (2009).
+
     This basis is properly orthogonal for any number of allowed species out of
     the box.
     """
 
     def __init__(self, species):
-        """
+        """Initialize a sinusoid basis set.
+
         Args:
             species (tuple or dict):
                 Species. If dict, the species should be the keys and
@@ -234,7 +250,6 @@ class SinusoidBasis(SiteBasis):
                 associated to that specie. If a tuple is given a uniform
                 probability is assumed.
         """
-
         super().__init__(species)
         m = len(species)
 
@@ -251,8 +266,10 @@ class NumpyPolyBasis(SiteBasis, ABC):
 
     Inherit from this class for quick polynomial basis sets. See below.
     """
+
     def __init__(self, species, poly_fun):
-        """
+        """Initialize Basis.
+
         Args:
             species (tuple or dict):
                 Species. If dict, the species should be the keys and
@@ -290,7 +307,8 @@ class ChebyshevBasis(NumpyPolyBasis):
     """
 
     def __init__(self, species):
-        """
+        """Initialize ChebyshevBasis.
+
         Args:
             species (tuple or dict):
                 Species. If dict, the species should be the keys and
@@ -304,13 +322,14 @@ class ChebyshevBasis(NumpyPolyBasis):
 class LegendreBasis(NumpyPolyBasis):
     """Legendre Polynomial Site Basis.
 
-    Note that as implemented here, this basis
-    will not be orthogonal for more than 2 species. But can be orthonormalized
-    calling the orthonormalize method.
+    Note that as implemented here, this basis will not be orthogonal for more
+    than 2 species. But can be orthonormalized calling the orthonormalize
+    method.
     """
 
     def __init__(self, species):
-        """
+        """Initialize LegendreBasis.
+
         Args:
             species (tuple or dict):
                 Species. If dict, the species should be the keys and
@@ -322,7 +341,7 @@ class LegendreBasis(NumpyPolyBasis):
 
 
 def basis_factory(basis_name, *args, **kwargs):
-    """Tries to return an instance of a Basis class defined in basis.py."""
+    """Try to return an instance of a Basis class defined in basis.py."""
     try:
         class_name = basis_name.capitalize() + 'Basis'
         basis_class = globals()[class_name]
@@ -335,7 +354,8 @@ def basis_factory(basis_name, *args, **kwargs):
 
 
 def _get_subclasses(base_class):
-    """
+    """Get all non-abstract subclasses of a class.
+
     Gets all non-abstract classes that inherit from the given base class in
     a module. This is used to obtain all the available basis functions.
     """

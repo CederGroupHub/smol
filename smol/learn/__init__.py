@@ -1,7 +1,4 @@
-"""
-This module contains functionality necessary for fitting Cluster Expansions
-and testing the performance of the fit
-"""
+"""Contains classes to fit and modify fits of Cluster Expansions."""
 
 from .estimator import WDRLasso
 from .utils import constrain_dielectric

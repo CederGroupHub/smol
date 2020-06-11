@@ -36,21 +36,27 @@ class ClusterExpansion(MSONable):
     CEProcessor that calculates the CE for a fixed supercell size. Before using
     a ClusterExpansion for Monte Carlo you should consider pruning the orbit
     functions with small eci.
+
+    Attributes:
+        ecis (ndarrya): ECIS of the cluster expansion
+        metadata (dict): dict to save optional values describing cluster
+            expansion. i.e. if it was pruned, any error metrics etc.
     """
 
     def __init__(self, cluster_subspace, ecis, feature_matrix):
-        """
+        """Initialize a ClusterExpansion.
+
         Args:
             cluster_subspace (ClusterSubspace):
-                A StructureWrangler object to provide the fitting data and
-                processing
+                A clustersubspace representing the subspace over which the
+                Cluster Expansion was fit. Must be the same used to create
+                the feature matrix.
             ecis (ndarray):
                 ecis for cluster expansion. Make sure the supplied eci
                 correspond to the correlation vector terms (length and order)
             feature_matrix (ndarray)
                 the feature matrix used in fitting the given eci
         """
-
         self.ecis = ecis
         self.metadata = {}
         self._subspace = cluster_subspace
@@ -58,23 +64,26 @@ class ClusterExpansion(MSONable):
 
     @property
     def prim_structure(self):
-        """Primitive structure which the Expansion is based on."""
+        """Get primitive structure which the expansion is based on."""
         return self.cluster_subspace.structure
 
     @property
     def expansion_structure(self):
-        """Expansion structure with only sites included in the expansion.
+        """Get expansion structure.
+
+        Prim structure with only sites included in the expansion.
         (i.e. sites with partial occupancies)
         """
         return self.cluster_subspace.exp_structure
 
     @property
     def cluster_subspace(self):
+        """Get cluster subspace."""
         return self._subspace
 
     @property
     def eci_orbit_ids(self):
-        """Orbit ids corresponding to each ECI in the Cluster Expansion.
+        """Get Orbit ids corresponding to each ECI in the Cluster Expansion.
 
         If the Cluster Expansion includes external terms these are not included
         in the list since they are not associated with any orbit.
@@ -93,14 +102,15 @@ class ClusterExpansion(MSONable):
         Returns:
             array
         """
-
         corrs = self.cluster_subspace.corr_from_structure(structure,
                                                           normalized=normalize)
         return np.dot(np.array(corrs), self.ecis)
 
     def prune(self, threshold=0):
-        """Remove ECI's (fitting parameters) and orbits in the ClusterSubspaces
-        that have ECI/parameter values smaller than the given threshold.
+        """Remove ECI's with small values.
+
+        Removes ECI's and and orbits in the ClusterSubspaces that have
+        ECI/parameter values smaller than the given threshold.
 
         This will change the fits error metrics (ie RMSE) a little, but it
         should not be much. If they change a lot then the threshold used is
@@ -110,7 +120,6 @@ class ClusterExpansion(MSONable):
         after pruning the ECI will probably change and hence also the fit
         performance.
         """
-
         bit_ids = [i for i, eci in enumerate(self.ecis)
                    if abs(eci) < threshold]
         self.cluster_subspace.remove_orbit_bit_combos(bit_ids)
@@ -124,8 +133,7 @@ class ClusterExpansion(MSONable):
     # with which the fit was done.
     def convert_eci(self, new_basis, fit_structures, supercell_matrices,
                     orthonormal=False):
-        """Numerically converts the eci of the cluster expansion to eci in a
-        new basis.
+        """Numerically convert given eci to eci in a new basis.
 
         Args:
             new_basis (str):
@@ -181,9 +189,7 @@ class ClusterExpansion(MSONable):
 
     @classmethod
     def from_dict(cls, d):
-        """
-        Creates ClusterExpansion from serialized MSONable dict.
-        """
+        """Create ClusterExpansion from serialized MSONable dict."""
         ce = cls(ClusterSubspace.from_dict(d['cluster_subspace']),
                  ecis=np.array(d['ecis']),
                  feature_matrix=np.array(d['feature_matrix']))
@@ -192,7 +198,7 @@ class ClusterExpansion(MSONable):
 
     def as_dict(self):
         """
-        Json-serialization dict representation.
+        Get Json-serialization dict representation.
 
         Returns:
             MSONable dict
