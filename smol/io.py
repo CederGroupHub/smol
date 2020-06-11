@@ -1,6 +1,10 @@
-"""
-Input and output functions. Can also at some point add input and output for
-other CE code packages to make it easier to translate work.
+"""Input and output functions.
+
+Some convenience functions to save and load CE and MC workflows in a "standard"
+way.
+
+Can also at some point add input and output for other CE code packages to make
+it easier to translate work.
 """
 
 __author__ = "Luis Barroso-Luque"
@@ -13,6 +17,8 @@ def save_work(file_path, *msonables):
     """
     Save a set of unique MSONable objects used in a workflow for a cluster
     expansion and/or monte carlo run as a json dictionary.
+
+    Only one of each class type can be saved per file.
 
     Args:
         file_path (str):

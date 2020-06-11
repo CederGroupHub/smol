@@ -1,5 +1,8 @@
-"""Implementation of a Canonical Ensemble Class for running Monte Carlo
-simulations for fixed number of sites and fixed concentration of species.
+"""
+Implementation of a Canonical Ensemble Class.
+
+Used when running Monte Carlo simulations for fixed number of sites and fixed
+concentration of species.
 """
 
 __author__ = "Luis Barroso-Luque"
@@ -14,12 +17,16 @@ from smol.globals import kB
 
 class CanonicalEnsemble(BaseEnsemble, MSONable):
     """
-    A Canonical Ensemble class to run Monte Carlo Simulations
+    A Canonical Ensemble class to run Monte Carlo Simulations.
+
+    Attributes:
+        temperature (float): temperature in Kelvin
     """
 
     def __init__(self, processor, temperature, sample_interval,
                  initial_occupancy, seed=None):
-        """
+        """Initialize CanonicalEnemble.
+
         Args:
             processor (Processor):
                 A processor that can compute the change in a property given
@@ -27,14 +34,13 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             temperature (float):
                 Temperature of ensemble
             sample_interval (int):
-                Interval of steps to save the current occupancy and property
+                Interval of steps to save the current occupancy and energy
             initial_occupancy (ndarray or list):
                 Initial occupancy vector. The occupancy can be encoded
                 according to the processor or the species names directly.
             seed (int):
                 Seed for random number generator.
         """
-
         super().__init__(processor, initial_occupancy=initial_occupancy,
                          sample_interval=sample_interval, seed=seed)
         self.temperature = temperature
@@ -43,53 +49,63 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
 
     @property
     def temperature(self):
+        """Get the temperature of ensemble."""
         return self._temperature
 
     @temperature.setter
     def temperature(self, T):
+        """Set the temperature and beta accordingly."""
         self._temperature = T
         self._beta = 1.0/(kB*T)
 
     @property
     def beta(self):
+        """Get 1/kBT."""
         return self._beta
 
     @property
     def current_energy(self):
+        """Get the energy of structure in the last iteration."""
         return self.current_property
 
     @property
     def average_energy(self):
+        """Get the average of sampled energies."""
         return self.energy_samples.mean()
 
     @property
     def energy_variance(self):
+        """Get the variance of samples energies."""
         return self.energy_samples.var()
 
     @property
     def energy_samples(self):
+        """Get an array with the sampled energies."""
         return np.array([d['energy'] for d
                          in self.data[self._prod_start:]])
 
     @property
     def minimum_energy(self):
+        """Get the minimum energy in samples."""
         return self._min_energy
 
     @property
     def minimum_energy_occupancy(self):
+        """Get the occupancy for of the structure with minimum energy."""
         return self.processor.decode_occupancy(self._min_occupancy)
 
     @property
     def minimum_energy_structure(self):
+        """Get the structure with minimum energy in samples."""
         return self.processor.structure_from_occupancy(self._min_occupancy)
 
     def anneal(self, start_temperature, steps, mc_iterations,
                cool_function=None):
-        """
-        Carries out a simulated annealing procedure for a total number of
-        temperatures given by "steps" interpolating between the start and end
-        temperature according to a cooling function. The start temperature is
-        the temperature set for the ensemble.
+        """Carry out a simulated annealing procedure.
+
+        Uses the total number of temperatures given by "steps" interpolating
+        between the start and end temperature according to a cooling function.
+        The start temperature is the temperature set for the ensemble.
 
         Args:
            start_temperature (float):
@@ -136,19 +152,19 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         return min_energy, min_occupancy, anneal_data
 
     def reset(self):
-        """
-        Resets the ensemble by returning it to its initial state. This will
-        also clear the data.
+        """Reset the ensemble by returning it to its initial state.
+
+        This will also clear the all the sample data.
         """
         super().reset()
         self._min_energy = self.processor.compute_property(self._occupancy)
         self._min_occupancy = self._occupancy
 
     def _attempt_step(self, sublattices=None):
-        """
-        Attempts flips corresponding to an elementary canonical swap.
+        """Attempt flips corresponding to an elementary canonical swap.
+
         Will pick a sublattice at random and then a canonical swap at random
-        from that sublattice.
+        from that sublattice (frozen sites will be excluded).
 
         Args:
             sublattices (list of str): optional
@@ -173,8 +189,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         return accept
 
     def _get_flips(self, sublattices=None):
-        """
-        Gets a possible canonical flip. A swap between two sites.
+        """Get a possible canonical flip. A swap between two sites.
 
         Args:
             sublattices (list of str): optional
@@ -199,17 +214,13 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             return tuple()
 
     def _get_current_data(self):
-        """
-        Get ensemble specific data for current MC step
-        """
+        """Get ensemble specific data for current MC step."""
         data = super()._get_current_data()
         data['energy'] = self.current_energy
         return data
 
     def as_dict(self) -> dict:
-        """
-        Json-serialization dict representation.
-        Note this will not save or load any restrictions on active sites.
+        """Json-serialization dict representation.
 
         Returns:
             MSONable dict
@@ -235,8 +246,13 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
 
     @classmethod
     def from_dict(cls, d):
-        """
-        Creates a CanonicalEnsemble from MSONable dict representation.
+        """Create a CanonicalEnsemble from MSONable dict representation.
+
+        Args:
+            d (dict): dictionary from CanonicalEnsemble.as_dict()
+
+        Returns:
+            CanonicalEnsemble
         """
         eb = cls(BaseProcessor.from_dict(d['processor']),
                  temperature=d['temperature'],
