@@ -99,7 +99,7 @@ class CEProcessor(BaseProcessor):
         """
         # the only reason to keep the CE is for the MSONable from_dict
         self.cluster_expansion = cluster_expansion
-        self.ecis = cluster_expansion.ecis
+        self.ecis = cluster_expansion.coefs
         self.subspace = cluster_expansion.cluster_subspace
         self.structure = self.subspace.structure.copy()
         self.structure.make_supercell(supercell_matrix)

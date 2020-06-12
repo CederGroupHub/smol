@@ -147,7 +147,6 @@ class Orbit(MSONable):
         if len(equiv) * len(self.cluster_symops) != len(self.structure_symops):
             self._equiv = None  # Unset this
             raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
-
         return equiv
 
     @property

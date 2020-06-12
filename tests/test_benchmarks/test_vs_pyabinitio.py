@@ -57,10 +57,11 @@ class TestvsPyabinitio(unittest.TestCase):
         for s, e in lno_data:
             sw.add_data(s, {'energy': e}, verbose=True)
 
-        ecis = np.linalg.lstsq(sw.feature_matrix,
+        coefs = np.linalg.lstsq(sw.feature_matrix,
                                sw.get_property_vector('energy'),
                                rcond=None)[0]
-        ce = ClusterExpansion(cs, ecis=ecis, feature_matrix=sw.feature_matrix)
+        ce = ClusterExpansion(cs, coefficients=coefs,
+                              feature_matrix=sw.feature_matrix)
 
         # make a supercell structure
         test_struct = lno_prim.copy()
