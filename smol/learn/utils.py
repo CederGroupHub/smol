@@ -7,7 +7,9 @@ from functools import wraps
 
 
 def constrain_dielectric(max_dielectric, ewald_ind=-1):
-    """Decorator to enforce that a fit method fitting a cluster expansion that
+    """Constrain a fit method to keep dieletric 0<= e < max_dielectric.
+
+    Decorator to enforce that a fit method fitting a cluster expansion that
     contains an EwaldTerm to constrain the dielectric constant to be positive
     and below the supplied value.
 
@@ -27,9 +29,9 @@ def constrain_dielectric(max_dielectric, ewald_ind=-1):
         ewald_ind (int):
             Index of column of Ewald interaction features in the feature matrix
     """
-
     def decorate_fit_method(fit_method):
-        """
+        """Decorate a fit method to constrain "dielectric constant".
+
         Args:
             fit_method (callable):
                 the fit_method you will use to fit your cluster expansion.

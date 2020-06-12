@@ -1,8 +1,9 @@
-# coding: utf-8
 """
-Utilities for manipulating coordinates or list of coordinates, under periodic
-boundary conditions or otherwise.
+General cython utility functions to calculate correlation vectors and local
+changes in correlation vectors a tad bit faster than pure python.
 """
+
+__author__ = "Luis Barroso-Luque, William D. Richards"
 
 import numpy as np
 cimport numpy as np
@@ -15,8 +16,8 @@ cimport cython
 @cython.initializedcheck(False)
 @cython.cdivision(True)
 def corr_from_occupancy(np.int_t[::1] occu, int n_bit_orderings, orbit_list):
-    """
-    Computes the correlation vector for a given encoded occupancy vector
+    """Computes the correlation vector for a given encoded occupancy string.
+
     Args:
         occu (np.array):
             encoded occupancy vector
@@ -64,13 +65,12 @@ def corr_from_occupancy(np.int_t[::1] occu, int n_bit_orderings, orbit_list):
 @cython.cdivision(True)
 def general_delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,
                                    int n_bit_orderings, site_orbit_list):
-    """
-    Computes the correlation difference between two occupancy
-    vectors.
+    """Computes the correlation difference between two occupancy vectors.
+
     Args:
         occu_f (np.array):
             encoded occupancy vector with flip
-        occu_i (np.array):
+        occu_i (ndarray):
             encoded occupancy vector without flip
         n_bit_orderings (int):
             total number of bit orderings in expansion.
@@ -80,8 +80,8 @@ def general_delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,
             (bit_combos, orbit id, site indices, ratio, bases array)
 
 
-    Returns: array
-        correlation vector difference
+    Returns:
+        ndarray: correlation vector difference
     """
 
     cdef int i, j, k, I, J, K, o_id, n
@@ -113,15 +113,34 @@ def general_delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,
     return out
 
 
+# TODO make this only compute a single float and not an ndarry with one element
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
-def delta_ewald_single_flip(np.int_t[:] final, np.int_t[:] init,
+def delta_ewald_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,
                             int n_bit_orderings, clusters, int ind, int bit,
                             np.float_t[:, :, :] ewald_matrices,
                             np.int_t[:, :] ewald_inds, double size):
+    """Compute the change in electrostatic interaction energy from a flip.
 
+    Args:
+        occu_f (np.array):
+            encoded occupancy vector with flip
+        occu_i (np.array):
+            encoded occupancy vector without flip
+        n_bit_orderings (int):
+            total number of bit orderings in expansion.
+        clusters:
+        ind:
+        bit:
+        ewald_matrices:
+        ewald_inds:
+        size:
+
+    Returns:
+        float: electrostatic interaction energy difference
+    """
     cdef int i, j, k, I, J, K, l, add, sub
     cdef bint ok
     cdef np.int_t[:, :] inds
@@ -131,19 +150,19 @@ def delta_ewald_single_flip(np.int_t[:] final, np.int_t[:] init,
 
     # values of -1 are vacancies and hence don't have ewald indices
     add = ewald_inds[ind, bit]
-    sub = ewald_inds[ind, init[ind]]
+    sub = ewald_inds[ind, occu_i[ind]]
     for l in range(ewald_matrices.shape[0]):
         o = 0
-        for j in range(final.shape[0]):
-            i = ewald_inds[j, final[j]]
+        for j in range(occu_f.shape[0]):
+            i = ewald_inds[j, occu_f[j]]
             if i != -1 and add != -1:
                 if i != add:
                     o += ewald_matrices[l, i, add] * 2
                 else:
                     o += ewald_matrices[l, i, add]
 
-        for j in range(init.shape[0]):
-            i = ewald_inds[j, init[j]]
+        for j in range(occu_i.shape[0]):
+            i = ewald_inds[j, occu_i[j]]
             if i != -1 and sub != -1:
                 if i != sub:
                     o -= ewald_matrices[l, i, sub] * 2
@@ -160,15 +179,24 @@ def delta_ewald_single_flip(np.int_t[:] final, np.int_t[:] init,
 @cython.wraparound(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
-def indicator_delta_corr_single_flip(np.int_t[:] final, np.int_t[:] init,
+def indicator_delta_corr_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,
                                      int n_bit_orderings, site_orbit_list):
-    """
-    Counts number of rows of a that are present in b
+    """Local change in indicator basis correlation vector from single flip.
+
     Args:
-        final, init: inital and final occupancies
-        clusters: List of clusters that the flip can affect
+        occu_f (np.array):
+            encoded occupancy vector with flip
+        occu_i (np.array):
+            encoded occupancy vector without flip
+        n_bit_orderings (int):
+            total number of bit orderings in expansion.
+        site_orbit_list:
+            Information of all orbits that include the flip site.
+            List of tuples each with
+            (bit_combos, orbit id, site indices, ratio, bases array)
+
     Returns:
-        delta_corr vector from a single flip
+        ndarray: correlation vector difference
     """
 
     cdef int i, j, k, I, J, K, l
@@ -190,7 +218,7 @@ def indicator_delta_corr_single_flip(np.int_t[:] final, np.int_t[:] init,
                 for j in range(J):
                     ok = True
                     for k in range(K):
-                        if final[inds[i, k]] != b[j, k]:
+                        if occu_f[inds[i, k]] != b[j, k]:
                             ok = False
                             break
                     if ok:
@@ -198,7 +226,7 @@ def indicator_delta_corr_single_flip(np.int_t[:] final, np.int_t[:] init,
 
                     ok = True
                     for k in range(K):
-                        if init[inds[i, k]] != b[j, k]:
+                        if occu_i[inds[i, k]] != b[j, k]:
                             ok = False
                             break
                     if ok:

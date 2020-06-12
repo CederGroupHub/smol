@@ -16,13 +16,12 @@ from abc import ABC, abstractmethod
 
 
 class BaseEnsemble(ABC):
-    """
-    Abstract Base Class for Monte Carlo Ensembles.
-    """
+    """Abstract Base Class for Monte Carlo Ensembles."""
 
     def __init__(self, processor, sample_interval, initial_occupancy,
                  sublattices=None, seed=None):
-        """
+        """Initialize class instance.
+
         Args:
             processor (Processor):
                 A processor that can compute the change in a property given
@@ -83,73 +82,83 @@ class BaseEnsemble(ABC):
 
     @property
     def sublattices(self):
-        """
-        Names of sublattices. Useful if allowing flips only from certain
-        sublattices is needed.
+        """Get names of sublattices.
+
+        Useful if allowing flips only from certain sublattices is needed.
         """
         return list(self._sublattices.keys())
 
     @property
     def current_occupancy(self):
+        """Get the occupancy string for current interation."""
         return self.processor.decode_occupancy(self._occupancy)
 
     @property
     def current_property(self):
+        """Get the property from current iteration."""
         return deepcopy(self._property)
 
     @property
     def current_structure(self):
+        """Get the structure from current iteration."""
         return self.processor.structure_from_occupancy(self._occupancy)
 
     @property
     def current_step(self):
+        """Get the iteration number of current step."""
         return self._step
 
     @property
     def initial_occupancy(self):
+        """Get encoded occupancy string for the initial structure."""
         return self.processor.decode_occupancy(self._init_occupancy)
 
     @property
     def initial_structure(self):
+        """Get the initial structure."""
         return self.processor.structure_from_occupancy(self._init_occupancy)
 
     @property
     def accepted_steps(self):
+        """Get the number of accepted/successful MC steps."""
         return self._ssteps
 
     @property
     def acceptance_ratio(self):
+        """Get the ratio of accepted/successful MC steps."""
         return self.accepted_steps/self.current_step
 
     @property
     def production_start(self):
+        """Get the iteration number for production samples and values."""
         return self._prod_start*self.sample_interval
 
     @production_start.setter
     def production_start(self, val):
+        """Set the iteration number for production samples and values."""
         self._prod_start = val//self.sample_interval
 
     @property
     def data(self):
+        """List of sampled data."""
         return self._data
 
     @property
     def seed(self):
+        """Seed for the random number generator."""
         return self._seed
 
     def restrict_sites(self, sites):
-        """
-        Restrict (freeze) the given sites from being flipped during a Monte
-        Carlo run.
+        """Restricts (freezes) the given sites.
 
-        If some of the given indices refer to inactive sites, there will be
-        no effect.
+        This will exclude those sites from being flipped during a Monte Carlo
+        run. If some of the given indices refer to inactive sites, there will
+        be no effect.
 
         Args:
             sites (Sequence):
                 indices of sites in the occupancy string to restrict.
         """
-
         for sublatt in self._active_sublatts.values():
             sublatt['sites'] = np.array([i for i in sublatt['sites']
                                          if i not in sites])
@@ -157,15 +166,14 @@ class BaseEnsemble(ABC):
                                   if i not in self.restricted_sites]
 
     def reset_restricted_sites(self):
-        """Will unfreeze all previously restricted sites."""
-
+        """Unfreeze all previously restricted sites."""
         self._active_sublatts = deepcopy(self._sublattices)
         self.restricted_sites = []
 
     def run(self, iterations, sublattices=None):
-        """
-        Samples the ensembles for the given number of iterations. Sampling at
-        the set intervals.
+        """Run the ensembles for the given number of iterations.
+
+        Samples are taken at the set intervals specified in constructur.
 
         Args:
             iterations (int):
@@ -173,7 +181,6 @@ class BaseEnsemble(ABC):
             sublattices (list of str):
                 List of sublattice names to consider in site flips.
         """
-
         write_loops = iterations//self.sample_interval
         if iterations % self.sample_interval > 0:
             write_loops += 1
@@ -192,18 +199,16 @@ class BaseEnsemble(ABC):
             self._save_data()
 
     def reset(self):
-        """
-        Resets the ensemble by returning it to its initial state. This will
-        also clear the data.
+        """Reset the ensemble by returning it to its initial state.
+
+        This will also clear the sample data.
         """
         self._occupancy = self._init_occupancy.copy()
         self._step, self._ssteps = 0, 0
         self._data = []
 
     def dump(self, filename):
-        """
-        Write data into a text file in json format, and clear data
-        """
+        """Write data into a text file in json format, and clear data."""
         with open(filename, 'a') as fp:
             for d in self.data:
                 json.dump(d, fp)
@@ -213,16 +218,11 @@ class BaseEnsemble(ABC):
 
     @abstractmethod
     def _attempt_step(self, sublattices=None):
-        """
-        Attempts a MC step and returns 0, 1 based on whether the step was
-        accepted or not.
-        """
+        """Attempt a MC step and return if the step was accepted or not."""
         return
 
     def _get_current_data(self):
-        """
-        Method to extract the ensembles data from the current state. Should
-        return a dict with current data.
+        """Extract the ensembles data from the current state.
 
         Returns: ensembles data
             dict
@@ -231,8 +231,7 @@ class BaseEnsemble(ABC):
 
     @staticmethod
     def _accept(delta_e, beta=1.0):
-        """
-        Evaluate the metropolis acceptance criterion
+        """Evaluate the metropolis acceptance criterion.
 
         Args:
             delta_e (float):

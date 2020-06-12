@@ -1,6 +1,10 @@
-"""
-Input and output functions. Can also at some point add input and output for
-other CE code packages to make it easier to translate work.
+"""Input and output functions.
+
+Some convenience functions to save and load CE and MC workflows in a "standard"
+way.
+
+Can also at some point add input and output for other CE code packages to make
+it easier to translate work.
 """
 
 __author__ = "Luis Barroso-Luque"
@@ -10,9 +14,12 @@ from monty.json import MSONable, MontyEncoder, MontyDecoder
 
 
 def save_work(file_path, *msonables):
-    """
+    """Save msonable classes used in a CE and/or MC workflow.
+
     Save a set of unique MSONable objects used in a workflow for a cluster
     expansion and/or monte carlo run as a json dictionary.
+
+    Only one of each class type can be saved per file.
 
     Args:
         file_path (str):
@@ -32,9 +39,7 @@ def save_work(file_path, *msonables):
 
 
 def load_work(file_path):
-    """
-    Load a dictionary of with the save_work function and instantiate the
-    MSONable objects.
+    """Load a dictionary and instantiate the MSONable objects.
 
     Args:
         file_path (str):

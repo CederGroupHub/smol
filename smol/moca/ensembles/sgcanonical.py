@@ -1,6 +1,7 @@
-"""Implementation of a Semi-Grand Canonical Ensemble Classes for running Monte
-Carlo simulations for fixed number of sites but variable concentration of
-species.
+"""Implementation of Semi-Grand Canonical Ensemble Classes.
+
+These are used to run Monte Carlo sampling for fixed number of sites but
+variable concentration of species.
 
 Two classes are different SGC ensembles implemented:
 * MuSemiGrandEnsemble - for which relative chemical potentials are fixed
@@ -20,10 +21,10 @@ from smol.moca.ensembles.canonical import CanonicalEnsemble
 
 
 class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
-    """
-    Abstract Semi-Grand Canonical Base Ensemble. Total number of species are
-    fixed but composition of "active" (with partial occupancies) sublattices is
-    allowed to change.
+    """Abstract Semi-Grand Canonical Base Ensemble.
+
+    Total number of species are fixed but composition of "active" (with partial
+    occupancies) sublattices is allowed to change.
 
     This class can not be instantiated. See MuSemiGrandEnsemble and
     FuSemiGrandEnsemble below.
@@ -31,30 +32,32 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
 
     def __init__(self, processor, temperature, sample_interval,
                  initial_occupancy, seed=None):
-        """
+        """Initialize BaseSemiGrandEnsemble.
+
         Args:
-            processor (Processor Class):
+            processor (Processor):
                 A processor that can compute the change in a property given
-                a set of flips.
+                a set of flips. See moca.processor
             temperature (float):
                 Temperature of ensemble
             sample_interval (int):
                 interval of steps to save the current occupancy and property
             initial_occupancy (ndarray or list):
-                Initial occupancy vector. The occupancy can be encoded
+                Initial occupancy string. The occupancy can be encoded
                 according to the processor or the species names directly.
             seed (int):
-                seed for random number generator
+                seed for random number generator. Useful to reproduce exact
+                results.
         """
-
         super().__init__(processor, temperature, sample_interval,
                          initial_occupancy=initial_occupancy, seed=seed)
 
     @property
     def current_species_counts(self):
-        """
-        Counts of species. This excludes species in "static" sublattices.
-        Those with no partial occupancy.
+        """Count of species.
+
+        This excludes species in "static" sublattices. Those with no partial
+        occupancy.
         """
         counts = self._get_counts()
         species_counts = {}
@@ -68,7 +71,7 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
 
     @property
     def current_composition(self):
-        """Composition of all active sites. Excludes inactive sites."""
+        """Get composition of all active sites. Excludes inactive sites."""
         comps = defaultdict(lambda: 0)
         sublatt_comps = self.current_sublattice_compositions
         for sub_comp in sublatt_comps:
@@ -78,7 +81,7 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
 
     @property
     def composition_samples(self):
-        """Samples of all active site compositions."""
+        """Get array of site compositions for all active sites."""
         n = len(self.data[self._prod_start:])
         comp_samples = {sp: np.empty(n) for sp in self.current_composition}
         for i, sample in enumerate(self.data[self._prod_start:]):
@@ -88,24 +91,24 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
 
     @property
     def average_composition(self):
-        """Average composition of all active sites."""
+        """Get average composition of all active sites."""
         return {sp: comp.mean() for sp, comp
                 in self.composition_samples.items()}
 
     @property
     def composition_variance(self):
-        """Composition variance."""
+        """Get sampled composition variance."""
         return {sp: comp.var() for sp, comp in self.composition_samples}
 
     @property
     def current_sublattice_compositions(self):
-        """Composition for each "active" sublattice."""
+        """Get composition for each "active" sublattice at last iteration."""
         comps = self._get_sublattice_comps()
         return tuple(comps.values())
 
     @property
     def sublattice_composition_samples(self):
-        """Samples of sublattice compositions"""
+        """Get array of sampled sublattice compositions."""
         n = len(self.data[self._prod_start:])
         comp_samples = tuple({sp: np.empty(n) for sp in comps}
                              for comps in self.current_sublattice_compositions)
@@ -117,28 +120,25 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
 
     @property
     def average_sublattice_compositions(self):
-        """Average sublattice compositions."""
+        """Get average sublattice compositions from samples."""
         return tuple({sp: comp.mean() for sp, comp in comps.items()}
                      for comps in self.sublattice_composition_samples)
 
     @property
     def sublattice_composition_variance(self):
-        """sublattice composition variance."""
+        """Get sublattice composition variance from samples."""
         return tuple({sp: comp.var() for sp, comp in comps.items()}
                      for comps in self.sublattice_composition_samples)
 
     @abstractmethod
     def _attempt_step(self, sublattices=None):
-        """
-        Attempts a MC step and returns 0, 1 based on whether the step was
-        accepted or not.
-        """
+        """Attempt an MC step and returns 0, 1 based on acceptance."""
         return
 
     def _get_flips(self, sublattices=None):
-        """
-        Gets a possible semi-grand canonical flip, and the corresponding
-        change in chemical potential
+        """Get a possible semi-grand canonical flip.
+
+        Also gets the corresponding change in relative chemical potential.
 
         Args:
             sublattices (list of str): optional
@@ -163,8 +163,7 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
         return (site, new_sp), sublattice, new_species, old_species
 
     def _get_counts(self):
-        """
-        Get the total count of each species for current occupation
+        """Get the total count of each species for current occupation.
 
         Returns: dict of sublattices with corresponding species concentrations
             dict
@@ -177,10 +176,7 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
         return counts
 
     def _get_sublattice_comps(self):
-        """
-        Get the current composition (species concentration) for each
-        sublattice.
-        """
+        """Get current composition for each sublattice."""
         composition = {}
         counts = self._get_counts()
         for name, sublattice in self._sublattices.items():
@@ -190,9 +186,7 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
         return composition
 
     def _get_current_data(self):
-        """
-        Get ensemble specific data for current MC step
-        """
+        """Get ensemble specific data for current MC step."""
         data = super()._get_current_data()
         data['counts'] = self.current_species_counts
         data['composition'] = self.current_composition
@@ -201,7 +195,8 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
 
 
 class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
-    """
+    """Relative chemical potential based SemiGrand Ensemble.
+
     A Semi-Grand Canonical Ensemble for Monte Carlo Simulations where species
     chemical potentials are predefined. Note that in the SGC Ensemble
     implemented here, only the differences in chemical potentials with
@@ -213,7 +208,8 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
 
     def __init__(self, processor, temperature, chemical_potentials,
                  sample_interval, initial_occupancy, seed=None):
-        """
+        """Initialize a MuSemiGrandEnsemble.
+
         Args:
             processor (Processor Class):
                 A processor that can compute the change in a property given
@@ -232,7 +228,6 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
             seed (int):
                 seed for random number generator
         """
-
         super().__init__(processor, temperature, sample_interval,
                          initial_occupancy=initial_occupancy,
                          seed=seed)
@@ -272,9 +267,8 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
         return chem_pots
 
     def _attempt_step(self, sublattices=None):
-        """
-        Attempts flips corresponding to a semi canonical swap (a single site
-        identity flip).
+        """Attempt a single SGC swap.
+
         Args:
             sublattices (list of str): optional
                 If only considering a subset of the active sublattices.
@@ -299,8 +293,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
         return accept
 
     def as_dict(self) -> dict:
-        """
-        Json-serialization dict representation
+        """Json-serialization dict representation.
 
         Returns:
             MSONable dict
@@ -311,8 +304,13 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
 
     @classmethod
     def from_dict(cls, d):
-        """
-        Creates a CanonicalEnsemble from MSONable dict representation.
+        """Create a MuSemiGrandEnsemble from MSONable dict representation.
+
+        Args:
+            d (dict): dictionary from MuSemiGrandEnsemble.as_dict()
+
+        Returns:
+            MuSemiGrandEnsemble
         """
         eb = cls(BaseProcessor.from_dict(d['processor']),
                  temperature=d['temperature'],
@@ -335,7 +333,8 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
 
 
 class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
-    """
+    """Fugacity fraction SemiGrandEnsemble.
+
     A Semi-Grand Canonical Ensemble for Monte Carlo simulations where the
     species fugacity ratios are set constant. This implicitly sets the chemical
     potentials, albeit for a specific temperature. Since one species per
@@ -347,7 +346,8 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
 
     def __init__(self, processor, temperature, sample_interval,
                  initial_occupancy, fugacity_fractions=None, seed=None):
-        """
+        """Initialize a FuSemiGrandEnsemble.
+
         Args:
             processor (Processor Class):
                 A processor that can compute the change in a property given
@@ -367,7 +367,6 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
             seed (int):
                 seed for random number generator
         """
-
         super().__init__(processor, temperature, sample_interval,
                          initial_occupancy=initial_occupancy,
                          seed=seed)
@@ -400,7 +399,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
 
     def _attempt_step(self, sublattices=None):
         """
-        Attempts flips corresponding to a canonical swap.
+        Attempt an SGC flip.
 
         Args:
             sublattices (list of str): optional
@@ -426,7 +425,8 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
 
     @staticmethod
     def _accept(delta_e, ratio, beta=1.0):
-        """
+        """Accept an SGC step.
+
         Fugacity based Semi-Grand Canonical Metropolis acceptance criteria.
 
         Args:
@@ -440,8 +440,13 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
 
     @classmethod
     def from_dict(cls, d):
-        """
-        Creates a CanonicalEnsemble from MSONable dict representation.
+        """Create a FuSemiGrandEnsemble from MSONable dict representation.
+
+        Args:
+            d (dict): dictionary from FuSemiGrandEnsemble.as_dict()
+
+        Returns:
+            FuSemiGrandEnsemble
         """
         eb = cls(BaseProcessor.from_dict(d['processor']),
                  temperature=d['temperature'],
