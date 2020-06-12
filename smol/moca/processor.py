@@ -99,7 +99,7 @@ class CEProcessor(BaseProcessor):
         """
         # the only reason to keep the CE is for the MSONable from_dict
         self.cluster_expansion = cluster_expansion
-        self.ecis = cluster_expansion.coefs
+        self.coefs = cluster_expansion.coefs
         self.subspace = cluster_expansion.cluster_subspace
         self.structure = self.subspace.structure.copy()
         self.structure.make_supercell(supercell_matrix)
@@ -154,7 +154,7 @@ class CEProcessor(BaseProcessor):
         Returns:
             float: predicted property
         """
-        return np.dot(self.compute_correlation(occu), self.ecis) * self.size
+        return np.dot(self.compute_correlation(occu), self.coefs) * self.size
 
     def compute_property_change(self, occu, flips):
         """Compute change in property from a set of flips.
@@ -168,7 +168,7 @@ class CEProcessor(BaseProcessor):
         Returns:
             float:  property difference between inital and final states
         """
-        return np.dot(self.delta_corr(flips, occu), self.ecis) * self.size
+        return np.dot(self.delta_corr(flips, occu), self.coefs) * self.size
 
     def compute_correlation(self, occu):
         """Compute the correlation vector for a given occupancy array.
