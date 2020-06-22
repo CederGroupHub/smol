@@ -68,7 +68,20 @@ class TestStructureWrangler(unittest.TestCase):
                              supercell_matrix=item['scmatrix'],
                              site_mapping=item['mapping'])
         self.assertEqual(len(self.sw.structures), len(items))
-
+        
+        # Add more properties to test removal
+        self.sw.add_properties('normalized',
+                               self.sw.get_property_vector('energy', normalize=True))
+        self.sw.add_properties('normalized1',
+                               self.sw.get_property_vector('energy', normalize=True))
+        self.assertTrue(all(prop in ['energy', 'normalized_energy',
+                                     'normalized', 'normalized1'] for
+                            prop in self.sw.available_properties))
+        self.sw.remove_properties('normalized_energy', 'normalized',
+                                  'normalized1')
+        self.assertEqual(self.sw.available_properties, ['energy'])
+        self.assertWarns(RuntimeWarning, self.sw.remove_properties, 'blab')
+        
     def test_remove_structure(self):
         total = len(self.sw.structures)
         s = self.sw.structures[np.random.randint(0, total)]

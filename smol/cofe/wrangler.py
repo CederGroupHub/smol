@@ -258,6 +258,21 @@ class StructureWrangler(MSONable):
         for prop, item in zip(property_vector, self._items):
             item['properties'][key] = prop
 
+    def remove_properties(self, *property_keys):
+        """Remove properties from given keys.
+
+        Args:
+            *property_keys (str):
+                names of properties to remove
+        """
+        for key in property_keys:
+            try:
+                for item in self._items:
+                    del item['properties'][key]
+            except KeyError:
+                warnings.warn(f'Propertiy {key} does not exist.',
+                              RuntimeWarning)
+
     def get_property_vector(self, key, normalize=True):
         """Get the property target vector.
 
