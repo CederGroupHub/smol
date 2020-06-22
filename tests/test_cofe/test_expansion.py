@@ -118,7 +118,7 @@ class TestClusterExpansionEwaldBinary(unittest.TestCase):
         self.assertEqual(len(cs.orbits), 1)
         cs.add_external_term(EwaldTerm())
         ecis = self._test_predictions(cs, data)
-        self.assertAlmostEqual(ecis[-1], 1, places=10)
+        self.assertAlmostEqual(ecis[-1], 1, places=8)
 
     def test_ce_ewald(self):
         data = self.dataset['data']
