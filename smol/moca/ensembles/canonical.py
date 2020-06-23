@@ -14,7 +14,6 @@ from smol.moca.ensembles.base import BaseEnsemble
 from smol.moca.processor import BaseProcessor
 from smol.globals import kB
 
-
 class CanonicalEnsemble(BaseEnsemble, MSONable):
     """
     A Canonical Ensemble class to run Monte Carlo Simulations.
@@ -24,7 +23,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
     """
 
     def __init__(self, processor, temperature, sample_interval,
-                 initial_occupancy, seed=None):
+                 initial_occupancy, seed=None, sublattices=None):
         """Initialize CanonicalEnemble.
 
         Args:
@@ -42,7 +41,8 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
                 Seed for random number generator.
         """
         super().__init__(processor, initial_occupancy=initial_occupancy,
-                         sample_interval=sample_interval, seed=seed)
+                         sample_interval=sample_interval, seed=seed, 
+                         sublattices=sublattices)
         self.temperature = temperature
         self._min_energy = self._property
         self._min_occupancy = self._init_occupancy
@@ -176,7 +176,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         Args:
             sublattices (list of str): optional
                 If only considering one sublattice.
-
+            
         Returns: Flip acceptance
             bool
         """
