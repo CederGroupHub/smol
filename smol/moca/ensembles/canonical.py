@@ -14,7 +14,6 @@ from smol.moca.ensembles.base import BaseEnsemble
 from smol.moca.processor import BaseProcessor
 from smol.globals import kB
 
-
 class CanonicalEnsemble(BaseEnsemble, MSONable):
     """
     A Canonical Ensemble class to run Monte Carlo Simulations.
@@ -24,7 +23,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
     """
 
     def __init__(self, processor, temperature, sample_interval,
-                 initial_occupancy, seed=None):
+                 initial_occupancy, seed=None, sublattices=None):
         """Initialize CanonicalEnemble.
 
         Args:
@@ -42,7 +41,8 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
                 Seed for random number generator.
         """
         super().__init__(processor, initial_occupancy=initial_occupancy,
-                         sample_interval=sample_interval, seed=seed)
+                         sample_interval=sample_interval, seed=seed, 
+                         sublattices=sublattices)
         self.temperature = temperature
         self._min_energy = self._property
         self._min_occupancy = self._init_occupancy
@@ -100,7 +100,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         return self.processor.structure_from_occupancy(self._min_occupancy)
 
     def anneal(self, start_temperature, steps, mc_iterations,
-               cool_function=None):
+               cool_function=None, set_min_occu=True):
         """Carry out a simulated annealing procedure.
 
         Uses the total number of temperatures given by "steps" interpolating
@@ -120,8 +120,12 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
                A (monotonically decreasing) function to interpolate
                temperatures.
                If none is given, linear interpolation is used.
+           set_min_occu (bool):
+               When True, sets the current occupancy and energy of the 
+               ensemble to the minimum found during annealing.
+               Otherwise, do a full reset to initial occupancy and energy.
 
-        Returns: (minimum energy, occupation)
+        Returns: (minimum energy, occupation, annealing data)
            tuple
         """
         if start_temperature < self.temperature:
@@ -147,7 +151,10 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
 
         min_energy = self._min_energy
         min_occupancy = self.processor.decode_occupancy(self._min_occupancy)
-        self.reset()  # should we do full reset or keep min energy?
+        self.reset()  
+        if set_min_occu:
+            self._occupancy = self.processor.encode_occupancy(min_occupancy)
+            self._property = min_energy
         # TODO Save annealing data?
         return min_energy, min_occupancy, anneal_data
 
@@ -169,7 +176,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         Args:
             sublattices (list of str): optional
                 If only considering one sublattice.
-
+            
         Returns: Flip acceptance
             bool
         """

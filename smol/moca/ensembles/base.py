@@ -204,6 +204,7 @@ class BaseEnsemble(ABC):
         This will also clear the sample data.
         """
         self._occupancy = self._init_occupancy.copy()
+        self._property = self.processor.compute_property(self._occupancy)
         self._step, self._ssteps = 0, 0
         self._data = []
 
