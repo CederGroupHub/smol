@@ -1,97 +1,41 @@
-"""
-Implementation of a processor for a fixed size Super Cell optimized to compute
-correlation vectors and local changes in correlation vectors. This class allows
-the use a cluster expansion hamiltonian to run Monte Carlo based simulations.
+"""Implementation of processor classes for a fixed size super cell.
+
+A processor is optimized to compute correlation vectors and local changes in
+correlation vectors. This class allows the use a cluster expansion hamiltonian
+to run Monte Carlo based simulations.
+
 If you are using a Hamiltonian with an Ewald summation electrostatic term, you
-should use the EwaldCEProcessor class.
+should use the EwaldCEProcessor class to handle changes in the electrostatic
+interaction energy.
 """
 
+__author__ = "Luis Barroso-Luque"
+
+from abc import ABCMeta, abstractmethod
 import numpy as np
 from collections import defaultdict, OrderedDict
 from monty.json import MSONable
 from pymatgen import Structure, PeriodicSite
+from pymatgen.analysis.ewald import EwaldSummation
 from smol.cofe import ClusterExpansion
-from smol.cofe.configspace import EwaldTerm
-from smol.cofe.configspace.utils import get_bits, get_bits_w_concentration
-from src.ce_utils import corr_from_occupancy, delta_corr_single_flip, \
-    delta_ewald_single_flip
+from smol.cofe.extern import EwaldTerm
+from smol.cofe.configspace.utils import get_site_domains
+from src.ce_utils import (corr_from_occupancy, general_delta_corr_single_flip,
+                          delta_ewald_single_flip,
+                          indicator_delta_corr_single_flip)
 
 
-class CEProcessor(MSONable):
+class BaseProcessor(MSONable, metaclass=ABCMeta):
+    """Abstract base class for processors.
+
+    A processor is used to provide a quick way to calculated energy differences
+    (probability ratio's) between two adjacent configurational states.
     """
-    A processor allows an ensemble class to generate a Markov chain
-    for sampling thermodynamic properties from a cluster expansion
-    Hamiltonian.
-    Think of this as fixed size supercell optimized to calculate correlation
-    vectors and local changes to correlation vectors from site flips.
-    """
 
-    def __init__(self, cluster_expansion, supercell_matrix):
-        """
-        Args:
-            cluster_expansion (ClusterExpansion):
-                A fitted cluster expansion representing a Hamiltonian
-            supercell_matrix (array):
-                An array representing the supercell matrix with respect to the
-                Cluster Expansion prim structure.
-        """
-
-        # the only reason to keep the CE is for the MSONable from_dict
-        self.cluster_expansion = cluster_expansion
-
-        self.ecis = cluster_expansion.ecis.copy()
-        self.subspace = cluster_expansion.subspace
-        self.structure = self.subspace.structure.copy()
-        self.structure.make_supercell(supercell_matrix)
-        self.supercell_matrix = supercell_matrix
-
-        # this can be used (maybe should) to check if a flip is valid
-        exp_bits = get_bits_w_concentration(cluster_expansion.expansion_structure)  # noqa
-        self.unique_bits = tuple(OrderedDict(bits) for bits in
-                                 set(tuple(bits.items()) for bits in exp_bits))
-
-        self.bits = get_bits(self.structure)
-        self.size = self.subspace.num_prims_from_matrix(supercell_matrix)
-        self.n_orbit_functions = self.subspace.n_bit_orderings
-        self.orbit_inds = self.subspace.supercell_orbit_mappings(supercell_matrix)  # noqa
-
-        # List of orbit information and supercell site indices to compute corr
-        self.orbit_list = []
-        # Dictionary of orbits by site index and information
-        # necessary to compute local changes in correlation vectors from flips
-        self.orbits_by_sites = defaultdict(list)
-        # Store the orbits grouped by site index in the structure,
-        # to be used by delta_corr. We also store a reduced index array,
-        # where only the rows with the site index are stored. The ratio is
-        # needed because the correlations are averages over the full inds
-        # array.
-        for orbit, inds in self.orbit_inds:
-            self.orbit_list.append((orbit.bit_id, orbit.bit_combos,
-                                    orbit.bases_array, inds))
-            for site_ind in np.unique(inds):
-                in_inds = np.any(inds == site_ind, axis=-1)
-                ratio = len(inds) / np.sum(in_inds)
-                self.orbits_by_sites[site_ind].append((orbit.bit_id, ratio,
-                                                       orbit.bit_combos,
-                                                       orbit.bases_array,
-                                                       inds[in_inds]))
-
-    def compute_property(self, occu):
-        """
-        Computes the total value of the property corresponding to the CE
-        for the given occupancy vector
-
-        Args:
-            occu (array):
-                encoded occupancy array
-        Returns: predicted property
-            float
-        """
-        return np.dot(self.compute_correlation(occu), self.ecis) * self.size
-
+    @abstractmethod
     def compute_property_change(self, occu, flips):
-        """
-        Compute change in property from a set of flips
+        """Compute change in property from a set of flips.
+
         Args:
             occu (array):
                 encoded occupancy array
@@ -99,46 +43,168 @@ class CEProcessor(MSONable):
                 list of tuples for (index of site, specie code to set)
 
         Returns:
-            float
+            float:  property difference between inital and final states
         """
-        return np.dot(self.delta_corr(flips, occu), self.ecis) * self.size
+        return
+
+    def as_dict(self) -> dict:
+        """
+        Json-serialization dict representation.
+
+        Returns:
+            MSONable dict
+        """
+        d = {'@module': self.__class__.__module__,
+             '@class': self.__class__.__name__}
+        return d
+
+    @classmethod
+    def from_dict(cls, d):
+        """Create a CEProcessor from serialized MSONable dict."""
+        # is this good design?
+        try:
+            for derived in cls.__subclasses__():
+                if derived.__name__ == d['@class']:
+                    return derived.from_dict(d)
+        except KeyError:
+            raise NameError(f"Unable to instantiate {d['@class']}.")
+
+
+class CEProcessor(BaseProcessor):
+    """CEProcessor class to use a ClusterExpansion in MC simulations.
+
+    A processor allows an ensemble class to generate a Markov chain
+    for sampling thermodynamic properties from a cluster expansion
+    Hamiltonian.
+
+    Think of this as fixed size supercell optimized to calculate correlation
+    vectors and local changes to correlation vectors from site flips.
+    """
+
+    def __init__(self, cluster_expansion, supercell_matrix,
+                 optimize_indicator=False):
+        """Initialize a CEProcessor.
+
+        Args:
+            cluster_expansion (ClusterExpansion):
+                A fitted cluster expansion representing a Hamiltonian
+            supercell_matrix (ndarray):
+                An array representing the supercell matrix with respect to the
+                Cluster Expansion prim structure.
+            optimize_indicator (bool):
+                When using an indicator basis, set the delta_corr function to
+                the indicator optimize function. This can make MC steps faster.
+                Make sure your cluster expansion was indeed fit with an
+                indicator basis set, otherwise your MC results are no good.
+        """
+        # the only reason to keep the CE is for the MSONable from_dict
+        self.cluster_expansion = cluster_expansion
+        self.coefs = cluster_expansion.coefs
+        self.subspace = cluster_expansion.cluster_subspace
+        self.structure = self.subspace.structure.copy()
+        self.structure.make_supercell(supercell_matrix)
+        self.supercell_matrix = supercell_matrix
+
+        # this can be used (maybe should) to check if a flip is valid
+        domains = get_site_domains(cluster_expansion.expansion_structure,
+                                   include_measure=True)
+        self.unique_site_domains = tuple(OrderedDict(doms) for doms in
+                                         set(tuple(doms.items()) for doms in domains))  # noqa
+
+        self.allowed_species = get_site_domains(self.structure)
+        self.size = self.subspace.num_prims_from_matrix(supercell_matrix)
+        self.n_orbit_functions = self.subspace.n_bit_orderings
+
+        # set the dcorr_single_flip function
+        self.indicator_opt = optimize_indicator
+        self._dcorr_single_flip = indicator_delta_corr_single_flip \
+            if optimize_indicator \
+            else general_delta_corr_single_flip
+
+        self._orbit_inds = self.subspace.supercell_orbit_mappings(supercell_matrix)  # noqa
+        # List of orbit information and supercell site indices to compute corr
+        self._orbit_list = []
+        # Dictionary of orbits by site index and information
+        # necessary to compute local changes in correlation vectors from flips
+        self._orbits_by_sites = defaultdict(list)
+        # Store the orbits grouped by site index in the structure,
+        # to be used by delta_corr. We also store a reduced index array,
+        # where only the rows with the site index are stored. The ratio is
+        # needed because the correlations are averages over the full inds
+        # array.
+        for orbit, inds in self._orbit_inds:
+            self._orbit_list.append((orbit.bit_id, orbit.bit_combos,
+                                     orbit.bases_array, inds))
+            for site_ind in np.unique(inds):
+                in_inds = np.any(inds == site_ind, axis=-1)
+                ratio = len(inds) / np.sum(in_inds)
+                self._orbits_by_sites[site_ind].append((orbit.bit_id, ratio,
+                                                        orbit.bit_combos,
+                                                        orbit.bases_array,
+                                                        inds[in_inds]))
+
+    def compute_property(self, occu):
+        """Compute the value of the property for the given occupancy array.
+
+        The property fitted to the corresponding to the CE.
+
+        Args:
+            occu (array):
+                encoded occupancy array
+        Returns:
+            float: predicted property
+        """
+        return np.dot(self.compute_correlation(occu), self.coefs) * self.size
+
+    def compute_property_change(self, occu, flips):
+        """Compute change in property from a set of flips.
+
+        Args:
+            occu (array):
+                encoded occupancy array
+            flips (list):
+                list of tuples for (index of site, specie code to set)
+
+        Returns:
+            float:  property difference between inital and final states
+        """
+        return np.dot(self.delta_corr(flips, occu), self.coefs) * self.size
 
     def compute_correlation(self, occu):
-        """
-        Computes the correlation vector for a given occupancy vector.
+        """Compute the correlation vector for a given occupancy array.
+
         Each entry in the correlation vector corresponds to a particular
         symmetrically distinct bit ordering.
 
         Args:
             occu (array):
-                encoded occupation vector
+                encoded occupation array
 
-        Returns: Correlation vector
-            array
+        Returns:
+            array: correlation vector
         """
         return corr_from_occupancy(occu, self.n_orbit_functions,
-                                   self.orbit_list)
+                                   self._orbit_list)
 
     def occupancy_from_structure(self, structure):
-        """
-        Gets the occupancy vector for a given structure. The structure must
-        strictly be a supercell of the prim according to the processor's
-        supercell matrix
+        """Get the occupancy array for a given structure.
+
+        The structure must strictly be a supercell of the prim according to the
+        processor's supercell matrix.
 
         Args:
             structure (Structure):
                 A pymatgen structure (related to the cluster-expansion prim
                 by the supercell matrix passed to the processor)
-        Returns: encoded occupancy vector
+        Returns: encoded occupancy array
             list
         """
         occu = self.subspace.occupancy_from_structure(structure,
-                                                      self.supercell_matrix)
+                                                      scmatrix=self.supercell_matrix)  # noqa
         return self.encode_occupancy(occu)
 
     def structure_from_occupancy(self, occu):
-        """
-        Get pymatgen.Structure from an occupancy vector
+        """Get pymatgen.Structure from an occupancy array.
 
         Args:
             occu (array):
@@ -156,60 +222,47 @@ class CEProcessor(MSONable):
         return Structure.from_sites(sites)
 
     def encode_occupancy(self, occu):
-        """
-        Encode occupancy vector of species str to ints.
-        """
-        ec_occu = np.array([bit.index(sp) for bit, sp in zip(self.bits, occu)])
-        return ec_occu
+        """Encode occupancy array of species str to ints."""
+        return np.array([species.index(sp) for species, sp
+                        in zip(self.allowed_species, occu)])
 
     def decode_occupancy(self, enc_occu):
-        """
-        Decode encoded occupancy vector of int to species str
-        """
-        occu = [bit[i] for i, bit in zip(enc_occu, self.bits)]
-        return occu
+        """Decode an encoded occupancy array of int to species str."""
+        return [species[i] for i, species in
+                zip(enc_occu, self.allowed_species)]
 
     def delta_corr(self, flips, occu):
         """
-        Computes the change in the correlation vector from a list of site
-        flips
+        Compute the change in the correlation vector from a list of flips.
+
         Args:
             flips list(tuple):
                 list of tuples with two elements. Each tuple represents a
                 single flip where the first element is the index of the site
-                in the occupancy vector and the second element is the index
+                in the occupancy array and the second element is the index
                 for the new species to place at that site.
             occu (array):
                 encoded occupancy array
 
         Returns:
-            array
+            array: change in correlation vector
         """
-
-        occu_i = occu.copy()
+        occu_i = occu
         delta_corr = np.zeros(self.n_orbit_functions)
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
-            orbits = self.orbits_by_sites[f[0]]
-            delta_corr += delta_corr_single_flip(occu_f, occu_i,
-                                                 self.n_orbit_functions,
-                                                 orbits)
+            orbits = self._orbits_by_sites[f[0]]
+            delta_corr += self._dcorr_single_flip(occu_f, occu_i,
+                                                  self.n_orbit_functions,
+                                                  orbits)
             occu_i = occu_f
 
         return delta_corr
 
-    @classmethod
-    def from_dict(cls, d):
-        """
-        Creates CEProcessor from serialized MSONable dict
-        """
-        return cls(ClusterExpansion.from_dict(d['cluster_expansion']),
-                   np.array(d['supercell_matrix']))
-
     def as_dict(self) -> dict:
         """
-        Json-serialization dict representation
+        Json-serialization dict representation.
 
         Returns:
             MSONable dict
@@ -217,71 +270,115 @@ class CEProcessor(MSONable):
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
              'cluster_expansion': self.cluster_expansion.as_dict(),
-             'supercell_matrix': self.supercell_matrix.tolist()}
+             'supercell_matrix': self.supercell_matrix.tolist(),
+             'indicator': self.indicator_opt}
         return d
 
+    @classmethod
+    def from_dict(cls, d):
+        """Create a CEProcessor from serialized MSONable dict."""
+        return cls(ClusterExpansion.from_dict(d['cluster_expansion']),
+                   np.array(d['supercell_matrix']),
+                   optimize_indicator=d['indicator'])
 
-class EwaldCEProcessor(CEProcessor):
-    """
-    A subclass of the CEProcessor class that handles changes in an additional
-    Ewald Summetion terms from single site flips.
-    Make sure that the ClusterExpansion object used has an Ewald Term,
+
+class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
+    """Processor for CE's including an EwaldTerm.
+
+    A subclass of the CEProcessor class that handles changes for the
+    electrostatic interaction energy in an additional Ewald Summation term.
+    Make sure that the ClusterExpansion object used has an EwaldTerm,
     otherwise this will not work.
     """
 
-    def __init__(self, cluster_expansion, supercell_matrix):
-        """
+    def __init__(self, cluster_expansion, supercell_matrix,
+                 optimize_indicator=False):
+        """Initialize an EwaldCEProcessor.
+
         Args:
             cluster_expansion (ClusterExpansion):
                 A fitted cluster expansion representing a Hamiltonian
             supercell_matrix (array):
                 An array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
+            optimize_indicator (bool):
+                When using an indicator basis, set the delta_corr function to
+                the indicator optimize function. This can make MC steps faster.
         """
+        super().__init__(cluster_expansion, supercell_matrix,
+                         optimize_indicator)
 
-        super().__init__(cluster_expansion, supercell_matrix)
-
-        if len(cluster_expansion.subspace.external_terms) != 1:
+        n_terms = len(cluster_expansion.cluster_subspace.external_terms)
+        if n_terms != 1:
             raise AttributeError('The provided ClusterExpansion must have only'
-                                 'one external term being an EwaldTerm')
-        term, args, kwargs = cluster_expansion.subspace.external_terms[0]
-        if term != EwaldTerm:
+                                 ' one external term (an EwaldTerm). The one '
+                                 f'provided has {n_terms} external terms.')
+        self._ewald_term = cluster_expansion.cluster_subspace.external_terms[0]
+        if not isinstance(self._ewald_term, EwaldTerm):
             raise TypeError('The external term in the provided '
-                            'ClusterExpansion must be an EwaldTerm')
+                            'ClusterExpansion must be an EwaldTerm.')
 
-        self.ewald = term(self.structure, self.orbit_inds, *args, **kwargs)
+        # Set up ewald structure and indices
+        struct, inds = self._ewald_term._get_ewald_structure(self.structure)
+        self._ewald_structure = struct
+        self._ewald_inds = inds
+        # Lazy set up Ewald Summation since it can be slow
+        self.__ewald = None
+        self.__all_ewalds = None
+
+    @property
+    def ewald_summation(self):
+        """Get the pymatgen EwaldSummation object."""
+        if self.__ewald is None:
+            self.__ewald = EwaldSummation(self._ewald_structure,
+                                          self._ewald_term.eta)
+        return self.__ewald
+
+    @property
+    def ewald_interactions(self):
+        """Get the electrostatic interaction matrix.
+
+        For charged cell the interactions assume the system is embedded in a
+        charge compensating background, however the interactions do not include
+        any corrections for the background charge. For more details look at
+        https://doi.org/10.1017/CBO9780511805769.034 (pp. 499–511).
+        """
+        if self.__all_ewalds is None:
+            self.__all_ewalds = self.ewald_summation.total_energy_matrix
+        # This line extending the ewald matrix by one dimension is done only
+        # to use the original cython delta_ewald function that took additional
+        # matrices for partial_ems when using the legacy inv_r=True option
+        # This hassle can be removed if the delta_ewald cython function is
+        # updated accordingly
+        return np.array([self.__all_ewalds])
 
     def compute_correlation(self, occu):
-        """
-        Computes the correlation vector for a given occupancy vector.
+        """Compute the correlation vector for a given occupancy array.
+
         Each entry in the correlation vector corresponds to a particular
         symmetrically distinct bit ordering. The last value of the correlation
         is the ewald summation value.
 
         Args:
             occu (array):
-                encoded occupation vector
+                encoded occupation array
 
-        Returns: Correlation vector
-            array
+        Returns:
+            array: correlation vector
         """
-
         ce_corr = corr_from_occupancy(occu, self.n_orbit_functions,
-                                      self.orbit_list)
-        ewald_corr = self.ewald.get_ewald_eci(occu)/self.size
+                                      self._orbit_list)
+        ewald_corr = self._ewald_correlation(occu)
+        return np.append(ce_corr, ewald_corr)
 
-        return np.concatenate([ce_corr, ewald_corr])
-
-    def delta_corr(self, flips, occu, debug=False):
-        """
-        Computes the change in the correlation vector from a list of site
-        flips
+    def delta_corr(self, flips, occu):
+        """Compute the change in the correlation vector from list of flips.
 
         Args:
             flips list(tuple):
                  list of tuples with two elements. Each tuple represents a
                  single flip where the first element is the index of the site
-                 in the occupancy vector and the second element is the index
+                 in the occupancy array and the second element is the index
                  for the new species to place at that site.
             occu (array):
                 encoded occupancy array
@@ -289,22 +386,48 @@ class EwaldCEProcessor(CEProcessor):
         Returns:
             array
         """
-        occu_i = occu.copy()
+        occu_i = occu
         delta_corr = np.zeros(self.n_orbit_functions + 1)
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
-            orbits = self.orbits_by_sites[f[0]]
-            delta_corr[:-1] += delta_corr_single_flip(occu_f, occu_i,
-                                                      self.n_orbit_functions,
-                                                      orbits)
+            orbits = self._orbits_by_sites[f[0]]
+            delta_corr[:-1] += self._dcorr_single_flip(occu_f, occu_i,
+                                                       self.n_orbit_functions,
+                                                       orbits)
             delta_corr[-1] += delta_ewald_single_flip(occu_f, occu_i,
                                                       self.n_orbit_functions,
                                                       orbits,
                                                       f[0], f[1],
-                                                      self.ewald.all_ewalds,
-                                                      self.ewald.ewald_inds,
+                                                      self.ewald_interactions,
+                                                      self._ewald_inds,
                                                       self.size)
             occu_i = occu_f
 
         return delta_corr
+
+    def _ewald_correlation(self, occu):
+        """Compute the electrostatic interaction energy normalized by prim."""
+        num_ewald_sites = len(self._ewald_structure)
+        matrix = self.ewald_summation.total_energy_matrix
+        ew_occu = self._ewald_term._get_ewald_occu(occu, num_ewald_sites,
+                                                   self._ewald_inds)
+        interactions = np.sum(matrix[ew_occu, :][:, ew_occu])
+        return interactions/self.size
+
+    # TODO saving ewaldsummation
+    # It would be nice to save the ewaldsummation since creating it again takes
+    # some time....but need pymatgen to be MSONable
+    # def as_dict(self) -> dict:
+    #    d = super().as_dict()
+    #    d['_ewald'] = self.ewald_summation.as_dict()
+
+    #   return d
+
+    # @classmethod
+    # def from_dict(cls, d):
+    #    pr = cls(ClusterExpansion.from_dict(d['cluster_expansion']),
+    #             np.array(d['supercell_matrix']),
+    #             optimize_indicator=d['indicator'])
+    #    pr.__ewald = EwaldSummation.as_dict()  # this is not part of pymatgen!
+    #    # yet....

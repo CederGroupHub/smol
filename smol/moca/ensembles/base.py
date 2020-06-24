@@ -1,3 +1,7 @@
+"""Abstract Base class for Monte Carlo Ensembles."""
+
+__author__ = "Luis Barroso-Luque"
+
 import random
 from copy import deepcopy
 import os
@@ -5,73 +9,69 @@ import json
 import numpy as np
 from math import exp
 from abc import ABC, abstractmethod
-from pymatgen.transformations.standard_transformations import \
-    OrderDisorderedStructureTransformation
+
 
 # TODO it would be great to use the design paradigm of observers to extract
 #  a variety of information during a montecarlo run
 
 
 class BaseEnsemble(ABC):
-    """
-    Base Class for Monte Carlo Ensembles.
-    """
+    """Abstract Base Class for Monte Carlo Ensembles."""
 
-    def __init__(self, processor, save_interval, initial_occupancy=None,
+    def __init__(self, processor, sample_interval, initial_occupancy,
                  sublattices=None, seed=None):
-        """
+        """Initialize class instance.
+
         Args:
-            processor (Processor Class):
+            processor (Processor):
                 A processor that can compute the change in a property given
                 a set of flips.
-            save_interval (int):
+            sample_interval (int):
                 interval of steps to save the current occupancy and property
-            inital_occupancy (array):
-                Initial occupancy vector. If none is given then a random one
-                will be used. The occupancy can be encoded according to the
-                processor or the species names directly.
+            initial_occupancy (ndarray or list):
+                Initial occupancy vector. The occupancy can be encoded
+                according to the processor or the species names directly.
             sublattices (dict): optional
                 dictionary with keys identifying the active sublattices
-                (i.e. "anion" or the bits in that sublattice
-                "['Li+', 'Vacancy']"), the values should be a dictionary
+                (i.e. "anion" or the allowed species in that sublattice
+                "Li+/Vacancy". The values should be a dictionary
                 with two items {'sites': array with the site indices for all
                 sites corresponding to that sublattice in the occupancy vector,
-                'species': OrderedDict of allowed species in sublattice}
-                All sites in a sublattice need to have the same bits/species
-                allowed.
+                'site_domain': OrderedDict of allowed species in sublattice}
+                All sites in a sublattice need to have the same set of allowed
+                species.
             seed (int): optional
                 seed for random number generator
         """
+        if len(initial_occupancy) != len(processor.structure):
+            raise ValueError('The given initial occupancy does not match '
+                             'the underlying processor size')
 
-        if initial_occupancy is None:
-            struct = processor.subspace.structure.copy()
-            scmatrix = processor.supercell_matrix
-            struct.make_supercell(scmatrix)
-            odt = OrderDisorderedStructureTransformation(algo=2)
-            struct = odt.apply_transformation(struct)
-            initial_occupancy = processor.occupancy_from_structure(struct)
-        elif isinstance(initial_occupancy[0], str):
+        if isinstance(initial_occupancy[0], str):
             initial_occupancy = processor.encode_occupancy(initial_occupancy)
 
         if sublattices is None:
-            sublattices = {str(dict(bits)):
-                           {'sites': np.array([i for i, b in
-                                               enumerate(processor.bits)
-                                               if b == tuple(bits.keys())]),
-                            'species': bits}
-                           for bits in processor.unique_bits}
+            sublattices = {'/'.join(domain.keys()):
+                           {'sites': np.array([i for i, sp in
+                                        enumerate(processor.allowed_species)  # noqa
+                                               if sp == list(domain.keys())]),
+                            'domain': domain}
+                           for domain in processor.unique_site_domains}
 
         self.processor = processor
-        self.save_interval = save_interval
+        self.sample_interval = sample_interval
         self.num_atoms = len(initial_occupancy)
-        self._prod_start = 0
+
         self._sublattices = sublattices
+        self._active_sublatts = deepcopy(sublattices)
         self._init_occupancy = initial_occupancy
         self._occupancy = self._init_occupancy.copy()
         self._property = processor.compute_property(self._occupancy)
+        self._prod_start = 0
         self._step = 0
         self._ssteps = 0
         self._data = []
+        self.restricted_sites = []
 
         # Set and save the seed for random. This allows reproducible results.
         if seed is None:
@@ -81,118 +81,158 @@ class BaseEnsemble(ABC):
         random.seed(seed)
 
     @property
-    def occupancy(self):
+    def sublattices(self):
+        """Get names of sublattices.
+
+        Useful if allowing flips only from certain sublattices is needed.
+        """
+        return list(self._sublattices.keys())
+
+    @property
+    def current_occupancy(self):
+        """Get the occupancy string for current interation."""
         return self.processor.decode_occupancy(self._occupancy)
 
     @property
-    def initial_occupancy(self):
-        return self.processor.decode_occupancy(self._init_occupancy)
-
-    @property
     def current_property(self):
+        """Get the property from current iteration."""
         return deepcopy(self._property)
 
     @property
     def current_structure(self):
+        """Get the structure from current iteration."""
         return self.processor.structure_from_occupancy(self._occupancy)
 
     @property
     def current_step(self):
+        """Get the iteration number of current step."""
         return self._step
 
     @property
+    def initial_occupancy(self):
+        """Get encoded occupancy string for the initial structure."""
+        return self.processor.decode_occupancy(self._init_occupancy)
+
+    @property
+    def initial_structure(self):
+        """Get the initial structure."""
+        return self.processor.structure_from_occupancy(self._init_occupancy)
+
+    @property
     def accepted_steps(self):
+        """Get the number of accepted/successful MC steps."""
         return self._ssteps
 
     @property
     def acceptance_ratio(self):
+        """Get the ratio of accepted/successful MC steps."""
         return self.accepted_steps/self.current_step
 
     @property
     def production_start(self):
-        return self._prod_start*self.save_interval
+        """Get the iteration number for production samples and values."""
+        return self._prod_start*self.sample_interval
 
     @production_start.setter
     def production_start(self, val):
-        self._prod_start = val//self.save_interval
+        """Set the iteration number for production samples and values."""
+        self._prod_start = val//self.sample_interval
 
     @property
     def data(self):
+        """List of sampled data."""
         return self._data
 
     @property
     def seed(self):
+        """Seed for the random number generator."""
         return self._seed
 
-    def run(self, iterations, sublattice_name=None):
+    def restrict_sites(self, sites):
+        """Restricts (freezes) the given sites.
+
+        This will exclude those sites from being flipped during a Monte Carlo
+        run. If some of the given indices refer to inactive sites, there will
+        be no effect.
+
+        Args:
+            sites (Sequence):
+                indices of sites in the occupancy string to restrict.
         """
-        Samples the ensembles for the given number of iterations. Sampling at
-        the provided intervals???
+        for sublatt in self._active_sublatts.values():
+            sublatt['sites'] = np.array([i for i in sublatt['sites']
+                                         if i not in sites])
+        self.restricted_sites += [i for i in sites
+                                  if i not in self.restricted_sites]
+
+    def reset_restricted_sites(self):
+        """Unfreeze all previously restricted sites."""
+        self._active_sublatts = deepcopy(self._sublattices)
+        self.restricted_sites = []
+
+    def run(self, iterations, sublattices=None):
+        """Run the ensembles for the given number of iterations.
+
+        Samples are taken at the set intervals specified in constructur.
 
         Args:
             iterations (int):
                 Total number of monte carlo steps to attempt
+            sublattices (list of str):
+                List of sublattice names to consider in site flips.
         """
-
-        write_loops = iterations//self.save_interval
-        if iterations % self.save_interval > 0:
+        write_loops = iterations//self.sample_interval
+        if iterations % self.sample_interval > 0:
             write_loops += 1
 
         start_step = self.current_step
 
         for _ in range(write_loops):
             remaining = iterations - self.current_step + start_step
-            no_interrupt = min(remaining, self.save_interval)
+            no_interrupt = min(remaining, self.sample_interval)
 
-            for i in range(no_interrupt):
-                success = self._attempt_step(sublattice_name)
+            for _ in range(no_interrupt):
+                success = self._attempt_step(sublattices)
                 self._ssteps += success
 
             self._step += no_interrupt
             self._save_data()
 
     def reset(self):
-        """
-        Resets the ensemble by returning it to its initial state. This will
-        also clear the data.
+        """Reset the ensemble by returning it to its initial state.
+
+        This will also clear the sample data.
         """
         self._occupancy = self._init_occupancy.copy()
+        self._property = self.processor.compute_property(self._occupancy)
         self._step, self._ssteps = 0, 0
         self._data = []
 
     def dump(self, filename):
-        """
-        Write data into a text file in json format, and clear data
-        """
+        """Write data into a text file in json format, and clear data."""
         with open(filename, 'a') as fp:
             for d in self.data:
-                json.dump(self.data, fp)
+                json.dump(d, fp)
                 fp.write(os.linesep)
 
         self._data = []
 
     @abstractmethod
-    def _attempt_step(self, sublattice_name):
-        """
-        Attempts a MC step and returns 0, 1 based on whether the step was
-        accepted or not.
-        """
-        pass
+    def _attempt_step(self, sublattices=None):
+        """Attempt a MC step and return if the step was accepted or not."""
+        return
 
     def _get_current_data(self):
-        """
-        Method to extract the ensembles data from the current state. Should
-        return a dict with current data.
+        """Extract the ensembles data from the current state.
 
         Returns: ensembles data
             dict
         """
-        return {}
+        return {'occupancy': self.current_occupancy}
 
     @staticmethod
     def _accept(delta_e, beta=1.0):
-        """
-        Evaluate the metropolis acceptance criterion
+        """Evaluate the metropolis acceptance criterion.
 
         Args:
             delta_e (float):
@@ -207,7 +247,8 @@ class BaseEnsemble(ABC):
 
     def _save_data(self):
         """
-        Save the current sample and properties
+        Save the current sample and properties.
+
         Args:
             step (int):
                 Current montecarlo step

@@ -2,13 +2,17 @@ import unittest
 import random
 import numpy as np
 from itertools import combinations
+import json
 from pymatgen import Lattice, Structure
 from pymatgen.util.coord import is_coord_subset_pbc
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe import ClusterSubspace
-from smol.cofe.configspace.utils import SITE_TOL, get_bits
-from smol.exceptions import *
+from smol.cofe.extern import EwaldTerm
+from smol.cofe.configspace.utils import SITE_TOL, get_site_domains
+from smol.exceptions import StructureMatchError
 from src.ce_utils import corr_from_occupancy
+
+# TODO test correlations for ternary and for applications of symops to structure
 
 
 class TestClusterSubSpace(unittest.TestCase):
@@ -20,16 +24,24 @@ class TestClusterSubSpace(unittest.TestCase):
         self.structure = Structure(self.lattice, self.species, self.coords)
         sf = SpacegroupAnalyzer(self.structure)
         self.symops = sf.get_symmetry_operations()
-        self.cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5},
-                                             basis='Indicator',
-                                             orthonormal=False)
-        self.bits = get_bits(self.structure)
+        self.cs = ClusterSubspace.from_radii(self.structure,
+                                             radii={2: 6, 3: 5},
+                                             basis='indicator',
+                                             orthonormal=False,
+                                             supercell_size='volume')
+        self.domains = get_site_domains(self.structure)
 
     def test_numbers(self):
-        # Test the total generated orbits, orderings and clusters are as expected.
+        # Test the total generated orbits, orderings and clusters are
+        # as expected.
         self.assertEqual(self.cs.n_orbits, 27)
         self.assertEqual(self.cs.n_bit_orderings, 124)
         self.assertEqual(self.cs.n_clusters, 377)
+
+    def test_func_orbit_ids(self):
+        self.assertEqual(len(self.cs.function_orbit_ids), 124)
+        self.assertEqual(len(set(self.cs.function_orbit_ids)),
+                         27)
 
     def test_orbits(self):
         self.assertEqual(len(self.cs.orbits) + 1, self.cs.n_orbits)  # +1 for empty cluster
@@ -111,25 +123,30 @@ class TestClusterSubSpace(unittest.TestCase):
 
     def test_refine_structure(self):
         lattice = Lattice([[2.95, 3, 0], [0, 3, 2.9], [3, 0, 3]])
-        structure = Structure(lattice, ['Li', ] * 2 + ['Ca'] + ['Br'], self.coords)
+        structure = Structure(lattice, ['Li', ]*2 + ['Ca'] + ['Br'],
+                              self.coords)
         structure.make_supercell(2)
         ref_structure = self.cs.refine_structure(structure)
         prim_ref = ref_structure.get_primitive_structure()
 
-        # This is failing in pymatgen 2020.1.10, since lattice matrices are not the same,
-        # but still equivalent
+        # This is failing in pymatgen 2020.1.10, since lattice matrices are not
+        # the same, but still equivalent
         # self.assertEqual(self.lattice, structure.lattice)
-        self.assertTrue(np.allclose(self.lattice.parameters, prim_ref.lattice.parameters))
+        self.assertTrue(np.allclose(self.lattice.parameters,
+                                    prim_ref.lattice.parameters))
         self.assertTrue(np.allclose(self.cs.corr_from_structure(structure),
                                     self.cs.corr_from_structure(ref_structure)))
 
     def test_corr_from_structure(self):
-        structure = Structure(self.lattice, ['Li',] * 2 + ['Ca'] + ['Br'], self.coords)
+        structure = Structure(self.lattice, ['Li',] * 2 + ['Ca'] + ['Br'],
+                              self.coords)
         corr = self.cs.corr_from_structure(structure)
-        self.assertEqual(len(corr), self.cs.n_bit_orderings + len(self.cs.external_terms))
+        self.assertEqual(len(corr),
+                         self.cs.n_bit_orderings + len(self.cs.external_terms))
         self.assertEqual(corr[0], 1)
 
-        cs = ClusterSubspace.from_radii(self.structure, {2: 5})
+        cs = ClusterSubspace.from_radii(self.structure, {2: 5},
+                                        basis='indicator')
 
         # make an ordered supercell_structure
         s = self.structure.copy()
@@ -158,7 +175,8 @@ class TestClusterSubSpace(unittest.TestCase):
             self.assertTrue(np.allclose(cs.corr_from_structure(s), expected))
 
     def test_remove_orbits(self):
-        cs = ClusterSubspace.from_radii(self.structure, {2: 5})
+        cs = ClusterSubspace.from_radii(self.structure, {2: 5},
+                                        basis='indicator')
         s = self.structure.copy()
         s.make_supercell([2, 1, 1])
         species = ('Li', 'Ca', 'Li', 'Ca', 'Br', 'Br')
@@ -177,10 +195,12 @@ class TestClusterSubSpace(unittest.TestCase):
         expected = [1, 0.5, 0.25, 0, 0.5, 0.25, 0.125, 0, 0, 0, 0.25]
         self.assertEqual(len(cs.corr_from_structure(s)), 11)
         self.assertEqual(cs.n_orbits, 5)
+        self.assertEqual(len(set(cs.function_orbit_ids)), 5)
         self.assertTrue(np.allclose(cs.corr_from_structure(s), expected))
 
     def test_remove_bit_combos(self):
-        cs = ClusterSubspace.from_radii(self.structure, {2: 5})
+        cs = ClusterSubspace.from_radii(self.structure, {2: 5},
+                                        basis='indicator')
         s = self.structure.copy()
         s.make_supercell([2, 1, 1])
         species = ('Li', 'Ca', 'Li', 'Ca', 'Br', 'Br')
@@ -235,16 +255,21 @@ class TestClusterSubSpace(unittest.TestCase):
         m = np.array([[2, 0, 0], [0, 2, 0], [0, 1, 1]])
         supercell = self.structure.copy()
         supercell.make_supercell(m)
-        s = Structure(supercell.lattice, ['Ca', 'Li', 'Li', 'Br', 'Br', 'Br', 'Br'],
-                      [[0.125, 1, 0.25], [0.125, 0.5, 0.25], [0.375, 0.5, 0.75],
-                       [0, 0, 0], [0, 0.5, 1], [0.5, 1, 0], [0.5, 0.5, 0]])
-        cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5})
+        s = Structure(supercell.lattice,
+                      ['Ca', 'Li', 'Li', 'Br', 'Br', 'Br', 'Br'],
+                      [[0.125, 1, 0.25], [0.125, 0.5, 0.25],
+                       [0.375, 0.5, 0.75], [0, 0, 0], [0, 0.5, 1],
+                       [0.5, 1, 0], [0.5, 0.5, 0]])
+        cs = ClusterSubspace.from_radii(self.structure, {2: 6, 3: 5},
+                                        basis='indicator',
+                                        supercell_size='volume')
         a = cs.corr_from_structure(s)
         s.make_supercell([2, 1, 1])
         b = cs.corr_from_structure(s)
         self.assertTrue(np.allclose(a, b))
 
-    def _encode_occu(self, occu, bits):
+    @staticmethod
+    def _encode_occu(occu, bits):
         return np.array([bit.index(sp) for sp, bit in zip(occu, bits)])
 
     def test_vs_CASM_pairs(self):
@@ -252,13 +277,14 @@ class TestClusterSubSpace(unittest.TestCase):
         coords = ((0.25, 0.25, 0.25), (0.75, 0.75, 0.75),
                   (0.5, 0.5, 0.5),  (0, 0, 0))
         structure = Structure(self.lattice, species, coords)
-        cs = ClusterSubspace.from_radii(structure, {2: 6})
-        bits = get_bits(structure)
+        cs = ClusterSubspace.from_radii(structure, {2: 6},
+                                         basis='indicator')
+        bits = get_site_domains(structure)
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
         orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
                       for orb, inds in cs.supercell_orbit_mappings(m)]
 
-        # last two clusters are switched from CASM output (and using occupancy basis)
+        # last two clusters are switched from CASM output (occupancy basis)
         # all_li (ignore casm point term)
         occu = self._encode_occu(['Li', 'Li', 'Li'], bits)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
@@ -292,19 +318,20 @@ class TestClusterSubSpace(unittest.TestCase):
 
     def test_vs_CASM_triplets(self):
         """
-        test vs casm generated correlation with occupancy basis
+        Test vs casm generated correlation with occupancy basis.
         """
         species = [{'Li': 0.1}] * 3 + ['Br']
         coords = ((0.25, 0.25, 0.25), (0.75, 0.75, 0.75),
                   (0.5, 0.5, 0.5), (0, 0, 0))
         structure = Structure(self.lattice, species, coords)
-        cs = ClusterSubspace.from_radii(structure, {2: 6, 3: 4.5})
-        bits = get_bits(structure)
+        cs = ClusterSubspace.from_radii(structure, {2: 6, 3: 4.5},
+                                        basis='indicator')
+        bits = get_site_domains(structure)
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 
         orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
                       for orb, inds in cs.supercell_orbit_mappings(m)]
-        # last two pair terms are switched from CASM output (and using occupancy basis)
+        # last two pair terms are switched from CASM output (occupancy basis)
         # all_vacancy (ignore casm point term)
         occu = self._encode_occu(['Vacancy', 'Vacancy', 'Vacancy'], bits)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
@@ -317,40 +344,47 @@ class TestClusterSubSpace(unittest.TestCase):
         occu = self._encode_occu(['Vacancy', 'Vacancy', 'Li'], bits)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
-                                    [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1]))
+                                    [1, 0, 1, 0, 0, 0, 1, 0, 0, 0,
+                                     0, 1, 0, 0, 0, 0, 0, 0, 1]))
 
         # tetrahedral
         occu = self._encode_occu(['Li', 'Li', 'Vacancy'], bits)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
-                                    [1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0]))
+                                    [1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1,
+                                     0, 0, 1, 0, 0, 1, 1, 0]))
         # mixed
         occu = self._encode_occu(['Li', 'Vacancy', 'Li'], bits)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
-                                    [1, 0.5, 1, 0.5, 0, 0.5, 1, 0.5, 0, 0, 0.5, 1, 0, 0, 0.5, 0.5, 0.5, 0.5, 1]))
+                                    [1, 0.5, 1, 0.5, 0, 0.5, 1, 0.5, 0, 0,
+                                     0.5, 1, 0, 0, 0.5, 0.5, 0.5, 0.5, 1]))
         # single_tet
         occu = self._encode_occu(['Li', 'Vacancy', 'Vacancy'], bits)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
-                                    [1, 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0, 0.5, 0.5, 0]))
+                                    [1, 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0,
+                                     0.5, 0, 0, 0, 0, 0, 0.5, 0.5, 0]))
 
     def test_vs_CASM_multicomp(self):
-        cs = ClusterSubspace.from_radii(self.structure, {2: 5})
+        cs = ClusterSubspace.from_radii(self.structure, {2: 5},
+                                        basis='indicator')
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 
         orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
                       for orb, inds in cs.supercell_orbit_mappings(m)]
         # mixed
-        occu = self._encode_occu(['Vacancy', 'Li', 'Li'], self.bits)
+        occu = self._encode_occu(['Vacancy', 'Li', 'Li'], self.domains)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
-                                    [1, 0.5, 0, 1, 0, 0.5, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 1, 0, 0, 0.5, 0, 0, 0]))
+                                    [1, 0.5, 0, 1, 0, 0.5, 0, 0, 0, 0, 0,
+                                     0, 0.5, 0, 0, 1, 0, 0, 0.5, 0, 0, 0]))
         # Li_tet_ca_oct
-        occu = self._encode_occu(['Vacancy', 'Li', 'Ca'], self.bits)
+        occu = self._encode_occu(['Vacancy', 'Li', 'Ca'], self.domains)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
-                                    [1, 0.5, 0, 0, 1, 0, 0.5, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, 0.5, 0, 0]))
+                                    [1, 0.5, 0, 0, 1, 0, 0.5, 0, 0, 0, 0,
+                                     0, 0.5, 0, 0, 0, 0, 1, 0, 0.5, 0, 0]))
 
     def test_copy(self):
         cs = self.cs.copy()
@@ -409,9 +443,49 @@ class TestClusterSubSpace(unittest.TestCase):
         str(self.cs)
 
     def test_msonable(self):
+        # get corr for a few supercells to cache their orbit indices
+        struct = Structure(self.lattice, ['Li',]*2 + ['Ca'] + ['Br'],
+                              self.coords)
+        struct1 = struct.copy()
+        struct1.make_supercell(2)
+        struct2 = struct1.copy()
+        # TODO all symops after 1 make finding supercell step fail this needs
+        #  to be checked!
+        struct2.apply_operation(self.cs.symops[1])
+        for s in (struct, struct1, struct2):  # run this to cache orb indices
+            _ = self.cs.corr_from_structure(s)
+        self.assertNotEqual(len(self.cs._supercell_orb_inds), 0)
         d = self.cs.as_dict()
         cs = ClusterSubspace.from_dict(d)
+        self.assertEqual(cs.as_dict(), d)
         self.assertEqual(cs.n_orbits, 27)
         self.assertEqual(cs.n_bit_orderings, 124)
         self.assertEqual(cs.n_clusters, 377)
         self.assertEqual(str(cs), str(self.cs))
+        # checked that the cached orbit index mappings where properly kept
+        for scm, orb_inds in cs._supercell_orb_inds.items():
+            self.assertTrue(scm in self.cs._supercell_orb_inds)
+            for orb_inds1, orb_inds2 in zip(orb_inds,
+                                            self.cs._supercell_orb_inds[scm]):
+                self.assertEqual(orb_inds1[0].id, orb_inds1[0].id)
+                self.assertEqual(orb_inds1[0].radius, orb_inds1[0].radius)
+                self.assertTrue(np.array_equal(orb_inds1[1], orb_inds2[1]))
+        self.assertTrue(np.array_equal(self.cs.corr_from_structure(struct2),
+                                       cs.corr_from_structure(struct2)))
+        # Check external terms are kept
+        self.cs.add_external_term(EwaldTerm(eta=3))
+        d = self.cs.as_dict()
+        cs = ClusterSubspace.from_dict(d)
+        self.assertEqual(cs.as_dict(), d)
+        self.assertEqual(len(cs.external_terms), 1)
+        self.assertTrue(isinstance(cs.external_terms[0], EwaldTerm))
+        self.assertEqual(cs.external_terms[0].eta, 3)
+        module = d['external_terms'][0]['@module']
+        d['external_terms'][0]['@module'] = 'smol.blab'
+        self.assertWarns(ImportWarning, ClusterSubspace.from_dict, d)
+        d['external_terms'][0]['@module'] = module
+        d['external_terms'][0]['@class'] = 'Blab'
+        self.assertWarns(RuntimeWarning, ClusterSubspace.from_dict, d)
+        # test if serializable
+        j = json.dumps(d)
+        json.loads(j)

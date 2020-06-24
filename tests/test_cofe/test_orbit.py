@@ -1,5 +1,6 @@
 import unittest
 from itertools import combinations_with_replacement
+import json
 import numpy as np
 from pymatgen import Lattice, Structure
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
@@ -54,12 +55,12 @@ class TestOrbit(unittest.TestCase):
         self.assertNotEqual(orbit2, self.orbit)
 
     def test_bit_combos(self):
-        bit_combos = self.orbit.bit_combos # orbit with two symmetrically equivalent sites
-        self.assertEqual(len(bit_combos), 3)
+        # orbit with two symmetrically equivalent sites
+        self.assertEqual(self.orbit.n_bit_orderings, 3)
         orbit = Orbit(self.coords[1:3], self.lattice, [[0, 1], [0, 1]],
                       self.bases, self.symops)
-        bit_combos = orbit.bit_combos  # orbit with two symmetrically distinct sites
-        self.assertEqual(len(bit_combos), 4)
+        # orbit with two symmetrically distinct sites
+        self.assertEqual(orbit.n_bit_orderings, 4)
 
     def test_is_orthonormal(self):
         self.assertFalse(self.orbit.basis_orthogonal)
@@ -125,7 +126,6 @@ class TestOrbit(unittest.TestCase):
         self.assertRaises(RuntimeError, self.orbit.remove_bit_combos_by_inds,
                           [4])
 
-
     def test_repr(self):
         repr(self.orbit)
 
@@ -135,3 +135,5 @@ class TestOrbit(unittest.TestCase):
     def test_msonable(self):
         d = self.orbit.as_dict()
         self.assertEqual(self.orbit, Orbit.from_dict(d))
+        j = json.dumps(d)
+        json.loads(j)

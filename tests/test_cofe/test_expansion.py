@@ -1,183 +1,146 @@
 import unittest
+import json
 import numpy as np
 from smol.cofe import StructureWrangler, ClusterSubspace, ClusterExpansion
-from smol.cofe.configspace import EwaldTerm
-from smol.cofe.regression import constrain_dielectric
-from smol.cofe.regression.estimator import CVXEstimator, BaseEstimator
-from tests.data import lno_prim, lno_data
+from smol.cofe.extern import EwaldTerm
+from tests.data import synthetic_CE_binary, synthetic_CEewald_binary
 
-# Probably should also add fitting to synthetic data.
-# i.e. using from pymatgen.transformations.advanced_transformations import
-# EnumerateStructureTransformation
-class TestClusterExpansion(unittest.TestCase):
+
+# TODO add tests with synthetic ternary dataset
+
+
+class TestClusterExpansionBinary(unittest.TestCase):
+    """
+    Test cluster expansion on a synthetic CE binary dataset
+    """
+
     def setUp(self) -> None:
-        self.cs = ClusterSubspace.from_radii(lno_prim, {2: 5, 3: 4.1},
-                                             ltol=0.15, stol=0.2,
-                                             angle_tol=5, supercell_size='O2-')
-        self.sw = StructureWrangler(self.cs)
-        self.sw.add_data(lno_data)
+        cs = ClusterSubspace.from_dict(synthetic_CE_binary['cluster_subspace'])
+        self.sw = StructureWrangler(cs)
+        data = synthetic_CE_binary['data']
+        train_ids = np.random.choice(range(len(data)), size=len(data)//5,
+                                          replace=False)
+        test_ids = np.array(list(set(range(len(data))) - set(train_ids)))
+        self.test_structs = [data[i][0] for i in test_ids]
+        self.test_energies = np.array([data[i][1] for i in test_ids])
+        for i in train_ids:
+            struct, energy = data[i]
+            self.sw.add_data(struct, {'energy': energy})
+        coefs = np.linalg.lstsq(self.sw.feature_matrix,
+                               self.sw.get_property_vector('energy', True),
+                               rcond=None)[0]
+        self.ce = ClusterExpansion(cs, coefs, self.sw.feature_matrix)
 
-    def test_from_radii(self):
-        # Test with numpy because CVXEstimator gives slightly  different ECIs
-        # for same parameters
-        estimator = BaseEstimator()
-        estimator._solve = lambda X, y: np.linalg.lstsq(X, y, rcond=None)[0]
-        weights = ['hull', {'temperature': 50}]
-        ce = ClusterExpansion.from_radii(lno_prim, {2: 5, 3: 4.1},
-                                         ltol=0.15, stol=0.2,
-                                         angle_tol=5, supercell_size='O2-',
-                                         data=lno_data, estimator=estimator,
-                                         weights=weights)
-        ce.fit()
-        ce1 = ClusterExpansion.from_radii(lno_prim, {2: 5, 3: 4.1},
-                                         ltol=0.15, stol=0.2,
-                                         angle_tol=5, supercell_size='O2-',
-                                         estimator=estimator, data=lno_data,
-                                         weights=weights)
+    def test_predict_train(self):
+        preds = [self.ce.predict(s) for s in self.sw.structures]
+        self.assertTrue(np.allclose(preds,
+                                    self.sw.get_property_vector('energy', False)))
+        preds = [self.ce.predict(s, True) for s in self.sw.structures]
+        self.assertTrue(np.allclose(preds,
+                                    self.sw.get_property_vector('energy')))
 
-        ce1.fit()
-
-        ce2 = ClusterExpansion.from_radii(lno_prim, {2: 5, 3: 4.1},
-                                         ltol=0.15, stol=0.2,
-                                         angle_tol=5, supercell_size='O2-',
-                                         ecis=ce.ecis)
-        test_structs = self.sw.structures[:10]
-
-        self.assertTrue(np.allclose(ce.predict(test_structs),
-                                    ce1.predict(test_structs)))
-        self.assertTrue(np.array_equal(ce.predict(test_structs),
-                                       ce2.predict(test_structs)))
-
-        ce3 = ClusterExpansion.from_radii(lno_prim, {2: 5, 3: 4.1},
-                                          ltol=0.15, stol=0.2,
-                                          angle_tol=5, supercell_size='O2-',
-                                          external_terms=[EwaldTerm,
-                                                          {'eta': None}],
-                                          data=lno_data,
-                                          weights=weights)
-        ce3.fit()
-        self.assertEqual(len(ce3.ecis[:-1]), len(ce.ecis))
-        self.assertEqual(len(ce3.predict(test_structs)), len(test_structs))
-
-    def test_cvxestimator(self):
-        estimator = CVXEstimator()
-        ce = ClusterExpansion.from_structure_wrangler(self.sw,
-                                                      estimator=estimator)
-        self.assertRaises(AttributeError, ce.predict, self.sw.structures[:10])
-        ce.fit(mu=5)
-        self.assertIsNotNone(ce.ecis)
-        self.assertEqual(len(ce.ecis), self.cs.n_bit_orderings)
-
-    def test_sklearn(self):
-        try:
-            from sklearn.linear_model import Ridge, LassoCV
-        except ImportError:
-            return
-        ce = ClusterExpansion.from_structure_wrangler(self.sw,
-                                                      estimator=Ridge())
-        self.assertRaises(AttributeError, ce.predict, self.sw.structures[:10])
-        ce.fit()
-        self.assertIsNotNone(ce.ecis)
-        self.assertEqual(len(ce.ecis), self.cs.n_bit_orderings)
-        ce.estimator = LassoCV()
-        ce.fit()
-        self.assertIsNotNone(ce.ecis)
-        self.assertEqual(len(ce.ecis), self.cs.n_bit_orderings)
-
-    def test_numpy(self):
-        estimator = BaseEstimator()
-        estimator._solve = lambda X, y: np.linalg.lstsq(X, y, rcond=None)[0]
-        ce = ClusterExpansion.from_structure_wrangler(self.sw,
-                                                      estimator=estimator)
-        self.assertRaises(AttributeError, ce.predict, self.sw.structures[:10])
-        ce.fit()
-        self.assertIsNotNone(ce.ecis)
-        self.assertEqual(len(ce.ecis), self.cs.n_bit_orderings)
-        pred = ce.estimator.predict(ce.feature_matrix)
-
-        self.assertEqual(ce.max_error,
-                         np.max(np.abs(ce.property_vector - pred)))
-        self.assertEqual(ce.mean_absolute_error,
-                         np.average(np.abs(ce.property_vector - pred)))
-        self.assertEqual(ce.root_mean_squared_error,
-                         np.sqrt(np.average((ce.property_vector - pred) ** 2)))
-
-        self.sw._set_weights(self.sw.items, 'hull')
-        ce._weights = self.sw.weights
-        self.assertTrue(np.array_equal(ce.weights, self.sw.weights))
-        ce.fit()
-        pred = ce.estimator.predict(ce.feature_matrix)
-
-        self.assertEqual(ce.max_error,
-                         np.max(np.abs(ce.property_vector - pred)))
-        self.assertEqual(ce.mean_absolute_error,
-                         np.average(np.abs(ce.property_vector - pred),
-                                    weights=ce.weights))
-        self.assertEqual(ce.root_mean_squared_error,
-                         np.sqrt(np.average((ce.property_vector - pred) ** 2,
-                                            weights=ce.weights)))
-
-    def test_no_estimator(self):
-        ecis = np.ones((self.cs.n_bit_orderings))
-        ce = ClusterExpansion.from_structure_wrangler(self.sw, ecis=ecis)
-        structs = self.sw.structures[:10]
-        p = np.array([sum(self.cs.corr_from_structure(s)) for s in structs])
-        self.assertTrue(np.allclose(ce.predict(structs, normalized=True), p))
+    def test_predict_test(self):
+        preds = [self.ce.predict(s) for s in self.test_structs]
+        self.assertTrue(np.allclose(preds, self.test_energies))
 
     def test_convert_eci(self):
-        estimator = BaseEstimator()
-        estimator._solve = lambda X, y: np.linalg.lstsq(X, y, rcond=None)[0]
-        ce = ClusterExpansion.from_structure_wrangler(self.sw,
-                                                      estimator=estimator)
-        ce.fit()
-        cs = self.cs.copy()
+        cs = self.ce.cluster_subspace.copy()
         cs.change_site_bases('indicator', orthonormal=True)
         feature_matrix = np.array([cs.corr_from_structure(s)
-                                   for s in self.sw.refined_structures[15:]])
-        eci = ce.convert_eci('indicator', orthonormal=True)
-
-        self.assertTrue(np.allclose(ce.predict(self.sw.refined_structures[15:],
-                                               normalized=True),
+                                   for s in self.sw.refined_structures])
+        eci = self.ce.convert_eci('indicator',
+                                  self.sw.refined_structures,
+                                  self.sw.supercell_matrices,
+                                  orthonormal=True)
+        self.assertTrue(np.allclose(np.dot(self.sw.feature_matrix, self.ce.coefs),
                                     np.dot(feature_matrix, eci)))
 
-    # TODO Finish writing this test
     def test_prune(self):
-        ce = ClusterExpansion.from_structure_wrangler(self.sw)
-        self.assertRaises(RuntimeError, ce.prune, ce)
-
-    def test_constrain_dielectric(self):
-        self.cs.add_external_term(EwaldTerm)
-        ce = ClusterExpansion.from_structure_wrangler(self.sw,
-                                                      estimator=CVXEstimator())
-        ce.fit()
-        constrain_dielectric(ce, 5)
-        self.assertEqual(ce.ecis[-1], 1/5)
-
-    def test_exceptions(self):
-        self.assertRaises(ValueError, ClusterExpansion, self.cs,
-                          self.sw.structures[:10], self.sw.properties[:5])
-        self.assertRaises(ValueError, ClusterExpansion, self.cs,
-                          self.sw.structures[:10], self.sw.properties[:10],
-                          weights=[1, 1, 1])
-        self.assertRaises(ValueError, ClusterExpansion, self.cs,
-                          self.sw.structures[:10], self.sw.properties[:10],
-                          supercell_matrices=[1, 1, 1])
-        self.assertRaises(AttributeError, ClusterExpansion, self.cs,
-                          self.sw.structures[:10], self.sw.properties[:10],
-                          estimator=None, ecis=None)
+        cs = ClusterSubspace.from_dict(synthetic_CE_binary['cluster_subspace'])
+        ce = ClusterExpansion(cs, self.ce.coefs.copy(), self.ce._feat_matrix)
+        thresh = 8E-3
+        ce.prune(threshold=thresh)
+        ids = [i for i, coef in enumerate(self.ce.coefs) if abs(coef) >= thresh]
+        new_coefs = self.ce.coefs[abs(self.ce.coefs) >= thresh]
+        new_eci = self.ce.eci[ids]
+        self.assertEqual(len(ce.coefs), len(new_coefs))
+        self.assertTrue(np.array_equal(new_coefs, ce.coefs))
+        self.assertTrue(np.array_equal(new_eci, ce.eci))
+        self.assertEqual(ce.cluster_subspace.n_orbits, len(new_coefs))
+        self.assertEqual(len(ce.eci_orbit_ids), len(new_coefs))
+        # check new predictions
+        preds = [ce.predict(s, normalize=True) for s in self.sw.structures]
+        self.assertTrue(np.allclose(preds,
+                                    np.dot(self.sw.feature_matrix[:, ids],
+                                           new_coefs)))
+        # check the updated feature matrix is correct
+        self.assertTrue(np.equal(ce._feat_matrix,
+                               self.sw.feature_matrix[:, ids]).all())
+        # check that recomputing features produces whats expected
+        new_feature_matrix = np.array([cs.corr_from_structure(s)
+                                       for s in self.sw.structures])
+        self.assertTrue(np.equal(ce._feat_matrix, new_feature_matrix).all())
 
     def test_print(self):
-        ce = ClusterExpansion.from_structure_wrangler(self.sw)
-        print(ce)
-        ce.fit()
-        print(ce)
+        _ = str(self.ce)
 
     def test_msonable(self):
-        ecis = np.ones((self.cs.n_bit_orderings))
-        ce = ClusterExpansion.from_structure_wrangler(self.sw, ecis=ecis)
-        # ce.print_ecis()
-        d = ce.as_dict()
+        self.ce.metadata['somethingimportant'] = 75
+        d = self.ce.as_dict()
         ce1 = ClusterExpansion.from_dict(d)
-        self.assertTrue(np.array_equal(ce.ecis, ce1.ecis))
-        self.assertIsInstance(ce.subspace, ClusterSubspace)
-        self.assertIsInstance(ce.estimator, BaseEstimator)
+        self.assertTrue(np.array_equal(self.ce.coefs, ce1.coefs))
+        self.assertIsInstance(self.ce.cluster_subspace, ClusterSubspace)
+        self.assertEqual(ce1.metadata, self.ce.metadata)
+        j = json.dumps(d)
+        json.loads(j)
+
+
+class TestClusterExpansionEwaldBinary(unittest.TestCase):
+    """
+    Test cluster expansion on a synthetic CE + Ewald binary dataset
+    """
+
+    def setUp(self) -> None:
+        self.dataset = synthetic_CEewald_binary
+        self.cs = ClusterSubspace.from_dict(self.dataset['cluster_subspace'])
+
+        num_structs = len(self.dataset['data'])
+        self.train_ids = np.random.choice(range(num_structs),
+                                          size=num_structs//5,
+                                          replace=False)
+        self.test_ids = np.array(list(set(range(num_structs)) - set(self.train_ids)))
+
+    def test_ewald_only(self):
+        data = self.dataset['ewald_data']
+        cs = ClusterSubspace.from_radii(self.cs.structure,
+                                        radii={2: 0},
+                                        basis='sinusoid')
+        self.assertEqual(len(cs.orbits), 1)
+        cs.add_external_term(EwaldTerm())
+        ecis = self._test_predictions(cs, data)
+        self.assertAlmostEqual(ecis[-1], 1, places=10)
+
+    def test_ce_ewald(self):
+        data = self.dataset['data']
+        cs = ClusterSubspace.from_dict(self.dataset['cluster_subspace'])
+        cs.add_external_term(EwaldTerm())
+        _ = self._test_predictions(cs, data)
+
+    def _test_predictions(self, cs, data):
+        sw = StructureWrangler(cs)
+        for i in self.train_ids:
+            struct, energy = data[i]
+            sw.add_data(struct, {'energy': energy})
+        ecis = np.linalg.lstsq(sw.feature_matrix,
+                               sw.get_property_vector('energy', True),
+                               rcond=None)[0]
+        ce = ClusterExpansion(cs, ecis, sw.feature_matrix)
+        test_structs = [data[i][0] for i in self.test_ids]
+        test_energies = np.array([data[i][1] for i in self.test_ids])
+        preds = [ce.predict(s) for s in sw.structures]
+        self.assertTrue(np.allclose(preds,
+                                    sw.get_property_vector('energy', False)))
+        preds = [ce.predict(s) for s in test_structs]
+        self.assertTrue(np.allclose(preds, test_energies))
+
+        return ecis

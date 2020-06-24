@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 jobs:
   build:
     docker:
@@ -20,8 +20,14 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
+            pip install -q --upgrade pip
+            # need to use latest pymatgen, eventually change it back in
+            # next release
+            git clone https://github.com/materialsproject/pymatgen.git
+            cd pymatgen
+            pip install . & cd ..
             pip install -r requirements.txt
-            pip install scikit-learn pytest coverage pytest-cov
+            pip install -q pytest
 
       - save_cache:
           paths:
@@ -34,15 +40,16 @@ jobs:
           command: |
             . venv/bin/activate
             pip install --quiet -e .
-            pytest --cov=smol --cov-report html:coverage_reports
-
-      - store_artifacts:
-          path: coverage_reports
-          destination: coverage_reports
+            pytest tests
 
   build-cython:
     docker:
       - image: circleci/python:3.7.3
+
+    parameters:
+      codacy-token:
+        type: string
+        default: ${CODACY_PROJECT_TOKEN}
 
     working_directory: ~/smol
 
@@ -60,8 +67,14 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
+            pip install -q --upgrade pip
+            # need to use latest pymatgen, eventually change it back in
+            # next release
+            git clone https://github.com/materialsproject/pymatgen.git
+            cd pymatgen
+            pip install . & cd ..
             pip install -r requirements.txt
-            pip install cython scikit-learn pytest coverage pytest-cov
+            pip install -q coverage cython pytest
 
       - save_cache:
           paths:
@@ -74,7 +87,10 @@ jobs:
           command: |
             . venv/bin/activate
             python setup.py --quiet install --use-cython
-            pytest --cov=smol --cov-report html:coverage_reports
+            coverage run -m pytest tests
+            coverage xml
+            export CODACY_PROJECT_TOKEN=<< parameters.codacy-token >>
+            bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l Python -r coverage.xml
 
   style-check:
     docker:
@@ -113,7 +129,7 @@ jobs:
             # echo "--- Done ---"
 
 workflows:
-  version: 2
+  version: 2.1
   build_and_test:
     jobs:
       - build

@@ -1,13 +1,14 @@
-# coding: utf-8
 """
-Utilities for manipulating coordinates or list of coordinates, under periodic
-boundary conditions or otherwise.
+General cython utility functions to calculate correlation vectors and local
+changes in correlation vectors a tad bit faster than pure python.
 """
+
+__author__ = "Luis Barroso-Luque, William D. Richards"
 
 import numpy as np
 cimport numpy as np
 cimport cython
-from cython.parallel import prange, parallel
+#from cython.parallel import prange, parallel
 
 
 @cython.boundscheck(False)
@@ -15,8 +16,8 @@ from cython.parallel import prange, parallel
 @cython.initializedcheck(False)
 @cython.cdivision(True)
 def corr_from_occupancy(np.int_t[::1] occu, int n_bit_orderings, orbit_list):
-    """
-    Computes the correlation vector for a given encoded occupancy vector
+    """Computes the correlation vector for a given encoded occupancy string.
+
     Args:
         occu (np.array):
             encoded occupancy vector
@@ -30,7 +31,7 @@ def corr_from_occupancy(np.int_t[::1] occu, int n_bit_orderings, orbit_list):
         correlation vector difference
     """
 
-    cdef int i, j, k, I, J, K, id, n
+    cdef int i, j, k, I, J, K, o_id, n
     cdef double p, pi
     cdef const np.int_t[:, ::1] inds
     cdef const np.int_t[:, ::1] bits
@@ -39,10 +40,10 @@ def corr_from_occupancy(np.int_t[::1] occu, int n_bit_orderings, orbit_list):
     cdef np.float_t[:] o_view = out
     o_view[0] = 1  # empty cluster
 
-    for id, combos, bases, inds in orbit_list:
+    for o_id, combos, bases, inds in orbit_list:
         I = inds.shape[0] # cluster index
         K = inds.shape[1] # index within cluster
-        n = id
+        n = o_id
         for bits in combos:
             J = bits.shape[0]
             p = 0
@@ -62,15 +63,14 @@ def corr_from_occupancy(np.int_t[::1] occu, int n_bit_orderings, orbit_list):
 @cython.wraparound(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
-def delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,
-                           int n_bit_orderings, site_orbit_list):
-    """
-    Computes the correlation difference between two occupancy
-    vectors.
+def general_delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,
+                                   int n_bit_orderings, site_orbit_list):
+    """Computes the correlation difference between two occupancy vectors.
+
     Args:
         occu_f (np.array):
             encoded occupancy vector with flip
-        occu_i (np.array):
+        occu_i (ndarray):
             encoded occupancy vector without flip
         n_bit_orderings (int):
             total number of bit orderings in expansion.
@@ -80,11 +80,11 @@ def delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,
             (bit_combos, orbit id, site indices, ratio, bases array)
 
 
-    Returns: array
-        correlation vector difference
+    Returns:
+        ndarray: correlation vector difference
     """
 
-    cdef int i, j, k, I, J, K, id, n
+    cdef int i, j, k, I, J, K, o_id, n
     cdef double p, pi, pf, r
     cdef const np.int_t[:, ::1] inds
     cdef const np.int_t[:, ::1] bits
@@ -92,10 +92,10 @@ def delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,
     out = np.zeros(n_bit_orderings)
     cdef np.float_t[:] o_view = out
 
-    for id, r, combos, bases, inds in site_orbit_list:
+    for o_id, r, combos, bases, inds in site_orbit_list:
         I = inds.shape[0] # cluster index
         K = inds.shape[1] # index within cluster
-        n = id
+        n = o_id
         for bits in combos:
             J = bits.shape[0]
             p = 0
@@ -113,15 +113,34 @@ def delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,
     return out
 
 
+# TODO make this only compute a single float and not an ndarry with one element
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
-def delta_ewald_single_flip(np.int_t[:] final, np.int_t[:] init,
+def delta_ewald_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,
                             int n_bit_orderings, clusters, int ind, int bit,
                             np.float_t[:, :, :] ewald_matrices,
                             np.int_t[:, :] ewald_inds, double size):
+    """Compute the change in electrostatic interaction energy from a flip.
 
+    Args:
+        occu_f (np.array):
+            encoded occupancy vector with flip
+        occu_i (np.array):
+            encoded occupancy vector without flip
+        n_bit_orderings (int):
+            total number of bit orderings in expansion.
+        clusters:
+        ind:
+        bit:
+        ewald_matrices:
+        ewald_inds:
+        size:
+
+    Returns:
+        float: electrostatic interaction energy difference
+    """
     cdef int i, j, k, I, J, K, l, add, sub
     cdef bint ok
     cdef np.int_t[:, :] inds
@@ -131,19 +150,19 @@ def delta_ewald_single_flip(np.int_t[:] final, np.int_t[:] init,
 
     # values of -1 are vacancies and hence don't have ewald indices
     add = ewald_inds[ind, bit]
-    sub = ewald_inds[ind, init[ind]]
+    sub = ewald_inds[ind, occu_i[ind]]
     for l in range(ewald_matrices.shape[0]):
         o = 0
-        for j in range(final.shape[0]):
-            i = ewald_inds[j, final[j]]
+        for j in range(occu_f.shape[0]):
+            i = ewald_inds[j, occu_f[j]]
             if i != -1 and add != -1:
                 if i != add:
                     o += ewald_matrices[l, i, add] * 2
                 else:
                     o += ewald_matrices[l, i, add]
 
-        for j in range(init.shape[0]):
-            i = ewald_inds[j, init[j]]
+        for j in range(occu_i.shape[0]):
+            i = ewald_inds[j, occu_i[j]]
             if i != -1 and sub != -1:
                 if i != sub:
                     o -= ewald_matrices[l, i, sub] * 2
@@ -152,5 +171,68 @@ def delta_ewald_single_flip(np.int_t[:] final, np.int_t[:] init,
 
         o_view[l] = o / size
         l += 1
+
+    return out
+
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.initializedcheck(False)
+@cython.cdivision(True)
+def indicator_delta_corr_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,
+                                     int n_bit_orderings, site_orbit_list):
+    """Local change in indicator basis correlation vector from single flip.
+
+    Args:
+        occu_f (np.array):
+            encoded occupancy vector with flip
+        occu_i (np.array):
+            encoded occupancy vector without flip
+        n_bit_orderings (int):
+            total number of bit orderings in expansion.
+        site_orbit_list:
+            Information of all orbits that include the flip site.
+            List of tuples each with
+            (bit_combos, orbit id, site indices, ratio, bases array)
+
+    Returns:
+        ndarray: correlation vector difference
+    """
+
+    cdef int i, j, k, I, J, K, l
+    cdef bint ok
+    cdef np.int_t[:, :] b, inds
+    out = np.zeros(n_bit_orderings)
+    cdef np.float_t[:] o_view = out
+    cdef np.float_t[:, :] m
+    cdef double r, o
+
+    for o_id, r, combos, _, inds in site_orbit_list:
+        l = o_id
+        I = inds.shape[0] # cluster index
+        K = inds.shape[1] # index within cluster
+        for b in combos:
+            J = b.shape[0] # index within bit array
+            o = 0
+            for i in range(I):
+                for j in range(J):
+                    ok = True
+                    for k in range(K):
+                        if occu_f[inds[i, k]] != b[j, k]:
+                            ok = False
+                            break
+                    if ok:
+                        o += 1
+
+                    ok = True
+                    for k in range(K):
+                        if occu_i[inds[i, k]] != b[j, k]:
+                            ok = False
+                            break
+                    if ok:
+                        o -= 1
+
+            o_view[l] = o / r / (I * J)
+            l += 1
 
     return out

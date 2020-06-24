@@ -1,52 +1,68 @@
-"""
-Implementation of an orbit. A set of symmetrically equivalent (with respect to
-the given undecorated lattice symmetry) clusters.
+"""Implementation of an Orbit.
+
+A set of symmetrically equivalent (with respect to the given undecorated
+lattice symmetry) clusters.
 """
 
-from __future__ import division
+__author__ = "Luis Barroso-Luque, William Davidson Richard"
+
 import itertools
 import numpy as np
 from monty.json import MSONable
 from pymatgen import Lattice, SymmOp
 from pymatgen.util.coord import coord_list_mapping
-
-from .cluster import Cluster
 from smol.cofe.configspace.utils import SITE_TOL, _repr
 from smol.exceptions import SymmetryError, SYMMETRY_ERROR_MESSAGE
+from .cluster import Cluster
 from .basis import basis_factory
 
 
 class Orbit(MSONable):
-    """
+    """Orbit set of symmetrically equivalent clusters.
+
     An Orbit represents a set of clusters that are symmetrically equivalent
-    (when undecorated).
-    This usually includes translational and structure symmetry of the
+    (when undecorated). The class also includes the possible orderings on the
+    clusters in the orbit.
+
+    An orbit usually includes translational and structure symmetry of the
     underlying lattice. But this is not a hard requirement any set of symmetry
     operations can be passed to the constructor. (regardless an orbit should at
     a minimum have translational symmetry).
-    Also includes the possible orderings on the clusters
+
+    You probably never need to instantiate this class directly. Look at
+    ClusterSubspace to create orbits and clusters necessary for a CE.
+
+    Attributes:
+        bits (list): list describing occupancy in each cluster.
+        site_bases (list of SiteBasis): list of the SiteBasis for each site.
+        structure_symops (list of Symmops):
+            list of underlying structure symmetry operations.
+        radius (float): max distance between two sites in a cluster.
+        size (int): number of sites in cluster.
+        lattice (Lattice): underlying structure lattice.
     """
 
     def __init__(self, sites, lattice, bits, site_bases, structure_symops):
-        """
+        """Initialize an Orbit.
+
         Args:
-            sites (list):
+            sites (list or ndarray):
                 list of frac coords for the sites
             lattice (pymatgen.Lattice):
                 A lattice object for the given sites
             bits (list):
-                list describing the occupancy of each site in cluster. For each
-                site, should be the number of possible occupancies minus one.
-                i.e. for a 3 site cluster, each of which having one of Li, TM,
-                or Vac, bits should be [[0, 1], [0, 1], [0, 1]]. This is
-                ensures the expansion is not "over-complete" by implicitly
-                enforcing that all sites have a site basis function phi_0 = 1.
-            site_bases (list(SiteBasis)):
+                list describing the possible site function orderings for
+                each site in cluster. Should be the number of possible
+                occupancies minus one. i.e. for a 3 site cluster, each of which
+                having one of Li, TM, or Vac, bits are [[0, 1], [0, 1], [0, 1]]
+                This is ensures the expansion is not "over-complete" by
+                implicitly enforcing that all sites have a site basis function
+                phi_0 = 1.
+            site_bases (list of SiteBasis):
                 list of SiteBasis objects for each site in the given sites.
-            structure_symops (list(pymatgen.SymmOps)):
+            structure_symops (list of SymmOp):
                 list of symmetry operations for the base structure
         """
-
         if len(sites) != len(bits):
             raise AttributeError(f'Number of sites {len(sites)} must be equal '
                                  f'to number of bits {len(bits)}')
@@ -76,35 +92,25 @@ class Orbit(MSONable):
         self.lattice = lattice
 
     @property
-    def cluster_symops(self):
+    def n_bit_orderings(self):
+        """Get number of symmetrically distinct bit orderings."""
+        return len(self.bit_combos)
+
+    @property
+    def multiplicity(self):
+        """Get number of clusters in orbit.
+
+        Number of clusters in the given sites of the lattice object that are in
+        the orbit.
         """
-        Symmetry operations that map a cluster to its periodic image.
-        each element is a tuple of (pymatgen.core.operations.Symop, mapping)
-        where mapping is a tuple such that
-        Symop.operate(sites) = sites[mapping]
-        (after translation back to unit cell)
-        """
-        if self._symops:
-            return self._symops
-        self._symops = []
-        for symop in self.structure_symops:
-            new_sites = symop.operate_multi(self.base_cluster.sites)
-            c = Cluster(new_sites, self.base_cluster.lattice)
-            if c == self.base_cluster:
-                recenter = np.round(self.base_cluster.centroid - c.centroid)
-                c_sites = c.sites + recenter
-                mapping = tuple(coord_list_mapping(self.base_cluster.sites,
-                                                   c_sites, atol=SITE_TOL))
-                self._symops.append((symop, mapping))
-        if len(self._symops) * self.multiplicity != len(self.structure_symops):
-            raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
-        return self._symops
+        return len(self.clusters)
 
     @property
     def bit_combos(self):
-        """
+        """Get list of site bit orderings.
+
         List of lists, each inner list is of symmetrically equivalent bit
-        orderings
+        orderings.
         """
         if self._bit_combos is not None:
             return self._bit_combos
@@ -128,9 +134,7 @@ class Orbit(MSONable):
 
     @property
     def clusters(self):
-        """
-        Returns symmetrically equivalent clusters
-        """
+        """Get symmetrically equivalent clusters."""
         if self._equiv:
             return self._equiv
         equiv = [self.base_cluster]
@@ -143,22 +147,36 @@ class Orbit(MSONable):
         if len(equiv) * len(self.cluster_symops) != len(self.structure_symops):
             self._equiv = None  # Unset this
             raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
-
         return equiv
 
     @property
-    def multiplicity(self):
+    def cluster_symops(self):
+        """Get symmetry operations that map a cluster to its periodic image.
+
+        Each element is a tuple of (pymatgen.core.operations.Symop, mapping)
+        where mapping is a tuple such that
+        Symop.operate(sites) = sites[mapping]
+        (after translation back to unit cell)
         """
-        Number of clusters in the given sites of the lattice object that are in
-        the orbit.
-        """
-        return len(self.clusters)
+        if self._symops:
+            return self._symops
+        self._symops = []
+        for symop in self.structure_symops:
+            new_sites = symop.operate_multi(self.base_cluster.sites)
+            c = Cluster(new_sites, self.base_cluster.lattice)
+            if c == self.base_cluster:
+                recenter = np.round(self.base_cluster.centroid - c.centroid)
+                c_sites = c.sites + recenter
+                mapping = tuple(coord_list_mapping(self.base_cluster.sites,
+                                                   c_sites, atol=SITE_TOL))
+                self._symops.append((symop, mapping))
+        if len(self._symops) * self.multiplicity != len(self.structure_symops):
+            raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
+        return self._symops
 
     @property
     def basis_arrays(self):
-        """
-        A tuple of all site function arrays for each site in orbit
-        """
+        """Get a tuple of all site function arrays for each site in orbit."""
         if self._basis_arrs is None:
             self._basis_arrs = tuple(sb.function_array
                                      for sb in self.site_bases)
@@ -166,7 +184,8 @@ class Orbit(MSONable):
 
     @property
     def bases_array(self):
-        """
+        """Get bases array.
+
         3D array with all basis arrays. Since each basis array can be of
         different dimension the 3D array is the size of the largest array.
         Smaller arrays are padded with ones. Doing this allows using numpy
@@ -183,18 +202,19 @@ class Orbit(MSONable):
 
     @property
     def basis_orthogonal(self):
-        """Test if the Orbit bases are orthogonal """
+        """Test if the Orbit bases are orthogonal."""
         return all(basis.is_orthogonal for basis in self.site_bases)
 
     @property
     def basis_orthonormal(self):
-        """Test if the orbit bases are orthonormal"""
+        """Test if the orbit bases are orthonormal."""
         return all(basis.is_orthonormal for basis in self.site_bases)
 
-    def remove_bit_combo(self, bits):
-        """
-        Removes bit_combos from orbit. Only a single set bits in the bit combo
-        (symmetrically equivalent bit orderings) needs to be passed
+    def remove_bit_combo(self, bits):  # seems like this is no longer used?
+        """Remove bit_combos from orbit.
+
+        Only a single set bits in the bit combo (symmetrically equivalent bit
+        orderings) needs to be passed.
         """
         bit_combos = []
 
@@ -203,16 +223,13 @@ class Orbit(MSONable):
                 bit_combos.append(bit_combo)
 
         if not bit_combos:
-            raise RuntimeError(f'All bit_combos have been removed from orbit '
+            raise RuntimeError('All bit_combos have been removed from orbit '
                                f'with id {self.id}')
 
         self._bit_combos = tuple(bit_combos)
 
     def remove_bit_combos_by_inds(self, inds):
-        """
-        Remove a bit combos by their indices in the bit_combo list
-        """
-
+        """Remove bit combos by their indices in the bit_combo list."""
         if max(inds) > len(self.bit_combos) - 1:
             raise RuntimeError(f'Some indices {inds} out of ranges for total '
                                f'{len(self._bit_combos)} bit combos')
@@ -221,12 +238,11 @@ class Orbit(MSONable):
                                  if i not in inds)
 
         if not self.bit_combos:
-            raise RuntimeError(f'All bit_combos have been removed from orbit '
+            raise RuntimeError('All bit_combos have been removed from orbit '
                                f'with id {self.id}')
 
-    def eval(self, bits, species_encoding):
-        """
-        Evaluates a cluster function defined for this orbit
+    def eval(self, bits, species_encoding):  # is this used anymore?
+        """Evaluate a cluster function defined for this orbit.
 
         Args:
             bits (list):
@@ -246,8 +262,7 @@ class Orbit(MSONable):
         return p
 
     def transform_site_bases(self, basis_name, orthonormal=False):
-        """
-        Transforms the Orbits site bases to new set of bases
+        """Transform the Orbits site bases to new basis set.
 
         Args:
             basis_name (str):
@@ -266,16 +281,18 @@ class Orbit(MSONable):
         self._basis_arrs, self._bases_arr = None, None
 
     def assign_ids(self, orbit_id, orbit_bit_id, start_cluster_id):
-        """
-        Used to assign unique orbit and cluster id's when creating a cluster
-        _subspace.
+        """Assign unique orbit and cluster ids.
+
+        This should be called iteratively for a list of orbits to get a proper
+        set of unique id's for the orbits.
 
         Args:
             orbit_id (int): orbit id
             orbit_bit_id (int): start bit ordering id
             start_cluster_id (int): start cluster id
 
-        Returns (int, int, int):
+        Returns:
+            (int, int, int):
             next orbit id, next bit ordering id, next cluster id
         """
         self.id = orbit_id
@@ -286,6 +303,7 @@ class Orbit(MSONable):
         return orbit_id + 1, orbit_bit_id + len(self.bit_combos), c_id
 
     def __eq__(self, other):
+        """Check equality of orbits."""
         try:
             # when performing Orbit in list, this ordering stops the
             # equivalent structures from generating
@@ -296,15 +314,19 @@ class Orbit(MSONable):
             raise NotImplementedError
 
     def __neq__(self, other):
+        """Check negation of orbit equality."""
         return not self.__eq__(other)
 
     def __str__(self):
-        return f'[Orbit] id: {self.id:<4} bit_id: {self.bit_id:<4}' \
+        """Pretty strings for pretty things."""
+        return f'[Orbit] id: {self.id:<3}' \
+               f'orderings: {self.n_bit_orderings:<4}' \
                f'multiplicity: {self.multiplicity:<4}' \
-               f' no. symops: {len(self.cluster_symops):<4} ' \
-               f'{str(self.base_cluster)}'
+               f' no. symops: {len(self.cluster_symops):<4}\n' \
+               f'              {str(self.base_cluster)}'
 
     def __repr__(self):
+        """Get Orbit representation."""
         return _repr(self, orb_id=self.id,
                      orb_b_id=self.bit_id,
                      radius=self.radius,
@@ -313,10 +335,7 @@ class Orbit(MSONable):
 
     @classmethod
     def from_dict(cls, d):
-        """
-        Creates Orbit from serialized MSONable dict
-        """
-
+        """Create Orbit from serialized MSONable dict."""
         structure_symops = [SymmOp.from_dict(so_d)
                             for so_d in d['structure_symops']]
         site_bases = [basis_factory(*sb_d) for sb_d in d['site_bases']]
@@ -324,8 +343,7 @@ class Orbit(MSONable):
                    d['bits'], site_bases, structure_symops)
 
     def as_dict(self):
-        """
-        Json-serialization dict representation
+        """Get Json-serialization dict representation.
 
         Returns:
             MSONable dict
@@ -334,7 +352,7 @@ class Orbit(MSONable):
              "@class": self.__class__.__name__,
              "sites": self.base_cluster.sites.tolist(),
              "lattice": self.lattice.as_dict(),
-             "bits": [i.tolist() for i in self.bits], 
+             "bits": self.bits,
              "site_bases": [(sb.__class__.__name__[:-5].lower(),
                              sb.species) for sb in self.site_bases],
              "structure_symops": [so.as_dict() for so in self.structure_symops]
