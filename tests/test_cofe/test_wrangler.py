@@ -37,11 +37,18 @@ class TestStructureWrangler(unittest.TestCase):
             self.assertTrue(size*num_prim_sits, len(occu))
 
     def test_add_data(self):
+        # Check that a structure that does not match raises error.
+        self.assertRaises(Exception, self.sw.add_data, lno_data[0][0],
+                          {'energy': 0}, raise_failed=True)
+
+        # Check data in setup was added correctly
         self.assertTrue(all(w == 2.0 for w in self.sw.get_weights('random')[:-1]))
         self.assertTrue(len(self.sw.get_weights('random')) == self.sw.num_structures)
         self.assertTrue(self.sw.get_weights('random')[-1] == 3.0)
         self.assertEqual(self.sw.available_properties, ['energy'])
         self.assertEqual(self.sw.available_weights, ['random'])
+
+        # Check adding new properties
         self.assertRaises(AttributeError, self.sw.add_properties, 'test',
                           self.sw.sizes[:-2])
         self.sw.add_properties('normalized_energy',
@@ -49,6 +56,7 @@ class TestStructureWrangler(unittest.TestCase):
         items = self.sw._items
         self.sw.remove_all_data()
         self.assertEqual(len(self.sw.structures), 0)
+
         # Test passing supercell matrices
         for item in items:
             self.sw.add_data(item['structure'], item['properties'],
@@ -56,6 +64,7 @@ class TestStructureWrangler(unittest.TestCase):
         self.assertEqual(len(self.sw.structures), len(items))
         self.sw.remove_all_data()
         self.assertEqual(len(self.sw.structures), 0)
+
         # Test passing site mappings
         for item in items:
             self.sw.add_data(item['structure'], item['properties'],
@@ -68,7 +77,20 @@ class TestStructureWrangler(unittest.TestCase):
                              supercell_matrix=item['scmatrix'],
                              site_mapping=item['mapping'])
         self.assertEqual(len(self.sw.structures), len(items))
-
+        
+        # Add more properties to test removal
+        self.sw.add_properties('normalized',
+                               self.sw.get_property_vector('energy', normalize=True))
+        self.sw.add_properties('normalized1',
+                               self.sw.get_property_vector('energy', normalize=True))
+        self.assertTrue(all(prop in ['energy', 'normalized_energy',
+                                     'normalized', 'normalized1'] for
+                            prop in self.sw.available_properties))
+        self.sw.remove_properties('normalized_energy', 'normalized',
+                                  'normalized1')
+        self.assertEqual(self.sw.available_properties, ['energy'])
+        self.assertWarns(RuntimeWarning, self.sw.remove_properties, 'blab')
+        
     def test_remove_structure(self):
         total = len(self.sw.structures)
         s = self.sw.structures[np.random.randint(0, total)]

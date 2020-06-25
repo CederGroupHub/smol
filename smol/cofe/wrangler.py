@@ -167,7 +167,8 @@ class StructureWrangler(MSONable):
         return self._metadata
 
     def add_data(self, structure, properties, normalized=False, weights=None,
-                 verbose=False, supercell_matrix=None, site_mapping=None):
+                 verbose=False, supercell_matrix=None, site_mapping=None,
+                 raise_failed=False):
         """Add a structure and measured property to Structure Wrangler.
 
         The property are usually extensive (i.e. not normalized per atom
@@ -207,10 +208,14 @@ class StructureWrangler(MSONable):
                 such that the elements of site_mapping represent the indices
                 of the matching sites to the prim structure. I you pass this
                 option you are fully responsible that the mappings are correct!
+            raise_failed (bool): optional
+                If true will raise the thrown error when adding a structure
+                fails. This can be helpful to keep a list of structures that
+                fail for further checking.
         """
         item = self._process_structure(structure, properties, normalized,
                                        weights, verbose, supercell_matrix,
-                                       site_mapping)
+                                       site_mapping, raise_failed)
         if item is not None:
             self._items.append(item)
 
@@ -257,6 +262,21 @@ class StructureWrangler(MSONable):
 
         for prop, item in zip(property_vector, self._items):
             item['properties'][key] = prop
+
+    def remove_properties(self, *property_keys):
+        """Remove properties from given keys.
+
+        Args:
+            *property_keys (str):
+                names of properties to remove
+        """
+        for key in property_keys:
+            try:
+                for item in self._items:
+                    del item['properties'][key]
+            except KeyError:
+                warnings.warn(f'Propertiy {key} does not exist.',
+                              RuntimeWarning)
 
     def get_property_vector(self, key, normalize=True):
         """Get the property target vector.
@@ -435,7 +455,7 @@ class StructureWrangler(MSONable):
         return d
 
     def _process_structure(self, structure, properties, normalized, weights,
-                           verbose, scmatrix, smapping):
+                           verbose, scmatrix, smapping, raise_failed):
         """Process a structure to be added to wrangler.
 
         Checks if the structure for this data item can be matched to the
@@ -464,6 +484,8 @@ class StructureWrangler(MSONable):
                 print(f'Unable to match {structure.composition} with '
                       f'properties {properties} to supercell_structure. '
                       f'Throwing out.\n Error Message: {str(e)}')
+            if raise_failed:
+                raise e
             return
         return {'structure': structure, 'ref_structure': refined_struct,
                 'properties': properties, 'weights': weights,

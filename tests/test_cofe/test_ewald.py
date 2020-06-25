@@ -31,6 +31,7 @@ class TestEwald(unittest.TestCase):
                        [0.5, 1, 0], [0.5, 0.5, 0]])
         occu = cs.occupancy_from_structure(s, encode=True)
         ew = EwaldTerm(eta=0.15)
-        self.assertAlmostEqual(ew.corr_from_occupancy(occu, supercell, 1),
-                               EwaldSummation(s, eta=ew.eta).total_energy, places=5)
+        np.testing.assert_almost_equal(ew.corr_from_occupancy(occu, supercell, 1),
+                                       EwaldSummation(s, eta=ew.eta).total_energy,
+                                       decimal=7)
         _, _ = ew._get_ewald_structure(supercell)
