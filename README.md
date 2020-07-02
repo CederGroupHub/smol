@@ -1,4 +1,4 @@
-#  smol
+# <img src="docs/logo.png" width="350px" alt="smol">
 
 ### Statistical Mechanics on Lattices
 
@@ -12,8 +12,10 @@ crystalline material systems.
 
 #### Installing & Running
 1.  `Clone` the repository.
-    -   The `master` branch is the stable version of the code. The `develop`
-    branch has the newest tested version, but may have more lingering bugs.
+    -   The latest tag in the `master` branch is the stable version of the
+    code. The `master` branch has the newest tested features, but may have more
+    lingering bugs. The `experimental` branch has more features but is not
+    fully tested.
 
 2.  Go to the top level directory of the cloned repo and type:
 

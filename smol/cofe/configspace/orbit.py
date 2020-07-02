@@ -304,14 +304,9 @@ class Orbit(MSONable):
 
     def __eq__(self, other):
         """Check equality of orbits."""
-        try:
-            # when performing Orbit in list, this ordering stops the
-            # equivalent structures from generating
-            return any(self.base_cluster == cluster
-                       for cluster in other.clusters)
-        except AttributeError as e:
-            print(e.message)
-            raise NotImplementedError
+        # when performing orbit in list, this ordering stops the
+        # equivalent structures from generating
+        return self.base_cluster in other.clusters
 
     def __neq__(self, other):
         """Check negation of orbit equality."""
