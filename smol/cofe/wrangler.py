@@ -163,7 +163,7 @@ class StructureWrangler(MSONable):
 
     @property
     def data_items(self):
-        """Get a list of the data item dictionaries"""
+        """Get a list of the data item dictionaries."""
         return self._items
 
     @property
@@ -419,7 +419,7 @@ class StructureWrangler(MSONable):
         """
         try:
             if supercell_matrix is None:
-                supercell_matrix = self._subspace.scmatrix_from_structure(structure)
+                supercell_matrix = self._subspace.scmatrix_from_structure(structure)  # noqa
             size = self._subspace.num_prims_from_matrix(supercell_matrix)
             if site_mapping is None:
                 supercell = self._subspace.structure.copy()
@@ -427,7 +427,7 @@ class StructureWrangler(MSONable):
                 site_mapping = self._subspace.structure_site_mapping(supercell,
                                                                      structure)
             fm_row = self._subspace.corr_from_structure(structure,
-                                                        scmatrix=supercell_matrix,
+                                                        scmatrix=supercell_matrix,  # noqa
                                                         site_mapping=site_mapping)  # noqa
             refined_struct = self._subspace.refine_structure(structure,
                                                              supercell_matrix)
