@@ -27,6 +27,9 @@ writing new code that you think will improve `smol` then please follow the
 steps bellow to add it to the repository. 
 
 1.  `Fork` the repository and then `clone` your fork to your local workspace.
+    1. You should always keep your `master` branch up to date with the main
+    repository `master` branch. Be good about doing *fast forward* merges of
+    the main `master` into your `master` branch while developing.
 
 2.  In order to have changes available without having to re-install the package,
 type in the top level directory:
@@ -38,14 +41,28 @@ while developing or the .c files have gone missing) use:
 
         python setup.py develop --use-cython
 
-4.  Once you have changes worth sharing open a `pull request` to the `develop`
-branch. The `master` branch will be reserved only for the most stable version
-and will only be updated with the `develop` branch once the team is comfortable
-with the stability of the code.
-    -   When openning a new pull request you will get a standard template, you do
-    not need to fill/keep everything, only the things that apply to your pull
-    request, but please try to be as thorough as possible in describing what 
-    you have done.
+4. Once you have changes worth sharing there are 3 main ways of adding your
+work to the main repository for others to see. All these require you to open a
+***pull request*** to a specific branch in the main repo. If you are not sure
+were your work should go please ask one of the repo administrators.
+    1. For short and concise additions (such as single new methods, bug fixes
+    and small edits) open a PR to the `master` branch.
+    2. For more involved work in developing complex functionality, consider
+    opening a new *feature* branch for your work that will eventually be merged
+    into the `master` branch once all your work is ready.
+    3. For small, but very specific or niche features; such that they are very
+    "experimental" but are not general enough to or easy to add robust testing
+    for open a PR to the `experimental` branch.
+
+5. Since the `master` branch is reserved only for the most stable version of
+the code, any new features should come with new unit-tests. Every so often a
+tag will be added to create versions of the code where it is most
+stable/tested. When opening a PR to the `master` branch, you will need to do
+the following:
+    -   When opening a new pull request you will get a standard template, you
+    do not need to fill/keep everything, only the things that apply to your
+    pull request, but please try to be as thorough as possible in describing
+    what you have done.
     -   You should make sure your work does not break any of the unittests, and
     if you implemented new functionality you should write tests for it.
         -   To run the tests you need to install `pytest`. Then from the top
@@ -53,18 +70,49 @@ with the stability of the code.
         
                 pytest tests
 
-        -   New tests should be put in the `/tests/` directory, and follow standard
-        Python `unittest` naming.
+        -   New tests should be put in the `/tests/` directory, and follow
+        standard Python `unittest` naming.
     -   You should also check your code conforms with standard python style by
         installing `flake8` (use pip). Then from the top level directory,
         
                 flake8 smol
-        
-    -   You are also encouraged to start a pull request before you're fully done
-    with your work when you want others to see what you are doing and possibly
-    get feedback or comments. If you open a pull request that is a work in
-    progress use [WIP] in the title.
-    -   If you are working on a large feature then you should consider creating a
-    new branch so that your work can be included in the main repo during
-    development (once the feature is ready in can be merged into the `develop`
-    branch). To open up a new branch contact a repo admin.
+    -   Make sure you write proper docstrings following ***Google***
+    style. You can just look at other docstrings to see what this looks like,
+    but it is also helpful to set up your IDE to help you with this (PyCharm
+    is nice for this). Additionally you can also install `pycodestyle` and run
+    that to make sure everything looks real nice.
+    -   Finally, you are also encouraged to start a pull request before you're
+    fully done with your work when you want others to see what you are doing
+    and possibly get feedback or comments. If you open a pull request that is a
+    work in progress use [WIP] in the title.
+    
+6. The `experimental` branch is used for new (exciting) features that are not
+fully tested. If you worked on developing something very particular to your own
+use case and you think someone at some point may benefit from it, but it is not
+worth adding to the main code and writing a bunch of tests for it. Admins take
+care of making sure the `experimental` branch is up to date with the underlying
+stable code from the `master` branch.
+    -   When opening a PR to the `experimental` branch, make sure that you
+    very carefully describe your *experimental* features and considering adding
+    a little example showing how to use it. This will be very helpful for
+    other brave souls that may want to try out your experimental features!
+
+7. If you are working on a large feature then you should consider creating a
+new **feature** branch so that your work can be included in the main repo
+during development (once the feature is ready in can be merged into the
+`develop` branch). This will allow you to work on your own schedule, but also
+allow for suggestions and collaboration with others. To open up a new branch
+contact a repo admin.
+    -   You need to tell the admin creating the name for your feature branch.
+    Make sure this is a descriptive name so it is obvious to others what the
+    branch is for.
+    -   You can (and should) open many PRs to the feature branch as you are
+    developing the necessary code. These PRs do not need anything special you
+    are free to organize them however you see fit.
+    -   When you think the code for the the branch is ready and well tested
+    with its corresponding unit tests, then it can be merged into the `master`
+    branch to become part of the main code. This requires a PR from the feature
+    branch to the `master` branch. Ask a repo admin to help you with this if
+    necessary.
+    -   Once the feature branch has been merged to the `master` branch it will
+    be deleted.
