@@ -28,6 +28,7 @@ class TestCluster(unittest.TestCase):
 
     def test_size(self):
         self.assertEqual(self.cluster.size, 4)
+        self.assertEqual(len(self.cluster), self.cluster.size)
 
     def test_radius(self):
         coords = self.lattice.get_cartesian_coords(self.cluster.sites)
