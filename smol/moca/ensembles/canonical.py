@@ -44,7 +44,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
                 "Li+/Vacancy". The values should be a dictionary
                 with two items {'sites': array with the site indices for all
                 sites corresponding to that sublattice in the occupancy vector,
-                'site_domain': OrderedDict of allowed species in sublattice}
+                'site_space': OrderedDict of allowed species in sublattice}
                 All sites in a sublattice need to have the same set of allowed
                 species.
             seed (int):

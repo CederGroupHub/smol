@@ -37,7 +37,7 @@ class BaseEnsemble(ABC):
                 "Li+/Vacancy". The values should be a dictionary
                 with two items {'sites': array with the site indices for all
                 sites corresponding to that sublattice in the occupancy vector,
-                'site_domain': OrderedDict of allowed species in sublattice}
+                'site_space': OrderedDict of allowed species in sublattice}
                 All sites in a sublattice need to have the same set of allowed
                 species.
             seed (int): optional
@@ -51,12 +51,12 @@ class BaseEnsemble(ABC):
             initial_occupancy = processor.encode_occupancy(initial_occupancy)
 
         if sublattices is None:
-            sublattices = {'/'.join(domain.keys()):
+            sublattices = {'/'.join(site_space.keys()):
                            {'sites': np.array([i for i, sp in
-                                        enumerate(processor.allowed_species)  # noqa
-                                               if sp == list(domain.keys())]),
-                            'domain': domain}
-                           for domain in processor.unique_site_domains}
+                                               enumerate(processor.allowed_species)  # noqa
+                                               if sp == list(site_space.keys())]),  # noqa
+                            'site_space': site_space}
+                           for site_space in processor.unique_site_spaces}
 
         self.processor = processor
         self.sample_interval = sample_interval

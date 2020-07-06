@@ -8,7 +8,7 @@ from pymatgen.util.coord import is_coord_subset_pbc
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe import ClusterSubspace
 from smol.cofe.extern import EwaldTerm
-from smol.cofe.configspace.utils import SITE_TOL, get_site_domains
+from smol.cofe.configspace.utils import SITE_TOL, get_site_spaces
 from smol.exceptions import StructureMatchError
 from src.ce_utils import corr_from_occupancy
 
@@ -29,7 +29,7 @@ class TestClusterSubSpace(unittest.TestCase):
                                              basis='indicator',
                                              orthonormal=False,
                                              supercell_size='volume')
-        self.domains = get_site_domains(self.structure)
+        self.domains = get_site_spaces(self.structure)
 
     def test_numbers(self):
         # Test the total generated orbits, orderings and clusters are
@@ -279,7 +279,7 @@ class TestClusterSubSpace(unittest.TestCase):
         structure = Structure(self.lattice, species, coords)
         cs = ClusterSubspace.from_radii(structure, {2: 6},
                                          basis='indicator')
-        bits = get_site_domains(structure)
+        bits = get_site_spaces(structure)
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
         orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
                       for orb, inds in cs.supercell_orbit_mappings(m)]
@@ -326,7 +326,7 @@ class TestClusterSubSpace(unittest.TestCase):
         structure = Structure(self.lattice, species, coords)
         cs = ClusterSubspace.from_radii(structure, {2: 6, 3: 4.5},
                                         basis='indicator')
-        bits = get_site_domains(structure)
+        bits = get_site_spaces(structure)
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 
         orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)

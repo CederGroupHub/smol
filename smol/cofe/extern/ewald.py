@@ -13,7 +13,7 @@ import numpy as np
 from pymatgen import Structure, PeriodicSite
 from pymatgen.analysis.ewald import EwaldSummation
 from monty.json import MSONable
-from smol.cofe.configspace.utils import get_site_domains
+from smol.cofe.configspace.utils import get_site_spaces
 
 
 class EwaldTerm(MSONable):
@@ -97,7 +97,7 @@ class EwaldTerm(MSONable):
         Returns:
             Structure, array
         """
-        site_doms = get_site_domains(structure)
+        site_doms = get_site_spaces(structure)
         nbits = np.array([len(b) - 1 for b in site_doms])
         ewald_inds, ewald_sites = [], []
         for dom, site in zip(site_doms, structure):

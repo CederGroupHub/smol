@@ -19,7 +19,7 @@ from pymatgen import Structure, PeriodicSite
 from pymatgen.analysis.ewald import EwaldSummation
 from smol.cofe import ClusterExpansion
 from smol.cofe.extern import EwaldTerm
-from smol.cofe.configspace.utils import get_site_domains
+from smol.cofe.configspace.utils import get_site_spaces
 from src.ce_utils import (corr_from_occupancy, general_delta_corr_single_flip,
                           delta_ewald_single_flip,
                           indicator_delta_corr_single_flip)
@@ -106,12 +106,13 @@ class CEProcessor(BaseProcessor):
         self.supercell_matrix = supercell_matrix
 
         # this can be used (maybe should) to check if a flip is valid
-        domains = get_site_domains(cluster_expansion.expansion_structure,
-                                   include_measure=True)
-        self.unique_site_domains = tuple(OrderedDict(doms) for doms in
-                                         set(tuple(doms.items()) for doms in domains))  # noqa
+        site_spaces = get_site_spaces(cluster_expansion.expansion_structure,
+                                      include_measure=True)
+        self.unique_site_spaces = tuple(OrderedDict(space) for space in
+                                        set(tuple(spaces.items())
+                                            for spaces in site_spaces))
 
-        self.allowed_species = get_site_domains(self.structure)
+        self.allowed_species = get_site_spaces(self.structure)
         self.size = self.subspace.num_prims_from_matrix(supercell_matrix)
         self.n_orbit_functions = self.subspace.n_bit_orderings
 

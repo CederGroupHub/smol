@@ -58,7 +58,7 @@ class TestCEProcessor(unittest.TestCase):
                                                                            scmatrix=scmatrix)
         self.enc_occu = self.pr.occupancy_from_structure(test_struct)
         self.sublattices = []
-        for doms in self.pr.unique_site_domains:
+        for doms in self.pr.unique_site_spaces:
             sites = np.array([i for i, b in enumerate(self.pr.allowed_species)
                               if b == list(doms.keys())])
             self.sublattices.append({'doms': list(range(len(doms))),
@@ -213,7 +213,7 @@ class TestEwaldCEProcessor(unittest.TestCase):
                                                                            scmatrix=scmatrix)
         self.enc_occu = self.pr.occupancy_from_structure(test_struct)
         self.sublattices = []
-        for doms in self.pr.unique_site_domains:
+        for doms in self.pr.unique_site_spaces:
             sites = np.array([i for i, b in enumerate(self.pr.allowed_species)
                               if b == list(doms.keys())])
             self.sublattices.append({'doms': list(range(len(doms))),
