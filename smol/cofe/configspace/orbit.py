@@ -302,16 +302,15 @@ class Orbit(MSONable):
             c_id = c.assign_ids(c_id)
         return orbit_id + 1, orbit_bit_id + len(self.bit_combos), c_id
 
+    def __len__(self):
+        """Get size of a the base cluster. The number of sites."""
+        return self.size
+
     def __eq__(self, other):
         """Check equality of orbits."""
-        try:
-            # when performing Orbit in list, this ordering stops the
-            # equivalent structures from generating
-            return any(self.base_cluster == cluster
-                       for cluster in other.clusters)
-        except AttributeError as e:
-            print(e.message)
-            raise NotImplementedError
+        # when performing orbit in list, this ordering stops the
+        # equivalent structures from generating
+        return self.base_cluster in other.clusters
 
     def __neq__(self, other):
         """Check negation of orbit equality."""

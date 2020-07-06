@@ -23,7 +23,7 @@ from pymatgen.util.coord import (is_coord_subset, is_coord_subset_pbc,
                                  coord_list_mapping_pbc)
 from smol.cofe.configspace import Orbit
 from smol.cofe.configspace.basis import basis_factory
-from smol.cofe.configspace.utils import SITE_TOL, get_site_domains
+from smol.cofe.configspace.utils import SITE_TOL, get_site_spaces
 from smol.exceptions import (SymmetryError, StructureMatchError,
                              SYMMETRY_ERROR_MESSAGE)
 from src.ce_utils import corr_from_occupancy
@@ -416,7 +416,7 @@ class ClusterSubspace(MSONable):
                 This prevents running _site_matcher to get the mappings.
             encode (bool): oprtional
                 If true the occupancy string will have the index of the species
-                in the expansion structure site domains, rather than the
+                in the expansion structure site spaces, rather than the
                 species name.
 
         Returns:
@@ -434,7 +434,7 @@ class ClusterSubspace(MSONable):
 
         occu = []  # np.zeros(len(self.supercell_structure), dtype=np.int)
 
-        for i, domain in enumerate(get_site_domains(supercell)):
+        for i, site_space in enumerate(get_site_spaces(supercell)):
             # rather than starting with all vacancies and looping
             # only over mapping, explicitly loop over everything to
             # catch vacancies on improper sites
@@ -442,11 +442,11 @@ class ClusterSubspace(MSONable):
                 sp = str(structure[site_mapping.index(i)].specie)
             else:
                 sp = 'Vacancy'
-            if sp not in domain:
+            if sp not in site_space:
                 raise StructureMatchError('A site in given structure has an'
                                           f' unrecognized species {sp}.')
             if encode:
-                occu.append(domain.index(sp))
+                occu.append(site_space.index(sp))
             else:
                 occu.append(sp)
         return occu
@@ -663,9 +663,10 @@ class ClusterSubspace(MSONable):
         Returns:
             dict: {size: list of Orbits within cutoff radius}
         """
-        domains = get_site_domains(exp_struct, include_measure=use_conc)
-        nbits = np.array([len(b) - 1 for b in domains])
-        site_bases = tuple(basis_factory(basis, domain) for domain in domains)
+        site_spaces = get_site_spaces(exp_struct, include_measure=use_conc)
+        nbits = np.array([len(b) - 1 for b in site_spaces])
+        site_bases = tuple(basis_factory(basis, site_space)
+                           for site_space in site_spaces)
 
         if orthonorm:
             for basis in site_bases:

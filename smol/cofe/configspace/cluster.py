@@ -70,6 +70,10 @@ class Cluster(MSONable):
         self.id = cluster_id
         return cluster_id + 1
 
+    def __len__(self):
+        """Get size of a cluster. The number of sites."""
+        return self.size
+
     def __eq__(self, other):
         """Check equivalency of clusters considering symmetry."""
         if self.sites.shape != other.sites.shape:

@@ -162,6 +162,11 @@ class StructureWrangler(MSONable):
         return [i['mapping'] for i in self._items]
 
     @property
+    def data_items(self):
+        """Get a list of the data item dictionaries."""
+        return self._items
+
+    @property
     def metadata(self):
         """Get dictionary to save applied filters, etc."""
         return self._metadata
@@ -213,10 +218,29 @@ class StructureWrangler(MSONable):
                 fails. This can be helpful to keep a list of structures that
                 fail for further checking.
         """
-        item = self._process_structure(structure, properties, normalized,
-                                       weights, verbose, supercell_matrix,
-                                       site_mapping, raise_failed)
+        item = self.process_structure(structure, properties, normalized,
+                                      weights, verbose, supercell_matrix,
+                                      site_mapping, raise_failed)
         if item is not None:
+            self._items.append(item)
+
+    def append_data_items(self, data_items):
+        """Append a list of data items.
+
+        Each data item must have all necessary fields. A data item can be
+        obtained using the process_structure method.
+
+        Args:
+            data_items (list of dict):
+                list of data items with all necessary information
+        """
+        keys = ['structure', 'ref_structure', 'properties', 'weights',
+                'scmatrix', 'mapping', 'features', 'size']
+        for item in data_items:
+            if not all(key in keys for key in item.keys()):
+                raise ValueError('A supplied data item is missing required '
+                                 'keys. Make sure they were obtained with '
+                                 'the process_structure method.')
             self._items.append(item)
 
     def add_weights(self, key, weights):
@@ -349,6 +373,80 @@ class StructureWrangler(MSONable):
         """Remove all data from Wrangler."""
         self._items = []
 
+    def process_structure(self, structure, properties, normalized=False,
+                          weights=None, verbose=False, supercell_matrix=None,
+                          site_mapping=None, raise_failed=False):
+        """Process a structure to be added to wrangler.
+
+        Checks if the structure for this data item can be matched to the
+        cluster subspace prim structure to obtain its supercell matrix,
+        correlation, and refined structure.
+
+        Args
+            structure (Structure):
+                A fit structure
+            properties (dict):
+                A dictionary with a key describing the property and the target
+                value for the corresponding structure. For example if only a
+                single property {'energy': value} but can also add more than
+                one i.e. {'total_energy': value1, 'formation_energy': value2}.
+                You are free to make up the keys for each property but make
+                sure you are consistent for all structures that you add.
+            normalized (bool):
+                Wether the given properties have already been normalized.
+            weights (dict):
+                The weight given to the structure when doing the fit. The key
+                must match at least one of the given properties.
+            verbose (bool):
+                if True then print structures that fail in StructureMatcher.
+            supercell_matrix (ndarray): optional
+                If the corresponding structure has already been matched to the
+                clustersubspace prim structure, passing the supercell_matrix
+                will use that instead of trying to re-match. If using this
+                the user is responsible to have the correct supercell_matrix,
+                Here you are the cause of your own bugs.
+            site_mapping (list): optional
+                Site mapping as obtained by StructureMatcher.get_mapping
+                such that the elements of site_mapping represent the indices
+                of the matching sites to the prim structure. I you pass this
+                option you are fully responsible that the mappings are correct!
+            raise_failed (bool): optional
+                If true will raise the thrown error when adding a structure
+                fails. This can be helpful to keep a list of structures that
+                fail for further checking.
+        Returns:
+            dict: data item dict for structure
+        """
+        try:
+            if supercell_matrix is None:
+                supercell_matrix = self._subspace.scmatrix_from_structure(structure)  # noqa
+            size = self._subspace.num_prims_from_matrix(supercell_matrix)
+            if site_mapping is None:
+                supercell = self._subspace.structure.copy()
+                supercell.make_supercell(supercell_matrix)
+                site_mapping = self._subspace.structure_site_mapping(supercell,
+                                                                     structure)
+            fm_row = self._subspace.corr_from_structure(structure,
+                                                        scmatrix=supercell_matrix,  # noqa
+                                                        site_mapping=site_mapping)  # noqa
+            refined_struct = self._subspace.refine_structure(structure,
+                                                             supercell_matrix)
+            if normalized:
+                properties = {key: val*size for key, val in properties.items()}
+            weights = {} if weights is None else weights
+        except StructureMatchError as e:
+            if verbose:
+                print(f'Unable to match {structure.composition} with '
+                      f'properties {properties} to supercell_structure. '
+                      f'Throwing out.\n Error Message: {str(e)}')
+            if raise_failed:
+                raise e
+            return
+        return {'structure': structure, 'ref_structure': refined_struct,
+                'properties': properties, 'weights': weights,
+                'scmatrix': supercell_matrix, 'mapping': site_mapping,
+                'features': fm_row, 'size': size}
+
     def filter_by_ewald(self, max_ewald, verbose=False):
         """Filter structures by electrostatic interaction energy.
 
@@ -453,44 +551,6 @@ class StructureWrangler(MSONable):
              '_items': s_items,
              'metadata': self.metadata}
         return d
-
-    def _process_structure(self, structure, properties, normalized, weights,
-                           verbose, scmatrix, smapping, raise_failed):
-        """Process a structure to be added to wrangler.
-
-        Checks if the structure for this data item can be matched to the
-        cluster subspace prim structure to obtain its supercell matrix,
-        correlation, and refined structure.
-        """
-        try:
-            if scmatrix is None:
-                scmatrix = self._subspace.scmatrix_from_structure(structure)
-            size = self._subspace.num_prims_from_matrix(scmatrix)
-            if smapping is None:
-                supercell = self._subspace.structure.copy()
-                supercell.make_supercell(scmatrix)
-                smapping = self._subspace.structure_site_mapping(supercell,
-                                                                 structure)
-            fm_row = self._subspace.corr_from_structure(structure,
-                                                        scmatrix=scmatrix,
-                                                        site_mapping=smapping)  # noqa
-            refined_struct = self._subspace.refine_structure(structure,
-                                                             scmatrix)
-            if normalized:
-                properties = {key: val*size for key, val in properties.items()}
-            weights = {} if weights is None else weights
-        except StructureMatchError as e:
-            if verbose:
-                print(f'Unable to match {structure.composition} with '
-                      f'properties {properties} to supercell_structure. '
-                      f'Throwing out.\n Error Message: {str(e)}')
-            if raise_failed:
-                raise e
-            return
-        return {'structure': structure, 'ref_structure': refined_struct,
-                'properties': properties, 'weights': weights,
-                'scmatrix': scmatrix, 'mapping': smapping,
-                'features': fm_row, 'size': size}
 
 
 def _energies_above_hull(structures, energies, ce_structure):

@@ -40,6 +40,10 @@ class TestOrbit(unittest.TestCase):
         for cluster in self.orbit.clusters[1:]:
             self.assertNotEqual(self.orbit.base_cluster, cluster)
 
+    def test_size(self):
+        self.assertEqual(self.orbit.size, self.basecluster.size)
+        self.assertEqual(len(self.orbit), len(self.basecluster))
+
     def test_multiplicity(self):
         self.assertEqual(self.orbit.multiplicity, 4)
 

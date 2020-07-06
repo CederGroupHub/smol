@@ -90,7 +90,22 @@ class TestStructureWrangler(unittest.TestCase):
                                   'normalized1')
         self.assertEqual(self.sw.available_properties, ['energy'])
         self.assertWarns(RuntimeWarning, self.sw.remove_properties, 'blab')
-        
+
+    def test_append_data_items(self):
+        items = self.sw._items
+        self.sw.remove_all_data()
+        self.assertEqual(len(self.sw.structures), 0)
+        self.assertRaises(ValueError, self.sw.append_data_items, [{'b': 1}])
+        data_items = []
+        for item in items:
+            data_items.append(self.sw.process_structure(item['structure'],
+                                                        item['properties'],
+                             supercell_matrix=item['scmatrix'],
+                             site_mapping=item['mapping']))
+
+        self.sw.append_data_items(data_items)
+        self.assertEqual(len(self.sw.data_items), len(items))
+
     def test_remove_structure(self):
         total = len(self.sw.structures)
         s = self.sw.structures[np.random.randint(0, total)]
