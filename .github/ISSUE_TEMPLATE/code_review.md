@@ -5,9 +5,13 @@ title: "[Code Review] latte.py (edit this)"
 labels: code review
 assignees: lbluque, qchempku2017
 ---
-Make sure that a code review issue for the source file you are about to create
-one does not already exist. Please edit the above fields based on the file you
+<!--
+Thank you for contributing a source file to smol! You are a sensei dev!
+Please make sure that a code review issue for the source file you are about to create
+one does not already exist. Please edit this template based on the file you
 are opening this issue for. 
+-->
+
 
 | File Name | Module Path | Authors|
 |-----------|-------------|--------|
