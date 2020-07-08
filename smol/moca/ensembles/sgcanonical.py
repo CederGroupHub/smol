@@ -64,7 +64,8 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
 
         for name in self._sublattices.keys():
             cons = {sp: count for sp, count
-                    in zip(self._sublattices[name]['domain'], counts[name])}
+                    in zip(self._sublattices[name]['site_space'],
+                           counts[name])}
             species_counts.update(cons)
 
         return species_counts
@@ -151,7 +152,7 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
 
         sublattice_name = random.choice(sublattices)
         sublattice = self._active_sublatts[sublattice_name]
-        species = tuple(sublattice['domain'].keys())
+        species = tuple(sublattice['site_space'].keys())
 
         site = random.choice(sublattice['sites'])
         old_sp = self._occupancy[site]  # old species code
@@ -172,7 +173,7 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
         for name, sublattice in self._sublattices.items():
             occupancy = self._occupancy[sublattice['sites']]
             counts[name] = [len(occupancy[occupancy == i]) for i
-                            in range(len(sublattice['domain']))]
+                            in range(len(sublattice['site_space']))]
         return counts
 
     def _get_sublattice_comps(self):
@@ -182,7 +183,8 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
         for name, sublattice in self._sublattices.items():
             occupancy = self._occupancy[sublattice['sites']]
             composition[name] = {sp: ct/len(occupancy) for sp, ct
-                                 in zip(sublattice['domain'], counts[name])}
+                                 in zip(sublattice['site_space'],
+                                        counts[name])}
         return composition
 
     def _get_current_data(self):
@@ -233,7 +235,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
                          seed=seed)
 
         # check that species are valid
-        species = [sp for sps in processor.unique_site_domains for sp in sps]
+        species = [sp for sps in processor.unique_site_spaces for sp in sps]
         for sp in chemical_potentials.keys():
             if sp not in species:
                 raise ValueError(f'Species {sp} in provided chemical '
@@ -247,7 +249,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
         # Add chemical potentials to sublattice dictionary
         for sublatt in self._sublattices.values():
             sublatt['mu'] = {sp: mu for sp, mu in chemical_potentials.items()
-                             if sp in sublatt['domain']}
+                             if sp in sublatt['site_space']}
             # This can be removed since it really doesn't affect results...
             # If no reference species is set, then set and recenter others
             mus = list(sublatt['mu'].values())
@@ -374,7 +376,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
         # TODO remove option to pass fugacity fractions, always use the prim
         if fugacity_fractions is not None:
             # check that species are valid
-            species = [sp for sps in processor.unique_site_domains
+            species = [sp for sps in processor.unique_site_spaces
                        for sp in sps]
             for sublatt in fugacity_fractions:
                 if sum([f for f in sublatt.values()]) != 1:
@@ -390,9 +392,9 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
             # with the same allowed species but different concentrations this
             # will mess it up and give both of them the first dictionary...
             for sublatt in self._sublattices.values():
-                ind = [sl.keys() for sl
-                       in fugacity_fractions].index(sublatt['domain'].keys())
-                sublatt['domain'] = fugacity_fractions[ind]
+                ind = [sl.keys() for sl in
+                       fugacity_fractions].index(sublatt['site_space'].keys())
+                sublatt['site_space'] = fugacity_fractions[ind]
 
         # recopy active_sublatts to include fugacity info
         self._active_sublatts = deepcopy(self._sublattices)
@@ -411,7 +413,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
         flip, sublattice, new_sp, old_sp = self._get_flips(sublattices)
         delta_e = self.processor.compute_property_change(self._occupancy,
                                                          [flip])
-        ratio = sublattice['domain'][new_sp]/sublattice['domain'][old_sp]
+        ratio = sublattice['site_space'][new_sp]/sublattice['site_space'][old_sp]  # noqa
         accept = self._accept(delta_e, ratio, self.beta)
 
         if accept:
