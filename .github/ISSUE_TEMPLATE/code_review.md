@@ -1,17 +1,18 @@
 ---
-name: "\U260026FF Code Review"
+name: "\U00002615 Code Review"
 about: "Use this template for code review & commentary of a specific source file. \U0001F60E"
 title: "[Code Review] latte.py (edit this)"
 labels: code review
 assignees: lbluque, qchempku2017
+
 ---
+
 <!--
 Thank you for contributing a source file to smol! You are a sensei dev!
 Please make sure that a code review issue for the source file you are about to create
 one does not already exist. Please edit this template based on the file you
 are opening this issue for. 
 -->
-
 
 | File Name | Module Path | Authors|
 |-----------|-------------|--------|
