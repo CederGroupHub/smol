@@ -1,14 +1,21 @@
 ---
-file name: "latte.py"
-Module Path: "smol.oatmilk"
-Authors: "Mr. Coder"
-
+name: Code Review
+about: Use this template for code review and comment of a specific source file.
+title: "[Code Review]: latte.py (edit this)"
+labels: code review
+assignees: lbluque, qchempku2017
 ---
-## Code Review
+Make sure that a code review issue for the source file you are about to create
+one does not already exist. Please edit the above fields based on the file you
+are opening this issue for. 
 
+| File Name | Module Path | Authors|
+|-----------|-------------|--------|
+| latte.py  |smol.oatmilk |Mr. Coder|
+
+## Code Review
 We use *code review* issues to open up a pinned location to discuss a specific
-source file. Please edit the above fields based on the file you are opening
-this issue for.
+source file.
 
 ### Source file summary
 Please add a brief summary of what the purpose of the code in the source file
