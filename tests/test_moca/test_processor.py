@@ -258,3 +258,13 @@ class TestEwaldCEProcessor(unittest.TestCase):
             rdcorr = self.pr.delta_corr([(site, old_sp)], new_occu)
             self.assertTrue(np.allclose(dcorr, -1*rdcorr,
                                         rtol=rtol, atol=atol))
+
+    def test_msonable(self):
+        d = self.pr.as_dict()
+        pr = EwaldCEProcessor.from_dict(d)
+        self.assertEqual(self.pr.compute_property(self.enc_occu),
+                         pr.compute_property(self.enc_occu))
+        self.assertTrue(np.array_equal(self.pr.ewald_interactions,
+                                       pr.ewald_interactions))
+        j = json.dumps(d)
+        _ = json.loads(j)

@@ -416,19 +416,22 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
         interactions = np.sum(matrix[ew_occu, :][:, ew_occu])
         return interactions/self.size
 
-    # TODO saving ewaldsummation
-    # It would be nice to save the ewaldsummation since creating it again takes
-    # some time....but need pymatgen to be MSONable
-    # def as_dict(self) -> dict:
-    #    d = super().as_dict()
-    #    d['_ewald'] = self.ewald_summation.as_dict()
+    def as_dict(self) -> dict:
+        """
+        Json-serialization dict representation.
 
-    #   return d
+        Returns:
+            MSONable dict
+        """
+        d = super().as_dict()
+        d['_ewald'] = self.ewald_summation.as_dict()
+        return d
 
-    # @classmethod
-    # def from_dict(cls, d):
-    #    pr = cls(ClusterExpansion.from_dict(d['cluster_expansion']),
-    #             np.array(d['supercell_matrix']),
-    #             optimize_indicator=d['indicator'])
-    #    pr.__ewald = EwaldSummation.as_dict()  # this is not part of pymatgen!
-    #    # yet....
+    @classmethod
+    def from_dict(cls, d):
+        """Create a CEProcessor from serialized MSONable dict."""
+        pr = cls(ClusterExpansion.from_dict(d['cluster_expansion']),
+                 np.array(d['supercell_matrix']),
+                 optimize_indicator=d['indicator'])
+        pr._ewald = EwaldSummation.from_dict(d['_ewald'])
+        return pr
