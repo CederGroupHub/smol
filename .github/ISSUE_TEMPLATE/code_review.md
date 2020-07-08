@@ -1,7 +1,7 @@
 ---
 name: Code Review
 about: Use this template for code review and comment of a specific source file.
-title: "[Code Review]: latte.py (edit this)"
+title: "[Code Review] latte.py (edit this)"
 labels: code review
 assignees: lbluque, qchempku2017
 ---
