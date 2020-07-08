@@ -29,7 +29,7 @@ If you are mentioning a set of specific lines in code already implemented, it
 may come in handy to add a
 [permanent link](https://docs.github.com/en/enterprise/2.21/user/github/managing-your-work-on-github/creating-a-permanent-link-to-a-code-snippet) to it.
 
-**Format suggested code niceley**
+**Format suggested code nicely**
 
 ```python
 def roast(beans, *flavoring_oils):
