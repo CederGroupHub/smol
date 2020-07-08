@@ -1,6 +1,6 @@
 ---
-name: ":sunglasses: Code Review"
-about: "Use this template for code review & commentary of a specific source file. :coffee:"
+name: "\U260026FF Code Review"
+about: "Use this template for code review & commentary of a specific source file. \U0001F60E"
 title: "[Code Review] latte.py (edit this)"
 labels: code review
 assignees: lbluque, qchempku2017
