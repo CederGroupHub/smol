@@ -8,6 +8,8 @@ concentration of species.
 __author__ = "Luis Barroso-Luque"
 
 import random
+from itertools import combinations
+from collections import defaultdict
 import numpy as np
 from monty.json import MSONable
 from smol.moca.ensembles.base import BaseEnsemble
@@ -24,7 +26,8 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
     """
 
     def __init__(self, processor, temperature, sample_interval,
-                 initial_occupancy, sublattices=None, seed=None):
+                 initial_occupancy, sublattices=None, site_space_overlap=False,
+                 seed=None):
         """Initialize CanonicalEnemble.
 
         Args:
@@ -47,6 +50,11 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
                 'site_space': OrderedDict of allowed species in sublattice}
                 All sites in a sublattice need to have the same set of allowed
                 species.
+            site_space_overlap (bool): optional
+                For systems with sets of 2 or more allowed species in two
+                different sublattices (as determined by their associated
+                site spaces), setting to true will allow species swaps between
+                these sublattices.
             seed (int):
                 Seed for random number generator.
         """
@@ -56,6 +64,19 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         self.temperature = temperature
         self._min_energy = self._property
         self._min_occupancy = self._init_occupancy
+
+        self._sublattice_overlap = None
+        # get sublattice species intersection sets, fill overlap dict
+        if site_space_overlap:
+            self._sublattice_overlap = defaultdict(list)
+            for sublatt1, sublatt2 in combinations(self._sublattices, 2):
+                species1 = sublatt1['site_space'].keys()
+                species2 = sublatt2['site_space'].keys()
+                overlap = set(species1).intersection(species2)
+                if len(overlap) >= 2:
+                    for sp in overlap:
+                        overlap_info = ((sublatt1, sublatt2), overlap - {sp})
+                        self._sublattice_overlap[sp].append(overlap_info)
 
     @property
     def temperature(self):
@@ -217,15 +238,31 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         if sublattices is None:
             sublattices = self.sublattices
 
-        sublattice_name = random.choice(sublattices)
-        sites = self._active_sublatts[sublattice_name]['sites']
+        sublatt_name = random.choice(sublattices)
+        sites = self._active_sublatts[sublatt_name]['sites']
         site1 = random.choice(sites)
-        swap_options = [i for i in sites
-                        if self._occupancy[i] != self._occupancy[site1]]
+        occu1 = self._occupancy[site1]
+
+        swap_options = [i for i in sites if self._occupancy[i] != occu1]
+        if self._sublattice_overlap:
+            sspace = self._active_sublatts[sublatt_name]['site_space']
+            sp = list(sspace.keys()).index(occu1)
+            for (sublatt1, sublatt2), sp_compliment in self._sublattice_overlap[sp]:
+                if sublatt1['site_space'] == sspace:
+                    swap_sublatt = sublatt2
+                elif sublatt2['site_space'] == sspace:
+                    swap_sublatt = sublatt1
+                else:
+                    raise RuntimeError('Somthing has gone real off!!!')
+                swap_species = list(swap_sublatt['site_space'].keys())
+                allowed_swaps = (swap_species.index(s) for s in sp_compliment)
+                swap_options += [i for i in swap_sublatt['sites']
+                                 if i in allowed_swaps]
+
         if swap_options:
             site2 = random.choice(swap_options)
             return ((site1, self._occupancy[site2]),
-                    (site2, self._occupancy[site1]))
+                    (site2, occu1))
         else:
             # inefficient, maybe re-call method? infinite recursion problem
             return tuple()
