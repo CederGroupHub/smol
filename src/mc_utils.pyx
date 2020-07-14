@@ -113,13 +113,13 @@ def general_delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,
     return out
 
 
-# TODO make this only compute a single float and not an ndarry with one element
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
-def delta_ewald_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i, int ind,
-                            int bit, np.float_t[:, :] ewald_matrix,
+def delta_ewald_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,
+                            int site_ind, int site_occu,
+                            np.float_t[:, :] ewald_matrix,
                             np.int_t[:, :] ewald_inds, double size):
     """Compute the change in electrostatic interaction energy from a flip.
 
@@ -128,27 +128,30 @@ def delta_ewald_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i, int ind,
             encoded occupancy vector with flip
         occu_i (ndarray):
             encoded occupancy vector without flip
-        ind:
-        bit:
+        site_ind (int):
+            site index for site being flipped
+        site_occu (int):
+            encoded occupation of site flip
         ewald_matrix (ndarray):
             Ewald matrix for electrostatic interactions
         ewald_inds (ndarray):
+            2D array of indices corresponding to a specific site occupation
+            in the ewald matrix
         size (int):
             supercell size in terms of prim
 
     Returns:
         float: electrostatic interaction energy difference
     """
-    cdef int i, j, k, I, J, K, l, add, sub
+    cdef int i, j, add, sub
     cdef bint ok
     cdef np.int_t[:, :] inds
-    cdef double out
+    cdef double out = 0
 
     # values of -1 are vacancies and hence don't have ewald indices
-    add = ewald_inds[ind, bit]
-    sub = ewald_inds[ind, occu_i[ind]]
+    add = ewald_inds[site_ind, site_occu]
+    sub = ewald_inds[site_ind, occu_i[site_ind]]
 
-    out = 0
     for j in range(occu_f.shape[0]):
         i = ewald_inds[j, occu_f[j]]
         if i != -1 and add != -1:

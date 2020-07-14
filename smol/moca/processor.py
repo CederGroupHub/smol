@@ -403,8 +403,6 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
                                                        self.n_orbit_functions,
                                                        orbits)
             delta_corr[-1] += delta_ewald_single_flip(occu_f, occu_i,
-                                                      self.n_orbit_functions,
-                                                      orbits,
                                                       f[0], f[1],
                                                       self.ewald_matrix,
                                                       self._ewald_inds,
