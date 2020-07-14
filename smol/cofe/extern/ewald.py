@@ -155,7 +155,8 @@ class EwaldTerm(MSONable):
              '@class': self.__class__.__name__,
              'eta': self.eta,
              'real_space_cut': self.real_space_cut,
-             'recip_space_cut': self.recip_space_cut}
+             'recip_space_cut': self.recip_space_cut,
+             'use_term': self.use_term}
         return d
 
     @classmethod
@@ -165,4 +166,5 @@ class EwaldTerm(MSONable):
         (Over-kill here since only EwaldSummation params are saved).
         """
         return cls(eta=d['eta'], real_space_cut=d['real_space_cut'],
-                   recip_space_cut=d['recip_space_cut'])
+                   recip_space_cut=d['recip_space_cut'],
+                   use_term=d['use_term'])
