@@ -12,6 +12,7 @@ interaction energy.
 __author__ = "Luis Barroso-Luque"
 
 from abc import ABCMeta, abstractmethod
+from functools import cached_property
 import numpy as np
 from collections import defaultdict, OrderedDict
 from monty.json import MSONable
@@ -293,7 +294,7 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
     """
 
     def __init__(self, cluster_expansion, supercell_matrix,
-                 optimize_indicator=False):
+                 optimize_indicator=False, ewald_summation=None):
         """Initialize an EwaldCEProcessor.
 
         Args:
@@ -305,6 +306,10 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
             optimize_indicator (bool):
                 When using an indicator basis, set the delta_corr function to
                 the indicator optimize function. This can make MC steps faster.
+            ewald_summation (EwaldSummation): optional
+                pymatgen EwaldSummation instance, make sure this uses the exact
+                same parameters as those used in the EwaldTerm in the cluster
+                Expansion (i.e. same eta, real and recip cuts).
         """
         super().__init__(cluster_expansion, supercell_matrix,
                          optimize_indicator)
@@ -317,27 +322,34 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
         self._ewald_term = cluster_expansion.cluster_subspace.external_terms[0]
         if not isinstance(self._ewald_term, EwaldTerm):
             raise TypeError('The external term in the provided '
-                            'ClusterExpansion must be an EwaldTerm.')
+                            'ClusterExpansion must be an EwaldTerm.'
+                            f'Got {type(self._ewald_term)}')
 
         # Set up ewald structure and indices
         struct, inds = self._ewald_term.get_ewald_structure(self.structure)
         self._ewald_structure = struct
         self._ewald_inds = inds
         # Lazy set up Ewald Summation since it can be slow
-        self.__ewald = None
+        self.__ewald = ewald_summation
 
     @property
     def ewald_summation(self):
         """Get the pymatgen EwaldSummation object."""
         if self.__ewald is None:
             self.__ewald = EwaldSummation(self._ewald_structure,
-                                          self._ewald_term.eta)
+                                          real_space_cut=self._ewald_term.real_space_cut,  # noqa
+                                          recip_space_cut=self._ewald_term.recip_space_cut,  # noqa
+                                          eta=self._ewald_term.eta)
         return self.__ewald
 
     @property
-    def ewald_interactions(self):
-        """Get the electrostatic interaction matrix."""
-        return self.ewald_summation.total_energy_matrix
+    def ewald_matrix(self):
+        """Get the electrostatic interaction matrix.
+
+        The matrix used is the one set in the EwaldTerm of the given
+        ClusterExpansion.
+        """
+        return self._ewald_term.get_ewald_matrix(self.ewald_summation)
 
     def compute_correlation(self, occu):
         """Compute the correlation vector for a given occupancy array.
@@ -347,15 +359,15 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
         is the ewald summation value.
 
         Args:
-            occu (array):
+            occu (ndarray):
                 encoded occupation array
 
         Returns:
-            array: correlation vector
+            ndarray: correlation vector
         """
         ce_corr = corr_from_occupancy(occu, self.n_orbit_functions,
                                       self._orbit_list)
-        ewald_corr = self._ewald_correlation(occu)
+        ewald_corr = self._ewald_interaction(occu)
         return np.append(ce_corr, ewald_corr)
 
     def delta_corr(self, flips, occu):
@@ -386,19 +398,19 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
                                                       self.n_orbit_functions,
                                                       orbits,
                                                       f[0], f[1],
-                                                      self.ewald_interactions,
+                                                      self.ewald_matrix,
                                                       self._ewald_inds,
                                                       self.size)
             occu_i = occu_f
 
         return delta_corr
 
-    def _ewald_correlation(self, occu):
+    def _ewald_interaction(self, occu):
         """Compute the electrostatic interaction energy normalized by prim."""
-        num_ewald_sites = len(self._ewald_structure)
-        matrix = self.ewald_summation.total_energy_matrix
-        ew_occu = self._ewald_term._get_ewald_occu(occu, num_ewald_sites,
-                                                   self._ewald_inds)
+        matrix = self.ewald_matrix
+        ew_occu = self._ewald_term.get_ewald_occu(occu,
+                                                  len(self._ewald_structure),
+                                                  self._ewald_inds)
         interactions = np.sum(matrix[ew_occu, :][:, ew_occu])
         return interactions/self.size
 
@@ -418,6 +430,6 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
         """Create a CEProcessor from serialized MSONable dict."""
         pr = cls(ClusterExpansion.from_dict(d['cluster_expansion']),
                  np.array(d['supercell_matrix']),
-                 optimize_indicator=d['indicator'])
-        pr._ewald = EwaldSummation.from_dict(d['_ewald'])
+                 optimize_indicator=d['indicator'],
+                 ewald_summation=EwaldSummation.from_dict(d['_ewald']))
         return pr

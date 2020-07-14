@@ -264,7 +264,7 @@ class TestEwaldCEProcessor(unittest.TestCase):
         pr = EwaldCEProcessor.from_dict(d)
         self.assertEqual(self.pr.compute_property(self.enc_occu),
                          pr.compute_property(self.enc_occu))
-        self.assertTrue(np.array_equal(self.pr.ewald_interactions,
-                                       pr.ewald_interactions))
+        self.assertTrue(np.array_equal(self.pr.ewald_matrix,
+                                       pr.ewald_matrix))
         j = json.dumps(d)
         _ = json.loads(j)

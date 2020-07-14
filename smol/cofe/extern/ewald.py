@@ -112,22 +112,11 @@ class EwaldTerm(MSONable):
         ewald_structure, ewald_inds = self.get_ewald_structure(structure)
         ewald_summation = EwaldSummation(ewald_structure, self.real_space_cut,
                                          self.recip_space_cut, eta=self.eta)
-        ewald_matrix = self._get_ewald_matrix(ewald_summation)
-        ew_occu = self._get_ewald_occu(occu, len(ewald_structure), ewald_inds)
+        ewald_matrix = self.get_ewald_matrix(ewald_summation)
+        ew_occu = self.get_ewald_occu(occu, len(ewald_structure), ewald_inds)
         return np.array([np.sum(ewald_matrix[ew_occu, :][:, ew_occu])])/size
 
-    @staticmethod
-    def _get_ewald_occu(occu, num_ewald_sites, ewald_inds):
-        i_inds = ewald_inds[np.arange(len(occu)), occu]
-        # instead of this line:
-        #   i_inds = i_inds[i_inds != -1]
-        # just make b_inds one longer than it needs to be and don't return
-        # the last value
-        b_inds = np.zeros(num_ewald_sites + 1, dtype=np.bool)
-        b_inds[i_inds] = True
-        return b_inds[:-1]
-
-    def _get_ewald_matrix(self, ewald_summation):
+    def get_ewald_matrix(self, ewald_summation):
         """Get the corresponding Ewald matrix for the given term to use.
 
         Args:
@@ -145,6 +134,17 @@ class EwaldTerm(MSONable):
         else:
             matrix = np.diag(ewald_summation.point_energy_matrix)
         return matrix
+
+    @staticmethod
+    def get_ewald_occu(occu, num_ewald_sites, ewald_inds):
+        i_inds = ewald_inds[np.arange(len(occu)), occu]
+        # instead of this line:
+        #   i_inds = i_inds[i_inds != -1]
+        # just make b_inds one longer than it needs to be and don't return
+        # the last value
+        b_inds = np.zeros(num_ewald_sites + 1, dtype=np.bool)
+        b_inds[i_inds] = True
+        return b_inds[:-1]
 
     def as_dict(self) -> dict:
         """
