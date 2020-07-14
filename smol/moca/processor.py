@@ -20,7 +20,7 @@ from pymatgen.analysis.ewald import EwaldSummation
 from smol.cofe import ClusterExpansion
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.configspace.utils import get_site_spaces
-from src.ce_utils import (corr_from_occupancy, general_delta_corr_single_flip,
+from src.mc_utils import (corr_from_occupancy, general_delta_corr_single_flip,
                           delta_ewald_single_flip,
                           indicator_delta_corr_single_flip)
 
@@ -37,7 +37,7 @@ class BaseProcessor(MSONable, metaclass=ABCMeta):
         """Compute change in property from a set of flips.
 
         Args:
-            occu (array):
+            occu (ndarray):
                 encoded occupancy array
             flips (list):
                 list of tuples for (index of site, specie code to set)
@@ -150,7 +150,7 @@ class CEProcessor(BaseProcessor):
         The property fitted to the corresponding to the CE.
 
         Args:
-            occu (array):
+            occu (ndarray):
                 encoded occupancy array
         Returns:
             float: predicted property
@@ -161,7 +161,7 @@ class CEProcessor(BaseProcessor):
         """Compute change in property from a set of flips.
 
         Args:
-            occu (array):
+            occu (ndarray):
                 encoded occupancy array
             flips (list):
                 list of tuples for (index of site, specie code to set)
@@ -169,7 +169,7 @@ class CEProcessor(BaseProcessor):
         Returns:
             float:  property difference between inital and final states
         """
-        return np.dot(self.delta_corr(flips, occu), self.coefs) * self.size
+        return np.dot(self._delta_corr(flips, occu), self.coefs) * self.size
 
     def compute_correlation(self, occu):
         """Compute the correlation vector for a given occupancy array.
@@ -178,7 +178,7 @@ class CEProcessor(BaseProcessor):
         symmetrically distinct bit ordering.
 
         Args:
-            occu (array):
+            occu (ndarray):
                 encoded occupation array
 
         Returns:
@@ -208,7 +208,7 @@ class CEProcessor(BaseProcessor):
         """Get pymatgen.Structure from an occupancy array.
 
         Args:
-            occu (array):
+            occu (ndarray):
                 encoded occupancy array
 
         Returns:
@@ -232,7 +232,7 @@ class CEProcessor(BaseProcessor):
         return [species[i] for i, species in
                 zip(enc_occu, self.allowed_species)]
 
-    def delta_corr(self, flips, occu):
+    def _delta_corr(self, flips, occu):
         """
         Compute the change in the correlation vector from a list of flips.
 
@@ -242,7 +242,7 @@ class CEProcessor(BaseProcessor):
                 single flip where the first element is the index of the site
                 in the occupancy array and the second element is the index
                 for the new species to place at that site.
-            occu (array):
+            occu (ndarray):
                 encoded occupancy array
 
         Returns:
@@ -293,18 +293,22 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
     """
 
     def __init__(self, cluster_expansion, supercell_matrix,
-                 optimize_indicator=False):
+                 optimize_indicator=False, ewald_summation=None):
         """Initialize an EwaldCEProcessor.
 
         Args:
             cluster_expansion (ClusterExpansion):
                 A fitted cluster expansion representing a Hamiltonian
-            supercell_matrix (array):
+            supercell_matrix (ndarray):
                 An array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
             optimize_indicator (bool):
                 When using an indicator basis, set the delta_corr function to
                 the indicator optimize function. This can make MC steps faster.
+            ewald_summation (EwaldSummation): optional
+                pymatgen EwaldSummation instance, make sure this uses the exact
+                same parameters as those used in the EwaldTerm in the cluster
+                Expansion (i.e. same eta, real and recip cuts).
         """
         super().__init__(cluster_expansion, supercell_matrix,
                          optimize_indicator)
@@ -317,41 +321,34 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
         self._ewald_term = cluster_expansion.cluster_subspace.external_terms[0]
         if not isinstance(self._ewald_term, EwaldTerm):
             raise TypeError('The external term in the provided '
-                            'ClusterExpansion must be an EwaldTerm.')
+                            'ClusterExpansion must be an EwaldTerm.'
+                            f'Got {type(self._ewald_term)}')
 
         # Set up ewald structure and indices
-        struct, inds = self._ewald_term._get_ewald_structure(self.structure)
+        struct, inds = self._ewald_term.get_ewald_structure(self.structure)
         self._ewald_structure = struct
         self._ewald_inds = inds
         # Lazy set up Ewald Summation since it can be slow
-        self.__ewald = None
-        self.__all_ewalds = None
+        self.__ewald = ewald_summation
 
     @property
     def ewald_summation(self):
         """Get the pymatgen EwaldSummation object."""
         if self.__ewald is None:
             self.__ewald = EwaldSummation(self._ewald_structure,
-                                          self._ewald_term.eta)
+                                          real_space_cut=self._ewald_term.real_space_cut,  # noqa
+                                          recip_space_cut=self._ewald_term.recip_space_cut,  # noqa
+                                          eta=self._ewald_term.eta)
         return self.__ewald
 
-    @property
-    def ewald_interactions(self):
+    @property  # TODO use cached_property (only for python 3.8)
+    def ewald_matrix(self):
         """Get the electrostatic interaction matrix.
 
-        For charged cell the interactions assume the system is embedded in a
-        charge compensating background, however the interactions do not include
-        any corrections for the background charge. For more details look at
-        https://doi.org/10.1017/CBO9780511805769.034 (pp. 499–511).
+        The matrix used is the one set in the EwaldTerm of the given
+        ClusterExpansion.
         """
-        if self.__all_ewalds is None:
-            self.__all_ewalds = self.ewald_summation.total_energy_matrix
-        # This line extending the ewald matrix by one dimension is done only
-        # to use the original cython delta_ewald function that took additional
-        # matrices for partial_ems when using the legacy inv_r=True option
-        # This hassle can be removed if the delta_ewald cython function is
-        # updated accordingly
-        return np.array([self.__all_ewalds])
+        return self._ewald_term.get_ewald_matrix(self.ewald_summation)
 
     def compute_correlation(self, occu):
         """Compute the correlation vector for a given occupancy array.
@@ -361,18 +358,27 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
         is the ewald summation value.
 
         Args:
-            occu (array):
+            occu (ndarray):
                 encoded occupation array
 
         Returns:
-            array: correlation vector
+            ndarray: correlation vector
         """
         ce_corr = corr_from_occupancy(occu, self.n_orbit_functions,
                                       self._orbit_list)
-        ewald_corr = self._ewald_correlation(occu)
-        return np.append(ce_corr, ewald_corr)
+        ewald_val = self._ewald_value_from_occupancy(occu)/self.size
+        return np.append(ce_corr, ewald_val)
 
-    def delta_corr(self, flips, occu):
+    def _ewald_value_from_occupancy(self, occu):
+        """Compute the electrostatic interaction energy."""
+        matrix = self.ewald_matrix
+        ew_occu = self._ewald_term.get_ewald_occu(occu,
+                                                  matrix.shape[0],
+                                                  self._ewald_inds)
+        interactions = np.sum(matrix[ew_occu, :][:, ew_occu])
+        return interactions
+
+    def _delta_corr(self, flips, occu):
         """Compute the change in the correlation vector from list of flips.
 
         Args:
@@ -381,7 +387,7 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
                  single flip where the first element is the index of the site
                  in the occupancy array and the second element is the index
                  for the new species to place at that site.
-            occu (array):
+            occu (ndarray):
                 encoded occupancy array
 
         Returns:
@@ -400,35 +406,29 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
                                                       self.n_orbit_functions,
                                                       orbits,
                                                       f[0], f[1],
-                                                      self.ewald_interactions,
+                                                      self.ewald_matrix,
                                                       self._ewald_inds,
                                                       self.size)
             occu_i = occu_f
 
         return delta_corr
 
-    def _ewald_correlation(self, occu):
-        """Compute the electrostatic interaction energy normalized by prim."""
-        num_ewald_sites = len(self._ewald_structure)
-        matrix = self.ewald_summation.total_energy_matrix
-        ew_occu = self._ewald_term._get_ewald_occu(occu, num_ewald_sites,
-                                                   self._ewald_inds)
-        interactions = np.sum(matrix[ew_occu, :][:, ew_occu])
-        return interactions/self.size
+    def as_dict(self) -> dict:
+        """
+        Json-serialization dict representation.
 
-    # TODO saving ewaldsummation
-    # It would be nice to save the ewaldsummation since creating it again takes
-    # some time....but need pymatgen to be MSONable
-    # def as_dict(self) -> dict:
-    #    d = super().as_dict()
-    #    d['_ewald'] = self.ewald_summation.as_dict()
+        Returns:
+            MSONable dict
+        """
+        d = super().as_dict()
+        d['_ewald'] = self.ewald_summation.as_dict()
+        return d
 
-    #   return d
-
-    # @classmethod
-    # def from_dict(cls, d):
-    #    pr = cls(ClusterExpansion.from_dict(d['cluster_expansion']),
-    #             np.array(d['supercell_matrix']),
-    #             optimize_indicator=d['indicator'])
-    #    pr.__ewald = EwaldSummation.as_dict()  # this is not part of pymatgen!
-    #    # yet....
+    @classmethod
+    def from_dict(cls, d):
+        """Create a CEProcessor from serialized MSONable dict."""
+        pr = cls(ClusterExpansion.from_dict(d['cluster_expansion']),
+                 np.array(d['supercell_matrix']),
+                 optimize_indicator=d['indicator'],
+                 ewald_summation=EwaldSummation.from_dict(d['_ewald']))
+        return pr
