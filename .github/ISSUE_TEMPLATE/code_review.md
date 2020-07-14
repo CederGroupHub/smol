@@ -1,13 +1,18 @@
 ---
-name: Code Review
-about: Use this template for code review and comment of a specific source file.
-title: "[Code Review]: latte.py (edit this)"
+name: "\U00002615 Code Review"
+about: "Use this template for code review & commentary of a specific source file. \U0001F60E"
+title: "[Code Review] latte.py (edit this)"
 labels: code review
 assignees: lbluque, qchempku2017
+
 ---
-Make sure that a code review issue for the source file you are about to create
-one does not already exist. Please edit the above fields based on the file you
+
+<!--
+Thank you for contributing a source file to smol! You are a sensei dev!
+Please make sure that a code review issue for the source file you are about to create
+one does not already exist. Please edit this template based on the file you
 are opening this issue for. 
+-->
 
 | File Name | Module Path | Authors|
 |-----------|-------------|--------|
@@ -29,7 +34,7 @@ If you are mentioning a set of specific lines in code already implemented, it
 may come in handy to add a
 [permanent link](https://docs.github.com/en/enterprise/2.21/user/github/managing-your-work-on-github/creating-a-permanent-link-to-a-code-snippet) to it.
 
-**Format suggested code niceley**
+**Format suggested code nicely**
 
 ```python
 def roast(beans, *flavoring_oils):
