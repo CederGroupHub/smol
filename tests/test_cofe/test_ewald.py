@@ -34,4 +34,17 @@ class TestEwald(unittest.TestCase):
         np.testing.assert_almost_equal(ew.corr_from_occupancy(occu, supercell, 1),
                                        EwaldSummation(s, eta=ew.eta).total_energy,
                                        decimal=7)
+        ew = EwaldTerm(eta=0.15, use_term='real')
+        np.testing.assert_almost_equal(ew.corr_from_occupancy(occu, supercell, 1),
+                                       EwaldSummation(s, eta=ew.eta).real_space_energy,
+                                       decimal=7)
+        ew = EwaldTerm(eta=0.15, use_term='reciprocal')
+        np.testing.assert_almost_equal(ew.corr_from_occupancy(occu, supercell, 1),
+                                       EwaldSummation(s, eta=ew.eta).reciprocal_space_energy,
+                                       decimal=7)
+        ew = EwaldTerm(eta=0.15, use_term='point')
+        np.testing.assert_almost_equal(ew.corr_from_occupancy(occu, supercell, 1),
+                                       EwaldSummation(s, eta=ew.eta).point_energy,
+                                       decimal=7)
+        # TODO elaborate on this
         _, _ = ew._get_ewald_structure(supercell)

@@ -26,7 +26,10 @@ class EwaldTerm(MSONable):
     and reduce complexity (number of orbits) required to fit ionic materials.
     """
 
-    def __init__(self, eta=None, real_space_cut=None, recip_space_cut=None,):
+    ewald_term_options = ('total', 'real', 'reciprocal', 'point')
+
+    def __init__(self, eta=None, real_space_cut=None, recip_space_cut=None,
+                 use_term='total'):
         """Initialize EwaldTerm.
 
         Input parameters are standard input parameters to pymatgen
@@ -42,10 +45,18 @@ class EwaldTerm(MSONable):
             recip_space_cut (float):
                 Reciprocal space cutoff radius. Determined automagically if not
                 given.
+            use_term (str): optional
+                the Ewald expansion term to use as an additional term in the
+                expansion. Options are total, real, reciprocal, point.
         """
         self.eta = eta
         self.real_space_cut = real_space_cut
         self.recip_space_cut = recip_space_cut
+        if use_term not in self.ewald_term_options:
+            raise AttributeError(f'Provided use_term {use_term} is not a valid'
+                                 'option. Please use one of '
+                                 f'{self.ewald_term_options}.')
+        self.use_term = use_term
 
     def corr_from_occupancy(self, occu, structure, size):
         """Obtain the Ewald interaction energy normalized by the given size.
@@ -67,9 +78,9 @@ class EwaldTerm(MSONable):
             float
         """
         ewald_structure, ewald_inds = self._get_ewald_structure(structure)
-        ewald = EwaldSummation(ewald_structure, self.real_space_cut,
-                               self.recip_space_cut, eta=self.eta)
-        ewald_matrix = ewald.total_energy_matrix
+        ewald_summation = EwaldSummation(ewald_structure, self.real_space_cut,
+                                         self.recip_space_cut, eta=self.eta)
+        ewald_matrix = self._get_ewald_matrix(ewald_summation)
         ew_occu = self._get_ewald_occu(occu, len(ewald_structure), ewald_inds)
         return np.array([np.sum(ewald_matrix[ew_occu, :][:, ew_occu])])/size
 
@@ -113,6 +124,25 @@ class EwaldTerm(MSONable):
         ewald_structure = Structure.from_sites(ewald_sites)
 
         return ewald_structure, ewald_inds
+
+    def _get_ewald_matrix(self, ewald_summation):
+        """Get the corresponding Ewald matrix for the given term to use.
+
+        Args:
+            ewald_summation (EwaldSummation):
+                pymatgen EwaldSummation instance
+        Returns:
+            ndarray: ewald matrix for corresponding term
+        """
+        if self.use_term == 'total':
+            matrix = ewald_summation.total_energy_matrix
+        elif self.use_term == 'reciprocal':
+            matrix = ewald_summation.reciprocal_space_energy_matrix
+        elif self.use_term == 'real':
+            matrix = ewald_summation.real_space_energy_matrix
+        else:
+            matrix = np.diag(ewald_summation.point_energy_matrix)
+        return matrix
 
     def as_dict(self) -> dict:
         """
