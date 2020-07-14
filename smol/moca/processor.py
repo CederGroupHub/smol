@@ -320,12 +320,11 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
                             'ClusterExpansion must be an EwaldTerm.')
 
         # Set up ewald structure and indices
-        struct, inds = self._ewald_term._get_ewald_structure(self.structure)
+        struct, inds = self._ewald_term.get_ewald_structure(self.structure)
         self._ewald_structure = struct
         self._ewald_inds = inds
         # Lazy set up Ewald Summation since it can be slow
         self.__ewald = None
-        self.__all_ewalds = None
 
     @property
     def ewald_summation(self):
@@ -337,21 +336,8 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
 
     @property
     def ewald_interactions(self):
-        """Get the electrostatic interaction matrix.
-
-        For charged cell the interactions assume the system is embedded in a
-        charge compensating background, however the interactions do not include
-        any corrections for the background charge. For more details look at
-        https://doi.org/10.1017/CBO9780511805769.034 (pp. 499–511).
-        """
-        if self.__all_ewalds is None:
-            self.__all_ewalds = self.ewald_summation.total_energy_matrix
-        # This line extending the ewald matrix by one dimension is done only
-        # to use the original cython delta_ewald function that took additional
-        # matrices for partial_ems when using the legacy inv_r=True option
-        # This hassle can be removed if the delta_ewald cython function is
-        # updated accordingly
-        return np.array([self.__all_ewalds])
+        """Get the electrostatic interaction matrix."""
+        return self.ewald_summation.total_energy_matrix
 
     def compute_correlation(self, occu):
         """Compute the correlation vector for a given occupancy array.

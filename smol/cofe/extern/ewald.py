@@ -58,45 +58,8 @@ class EwaldTerm(MSONable):
                                  f'{self.ewald_term_options}.')
         self.use_term = use_term
 
-    def corr_from_occupancy(self, occu, structure, size):
-        """Obtain the Ewald interaction energy normalized by the given size.
-
-        The size of the given structure in terms of prims.
-        The computed electrostatic interactions do not include the charged
-        cell energy (which is only important for charged structures). See
-        the pymatgen EwaldSummation class for further details.
-
-        Args:
-            occu (array):
-                occupation vector for the given structure
-            structure (Structure):
-                pymatgen Structure for which to compute the electrostatic
-                interactions,
-            size (int):
-                the size of the given structure in number of prim cells
-        Returns:
-            float
-        """
-        ewald_structure, ewald_inds = self._get_ewald_structure(structure)
-        ewald_summation = EwaldSummation(ewald_structure, self.real_space_cut,
-                                         self.recip_space_cut, eta=self.eta)
-        ewald_matrix = self._get_ewald_matrix(ewald_summation)
-        ew_occu = self._get_ewald_occu(occu, len(ewald_structure), ewald_inds)
-        return np.array([np.sum(ewald_matrix[ew_occu, :][:, ew_occu])])/size
-
     @staticmethod
-    def _get_ewald_occu(occu, num_ewald_sites, ewald_inds):
-        i_inds = ewald_inds[np.arange(len(occu)), occu]
-        # instead of this line:
-        #   i_inds = i_inds[i_inds != -1]
-        # just make b_inds one longer than it needs to be and don't return
-        # the last value
-        b_inds = np.zeros(num_ewald_sites + 1, dtype=np.bool)
-        b_inds[i_inds] = True
-        return b_inds[:-1]
-
-    @staticmethod
-    def _get_ewald_structure(structure):
+    def get_ewald_structure(structure):
         """Get the structure contributing to Ewald summation.
 
         Removes vacancies and the corresponding indices to those sites from the
@@ -106,7 +69,7 @@ class EwaldTerm(MSONable):
             structure:
                 Structure to compute Ewald interaction energy from
         Returns:
-            Structure, array
+            tuple: Structure, array
         """
         site_doms = get_site_spaces(structure)
         nbits = np.array([len(b) - 1 for b in site_doms])
@@ -124,6 +87,45 @@ class EwaldTerm(MSONable):
         ewald_structure = Structure.from_sites(ewald_sites)
 
         return ewald_structure, ewald_inds
+
+    def corr_from_occupancy(self, occu, structure, size):
+        """Obtain the Ewald interaction energy normalized by the given size.
+
+        The size of the given structure in terms of prims.
+        The computed electrostatic interactions do not include the charged
+        cell energy (which is only important for charged structures). See
+        the pymatgen EwaldSummation class for further details.
+        For more details also look at
+        https://doi.org/10.1017/CBO9780511805769.034 (pp. 499–511).
+
+        Args:
+            occu (array):
+                occupation vector for the given structure
+            structure (Structure):
+                pymatgen Structure for which to compute the electrostatic
+                interactions,
+            size (int):
+                the size of the given structure in number of prim cells
+        Returns:
+            float
+        """
+        ewald_structure, ewald_inds = self.get_ewald_structure(structure)
+        ewald_summation = EwaldSummation(ewald_structure, self.real_space_cut,
+                                         self.recip_space_cut, eta=self.eta)
+        ewald_matrix = self._get_ewald_matrix(ewald_summation)
+        ew_occu = self._get_ewald_occu(occu, len(ewald_structure), ewald_inds)
+        return np.array([np.sum(ewald_matrix[ew_occu, :][:, ew_occu])])/size
+
+    @staticmethod
+    def _get_ewald_occu(occu, num_ewald_sites, ewald_inds):
+        i_inds = ewald_inds[np.arange(len(occu)), occu]
+        # instead of this line:
+        #   i_inds = i_inds[i_inds != -1]
+        # just make b_inds one longer than it needs to be and don't return
+        # the last value
+        b_inds = np.zeros(num_ewald_sites + 1, dtype=np.bool)
+        b_inds[i_inds] = True
+        return b_inds[:-1]
 
     def _get_ewald_matrix(self, ewald_summation):
         """Get the corresponding Ewald matrix for the given term to use.

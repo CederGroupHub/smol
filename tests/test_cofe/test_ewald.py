@@ -47,7 +47,7 @@ class TestEwald(unittest.TestCase):
                                        EwaldSummation(s, eta=ew.eta).point_energy,
                                        decimal=7)
         # TODO elaborate on this
-        _, _ = ew._get_ewald_structure(supercell)
+        _, _ = ew.get_ewald_structure(supercell)
 
     def test_msonable(self):
         ew = EwaldTerm(eta=0.15, real_space_cut=0.5, use_term='point')
