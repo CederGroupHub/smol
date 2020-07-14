@@ -112,7 +112,7 @@ class TestCEProcessor(unittest.TestCase):
             new_occu = occu.copy()
             new_occu[site] = new_sp
             # Test forward
-            dcorr = self.pr.delta_corr([(site, new_sp)], occu)
+            dcorr = self.pr._delta_corr([(site, new_sp)], occu)
             corr_f = self.pr.compute_correlation(new_occu)
             corr_i = self.pr.compute_correlation(occu)
 
@@ -120,7 +120,7 @@ class TestCEProcessor(unittest.TestCase):
                                         rtol=rtol, atol=atol))
             # Test reverse matches forward
             old_sp = occu[site]
-            rdcorr = self.pr.delta_corr([(site, old_sp)], new_occu)
+            rdcorr = self.pr._delta_corr([(site, old_sp)], new_occu)
             self.assertTrue(np.array_equal(dcorr, -1*rdcorr))
 
     def test_delta_corr_indicator(self):
@@ -145,14 +145,14 @@ class TestCEProcessor(unittest.TestCase):
             new_occu = occu.copy()
             new_occu[site] = new_sp
             # Test forward
-            dcorr = pr.delta_corr([(site, new_sp)], occu)
+            dcorr = pr._delta_corr([(site, new_sp)], occu)
             corr_f = pr.compute_correlation(new_occu)
             corr_i = pr.compute_correlation(occu)
             self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
                                         rtol=rtol, atol=atol))
             # Test reverse matches forward
             old_sp = occu[site]
-            rdcorr = pr.delta_corr([(site, old_sp)], new_occu)
+            rdcorr = pr._delta_corr([(site, old_sp)], new_occu)
             self.assertTrue(np.allclose(dcorr, -1*rdcorr,
                                         rtol=rtol, atol=atol))
 
@@ -248,14 +248,14 @@ class TestEwaldCEProcessor(unittest.TestCase):
             new_occu = occu.copy()
             new_occu[site] = new_sp
             # Test forward
-            dcorr = self.pr.delta_corr([(site, new_sp)], occu)
+            dcorr = self.pr._delta_corr([(site, new_sp)], occu)
             corr_f = self.pr.compute_correlation(new_occu)
             corr_i = self.pr.compute_correlation(occu)
             self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
                                         rtol=rtol, atol=atol))
             # Test reverse matches forward
             old_sp = occu[site]
-            rdcorr = self.pr.delta_corr([(site, old_sp)], new_occu)
+            rdcorr = self.pr._delta_corr([(site, old_sp)], new_occu)
             self.assertTrue(np.allclose(dcorr, -1*rdcorr,
                                         rtol=rtol, atol=atol))
 

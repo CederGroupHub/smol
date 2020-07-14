@@ -12,7 +12,6 @@ interaction energy.
 __author__ = "Luis Barroso-Luque"
 
 from abc import ABCMeta, abstractmethod
-from functools import cached_property
 import numpy as np
 from collections import defaultdict, OrderedDict
 from monty.json import MSONable
@@ -170,7 +169,7 @@ class CEProcessor(BaseProcessor):
         Returns:
             float:  property difference between inital and final states
         """
-        return np.dot(self.delta_corr(flips, occu), self.coefs) * self.size
+        return np.dot(self._delta_corr(flips, occu), self.coefs) * self.size
 
     def compute_correlation(self, occu):
         """Compute the correlation vector for a given occupancy array.
@@ -233,7 +232,7 @@ class CEProcessor(BaseProcessor):
         return [species[i] for i, species in
                 zip(enc_occu, self.allowed_species)]
 
-    def delta_corr(self, flips, occu):
+    def _delta_corr(self, flips, occu):
         """
         Compute the change in the correlation vector from a list of flips.
 
@@ -342,7 +341,7 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
                                           eta=self._ewald_term.eta)
         return self.__ewald
 
-    @property
+    @property  # TODO use cached_property (only for python 3.8)
     def ewald_matrix(self):
         """Get the electrostatic interaction matrix.
 
@@ -370,7 +369,7 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
         ewald_corr = self._ewald_interaction(occu)
         return np.append(ce_corr, ewald_corr)
 
-    def delta_corr(self, flips, occu):
+    def _delta_corr(self, flips, occu):
         """Compute the change in the correlation vector from list of flips.
 
         Args:
