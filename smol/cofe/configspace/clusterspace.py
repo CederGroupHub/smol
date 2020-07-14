@@ -333,16 +333,17 @@ class ClusterSubspace(MSONable):
                       for orb, inds in orb_inds]
         corr = corr_from_occupancy(occu, self.n_bit_orderings, orbit_list)
 
+        size = self.num_prims_from_matrix(scmatrix)
+
         if self.external_terms:
             supercell = self.structure.copy()
             supercell.make_supercell(scmatrix)
-            size = self.num_prims_from_matrix(scmatrix)
-            extras = [term.corr_from_occupancy(occu, supercell, size)
+            extras = [term.value_from_occupancy(occu, supercell)/size
                       for term in self._external_terms]
             corr = np.concatenate([corr, *extras])
 
         if not normalized:
-            corr *= self.num_prims_from_matrix(scmatrix)
+            corr *= size
 
         return corr
 

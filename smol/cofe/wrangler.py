@@ -482,7 +482,7 @@ class StructureWrangler(MSONable):
                 supercell = self._subspace.structure.copy()
                 supercell.make_supercell(matrix)
                 size = self._subspace.num_prims_from_matrix(matrix)
-                term = EwaldTerm().corr_from_occupancy(occu, supercell, size)
+                term = EwaldTerm().value_from_occupancy(occu, supercell, size)
                 ewald_corr.append(term)
 
         min_e = defaultdict(lambda: np.inf)

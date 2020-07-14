@@ -37,7 +37,7 @@ class BaseProcessor(MSONable, metaclass=ABCMeta):
         """Compute change in property from a set of flips.
 
         Args:
-            occu (array):
+            occu (ndarray):
                 encoded occupancy array
             flips (list):
                 list of tuples for (index of site, specie code to set)
@@ -150,7 +150,7 @@ class CEProcessor(BaseProcessor):
         The property fitted to the corresponding to the CE.
 
         Args:
-            occu (array):
+            occu (ndarray):
                 encoded occupancy array
         Returns:
             float: predicted property
@@ -161,7 +161,7 @@ class CEProcessor(BaseProcessor):
         """Compute change in property from a set of flips.
 
         Args:
-            occu (array):
+            occu (ndarray):
                 encoded occupancy array
             flips (list):
                 list of tuples for (index of site, specie code to set)
@@ -178,7 +178,7 @@ class CEProcessor(BaseProcessor):
         symmetrically distinct bit ordering.
 
         Args:
-            occu (array):
+            occu (ndarray):
                 encoded occupation array
 
         Returns:
@@ -208,7 +208,7 @@ class CEProcessor(BaseProcessor):
         """Get pymatgen.Structure from an occupancy array.
 
         Args:
-            occu (array):
+            occu (ndarray):
                 encoded occupancy array
 
         Returns:
@@ -242,7 +242,7 @@ class CEProcessor(BaseProcessor):
                 single flip where the first element is the index of the site
                 in the occupancy array and the second element is the index
                 for the new species to place at that site.
-            occu (array):
+            occu (ndarray):
                 encoded occupancy array
 
         Returns:
@@ -299,7 +299,7 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
         Args:
             cluster_expansion (ClusterExpansion):
                 A fitted cluster expansion representing a Hamiltonian
-            supercell_matrix (array):
+            supercell_matrix (ndarray):
                 An array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
             optimize_indicator (bool):
@@ -366,8 +366,17 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
         """
         ce_corr = corr_from_occupancy(occu, self.n_orbit_functions,
                                       self._orbit_list)
-        ewald_corr = self._ewald_interaction(occu)
-        return np.append(ce_corr, ewald_corr)
+        ewald_val = self._ewald_value_from_occupancy(occu)/self.size
+        return np.append(ce_corr, ewald_val)
+
+    def _ewald_value_from_occupancy(self, occu):
+        """Compute the electrostatic interaction energy."""
+        matrix = self.ewald_matrix
+        ew_occu = self._ewald_term.get_ewald_occu(occu,
+                                                  matrix.shape[0],
+                                                  self._ewald_inds)
+        interactions = np.sum(matrix[ew_occu, :][:, ew_occu])
+        return interactions
 
     def _delta_corr(self, flips, occu):
         """Compute the change in the correlation vector from list of flips.
@@ -378,7 +387,7 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
                  single flip where the first element is the index of the site
                  in the occupancy array and the second element is the index
                  for the new species to place at that site.
-            occu (array):
+            occu (ndarray):
                 encoded occupancy array
 
         Returns:
@@ -403,15 +412,6 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
             occu_i = occu_f
 
         return delta_corr
-
-    def _ewald_interaction(self, occu):
-        """Compute the electrostatic interaction energy normalized by prim."""
-        matrix = self.ewald_matrix
-        ew_occu = self._ewald_term.get_ewald_occu(occu,
-                                                  len(self._ewald_structure),
-                                                  self._ewald_inds)
-        interactions = np.sum(matrix[ew_occu, :][:, ew_occu])
-        return interactions/self.size
 
     def as_dict(self) -> dict:
         """
