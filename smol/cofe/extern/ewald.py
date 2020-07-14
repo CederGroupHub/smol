@@ -64,7 +64,9 @@ class EwaldTerm(MSONable):
 
         Creates a structure with overlapping sites for each species in the
         corresponding site space. This is used to construct single Ewald
-        matrices for all possible configurations.
+        matrices for all possible configurations. The ewald_inds array is a
+        2D array where the firse element is the index of the site in a
+        supercell and the second is the encoded species occupancy
 
         Removes vacancies and the corresponding indices to those sites from the
         original structure.
