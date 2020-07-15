@@ -19,7 +19,7 @@ def corr_from_occupancy(np.int_t[::1] occu, int n_bit_orderings, orbit_list):
     """Computes the correlation vector for a given encoded occupancy string.
 
     Args:
-        occu (np.array):
+        occu (ndarray):
             encoded occupancy vector
         n_bit_orderings (int):
             total number of bit orderings in expansion.
@@ -68,7 +68,7 @@ def general_delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,
     """Computes the correlation difference between two occupancy vectors.
 
     Args:
-        occu_f (np.array):
+        occu_f (ndarray):
             encoded occupancy vector with flip
         occu_i (ndarray):
             encoded occupancy vector without flip
@@ -113,64 +113,62 @@ def general_delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,
     return out
 
 
-# TODO make this only compute a single float and not an ndarry with one element
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
 def delta_ewald_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,
-                            int n_bit_orderings, clusters, int ind, int bit,
-                            np.float_t[:, :, :] ewald_matrices,
+                            int site_ind, int site_occu,
+                            np.float_t[:, :] ewald_matrix,
                             np.int_t[:, :] ewald_inds, double size):
     """Compute the change in electrostatic interaction energy from a flip.
 
     Args:
-        occu_f (np.array):
+        occu_f (ndarray):
             encoded occupancy vector with flip
-        occu_i (np.array):
+        occu_i (ndarray):
             encoded occupancy vector without flip
-        n_bit_orderings (int):
-            total number of bit orderings in expansion.
-        clusters:
-        ind:
-        bit:
-        ewald_matrices:
-        ewald_inds:
-        size:
+        site_ind (int):
+            site index for site being flipped
+        site_occu (int):
+            encoded occupation of site flip
+        ewald_matrix (ndarray):
+            Ewald matrix for electrostatic interactions
+        ewald_inds (ndarray):
+            2D array of indices corresponding to a specific site occupation
+            in the ewald matrix
+        size (int):
+            supercell size in terms of prim
 
     Returns:
         float: electrostatic interaction energy difference
     """
-    cdef int i, j, k, I, J, K, l, add, sub
+    cdef int i, j, add, sub
     cdef bint ok
     cdef np.int_t[:, :] inds
-    out = np.zeros(len(ewald_matrices))
-    cdef np.float_t[:] o_view = out
-    cdef double r, o
+    cdef double out = 0
 
     # values of -1 are vacancies and hence don't have ewald indices
-    add = ewald_inds[ind, bit]
-    sub = ewald_inds[ind, occu_i[ind]]
-    for l in range(ewald_matrices.shape[0]):
-        o = 0
-        for j in range(occu_f.shape[0]):
-            i = ewald_inds[j, occu_f[j]]
-            if i != -1 and add != -1:
-                if i != add:
-                    o += ewald_matrices[l, i, add] * 2
-                else:
-                    o += ewald_matrices[l, i, add]
+    add = ewald_inds[site_ind, site_occu]
+    sub = ewald_inds[site_ind, occu_i[site_ind]]
 
-        for j in range(occu_i.shape[0]):
-            i = ewald_inds[j, occu_i[j]]
-            if i != -1 and sub != -1:
-                if i != sub:
-                    o -= ewald_matrices[l, i, sub] * 2
-                else:
-                    o -= ewald_matrices[l, i, sub]
+    for j in range(occu_f.shape[0]):
+        i = ewald_inds[j, occu_f[j]]
+        if i != -1 and add != -1:
+            if i != add:
+                out += ewald_matrix[i, add] * 2
+            else:
+                out += ewald_matrix[i, add]
 
-        o_view[l] = o / size
-        l += 1
+    for j in range(occu_i.shape[0]):
+        i = ewald_inds[j, occu_i[j]]
+        if i != -1 and sub != -1:
+            if i != sub:
+                out -= ewald_matrix[i, sub] * 2
+            else:
+                out -= ewald_matrix[i, sub]
+
+    out /= size
 
     return out
 
@@ -184,9 +182,9 @@ def indicator_delta_corr_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,
     """Local change in indicator basis correlation vector from single flip.
 
     Args:
-        occu_f (np.array):
+        occu_f (ndarray):
             encoded occupancy vector with flip
-        occu_i (np.array):
+        occu_i (ndarray):
             encoded occupancy vector without flip
         n_bit_orderings (int):
             total number of bit orderings in expansion.

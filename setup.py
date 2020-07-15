@@ -48,8 +48,8 @@ if '--use-cython' in sys.argv:
 else:
     USE_CYTHON = False
 ext = '.pyx' if USE_CYTHON else '.c'
-extensions = [Extension("src.ce_utils",
-                        ["src/ce_utils"+ext],
+extensions = [Extension("src.mc_utils",
+                        ["src/mc_utils"+ext],
                         language='c',
                         include_path=[numpy.get_include()],
                         include_dirs=['src/'],

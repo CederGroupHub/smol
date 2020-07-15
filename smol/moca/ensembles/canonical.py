@@ -6,6 +6,7 @@ concentration of species.
 """
 
 __author__ = "Luis Barroso-Luque"
+__credits__ = "Daniil Kitcheav"
 
 import random
 from itertools import combinations

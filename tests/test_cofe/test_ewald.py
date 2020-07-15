@@ -14,7 +14,7 @@ class TestEwald(unittest.TestCase):
                   (0.5, 0.5, 0.5), (0, 0, 0))
         self.structure = Structure(self.lattice, species, coords)
 
-    def test_corr_from_occupancy(self):
+    def test_val_from_occupancy(self):
         self.structure.add_oxidation_state_by_element({'Br': -1,
                                                        'Ca': 2,
                                                        'Li': 1})
@@ -31,7 +31,25 @@ class TestEwald(unittest.TestCase):
                        [0.5, 1, 0], [0.5, 0.5, 0]])
         occu = cs.occupancy_from_structure(s, encode=True)
         ew = EwaldTerm(eta=0.15)
-        np.testing.assert_almost_equal(ew.corr_from_occupancy(occu, supercell, 1),
+        np.testing.assert_almost_equal(ew.value_from_occupancy(occu, supercell),
                                        EwaldSummation(s, eta=ew.eta).total_energy,
                                        decimal=7)
-        _, _ = ew._get_ewald_structure(supercell)
+        ew = EwaldTerm(eta=0.15, use_term='real')
+        np.testing.assert_almost_equal(ew.value_from_occupancy(occu, supercell),
+                                       EwaldSummation(s, eta=ew.eta).real_space_energy,
+                                       decimal=7)
+        ew = EwaldTerm(eta=0.15, use_term='reciprocal')
+        np.testing.assert_almost_equal(ew.value_from_occupancy(occu, supercell),
+                                       EwaldSummation(s, eta=ew.eta).reciprocal_space_energy,
+                                       decimal=7)
+        ew = EwaldTerm(eta=0.15, use_term='point')
+        np.testing.assert_almost_equal(ew.value_from_occupancy(occu, supercell),
+                                       EwaldSummation(s, eta=ew.eta).point_energy,
+                                       decimal=7)
+        # TODO elaborate on this
+        _, _ = ew.get_ewald_structure(supercell)
+
+    def test_msonable(self):
+        ew = EwaldTerm(eta=0.15, real_space_cut=0.5, use_term='point')
+        d = ew.as_dict()
+        self.assertEqual(EwaldTerm.from_dict(d).as_dict(), d)
