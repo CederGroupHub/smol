@@ -10,7 +10,7 @@ from smol.cofe import ClusterSubspace
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.configspace.utils import SITE_TOL, get_site_spaces
 from smol.exceptions import StructureMatchError
-from src.ce_utils import corr_from_occupancy
+from src.mc_utils import corr_from_occupancy
 
 # TODO test correlations for ternary and for applications of symops to structure
 
