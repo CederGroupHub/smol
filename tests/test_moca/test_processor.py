@@ -13,8 +13,11 @@ from tests.data import lno_prim, lno_data
 # TODO check that delta_corr gives same values for random sympos shuffles of same structure
 # TODO check that delta_corr works for all bases and orthonormal combos
 
-rtol = 0.0  # relative tolerance to check property change functions
-atol = 1E-12  # absolute tolerance to check property change functions
+RTOL = 0.0  # relative tolerance to check property change functions
+# absolute tolerance to check property change functions (eps is approx 2E-16)
+ATOL = 3E2 * np.finfo(float).eps
+EWALD_ATOL = 8 * ATOL  # ewald term has higher drift
+DRIFT_TOL = np.finfo(float).eps  # tolerance of average drift
 
 # Note that for delta_corr_ewald the forward and back check is not strictly
 # equal but close to within the above tolerances. If energy drift is ever
@@ -58,12 +61,11 @@ class TestCEProcessor(unittest.TestCase):
                                                                            scmatrix=scmatrix)
         self.enc_occu = self.pr.occupancy_from_structure(test_struct)
         self.sublattices = []
-        for doms in self.pr.unique_site_spaces:
+        for space in self.pr.unique_site_spaces:
             sites = np.array([i for i, b in enumerate(self.pr.allowed_species)
-                              if b == list(doms.keys())])
-            self.sublattices.append({'doms': list(range(len(doms))),
+                              if b == list(space.keys())])
+            self.sublattices.append({'spaces': list(range(len(space))),
                                      'sites': sites})
-        print(self.sublattices)
 
     def test_compute_property(self):
         self.assertTrue(np.isclose(self.ce.predict(self.test_struct),
@@ -78,7 +80,7 @@ class TestCEProcessor(unittest.TestCase):
         for _ in range(50):
             sublatt = np.random.choice(self.sublattices)
             site = np.random.choice(sublatt['sites'])
-            new_sp = np.random.choice(sublatt['doms'])
+            new_sp = np.random.choice(sublatt['spaces'])
             new_occu = occu.copy()
             new_occu[site] = new_sp
             prop_f = self.pr.compute_property(new_occu)
@@ -86,7 +88,7 @@ class TestCEProcessor(unittest.TestCase):
             dprop = self.pr.compute_property_change(occu, [(site, new_sp)])
             # Check with some tight tolerances.
             self.assertTrue(np.allclose(dprop, prop_f - prop_i,
-                                        rtol=rtol, atol=atol))
+                                        rtol=RTOL, atol=ATOL))
             # Test reverse matches forward
             old_sp = occu[site]
             rdprop = self.pr.compute_property_change(new_occu, [(site,
@@ -108,7 +110,7 @@ class TestCEProcessor(unittest.TestCase):
         for _ in range(50):
             sublatt = np.random.choice(self.sublattices)
             site = np.random.choice(sublatt['sites'])
-            new_sp = np.random.choice(sublatt['doms'])
+            new_sp = np.random.choice(sublatt['spaces'])
             new_occu = occu.copy()
             new_occu[site] = new_sp
             # Test forward
@@ -117,7 +119,7 @@ class TestCEProcessor(unittest.TestCase):
             corr_i = self.pr.compute_correlation(occu)
 
             self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
-                                        rtol=rtol, atol=atol))
+                                        rtol=RTOL, atol=ATOL))
             # Test reverse matches forward
             old_sp = occu[site]
             rdcorr = self.pr._delta_corr([(site, old_sp)], new_occu)
@@ -141,7 +143,7 @@ class TestCEProcessor(unittest.TestCase):
         for _ in range(50):
             sublatt = np.random.choice(self.sublattices)
             site = np.random.choice(sublatt['sites'])
-            new_sp = np.random.choice(sublatt['doms'])
+            new_sp = np.random.choice(sublatt['spaces'])
             new_occu = occu.copy()
             new_occu[site] = new_sp
             # Test forward
@@ -149,12 +151,16 @@ class TestCEProcessor(unittest.TestCase):
             corr_f = pr.compute_correlation(new_occu)
             corr_i = pr.compute_correlation(occu)
             self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
-                                        rtol=rtol, atol=atol))
+                                        rtol=RTOL, atol=ATOL))
             # Test reverse matches forward
             old_sp = occu[site]
             rdcorr = pr._delta_corr([(site, old_sp)], new_occu)
-            self.assertTrue(np.allclose(dcorr, -1*rdcorr,
-                                        rtol=rtol, atol=atol))
+            self.assertTrue(np.allclose(dcorr, -1 * rdcorr,
+                                        rtol=RTOL, atol=ATOL))
+
+    def test_get_average_drift(self):
+        forward, reverse = self.pr.get_average_drift()
+        self.assertTrue(forward <= DRIFT_TOL and reverse <= DRIFT_TOL)
 
     def test_structure_from_occupancy(self):
         # The structures do pass as equal by direct == comparison, but as long
@@ -214,7 +220,7 @@ class TestEwaldCEProcessor(unittest.TestCase):
         for doms in pr.unique_site_spaces:
             sites = np.array([i for i, b in enumerate(pr.allowed_species)
                               if b == list(doms.keys())])
-            cls.sublattices.append({'doms': list(range(len(doms))),
+            cls.sublattices.append({'spaces': list(range(len(doms))),
                                     'sites': sites})
 
     def setUp(self):
@@ -239,27 +245,27 @@ class TestEwaldCEProcessor(unittest.TestCase):
         for _ in range(50):
             sublatt = np.random.choice(self.sublattices)
             site = np.random.choice(sublatt['sites'])
-            new_sp = np.random.choice(sublatt['doms'])
+            new_sp = np.random.choice(sublatt['spaces'])
             new_occu = occu.copy()
             new_occu[site] = new_sp
             prop_f = self.pr.compute_property(new_occu)
             prop_i = self.pr.compute_property(occu)
             dprop = self.pr.compute_property_change(occu, [(site, new_sp)])
-            self.assertTrue(np.allclose(dprop, prop_f - prop_i,
-                                        rtol=rtol, atol=atol))
+            self.assertTrue(np.isclose(dprop, prop_f - prop_i,
+                                       rtol=RTOL, atol=EWALD_ATOL))
             # Test reverse matches forward
             old_sp = occu[site]
             rdprop = self.pr.compute_property_change(new_occu, [(site,
                                                                  old_sp)])
-            self.assertTrue(np.isclose(dprop, -1.0*rdprop,
-                                       rtol=rtol, atol=atol))
+            self.assertTrue(np.isclose(dprop, -1.0 * rdprop,
+                                       rtol=RTOL, atol=EWALD_ATOL))
 
     def test_delta_corr(self):
         occu = self.enc_occu.copy()
         for _ in range(50):
             sublatt = np.random.choice(self.sublattices)
             site = np.random.choice(sublatt['sites'])
-            new_sp = np.random.choice(sublatt['doms'])
+            new_sp = np.random.choice(sublatt['spaces'])
             new_occu = occu.copy()
             new_occu[site] = new_sp
             # Test forward
@@ -267,12 +273,16 @@ class TestEwaldCEProcessor(unittest.TestCase):
             corr_f = self.pr.compute_correlation(new_occu)
             corr_i = self.pr.compute_correlation(occu)
             self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
-                                        rtol=rtol, atol=atol))
+                                        rtol=RTOL, atol=ATOL))
             # Test reverse matches forward
             old_sp = occu[site]
             rdcorr = self.pr._delta_corr([(site, old_sp)], new_occu)
-            self.assertTrue(np.allclose(dcorr, -1*rdcorr,
-                                        rtol=rtol, atol=atol))
+            self.assertTrue(np.allclose(dcorr, -1 * rdcorr,
+                                        rtol=RTOL, atol=ATOL))
+
+    def test_get_average_drift(self):
+        forward, reverse = self.pr.get_average_drift()
+        self.assertTrue(forward <= DRIFT_TOL and reverse <= DRIFT_TOL)
 
     def test_msonable(self):
         d = self.pr.as_dict()
