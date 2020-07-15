@@ -44,7 +44,11 @@ A long description of this package
 # Compile option for cython extensions
 if '--use-cython' in sys.argv:
     USE_CYTHON = True
+    cython_kwargs = {}
     sys.argv.remove('--use-cython')
+    if '--annotate-cython' in sys.argv:
+        cython_kwargs['annotate'] = True
+        sys.argv.remove('--annotate-cython')
 else:
     USE_CYTHON = False
 ext = '.pyx' if USE_CYTHON else '.c'
@@ -59,7 +63,7 @@ extensions = [Extension("src.mc_utils",
 
 if USE_CYTHON:
     from Cython.Build import cythonize
-    extensions = cythonize(extensions)
+    extensions = cythonize(extensions, **cython_kwargs)
 
 setup(
     name="smol",
