@@ -376,7 +376,7 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
         # Lazy set up Ewald Summation since it can be slow
         self.__ewald = ewald_summation
         self.__matrix = None  # to cache matrix for now, the use cached_prop
-        self.ewald_num_threads = num_ewald_threads
+        self.num_ewald_threads = num_ewald_threads
 
     @property
     def ewald_summation(self):
@@ -457,7 +457,7 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
                                                       self._ewald_inds,
                                                       f[0],
                                                       self.size,
-                                                      self.ewald_num_threads)
+                                                      self.num_ewald_threads)
             occu_i = occu_f
 
         return delta_corr
