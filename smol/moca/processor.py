@@ -334,7 +334,8 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
     """
 
     def __init__(self, cluster_expansion, supercell_matrix,
-                 optimize_indicator=False, ewald_summation=None):
+                 optimize_indicator=False, ewald_summation=None,
+                 num_ewald_threads=1):
         """Initialize an EwaldCEProcessor.
 
         Args:
@@ -350,6 +351,9 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
                 pymatgen EwaldSummation instance, make sure this uses the exact
                 same parameters as those used in the EwaldTerm in the cluster
                 Expansion (i.e. same eta, real and recip cuts).
+            num_ewald_threads (int): optional
+                number of OMP threads to use when computing ewald updates. For
+                small systems the parallelization overhead may not be worth it.
         """
         super().__init__(cluster_expansion, supercell_matrix,
                          optimize_indicator)
@@ -372,6 +376,7 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
         # Lazy set up Ewald Summation since it can be slow
         self.__ewald = ewald_summation
         self.__matrix = None  # to cache matrix for now, the use cached_prop
+        self.ewald_num_threads = num_ewald_threads
 
     @property
     def ewald_summation(self):
@@ -451,7 +456,8 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
                                                       self.ewald_matrix,
                                                       self._ewald_inds,
                                                       f[0],
-                                                      self.size)
+                                                      self.size,
+                                                      self.ewald_num_threads)
             occu_i = occu_f
 
         return delta_corr

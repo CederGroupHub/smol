@@ -8,7 +8,7 @@ __author__ = "Luis Barroso-Luque, William D. Richards"
 import numpy as np
 cimport numpy as np
 cimport cython
-#from cython.parallel import prange, parallel
+from cython.parallel import prange
 
 
 @cython.boundscheck(False)
@@ -119,65 +119,6 @@ def general_delta_corr_single_flip(const np.int_t[::1] occu_f,
 @cython.wraparound(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
-def delta_ewald_single_flip(const np.int_t[::1] occu_f,
-                            const np.int_t[::1] occu_i,
-                            const np.float_t[:, ::1] ewald_matrix,
-                            const np.int_t[:, ::1] ewald_inds,
-                            const int site_ind,
-                            const double size):
-    """Compute the change in electrostatic interaction energy from a flip.
-
-    Args:
-        occu_f (ndarray):
-            encoded occupancy vector with flip
-        occu_i (ndarray):
-            encoded occupancy vector without flip
-        site_ind (int):
-            site index for site being flipped
-        ewald_matrix (ndarray):
-            Ewald matrix for electrostatic interactions
-        ewald_inds (ndarray):
-            2D array of indices corresponding to a specific site occupation
-            in the ewald matrix
-        size (int):
-            supercell size in terms of prim
-
-    Returns:
-        float: electrostatic interaction energy difference
-    """
-    cdef int i, j, add, sub
-    cdef bint ok
-    cdef double out = 0
-
-    # values of -1 are vacancies and hence don't have ewald indices
-    add = ewald_inds[site_ind, occu_f[site_ind]]
-    sub = ewald_inds[site_ind, occu_i[site_ind]]
-
-    for j in range(occu_f.shape[0]):
-        i = ewald_inds[j, occu_f[j]]
-        if i != -1 and add != -1:
-            if i != add:
-                out += ewald_matrix[i, add] * 2
-            else:
-                out += ewald_matrix[i, add]
-
-    for j in range(occu_i.shape[0]):
-        i = ewald_inds[j, occu_i[j]]
-        if i != -1 and sub != -1:
-            if i != sub:
-                out -= ewald_matrix[i, sub] * 2
-            else:
-                out -= ewald_matrix[i, sub]
-
-    out /= size
-
-    return out
-
-
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.initializedcheck(False)
-@cython.cdivision(True)
 def indicator_delta_corr_single_flip(const np.int_t[::1] occu_f,
                                      const np.int_t[::1] occu_i,
                                      const int n_bit_orderings,
@@ -234,5 +175,67 @@ def indicator_delta_corr_single_flip(const np.int_t[::1] occu_f,
 
             o_view[l] = o / r / (I * J)
             l += 1
+
+    return out
+
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.initializedcheck(False)
+@cython.cdivision(True)
+def delta_ewald_single_flip(const np.int_t[::1] occu_f,
+                            const np.int_t[::1] occu_i,
+                            const np.float_t[:, ::1] ewald_matrix,
+                            const np.int_t[:, ::1] ewald_inds,
+                            const int site_ind,
+                            const double size,
+                            const int num_threads = 1):
+    """Compute the change in electrostatic interaction energy from a flip.
+
+    Args:
+        occu_f (ndarray):
+            encoded occupancy vector with flip
+        occu_i (ndarray):
+            encoded occupancy vector without flip
+        site_ind (int):
+            site index for site being flipped
+        ewald_matrix (ndarray):
+            Ewald matrix for electrostatic interactions
+        ewald_inds (ndarray):
+            2D array of indices corresponding to a specific site occupation
+            in the ewald matrix
+        size (int):
+            supercell size in terms of prim
+
+    Returns:
+        float: electrostatic interaction energy difference
+    """
+    cdef int i, j, k, add, sub
+    cdef bint ok
+    cdef double out = 0
+    cdef double out_k
+
+    # values of -1 are vacancies and hence don't have ewald indices
+    add = ewald_inds[site_ind, occu_f[site_ind]]
+    sub = ewald_inds[site_ind, occu_i[site_ind]]
+
+    for k in prange(occu_f.shape[0], nogil=True, num_threads=num_threads):
+        i = ewald_inds[k, occu_f[k]]
+        out_k = 0
+        if i != -1 and add != -1:
+            if i != add:
+                out_k = out_k + 2 * ewald_matrix[i, add]
+            else:
+                out_k = out_k + ewald_matrix[i, add]
+
+        j = ewald_inds[k, occu_i[k]]
+        if j != -1 and sub != -1:
+            if j != sub:
+                out_k = out_k - 2 * ewald_matrix[j, sub]
+            else:
+                out_k = out_k - ewald_matrix[j, sub]
+
+        out += out_k
+    out /= size
 
     return out
