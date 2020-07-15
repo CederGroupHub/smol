@@ -123,8 +123,10 @@ class TestClusterExpansionEwaldBinary(unittest.TestCase):
     def test_ce_ewald(self):
         data = self.dataset['data']
         cs = ClusterSubspace.from_dict(self.dataset['cluster_subspace'])
-        cs.add_external_term(EwaldTerm())
-        _ = self._test_predictions(cs, data)
+        for term in EwaldTerm.ewald_term_options:
+            cs.add_external_term(EwaldTerm(use_term=term))
+            _ = self._test_predictions(cs, data)
+            cs._external_terms = []
 
     def _test_predictions(self, cs, data):
         sw = StructureWrangler(cs)

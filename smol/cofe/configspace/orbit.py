@@ -1,7 +1,7 @@
 """Implementation of an Orbit.
 
-A set of symmetrically equivalent (with respect to the given undecorated
-lattice symmetry) clusters.
+A set of symmetrically equivalent (with respect to the given random structure
+symmetry) clusters.
 """
 
 __author__ = "Luis Barroso-Luque, William Davidson Richard"
@@ -21,8 +21,8 @@ class Orbit(MSONable):
     """Orbit set of symmetrically equivalent clusters.
 
     An Orbit represents a set of clusters that are symmetrically equivalent
-    (when undecorated). The class also includes the possible orderings on the
-    clusters in the orbit.
+    in the random structure. The class also includes the possible orderings on
+    the clusters in the orbit.
 
     An orbit usually includes translational and structure symmetry of the
     underlying lattice. But this is not a hard requirement any set of symmetry

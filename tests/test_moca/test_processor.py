@@ -112,7 +112,7 @@ class TestCEProcessor(unittest.TestCase):
             new_occu = occu.copy()
             new_occu[site] = new_sp
             # Test forward
-            dcorr = self.pr.delta_corr([(site, new_sp)], occu)
+            dcorr = self.pr._delta_corr([(site, new_sp)], occu)
             corr_f = self.pr.compute_correlation(new_occu)
             corr_i = self.pr.compute_correlation(occu)
 
@@ -120,7 +120,7 @@ class TestCEProcessor(unittest.TestCase):
                                         rtol=rtol, atol=atol))
             # Test reverse matches forward
             old_sp = occu[site]
-            rdcorr = self.pr.delta_corr([(site, old_sp)], new_occu)
+            rdcorr = self.pr._delta_corr([(site, old_sp)], new_occu)
             self.assertTrue(np.array_equal(dcorr, -1*rdcorr))
 
     def test_delta_corr_indicator(self):
@@ -145,14 +145,14 @@ class TestCEProcessor(unittest.TestCase):
             new_occu = occu.copy()
             new_occu[site] = new_sp
             # Test forward
-            dcorr = pr.delta_corr([(site, new_sp)], occu)
+            dcorr = pr._delta_corr([(site, new_sp)], occu)
             corr_f = pr.compute_correlation(new_occu)
             corr_i = pr.compute_correlation(occu)
             self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
                                         rtol=rtol, atol=atol))
             # Test reverse matches forward
             old_sp = occu[site]
-            rdcorr = pr.delta_corr([(site, old_sp)], new_occu)
+            rdcorr = pr._delta_corr([(site, old_sp)], new_occu)
             self.assertTrue(np.allclose(dcorr, -1*rdcorr,
                                         rtol=rtol, atol=atol))
 
@@ -177,47 +177,62 @@ class TestCEProcessor(unittest.TestCase):
 
 
 class TestEwaldCEProcessor(unittest.TestCase):
-    def setUp(self) -> None:
-        cs = ClusterSubspace.from_radii(lno_prim, {2: 5, 3: 4.1},
-                                         ltol=0.15, stol=0.2,
-                                         angle_tol=5,
-                                         supercell_size='O2-',
-                                         basis='sinusoid',
-                                         orthonormal=True,
-                                         use_concentration=True)
-        cs.add_external_term(EwaldTerm())
-        self.sw = StructureWrangler(cs)
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.cs = ClusterSubspace.from_radii(lno_prim, {2: 5, 3: 4.1},
+                                            basis='sinusoid',
+                                            orthonormal=True,
+                                            use_concentration=True,
+                                            ltol=0.15, stol=0.2,
+                                            angle_tol=5,
+                                            supercell_size='O2-')
+        cls.sw = StructureWrangler(cls.cs)
         for struct, energy in lno_data:
-            self.sw.add_data(struct, {'energy': energy})
-        ecis = np.linalg.lstsq(self.sw.feature_matrix,
-                               self.sw.get_property_vector('energy', True),
-                               rcond=None)[0]
-        self.ce = ClusterExpansion(cs, ecis, self.sw.feature_matrix)
-        scmatrix = np.array([[3, 0, 0],
-                             [0, 2, 0],
-                             [0, 0, 1]])
-        self.pr = EwaldCEProcessor(self.ce, scmatrix)
+            cls.sw.add_data(struct, {'energy': energy})
+
         # create a test structure
         test_struct = lno_prim.copy()
         test_struct.replace_species({"Li+": {"Li+": 2},
                                      "Ni3+": {"Ni3+": 2},
                                      "Ni4+": {"Ni4+": 0}})
-        test_struct.make_supercell(scmatrix)
+        cls.scmatrix = np.array([[3, 0, 0],
+                                 [0, 2, 0],
+                                 [0, 0, 1]])
+        test_struct.make_supercell(cls.scmatrix)
         ro = {"Li+": {"Li+": 0.5},
               "Ni3+": {"Ni3+": .35, "Ni4+": 1 - .35}}
         test_struct.replace_species(ro)
         order = OrderDisorderedStructureTransformation(algo=2)
-        test_struct = order.apply_transformation(test_struct)
-        self.test_struct = test_struct
-        self.test_occu = self.ce.cluster_subspace.occupancy_from_structure(test_struct,
-                                                                           scmatrix=scmatrix)
-        self.enc_occu = self.pr.occupancy_from_structure(test_struct)
-        self.sublattices = []
-        for doms in self.pr.unique_site_spaces:
-            sites = np.array([i for i, b in enumerate(self.pr.allowed_species)
+        cls.test_struct = order.apply_transformation(test_struct)
+        cls.test_occu = cls.cs.occupancy_from_structure(cls.test_struct,
+                                                        scmatrix=cls.scmatrix)
+
+        # create sublattices
+        cls.sublattices = []
+        pr = CEProcessor(ClusterExpansion(cls.cs, np.empty(1), np.empty((1, 1))),
+                         cls.scmatrix)
+        for doms in pr.unique_site_spaces:
+            sites = np.array([i for i, b in enumerate(pr.allowed_species)
                               if b == list(doms.keys())])
-            self.sublattices.append({'doms': list(range(len(doms))),
-                                     'sites': sites})
+            cls.sublattices.append({'doms': list(range(len(doms))),
+                                    'sites': sites})
+
+    def setUp(self):
+        self.setUpCE()
+
+    def tearDown(self) -> None:
+        self.cs._external_terms = []
+
+    def setUpCE(self, term='total') -> None:
+        self.cs.add_external_term(EwaldTerm(use_term=term))
+        self.sw.update_features()
+        ecis = np.linalg.lstsq(self.sw.feature_matrix,
+                               self.sw.get_property_vector('energy', True),
+                               rcond=None)[0]
+        self.ce = ClusterExpansion(self.cs, ecis, self.sw.feature_matrix)
+
+        self.pr = EwaldCEProcessor(self.ce, self.scmatrix)
+        self.enc_occu = self.pr.occupancy_from_structure(self.test_struct)
 
     def test_compute_property_change(self):
         occu = self.enc_occu.copy()
@@ -248,13 +263,47 @@ class TestEwaldCEProcessor(unittest.TestCase):
             new_occu = occu.copy()
             new_occu[site] = new_sp
             # Test forward
-            dcorr = self.pr.delta_corr([(site, new_sp)], occu)
+            dcorr = self.pr._delta_corr([(site, new_sp)], occu)
             corr_f = self.pr.compute_correlation(new_occu)
             corr_i = self.pr.compute_correlation(occu)
             self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
                                         rtol=rtol, atol=atol))
             # Test reverse matches forward
             old_sp = occu[site]
-            rdcorr = self.pr.delta_corr([(site, old_sp)], new_occu)
+            rdcorr = self.pr._delta_corr([(site, old_sp)], new_occu)
             self.assertTrue(np.allclose(dcorr, -1*rdcorr,
                                         rtol=rtol, atol=atol))
+
+    def test_msonable(self):
+        d = self.pr.as_dict()
+        pr = EwaldCEProcessor.from_dict(d)
+        self.assertEqual(self.pr.compute_property(self.enc_occu),
+                         pr.compute_property(self.enc_occu))
+        self.assertTrue(np.array_equal(self.pr.ewald_matrix,
+                                       pr.ewald_matrix))
+        j = json.dumps(d)
+        _ = json.loads(j)
+
+
+class TestEwaldCEProcessorReal(TestEwaldCEProcessor):
+    def setUp(self):
+        self.setUpCE(term='real')
+
+    def tearDown(self) -> None:
+        self.cs._external_terms = []
+
+
+class TestEwaldCEProcessorRecip(TestEwaldCEProcessor):
+    def setUp(self):
+        self.setUpCE(term='reciprocal')
+
+    def tearDown(self) -> None:
+        self.cs._external_terms = []
+
+
+class TestEwaldCEProcessorPoint(TestEwaldCEProcessor):
+    def setUp(self):
+        self.setUpCE(term='point')
+
+    def tearDown(self) -> None:
+        self.cs._external_terms = []
