@@ -52,18 +52,18 @@ if '--use-cython' in sys.argv:
 else:
     USE_CYTHON = False
 ext = '.pyx' if USE_CYTHON else '.c'
-extensions = [Extension("src.mc_utils",
-                        ["src/mc_utils"+ext],
-                        language='c',
-                        include_path=[numpy.get_include()],
-                        include_dirs=['src/'],
-                        # extra_compile_args=['-fopenmp'],
-                        # extra_link_args=['-fopenmp']
-                        )]
+ext_modules = [Extension("src.mc_utils",
+                         ["src/mc_utils"+ext],
+                         language="c",
+                         include_path=[numpy.get_include()],
+                         include_dirs=["src/"],
+                         extra_compile_args=["-O3", "-ffast-math", "-fopenmp"],
+                         extra_link_args=["-fopenmp"]
+                         )]
 
 if USE_CYTHON:
     from Cython.Build import cythonize
-    extensions = cythonize(extensions, **cython_kwargs)
+    extensions = cythonize(ext_modules, **cython_kwargs)
 
 setup(
     name="smol",
