@@ -118,9 +118,9 @@ def general_delta_corr_single_flip(np.int_t[::1] occu_f, np.int_t[::1] occu_i,
 @cython.initializedcheck(False)
 @cython.cdivision(True)
 def delta_ewald_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,
-                            int site_ind, int site_occu,
                             np.float_t[:, :] ewald_matrix,
-                            np.int_t[:, :] ewald_inds, double size):
+                            np.int_t[:, :] ewald_inds, int site_ind,
+                            double size):
     """Compute the change in electrostatic interaction energy from a flip.
 
     Args:
@@ -130,8 +130,6 @@ def delta_ewald_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,
             encoded occupancy vector without flip
         site_ind (int):
             site index for site being flipped
-        site_occu (int):
-            encoded occupation of site flip
         ewald_matrix (ndarray):
             Ewald matrix for electrostatic interactions
         ewald_inds (ndarray):
@@ -149,7 +147,7 @@ def delta_ewald_single_flip(np.int_t[:] occu_f, np.int_t[:] occu_i,
     cdef double out = 0
 
     # values of -1 are vacancies and hence don't have ewald indices
-    add = ewald_inds[site_ind, site_occu]
+    add = ewald_inds[site_ind, occu_f[site_ind]]
     sub = ewald_inds[site_ind, occu_i[site_ind]]
 
     for j in range(occu_f.shape[0]):
