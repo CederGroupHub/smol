@@ -108,6 +108,11 @@ class StructureWrangler(MSONable):
         return len(self._items)
 
     @property
+    def num_features(self):
+        """Get umber of features for each added structure."""
+        return self.feature_matrix.shape[1]
+
+    @property
     def available_properties(self):
         """Get list of properties that have been added."""
         return list(set(p for i in self._items
@@ -170,6 +175,45 @@ class StructureWrangler(MSONable):
     def metadata(self):
         """Get dictionary to save applied filters, etc."""
         return self._metadata
+
+    def get_matrix_rank(self, rows=None, cols=None):
+        """Get the rank of the feature matrix or a submatrix of it.
+
+        Args:
+            rows (list):
+                indices of structures to include in feature matrix.
+            cols (list):
+                indices of features (correlations) to include in feature matrix
+
+        Returns:
+            int: the rank of the matrix
+        """
+        rows = rows if rows is not None else range(self.num_structures)
+        cols = cols if cols is not None else range(self.num_features)
+        return np.linalg.matrix_rank(self.feature_matrix[rows][:, cols])
+
+    def get_condition_number(self, rows=None, cols=None, p=2):
+        """Compute the condition number for the feature matrix or submatrix.
+
+        The condition number is a measure of how sensitive the solution to
+        the linear system is to perturbations in the sampled data. The larger
+        the condition number the more ill-conditioned the linear problem is.
+
+        Args:
+            rows (list):
+                indices of structures to include in feature matrix.
+            cols (list):
+                indices of features (correlations) to include in feature matrix
+            p : (optional)
+                the type of norm to use when computing condition number.
+                see the numpy docs for np.linalg.cond for options.
+
+        Returns:
+            float: matrix condition number
+        """
+        rows = rows if rows is not None else range(self.num_structures)
+        cols = cols if cols is not None else range(self.num_features)
+        return np.linalg.cond(self.feature_matrix[rows][:, cols], p=p)
 
     def add_data(self, structure, properties, normalized=False, weights=None,
                  verbose=False, supercell_matrix=None, site_mapping=None,

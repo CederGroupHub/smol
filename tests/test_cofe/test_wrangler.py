@@ -36,6 +36,16 @@ class TestStructureWrangler(unittest.TestCase):
             self.assertTrue(len(struct) <= len(occu))  # < with vacancies
             self.assertTrue(size*num_prim_sits, len(occu))
 
+    def test_matrix_properties(self):
+        self.assertGreaterEqual(self.sw.get_condition_number(), 1)
+        print(self.sw.feature_matrix.shape)
+        rows = np.random.choice(range(self.sw.num_structures), 8)
+        cols = np.random.choice(range(self.sw.num_features), 10)
+        self.assertGreaterEqual(self.sw.get_condition_number(), 1)
+        self.assertGreaterEqual(self.sw.get_condition_number(rows, cols), 1)
+        self.assertGreaterEqual(self.sw.get_matrix_rank(rows, cols),
+                                self.sw.get_matrix_rank(cols=cols[:-4]))
+
     def test_add_data(self):
         # Check that a structure that does not match raises error.
         self.assertRaises(Exception, self.sw.add_data, lno_data[0][0],
