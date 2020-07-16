@@ -2,7 +2,7 @@
 # Copyright (c)
 # Distributed under the terms of the MIT License.
 
-"""Setup.py for SMoL."""
+"""Setup.py for smol."""
 
 import sys
 import platform
@@ -55,15 +55,16 @@ ext = '.pyx' if USE_CYTHON else '.c'
 ext_modules = [Extension("src.mc_utils",
                          ["src/mc_utils"+ext],
                          language="c",
-                         include_path=[numpy.get_include()],
                          include_dirs=["src/"],
                          extra_compile_args=["-O3", "-ffast-math", "-fopenmp"],
-                         extra_link_args=["-fopenmp"]
-                         )]
+                         extra_link_args=["-fopenmp"])]
 
 if USE_CYTHON:
     from Cython.Build import cythonize
-    extensions = cythonize(ext_modules, **cython_kwargs)
+    extensions = cythonize(ext_modules,
+                           include_path=[numpy.get_include()],
+                           compiler_directives={'language_level': 3},
+                           **cython_kwargs)
 
 setup(
     name="smol",
@@ -71,13 +72,10 @@ setup(
     version="2019.10.4",
     cmdclass={'build_ext': build_ext},
     setup_requires=['numpy>=1.14.3', 'setuptools>=18.0'],
-    python_requires='>=3.6',
+    python_requires='>=3.7',
     install_requires=["numpy>=1.14.3", 'monty', 'pymatgen', 'cvxopt'],
     extras_require={
         "provenance": ["pybtex"],
-        "ase": ["ase>=3.3"],
-        "vis": ["vtk>=6.0.0"],
-        "abinit": ["apscheduler", "netcdf4"],
         ':python_version < "3.7"': [
             "dataclasses>=0.6",
         ]},
@@ -86,7 +84,7 @@ setup(
     author_email="lbluque@berkeley.edu",
     maintainer="Who takes this for the team?",
     maintainer_email="above@beep.com",
-    #url="",
+    url="https://ceder.berkeley.edu/",
     license="MIT",
     description="Computational methods for statistical mechanical and"
                 "thermodynamics calculations of crystalline materials systems.",
@@ -95,11 +93,10 @@ setup(
     keywords=["materials", "science", "structure", "analysis", "phase",
               "diagrams", "crystal", "clusters", "Monte Carlo", "inference"],
     classifiers=[
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
+        "Development Status :: 3 - Alpha",
+        "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.7",
-        "Development Status :: 4 - Beta",
+        "Programming Language :: Python :: 3.8",
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
@@ -108,5 +105,9 @@ setup(
         "Topic :: Scientific/Engineering :: Chemistry",
         "Topic :: Software Development :: Libraries :: Python Modules"
     ],
-    ext_modules=extensions
+    ext_modules=extensions,
+    project_urls={
+        'Source': 'https://github.com/CederGroupHub/smol',
+        'Bug Reports': 'https://github.com/CederGroupHub/smol/issues'
+    },
 )
