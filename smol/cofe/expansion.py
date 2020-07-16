@@ -60,7 +60,7 @@ class ClusterExpansion(MSONable):
         """
         if len(coefficients) != feature_matrix.shape[1]:
             raise AttributeError(f'Feature matrix shape {feature_matrix.shape}'
-                                 'does not mathc len of coefficients '
+                                 'does not match length of coefficients '
                                  f'{len(coefficients)}.')
         self.coefs = coefficients
         self.metadata = {}
