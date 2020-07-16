@@ -15,7 +15,8 @@ from cython.parallel import prange
 @cython.wraparound(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
-def corr_from_occupancy(const np.int_t[::1] occu, const int n_bit_orderings,
+def corr_from_occupancy(const np.int_t[::1] occu,
+                        const int n_bit_orderings,
                         orbit_list):
     """Computes the correlation vector for a given encoded occupancy string.
 
@@ -24,14 +25,13 @@ def corr_from_occupancy(const np.int_t[::1] occu, const int n_bit_orderings,
             encoded occupancy vector
         n_bit_orderings (int):
             total number of bit orderings in expansion.
-        orbits:
+        orbit_list:
             Information of all orbits that include the flip site.
             (bit_combos, orbit id, site indices, bases array)
 
     Returns: array
         correlation vector difference
     """
-
     cdef int i, j, k, I, J, K, o_id, n
     cdef double p, pi
     cdef const np.int_t[:, ::1] inds
@@ -66,7 +66,8 @@ def corr_from_occupancy(const np.int_t[::1] occu, const int n_bit_orderings,
 @cython.cdivision(True)
 def general_delta_corr_single_flip(const np.int_t[::1] occu_f,
                                    const np.int_t[::1] occu_i,
-                                   const int n_bit_orderings, site_orbit_list):
+                                   const int n_bit_orderings,
+                                   site_orbit_list):
     """Computes the correlation difference between two occupancy vectors.
 
     Args:
@@ -85,7 +86,6 @@ def general_delta_corr_single_flip(const np.int_t[::1] occu_f,
     Returns:
         ndarray: correlation vector difference
     """
-
     cdef int i, j, k, I, J, K, o_id, n
     cdef double p, pi, pf, r
     cdef const np.int_t[:, ::1] inds
@@ -140,7 +140,6 @@ def indicator_delta_corr_single_flip(const np.int_t[::1] occu_f,
     Returns:
         ndarray: correlation vector difference
     """
-
     cdef int i, j, k, I, J, K, l
     cdef bint ok
     cdef const np.int_t[:, ::1] b, inds
