@@ -8,7 +8,6 @@ __author__ = "Luis Barroso-Luque, William D. Richards"
 import numpy as np
 cimport numpy as np
 cimport cython
-from cython.parallel import prange
 
 
 @cython.boundscheck(False)
@@ -187,8 +186,7 @@ def delta_ewald_single_flip(const long[::1] occu_f,
                             const double[:, ::1] ewald_matrix,
                             const long[:, ::1] ewald_inds,
                             const int site_ind,
-                            const double size,
-                            const int num_threads = 1):
+                            const double size):
     """Compute the change in electrostatic interaction energy from a flip.
 
     Args:
@@ -218,7 +216,7 @@ def delta_ewald_single_flip(const long[::1] occu_f,
     add = ewald_inds[site_ind, occu_f[site_ind]]
     sub = ewald_inds[site_ind, occu_i[site_ind]]
 
-    for k in prange(occu_f.shape[0], nogil=True, num_threads=num_threads):
+    for k in range(occu_f.shape[0]):
         i = ewald_inds[k, occu_f[k]]
         out_k = 0
         if i != -1 and add != -1:
