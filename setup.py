@@ -38,7 +38,9 @@ if sys.platform.startswith('darwin'):
     cpp_extra_link_args = ["-O2", "-march=native", '-stdlib=libc++']
 
 long_desc = """
-A long description of this package
+Lighthweight but caffeinated Python implementations of computational methods
+for statistical mechanical calculations of configurational states for
+crystalline material systems.
 """
 
 # Compile option for cython extensions
@@ -51,32 +53,34 @@ if '--use-cython' in sys.argv:
         sys.argv.remove('--annotate-cython')
 else:
     USE_CYTHON = False
+
 ext = '.pyx' if USE_CYTHON else '.c'
 ext_modules = [Extension("src.mc_utils",
                          ["src/mc_utils"+ext],
                          language="c",
                          include_dirs=["src/"],
-                         extra_compile_args=["-O3", "-ffast-math", "-fopenmp"],
-                         extra_link_args=["-fopenmp"])]
+                         extra_compile_args=["-O3", "-ffast-math"]
+                         )]
 
 if USE_CYTHON:
     from Cython.Build import cythonize
-    extensions = cythonize(ext_modules,
-                           include_path=[numpy.get_include()],
-                           compiler_directives={'language_level': 3},
-                           **cython_kwargs)
+    ext_modules = cythonize(ext_modules,
+                            include_path=[numpy.get_include()],
+                            compiler_directives={'language_level': 3},
+                            **cython_kwargs)
 
 setup(
     name="smol",
     packages=find_packages(),
     version="2019.10.4",
-    cmdclass={'build_ext': build_ext},
-    setup_requires=['numpy>=1.14.3', 'setuptools>=18.0'],
+    cmdclass={"build_ext": build_ext},
+    setup_requires=['numpy>=1.18.1', 'setuptools>=18.0'],
     python_requires='>=3.7',
-    install_requires=["numpy>=1.14.3", 'monty', 'pymatgen', 'cvxopt'],
+    install_requires=['numpy>=1.18.1', 'pymatgen>=2020.7.13',
+                      'monty>=3.0.1', 'cvxopt'],
     extras_require={
         "provenance": ["pybtex"],
-        ':python_version < "3.7"': [
+        ':python_version > "3.7"': [
             "dataclasses>=0.6",
         ]},
     package_data={},
@@ -105,7 +109,7 @@ setup(
         "Topic :: Scientific/Engineering :: Chemistry",
         "Topic :: Software Development :: Libraries :: Python Modules"
     ],
-    ext_modules=extensions,
+    ext_modules=ext_modules,
     project_urls={
         'Source': 'https://github.com/CederGroupHub/smol',
         'Bug Reports': 'https://github.com/CederGroupHub/smol/issues'
