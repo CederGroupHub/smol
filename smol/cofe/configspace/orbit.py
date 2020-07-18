@@ -11,10 +11,11 @@ import numpy as np
 from monty.json import MSONable
 from pymatgen import Lattice, SymmOp
 from pymatgen.util.coord import coord_list_mapping
-from smol.cofe.configspace.utils import SITE_TOL, _repr
-from smol.exceptions import SymmetryError, SYMMETRY_ERROR_MESSAGE
-from .cluster import Cluster
-from .basis import basis_factory
+from smol.globals import SITE_TOL
+from smol.common.utils.repr_util import _repr
+from smol.common.exceptions import SymmetryError, SYMMETRY_ERROR_MESSAGE
+from smol.cofe.configspace.cluster import Cluster
+from smol.cofe.configspace.basis import basis_factory
 
 
 class Orbit(MSONable):

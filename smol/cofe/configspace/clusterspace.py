@@ -23,8 +23,9 @@ from pymatgen.util.coord import (is_coord_subset, is_coord_subset_pbc,
                                  coord_list_mapping_pbc)
 from smol.cofe.configspace import Orbit
 from smol.cofe.configspace.basis import basis_factory
-from smol.cofe.configspace.utils import SITE_TOL, get_site_spaces
-from smol.exceptions import (SymmetryError, StructureMatchError,
+from smol.common.globals import SITE_TOL
+from smol.cofe.configspace.sitespace import get_site_spaces
+from smol.common.exceptions import (SymmetryError, StructureMatchError,
                              SYMMETRY_ERROR_MESSAGE)
 from src.mc_utils import corr_from_occupancy
 
