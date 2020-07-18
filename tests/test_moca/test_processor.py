@@ -15,8 +15,8 @@ from tests.data import lno_prim, lno_data
 
 RTOL = 0.0  # relative tolerance to check property change functions
 # absolute tolerance to check property change functions (eps is approx 2E-16)
-ATOL = 3E2 * np.finfo(float).eps
-EWALD_ATOL = 8 * ATOL  # ewald term has higher drift
+ATOL = 4E2 * np.finfo(float).eps
+EWALD_ATOL = 9 * ATOL  # ewald term has higher drift
 DRIFT_TOL = np.finfo(float).eps  # tolerance of average drift
 
 # Note that for delta_corr_ewald the forward and back check is not strictly

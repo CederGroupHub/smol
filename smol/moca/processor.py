@@ -368,9 +368,10 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
         # Set up ewald structure and indices
         struct, inds = self._ewald_term.get_ewald_structure(self.structure)
         self._ewald_structure = struct
-        self._ewald_inds = inds
+        self._ewald_inds = np.ascontiguousarray(inds)
         # Lazy set up Ewald Summation since it can be slow
         self.__ewald = ewald_summation
+        self.__matrix = None  # to cache matrix for now, the use cached_prop
 
     @property
     def ewald_summation(self):
@@ -389,7 +390,10 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
         The matrix used is the one set in the EwaldTerm of the given
         ClusterExpansion.
         """
-        return self._ewald_term.get_ewald_matrix(self.ewald_summation)
+        if self.__matrix is None:
+            matrix = self._ewald_term.get_ewald_matrix(self.ewald_summation)
+            self.__matrix = np.ascontiguousarray(matrix)
+        return self.__matrix
 
     def compute_correlation(self, occu):
         """Compute the correlation vector for a given occupancy array.
@@ -444,9 +448,9 @@ class EwaldCEProcessor(CEProcessor, BaseProcessor):  # is this troublesome?
                                                        self.n_orbit_functions,
                                                        orbits)
             delta_corr[-1] += delta_ewald_single_flip(occu_f, occu_i,
-                                                      f[0], f[1],
                                                       self.ewald_matrix,
                                                       self._ewald_inds,
+                                                      f[0],
                                                       self.size)
             occu_i = occu_f
 
