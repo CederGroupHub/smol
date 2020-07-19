@@ -155,9 +155,10 @@ class ClusterExpansion(MSONable):
                    if abs(coef) < threshold]
         self.cluster_subspace.remove_orbit_bit_combos(bit_ids)
         # Update necessary attributes
-        ids_compliment = list(set(range(len(self.coefs))) - set(bit_ids))
-        self.coefs = self.coefs[ids_compliment]
-        self._feat_matrix = self._feat_matrix[:, ids_compliment]
+        ids_complement = list(set(range(len(self.coefs))) - set(bit_ids))
+        ids_complement.sort()
+        self.coefs = self.coefs[ids_complement]
+        self._feat_matrix = self._feat_matrix[:, ids_complement]
         self._eci = None  # Reset
 
     # This needs further testing. For out-of-training structures
