@@ -13,7 +13,7 @@ import numpy as np
 from monty.json import MSONable
 from smol.moca.ensembles.base import BaseEnsemble
 from smol.moca.processor import BaseProcessor
-from smol.globals import kB
+from smol.constants import kB
 
 
 class CanonicalEnsemble(BaseEnsemble, MSONable):

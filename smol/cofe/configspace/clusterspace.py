@@ -13,6 +13,7 @@ from copy import deepcopy
 from importlib import import_module
 import warnings
 import numpy as np
+
 from monty.json import MSONable
 from pymatgen import Structure, PeriodicSite
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
@@ -21,9 +22,10 @@ from pymatgen.analysis.structure_matcher import (StructureMatcher,
 from pymatgen.util.coord import (is_coord_subset, is_coord_subset_pbc,
                                  lattice_points_in_supercell,
                                  coord_list_mapping_pbc)
+
 from smol.cofe.configspace import Orbit
-from smol.cofe.configspace.basis import basis_factory
-from smol.cofe.configspace.utils import SITE_TOL, get_site_spaces
+from smol.cofe.configspace.basis import basis_factory, get_site_spaces
+from smol.cofe.configspace.constants import SITE_TOL
 from smol.exceptions import (SymmetryError, StructureMatchError,
                              SYMMETRY_ERROR_MESSAGE)
 from src.mc_utils import corr_from_occupancy

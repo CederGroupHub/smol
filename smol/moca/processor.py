@@ -19,7 +19,7 @@ from pymatgen import Structure, PeriodicSite
 from pymatgen.analysis.ewald import EwaldSummation
 from smol.cofe import ClusterExpansion
 from smol.cofe.extern import EwaldTerm
-from smol.cofe.configspace.utils import get_site_spaces
+from smol.cofe.configspace.basis import get_site_spaces
 from src.mc_utils import (corr_from_occupancy, general_delta_corr_single_flip,
                           delta_ewald_single_flip,
                           indicator_delta_corr_single_flip)
