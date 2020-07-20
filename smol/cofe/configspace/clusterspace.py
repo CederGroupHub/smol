@@ -24,7 +24,8 @@ from pymatgen.util.coord import (is_coord_subset, is_coord_subset_pbc,
                                  coord_list_mapping_pbc)
 
 from smol.cofe.configspace import Orbit
-from smol.cofe.configspace.basis import basis_factory, get_site_spaces
+from smol.cofe.configspace.basis import (basis_factory, get_site_spaces,
+                                         get_allowed_species)
 from smol.cofe.configspace.constants import SITE_TOL
 from smol.exceptions import (SymmetryError, StructureMatchError,
                              SYMMETRY_ERROR_MESSAGE)
@@ -437,7 +438,7 @@ class ClusterSubspace(MSONable):
 
         occu = []  # np.zeros(len(self.supercell_structure), dtype=np.int)
 
-        for i, site_space in enumerate(get_site_spaces(supercell)):
+        for i, site_space in enumerate(get_allowed_species(supercell)):
             # rather than starting with all vacancies and looping
             # only over mapping, explicitly loop over everything to
             # catch vacancies on improper sites
@@ -508,7 +509,7 @@ class ClusterSubspace(MSONable):
         Args:
             new_basis (str):
                 name of new basis for all site bases
-            orthormal (bool):
+            orthonormal (bool):
                 option to orthonormalize all new site basis sets
         """
         for orbit in self.iterorbits():
@@ -662,11 +663,15 @@ class ClusterSubspace(MSONable):
                 wether to ensure orthonormal basis set.
             use_conc (bool):
                 If true the concentrations in the prim structure sites will be
-                used to orthormalize site bases.
+                used as the measure to orthormalize site bases.
         Returns:
             dict: {size: list of Orbits within cutoff radius}
         """
-        site_spaces = get_site_spaces(exp_struct, include_measure=use_conc)
+        if use_conc:
+            site_spaces = get_site_spaces(exp_struct)
+        else:
+            site_spaces = get_allowed_species(exp_struct)
+
         nbits = np.array([len(b) - 1 for b in site_spaces])
         site_bases = tuple(basis_factory(basis, site_space)
                            for site_space in site_spaces)
