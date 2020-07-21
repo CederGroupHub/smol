@@ -9,16 +9,14 @@ __author__ = "Luis Barroso-Luque"
 __credits__ = "Daniil Kitcheav"
 
 import random
-from math import exp
 import numpy as np
 
 from monty.json import MSONable
-from smol.moca.ensembles.base import BaseEnsemble
+from smol.moca.ensembles.base import ThermoEnsemble
 from smol.moca.processor import BaseProcessor
-from smol.constants import kB
 
 
-class CanonicalEnsemble(BaseEnsemble, MSONable):
+class CanonicalEnsemble(ThermoEnsemble, MSONable):
     """
     A Canonical Ensemble class to run Monte Carlo Simulations.
 
@@ -50,135 +48,13 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
                 'site_space': OrderedDict of allowed species in sublattice}
                 All sites in a sublattice need to have the same set of allowed
                 species.
-            seed (int):
+            seed (int): optional
                 Seed for random number generator.
         """
-        super().__init__(processor, initial_occupancy=initial_occupancy,
-                         sample_interval=sample_interval, seed=seed,
-                         sublattices=sublattices)
-        self.temperature = temperature
-        self._min_energy = self._property
-        self._min_occupancy = self._init_occupancy
-
-    @property
-    def temperature(self):
-        """Get the temperature of ensemble."""
-        return self._temperature
-
-    @temperature.setter
-    def temperature(self, T):
-        """Set the temperature and beta accordingly."""
-        self._temperature = T
-        self._beta = 1.0/(kB*T)
-
-    @property
-    def beta(self):
-        """Get 1/kBT."""
-        return self._beta
-
-    @property
-    def current_energy(self):
-        """Get the energy of structure in the last iteration."""
-        return self.current_property
-
-    @property
-    def average_energy(self):
-        """Get the average of sampled energies."""
-        return self.energy_samples.mean()
-
-    @property
-    def energy_variance(self):
-        """Get the variance of samples energies."""
-        return self.energy_samples.var()
-
-    @property
-    def energy_samples(self):
-        """Get an array with the sampled energies."""
-        return np.array([d['energy'] for d
-                         in self.data[self._prod_start:]])
-
-    @property
-    def minimum_energy(self):
-        """Get the minimum energy in samples."""
-        return self._min_energy
-
-    @property
-    def minimum_energy_occupancy(self):
-        """Get the occupancy for of the structure with minimum energy."""
-        return self.processor.decode_occupancy(self._min_occupancy)
-
-    @property
-    def minimum_energy_structure(self):
-        """Get the structure with minimum energy in samples."""
-        return self.processor.structure_from_occupancy(self._min_occupancy)
-
-    def anneal(self, start_temperature, steps, mc_iterations,
-               cool_function=None, set_min_occu=True):
-        """Carry out a simulated annealing procedure.
-
-        Uses the total number of temperatures given by "steps" interpolating
-        between the start and end temperature according to a cooling function.
-        The start temperature is the temperature set for the ensemble.
-
-        Args:
-           start_temperature (float):
-               Starting temperature. Must be higher than the current ensemble
-               temperature.
-           steps (int):
-               Number of temperatures to run MC simulations between start and
-               end temperatures.
-           mc_iterations (int):
-               number of Monte Carlo iterations to run at each temperature.
-           cool_function (str):
-               A (monotonically decreasing) function to interpolate
-               temperatures.
-               If none is given, linear interpolation is used.
-           set_min_occu (bool):
-               When True, sets the current occupancy and energy of the
-               ensemble to the minimum found during annealing.
-               Otherwise, do a full reset to initial occupancy and energy.
-
-        Returns:
-           tuple: (minimum energy, occupation, annealing data)
-        """
-        if start_temperature < self.temperature:
-            raise ValueError('End temperature is greater than start '
-                             f'temperature {self.temperature} > '
-                             f'{start_temperature}.')
-        if cool_function is None:
-            temperatures = np.linspace(start_temperature, self.temperature,
-                                       steps)
-        else:
-            raise NotImplementedError('No other cooling functions implemented '
-                                      'yet.')
-
-        min_energy = self.minimum_energy
-        min_occupancy = self.minimum_energy_occupancy
-        anneal_data = {}
-
-        for T in temperatures:
-            self.temperature = T
-            self.run(mc_iterations)
-            anneal_data[T] = self.data
-            self._data = []
-
-        min_energy = self._min_energy
-        min_occupancy = self.processor.decode_occupancy(self._min_occupancy)
-        self.reset()
-        if set_min_occu:
-            self._occupancy = self.processor.encode_occupancy(min_occupancy)
-            self._property = min_energy
-
-        return min_energy, min_occupancy, anneal_data
-
-    def reset(self):
-        """Reset the ensemble by returning it to its initial state.
-
-        This will also clear the all the sample data.
-        """
-        super().reset()
-        self._min_energy = self.processor.compute_property(self._occupancy)
-        self._min_occupancy = self._occupancy
+        super().__init__(processor, temperature=temperature,
+                         sample_interval=sample_interval,
+                         initial_occupancy=initial_occupancy,
+                         sublattices=sublattices, seed=seed)
 
     def _attempt_step(self, sublattices=None):
         """Attempt flips corresponding to an elementary canonical swap.
@@ -232,52 +108,6 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         else:
             # inefficient, maybe re-call method? infinite recursion problem
             return tuple()
-
-    @staticmethod
-    def _accept(delta_e, beta=1.0):
-        """Evaluate the metropolis acceptance criterion.
-
-        Args:
-            delta_e (float):
-                potential change
-            beta (float):
-                1/kBT
-
-        Returns:
-            bool
-        """
-        return True if delta_e < 0 else exp(-beta*delta_e) >= random.random()
-
-    def _get_current_data(self):
-        """Get ensemble specific data for current MC step."""
-        data = super()._get_current_data()
-        data['energy'] = self.current_energy
-        return data
-
-    def as_dict(self) -> dict:
-        """Json-serialization dict representation.
-
-        Returns:
-            MSONable dict
-        """
-        d = {'@module': self.__class__.__module__,
-             '@class': self.__class__.__name__,
-             'processor': self.processor.as_dict(),
-             'temperature': self.temperature,
-             'sample_interval': self.sample_interval,
-             'initial_occupancy': self.current_occupancy,
-             'seed': self.seed,
-             '_min_energy': self.minimum_energy,
-             '_min_occupancy': self._min_occupancy.tolist(),
-             '_sublattices': self._sublattices,
-             '_active_sublatts': self._active_sublatts,
-             'restricted_sites': self.restricted_sites,
-             'data': self.data,
-             '_step': self.current_step,
-             '_ssteps': self.accepted_steps,
-             '_energy': self.current_energy,
-             '_occupancy': self._occupancy.tolist()}
-        return d
 
     @classmethod
     def from_dict(cls, d):

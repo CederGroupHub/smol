@@ -16,11 +16,13 @@ import random
 from abc import ABCMeta, abstractmethod
 from math import exp
 import numpy as np
+
+from monty.json import MSONable
 from smol.moca.processor import BaseProcessor
-from smol.moca.ensembles.canonical import CanonicalEnsemble
+from smol.moca.ensembles.base import ThermoEnsemble
 
 
-class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
+class BaseSemiGrandEnsemble(ThermoEnsemble, metaclass=ABCMeta):
     """Abstract Semi-Grand Canonical Base Ensemble.
 
     Total number of species are fixed but composition of "active" (with partial
@@ -196,7 +198,7 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
         return data
 
 
-class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
+class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     """Relative chemical potential based SemiGrand Ensemble.
 
     A Semi-Grand Canonical Ensemble for Monte Carlo Simulations where species
@@ -334,7 +336,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
         return eb
 
 
-class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
+class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     """Fugacity fraction SemiGrandEnsemble.
 
     A Semi-Grand Canonical Ensemble for Monte Carlo simulations where the
