@@ -11,8 +11,8 @@ from monty.json import MSONable
 from pymatgen.util.coord import is_coord_subset
 from pymatgen import Lattice
 
-from smol.common.globals import SITE_TOL
-from smol.common.utils.repr_util import _repr
+from smol.cofe.configspace.constants import SITE_TOL
+from smol.utils import _repr
 
 
 class Cluster(MSONable):

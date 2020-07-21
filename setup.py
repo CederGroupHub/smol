@@ -2,7 +2,7 @@
 # Copyright (c)
 # Distributed under the terms of the MIT License.
 
-"""Setup.py for SMoL."""
+"""Setup.py for smol."""
 
 import sys
 import platform
@@ -38,43 +38,49 @@ if sys.platform.startswith('darwin'):
     cpp_extra_link_args = ["-O2", "-march=native", '-stdlib=libc++']
 
 long_desc = """
-A long description of this package
+Lighthweight but caffeinated Python implementations of computational methods
+for statistical mechanical calculations of configurational states for
+crystalline material systems.
 """
 
 # Compile option for cython extensions
 if '--use-cython' in sys.argv:
     USE_CYTHON = True
+    cython_kwargs = {}
     sys.argv.remove('--use-cython')
+    if '--annotate-cython' in sys.argv:
+        cython_kwargs['annotate'] = True
+        sys.argv.remove('--annotate-cython')
 else:
     USE_CYTHON = False
+
 ext = '.pyx' if USE_CYTHON else '.c'
-extensions = [Extension("src.mc_utils",
-                        ["src/mc_utils"+ext],
-                        language='c',
-                        include_path=[numpy.get_include()],
-                        include_dirs=['src/'],
-                        # extra_compile_args=['-fopenmp'],
-                        # extra_link_args=['-fopenmp']
-                        )]
+ext_modules = [Extension("src.mc_utils",
+                         ["src/mc_utils"+ext],
+                         language="c",
+                         include_dirs=["src/"],
+                         extra_compile_args=["-O3", "-ffast-math"]
+                         )]
 
 if USE_CYTHON:
     from Cython.Build import cythonize
-    extensions = cythonize(extensions)
+    ext_modules = cythonize(ext_modules,
+                            include_path=[numpy.get_include()],
+                            compiler_directives={'language_level': 3},
+                            **cython_kwargs)
 
 setup(
     name="smol",
     packages=find_packages(),
     version="2019.10.4",
-    cmdclass={'build_ext': build_ext},
-    setup_requires=['numpy>=1.14.3', 'setuptools>=18.0'],
-    python_requires='>=3.6',
-    install_requires=["numpy>=1.14.3", 'monty', 'pymatgen', 'cvxopt'],
+    cmdclass={"build_ext": build_ext},
+    setup_requires=['numpy>=1.18.1', 'setuptools>=18.0'],
+    python_requires='>=3.7',
+    install_requires=['numpy>=1.18.1', 'pymatgen>=2020.7.13',
+                      'monty>=3.0.1', 'cvxopt'],
     extras_require={
         "provenance": ["pybtex"],
-        "ase": ["ase>=3.3"],
-        "vis": ["vtk>=6.0.0"],
-        "abinit": ["apscheduler", "netcdf4"],
-        ':python_version < "3.7"': [
+        ':python_version > "3.7"': [
             "dataclasses>=0.6",
         ]},
     package_data={},
@@ -82,7 +88,7 @@ setup(
     author_email="lbluque@berkeley.edu",
     maintainer="Who takes this for the team?",
     maintainer_email="above@beep.com",
-    #url="",
+    url="https://ceder.berkeley.edu/",
     license="MIT",
     description="Computational methods for statistical mechanical and"
                 "thermodynamics calculations of crystalline materials systems.",
@@ -91,11 +97,10 @@ setup(
     keywords=["materials", "science", "structure", "analysis", "phase",
               "diagrams", "crystal", "clusters", "Monte Carlo", "inference"],
     classifiers=[
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
+        "Development Status :: 3 - Alpha",
+        "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.7",
-        "Development Status :: 4 - Beta",
+        "Programming Language :: Python :: 3.8",
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
@@ -104,5 +109,9 @@ setup(
         "Topic :: Scientific/Engineering :: Chemistry",
         "Topic :: Software Development :: Libraries :: Python Modules"
     ],
-    ext_modules=extensions
+    ext_modules=ext_modules,
+    project_urls={
+        'Source': 'https://github.com/CederGroupHub/smol',
+        'Bug Reports': 'https://github.com/CederGroupHub/smol/issues'
+    },
 )
