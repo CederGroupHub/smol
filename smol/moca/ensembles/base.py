@@ -7,7 +7,6 @@ from copy import deepcopy
 import os
 import json
 import numpy as np
-from math import exp
 from abc import ABC, abstractmethod
 
 
@@ -214,7 +213,6 @@ class BaseEnsemble(ABC):
             for d in self.data:
                 json.dump(d, fp)
                 fp.write(os.linesep)
-
         self._data = []
 
     @abstractmethod
@@ -229,21 +227,6 @@ class BaseEnsemble(ABC):
             dict
         """
         return {'occupancy': self.current_occupancy}
-
-    @staticmethod
-    def _accept(delta_e, beta=1.0):
-        """Evaluate the metropolis acceptance criterion.
-
-        Args:
-            delta_e (float):
-                potential change
-            beta (float):
-                1/kBT
-
-        Returns:
-            bool
-        """
-        return True if delta_e < 0 else exp(-beta*delta_e) >= random.random()
 
     def _save_data(self):
         """

@@ -9,7 +9,9 @@ __author__ = "Luis Barroso-Luque"
 __credits__ = "Daniil Kitcheav"
 
 import random
+from math import exp
 import numpy as np
+
 from monty.json import MSONable
 from smol.moca.ensembles.base import BaseEnsemble
 from smol.moca.processor import BaseProcessor
@@ -230,6 +232,21 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         else:
             # inefficient, maybe re-call method? infinite recursion problem
             return tuple()
+
+    @staticmethod
+    def _accept(delta_e, beta=1.0):
+        """Evaluate the metropolis acceptance criterion.
+
+        Args:
+            delta_e (float):
+                potential change
+            beta (float):
+                1/kBT
+
+        Returns:
+            bool
+        """
+        return True if delta_e < 0 else exp(-beta*delta_e) >= random.random()
 
     def _get_current_data(self):
         """Get ensemble specific data for current MC step."""
