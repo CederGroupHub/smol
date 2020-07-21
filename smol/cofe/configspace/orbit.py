@@ -8,10 +8,13 @@ __author__ = "Luis Barroso-Luque, William Davidson Richard"
 
 import itertools
 import numpy as np
+
 from monty.json import MSONable
 from pymatgen import Lattice, SymmOp
 from pymatgen.util.coord import coord_list_mapping
-from smol.cofe.configspace.utils import SITE_TOL, _repr
+
+from smol.utils import _repr
+from .constants import SITE_TOL
 from smol.exceptions import SymmetryError, SYMMETRY_ERROR_MESSAGE
 from .cluster import Cluster
 from .basis import basis_factory
