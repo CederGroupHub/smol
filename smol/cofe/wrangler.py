@@ -597,6 +597,58 @@ class StructureWrangler(MSONable):
         return d
 
 
+    def _get_duplicate_corrs (feature_matrix, electrostatic=True):
+    # you can use this fucntion to make sure there is a one-to-one  mapping of the correlation vector to the energy (de-duplication)
+
+        unique_matrix = np.unique(feature_matrix[:,:-1], axis=0)
+
+        if unique_matrix.shape == feature_matrix[:,:-1].shape:
+            print("There are no duplicates!")
+        else:
+            print("Need to remove duplicates before start fitting!")
+
+
+            if electrostatic:
+                modified_fm = feature_matrix[:,:-1] # if there is electrostatic
+
+
+            values, indices, inverse=np.unique(modified_fm, return_index=True, return_inverse=True, axis=0)
+
+
+            loc_to_repeats = {}
+            for i in range(len(inverse)):
+                if inverse[i] in loc_to_repeats:
+                    loc_to_repeats[inverse[i]].append(i)
+                else:
+                    loc_to_repeats[inverse[i]] = [i]
+
+            min_energy_locs = {}
+            for i in loc_to_repeats:
+                    min_location = -1
+                    min_energy = 1000
+                    for j in loc_to_repeats[i]:
+                        if wrangler.get_property_vector('total_energy')[j] < min_energy:
+                            min_enery = wrangler.get_property_vector('total_energy')[j]
+                            min_location = j
+                    min_energy_locs[i] = min_location
+                    min_enrgy_indexes = list(list(min_energy_locs.values()))
+
+
+            min_indices = list(min_energy_locs.values())
+            min_indices.sort()
+
+
+            cleaned_feature_matrix = feature_matrix[min_indices,:]
+            feature_matrix = cleaned_feature_matrix
+
+
+        return (feature_matrix,min_enrgy_indexes)
+
+
+
+
+
+
 def _energies_above_hull(structures, energies, ce_structure):
     """Compute energies above hull.
 
