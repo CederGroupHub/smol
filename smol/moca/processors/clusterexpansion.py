@@ -1,21 +1,19 @@
-"""Implementation of processor classes for a fixed size super cell.
+"""Implementation of CE processor class for a fixed size super cell.
 
-A processor is optimized to compute correlation vectors and local changes in
+A CE processor is optimized to compute correlation vectors and local changes in
 correlation vectors. This class allows the use a cluster expansion hamiltonian
 to run Monte Carlo based simulations.
 
 If you are using a Hamiltonian with an Ewald summation electrostatic term, you
-should use the EwaldCEProcessor class to handle changes in the electrostatic
-interaction energy.
+should use the CompositeProcessor with a CEProcessor and an EwaldProcessor
+class to handle changes in the electrostatic interaction energy.
 """
 
 __author__ = "Luis Barroso-Luque"
 
 import numpy as np
-from collections import defaultdict, OrderedDict
-from pymatgen import Structure, PeriodicSite
+from collections import defaultdict
 from smol.cofe import ClusterExpansion
-from smol.cofe.configspace.basis import get_site_spaces, get_allowed_species
 from src.mc_utils import (corr_from_occupancy, general_delta_corr_single_flip,
                           indicator_delta_corr_single_flip)
 
@@ -29,8 +27,7 @@ class CEProcessor(BaseProcessor):
     for sampling thermodynamic properties from a cluster expansion
     Hamiltonian.
 
-    Think of this as fixed size supercell optimized to calculate correlation
-    vectors and local changes to correlation vectors from site flips.
+    Attributes:
     """
 
     def __init__(self, cluster_expansion, supercell_matrix,
@@ -49,23 +46,11 @@ class CEProcessor(BaseProcessor):
                 Make sure your cluster expansion was indeed fit with an
                 indicator basis set, otherwise your MC results are no good.
         """
+        super().__init__(cluster_expansion.cluster_subspace, supercell_matrix)
         # the only reason to keep the CE is for the MSONable from_dict
         self.cluster_expansion = cluster_expansion
         self.coefs = cluster_expansion.coefs
-        self.subspace = cluster_expansion.cluster_subspace
-        self.structure = self.subspace.structure.copy()
-        self.structure.make_supercell(supercell_matrix)
-        self.supercell_matrix = supercell_matrix
-
-        # this can be used (maybe should) to check if a flip is valid
-        site_spaces = get_site_spaces(cluster_expansion.expansion_structure)
-        self.unique_site_spaces = tuple(OrderedDict(space) for space in
-                                        set(tuple(spaces.items())
-                                            for spaces in site_spaces))
-
-        self.allowed_species = get_allowed_species(self.structure)
-        self.size = self.subspace.num_prims_from_matrix(supercell_matrix)
-        self.n_orbit_functions = self.subspace.n_bit_orderings
+        self.n_orbit_functions = self.cluster_subspace.n_bit_orderings
 
         # set the dcorr_single_flip function
         self.indicator_opt = optimize_indicator
@@ -73,6 +58,7 @@ class CEProcessor(BaseProcessor):
             if optimize_indicator \
             else general_delta_corr_single_flip
 
+        # Prepare necssary information for local updates
         self._orbit_inds = self.subspace.supercell_orbit_mappings(supercell_matrix)  # noqa
         # List of orbit information and supercell site indices to compute corr
         self._orbit_list = []
@@ -95,32 +81,32 @@ class CEProcessor(BaseProcessor):
                                                         orbit.bases_array,
                                                         inds[in_inds]))
 
-    def compute_property(self, occu):
+    def compute_property(self, occupancy):
         """Compute the value of the property for the given occupancy array.
 
         The property fitted to the corresponding to the CE.
 
         Args:
-            occu (ndarray):
+            occupancy (ndarray):
                 encoded occupancy array
         Returns:
             float: predicted property
         """
-        return np.dot(self.compute_correlation(occu), self.coefs) * self.size
+        return np.dot(self.compute_correlation(occupancy), self.coefs) * self.size  # noqa
 
-    def compute_property_change(self, occu, flips):
+    def compute_property_change(self, occupancy, flips):
         """Compute change in property from a set of flips.
 
         Args:
-            occu (ndarray):
+            occupancy (ndarray):
                 encoded occupancy array
             flips (list):
                 list of tuples for (index of site, specie code to set)
 
         Returns:
-            float:  property difference between inital and final states
+            float: property difference between inital and final states
         """
-        return np.dot(self._delta_corr(flips, occu), self.coefs) * self.size
+        return np.dot(self._delta_corr(flips, occupancy), self.coefs) * self.size  # noqa
 
     def compute_correlation(self, occu):
         """Compute the correlation vector for a given occupancy array.
@@ -138,52 +124,7 @@ class CEProcessor(BaseProcessor):
         return corr_from_occupancy(occu, self.n_orbit_functions,
                                    self._orbit_list)
 
-    def occupancy_from_structure(self, structure):
-        """Get the occupancy array for a given structure.
-
-        The structure must strictly be a supercell of the prim according to the
-        processor's supercell matrix.
-
-        Args:
-            structure (Structure):
-                A pymatgen structure (related to the cluster-expansion prim
-                by the supercell matrix passed to the processor)
-        Returns: encoded occupancy array
-            list
-        """
-        occu = self.subspace.occupancy_from_structure(structure,
-                                                      scmatrix=self.supercell_matrix)  # noqa
-        return self.encode_occupancy(occu)
-
-    def structure_from_occupancy(self, occu):
-        """Get pymatgen.Structure from an occupancy array.
-
-        Args:
-            occu (ndarray):
-                encoded occupancy array
-
-        Returns:
-            Structure
-        """
-        occu = self.decode_occupancy(occu)
-        sites = []
-        for sp, s in zip(occu, self.structure):
-            if sp != 'Vacancy':
-                site = PeriodicSite(sp, s.frac_coords, self.structure.lattice)
-                sites.append(site)
-        return Structure.from_sites(sites)
-
-    def encode_occupancy(self, occu):
-        """Encode occupancy array of species str to ints."""
-        return np.array([species.index(sp) for species, sp
-                        in zip(self.allowed_species, occu)])
-
-    def decode_occupancy(self, enc_occu):
-        """Decode an encoded occupancy array of int to species str."""
-        return [species[i] for i, species in
-                zip(enc_occu, self.allowed_species)]
-
-    def get_average_drift(self, iterations=5000):
+    def get_average_drift(self, iterations=1000):
         """Get the average forward and reverse drift for the given property.
 
         This is a sanity check function. The drift value should be very, very,
@@ -263,7 +204,6 @@ class CEProcessor(BaseProcessor):
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
              'cluster_expansion': self.cluster_expansion.as_dict(),
-             'supercell_matrix': self.supercell_matrix.tolist(),
              'indicator': self.indicator_opt}
         return d
 

@@ -92,13 +92,15 @@ class ClusterSubspace(MSONable):
                 in the expansion. Easiest option for supercell_size is usually
                 to use a species that has a constant amount per formula unit.
         """
-        self.structure = structure
-        self.exp_structure = expansion_structure
+
+        # keep as private attributes
+        self._structure = structure
+        self._exp_structure = expansion_structure
         self.symops = symops  # should we even keep this as an attribute?
 
         # Test that all the found symmetry operations map back to the input
         # structure otherwise you can get weird subset/superset bugs.
-        fc = self.structure.frac_coords
+        fc = self._structure.frac_coords
         for op in self.symops:
             if not is_coord_subset_pbc(op.operate_multi(fc), fc, SITE_TOL):
                 raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
@@ -210,6 +212,16 @@ class ClusterSubspace(MSONable):
                    expansion_structure=expansion_structure, symops=symops,
                    orbits=orbits, supercell_matcher=supercell_matcher,
                    site_matcher=site_matcher, **matcher_kwargs)
+
+    @property
+    def structure(self):
+        """Return the prim structure."""
+        return self._structure
+
+    @property
+    def expansion_structure(self):
+        """Return the prim expansion structure."""
+        return self._exp_structure
 
     @property
     def orbits(self):
@@ -818,7 +830,7 @@ class ClusterSubspace(MSONable):
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
              'structure': self.structure.as_dict(),
-             'expansion_structure': self.exp_structure.as_dict(),
+             'expansion_structure': self.expansion_structure.as_dict(),
              'symops': [so.as_dict() for so in self.symops],
              'orbits': {s: [o.as_dict() for o in v]
                         for s, v in self._orbits.items()},
