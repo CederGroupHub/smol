@@ -17,7 +17,7 @@ from smol.utils import _repr
 from .constants import SITE_TOL
 from smol.exceptions import SymmetryError, SYMMETRY_ERROR_MESSAGE
 from .cluster import Cluster
-from .basis import basis_factory
+#from .basis import basis_factory
 
 
 class Orbit(MSONable):

@@ -11,337 +11,15 @@ this can be changed to use "concentration" biased bases.
 
 __author__ = "Luis Barroso-Luque"
 
-# from typing import Callable
-from abc import ABC
 import warnings
+from abc import abstractmethod
 from collections import OrderedDict
-from functools import partial
+from collections.abc import Iterator
+from functools import partial, wraps
 import numpy as np
+from numpy.polynomial.polynomial import polyval
 from numpy.polynomial.chebyshev import chebval
 from numpy.polynomial.legendre import legval
-
-from smol.utils import _get_subclasses
-
-
-class SiteBasis(ABC):
-    """Abstract base class to represent the basis for a site function space.
-
-    This abstract class must by derived from for specific bases to represent a
-    site function space.
-
-    Name all derived classes NameBasis. See implementations below.
-
-    Note that all SiteBasis in theory have the first basis function = 1, but
-    this should not be defined since it is handled implicitly when computing
-    bit_combos using total no. species - 1 in the Orbit class.
-
-    Derived classes must define a list of functions self._functions used to
-    compute the function array
-    """
-
-    def __init__(self, species):
-        """Initialize a SiteBasis.
-
-        Args:
-            species (tuple or dict):
-                Species. If dict, the species should be the keys and
-                the value should should correspond to the probability measure
-                associated to that specie. If a tuple is given a uniform
-                probability is assumed.
-        """
-        if not isinstance(species, dict):
-            species = {specie: 1 / len(species) for specie in species}
-        else:
-            if not np.allclose(sum(species.values()), 1):
-                warnings.warn('The measure given does not sum to 1.'
-                              'Are you sure this is what you want?',
-                              RuntimeWarning)
-
-        self._domain = OrderedDict(species)
-        self._functions = None  # derived classes must properly define this.
-        self._func_arr = None
-        self._r_array = None  # array from QR in basis orthonormalization
-
-    @property
-    def function_array(self):
-        """Get array with the non-constant site functions as rows."""
-        if self._func_arr is None:
-            self._func_arr = np.array([[f(self._encode(s))
-                                        for s in self.species]
-                                       for f in [lambda x: 1.0] +
-                                       self._functions])
-        return self._func_arr[1:]
-
-    @property
-    def measure_array(self):
-        """Get diagonal array with site species measures."""
-        return np.diag(list(self._domain.values()))
-
-    @property
-    def measure_vector(self):
-        """Get vector of site species measures."""
-        return np.array(list(self._domain.values()))
-
-    @property
-    def orthonormalization_array(self):
-        """Get R array from QR factorization."""
-        return self._r_array
-
-    @property
-    def species(self):
-        """Get list of allowed site species."""
-        return list(self._domain.keys())
-
-    @property
-    def site_space(self):
-        """Get dict of the site probability space.
-
-        The site space refers to the probability space represented by the
-        allowed species and their respective probabilities (concentration)
-        over which the site functions are defined.
-        """
-        return self._domain
-
-    def measure(self, species):
-        """Get the site probability measure of a species.
-
-        Args:
-            specie (str): specie name
-
-        Returns:
-            float: represents the associated measure with the give species
-        """
-        return self._domain[species]
-
-    def inner_prod(self, f, g):
-        """Compute inner product of two functions in space.
-
-        Compute the inner product of two functions over probability the space
-        spanned by basis.
-
-        Args:
-            f (Callable): function
-            g (Callable): function
-
-        Returns:
-            float: inner product result
-        """
-        res = sum([self.measure(s) * f(self._encode(s)) * g(self._encode(s))
-                   for s in self.species])
-        if abs(res) < 5E-15:  # Not sure what's causing these numerical issues
-            res = 0.0
-        return res
-
-    @property
-    def is_orthogonal(self):
-        """Test if the basis is orthogonal."""
-        # add the implicit 0th function
-        prods = np.dot(np.dot(self.measure_array, self._func_arr.T).T,
-                       self._func_arr.T)
-        d_terms = all(not np.isclose(prods[i, i], 0)
-                      for i in range(prods.shape[0]))
-        x_terms = all(np.isclose(prods[i, j], 0)
-                      for i in range(prods.shape[0])
-                      for j in range(prods.shape[1])
-                      if i != j)
-        return x_terms and d_terms
-
-    @property
-    def is_orthonormal(self):
-        """Test if the basis is orthonormal."""
-        prods = np.dot(np.dot(self.measure_array, self._func_arr.T).T,
-                       self._func_arr.T)
-        identity = np.eye(*prods.shape)
-        return np.allclose(identity, prods)
-
-    def orthonormalize(self):
-        """Orthonormalizes basis function set based on initial basis set.
-
-        Functions are orthonormal w.r.t the measure given.
-        (basis functions are also orthogonal to phi_0 = 1).
-
-        Modified GS-QR factorization of function array (here we are using
-        row vectors as opposed to the correct way of doing QR using columns.
-        Due to how the func_arr is saved (rows are vectors/functions) this
-        allows us to not sprinkle so many transposes.
-        """
-        Q = np.zeros_like(self._func_arr)
-        R = np.zeros_like(self._func_arr)
-        V = self._func_arr.copy()
-        n = V.shape[0]
-        for i, phi in enumerate(V):
-            R[i, i] = np.sqrt(np.dot(self.measure_vector*phi, phi))
-            Q[i] = phi/R[i, i]
-            R[i, i+1:n] = np.dot(V[i+1:n], self.measure_vector*Q[i])
-            V[i+1:n] = V[i+1:n] - np.outer(R[i, i+1:n], Q[i])
-
-        self._r_array = R
-        self._func_arr = Q
-
-    def _encode(self, specie):
-        """Encode species to another set (i.e. species names to integers)."""
-        return specie
-
-
-# This is not defined within the class so the class can be pickled.
-def indicator(s, sp):
-    """Check if s == p.
-
-    singleton indicator function for elementary events.
-    """
-    return int(s == sp)
-
-
-class IndicatorBasis(SiteBasis):
-    """Cluster Indicator Site Basis.
-
-    This basis as defined is not orthogonal for any number of species.
-    """
-
-    def __init__(self, species):
-        """Intialize an indicator basis set.
-
-        Args:
-            species (tuple or dict):
-                Species. If dict, the species should be the keys and
-                the value should should correspond to the probability measure
-                associated to that specie. If a tuple is given a uniform
-                probability is assumed.
-        """
-        super().__init__(species)
-
-        self._functions = [partial(indicator, sp=sp)
-                           for sp in self.species[:-1]]
-        _ = self.function_array  # initialize function array (hacky sorry)
-
-
-# Same reasoning. Defined at module level to make pickling happy.
-def sinusoid(n, m):
-    """Sine or cosine based on AVvW sinusoid site basis."""
-    a = -(-n // 2)  # ceiling division
-    if n % 2 == 0:
-        return partial(sin_f, a=a, m=m)
-    else:
-        return partial(cos_f, a=a, m=m)
-
-
-def sin_f(s, a, m):
-    """Return basis function for even indices."""
-    return -np.sin(2 * np.pi * a * s / m)
-
-
-def cos_f(s, a, m):
-    """Return basis function for odd indices."""
-    return -np.cos(2 * np.pi * a * s / m)
-
-
-class SinusoidBasis(SiteBasis):
-    """Sinusoid (Sine/cosine basis) as proposed by A. van de Walle.
-
-    A. van de Walle, Calphad. 33, 266–278 (2009).
-
-    This basis is properly orthogonal for any number of allowed species out of
-    the box.
-    """
-
-    def __init__(self, species):
-        """Initialize a sinusoid basis set.
-
-        Args:
-            species (tuple or dict):
-                Species. If dict, the species should be the keys and
-                the value should should correspond to the probability measure
-                associated to that specie. If a tuple is given a uniform
-                probability is assumed.
-        """
-        super().__init__(species)
-        m = len(species)
-
-        self._functions = [sinusoid(n, m) for n in range(1, m)]
-        self.__encoding = {s: i for (i, s) in enumerate(species)}
-        _ = self.function_array  # initialize function array (hacky sorry)
-
-    def _encode(self, specie):
-        return self.__encoding[specie]
-
-
-class NumpyPolyBasis(SiteBasis, ABC):
-    """Abstract class to quickly write polynomial basis included in Numpy.
-
-    Inherit from this class for quick polynomial basis sets. See below.
-    """
-
-    def __init__(self, species, poly_fun):
-        """Initialize Basis.
-
-        Args:
-            species (tuple or dict):
-                Species. If dict, the species should be the keys and
-                the value should should correspond to the probability measure
-                associated to that specie. If a tuple is given a uniform
-                probability is assumed.
-            poly_fun (Callable):
-                A numpy polynomial eval function (i.e. chebval)
-        """
-        super().__init__(species)
-        m = len(species)
-        enc = np.linspace(-1, 1, m)
-        self.__encoding = {s: i for (s, i) in zip(species, enc)}
-        funcs, coeffs = [], [1]
-        for _ in range(1, m):
-            coeffs.append(0)
-            funcs.append(partial(poly_fun, c=coeffs[::-1]))
-        self._functions = funcs
-        _ = self.function_array  # initialize function array (hacky sorry)
-
-    def _encode(self, specie):
-        return self.__encoding[specie]
-
-
-class ChebyshevBasis(NumpyPolyBasis):
-    """Chebyshev Polynomial Site Basis.
-
-    The actual implementation here differs from the one proposed originally
-    in J. M. Sanchez, et al., Physica A. 128, 334–350 (1984). Which is properly
-    orthonormal.
-
-    As implemented here, this basis will not be orthogonal for more
-    than 2 species. But can be orthonormalized calling the orthonormalize
-    method, then it will be equivalent to the originally proposed one.
-    """
-
-    def __init__(self, species):
-        """Initialize ChebyshevBasis.
-
-        Args:
-            species (tuple or dict):
-                Species. If dict, the species should be the keys and
-                the value should should correspond to the probability measure
-                associated to that specie. If a tuple is given a uniform
-                probability is assumed.
-        """
-        super().__init__(species, chebval)
-
-
-class LegendreBasis(NumpyPolyBasis):
-    """Legendre Polynomial Site Basis.
-
-    Note that as implemented here, this basis will not be orthogonal for more
-    than 2 species. But can be orthonormalized calling the orthonormalize
-    method.
-    """
-
-    def __init__(self, species):
-        """Initialize LegendreBasis.
-
-        Args:
-            species (tuple or dict):
-                Species. If dict, the species should be the keys and
-                the value should should correspond to the probability measure
-                associated to that specie. If a tuple is given a uniform
-                probability is assumed.
-        """
-        super().__init__(species, legval)
 
 
 def get_allowed_species(structure):
@@ -401,14 +79,285 @@ def get_site_spaces(structure):
     return all_site_spaces
 
 
-def basis_factory(basis_name, *args, **kwargs):
-    """Try to return an instance of a Basis class defined in basis.py."""
-    try:
-        class_name = basis_name.capitalize() + 'Basis'
-        basis_class = globals()[class_name]
-        instance = basis_class(*args, **kwargs)
-    except KeyError:
-        available = _get_subclasses(SiteBasis)
-        raise NotImplementedError(f'{basis_name} is not implemented. '
-                                  f'Choose one of {available}')
-    return instance
+class SiteBasis:
+    """Abstract base class to represent the basis for a site function space.
+
+    This abstract class must by derived from for specific bases to represent a
+    site function space.
+
+    Name all derived classes NameBasis. See implementations below.
+
+    Note that all SiteBasis in theory have the first basis function = 1, but
+    this should not be defined since it is handled implicitly when computing
+    bit_combos using total no. species - 1 in the Orbit class.
+
+    Derived classes must define a list of functions self._functions used to
+    compute the function array
+    """
+
+    def __init__(self, species, basis_functions):
+        """Initialize a SiteBasis.
+
+        Args:
+            species (Sequence or OrderedDict):
+                Species. If dict, the species should be the keys and
+                the value should should correspond to the probability measure
+                associated to that specie. If a tuple is given a uniform
+                probability is assumed.
+            basis_functions (BasisIterator):
+                A BasisIterator to obtain the nonconstant basis functions.
+        """
+        if not isinstance(species, dict):
+            species = {specie: 1 / len(species) for specie in species}
+        else:
+            if not np.allclose(sum(species.values()), 1):
+                warnings.warn('The measure given does not sum to 1.'
+                              'Are you sure this is what you want?',
+                              RuntimeWarning)
+
+        self.flavor = basis_functions.flavor
+        self._domain = OrderedDict(species)
+        # add non constant basis functions to array
+        func_arr = np.array([[function(sp) for sp in self.species]
+                             for function in basis_functions])
+        # stack the constant basis function on there for proper normalization
+        self._func_arr = np.vstack((np.ones_like(func_arr[0]), func_arr))
+        self._r_array = None  # array from QR in basis orthonormalization
+
+    @property
+    def function_array(self):
+        """Get array with the non-constant site functions as rows."""
+        return self._func_arr[1:]
+
+    @property
+    def measure_array(self):
+        """Get diagonal array with site species measures."""
+        return np.diag(list(self._domain.values()))
+
+    @property
+    def measure_vector(self):
+        """Get vector of site species measures."""
+        return np.array(list(self._domain.values()))
+
+    @property
+    def orthonormalization_array(self):
+        """Get R array from QR factorization."""
+        return self._r_array
+
+    @property
+    def species(self):
+        """Get list of allowed site species."""
+        return list(self._domain.keys())
+
+    @property
+    def site_space(self):
+        """Get dict of the site probability space.
+
+        The site space refers to the probability space represented by the
+        allowed species and their respective probabilities (concentration)
+        over which the site functions are defined.
+        """
+        return self._domain
+
+    @property
+    def is_orthogonal(self):
+        """Test if the basis is orthogonal."""
+        # add the implicit 0th function
+        prods = np.dot(np.dot(self.measure_array, self._func_arr),
+                       self._func_arr.T)
+        d_terms = all(not np.isclose(prods[i, i], 0)
+                      for i in range(prods.shape[0]))
+        x_terms = all(np.isclose(prods[i, j], 0)
+                      for i in range(prods.shape[0])
+                      for j in range(prods.shape[1])
+                      if i != j)
+        return x_terms and d_terms
+
+    @property
+    def is_orthonormal(self):
+        """Test if the basis is orthonormal."""
+        prods = np.dot(np.dot(self.measure_array, self._func_arr),
+                       self._func_arr.T)
+        identity = np.eye(*prods.shape)
+        return np.allclose(identity, prods)
+
+    def orthonormalize(self):
+        """Orthonormalizes basis function set based on initial basis set.
+
+        Functions are orthonormal w.r.t the measure given.
+        (basis functions are also orthogonal to phi_0 = 1).
+
+        Modified GS-QR factorization of function array (here we are using
+        row vectors as opposed to the correct way of doing QR using columns.
+        Due to how the func_arr is saved (rows are vectors/functions) this
+        allows us to not sprinkle so many transposes.
+        """
+        Q = np.zeros_like(self._func_arr)
+        R = np.zeros_like(self._func_arr)
+        V = self._func_arr.copy()
+        n = V.shape[0]
+        for i, phi in enumerate(V):
+            R[i, i] = np.sqrt(np.dot(self.measure_vector*phi, phi))
+            Q[i] = phi/R[i, i]
+            R[i, i+1:n] = np.dot(V[i+1:n], self.measure_vector*Q[i])
+            V[i+1:n] = V[i+1:n] - np.outer(R[i, i+1:n], Q[i])
+
+        self._r_array = R
+        self._func_arr = Q
+
+
+class BasisIterator(Iterator):
+    """Abstract basis iterator class.
+
+    A basis iterator iterates through non-constant basis functions only.
+    """
+    flavor = 'abstract'
+
+    def __init__(self, species):
+        """BasisIterator constructor
+
+        Args:
+            species (tuple):
+                tuple of allowed species in site spaces
+        """
+        self.species_iter = iter(species[:-1])  # all but one species iterator
+        self.species = species
+
+
+class IndicatorIterator(BasisIterator):
+    """Iterator for cluster indicator site basis functions.
+
+    The basis generated as defined is not orthogonal for any number of species.
+    """
+    flavor = 'indicator'
+
+    def __next__(self):
+        func = partial(indicator, sp=next(self.species_iter))
+        return func
+
+
+class SinusoidIterator(BasisIterator):
+    """Iterator for sinusoid (trig basis) as proposed by A. van de Walle.
+
+    A. van de Walle, Calphad. 33, 266–278 (2009).
+
+    This basis is properly orthogonal for any number of allowed species out of
+    the box, but it is not orthonormal for allowed species > 2.
+    """
+    flavor = 'sinusoid'
+
+    def __init__(self, species):
+        """SinusoidIterator constructor
+
+        Args:
+            species (tuple):
+                tuple of allowed species in site spaces
+        """
+        super().__init__(species)
+        self.encoding = {s: i for (i, s) in enumerate(self.species)}
+
+    def __next__(self):
+        n = self.encoding[next(self.species_iter)] + 1
+        func = encode_domain(self.encoding)(sinusoid_factory(n, len(self.species)))  # noqa
+        return func
+
+
+class NumpyPolyIterator(BasisIterator):
+    """Class to quickly implement polynomial basis sets included in numpy"""
+
+    def __init__(self, species, low=-1, high=1):
+        """NumpyPolyIterator Constructor
+
+        Args:
+            species (tuple):
+                tuple of allowed species in site spaces
+            low (float): optional
+                lower limit of interval for encoding
+            high (float): optional
+                higher limit of interval for encoding
+        """
+        super().__init__(species)
+        enc = np.linspace(low, high, len(self.species))
+        self.encoding = {s: i for (s, i) in zip(species, enc)}
+
+    @property
+    @abstractmethod
+    def polyval(self):
+        """Return a numpy polyval function."""
+        return
+
+    def __next__(self):
+        n = self.species.index(next(self.species_iter)) + 1
+        coeffs = n*[0, ] + [1]
+        func = encode_domain(self.encoding)(partial(self.polyval, c=coeffs))
+        return func
+
+
+class PolynomialIterator(NumpyPolyIterator):
+    """A standard polynomial basis set iterator."""
+    @property
+    def polyval(self):
+        """Return numpy Chebyshev polynomial eval."""
+        return polyval
+
+
+class ChebyshevIterator(NumpyPolyIterator):
+    """Chebyshev polynomial basis set iterator."""
+    @property
+    def polyval(self):
+        """Return numpy Chebyshev polynomial eval."""
+        return chebval
+
+
+class LegendreIterator(NumpyPolyIterator):
+    """Legendre polynomial basis set iterator."""
+    @property
+    def polyval(self):
+        """Return numpy Legendre polynomial eval."""
+        return legval
+
+
+# The actual definitions of the functions used as basis functions.
+# These functions should simply define a univariate injective function for
+# a finite set of species. If the function requires an encoding for the species
+# simply use the encode_domain decorator.
+# Definitions must be down outside of classes to prevent pickling problems.
+
+
+def indicator(s, sp):
+    """Singleton indicator function for elementary events."""
+    return float(s == sp)
+
+
+def sinusoid_factory(n, m):
+    """Sine or cosine based on AVvW sinusoid site basis."""
+    a = -(-n // 2)  # ceiling division
+    if n % 2 == 0:
+        return partial(sin_f, a=a, m=m)
+    else:
+        return partial(cos_f, a=a, m=m)
+
+
+def sin_f(s, a, m):
+    """Return basis function for even indices."""
+    return -np.sin(2 * np.pi * a * s / m)
+
+
+def cos_f(s, a, m):
+    """Return basis function for odd indices."""
+    return -np.cos(2 * np.pi * a * s / m)
+
+
+def encode_domain(encoding):
+    """Decorate a function with an encoding for its domain.
+
+    Args:
+        encoding (dict):
+            dictionary for encoding.
+    """
+    def decorate_func(func):
+        @wraps(func)
+        def encoded(s, *args, **kwargs):
+            return func(encoding[s], *args, **kwargs)
+        return encoded
+    return decorate_func
