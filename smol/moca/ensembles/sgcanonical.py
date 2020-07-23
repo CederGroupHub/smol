@@ -18,7 +18,7 @@ from math import exp
 import numpy as np
 
 from monty.json import MSONable
-from smol.moca.processor import BaseProcessor
+from smol.moca.processors.base import BaseProcessor
 from smol.moca.ensembles.base import ThermoEnsemble
 
 

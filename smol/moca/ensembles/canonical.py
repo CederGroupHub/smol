@@ -13,7 +13,7 @@ import numpy as np
 
 from monty.json import MSONable
 from smol.moca.ensembles.base import ThermoEnsemble
-from smol.moca.processor import BaseProcessor
+from smol.moca.processors.base import BaseProcessor
 
 
 class CanonicalEnsemble(ThermoEnsemble, MSONable):
