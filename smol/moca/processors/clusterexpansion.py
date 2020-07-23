@@ -13,7 +13,7 @@ __author__ = "Luis Barroso-Luque"
 
 import numpy as np
 from collections import defaultdict
-from smol.cofe import ClusterExpansion
+from smol.cofe import ClusterSubspace
 from src.mc_utils import (corr_from_occupancy, general_delta_corr_single_flip,
                           indicator_delta_corr_single_flip)
 
@@ -28,32 +28,46 @@ class CEProcessor(BaseProcessor):
     Hamiltonian.
 
     Attributes:
+        optimize_indicator (bool):
+            If true the local corr update function specialized for indicator
+            bases is used.
+        coefs (ndarray):
+            Fit coefficients representing the cluster expansion.
+        n_orbit_functions (int):
+            Total number of orbit basis functions. Includes all possible
+            labellings for all orbits. Same as n_bit_orderings.
     """
 
-    def __init__(self, cluster_expansion, supercell_matrix,
+    def __init__(self, cluster_subspace, supercell_matrix, coefficients,
                  optimize_indicator=False):
         """Initialize a CEProcessor.
 
         Args:
-            cluster_expansion (ClusterExpansion):
-                A fitted cluster expansion representing a Hamiltonian
+            cluster_subspace (ClusterSubspace):
+                A cluster subspace
             supercell_matrix (ndarray):
                 An array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
+            coefficients (ndarray):
+                Fit coefficients for the represented cluster expansion.
             optimize_indicator (bool):
                 When using an indicator basis, set the delta_corr function to
                 the indicator optimize function. This can make MC steps faster.
                 Make sure your cluster expansion was indeed fit with an
                 indicator basis set, otherwise your MC results are no good.
         """
-        super().__init__(cluster_expansion.cluster_subspace, supercell_matrix)
-        # the only reason to keep the CE is for the MSONable from_dict
-        self.cluster_expansion = cluster_expansion
-        self.coefs = cluster_expansion.coefs
-        self.n_orbit_functions = self.cluster_subspace.n_bit_orderings
+        super().__init__(cluster_subspace, supercell_matrix)
 
+        self.n_orbit_functions = self.cluster_subspace.n_bit_orderings
+        if len(coefficients) != self.n_orbit_functions:
+            raise ValueError('The provided coeffiecients are not the right'
+                             f'length. Got {len(coefficients)} coefficients, '
+                             f'the length must be {self.n_orbit_functions} '
+                             'based on the provided cluster subspace.')
+
+        self.coefs = coefficients
         # set the dcorr_single_flip function
-        self.indicator_opt = optimize_indicator
+        self.optimize_indicator = optimize_indicator
         self._dcorr_single_flip = indicator_delta_corr_single_flip \
             if optimize_indicator \
             else general_delta_corr_single_flip
@@ -92,7 +106,8 @@ class CEProcessor(BaseProcessor):
         Returns:
             float: predicted property
         """
-        return np.dot(self.compute_correlation(occupancy), self.coefs) * self.size  # noqa
+        return np.dot(self.compute_correlation(occupancy),
+                      self.coefs) * self.size
 
     def compute_property_change(self, occupancy, flips):
         """Compute change in property from a set of flips.
@@ -106,7 +121,8 @@ class CEProcessor(BaseProcessor):
         Returns:
             float: property difference between inital and final states
         """
-        return np.dot(self._delta_corr(flips, occupancy), self.coefs) * self.size  # noqa
+        return np.dot(self._delta_corr(flips, occupancy),
+                      self.coefs) * self.size
 
     def compute_correlation(self, occu):
         """Compute the correlation vector for a given occupancy array.
@@ -123,47 +139,6 @@ class CEProcessor(BaseProcessor):
         """
         return corr_from_occupancy(occu, self.n_orbit_functions,
                                    self._orbit_list)
-
-    def get_average_drift(self, iterations=1000):
-        """Get the average forward and reverse drift for the given property.
-
-        This is a sanity check function. The drift value should be very, very,
-        very small, the smaller the better...think machine precision values.
-
-        The average drift is the difference between the quick routine for used
-        for MC to get a property difference from a single flip and the
-        change in that property from explicitly calculating it fully for the
-        initial state and the flipped state.
-
-        Args:
-            iterations (int): optional
-                number of iterations/flips to compute.
-
-        Returns:
-            tuple: (float, float) forward and reverse average property drift
-        """
-        forward_drift, reverse_drift = 0.0, 0.0
-        trajectory = []
-        occu = [np.random.choice(species) for species in self.allowed_species]
-        occu = self.encode_occupancy(occu)
-        for _ in range(iterations):
-            site = np.random.randint(self.size)
-            species = set(range(len(self.allowed_species[site])))-{occu[site]}
-            species = np.random.choice(list(species))
-            delta_prop = self.compute_property_change(occu, [(site, species)])
-            new_occu = occu.copy()
-            new_occu[site] = species
-            prop = self.compute_property(occu)
-            new_prop = self.compute_property(new_occu)
-            forward_drift += (new_prop - prop) - delta_prop
-            reverse_flips = [(site, occu[site])]
-            trajectory.append((prop - new_prop, new_occu, reverse_flips))
-            occu = new_occu
-
-        forward_drift /= iterations
-        reverse_drift = sum(dp - self.compute_property_change(o, f)
-                            for dp, o, f in trajectory) / iterations
-        return forward_drift, reverse_drift
 
     def _delta_corr(self, flips, occu):
         """
@@ -201,15 +176,15 @@ class CEProcessor(BaseProcessor):
         Returns:
             MSONable dict
         """
-        d = {'@module': self.__class__.__module__,
-             '@class': self.__class__.__name__,
-             'cluster_expansion': self.cluster_expansion.as_dict(),
-             'indicator': self.indicator_opt}
+        d = super().as_dict()
+        d['coefficients'] = self.coefs.tolist()
+        d['optimize_indicator'] = self.optimize_indicator
         return d
 
     @classmethod
     def from_dict(cls, d):
         """Create a CEProcessor from serialized MSONable dict."""
-        return cls(ClusterExpansion.from_dict(d['cluster_expansion']),
+        return cls(ClusterSubspace.from_dict(d['cluster_subspace']),
                    np.array(d['supercell_matrix']),
-                   optimize_indicator=d['indicator'])
+                   coefficients=np.array(d['coefficients']),
+                   optimize_indicator=d['optimize_indicator'])

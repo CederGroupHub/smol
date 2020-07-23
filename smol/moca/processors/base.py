@@ -151,6 +151,47 @@ class BaseProcessor(MSONable, metaclass=ABCMeta):
         return [species[i] for i, species in
                 zip(enc_occu, self.allowed_species)]
 
+    def get_average_drift(self, iterations=1000):
+        """Get the average forward and reverse drift for the given property.
+
+        This is a sanity check function. The drift value should be very, very,
+        very small, the smaller the better...think machine precision values.
+
+        The average drift is the difference between the quick routine for used
+        for MC to get a property difference from a single flip and the
+        change in that property from explicitly calculating it fully for the
+        initial state and the flipped state.
+
+        Args:
+            iterations (int): optional
+                number of iterations/flips to compute.
+
+        Returns:
+            tuple: (float, float) forward and reverse average property drift
+        """
+        forward_drift, reverse_drift = 0.0, 0.0
+        trajectory = []
+        occu = [np.random.choice(species) for species in self.allowed_species]
+        occu = self.encode_occupancy(occu)
+        for _ in range(iterations):
+            site = np.random.randint(self.size)
+            species = set(range(len(self.allowed_species[site])))-{occu[site]}
+            species = np.random.choice(list(species))
+            delta_prop = self.compute_property_change(occu, [(site, species)])
+            new_occu = occu.copy()
+            new_occu[site] = species
+            prop = self.compute_property(occu)
+            new_prop = self.compute_property(new_occu)
+            forward_drift += (new_prop - prop) - delta_prop
+            reverse_flips = [(site, occu[site])]
+            trajectory.append((prop - new_prop, new_occu, reverse_flips))
+            occu = new_occu
+
+        forward_drift /= iterations
+        reverse_drift = sum(dp - self.compute_property_change(o, f)
+                            for dp, o, f in trajectory) / iterations
+        return forward_drift, reverse_drift
+
     def as_dict(self) -> dict:
         """
         Json-serialization dict representation.
@@ -164,6 +205,7 @@ class BaseProcessor(MSONable, metaclass=ABCMeta):
              'supercell_matrix': self.supercell_matrix.tolist()}
         return d
 
+    # TODO get rid of this and inspect in polymorphic constructors?
     @classmethod
     def from_dict(cls, d):
         """Create a processor from serialized MSONable dict."""
