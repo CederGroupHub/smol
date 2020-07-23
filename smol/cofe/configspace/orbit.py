@@ -14,10 +14,10 @@ from pymatgen import Lattice, SymmOp
 from pymatgen.util.coord import coord_list_mapping
 
 from smol.utils import _repr
-from .constants import SITE_TOL
 from smol.exceptions import SymmetryError, SYMMETRY_ERROR_MESSAGE
+from .constants import SITE_TOL
 from .cluster import Cluster
-#from .basis import basis_factory
+from .basis import basis_factory
 
 
 class Orbit(MSONable):
@@ -355,8 +355,8 @@ class Orbit(MSONable):
              "sites": self.base_cluster.sites.tolist(),
              "lattice": self.lattice.as_dict(),
              "bits": self.bits,
-             "site_bases": [(sb.__class__.__name__[:-5].lower(),
-                             sb.species) for sb in self.site_bases],
+             "site_bases": [(sb.flavor, sb.site_space)
+                            for sb in self.site_bases],
              "structure_symops": [so.as_dict() for so in self.structure_symops]
              }
         return d

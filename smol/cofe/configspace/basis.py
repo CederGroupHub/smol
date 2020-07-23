@@ -22,6 +22,8 @@ from numpy.polynomial.polynomial import polyval
 from numpy.polynomial.chebyshev import chebval
 from numpy.polynomial.legendre import legval
 
+from smol.utils import derived_class_factory
+
 
 def get_allowed_species(structure):
     """Get the allowed species for each site in a disoredered structure.
@@ -375,3 +377,24 @@ def encode_domain(encoding):
             return func(encoding[s], *args, **kwargs)
         return encoded
     return decorate_func
+
+
+def basis_factory(basis_name, site_space):
+    """Create a site basis for the given basis name.
+
+    Args:
+        basis_name (str):
+            Name of the basis.
+        site_space (Sequence or OrderedDict):
+            Site space over which the basis set is defined.
+
+    Returns:
+        SiteBasis
+    """
+    if isinstance(site_space, OrderedDict):
+        species = tuple(site_space.keys())
+    else:
+        species = tuple(site_space)
+    iterator_name = basis_name.capitalize() + 'Iterator'
+    basis_funcs = derived_class_factory(iterator_name, BasisIterator, species)
+    return SiteBasis(site_space, basis_funcs)

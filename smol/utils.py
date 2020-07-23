@@ -41,25 +41,23 @@ def derived_class_factory(class_name: str, base_class: object,
         object: instance of class with corresponding constructor args, kwargs
     """
     try:
-        derived_class = globals()[class_name]
+        derived_class = get_subclasses(base_class)[class_name]
         instance = derived_class(*args, **kwargs)
     except KeyError:
         raise NotImplementedError(f'{class_name} is not implemented.')
     return instance
 
 
-def get_subclasses(base_class: object) -> List[object]:
+def get_subclasses(base_class: object) -> Dict[str, object]:
     """Get all non-abstract subclasses of a class.
 
     Gets all non-abstract classes that inherit from the given base class in
     a module. This is used to obtain all the available basis functions.
     """
-    sub_classes = []
+    sub_classes = {}
     for sub_class in base_class.__subclasses__():
         if inspect.isabstract(sub_class):
-            sub_classes += get_subclasses(sub_class)
+            sub_classes.update(get_subclasses(sub_class))
         else:
-            sub_classes.append(sub_class)
+            sub_classes[sub_class.__name__] = sub_class
     return sub_classes
-
-# c.__name__[:-5].lower()
