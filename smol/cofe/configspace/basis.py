@@ -12,6 +12,7 @@ this can be changed to use "concentration" biased bases.
 __author__ = "Luis Barroso-Luque"
 
 import warnings
+from typing import Sequence
 from abc import abstractmethod
 from collections import OrderedDict
 from collections.abc import Iterator
@@ -104,20 +105,29 @@ class SiteBasis:
                 the value should should correspond to the probability measure
                 associated to that specie. If a tuple is given a uniform
                 probability is assumed.
-            basis_functions (BasisIterator):
-                A BasisIterator to obtain the nonconstant basis functions.
+            basis_functions (Sequence like):
+                A Sequence of the nonconstant basis functions. Must take the
+                valuves of species as input.
         """
-        if not isinstance(species, dict):
+        if isinstance(species, Sequence):
             species = {specie: 1 / len(species) for specie in species}
-        else:
+        elif isinstance(species, OrderedDict):
             if not np.allclose(sum(species.values()), 1):
                 warnings.warn('The measure given does not sum to 1.'
                               'Are you sure this is what you want?',
                               RuntimeWarning)
+        else:
+            raise TypeError('species argument must be Sequence like or an'
+                             'OrderedDict.')
 
         self.flavor = basis_functions.flavor
         self._domain = OrderedDict(species)
         # add non constant basis functions to array
+        if len(basis_functions) != len(self.species) - 1:
+            raise ValueError(f'Must provid {len(self.species) - 1 } total non-'
+                             'constant basis functions.'
+                             f'Got only {basis_functions} basis functions.')
+
         func_arr = np.array([[function(sp) for sp in self.species]
                              for function in basis_functions])
         # stack the constant basis function on there for proper normalization
@@ -163,7 +173,7 @@ class SiteBasis:
     def is_orthogonal(self):
         """Test if the basis is orthogonal."""
         # add the implicit 0th function
-        prods = np.dot(np.dot(self.measure_array, self._func_arr),
+        prods = np.dot(np.dot(self.measure_array, self._func_arr.T).T,
                        self._func_arr.T)
         d_terms = all(not np.isclose(prods[i, i], 0)
                       for i in range(prods.shape[0]))
@@ -176,7 +186,7 @@ class SiteBasis:
     @property
     def is_orthonormal(self):
         """Test if the basis is orthonormal."""
-        prods = np.dot(np.dot(self.measure_array, self._func_arr),
+        prods = np.dot(np.dot(self.measure_array, self._func_arr.T).T,
                        self._func_arr.T)
         identity = np.eye(*prods.shape)
         return np.allclose(identity, prods)
@@ -222,6 +232,10 @@ class BasisIterator(Iterator):
         """
         self.species_iter = iter(species[:-1])  # all but one species iterator
         self.species = species
+
+    def __len__(self):
+        """Get length of sequence."""
+        return len(self.species) - 1
 
 
 class IndicatorIterator(BasisIterator):
