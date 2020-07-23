@@ -552,6 +552,56 @@ class StructureWrangler(MSONable):
         self._metadata['applied_filters'].append(metadata)
         self._items = items
 
+    def _get_duplicates_indices(self, feature_matrix):
+        """Find indices of duplicate rows in matrix
+        Args:
+            feature_matrix(np.ndarray):
+                feature_matrix which is n x m where n = number of structures
+                and m = total basis functions before any regularization
+        Returns:
+            list: list containing lists of indices of rows in feature_matrix
+            where duplicates occur
+        """
+        num_ext = len(self.cluster_subspace.external_terms)
+        modidied_feature_matrix = feature_matrix[:,range(feature_matrix.shape[1]-num_ext)]
+        unique_matrix, indices, inverse=np.unique(modidied_feature_matrix, return_index=True, return_inverse=True, axis=0)
+        if unique_matrix.shape == modidied_feature_matrix.shape:
+            print("There are no duplicates!")
+            return None
+        print("Need to remove duplicates before start fitting!")
+        loc_to_repeats = {}
+        for i in range(len(inverse)):
+            if inverse[i] in loc_to_repeats:
+                loc_to_repeats[inverse[i]].append(i)
+            else:
+                loc_to_repeats[inverse[i]] = [i]
+        return list(loc_to_repeats.values())
+
+    def _get_deduplicated_corr(self, feature_matrix, property_key):
+        """This function removes higher energy duplicates from feature_matrix
+        Args:
+            feature_matrix(np.ndarray):
+                feature_matrix which is n x m where n = number of structures
+                and m = total basis functions before any regularization
+        Returns:
+            np.ndarray: deduplicated feature matrix
+            list: the indices of unique rows in feature matrix, where
+            higher energy duplicates have been removed
+        """
+        loc_to_repeats = self._get_duplicates_indices(feature_matrix)
+        min_energies_indices = []
+        for dupe_list in loc_to_repeats:
+                min_location = -1
+                min_energy = np.inf
+                for j in dupe_list:
+                    if self.get_property_vector(property)[j] < min_energy:
+                        min_energy = self.get_property_vector(property)[j]
+                        min_location = j
+                min_energies_indices.append(min_location)
+        min_energies_indices.sort()
+        deduplicated_feature_matrix = feature_matrix[min_energies_indices,:]
+        return (deduplicated_feature_matrix, min_energies_indices)
+
     @classmethod
     def from_dict(cls, d):
         """Create Structure Wrangler from serialized MSONable dict."""
@@ -595,59 +645,6 @@ class StructureWrangler(MSONable):
              '_items': s_items,
              'metadata': self.metadata}
         return d
-
-
-    def _get_duplicate_corrs (feature_matrix, electrostatic=True):
-    # you can use this fucntion to make sure there is a one-to-one  mapping of the correlation vector to the energy (de-duplication)
-
-        unique_matrix = np.unique(feature_matrix[:,:-1], axis=0)
-
-        if unique_matrix.shape == feature_matrix[:,:-1].shape:
-            print("There are no duplicates!")
-        else:
-            print("Need to remove duplicates before start fitting!")
-
-
-            if electrostatic:
-                modified_fm = feature_matrix[:,:-1] # if there is electrostatic
-
-
-            values, indices, inverse=np.unique(modified_fm, return_index=True, return_inverse=True, axis=0)
-
-
-            loc_to_repeats = {}
-            for i in range(len(inverse)):
-                if inverse[i] in loc_to_repeats:
-                    loc_to_repeats[inverse[i]].append(i)
-                else:
-                    loc_to_repeats[inverse[i]] = [i]
-
-            min_energy_locs = {}
-            for i in loc_to_repeats:
-                    min_location = -1
-                    min_energy = 1000
-                    for j in loc_to_repeats[i]:
-                        if wrangler.get_property_vector('total_energy')[j] < min_energy:
-                            min_enery = wrangler.get_property_vector('total_energy')[j]
-                            min_location = j
-                    min_energy_locs[i] = min_location
-                    min_enrgy_indexes = list(list(min_energy_locs.values()))
-
-
-            min_indices = list(min_energy_locs.values())
-            min_indices.sort()
-
-
-            cleaned_feature_matrix = feature_matrix[min_indices,:]
-            feature_matrix = cleaned_feature_matrix
-
-
-        return (feature_matrix,min_enrgy_indexes)
-
-
-
-
-
 
 def _energies_above_hull(structures, energies, ce_structure):
     """Compute energies above hull.
