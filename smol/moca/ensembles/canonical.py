@@ -14,6 +14,7 @@ from monty.json import MSONable
 from smol.moca.ensembles.base import BaseEnsemble
 from smol.moca.processor import BaseProcessor
 from smol.constants import kB
+import time
 
 
 class CanonicalEnsemble(BaseEnsemble, MSONable):
@@ -178,7 +179,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         self._min_energy = self.processor.compute_property(self._occupancy)
         self._min_occupancy = self._occupancy
 
-    def _attempt_step(self, sublattices=None):
+    def _attempt_step(self, timing, sublattices=None):
         """Attempt flips corresponding to an elementary canonical swap.
 
         Will pick a sublattice at random and then a canonical swap at random
@@ -191,11 +192,24 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         Returns: Flip acceptance
             bool
         """
+        start_time = time.time()
         flips = self._get_flips(sublattices)
+        end_time = time.time()
+        timing['get_flips'] += (end_time - start_time)
+
+        start_time = time.time()
         delta_e = self.processor.compute_property_change(self._occupancy,
                                                          flips)
-        accept = self._accept(delta_e, self.beta)
+        end_time = time.time()
+        timing['delta E'] += (end_time - start_time)
+        timing['num_flips'] += 1
 
+        start_time = time.time()
+        accept = self._accept(delta_e, self.beta)
+        end_time = time.time()
+        timing['accept'] += (end_time - start_time)
+
+        start_time = time.time()
         if accept:
             self._property += delta_e
             for f in flips:
@@ -203,6 +217,8 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             if self._property < self._min_energy:
                 self._min_energy = self._property
                 self._min_occupancy = self._occupancy.copy()
+        end_time = time.time()
+        timing['update E'] += (end_time - start_time)
 
         return accept
 

@@ -9,6 +9,7 @@ import json
 import numpy as np
 from math import exp
 from abc import ABC, abstractmethod
+import time
 
 
 # TODO it would be great to use the design paradigm of observers to extract
@@ -187,16 +188,35 @@ class BaseEnsemble(ABC):
 
         start_step = self.current_step
 
+        print("Testing timing of steps within each flip")
+        timing_dict = {}
+        timing_dict['save_data'] = 0
+        timing_dict['get_flips'] = 0
+        timing_dict['delta E'] = 0
+        timing_dict['accept'] = 0
+        timing_dict['update E'] = 0
+        timing_dict['num_flips'] = 0
+        timing_dict['num_save_data'] = 0
+
         for _ in range(write_loops):
             remaining = iterations - self.current_step + start_step
             no_interrupt = min(remaining, self.sample_interval)
 
             for _ in range(no_interrupt):
-                success = self._attempt_step(sublattices)
+                success = self._attempt_step(timing_dict, sublattices)
                 self._ssteps += success
 
             self._step += no_interrupt
+
+            start_time = time.time()
             self._save_data()
+            end_time = time.time()
+            timing_dict['save_data'] += (end_time - start_time)
+            timing_dict['num_save_data'] += 1
+        timing_dict['accepted_steps'] = self.accepted_steps
+        timing_dict['acceptance_ratio'] = self.acceptance_ratio
+        print("Printing out timing dictionary")
+        with open('timing.json', 'w') as fout: json.dump(timing_dict, fout)
 
     def reset(self):
         """Reset the ensemble by returning it to its initial state.
@@ -218,7 +238,7 @@ class BaseEnsemble(ABC):
         self._data = []
 
     @abstractmethod
-    def _attempt_step(self, sublattices=None):
+    def _attempt_step(self, timing, sublattices=None):
         """Attempt a MC step and return if the step was accepted or not."""
         return
 
