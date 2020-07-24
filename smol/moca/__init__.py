@@ -7,7 +7,7 @@ Monte Carlo simulations using Cluster Expansion Hamiltonians.
 
 from __future__ import division
 
-from .processors.clusterexpansion import CEProcessor
+from .processors.expansion import CEProcessor
 from .processors.ewald import EwaldProcessor
 from .processors.composite import CompositeProcessor
 from .ensembles.canonical import CanonicalEnsemble

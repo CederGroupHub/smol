@@ -74,11 +74,6 @@ class BaseProcessor(MSONable, metaclass=ABCMeta):
         """Get the give supercell matrix."""
         return self._scmatrix
 
-    @property
-    def size(self):
-        """Return the size of the processor (number of prims)"""
-        return
-
     @abstractmethod
     def compute_property(self, occupancy):
         """Compute the value of the property for the given occupancy array.

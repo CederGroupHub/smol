@@ -120,3 +120,4 @@ class CompositeProcessor(BaseProcessor):
                  np.array(d['supercell_matrix']))
         pr._processors = [(mix, BaseProcessor.from_dict(prd))
                           for mix, prd in d['_processors']]
+        return pr

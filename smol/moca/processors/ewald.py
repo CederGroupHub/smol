@@ -110,7 +110,7 @@ class EwaldProcessor(BaseProcessor):
             delta_energy += delta_ewald_single_flip(occu_f, occu_i,
                                                     self.ewald_matrix,
                                                     self._ewald_inds,
-                                                    f[0], self.size)
+                                                    f[0])
             occu_i = occu_f
         return delta_energy
 

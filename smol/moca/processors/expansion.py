@@ -73,7 +73,7 @@ class CEProcessor(BaseProcessor):
             else general_delta_corr_single_flip
 
         # Prepare necssary information for local updates
-        self._orbit_inds = self.subspace.supercell_orbit_mappings(supercell_matrix)  # noqa
+        self._orbit_inds = self._subspace.supercell_orbit_mappings(supercell_matrix)  # noqa
         # List of orbit information and supercell site indices to compute corr
         self._orbit_list = []
         # Dictionary of orbits by site index and information

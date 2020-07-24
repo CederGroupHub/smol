@@ -53,9 +53,8 @@ def corr_from_occupancy(const long[::1] occu,
                     for k in range(K):
                         pi *= bases[k, bits[j, k], occu[inds[i, k]]]
                     p += pi
-            o_view[n] = p / (I*J)
+            o_view[n] = p / (I * J)
             n += 1
-
     return out
 
 
@@ -108,9 +107,8 @@ def general_delta_corr_single_flip(const long[::1] occu_f,
                         pf *= bases[k, bits[j, k], occu_f[inds[i, k]]]
                         pi *= bases[k, bits[j, k], occu_i[inds[i, k]]]
                     p += (pf - pi)
-            o_view[n] = p / r / (I*J)
+            o_view[n] = p / r / (I * J)
             n += 1
-
     return out
 
 
@@ -173,7 +171,6 @@ def indicator_delta_corr_single_flip(const long[::1] occu_f,
 
             o_view[l] = o / r / (I * J)
             l += 1
-
     return out
 
 
@@ -185,8 +182,7 @@ def delta_ewald_single_flip(const long[::1] occu_f,
                             const long[::1] occu_i,
                             const double[:, ::1] ewald_matrix,
                             const long[:, ::1] ewald_inds,
-                            const int site_ind,
-                            const double size):
+                            const int site_ind):
     """Compute the change in electrostatic interaction energy from a flip.
 
     Args:
@@ -201,8 +197,6 @@ def delta_ewald_single_flip(const long[::1] occu_f,
         ewald_inds (ndarray):
             2D array of indices corresponding to a specific site occupation
             in the ewald matrix
-        size (int):
-            supercell size in terms of prim
 
     Returns:
         float: electrostatic interaction energy difference
@@ -231,8 +225,5 @@ def delta_ewald_single_flip(const long[::1] occu_f,
                 out_k = out_k - 2 * ewald_matrix[j, sub]
             else:
                 out_k = out_k - ewald_matrix[j, sub]
-
         out += out_k
-    out /= size
-
     return out
