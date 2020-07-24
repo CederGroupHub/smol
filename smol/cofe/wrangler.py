@@ -552,54 +552,47 @@ class StructureWrangler(MSONable):
         self._metadata['applied_filters'].append(metadata)
         self._items = items
 
-    def _get_duplicate_corr_inds(self, feature_matrix):
-        """Find indices of duplicate rows in matrix
-        Args:
-            feature_matrix(np.ndarray):
-                feature_matrix which is n x m where n = number of structures
-                and m = total basis functions before any regularization
+    def get_duplicate_corr_inds(self):
+        """Find indices of rows with duplicate corr vectors in feature matrix.
+
         Returns:
             list: list containing lists of indices of rows in feature_matrix
             where duplicates occur
         """
         num_ext = len(self.cluster_subspace.external_terms)
-        end = feature_matrix.shape[1] - num_ext - 1
-        modidied_feature_matrix = feature_matrix[:, :end]
-        unique_matrix, indices, inverse=np.unique(modidied_feature_matrix, return_index=True, return_inverse=True, axis=0)
-        if unique_matrix.shape == modidied_feature_matrix.shape:
-            return []
-        loc_to_repeats = {}
-        for i in range(len(inverse)):
-            if inverse[i] in loc_to_repeats:
-                loc_to_repeats[inverse[i]].append(i)
-            else:
-                loc_to_repeats[inverse[i]] = [i]
-        return list(loc_to_repeats.values())
+        end = self.feature_matrix.shape[1] - num_ext - 1
+        _, inverse = np.unique(self.feature_matrix[:, :end],
+                               return_inverse=True, axis=0)
+        duplicate_inds = [list(np.where(inverse == i)[0])
+                          for i in np.unique(inverse)
+                          if len(np.where(inverse == i)[0]) > 1]
+        return duplicate_inds
 
-    def _unique_feature_matrix_by_energy(property_key):
-        """This function removes higher energy duplicates from feature_matrix
+    def filter_duplicate_corrs(self, key, filter_by='min'):
+        """Filter structures with duplicate correlation.
+
+        Keep structures with the min or max value of the given property.
+
         Args:
-            feature_matrix(np.ndarray):
-                feature_matrix which is n x m where n = number of structures
-                and m = total basis functions before any regularization
-        Returns:
-            np.ndarray: deduplicated feature matrix
-            list: the indices of unique rows in feature matrix, where
-            higher energy duplicates have been removed
+            key (str):
+                Name of property to consider when returning structure indices
+                for the feature matrix with duplicate corr vectors removed.
+            filter_by (str)
+                The criteria for the property value to keep. Options are min
+                or max
         """
-        loc_to_repeats = self._get_duplicate_corr_inds(self.feature_matrix)
-        min_energies_indices = []
-        for dupe_list in loc_to_repeats:
-                min_location = -1
-                min_energy = np.inf
-                for j in dupe_list:
-                    if self.get_property_vector(property_key)[j] < min_energy:
-                        min_energy = self.get_property_vector(property_key)[j]
-                        min_location = j
-                min_energies_indices.append(min_location)
-        min_energies_indices.sort()
-        deduplicated_feature_matrix = self.feature_matrix[min_energies_indices,:]
-        return (deduplicated_feature_matrix, min_energies_indices)
+        if filter_by not in ('max', 'min'):
+            raise ValueError(f'Filtering by {filter_by} is not an option.')
+
+        choose_val = np.argmin if filter_by == 'min' else np.argmax
+
+        property_vector = self.get_property_vector(key)
+        dupe_inds = self.get_duplicate_corr_inds()
+        to_keep = {inds[choose_val(property_vector[inds])]
+                   for inds in dupe_inds}
+        to_remove = set(i for inds in dupe_inds for i in inds) - to_keep
+        self._items = [item for i, item in enumerate(self._items)
+                       if i not in to_remove]
 
     @classmethod
     def from_dict(cls, d):
@@ -644,6 +637,7 @@ class StructureWrangler(MSONable):
              '_items': s_items,
              'metadata': self.metadata}
         return d
+
 
 def _energies_above_hull(structures, energies, ce_structure):
     """Compute energies above hull.
