@@ -552,7 +552,7 @@ class StructureWrangler(MSONable):
         self._metadata['applied_filters'].append(metadata)
         self._items = items
 
-    def _get_duplicates_indices(self, feature_matrix):
+    def _get_duplicate_corr_inds(self, feature_matrix):
         """Find indices of duplicate rows in matrix
         Args:
             feature_matrix(np.ndarray):
@@ -563,12 +563,11 @@ class StructureWrangler(MSONable):
             where duplicates occur
         """
         num_ext = len(self.cluster_subspace.external_terms)
-        modidied_feature_matrix = feature_matrix[:,range(feature_matrix.shape[1]-num_ext)]
+        end = feature_matrix.shape[1] - num_ext - 1
+        modidied_feature_matrix = feature_matrix[:, :end]
         unique_matrix, indices, inverse=np.unique(modidied_feature_matrix, return_index=True, return_inverse=True, axis=0)
         if unique_matrix.shape == modidied_feature_matrix.shape:
-            print("There are no duplicates!")
-            return None
-        print("Need to remove duplicates before start fitting!")
+            return []
         loc_to_repeats = {}
         for i in range(len(inverse)):
             if inverse[i] in loc_to_repeats:
@@ -577,7 +576,7 @@ class StructureWrangler(MSONable):
                 loc_to_repeats[inverse[i]] = [i]
         return list(loc_to_repeats.values())
 
-    def _get_deduplicated_corr(self, feature_matrix, property_key):
+    def _unique_feature_matrix_by_energy(property_key):
         """This function removes higher energy duplicates from feature_matrix
         Args:
             feature_matrix(np.ndarray):
@@ -588,18 +587,18 @@ class StructureWrangler(MSONable):
             list: the indices of unique rows in feature matrix, where
             higher energy duplicates have been removed
         """
-        loc_to_repeats = self._get_duplicates_indices(feature_matrix)
+        loc_to_repeats = self._get_duplicate_corr_inds(self.feature_matrix)
         min_energies_indices = []
         for dupe_list in loc_to_repeats:
                 min_location = -1
                 min_energy = np.inf
                 for j in dupe_list:
-                    if self.get_property_vector(property)[j] < min_energy:
-                        min_energy = self.get_property_vector(property)[j]
+                    if self.get_property_vector(property_key)[j] < min_energy:
+                        min_energy = self.get_property_vector(property_key)[j]
                         min_location = j
                 min_energies_indices.append(min_location)
         min_energies_indices.sort()
-        deduplicated_feature_matrix = feature_matrix[min_energies_indices,:]
+        deduplicated_feature_matrix = self.feature_matrix[min_energies_indices,:]
         return (deduplicated_feature_matrix, min_energies_indices)
 
     @classmethod
