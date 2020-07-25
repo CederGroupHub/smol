@@ -19,19 +19,13 @@ from smol.constants import kB
 class BaseEnsemble(ABC):
     """Abstract Base Class for Monte Carlo Ensembles."""
 
-    def __init__(self, processor, sample_interval, initial_occupancy,
-                 sublattices=None, seed=None):
+    def __init__(self, processor, sublattices=None):
         """Initialize class instance.
 
         Args:
             processor (Processor):
                 A processor that can compute the change in a property given
                 a set of flips.
-            sample_interval (int):
-                interval of steps to save the current occupancy and property
-            initial_occupancy (ndarray or list):
-                Initial occupancy vector. The occupancy can be encoded
-                according to the processor or the species names directly.
             sublattices (dict): optional
                 dictionary with keys identifying the active sublattices
                 (i.e. "anion" or the allowed species in that sublattice
@@ -41,16 +35,7 @@ class BaseEnsemble(ABC):
                 'site_space': OrderedDict of allowed species in sublattice}
                 All sites in a sublattice need to have the same set of allowed
                 species.
-            seed (int): optional
-                seed for random number generator
         """
-        if len(initial_occupancy) != len(processor.structure):
-            raise ValueError('The given initial occupancy does not match '
-                             'the underlying processor size')
-
-        if isinstance(initial_occupancy[0], str):
-            initial_occupancy = processor.encode_occupancy(initial_occupancy)
-
         if sublattices is None:
             sublattices = {'/'.join(site_space.keys()):
                            {'sites': np.array([i for i, sp in
@@ -60,26 +45,11 @@ class BaseEnsemble(ABC):
                            for site_space in processor.unique_site_spaces}
 
         self.processor = processor
-        self.sample_interval = sample_interval
-        self.num_atoms = len(initial_occupancy)
+        self.num_atoms = 1 # TODO get this from processor structure and such
 
         self._sublattices = sublattices
         self._active_sublatts = deepcopy(sublattices)
-        self._init_occupancy = initial_occupancy
-        self._occupancy = self._init_occupancy.copy()
-        self._property = processor.compute_property(self._occupancy)
-        self._prod_start = 0
-        self._step = 0
-        self._ssteps = 0
-        self._data = []
         self.restricted_sites = []
-
-        # Set and save the seed for random. This allows reproducible results.
-        if seed is None:
-            seed = random.randint(1, 1E24)
-
-        self._seed = seed
-        random.seed(seed)
 
     @property
     def sublattices(self):
@@ -119,36 +89,6 @@ class BaseEnsemble(ABC):
         """Get the initial structure."""
         return self.processor.structure_from_occupancy(self._init_occupancy)
 
-    @property
-    def accepted_steps(self):
-        """Get the number of accepted/successful MC steps."""
-        return self._ssteps
-
-    @property
-    def acceptance_ratio(self):
-        """Get the ratio of accepted/successful MC steps."""
-        return self.accepted_steps/self.current_step
-
-    @property
-    def production_start(self):
-        """Get the iteration number for production samples and values."""
-        return self._prod_start*self.sample_interval
-
-    @production_start.setter
-    def production_start(self, val):
-        """Set the iteration number for production samples and values."""
-        self._prod_start = val//self.sample_interval
-
-    @property
-    def data(self):
-        """List of sampled data."""
-        return self._data
-
-    @property
-    def seed(self):
-        """Seed for the random number generator."""
-        return self._seed
-
     def restrict_sites(self, sites):
         """Restricts (freezes) the given sites.
 
@@ -171,34 +111,6 @@ class BaseEnsemble(ABC):
         self._active_sublatts = deepcopy(self._sublattices)
         self.restricted_sites = []
 
-    def run(self, iterations, sublattices=None):
-        """Run the ensembles for the given number of iterations.
-
-        Samples are taken at the set intervals specified in constructur.
-
-        Args:
-            iterations (int):
-                Total number of monte carlo steps to attempt
-            sublattices (list of str):
-                List of sublattice names to consider in site flips.
-        """
-        write_loops = iterations//self.sample_interval
-        if iterations % self.sample_interval > 0:
-            write_loops += 1
-
-        start_step = self.current_step
-
-        for _ in range(write_loops):
-            remaining = iterations - self.current_step + start_step
-            no_interrupt = min(remaining, self.sample_interval)
-
-            for _ in range(no_interrupt):
-                success = self._attempt_step(sublattices)
-                self._ssteps += success
-
-            self._step += no_interrupt
-            self._save_data()
-
     def reset(self):
         """Reset the ensemble by returning it to its initial state.
 
@@ -208,39 +120,6 @@ class BaseEnsemble(ABC):
         self._property = self.processor.compute_property(self._occupancy)
         self._step, self._ssteps = 0, 0
         self._data = []
-
-    def dump(self, filename):
-        """Write data into a text file in json format, and clear data."""
-        with open(filename, 'a') as fp:
-            for d in self.data:
-                json.dump(d, fp)
-                fp.write(os.linesep)
-        self._data = []
-
-    @abstractmethod
-    def _attempt_step(self, sublattices=None):
-        """Attempt a MC step and return if the step was accepted or not."""
-        return
-
-    def _get_current_data(self):
-        """Extract the ensembles data from the current state.
-
-        Returns: ensembles data
-            dict
-        """
-        return {'occupancy': self.current_occupancy}
-
-    def _save_data(self):
-        """
-        Save the current sample and properties.
-
-        Args:
-            step (int):
-                Current montecarlo step
-        """
-        data = self._get_current_data()
-        data['step'] = self.current_step
-        self._data.append(data)
 
 
 class ThermoEnsemble(BaseEnsemble, metaclass=ABCMeta):
@@ -259,7 +138,7 @@ class ThermoEnsemble(BaseEnsemble, metaclass=ABCMeta):
     """
 
     def __init__(self, processor, temperature, sample_interval,
-                 initial_occupancy, sublattices=None, seed=None):
+                 initial_occupancy, sublattices=None):
         """Initialize CanonicalEnemble.
 
         Args:
@@ -282,11 +161,9 @@ class ThermoEnsemble(BaseEnsemble, metaclass=ABCMeta):
                 'site_space': OrderedDict of allowed species in sublattice}
                 All sites in a sublattice need to have the same set of allowed
                 species.
-            seed (int): optional
-                Seed for random number generator.
         """
         super().__init__(processor, initial_occupancy=initial_occupancy,
-                         sample_interval=sample_interval, seed=seed,
+                         sample_interval=sample_interval,
                          sublattices=sublattices)
         self.temperature = temperature
         self._min_energy = self._property
@@ -411,7 +288,8 @@ class ThermoEnsemble(BaseEnsemble, metaclass=ABCMeta):
         """
         super().reset()
         self._min_occupancy = self._init_occupancy
-        self._min_energy = self.processor.compute_property(self._min_occupancy)
+
+         self._min_energy = self.processor.compute_property(self._min_occupancy)
 
     @abstractmethod
     def _attempt_step(self, sublattices=None):
@@ -451,7 +329,6 @@ class ThermoEnsemble(BaseEnsemble, metaclass=ABCMeta):
              'temperature': self.temperature,
              'sample_interval': self.sample_interval,
              'initial_occupancy': self.current_occupancy,
-             'seed': self.seed,
              '_min_energy': self.minimum_energy,
              '_min_occupancy': self._min_occupancy.tolist(),
              '_sublattices': self._sublattices,

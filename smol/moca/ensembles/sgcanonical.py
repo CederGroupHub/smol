@@ -33,7 +33,7 @@ class BaseSemiGrandEnsemble(ThermoEnsemble, metaclass=ABCMeta):
     """
 
     def __init__(self, processor, temperature, sample_interval,
-                 initial_occupancy, seed=None):
+                 initial_occupancy):
         """Initialize BaseSemiGrandEnsemble.
 
         Args:
@@ -47,12 +47,9 @@ class BaseSemiGrandEnsemble(ThermoEnsemble, metaclass=ABCMeta):
             initial_occupancy (ndarray or list):
                 Initial occupancy string. The occupancy can be encoded
                 according to the processor or the species names directly.
-            seed (int):
-                seed for random number generator. Useful to reproduce exact
-                results.
         """
         super().__init__(processor, temperature, sample_interval,
-                         initial_occupancy=initial_occupancy, seed=seed)
+                         initial_occupancy=initial_occupancy)
 
     @property
     def current_species_counts(self):
@@ -210,8 +207,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     values.
     """
 
-    def __init__(self, processor, temperature, chemical_potentials,
-                 sample_interval, initial_occupancy, seed=None):
+    def __init__(self, processor, temperature, chemical_potentials):
         """Initialize a MuSemiGrandEnsemble.
 
         Args:
@@ -224,17 +220,8 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
                 dictionary with species names and chemical potentials. If the
                 chemical potential for one species is not zero (reference), one
                 will be chosen and all other values will be shifted accordingly
-            sample_interval (int):
-                interval of steps to save the current occupancy and property
-            inital_occupancy (array):
-                Initial occupancy vector. If none is given then a random one
-                will be used.
-            seed (int):
-                seed for random number generator
         """
-        super().__init__(processor, temperature, sample_interval,
-                         initial_occupancy=initial_occupancy,
-                         seed=seed)
+        super().__init__(processor, temperature)
 
         # check that species are valid
         species = [sp for sps in processor.unique_site_spaces for sp in sps]
@@ -320,8 +307,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
                  temperature=d['temperature'],
                  chemical_potentials=d['chem_pots'],
                  sample_interval=d['sample_interval'],
-                 initial_occupancy=d['initial_occupancy'],
-                 seed=d['seed'])
+                 initial_occupancy=d['initial_occupancy'])
 
         eb._min_energy = d['_min_energy']
         eb._min_occupancy = np.array(d['_min_occupancy'])
@@ -349,7 +335,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     """
 
     def __init__(self, processor, temperature, sample_interval,
-                 initial_occupancy, fugacity_fractions=None, seed=None):
+                 initial_occupancy, fugacity_fractions=None):
         """Initialize a FuSemiGrandEnsemble.
 
         Args:
@@ -368,12 +354,9 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
                 sublattice (ie think of it as the sublattice concentrations
                 for random structure). If not given this will be taken from the
                 prim structure used in the CE.
-            seed (int):
-                seed for random number generator
         """
         super().__init__(processor, temperature, sample_interval,
-                         initial_occupancy=initial_occupancy,
-                         seed=seed)
+                         initial_occupancy=initial_occupancy)
 
         # TODO remove option to pass fugacity fractions, always use the prim
         if fugacity_fractions is not None:
@@ -455,8 +438,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         eb = cls(BaseProcessor.from_dict(d['processor']),
                  temperature=d['temperature'],
                  sample_interval=d['sample_interval'],
-                 initial_occupancy=d['initial_occupancy'],
-                 seed=d['seed'])
+                 initial_occupancy=d['initial_occupancy'])
         eb._min_energy = d['_min_energy']
         eb._min_occupancy = np.array(d['_min_occupancy'])
         eb._sublattices = d['_sublattices']

@@ -25,7 +25,7 @@ class CanonicalEnsemble(ThermoEnsemble, MSONable):
     """
 
     def __init__(self, processor, temperature, sample_interval,
-                 initial_occupancy, sublattices=None, seed=None):
+                 initial_occupancy, sublattices=None):
         """Initialize CanonicalEnemble.
 
         Args:
@@ -48,13 +48,11 @@ class CanonicalEnsemble(ThermoEnsemble, MSONable):
                 'site_space': OrderedDict of allowed species in sublattice}
                 All sites in a sublattice need to have the same set of allowed
                 species.
-            seed (int): optional
-                Seed for random number generator.
         """
         super().__init__(processor, temperature=temperature,
                          sample_interval=sample_interval,
                          initial_occupancy=initial_occupancy,
-                         sublattices=sublattices, seed=seed)
+                         sublattices=sublattices)
 
     def _attempt_step(self, sublattices=None):
         """Attempt flips corresponding to an elementary canonical swap.
@@ -122,8 +120,7 @@ class CanonicalEnsemble(ThermoEnsemble, MSONable):
         eb = cls(BaseProcessor.from_dict(d['processor']),
                  temperature=d['temperature'],
                  sample_interval=d['sample_interval'],
-                 initial_occupancy=d['initial_occupancy'],
-                 seed=d['seed'])
+                 initial_occupancy=d['initial_occupancy'])
         eb._min_energy = d['_min_energy']
         eb._min_occupancy = np.array(d['_min_occupancy'])
         eb._sublattices = d['_sublattices']
