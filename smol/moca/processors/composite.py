@@ -40,7 +40,7 @@ class CompositeProcessor(BaseProcessor):
                 An array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
         """
-        super().__init__(cluster_subspace, supercell_matrix)
+        super().__init__(cluster_subspace, supercell_matrix, None)
         self._processors = []
 
     @property
@@ -100,6 +100,45 @@ class CompositeProcessor(BaseProcessor):
         """
         return sum([mix * pr.compute_property_change(occupancy, flips)
                     for mix, pr in self._processors])
+
+    def compute_feature(self, occupancy):
+        """Compute the feature vector for a given occupancy array.
+
+        Each entry in the correlation vector corresponds to a particular
+        symmetrically distinct bit ordering.
+
+        Args:
+            occupancy (ndarray):
+                encoded occupation array
+
+        Returns:
+            array: correlation vector
+        """
+        feature = [mix * np.array(pr.compute_feature(occupancy))
+                    for mix, pr in self._processors]
+        # TODO you may be able to cut some speed by pre-allocating this
+        return np.append(feature[0], feature[1:])
+
+    def compute_feature_update(self, flips, occupancy):
+        """
+        Compute the change in the feature vector from a list of flips.
+
+        Args:
+            flips list(tuple):
+                list of tuples with two elements. Each tuple represents a
+                single flip where the first element is the index of the site
+                in the occupancy array and the second element is the index
+                for the new species to place at that site.
+            occupancy (ndarray):
+                encoded occupancy array
+
+        Returns:
+            array: change in feature vector
+        """
+        update = [mix * np.array(pr.compute_feature_update(flips, occupancy))
+                    for mix, pr in self._processors]
+        # TODO you may be able to cut some speed by pre-allocating this
+        return np.append(update[0], update[1:])
 
     def as_dict(self) -> dict:
         """

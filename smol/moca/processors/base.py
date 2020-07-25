@@ -35,7 +35,7 @@ class BaseProcessor(MSONable, metaclass=ABCMeta):
         size (int):
             Number of prims in the supercell structure.
     """
-    def __init__(self, cluster_subspace, supercell_matrix):
+    def __init__(self, cluster_subspace, supercell_matrix, coefficients):
         """Initialize a BaseProcessor.
 
         Args:
@@ -44,12 +44,15 @@ class BaseProcessor(MSONable, metaclass=ABCMeta):
             supercell_matrix (ndarray):
                 An array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
+            coefficients:
+                single or array of fit coefficients.
         """
         self._subspace = cluster_subspace
         self._structure = self._subspace.structure.copy()
         self._structure.make_supercell(supercell_matrix)
         self._scmatrix = supercell_matrix
 
+        self.coefs = coefficients
         # this can be used (maybe should) to check if a flip is valid
         site_spaces = get_site_spaces(self._subspace.expansion_structure)
         self.unique_site_spaces = tuple(OrderedDict(space) for space in
@@ -84,7 +87,7 @@ class BaseProcessor(MSONable, metaclass=ABCMeta):
         Returns:
             float: predicted property
         """
-        return
+        return self.coef * self.compute_feature(occupancy)
 
     @abstractmethod
     def compute_property_change(self, occupancy, flips):
@@ -98,6 +101,41 @@ class BaseProcessor(MSONable, metaclass=ABCMeta):
 
         Returns:
             float:  property difference between inital and final states
+        """
+        return self.coef * self.compute_feature_update(occupancy)
+
+    @abstractmethod
+    def compute_feature(self, occupancy):
+        """Compute the feature vector for a given occupancy array.
+
+        Each entry in the correlation vector corresponds to a particular
+        symmetrically distinct bit ordering.
+
+        Args:
+            occupancy (ndarray):
+                encoded occupation array
+
+        Returns:
+            array: correlation vector
+        """
+        return
+
+    @abstractmethod
+    def compute_feature_update(self, flips, occupancy):
+        """
+        Compute the change in the feature vector from a list of flips.
+
+        Args:
+            flips list(tuple):
+                list of tuples with two elements. Each tuple represents a
+                single flip where the first element is the index of the site
+                in the occupancy array and the second element is the index
+                for the new species to place at that site.
+            occupancy (ndarray):
+                encoded occupancy array
+
+        Returns:
+            array: change in correlation vector
         """
         return
 
@@ -115,7 +153,7 @@ class BaseProcessor(MSONable, metaclass=ABCMeta):
             list
         """
         occu = self._subspace.occupancy_from_structure(structure,
-                                                      scmatrix=self.supercell_matrix)  # noqa
+                                                       scmatrix=self.supercell_matrix)  # noqa
         return self.encode_occupancy(occu)
 
     def structure_from_occupancy(self, occu):

@@ -29,7 +29,7 @@ class EwaldProcessor(BaseProcessor):
     """
 
     def __init__(self, cluster_subspace, supercell_matrix, ewald_term,
-                 ewald_summation=None):
+                 coeficient=1.0, ewald_summation=None):
         """Initialize an EwaldCEProcessor.
 
         Args:
@@ -38,12 +38,16 @@ class EwaldProcessor(BaseProcessor):
             supercell_matrix (ndarray):
                 An array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
+            ewald_term (EwaldTerm):
+                An instance of EwaldTerm to compute electrostatic energies.
+            coeficient (float):
+                Fitting coeficient to scale Ewald energy by.
             ewald_summation (EwaldSummation): optional
                 pymatgen EwaldSummation instance, make sure this uses the exact
                 same parameters as those used in the EwaldTerm in the cluster
                 Expansion (i.e. same eta, real and recip cuts).
         """
-        super().__init__(cluster_subspace, supercell_matrix)
+        super().__init__(cluster_subspace, supercell_matrix, coeficient)
 
         self._ewald_term = ewald_term
         # Set up ewald structure and indices
@@ -85,10 +89,8 @@ class EwaldProcessor(BaseProcessor):
         Returns:
             float: Ewald electrostatic energy
         """
-        ew_occu = self._ewald_term.get_ewald_occu(occupancy,
-                                                  self.ewald_matrix.shape[0],
-                                                  self._ewald_inds)
-        return np.sum(self.ewald_matrix[ew_occu, :][:, ew_occu])
+
+        return self.coefs * self.compute_feature(occupancy)
 
     def compute_property_change(self, occupancy, flips):
         """Compute change in electrostatic energy from a set of flips.
@@ -101,6 +103,43 @@ class EwaldProcessor(BaseProcessor):
 
         Returns:
             float: electrostatic energy change
+        """
+
+        return self.coefs * self.compute_feature_update(flips, occupancy)
+
+    def compute_feature(self, occupancy):
+        """Compute the fearture vector for a given occupancy array.
+
+        Each entry in the correlation vector corresponds to a particular
+        symmetrically distinct bit ordering.
+
+        Args:
+            occupancy (ndarray):
+                encoded occupation array
+
+        Returns:
+            array: correlation vector
+        """
+        ew_occu = self._ewald_term.get_ewald_occu(occupancy,
+                                                  self.ewald_matrix.shape[0],
+                                                  self._ewald_inds)
+        return np.sum(self.ewald_matrix[ew_occu, :][:, ew_occu])
+
+    def compute_feature_update(self, flips, occupancy):
+        """
+        Compute the change in the feature vector from a list of flips.
+
+        Args:
+            flips list(tuple):
+                list of tuples with two elements. Each tuple represents a
+                single flip where the first element is the index of the site
+                in the occupancy array and the second element is the index
+                for the new species to place at that site.
+            occupancy (ndarray):
+                encoded occupancy array
+
+        Returns:
+            array: change in correlation vector
         """
         occu_i = occupancy
         delta_energy = 0

@@ -7,6 +7,7 @@ by the corresponding ensemble to generate Monte Carlo samples.
 __author__ = "Luis Barroso-Luque"
 
 from abc import ABC, abstractmethod
+import random
 
 
 class BaseSampler(ABC):
@@ -16,5 +17,7 @@ class BaseSampler(ABC):
     ensemble classes.
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, seed=None):
+        self._seed = seed
+        random.seed(seed)
+

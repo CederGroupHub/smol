@@ -56,7 +56,7 @@ class CEProcessor(BaseProcessor):
                 Make sure your cluster expansion was indeed fit with an
                 indicator basis set, otherwise your MC results are no good.
         """
-        super().__init__(cluster_subspace, supercell_matrix)
+        super().__init__(cluster_subspace, supercell_matrix, coefficients)
 
         self.n_orbit_functions = self.cluster_subspace.n_bit_orderings
         if len(coefficients) != self.n_orbit_functions:
@@ -65,7 +65,6 @@ class CEProcessor(BaseProcessor):
                              f'the length must be {self.n_orbit_functions} '
                              'based on the provided cluster subspace.')
 
-        self.coefs = coefficients
         # set the dcorr_single_flip function
         self.optimize_indicator = optimize_indicator
         self._dcorr_single_flip = indicator_delta_corr_single_flip \
@@ -106,7 +105,7 @@ class CEProcessor(BaseProcessor):
         Returns:
             float: predicted property
         """
-        return np.dot(self.compute_correlation(occupancy),
+        return np.dot(self.compute_feature(occupancy),
                       self.coefs) * self.size
 
     def compute_property_change(self, occupancy, flips):
@@ -121,26 +120,26 @@ class CEProcessor(BaseProcessor):
         Returns:
             float: property difference between inital and final states
         """
-        return np.dot(self._delta_corr(flips, occupancy),
+        return np.dot(self.compute_feature_update(flips, occupancy),
                       self.coefs) * self.size
 
-    def compute_correlation(self, occu):
+    def compute_feature(self, occupancy):
         """Compute the correlation vector for a given occupancy array.
 
         Each entry in the correlation vector corresponds to a particular
         symmetrically distinct bit ordering.
 
         Args:
-            occu (ndarray):
+            occupancy (ndarray):
                 encoded occupation array
 
         Returns:
             array: correlation vector
         """
-        return corr_from_occupancy(occu, self.n_orbit_functions,
+        return corr_from_occupancy(occupancy, self.n_orbit_functions,
                                    self._orbit_list)
 
-    def _delta_corr(self, flips, occu):
+    def compute_feature_update(self, flips, occupancy):
         """
         Compute the change in the correlation vector from a list of flips.
 
@@ -150,13 +149,13 @@ class CEProcessor(BaseProcessor):
                 single flip where the first element is the index of the site
                 in the occupancy array and the second element is the index
                 for the new species to place at that site.
-            occu (ndarray):
+            occupancy (ndarray):
                 encoded occupancy array
 
         Returns:
             array: change in correlation vector
         """
-        occu_i = occu
+        occu_i = occupancy
         delta_corr = np.zeros(self.n_orbit_functions)
         for f in flips:
             occu_f = occu_i.copy()
