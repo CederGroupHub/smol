@@ -14,10 +14,9 @@ __version__ = "0.1"
 
 from copy import deepcopy
 from itertools import combinations as comb
-from itertools import combinations_with_replacement as cwr
 from itertools import permutations as perm
 from pymatmen.util.coord import find_in_coord_list_pbc
-from ionicstructure import PoscarWithChgDecorator
+from smol.sro_kit.ionicstructure import PoscarWithChgDecorator
 import time
 import numpy as np
 

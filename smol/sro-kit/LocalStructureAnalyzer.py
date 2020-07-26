@@ -172,3 +172,5 @@ class LiExcessSROAnalyzer(SROAnalyzer):
         '''
         chargedstructure = PoscarWithChgDecorator.from_file(posname).structure
         return LiExcessSROAnalyzer(chargedstructure)
+
+
