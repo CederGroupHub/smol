@@ -1,4 +1,12 @@
-#!/usr/bin/env python
+"""
+Modules for performing SRO analysis for ionic compound
+"""
+
+
+__author__ = "Bin Ouyang"
+__date__ = "2020.07.26"
+__version__ = "0.1"
+
 import os
 from ionicstructure import PoscarWithChgDecorator
 from DiffNetworkAnalyzer import PercolationAnalyzer as PA
