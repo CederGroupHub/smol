@@ -11,7 +11,7 @@ from .processor.expansion import CEProcessor
 from .processor.ewald import EwaldProcessor
 from .processor.composite import CompositeProcessor
 from .ensemble.canonical import CanonicalEnsemble
-from .ensemble.sgcanonical import MuSemiGrandEnsemble, FuSemiGrandEnsemble
+from .ensemble.semigrand import MuSemiGrandEnsemble, FuSemiGrandEnsemble
 
 __all__ = ['CEProcessor', 'EwaldProcessor', 'CompositeProcessor',
            'CanonicalEnsemble', 'MuSemiGrandEnsemble', 'FuSemiGrandEnsemble']

@@ -154,6 +154,17 @@ class Ensemble(ABC):
         """
         return
 
+    def propose_mcmc_move(self, occupancy):
+        """Return a MCMC move.
+
+        Args:
+            occupancy (ndarray):
+
+        Returns:
+            list of tuple: a move where each tuple is (site, species code)
+        """
+        return self._move.propose(occupancy)
+
     def restrict_sublattice(self, sublattice):
         """Restrict a whole sublattice."""
         sublattices = [sublatt for sublatt in self.sublattices

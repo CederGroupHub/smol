@@ -6,10 +6,6 @@ concentration of species.
 """
 
 __author__ = "Luis Barroso-Luque"
-__credits__ = "Daniil Kitcheav"
-
-import random
-import numpy as np
 
 from smol.moca.ensemble.base import Ensemble
 from smol.moca.processor.base import Processor
@@ -43,7 +39,7 @@ class CanonicalEnsemble(Ensemble):
         # TODO check for site space overlap and warn
         if move_type is None:
             move_type = 'swap'
-        elif move_type is not None and move_type not in self.valid_move_types:
+        elif move_type not in self.valid_move_types:
             raise ValueError(f'Provided move type {move_type} is not a valid '
                              'option for a Canonical Ensemble. Valid options '
                              f'are {self.valid_move_types}.')

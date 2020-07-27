@@ -10,9 +10,8 @@ Two classes are different SGC ensemble implemented:
 
 __author__ = "Luis Barroso-Luque"
 
-import random
-from abc import ABCMeta, abstractmethod
-from math import log, exp
+from abc import ABCMeta
+from math import log, prod
 import numpy as np
 
 from monty.json import MSONable
@@ -51,7 +50,7 @@ class BaseSemiGrandEnsemble(Ensemble, metaclass=ABCMeta):
         """
         if move_type is None:
             move_type = 'flip'
-        elif move_type is not None and move_type not in self.valid_move_types:
+        elif move_type not in self.valid_move_types:
             raise ValueError(f'Provided move type {move_type} is not a valid '
                              'option for a Semigrand ensemble. Valid options '
                              f'are {self.valid_move_types}.')
@@ -115,8 +114,23 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
                 raise ValueError(f'Species {sp} was not assigned a chemical '
                                  ' potential, a value must be provided.')
 
-        # TODO create a map to get chemical potentials in update functions quick
-        self._mu_table = None
+        self.__mus = chemical_potentials
+        self._mu_table = self._build_mu_table(chemical_potentials)
+
+    @property
+    def chemical_potentials(self):
+        """Get the chemical potentials for species in system."""
+        return self.__mus
+
+    @chemical_potentials.setter
+    def chemical_potentials(self, value):
+        """Set the chemical potentials and update table"""
+        if not all(val in self.__mus.keys() for val in value.keys()):
+            raise ValueError('Chemical potentials given are missing species. '
+                             'Values must be given for each of the following:'
+                             f' {self.__mus.keys()}')
+        self.__mus = value
+        self._mu_table = self._build_mu_table(value)
 
     def compute_sufficient_statistics(self, occupancy):
         """Compute the sufficient statistics for a give occupancy.
@@ -131,8 +145,8 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
             ndarray: vector of sufficient statistics
         """
         feature_vector = self.processor.compute_feature_vector(occupancy)
-        chemical_part = None  # TODO get this thing
-        return -self.beta * np.append(feature_vector, chemical_part)
+        gibbs_pot = self.compute_gibbs_potential(occupancy)
+        return -self.beta * np.append(feature_vector, gibbs_pot)
 
     def compute_sufficient_statistics_change(self, occupancy, move):
         """Return the change in the sufficient statistics vector from a move.
@@ -151,6 +165,29 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
         delta_mu = (self._mu_table[move[0]][occupancy[move[0]]]
                     - self._mu_table[move[0]][move[1]])  # -delta mu actually
         return -self.beta * np.append(delta_feature, delta_mu)  # prellocate to improve speed
+
+    def compute_gibbs_potential(self, occupancy):
+        """Compute sum of mu * N for given occupancy"""
+        return sum(self._mu_table[site][species]
+                   for site, species in enumerate(occupancy))
+
+    def _build_mu_table(self, chemical_potentials):
+        """Build an array for chemical potentials for all sites in system.
+
+        Rows represent sites and columns species. This allows quick evaluation
+        of chemical potential changes from flips. Not that the total number
+        of columns will be the number of species in the largest site space. For
+        smaller site spaces the values at those rows are meaningless and will
+        be given values of inf. Also rows representing sites with not partial
+        occupancy will have all inf values and should never be used.
+        """
+        num_cols = max(len(site_space) for site_space
+                       in self.processor.unique_site_spaces)
+        table = np.inf * np.ones((self.num_sites, num_cols))
+        for sublatt in self.sublattices:
+            ordered_pots = [chemical_potentials[sp] for sp in sublatt.species]
+            table[sublatt.sites, :len(ordered_pots)] = ordered_pots
+        return table
 
 
 class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
@@ -179,7 +216,8 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
                 dictionary of species name and fugacity fraction for each
                 sublattice (ie think of it as the sublattice concentrations
                 for random structure). If not given this will be taken from the
-                prim structure used in the cluster subspace.
+                prim structure used in the cluster subspace. Needs to be in
+                the same order as the corresponding sublattice.
             sublattices (list of Sublattice): optional
                 list of Lattice objects representing sites in the processor
                 supercell with same site spaces.
@@ -191,22 +229,38 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         super().__init__(processor, temperature, sublattices,
                          sublattice_probabilities, move_type)
 
-        # TODO remove option to pass fugacity fractions, always use the prim
         if fugacity_fractions is not None:
             # check that species are valid
-            species = [sp for sps in processor.unique_site_spaces
-                       for sp in sps]
-            for sublatt in fugacity_fractions:
-                if sum([f for f in sublatt.values()]) != 1:
+            for fus, sublatt in zip(fugacity_fractions, self.sublattices):
+                if sum([fu for fu in fus.values()]) != 1:
                     raise ValueError('Fugacity ratios must add to one.')
-                for sp in sublatt.keys():
-                    if sp not in species:
-                        raise ValueError(f'Species {sp} in provided fugacity '
-                                         'ratios is not a species in the'
-                                         f'expansion: {species}')
+                if not all(fu in sublatt.species for fu in fus.keys()):
+                    raise ValueError('Fugacity fractions given are missing or '
+                                     'not valid species. Values must be given '
+                                     'for each of the following: '
+                                     f'{[f.keys() for f in self.__fus]}')
 
-        # TODO create a map to get fugacities in update functions quick
-        self._fu_table = None
+        self.__fus = fugacity_fractions
+        self._fu_table = self._build_fu_table(fugacity_fractions)
+
+    @property
+    def fugacity_fractions(self):
+        """Get the fugacity fractions for species in system."""
+        return self.__fus
+
+    @fugacity_fractions.setter
+    def fugacity_fractions(self, value):
+        """Set the fugacity fractions and update table"""
+        if not all(sum(fus.values()) == 1 for fus in value):
+            raise ValueError('Fugacity ratios must add to one.')
+        for (fus, vals) in zip(self.__fus, value):
+            if not all(val in fus.keys() for val in vals.keys()):
+                raise ValueError('Fugacity fractions given are missing or not '
+                                 'valid species. Values must be given for each'
+                                 ' of the following: '
+                                 f'{[f.keys() for f in self.__fus]}')
+        self.__fus = value
+        self._fu_table = self._build_fu_table(value)
 
     def compute_sufficient_statistics(self, occupancy):
         """Compute the sufficient statistics for a give occupancy.
@@ -221,8 +275,9 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             ndarray: vector of sufficient statistics
         """
         feature_vector = self.processor.compute_feature_vector(occupancy)
-        chemical_part = None  # TODO get this thing
-        return -self.beta * np.append(feature_vector, chemical_part)
+        feature_vector *= -self.beta * feature_vector
+        gibbs_pot = self.compute_gibbs_potential(occupancy)
+        return np.append(feature_vector, gibbs_pot)
 
     def compute_sufficient_statistics_change(self, occupancy, move):
         """Return the change in the sufficient statistics vector from a move.
@@ -242,3 +297,26 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         delta_log_fu = log(self._fu_table[move[0]][move[1]] /
                            self._fu_table[move[0]][occupancy[move[0]]])
         return np.append(delta_feature, delta_log_fu)  # prellocate to improve speed
+
+    def compute_gibbs_potential(self, occupancy):
+        """Compute log of product of fugacities for given occupancy"""
+        return log(prod(self._fu_table[site][species]
+                        for site, species in enumerate(occupancy)))
+
+    def _build_fu_table(self, fugacity_fractions):
+        """Build an array for fugacity fractions for all sites in system.
+
+        Rows represent sites and columns species. This allows quick evaluation
+        of fugacity fraction changes from flips. Not that the total number
+        of columns will be the number of species in the largest site space. For
+        smaller site spaces the values at those rows are meaningless and will
+        be given values of inf. Also rows representing sites with not partial
+        occupancy will have all inf values and should never be used.
+        """
+        num_cols = max(len(site_space) for site_space
+                       in self.processor.unique_site_spaces)
+        table = np.inf * np.ones((self.num_sites, num_cols))
+        for fus, sublatt in zip(self.sublattices, fugacity_fractions):
+            ordered_fus = [fugacity_fractions[sp] for sp in sublatt.species]
+            table[sublatt.sites, :len(ordered_fus)] = ordered_fus
+        return table
