@@ -16,10 +16,10 @@ from pymatgen.analysis.ewald import EwaldSummation
 from src.mc_utils import delta_ewald_single_flip
 from smol.cofe import ClusterSubspace
 from smol.cofe.extern import EwaldTerm
-from smol.moca.processors.base import BaseProcessor
+from smol.moca.processor.base import Processor
 
 
-class EwaldProcessor(BaseProcessor):
+class EwaldProcessor(Processor):
     """Processor for CE's including an EwaldTerm.
 
     A subclass of the CEProcessor class that handles changes for the
@@ -90,7 +90,7 @@ class EwaldProcessor(BaseProcessor):
             float: Ewald electrostatic energy
         """
 
-        return self.coefs * self.compute_feature(occupancy)
+        return self.coefs * self.compute_feature_vector(occupancy)
 
     def compute_property_change(self, occupancy, flips):
         """Compute change in electrostatic energy from a set of flips.
@@ -105,10 +105,10 @@ class EwaldProcessor(BaseProcessor):
             float: electrostatic energy change
         """
 
-        return self.coefs * self.compute_feature_update(flips, occupancy)
+        return self.coefs*self.compute_feature_vector_change(occupancy, flips)
 
-    def compute_feature(self, occupancy):
-        """Compute the fearture vector for a given occupancy array.
+    def compute_feature_vector(self, occupancy):
+        """Compute the feature vector for a given occupancy array.
 
         Each entry in the correlation vector corresponds to a particular
         symmetrically distinct bit ordering.
@@ -125,18 +125,18 @@ class EwaldProcessor(BaseProcessor):
                                                   self._ewald_inds)
         return np.sum(self.ewald_matrix[ew_occu, :][:, ew_occu])
 
-    def compute_feature_update(self, flips, occupancy):
+    def compute_feature_vector_change(self, occupancy, flips):
         """
         Compute the change in the feature vector from a list of flips.
 
         Args:
-            flips list(tuple):
+            occupancy (ndarray):
+                encoded occupancy array
+            flips (list of tuple):
                 list of tuples with two elements. Each tuple represents a
                 single flip where the first element is the index of the site
                 in the occupancy array and the second element is the index
                 for the new species to place at that site.
-            occupancy (ndarray):
-                encoded occupancy array
 
         Returns:
             array: change in correlation vector

@@ -72,7 +72,7 @@ class TestCEProcessor(unittest.TestCase):
 
     def test_compute_correlation(self):
         self.assertTrue(np.allclose(self.ce.cluster_subspace.corr_from_structure(self.test_struct),
-                                    self.pr.compute_feature(self.enc_occu)))
+                                    self.pr.compute_feature_vector(self.enc_occu)))
 
     def test_compute_property_change(self):
         occu = self.enc_occu.copy()
@@ -113,15 +113,15 @@ class TestCEProcessor(unittest.TestCase):
             new_occu = occu.copy()
             new_occu[site] = new_sp
             # Test forward
-            dcorr = self.pr.compute_feature_update([(site, new_sp)], occu)
-            corr_f = self.pr.compute_feature(new_occu)
-            corr_i = self.pr.compute_feature(occu)
+            dcorr = self.pr.compute_feature_vector_change([(site, new_sp)], occu)
+            corr_f = self.pr.compute_feature_vector(new_occu)
+            corr_i = self.pr.compute_feature_vector(occu)
 
             self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
                                         rtol=RTOL, atol=ATOL))
             # Test reverse matches forward
             old_sp = occu[site]
-            rdcorr = self.pr.compute_feature_update([(site, old_sp)], new_occu)
+            rdcorr = self.pr.compute_feature_vector_change([(site, old_sp)], new_occu)
             self.assertTrue(np.array_equal(dcorr, -1*rdcorr))
 
     def test_feature_update_indicator(self):
@@ -146,14 +146,14 @@ class TestCEProcessor(unittest.TestCase):
             new_occu = occu.copy()
             new_occu[site] = new_sp
             # Test forward
-            dcorr = pr.compute_feature_update([(site, new_sp)], occu)
-            corr_f = pr.compute_feature(new_occu)
-            corr_i = pr.compute_feature(occu)
+            dcorr = pr.compute_feature_vector_change([(site, new_sp)], occu)
+            corr_f = pr.compute_feature_vector(new_occu)
+            corr_i = pr.compute_feature_vector(occu)
             self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
                                         rtol=RTOL, atol=ATOL))
             # Test reverse matches forward
             old_sp = occu[site]
-            rdcorr = pr.compute_feature_update([(site, old_sp)], new_occu)
+            rdcorr = pr.compute_feature_vector_change([(site, old_sp)], new_occu)
             self.assertTrue(np.allclose(dcorr, -1 * rdcorr,
                                         rtol=RTOL, atol=ATOL))
 
@@ -379,15 +379,15 @@ class TestCompositeProcessor(unittest.TestCase):
             new_occu = occu.copy()
             new_occu[site] = new_sp
             # Test forward
-            dcorr = self.pr.compute_feature_update([(site, new_sp)], occu)
-            corr_f = self.pr.compute_feature(new_occu)
-            corr_i = self.pr.compute_feature(occu)
+            dcorr = self.pr.compute_feature_vector_change([(site, new_sp)], occu)
+            corr_f = self.pr.compute_feature_vector(new_occu)
+            corr_i = self.pr.compute_feature_vector(occu)
 
             self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
                                         rtol=RTOL, atol=ATOL))
             # Test reverse matches forward
             old_sp = occu[site]
-            rdcorr = self.pr.compute_feature_update([(site, old_sp)], new_occu)
+            rdcorr = self.pr.compute_feature_vector_change([(site, old_sp)], new_occu)
             self.assertTrue(np.array_equal(dcorr, -1*rdcorr))
 
     def test_get_average_drift(self):

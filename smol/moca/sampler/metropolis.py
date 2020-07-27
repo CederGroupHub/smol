@@ -1,5 +1,5 @@
 def run(self, iterations, sublattices=None):
-    """Run the ensembles for the given number of iterations.
+    """Run the ensemble for the given number of iterations.
 
     Samples are taken at the set intervals specified in constructur.
 
@@ -36,9 +36,9 @@ def run(self, iterations, sublattices=None):
         self._data = []
 
     def _get_current_data(self):
-        """Extract the ensembles data from the current state.
+        """Extract the ensemble data from the current state.
 
-        Returns: ensembles data
+        Returns: ensemble data
             dict
         """
         return {'occupancy': self.current_occupancy}

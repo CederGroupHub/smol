@@ -1,6 +1,6 @@
 """Implementation of Composite processor class for a fixed size super cell.
 
-A Composite processor is merely a container for several different processors
+A Composite processor is merely a container for several different processor
 that acts as an interface such that it can be used in the same way as the
 individual processor. This can be used to mix models in any way that your
 heart desires.
@@ -20,10 +20,10 @@ __author__ = "Luis Barroso-Luque"
 import numpy as np
 
 from smol.cofe import ClusterSubspace
-from smol.moca.processors.base import BaseProcessor
+from smol.moca.processor.base import Processor
 
 
-class CompositeProcessor(BaseProcessor):
+class CompositeProcessor(Processor):
     """CompositeProcessor class used for mixed models.
 
     You can add anyone of the other processor class implemented to build a
@@ -45,24 +45,15 @@ class CompositeProcessor(BaseProcessor):
 
     @property
     def processors(self):
-        """Return the list of processors in composite."""
-        return [pr for _, pr in self._processors]
+        """Return the list of processor in composite."""
+        return self._processors
 
-    @property
-    def mixing_coefficients(self):
-        """Return a list of the mixing coefficients for each processor."""
-        return [coef for coef, _ in self._processors]
-
-    def add_processor(self, processor_class, mixing_coefficient=1,
-                      *args, **kwargs):
+    def add_processor(self, processor_class, *args, **kwargs):
         """Add a processor to composite.
 
         Args:
-            processor_class (BaseProcessor):
+            processor_class (Processor):
                 A derived class of BaseProcessor. The class, not an instance.
-            mixing_coefficient (float)
-                Coefficient to multiply the values of computed properties when
-                calculating the total for the composite.
             *args:
                 positional arguments necessary to create instance of processor
                 class (excluding the subspace and supercell_matrix)
@@ -72,7 +63,7 @@ class CompositeProcessor(BaseProcessor):
         """
         processor = processor_class(self._subspace, self._scmatrix,
                                     *args, **kwargs)
-        self._processors.append((mixing_coefficient, processor))
+        self._processors.append(processor)
 
     def compute_property(self, occupancy):
         """Compute the value of the property for the given occupancy array.
@@ -83,8 +74,7 @@ class CompositeProcessor(BaseProcessor):
         Returns:
             float: predicted property
         """
-        return sum([mix * pr.compute_property(occupancy)
-                    for mix, pr in self._processors])
+        return sum(pr.compute_property(occupancy) for pr in self._processors)
 
     def compute_property_change(self, occupancy, flips):
         """Compute change in property from a set of flips.
@@ -98,10 +88,10 @@ class CompositeProcessor(BaseProcessor):
         Returns:
             float:  property difference between inital and final states
         """
-        return sum([mix * pr.compute_property_change(occupancy, flips)
-                    for mix, pr in self._processors])
+        return sum(pr.compute_property_change(occupancy, flips)
+                   for pr in self._processors)
 
-    def compute_feature(self, occupancy):
+    def compute_feature_vector(self, occupancy):
         """Compute the feature vector for a given occupancy array.
 
         Each entry in the correlation vector corresponds to a particular
@@ -114,31 +104,31 @@ class CompositeProcessor(BaseProcessor):
         Returns:
             array: correlation vector
         """
-        feature = [mix * np.array(pr.compute_feature(occupancy))
-                    for mix, pr in self._processors]
+        features = [np.array(pr.compute_feature_vector(occupancy))
+                   for pr in self._processors]
         # TODO you may be able to cut some speed by pre-allocating this
-        return np.append(feature[0], feature[1:])
+        return np.append(features[0], features[1:])
 
-    def compute_feature_update(self, flips, occupancy):
+    def compute_feature_vector_change(self, occupancy, flips):
         """
         Compute the change in the feature vector from a list of flips.
 
         Args:
-            flips list(tuple):
+            occupancy (ndarray):
+                encoded occupancy array
+            flips (list of tuple):
                 list of tuples with two elements. Each tuple represents a
                 single flip where the first element is the index of the site
                 in the occupancy array and the second element is the index
                 for the new species to place at that site.
-            occupancy (ndarray):
-                encoded occupancy array
 
         Returns:
             array: change in feature vector
         """
-        update = [mix * np.array(pr.compute_feature_update(flips, occupancy))
-                    for mix, pr in self._processors]
+        updates = [np.array(pr.compute_feature_vector_change(occupancy, flips))
+                   for pr in self._processors]
         # TODO you may be able to cut some speed by pre-allocating this
-        return np.append(update[0], update[1:])
+        return np.append(updates[0], updates[1:])
 
     def as_dict(self) -> dict:
         """
@@ -157,6 +147,6 @@ class CompositeProcessor(BaseProcessor):
         """Create a Composite from serialized MSONable dict."""
         pr = cls(ClusterSubspace.from_dict(d['cluster_subspace']),
                  np.array(d['supercell_matrix']))
-        pr._processors = [(mix, BaseProcessor.from_dict(prd))
+        pr._processors = [(mix, Processor.from_dict(prd))
                           for mix, prd in d['_processors']]
         return pr

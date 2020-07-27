@@ -10,11 +10,11 @@ from abc import ABC, abstractmethod
 import random
 
 
-class BaseSampler(ABC):
-    """Abtract base class for samplers.
+class Sampler(ABC):
+    """Abtract base class for sampler.
 
-    A sampler is used to implement a specific MCMC algorithm for use in the
-    ensemble classes.
+    A sampler is used to implement a specific MCMC algorithm for use to sample
+    the ensemble classes.
     """
 
     def __init__(self, seed=None):
@@ -45,21 +45,6 @@ class BaseSampler(ABC):
         return self.accepted_steps/self.current_step
 
     @property
-    def production_start(self):
-        """Get the iteration number for production samples and values."""
-        return self._prod_start*self.sample_interval
-
-    @production_start.setter
-    def production_start(self, val):
-        """Set the iteration number for production samples and values."""
-        self._prod_start = val//self.sample_interval
-
-    @property
-    def data(self):
-        """List of sampled data."""
-        return self._data
-
-    @property
     def seed(self):
         """Seed for the random number generator."""
         return self._seed
@@ -73,4 +58,3 @@ class BaseSampler(ABC):
         self._property = self.processor.compute_property(self._occupancy)
         self._step, self._ssteps = 0, 0
         self._data = []
-

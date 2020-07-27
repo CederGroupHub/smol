@@ -17,10 +17,10 @@ from smol.cofe import ClusterSubspace
 from src.mc_utils import (corr_from_occupancy, general_delta_corr_single_flip,
                           indicator_delta_corr_single_flip)
 
-from smol.moca.processors.base import BaseProcessor
+from smol.moca.processor.base import Processor
 
 
-class CEProcessor(BaseProcessor):
+class CEProcessor(Processor):
     """CEProcessor class to use a ClusterExpansion in MC simulations.
 
     A processor allows an ensemble class to generate a Markov chain
@@ -94,40 +94,11 @@ class CEProcessor(BaseProcessor):
                                                         orbit.bases_array,
                                                         inds[in_inds]))
 
-    def compute_property(self, occupancy):
-        """Compute the value of the property for the given occupancy array.
-
-        The property fitted to the corresponding to the CE.
-
-        Args:
-            occupancy (ndarray):
-                encoded occupancy array
-        Returns:
-            float: predicted property
-        """
-        return np.dot(self.compute_feature(occupancy),
-                      self.coefs) * self.size
-
-    def compute_property_change(self, occupancy, flips):
-        """Compute change in property from a set of flips.
-
-        Args:
-            occupancy (ndarray):
-                encoded occupancy array
-            flips (list):
-                list of tuples for (index of site, specie code to set)
-
-        Returns:
-            float: property difference between inital and final states
-        """
-        return np.dot(self.compute_feature_update(flips, occupancy),
-                      self.coefs) * self.size
-
-    def compute_feature(self, occupancy):
+    def compute_feature_vector(self, occupancy):
         """Compute the correlation vector for a given occupancy array.
 
-        Each entry in the correlation vector corresponds to a particular
-        symmetrically distinct bit ordering.
+        The correlation vector in this case is normalized per supercell. In
+        other works it is extensive corresponding to the size of the supercell.
 
         Args:
             occupancy (ndarray):
@@ -137,20 +108,23 @@ class CEProcessor(BaseProcessor):
             array: correlation vector
         """
         return corr_from_occupancy(occupancy, self.n_orbit_functions,
-                                   self._orbit_list)
+                                   self._orbit_list) * self.size
 
-    def compute_feature_update(self, flips, occupancy):
+    def compute_feature_vector_change(self, occupancy, flips):
         """
         Compute the change in the correlation vector from a list of flips.
 
+        The correlation vector in this case is normalized per supercell. In
+        other works it is extensive corresponding to the size of the supercell.
+
         Args:
-            flips list(tuple):
+            occupancy (ndarray):
+                encoded occupancy array
+            flips (list of tuple):
                 list of tuples with two elements. Each tuple represents a
                 single flip where the first element is the index of the site
                 in the occupancy array and the second element is the index
                 for the new species to place at that site.
-            occupancy (ndarray):
-                encoded occupancy array
 
         Returns:
             array: change in correlation vector
@@ -166,7 +140,7 @@ class CEProcessor(BaseProcessor):
                                                   orbits)
             occu_i = occu_f
 
-        return delta_corr
+        return delta_corr * self.size
 
     def as_dict(self) -> dict:
         """

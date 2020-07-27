@@ -6,7 +6,7 @@ they represent or changes in said property from site flips. Things necessary
 to run Monte Carlo sampling.
 
 Processor classes should inherit from the BaseProcessor class. Processors
-can be combined into composite processors for mixed models.
+can be combined into composite processor for mixed models.
 """
 
 __author__ = "Luis Barroso-Luque"
@@ -20,8 +20,8 @@ from monty.json import MSONable
 from smol.cofe.configspace.basis import get_site_spaces, get_allowed_species
 
 
-class BaseProcessor(MSONable, metaclass=ABCMeta):
-    """Abstract base class for processors.
+class Processor(MSONable, metaclass=ABCMeta):
+    """Abstract base class for processor.
 
     A processor is used to provide a quick way to calculated energy differences
     (probability ratio's) between two adjacent configurational states for a
@@ -73,39 +73,17 @@ class BaseProcessor(MSONable, metaclass=ABCMeta):
         return self._structure
 
     @property
+    def num_sites(self):
+        """Get total number of sites in supercell."""
+        return len(self.cluster_subspace.structure) * self.size
+
+    @property
     def supercell_matrix(self):
         """Get the give supercell matrix."""
         return self._scmatrix
 
     @abstractmethod
-    def compute_property(self, occupancy):
-        """Compute the value of the property for the given occupancy array.
-
-        Args:
-            occupancy (ndarray):
-                encoded occupancy array
-        Returns:
-            float: predicted property
-        """
-        return self.coef * self.compute_feature(occupancy)
-
-    @abstractmethod
-    def compute_property_change(self, occupancy, flips):
-        """Compute change in property from a set of flips.
-
-        Args:
-            occupancy (ndarray):
-                encoded occupancy array
-            flips (list):
-                list of tuples for (index of site, specie code to set)
-
-        Returns:
-            float:  property difference between inital and final states
-        """
-        return self.coef * self.compute_feature_update(occupancy)
-
-    @abstractmethod
-    def compute_feature(self, occupancy):
+    def compute_feature_vector(self, occupancy):
         """Compute the feature vector for a given occupancy array.
 
         Each entry in the correlation vector corresponds to a particular
@@ -121,23 +99,49 @@ class BaseProcessor(MSONable, metaclass=ABCMeta):
         return
 
     @abstractmethod
-    def compute_feature_update(self, flips, occupancy):
+    def compute_feature_vector_change(self, occupancy, flips):
         """
         Compute the change in the feature vector from a list of flips.
 
         Args:
-            flips list(tuple):
+            occupancy (ndarray):
+                encoded occupancy array
+            flips (list of tuple):
                 list of tuples with two elements. Each tuple represents a
                 single flip where the first element is the index of the site
                 in the occupancy array and the second element is the index
                 for the new species to place at that site.
-            occupancy (ndarray):
-                encoded occupancy array
 
         Returns:
             array: change in correlation vector
         """
         return
+
+    def compute_property(self, occupancy):
+        """Compute the value of the property for the given occupancy array.
+
+        Args:
+            occupancy (ndarray):
+                encoded occupancy array
+        Returns:
+            float: predicted property
+        """
+        return np.dot(self.coefs, self.compute_feature_vector(occupancy))
+
+    def compute_property_change(self, occupancy, flips):
+        """Compute change in property from a set of flips.
+
+        Args:
+            occupancy (ndarray):
+                encoded occupancy array
+            flips (list):
+                list of tuples for (index of site, specie code to set)
+
+        Returns:
+            float:  property difference between inital and final states
+        """
+        return np.dot(self.coefs,
+                      self.compute_feature_vector_change(occupancy))
 
     def occupancy_from_structure(self, structure):
         """Get the occupancy array for a given structure.
@@ -156,33 +160,33 @@ class BaseProcessor(MSONable, metaclass=ABCMeta):
                                                        scmatrix=self.supercell_matrix)  # noqa
         return self.encode_occupancy(occu)
 
-    def structure_from_occupancy(self, occu):
+    def structure_from_occupancy(self, occupancy):
         """Get pymatgen Structure from an occupancy array.
 
         Args:
-            occu (ndarray):
+            occupancy (ndarray):
                 encoded occupancy array
 
         Returns:
             Structure
         """
-        occu = self.decode_occupancy(occu)
+        occupancy = self.decode_occupancy(occupancy)
         sites = []
-        for sp, s in zip(occu, self.structure):
+        for sp, s in zip(occupancy, self.structure):
             if sp != 'Vacancy':
                 site = PeriodicSite(sp, s.frac_coords, self.structure.lattice)
                 sites.append(site)
         return Structure.from_sites(sites)
 
-    def encode_occupancy(self, occu):
+    def encode_occupancy(self, occupancy):
         """Encode occupancy array of species str to ints."""
         return np.array([species.index(sp) for species, sp
-                        in zip(self.allowed_species, occu)])
+                         in zip(self.allowed_species, occupancy)])
 
-    def decode_occupancy(self, enc_occu):
+    def decode_occupancy(self, encoded_occupancy):
         """Decode an encoded occupancy array of int to species str."""
         return [species[i] for i, species in
-                zip(enc_occu, self.allowed_species)]
+                zip(encoded_occupancy, self.allowed_species)]
 
     def get_average_drift(self, iterations=1000):
         """Get the average forward and reverse drift for the given property.
