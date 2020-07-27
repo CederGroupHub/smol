@@ -129,7 +129,7 @@ class ChargedStructure(Structure):
         cations = []
         for ion, num in self.composition.items():
             if ion.oxi_state > 0:
-                cations.append(ion)
+                cations.append(str(ion))
         return cations
 
     @property
@@ -140,7 +140,7 @@ class ChargedStructure(Structure):
         anions = []
         for ion, num in self.composition.items():
             if ion.oxi_state > 0:
-                anion.append(ion)
+                anion.append(str(ion))
         return anions
 
     @staticmethod
