@@ -199,6 +199,7 @@ class PercolationAnalyzer(object):
                 if NTM == 1:
                     continue
                 tm_nums = [chan[3] for chan in tm_chan_dict[ind1] if ind2 in chan[:3]]
+                # print(ind1,ind2,NTM,tm_nums)
                 nn_tm_chandict[ind1][ind2] = dist_table[np.min(tm_nums)]
         print('{}s spent on get_nn_tm_chandict'.format(time.time()-start_time))
 
@@ -290,7 +291,7 @@ class PercolationAnalyzer(object):
                 elif index in diffinds:
                     nn_inds.append([index,0])
             nn_inds_lst.append(nn_inds)
-            for ((ind2, NLi2), (ind3, NLi3), (ind4, NLi4)) in cwr(nn_inds,3):
+            for ((ind2, NLi2), (ind3, NLi3), (ind4, NLi4)) in comb(nn_inds,3):
                 is_tet = True
                 for (i1, i2) in cwr((ind2, ind3, ind4), 2):
                     if dist_matrix[i1, i2] > self.d_max:
