@@ -15,7 +15,7 @@ class CanonicalEnsemble(Ensemble):
     """
     A Canonical Ensemble class to run Monte Carlo Simulations.
     """
-    valid_move_types = ('swap',)
+    valid_mc_ushers = ('Swapper',)
 
     def __init__(self, processor, temperature, sublattices=None):
         """Initialize CanonicalEnemble.

@@ -71,8 +71,9 @@ class TestCEProcessor(unittest.TestCase):
                          self.pr.compute_property(self.enc_occu)))
 
     def test_compute_correlation(self):
-        self.assertTrue(np.allclose(self.ce.cluster_subspace.corr_from_structure(self.test_struct),
-                                    self.pr.compute_feature_vector(self.enc_occu)))
+        self.assertTrue(np.allclose(
+            self.ce.cluster_subspace.corr_from_structure(self.test_struct, False),
+            self.pr.compute_feature_vector(self.enc_occu)))
 
     def test_compute_property_change(self):
         occu = self.enc_occu.copy()
@@ -113,7 +114,7 @@ class TestCEProcessor(unittest.TestCase):
             new_occu = occu.copy()
             new_occu[site] = new_sp
             # Test forward
-            dcorr = self.pr.compute_feature_vector_change([(site, new_sp)], occu)
+            dcorr = self.pr.compute_feature_vector_change(occu, [(site, new_sp)])
             corr_f = self.pr.compute_feature_vector(new_occu)
             corr_i = self.pr.compute_feature_vector(occu)
 
@@ -121,7 +122,7 @@ class TestCEProcessor(unittest.TestCase):
                                         rtol=RTOL, atol=ATOL))
             # Test reverse matches forward
             old_sp = occu[site]
-            rdcorr = self.pr.compute_feature_vector_change([(site, old_sp)], new_occu)
+            rdcorr = self.pr.compute_feature_vector_change(new_occu, [(site, old_sp)])
             self.assertTrue(np.array_equal(dcorr, -1*rdcorr))
 
     def test_feature_update_indicator(self):
@@ -146,14 +147,14 @@ class TestCEProcessor(unittest.TestCase):
             new_occu = occu.copy()
             new_occu[site] = new_sp
             # Test forward
-            dcorr = pr.compute_feature_vector_change([(site, new_sp)], occu)
+            dcorr = pr.compute_feature_vector_change(occu, [(site, new_sp)])
             corr_f = pr.compute_feature_vector(new_occu)
             corr_i = pr.compute_feature_vector(occu)
             self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
                                         rtol=RTOL, atol=ATOL))
             # Test reverse matches forward
             old_sp = occu[site]
-            rdcorr = pr.compute_feature_vector_change([(site, old_sp)], new_occu)
+            rdcorr = pr.compute_feature_vector_change(new_occu, [(site, old_sp)])
             self.assertTrue(np.allclose(dcorr, -1 * rdcorr,
                                         rtol=RTOL, atol=ATOL))
 
@@ -322,7 +323,7 @@ class TestCompositeProcessor(unittest.TestCase):
         self.pr = CompositeProcessor(cs, scmatrix)
 
         self.pr.add_processor(CEProcessor, coefficients=coefs[:-1])
-        self.pr.add_processor(EwaldProcessor, mixing_coefficient=coefs[-1],
+        self.pr.add_processor(EwaldProcessor, coefficient=coefs[-1],
                               ewald_term=ewald_term)
 
         # create a test structure
@@ -379,15 +380,15 @@ class TestCompositeProcessor(unittest.TestCase):
             new_occu = occu.copy()
             new_occu[site] = new_sp
             # Test forward
-            dcorr = self.pr.compute_feature_vector_change([(site, new_sp)], occu)
+            dcorr = self.pr.compute_feature_vector_change(occu, [(site, new_sp)])
             corr_f = self.pr.compute_feature_vector(new_occu)
             corr_i = self.pr.compute_feature_vector(occu)
 
             self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
-                                        rtol=RTOL, atol=ATOL))
+                                        rtol=RTOL, atol=EWALD_ATOL))
             # Test reverse matches forward
             old_sp = occu[site]
-            rdcorr = self.pr.compute_feature_vector_change([(site, old_sp)], new_occu)
+            rdcorr = self.pr.compute_feature_vector_change(new_occu, [(site, old_sp)])
             self.assertTrue(np.array_equal(dcorr, -1*rdcorr))
 
     def test_get_average_drift(self):
@@ -397,6 +398,7 @@ class TestCompositeProcessor(unittest.TestCase):
     def test_msonable(self):
         d = self.pr.as_dict()
         pr = CompositeProcessor.from_dict(d)
+        print(self.pr._processors)
         self.assertEqual(self.pr.compute_property(self.enc_occu),
                          pr.compute_property(self.enc_occu))
         j = json.dumps(d)

@@ -7,7 +7,6 @@ import numpy as np
 
 from smol.constants import kB
 from .sublattice import Sublattice
-from .moves import mcmc_move_factory
 
 
 class Ensemble(ABC):
@@ -37,6 +36,7 @@ class Ensemble(ABC):
         self._processor = processor
         self._sublattices = sublattices
         self.restricted_sites = []
+        self.thermo_boundaries = {}  # not pretty way to save general info
 
     @property
     def temperature(self):

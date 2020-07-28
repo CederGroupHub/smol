@@ -150,7 +150,6 @@ class CEProcessor(Processor):
             MSONable dict
         """
         d = super().as_dict()
-        d['coefficients'] = self.coefs.tolist()
         d['optimize_indicator'] = self.optimize_indicator
         return d
 

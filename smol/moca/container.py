@@ -16,34 +16,41 @@ class SampleContainer(MSONable):
     """A SampleContainter class stores Monte Carlo simulation samples.
 
     Attributes:
+        temperature (float):
+            temperature of ensemble that was sampled.
+        num_sites (int):
+                Size of system (usually in number of prims in supercell, but
+                can be anything representative i.e. number of sites)
+        sublattices (list of Sublattice)
+                Sublattices of the ensemble sampled.
         metadata (dict):
             dictionary of metadata from the MC run that generated the samples.
     """
 
-    def __init__(self, temperature, ensemble_name, system_description,
-                 system_size, metadata=None):
+    # To get sublattices, ensemble name, temperature, usher type
+
+    def __init__(self, temperature, num_sites, sublattices,
+                 natural_parameters, ensemble_metadata=None):
         """Initialize a sample container.
 
         Args:
             temperature (float):
                 Temperature of the ensemble.
-            ensemble_name (str):
-                Name or description of ensemble sampled.
-            system_description (str):
-                Description of system sampled
-            system_size (int):
-                Size of system (usually in number of prims in supercell, but
-                can be anything representative i.e. number of sites)
+            num_sites (int):
+                Total number of sites in supercell of the ensemble.
+            sublattices (list of Sublattice)
+                Sublattices of the ensemble sampled.
+            natural_parameters (ndarray):
+                array of natural parameters used in the ensemble.
+            ensemble_metadata (Ensemble):
+                Metadata of the ensemble that was sampled.
         """
 
         self.temperature = temperature
-        self.ensemble_name = ensemble_name
-        self.system_description = system_description
-        self.system_size = system_size
-        self.metadata = {} if metadata is None else metadata
-
-        self._total_steps = 0
-        self._accepted_steps = 0
+        self.num_sites = num_sites
+        self.sublattices = sublattices
+        self.metadata = {} if ensemble_metadata is None else ensemble_metadata
+        self._chains = np
 
     @property
     def num_samples(self):

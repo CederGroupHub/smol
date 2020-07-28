@@ -190,13 +190,13 @@ def delta_ewald_single_flip(const long[::1] occu_f,
             encoded occupancy vector with flip
         occu_i (ndarray):
             encoded occupancy vector without flip
-        site_ind (int):
-            site index for site being flipped
         ewald_matrix (ndarray):
             Ewald matrix for electrostatic interactions
         ewald_inds (ndarray):
             2D array of indices corresponding to a specific site occupation
             in the ewald matrix
+        site_ind (int):
+            site index for site being flipped
 
     Returns:
         float: electrostatic interaction energy difference

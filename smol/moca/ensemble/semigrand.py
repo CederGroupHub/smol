@@ -28,7 +28,7 @@ class BaseSemiGrandEnsemble(Ensemble, metaclass=ABCMeta):
     This class can not be instantiated. See MuSemiGrandEnsemble and
     FuSemiGrandEnsemble below.
     """
-    valid_move_types = ('flip', )
+    valid_mc_ushers = ('Flipper',)
 
     def __init__(self, processor, temperature, sublattices=None):
         """Initialize BaseSemiGrandEnsemble.
@@ -99,6 +99,8 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
 
         self.__mus = chemical_potentials
         self._mu_table = self._build_mu_table(chemical_potentials)
+        self.thermo_boundaries = {'chemical-potentials':
+                                  self.chemical_potentials}
 
     @property
     def chemical_potentials(self):
@@ -219,6 +221,8 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
 
         self.__fus = fugacity_fractions
         self._fu_table = self._build_fu_table(fugacity_fractions)
+        self.thermo_boundaries = {'fugacity-fractions':
+                                  self.fugacity_fractions}
 
     @property
     def fugacity_fractions(self):

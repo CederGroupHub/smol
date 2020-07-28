@@ -1,30 +1,31 @@
-""""Implementations of Move classes.
+""""Implementations of MCMC Usher classes.
 
-A Move is used to generate move/step proposals for Monte Carlo sampling.
-For example a Flip is simply proposes a change of the identity of a species at
-a site, for use in a SemiGrand ensemble. A Swap will propose a swap between
-species at two sites for use in Canonical ensemble simulations.
+An usher is used to generate step proposals for MC Monte Carlo sampling.
+For example a Flipper is simply proposes a change of the identity of a species
+at a site, for use in a SemiGrand ensemble. A Swapper will propose a swap
+between species at two sites for use in Canonical ensemble simulations.
 
-More complex moves can be defined simply by deriving from the BaseMove.
+More complex steps can be defined simply by deriving from the MCUsher
 """
 
 __author__ = "Luis Barroso-Luque"
 
 from abc import ABC, abstractmethod
+from functools import wraps
 import random
 
 from smol.utils import derived_class_factory
 
 
-class MCMCMove(ABC):
-    """Abstract base class for move classes."""
+class MCUsher(ABC):
+    """Abstract base class for MCMC usher classes."""
 
     def __init__(self, sublattices, sublattice_probabilities=None):
-        """Initialize MCMCMove
+        """Initialize MCMCStep
 
         Args:
             sublattices (list of Sublattice):
-                list of Sublattices to propose moves for.
+                list of Sublattices to propose steps for.
             sublattice_probabilities (list of float): optional
                 list of probability to pick a site from a specific sublattice.
         """
@@ -57,11 +58,11 @@ class MCMCMove(ABC):
         self._sublatt_probs = value
 
     @abstractmethod
-    def propose(self, occupancy):
-        """Propose an elementary move.
+    def suggest_step(self, occupancy):
+        """Propose an MCMC step.
 
-        A move is given as a sequence of tuples, where each tuple is of the
-        form (site idex, species code to set)
+        A step is given as a sequence of tuples, where each tuple is of the
+        form (site index, species code to set)
 
         Args:
             occupancy (ndarray):
@@ -77,13 +78,35 @@ class MCMCMove(ABC):
         return random.choices(self.sublattices, weights=self._sublatt_probs)[0]
 
 
-class Swap(MCMCMove):
-    """Implementation of a simple swap move."""
+class Flipper(MCUsher):
+    """Implementation of a simple flip step at a random site."""
 
-    def propose(self, occupancy):
-        """Propose a single swap move.
+    def suggest_step(self, occupancy):
+        """Propose a single random flip step.
 
-        A move is given as a sequence of tuples, where each tuple is of the
+        A step is given as a sequence of tuples, where each tuple is of the
+        form (site index, species code to set)
+
+        Args:
+            occupancy (ndarray):
+                encoded occupancy string.
+
+        Returns:
+            list(tuple): list of tuples each with (idex, code)
+        """
+        sublattice = self.get_random_sublattice()
+        site = random.choice(sublattice.active_sites)
+        choices = set(range(len(sublattice.species))) - {occupancy[site]}
+        return [(site, random.choice(list(choices)))]
+
+
+class Swapper(MCUsher):
+    """Implementation of a simple swap step for two random sites."""
+
+    def suggest_step(self, occupancy):
+        """Propose a single random swap step.
+
+        A step is given as a sequence of tuples, where each tuple is of the
         form (site index, species code to set)
 
         Args:
@@ -108,42 +131,21 @@ class Swap(MCMCMove):
         return swap
 
 
-class Flip(MCMCMove):
-    """Implementation of a simple flip move."""
-
-    def propose(self, occupancy):
-        """Propose a single swap move.
-
-        A move is given as a sequence of tuples, where each tuple is of the
-        form (site index, species code to set)
-
-        Args:
-            occupancy (ndarray):
-                encoded occupancy string.
-
-        Returns:
-            list(tuple): list of tuples each with (idex, code)
-        """
-        sublattice = self.get_random_sublattice()
-        site = random.choice(sublattice.active_sites)
-        choices = set(range(len(sublattice.species))) - {occupancy[site]}
-        return [(site, random.choice(list(choices)))]
-
-
-def mcmc_move_factory(move_type, sublattices, *args, **kwargs):
-    """"Get a MCMC move from string name.
+def mcmc_usher_factory(usher_type, sublattices, *args, **kwargs):
+    """"Get a MCMC Usher from string name.
 
     Args:
-        move_type (str):
-            string specifying move to instantiate.
+        usher_type (str):
+            string specifying step to instantiate.
         sublattices (list of Sublattice):
-                list of Sublattices to propose moves for.
+                list of Sublattices to propose steps for.
         *args:
             positional arguments passed to class constructor
         **kwargs:
             Keyword arguments passed to class constructor
 
     Returns:
-        MCMCMove: instance of derived class.
+        MCUsher: instance of derived class.
     """
-    return derived_class_factory(move_type.capitalize(), MCMCMove, sublattices)
+    return derived_class_factory(usher_type.capitalize(), MCUsher,
+                                 sublattices, *args, **kwargs)

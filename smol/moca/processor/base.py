@@ -141,7 +141,7 @@ class Processor(MSONable, metaclass=ABCMeta):
             float:  property difference between inital and final states
         """
         return np.dot(self.coefs,
-                      self.compute_feature_vector_change(occupancy))
+                      self.compute_feature_vector_change(occupancy, flips))
 
     def occupancy_from_structure(self, structure):
         """Get the occupancy array for a given structure.
@@ -180,8 +180,10 @@ class Processor(MSONable, metaclass=ABCMeta):
 
     def encode_occupancy(self, occupancy):
         """Encode occupancy array of species str to ints."""
+        # TODO check if setting to np.intc improves speed
         return np.array([species.index(sp) for species, sp
-                         in zip(self.allowed_species, occupancy)])
+                         in zip(self.allowed_species, occupancy)],
+                        dtype=int)
 
     def decode_occupancy(self, encoded_occupancy):
         """Decode an encoded occupancy array of int to species str."""
@@ -239,7 +241,8 @@ class Processor(MSONable, metaclass=ABCMeta):
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
              'cluster_subspace': self.cluster_subspace.as_dict(),
-             'supercell_matrix': self.supercell_matrix.tolist()}
+             'supercell_matrix': self.supercell_matrix.tolist(),
+             'coefficients': np.array(self.coefs).tolist()}
         return d
 
     # TODO get rid of this and inspect in polymorphic constructors?

@@ -29,7 +29,7 @@ class EwaldProcessor(Processor):
     """
 
     def __init__(self, cluster_subspace, supercell_matrix, ewald_term,
-                 coeficient=1.0, ewald_summation=None):
+                 coefficient=1.0, ewald_summation=None):
         """Initialize an EwaldCEProcessor.
 
         Args:
@@ -40,14 +40,14 @@ class EwaldProcessor(Processor):
                 Cluster Expansion prim structure.
             ewald_term (EwaldTerm):
                 An instance of EwaldTerm to compute electrostatic energies.
-            coeficient (float):
+            coefficient (float):
                 Fitting coeficient to scale Ewald energy by.
             ewald_summation (EwaldSummation): optional
                 pymatgen EwaldSummation instance, make sure this uses the exact
                 same parameters as those used in the EwaldTerm in the cluster
                 Expansion (i.e. same eta, real and recip cuts).
         """
-        super().__init__(cluster_subspace, supercell_matrix, coeficient)
+        super().__init__(cluster_subspace, supercell_matrix, coefficient)
 
         self._ewald_term = ewald_term
         # Set up ewald structure and indices
@@ -171,6 +171,7 @@ class EwaldProcessor(Processor):
         pr = cls(ClusterSubspace.from_dict(d['cluster_subspace']),
                  np.array(d['supercell_matrix']),
                  ewald_term=EwaldTerm.from_dict(d['ewald_term']),
+                 coefficient=d['coefficients'],
                  ewald_summation=EwaldSummation.from_dict(d['ewald_summation'])
                  )
         return pr

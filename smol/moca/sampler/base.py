@@ -8,7 +8,11 @@ __author__ = "Luis Barroso-Luque"
 
 from abc import ABC, abstractmethod
 import random
+from warnings import warn
 import numpy as np
+
+from smol.moca.container import SampleContainer
+from .usher import mcmc_usher_factory
 
 
 class Sampler(ABC):
@@ -18,19 +22,42 @@ class Sampler(ABC):
     the ensemble classes.
     """
 
-    def __init__(self, seed=None):
+    def __init__(self, ensemble, usher, container=None, seed=None):
         """Initialize BaseSampler.
 
         Args:
+            ensemble (Ensemble):
+                an Ensemble instance to sample from.
+            usher (MCUsher)
+                MC Usher to suggest MCMC steps.
+            container (SampleContainer)
+                A containter to store samples.
             seed (int): optional
                 seed for random number generator.
         """
         # Set and save the seed for random. This allows reproducible results.
+        self._ensemble = ensemble
+        self._usher = usher
+        if container is None:
+            ensemble_metadata = {'name': type(ensemble).__name__}
+            ensemble_metadata.update(ensemble.thermo_boundaries)
+            container = SampleContainer(ensemble.temperature,
+                                        ensemble.system_size,
+                                        ensemble.sublattices,
+                                        ensemble.natural_parameters,
+                                        ensemble_metadata)
+        self._container = container
+
         if seed is None:
             seed = random.randint(1, 1E24)
 
         self.__seed = seed
         random.seed(seed)
+
+    @property
+    def ensemble(self):
+        """Get the underlying ensemble."""
+        return self._ensemble
 
     @property
     def seed(self):
@@ -43,6 +70,23 @@ class Sampler(ABC):
         random.seed(seed)
         self.__seed = seed
 
+    @property
+    def samples(self):
+        return self._container
+
+    @abstractmethod
+    def sample(self):
+        return
+
+    def run(self, ):
+
+
+
+
+
+
+        if usher is None:
+            usher = mcmc_usher_factory(ensemble.valid_mc_ushers[0])
 
 
     def anneal(self, start_temperature, steps, mc_iterations,
