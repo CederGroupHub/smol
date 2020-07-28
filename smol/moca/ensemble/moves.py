@@ -34,6 +34,8 @@ class MCMCMove(ABC):
         elif len(sublattice_probabilities) != len(self.sublattices):
             raise AttributeError('Sublattice probabilites needs to be the '
                                  'same length as sublattices.')
+        elif sum(sublattice_probabilities) != 1:
+            raise ValueError('Sublattice probabilites must sum to one.')
         else:
             self._sublatt_probs = sublattice_probabilities
 

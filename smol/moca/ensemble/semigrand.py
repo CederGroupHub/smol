@@ -30,8 +30,7 @@ class BaseSemiGrandEnsemble(Ensemble, metaclass=ABCMeta):
     """
     valid_move_types = ('flip', )
 
-    def __init__(self, processor, temperature, sublattices=None,
-                 sublattice_probabilities=None, move_type=None):
+    def __init__(self, processor, temperature, sublattices=None):
         """Initialize BaseSemiGrandEnsemble.
 
         Args:
@@ -43,26 +42,16 @@ class BaseSemiGrandEnsemble(Ensemble, metaclass=ABCMeta):
             sublattices (list of Sublattice): optional
                 list of Lattice objects representing sites in the processor
                 supercell with same site spaces.
-            sublattice_probabilities (list of float): optional
-                list of probability to pick a site from a specific sublattice
-            move_type (str):
-                string specifying the type of MCMC move for the SGC ensemble.
         """
-        if move_type is None:
-            move_type = 'flip'
-        elif move_type not in self.valid_move_types:
-            raise ValueError(f'Provided move type {move_type} is not a valid '
-                             'option for a Semigrand ensemble. Valid options '
-                             f'are {self.valid_move_types}.')
-
-        super().__init__(processor, temperature, move_type=move_type,
-                         sublattices=sublattices,
-                         sublattice_probabilities=sublattice_probabilities)
+        super().__init__(processor, temperature, sublattices=sublattices)
         self.__params = np.append(self.processor.coefs, 1.0)
 
     @property
-    def exponential_parameters(self):
-        """Get the vector of exponential parameters."""
+    def natural_parameters(self):
+        """Get the vector of natural parameters.
+
+        For SGC an extra 1 is added for the chemical part of the LT.
+        """
         return self.__params
 
 
@@ -79,8 +68,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
     """
 
     def __init__(self, processor, temperature, chemical_potentials,
-                 sublattices=None, sublattice_probabilities=None,
-                 move_type=None):
+                 sublattices=None):
         """Initialize MuSemiGrandEnsemble.
 
         Args:
@@ -94,13 +82,8 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
             sublattices (list of Sublattice): optional
                 list of Lattice objects representing sites in the processor
                 supercell with same site spaces.
-            sublattice_probabilities (list of float): optional
-                list of probability to pick a site from a specific sublattice
-            move_type (str):
-                string specifying the type of MCMC move for the SGC ensemble.
         """
-        super().__init__(processor, temperature, sublattices,
-                         sublattice_probabilities, move_type)
+        super().__init__(processor, temperature, sublattices)
 
         # check that species are valid
         species = [sp for sps in processor.unique_site_spaces for sp in sps]
@@ -146,7 +129,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
         """
         feature_vector = self.processor.compute_feature_vector(occupancy)
         gibbs_pot = self.compute_gibbs_potential(occupancy)
-        return -self.beta * np.append(feature_vector, gibbs_pot)
+        return np.append(feature_vector, gibbs_pot)
 
     def compute_sufficient_statistics_change(self, occupancy, move):
         """Return the change in the sufficient statistics vector from a move.
@@ -164,7 +147,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
                                                                      move)
         delta_mu = (self._mu_table[move[0]][occupancy[move[0]]]
                     - self._mu_table[move[0]][move[1]])  # -delta mu actually
-        return -self.beta * np.append(delta_feature, delta_mu)  # prellocate to improve speed
+        return np.append(delta_feature, delta_mu)  # prellocate to improve speed
 
     def compute_gibbs_potential(self, occupancy):
         """Compute sum of mu * N for given occupancy"""
@@ -202,8 +185,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     temperature the corresponding chemical potentials can then be calculated.
     """
     def __init__(self, processor, temperature, fugacity_fractions=None,
-                 sublattices=None, sublattice_probabilities=None,
-                 move_type=None):
+                 sublattices=None):
         """Initialize MuSemiGrandEnsemble.
 
         Args:
@@ -221,13 +203,8 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             sublattices (list of Sublattice): optional
                 list of Lattice objects representing sites in the processor
                 supercell with same site spaces.
-            sublattice_probabilities (list of float): optional
-                list of probability to pick a site from a specific sublattice
-            move_type (str):
-                string specifying the type of MCMC move for the SGC ensemble.
         """
-        super().__init__(processor, temperature, sublattices,
-                         sublattice_probabilities, move_type)
+        super().__init__(processor, temperature, sublattices)
 
         if fugacity_fractions is not None:
             # check that species are valid
@@ -275,7 +252,6 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             ndarray: vector of sufficient statistics
         """
         feature_vector = self.processor.compute_feature_vector(occupancy)
-        feature_vector *= -self.beta * feature_vector
         gibbs_pot = self.compute_gibbs_potential(occupancy)
         return np.append(feature_vector, gibbs_pot)
 
@@ -293,7 +269,6 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         """
         delta_feature = self.processor.compute_feature_vector_change(occupancy,
                                                                      move)
-        delta_feature *= -self.beta
         delta_log_fu = log(self._fu_table[move[0]][move[1]] /
                            self._fu_table[move[0]][occupancy[move[0]]])
         return np.append(delta_feature, delta_log_fu)  # prellocate to improve speed

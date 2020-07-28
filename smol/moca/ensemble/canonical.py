@@ -17,8 +17,7 @@ class CanonicalEnsemble(Ensemble):
     """
     valid_move_types = ('swap',)
 
-    def __init__(self, processor, temperature, sublattices=None,
-                 sublattice_probabilities=None, move_type=None):
+    def __init__(self, processor, temperature, sublattices=None):
         """Initialize CanonicalEnemble.
 
         Args:
@@ -30,25 +29,11 @@ class CanonicalEnsemble(Ensemble):
             sublattices (list of Sublattice): optional
                 list of Lattice objects representing sites in the processor
                 supercell with same site spaces.
-            sublattice_probabilities (list of float): optional
-                list of probability to pick a site from a specific sublattice.
-            move_type (str):
-                string specifying the type of MCMC move for the Canonical
-                ensemble.
         """
-        # TODO check for site space overlap and warn
-        if move_type is None:
-            move_type = 'swap'
-        elif move_type not in self.valid_move_types:
-            raise ValueError(f'Provided move type {move_type} is not a valid '
-                             'option for a Canonical Ensemble. Valid options '
-                             f'are {self.valid_move_types}.')
-        super().__init__(processor, temperature, move_type=move_type,
-                         sublattices=sublattices,
-                         sublattice_probabilities=sublattice_probabilities)
+        super().__init__(processor, temperature, sublattices=sublattices)
 
     @property
-    def exponential_parameters(self):
+    def natural_parameters(self):
         """Get the vector of exponential parameters."""
         return self.processor.coefs
 
@@ -64,7 +49,7 @@ class CanonicalEnsemble(Ensemble):
         Returns:
             ndarray: vector of sufficient statistics
         """
-        return -self.beta * self.processor.compute_feature_vector(occupancy)
+        return self.processor.compute_feature_vector(occupancy)
 
     def compute_sufficient_statistics_change(self, occupancy, move):
         """Return the change in the sufficient statistics vector from a move.
@@ -78,4 +63,4 @@ class CanonicalEnsemble(Ensemble):
         Returns:
             ndarray: difference in vector of sufficient statistics
         """
-        return -self.beta * self.processor.compute_feature_vector_change(occupancy, move)  # noqa
+        return self.processor.compute_feature_vector_change(occupancy, move)
