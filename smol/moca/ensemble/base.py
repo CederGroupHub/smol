@@ -24,13 +24,11 @@ class Ensemble(ABC):
                 supercell with same site spaces.
         """
         if sublattices is None:
-            self._sublattices = [Sublattice(site_space,
-                                            np.array([i for i, sp in
-                                              enumerate(processor.allowed_species)  # noqa
-                                              if sp == list(site_space.keys())]))  # noqa
-                                 for site_space in processor.unique_site_spaces]  # noqa
-        else:
-            self._sublattices = sublattices
+            sublattices = [Sublattice(site_space,
+                                      np.array([i for i, sp in
+                                                enumerate(processor.allowed_species)  # noqa
+                                                if sp == list(site_space.keys())]))  # noqa
+                           for site_space in processor.unique_site_spaces]
 
         self.temperature = temperature
         self._processor = processor
@@ -91,34 +89,35 @@ class Ensemble(ABC):
         return
 
     @abstractmethod
-    def compute_sufficient_statistics(self, occupancy):
-        """Compute the sufficient statistics for a give occupancy
+    def compute_feature_vector(self, occupancy):
+        """Compute the feature vector for a give occupancy
 
-        The vector of sufficient statistics is the the necessary to compute
+        The feature vector is the necessary features required to compute
         the exponent determining in the relative probability for the given
-        occupancy (i.e. The LT for a generalized Massieu function).
+        occupancy (i.e. a generalized enthalpy). The feature vector for
+        ensembles represents the sufficient statistics.
 
         Args:
             occupancy (ndarray):
                 encoded occupancy string
 
         Returns:
-            ndarray: vector of sufficient statistics
+            ndarray: feature vector
         """
         return
 
     @abstractmethod
-    def compute_sufficient_statistics_change(self, occupancy, move):
-        """Return the change in the sufficient statistics vector from a move.
+    def compute_feature_vector_change(self, occupancy, step):
+        """Return the change in the feature vector from a step.
 
         Args:
             occupancy (ndarray):
                 encoded occupancy string.
-            move (list of tuple):
-                A sequence of moves given my the MCMCMove.propose.
+            step (list of tuple):
+                A sequence of flips given my the MCMCUsher.propose_step
 
         Returns:
-            ndarray: difference in vector of sufficient statistics
+            ndarray: difference in feature vector
         """
         return
 

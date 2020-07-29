@@ -1,7 +1,7 @@
 """"Implementations of MCMC Usher classes.
 
 An usher is used to generate step proposals for MC Monte Carlo sampling.
-For example a Flipper is simply proposes a change of the identity of a species
+For example a Flipper simply proposes a change of the identity of a species
 at a site, for use in a SemiGrand ensemble. A Swapper will propose a swap
 between species at two sites for use in Canonical ensemble simulations.
 
@@ -17,7 +17,7 @@ import random
 from smol.utils import derived_class_factory
 
 
-class MCUsher(ABC):
+class MCMCUsher(ABC):
     """Abstract base class for MCMC usher classes."""
 
     def __init__(self, sublattices, sublattice_probabilities=None):
@@ -31,7 +31,7 @@ class MCUsher(ABC):
         """
         self.sublattices = sublattices
         if sublattice_probabilities is None:
-            self._sublatt_probs = len(self.sublattices) * [1 / len(self.sublattices), ]  # noqa
+            self._sublatt_probs = len(self.sublattices)*[1/len(self.sublattices),]  # noqa
         elif len(sublattice_probabilities) != len(self.sublattices):
             raise AttributeError('Sublattice probabilites needs to be the '
                                  'same length as sublattices.')
@@ -58,7 +58,7 @@ class MCUsher(ABC):
         self._sublatt_probs = value
 
     @abstractmethod
-    def suggest_step(self, occupancy):
+    def propose_step(self, occupancy):
         """Propose an MCMC step.
 
         A step is given as a sequence of tuples, where each tuple is of the
@@ -78,10 +78,10 @@ class MCUsher(ABC):
         return random.choices(self.sublattices, weights=self._sublatt_probs)[0]
 
 
-class Flipper(MCUsher):
+class Flipper(MCMCUsher):
     """Implementation of a simple flip step at a random site."""
 
-    def suggest_step(self, occupancy):
+    def propose_step(self, occupancy):
         """Propose a single random flip step.
 
         A step is given as a sequence of tuples, where each tuple is of the
@@ -100,10 +100,10 @@ class Flipper(MCUsher):
         return [(site, random.choice(list(choices)))]
 
 
-class Swapper(MCUsher):
+class Swapper(MCMCUsher):
     """Implementation of a simple swap step for two random sites."""
 
-    def suggest_step(self, occupancy):
+    def propose_step(self, occupancy):
         """Propose a single random swap step.
 
         A step is given as a sequence of tuples, where each tuple is of the
@@ -145,7 +145,7 @@ def mcmc_usher_factory(usher_type, sublattices, *args, **kwargs):
             Keyword arguments passed to class constructor
 
     Returns:
-        MCUsher: instance of derived class.
+        MCMCUsher: instance of derived class.
     """
-    return derived_class_factory(usher_type.capitalize(), MCUsher,
+    return derived_class_factory(usher_type.capitalize(), MCMCUsher,
                                  sublattices, *args, **kwargs)

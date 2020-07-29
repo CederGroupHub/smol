@@ -15,7 +15,7 @@ class CanonicalEnsemble(Ensemble):
     """
     A Canonical Ensemble class to run Monte Carlo Simulations.
     """
-    valid_mc_ushers = ('Swapper',)
+    valid_mcmc_ushers = ('Swapper',)
 
     def __init__(self, processor, temperature, sublattices=None):
         """Initialize CanonicalEnemble.
@@ -37,8 +37,9 @@ class CanonicalEnsemble(Ensemble):
         """Get the vector of exponential parameters."""
         return self.processor.coefs
 
-    def compute_sufficient_statistics(self, occupancy):
+    def compute_feature_vector(self, occupancy):
         """Compute the sufficient statistics for a give occupancy.
+
 
         In the canonical case it is just the feature vector.
 
@@ -47,20 +48,20 @@ class CanonicalEnsemble(Ensemble):
                 encoded occupancy string
 
         Returns:
-            ndarray: vector of sufficient statistics
+            ndarray: feature vector
         """
         return self.processor.compute_feature_vector(occupancy)
 
-    def compute_sufficient_statistics_change(self, occupancy, move):
-        """Return the change in the sufficient statistics vector from a move.
+    def compute_feature_vector_change(self, occupancy, step):
+        """Return the change in the feature vector from a step.
 
         Args:
             occupancy (ndarray):
                 encoded occupancy string.
-            move (list of tuple):
-                A sequence of moves given my the MCMCMove.propose.
+            step (list of tuple):
+                A sequence of flips as given my the MCMCUsher.propose_step
 
         Returns:
-            ndarray: difference in vector of sufficient statistics
+            ndarray: difference in feature vector
         """
-        return self.processor.compute_feature_vector_change(occupancy, move)
+        return self.processor.compute_feature_vector_change(occupancy, step)

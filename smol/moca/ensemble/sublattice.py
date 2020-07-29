@@ -42,9 +42,9 @@ class Sublattice:
             sites (ndarray):
                 array with the site indices
         """
-        self.site_space = site_space
-        self.species = tuple(sites.keys())
         self.sites = sites
+        self.site_space = site_space
+        self.species = tuple(site_space.keys())
         self.active_sites = sites.copy()
         self.restricted_sites = []
 

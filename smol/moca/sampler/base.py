@@ -1,6 +1,6 @@
-"""Implementation of sampler classes.
+"""Implementation of base sampler classes.
 
-A samples essentially is an implementation of the MCMC algorithm that is used
+A sampler essentially is an implementation of the MCMC algorithm that is used
 by the corresponding ensemble to generate Monte Carlo samples.
 """
 
@@ -12,7 +12,6 @@ from warnings import warn
 import numpy as np
 
 from smol.moca.container import SampleContainer
-from .usher import mcmc_usher_factory
 
 
 class Sampler(ABC):
@@ -22,7 +21,8 @@ class Sampler(ABC):
     the ensemble classes.
     """
 
-    def __init__(self, ensemble, usher, container=None, seed=None):
+    def __init__(self, ensemble, usher, num_walkers=1, container=None,
+                 seed=None):
         """Initialize BaseSampler.
 
         Args:
@@ -30,8 +30,11 @@ class Sampler(ABC):
                 an Ensemble instance to sample from.
             usher (MCUsher)
                 MC Usher to suggest MCMC steps.
+            num_walkers (int):
+                Number of walkers used to generate chain. Default is 1
             container (SampleContainer)
-                A containter to store samples.
+                A containter to store samples. If given num_walkers is taken
+                from the container.
             seed (int): optional
                 seed for random number generator.
         """
@@ -45,7 +48,7 @@ class Sampler(ABC):
                                         ensemble.system_size,
                                         ensemble.sublattices,
                                         ensemble.natural_parameters,
-                                        ensemble_metadata)
+                                        ensemble_metadata, num_walkers)
         self._container = container
 
         if seed is None:
@@ -75,75 +78,91 @@ class Sampler(ABC):
         return self._container
 
     @abstractmethod
-    def sample(self):
-        return
+    def _attempt_step(self, occupancy):
+        """Attempts a MC step.
 
-    def run(self, ):
-
-
-
-
-
-
-        if usher is None:
-            usher = mcmc_usher_factory(ensemble.valid_mc_ushers[0])
-
-
-    def anneal(self, start_temperature, steps, mc_iterations,
-               cool_function=None):
-        """Carry out a simulated annealing procedure.
-
-        Uses the total number of temperatures given by "steps" interpolating
-        between the start and end temperature according to a cooling function.
-        The start temperature is the temperature set for the ensemble.
+        Returns the next state in the chain and if the attempted step was
+        successful.
 
         Args:
-           start_temperature (float):
-               Starting temperature. Must be higher than the current ensemble
-               temperature.
-           steps (int):
-               Number of temperatures to run MC simulations between start and
-               end temperatures.
-           mc_iterations (int):
-               number of Monte Carlo iterations to run at each temperature.
-           cool_function (str):
-               A (monotonically decreasing) function to interpolate
-               temperatures.
-               If none is given, linear interpolation is used.
-           set_min_occu (bool):
-               When True, sets the current occupancy and energy of the
-               ensemble to the minimum found during annealing.
-               Otherwise, do a full reset to initial occupancy and energy.
+            occupancy (ndarray):
+                encoded occupancy.
 
         Returns:
-           tuple: (minimum energy, occupancy, annealing data)
+            tuple: (acceptance, occupancy, features, enthalpy)
         """
-        if start_temperature < self.temperature:
-            raise ValueError('End temperature is greater than start '
-                             f'temperature {self.temperature} > '
-                             f'{start_temperature}.')
-        if cool_function is None:
-            temperatures = np.linspace(start_temperature, self.temperature,
-                                       steps)
-        else:
-            raise NotImplementedError('No other cooling functions implemented '
-                                      'yet.')
+        return tuple()
 
-        anneal_data = {}
-        for T in temperatures:
-            self.temperature = T
-            self.run(mc_iterations)
-            anneal_data[T] = self.data
-            self._data = []
+    def sample(self, nsteps, initial_occupancies, thin_by=1):
+        """Generate samples
 
-        min_occupancy = self.processor.decode_occupancy(min_occupancy)
-        return min_energy, min_occupancy, anneal_data
+        Yield a sample state every thin_by iterations. A state is give by
+        a tuple of (occupanices, feature_blob, enthalpies)
 
+        Args:
+            nsteps (int):
+                Number of iterations to run.
+            initial_occupancies (ndarray):
+                array of occupancies
+            thin_by (int): optional
+                Number to thin iterations by and provide samples.
 
-        # TODO check for site space overlap and warn
-        if move_type is None:
-            move_type = 'swap'
-        elif move_type not in self.valid_move_types:
-            raise ValueError(f'Provided move type {move_type} is not a valid '
-                             'option for a Canonical Ensemble. Valid options '
-                             f'are {self.valid_move_types}.')
+        Yields:
+            tuple: accepted, occupancies, feature_blob, enthalpies
+        """
+        occupancies = initial_occupancies.copy()
+        if initial_occupancies.shape != self.samples.shape:
+            if len(initial_occupancies.shape) == 1:
+                occupancies = np.reshape(occupancies, (1, len(occupancies)))
+            else:
+                raise AttributeError('The given initial occcupancies have '
+                                     'incompompatible dimensions. Shape should'
+                                     f' be {self.samples.shape}')
+        if nsteps % thin_by != 0:
+            warn(f'The number of steps {nsteps} is not a multiple of thin_by '
+                 f' {thin_by}. The last {nsteps % thin_by} will be ignored.',
+                 category=RuntimeWarning)
+        # TODO check that initial states are independent if num_walkers > 1
+
+        # allocate arrays for states
+        occupancies = np.ascontiguousarray(occupancies, dtype=int)
+        accepted = np.zeros(occupancies.shape[0], dtype=int)
+        enthalpies = np.empty(occupancies.shape[0])
+        feature_blob = np.empty((occupancies.shape[0],
+                                len(self.ensemble.natural_parameters)))
+
+        for _ in range(nsteps // thin_by):
+            for _ in range(thin_by):
+                for i, (accept, occupancy, features, enthalpy) in \
+                  enumerate(map(self._attempt_step, occupancies)):
+                    accepted[i] += accept
+                    occupancies[i] = occupancy
+                    feature_blob[i] = features
+                    enthalpies[i] = enthalpy
+            # yield copies
+            yield (accepted.copy(), occupancies.copy(), feature_blob.copy(),
+                   enthalpies.copy())
+
+    # TODO add progress option and streaming
+    def run(self, nsteps, initial_occupancies=None, thin_by=1):
+        """Run an MCMC sampling simulations.
+
+        Args:
+            nsteps (int):
+                number of total MC steps.
+            initial_occupancies (ndarray):
+                array of occupancies. If None, the last sample will be taken.
+            thin_by (int): optional
+                the amount to thin by for saving samples.
+        """
+        if initial_occupancies is None:
+            try:
+                initial_occupancies = self.samples.get_occupancy_chain()[-1]
+            except IndexError:
+                raise RuntimeError('There are no saved samples to obtain the '
+                                   'initial occupancies. These must be '
+                                   'provided.')
+
+        for result in self.sample(nsteps, initial_occupancies,
+                                  thin_by=thin_by):
+            self.samples.save_sample(*result)

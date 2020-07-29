@@ -10,7 +10,7 @@ Two classes are different SGC ensemble implemented:
 
 __author__ = "Luis Barroso-Luque"
 
-from abc import ABCMeta
+from abc import abstractmethod
 from math import log, prod
 import numpy as np
 
@@ -19,7 +19,7 @@ from smol.moca.processor.base import Processor
 from smol.moca.ensemble.base import Ensemble
 
 
-class BaseSemiGrandEnsemble(Ensemble, metaclass=ABCMeta):
+class BaseSemiGrandEnsemble(Ensemble):
     """Abstract Semi-Grand Canonical Base Ensemble.
 
     Total number of species are fixed but composition of "active" (with partial
@@ -28,7 +28,7 @@ class BaseSemiGrandEnsemble(Ensemble, metaclass=ABCMeta):
     This class can not be instantiated. See MuSemiGrandEnsemble and
     FuSemiGrandEnsemble below.
     """
-    valid_mc_ushers = ('Flipper',)
+    valid_mcmc_ushers = ('Flipper',)
 
     def __init__(self, processor, temperature, sublattices=None):
         """Initialize BaseSemiGrandEnsemble.
@@ -44,15 +44,36 @@ class BaseSemiGrandEnsemble(Ensemble, metaclass=ABCMeta):
                 supercell with same site spaces.
         """
         super().__init__(processor, temperature, sublattices=sublattices)
-        self.__params = np.append(self.processor.coefs, 1.0)
+        self.__params = np.append(self.processor.coefs, -1.0)
 
     @property
     def natural_parameters(self):
         """Get the vector of natural parameters.
 
-        For SGC an extra 1 is added for the chemical part of the LT.
+        For SGC an extra -1 is added for the chemical part of the LT.
         """
         return self.__params
+
+    @abstractmethod
+    def compute_chemical_work(self, occupancy):
+        """Compute the chemical work term"""
+        return []
+
+    def compute_feature_vector(self, occupancy):
+        """Compute the feature vector for a give occupancy.
+
+        In the canonical case it is just the feature vector from the processor.
+
+        Args:
+            occupancy (ndarray):
+                encoded occupancy string
+
+        Returns:
+            ndarray: feature vector
+        """
+        feature_vector = self.processor.compute_feature_vector(occupancy)
+        chemical_work = self.compute_chemical_work(occupancy)
+        return np.append(feature_vector, chemical_work)  # prellocate to improve speed
 
 
 class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
@@ -117,41 +138,25 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
         self.__mus = value
         self._mu_table = self._build_mu_table(value)
 
-    def compute_sufficient_statistics(self, occupancy):
-        """Compute the sufficient statistics for a give occupancy.
-
-        In the canonical case it is just the feature vector.
-
-        Args:
-            occupancy (ndarray):
-                encoded occupancy string
-
-        Returns:
-            ndarray: vector of sufficient statistics
-        """
-        feature_vector = self.processor.compute_feature_vector(occupancy)
-        gibbs_pot = self.compute_gibbs_potential(occupancy)
-        return np.append(feature_vector, gibbs_pot)
-
-    def compute_sufficient_statistics_change(self, occupancy, move):
-        """Return the change in the sufficient statistics vector from a move.
+    def compute_feature_vector_change(self, occupancy, step):
+        """Return the change in the feature vector from a step.
 
         Args:
             occupancy (ndarray):
                 encoded occupancy string.
-            move (list of tuple):
-                A sequence of moves given my the MCMCMove.propose.
+            step (list of tuple):
+                A sequence of flips given my the MCMCUsher.propose_step
 
         Returns:
-            ndarray: difference in vector of sufficient statistics
+            ndarray: difference in feature vector
         """
         delta_feature = self.processor.compute_feature_vector_change(occupancy,
-                                                                     move)
-        delta_mu = (self._mu_table[move[0]][occupancy[move[0]]]
-                    - self._mu_table[move[0]][move[1]])  # -delta mu actually
+                                                                     step)
+        delta_mu = sum(self._mu_table[f[0]][f[1]]
+                       - self._mu_table[f[0]][occupancy[f[0]]] for f in step)
         return np.append(delta_feature, delta_mu)  # prellocate to improve speed
 
-    def compute_gibbs_potential(self, occupancy):
+    def compute_chemical_work(self, occupancy):
         """Compute sum of mu * N for given occupancy"""
         return sum(self._mu_table[site][species]
                    for site, species in enumerate(occupancy))
@@ -163,12 +168,12 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
         of chemical potential changes from flips. Not that the total number
         of columns will be the number of species in the largest site space. For
         smaller site spaces the values at those rows are meaningless and will
-        be given values of inf. Also rows representing sites with not partial
-        occupancy will have all inf values and should never be used.
+        be given values of 0. Also rows representing sites with not partial
+        occupancy will have all 0 values and should never be used.
         """
         num_cols = max(len(site_space) for site_space
                        in self.processor.unique_site_spaces)
-        table = np.inf * np.ones((self.num_sites, num_cols))
+        table = np.zeros((self.num_sites, num_cols))
         for sublatt in self.sublattices:
             ordered_pots = [chemical_potentials[sp] for sp in sublatt.species]
             table[sublatt.sites, :len(ordered_pots)] = ordered_pots
@@ -243,41 +248,26 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         self.__fus = value
         self._fu_table = self._build_fu_table(value)
 
-    def compute_sufficient_statistics(self, occupancy):
-        """Compute the sufficient statistics for a give occupancy.
-
-        In the canonical case it is just the feature vector.
-
-        Args:
-            occupancy (ndarray):
-                encoded occupancy string
-
-        Returns:
-            ndarray: vector of sufficient statistics
-        """
-        feature_vector = self.processor.compute_feature_vector(occupancy)
-        gibbs_pot = self.compute_gibbs_potential(occupancy)
-        return np.append(feature_vector, gibbs_pot)
-
-    def compute_sufficient_statistics_change(self, occupancy, move):
-        """Return the change in the sufficient statistics vector from a move.
+    def compute_feature_vector_change(self, occupancy, step):
+        """Return the change in the sufficient statistics vector from a step.
 
         Args:
             occupancy (ndarray):
                 encoded occupancy string.
-            move (list of tuple):
-                A sequence of moves given my the MCMCMove.propose.
+            step (list of tuple):
+                A sequence of flips given my the MCMCUsher.propose_step
 
         Returns:
             ndarray: difference in vector of sufficient statistics
         """
         delta_feature = self.processor.compute_feature_vector_change(occupancy,
-                                                                     move)
-        delta_log_fu = log(self._fu_table[move[0]][move[1]] /
-                           self._fu_table[move[0]][occupancy[move[0]]])
+                                                                     step)
+        delta_log_fu = log(prod(self._fu_table[f[0]][f[1]] /
+                                self._fu_table[f[0]][occupancy[f[0]]]
+                                for f in step))
         return np.append(delta_feature, delta_log_fu)  # prellocate to improve speed
 
-    def compute_gibbs_potential(self, occupancy):
+    def compute_chemical_work(self, occupancy):
         """Compute log of product of fugacities for given occupancy"""
         return log(prod(self._fu_table[site][species]
                         for site, species in enumerate(occupancy)))
@@ -289,12 +279,12 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         of fugacity fraction changes from flips. Not that the total number
         of columns will be the number of species in the largest site space. For
         smaller site spaces the values at those rows are meaningless and will
-        be given values of inf. Also rows representing sites with not partial
-        occupancy will have all inf values and should never be used.
+        be given values of 0. Also rows representing sites with not partial
+        occupancy will have all 0 values and should never be used.
         """
         num_cols = max(len(site_space) for site_space
                        in self.processor.unique_site_spaces)
-        table = np.inf * np.ones((self.num_sites, num_cols))
+        table = np.zeros((self.num_sites, num_cols))
         for fus, sublatt in zip(self.sublattices, fugacity_fractions):
             ordered_fus = [fugacity_fractions[sp] for sp in sublatt.species]
             table[sublatt.sites, :len(ordered_fus)] = ordered_fus

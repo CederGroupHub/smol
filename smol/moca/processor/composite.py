@@ -41,12 +41,13 @@ class CompositeProcessor(Processor):
                 Cluster Expansion prim structure.
         """
         super().__init__(cluster_subspace, supercell_matrix, None)
-        self._processors = []
+        self.__processors = []
+        self.coefs = np.empty(0)
 
     @property
     def processors(self):
         """Return the list of processor in composite."""
-        return self._processors
+        return self.__processors
 
     def add_processor(self, processor_class, *args, **kwargs):
         """Add a processor to composite.
@@ -63,7 +64,8 @@ class CompositeProcessor(Processor):
         """
         processor = processor_class(self._subspace, self._scmatrix,
                                     *args, **kwargs)
-        self._processors.append(processor)
+        self.__processors.append(processor)
+        self.coefs = np.append(self.coefs, processor.coefs)
 
     def compute_property(self, occupancy):
         """Compute the value of the property for the given occupancy array.
@@ -74,7 +76,7 @@ class CompositeProcessor(Processor):
         Returns:
             float: predicted property
         """
-        return sum(pr.compute_property(occupancy) for pr in self._processors)
+        return sum(pr.compute_property(occupancy) for pr in self.__processors)
 
     def compute_property_change(self, occupancy, flips):
         """Compute change in property from a set of flips.
@@ -89,7 +91,7 @@ class CompositeProcessor(Processor):
             float:  property difference between inital and final states
         """
         return sum(pr.compute_property_change(occupancy, flips)
-                   for pr in self._processors)
+                   for pr in self.__processors)
 
     def compute_feature_vector(self, occupancy):
         """Compute the feature vector for a given occupancy array.
@@ -105,7 +107,7 @@ class CompositeProcessor(Processor):
             array: correlation vector
         """
         features = [np.array(pr.compute_feature_vector(occupancy))
-                   for pr in self._processors]
+                    for pr in self.__processors]
         # TODO you may be able to cut some speed by pre-allocating this
         return np.append(features[0], features[1:])
 
@@ -126,7 +128,7 @@ class CompositeProcessor(Processor):
             array: change in feature vector
         """
         updates = [np.array(pr.compute_feature_vector_change(occupancy, flips))
-                   for pr in self._processors]
+                   for pr in self.__processors]
         # TODO you may be able to cut some speed by pre-allocating this
         return np.append(updates[0], updates[1:])
 
@@ -138,7 +140,7 @@ class CompositeProcessor(Processor):
             MSONable dict
         """
         d = super().as_dict()
-        d['_processors'] = [pr.as_dict() for pr in self._processors]
+        d['_processors'] = [pr.as_dict() for pr in self.__processors]
         return d
 
     @classmethod
@@ -146,5 +148,5 @@ class CompositeProcessor(Processor):
         """Create a Composite from serialized MSONable dict."""
         pr = cls(ClusterSubspace.from_dict(d['cluster_subspace']),
                  np.array(d['supercell_matrix']))
-        pr._processors = [Processor.from_dict(prd) for prd in d['_processors']]
+        pr.__processors = [Processor.from_dict(prd) for prd in d['_processors']]
         return pr
