@@ -24,6 +24,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
 
     Attributes:
         temperature (float): temperature in Kelvin
+
     """
 
     def __init__(self, processor, temperature, sample_interval,
@@ -58,6 +59,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
                 these sublattices.
             seed (int):
                 Seed for random number generator.
+
         """
         super().__init__(processor, initial_occupancy=initial_occupancy,
                          sample_interval=sample_interval, seed=seed,
@@ -71,8 +73,8 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         if site_space_overlap:
             self._sublattice_overlap = defaultdict(list)
             for sublatt1, sublatt2 in combinations(self._sublattices, 2):
-                species1 = sublatt1['site_space'].keys()
-                species2 = sublatt2['site_space'].keys()
+                species1 = self._sublattices[sublatt1]['site_space'].keys()
+                species2 = self._sublattices[sublatt2]['site_space'].keys()
                 overlap = set(species1).intersection(species2)
                 if len(overlap) >= 2:
                     for sp in overlap:
@@ -159,6 +161,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
 
         Returns:
            tuple: (minimum energy, occupation, annealing data)
+
         """
         if start_temperature < self.temperature:
             raise ValueError('End temperature is greater than start '
@@ -211,6 +214,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
 
         Returns: Flip acceptance
             bool
+
         """
         flips = self._get_flips(sublattices)
         delta_e = self.processor.compute_property_change(self._occupancy,
@@ -235,6 +239,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
                 If only considering one sublattice.
         Returns:
             tuple
+
         """
         if sublattices is None:
             sublattices = self.sublattices
@@ -247,23 +252,29 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         swap_options = [i for i in sites if self._occupancy[i] != occu1]
         if self._sublattice_overlap:
             sspace = self._active_sublatts[sublatt_name]['site_space']
-            sp = list(sspace.keys()).index(occu1)
-            for (sublatt1, sublatt2), sp_compliment in self._sublattice_overlap[sp]:
-                if sublatt1['site_space'] == sspace:
+            sp = list(sspace.keys())[occu1]
+            for (sublatt1, sublatt2), sp_compliment in \
+                    self._sublattice_overlap[sp]:
+                if self._sublattices[sublatt1]['site_space'] == sspace:
                     swap_sublatt = sublatt2
-                elif sublatt2['site_space'] == sspace:
+                elif self._sublattices[sublatt2]['site_space'] == sspace:
                     swap_sublatt = sublatt1
                 else:
-                    raise RuntimeError('Somthing has gone real off!!!')
-                swap_species = list(swap_sublatt['site_space'].keys())
-                allowed_swaps = (swap_species.index(s) for s in sp_compliment)
-                swap_options += [i for i in swap_sublatt['sites']
-                                 if i in allowed_swaps]
+                    raise RuntimeError('Something has gone real off!!!')
+                swap_species = \
+                    list(self._sublattices[swap_sublatt]['site_space'].keys())
+                allowed_swaps = [swap_species.index(s) for s in sp_compliment]
+                swap_options += [i for i in
+                                 self._sublattices[swap_sublatt]['sites']
+                                 if self._occupancy[i] in allowed_swaps]
 
         if swap_options:
             site2 = random.choice(swap_options)
-            return ((site1, self._occupancy[site2]),
-                    (site2, occu1))
+            sp = self.processor.allowed_species[site1][self._occupancy[site1]]
+            sp2 = self.processor.allowed_species[site2][self._occupancy[site2]]
+
+            return ((site1, self.processor.allowed_species[site1].index(sp2)),
+                    (site2, self.processor.allowed_species[site2].index(sp)))
         else:
             # inefficient, maybe re-call method? infinite recursion problem
             return tuple()
@@ -279,6 +290,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
 
         Returns:
             MSONable dict
+
         """
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
@@ -308,6 +320,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
 
         Returns:
             CanonicalEnsemble
+            
         """
         eb = cls(BaseProcessor.from_dict(d['processor']),
                  temperature=d['temperature'],
