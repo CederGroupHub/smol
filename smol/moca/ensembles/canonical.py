@@ -71,8 +71,8 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         if site_space_overlap:
             self._sublattice_overlap = defaultdict(list)
             for sublatt1, sublatt2 in combinations(self._sublattices, 2):
-                species1 = sublatt1['site_space'].keys()
-                species2 = sublatt2['site_space'].keys()
+                species1 = self._sublattices[sublatt1]['site_space'].keys()
+                species2 = self._sublattices[sublatt2]['site_space'].keys()
                 overlap = set(species1).intersection(species2)
                 if len(overlap) >= 2:
                     for sp in overlap:
@@ -247,23 +247,28 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         swap_options = [i for i in sites if self._occupancy[i] != occu1]
         if self._sublattice_overlap:
             sspace = self._active_sublatts[sublatt_name]['site_space']
-            sp = list(sspace.keys()).index(occu1)
+            sp = list(sspace.keys())[occu1]
             for (sublatt1, sublatt2), sp_compliment in self._sublattice_overlap[sp]:
-                if sublatt1['site_space'] == sspace:
+                if self._sublattices[sublatt1]['site_space'] == sspace:
                     swap_sublatt = sublatt2
-                elif sublatt2['site_space'] == sspace:
+                elif self._sublattices[sublatt2]['site_space'] == sspace:
                     swap_sublatt = sublatt1
                 else:
-                    raise RuntimeError('Somthing has gone real off!!!')
-                swap_species = list(swap_sublatt['site_space'].keys())
-                allowed_swaps = (swap_species.index(s) for s in sp_compliment)
-                swap_options += [i for i in swap_sublatt['sites']
-                                 if i in allowed_swaps]
+                    raise RuntimeError('Something has gone real off!!!')
+                swap_species = list(self._sublattices[swap_sublatt]['site_space'].keys())
+                allowed_swaps = [swap_species.index(s) for s in sp_compliment]
+                swap_options += [i for i in self._sublattices[swap_sublatt]['sites']
+                                 if self._occupancy[i] in allowed_swaps]
 
         if swap_options:
             site2 = random.choice(swap_options)
-            return ((site1, self._occupancy[site2]),
-                    (site2, occu1))
+            # Need to adjust flip if relevant bit for one species is not the same
+            # sp is species of site1; sp2 is species of site2
+            sp = self.processor.allowed_species[site1][self._occupancy[site1]]
+            sp2 = self.processor.allowed_species[site2][self._occupancy[site2]]
+
+            return ((site1, self.processor.allowed_species[site1].index(sp2)),
+                    (site2, self.processor.allowed_species[site2].index(sp)))
         else:
             # inefficient, maybe re-call method? infinite recursion problem
             return tuple()
