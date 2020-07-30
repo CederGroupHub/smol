@@ -81,6 +81,12 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
                         overlap_info = ((sublatt1, sublatt2), overlap - {sp})
                         self._sublattice_overlap[sp].append(overlap_info)
 
+        self._reset_site_table()
+        self._sites_to_sublattice = {}
+        for sublatt in self._sublattices:
+            for site in self._sublattices[sublatt]['sites']:
+                self._sites_to_sublattice[site] = sublatt
+
     @property
     def temperature(self):
         """Get the temperature of ensemble."""
@@ -201,6 +207,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         super().reset()
         self._min_energy = self.processor.compute_property(self._occupancy)
         self._min_occupancy = self._occupancy
+        self._reset_site_table()
 
     def _attempt_step(self, sublattices=None):
         """Attempt flips corresponding to an elementary canonical swap.
@@ -225,6 +232,8 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             self._property += delta_e
             for f in flips:
                 self._occupancy[f[0]] = f[1]
+            self._update_site_table(flips)
+
             if self._property < self._min_energy:
                 self._min_energy = self._property
                 self._min_occupancy = self._occupancy.copy()
@@ -248,33 +257,33 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         sites = self._active_sublatts[sublatt_name]['sites']
         site1 = random.choice(sites)
         occu1 = self._occupancy[site1]
+        sp1 = self.processor.allowed_species[site1][self._occupancy[site1]]
 
-        swap_options = [i for i in sites if self._occupancy[i] != occu1]
+        # Build swap_options more quickly from self._site_table
+        swap_options = []
+        for sp in self._site_table:
+            if sp != sp1:
+                swap_options += self._site_table[sp][sublatt_name]
+
         if self._sublattice_overlap:
             sspace = self._active_sublatts[sublatt_name]['site_space']
-            sp = list(sspace.keys())[occu1]
             for (sublatt1, sublatt2), sp_compliment in \
-                    self._sublattice_overlap[sp]:
+                    self._sublattice_overlap[sp1]:
                 if self._sublattices[sublatt1]['site_space'] == sspace:
                     swap_sublatt = sublatt2
                 elif self._sublattices[sublatt2]['site_space'] == sspace:
                     swap_sublatt = sublatt1
                 else:
                     raise RuntimeError('Something has gone real off!!!')
-                swap_species = \
-                    list(self._sublattices[swap_sublatt]['site_space'].keys())
-                allowed_swaps = [swap_species.index(s) for s in sp_compliment]
-                swap_options += [i for i in
-                                 self._sublattices[swap_sublatt]['sites']
-                                 if self._occupancy[i] in allowed_swaps]
+                for sp in sp_compliment:
+                    swap_options += self._site_table[sp][swap_sublatt]
 
         if swap_options:
             site2 = random.choice(swap_options)
-            sp = self.processor.allowed_species[site1][self._occupancy[site1]]
             sp2 = self.processor.allowed_species[site2][self._occupancy[site2]]
 
             return ((site1, self.processor.allowed_species[site1].index(sp2)),
-                    (site2, self.processor.allowed_species[site2].index(sp)))
+                    (site2, self.processor.allowed_species[site2].index(sp1)))
         else:
             # inefficient, maybe re-call method? infinite recursion problem
             return tuple()
@@ -284,6 +293,38 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         data = super()._get_current_data()
         data['energy'] = self.current_energy
         return data
+
+    def _update_site_table(self, swap):
+        """Update site table based on a given swap"""
+        site1 = swap[0][0]
+        site2 = swap[1][0]
+        sublatt1 = self._sites_to_sublattice[site1]
+        sublatt2 = self._sites_to_sublattice[site2]
+        sp1 = self.processor.allowed_species[site1][swap[0][1]]
+        sp2 = self.processor.allowed_species[site2][swap[1][1]]
+
+        # update self._site_table
+        self._site_table[sp1][sublatt2][:] = [x for x in self._site_table[sp1][sublatt2]
+                                              if x != site2]
+        self._site_table[sp1][sublatt1].append(site1)
+        self._site_table[sp2][sublatt1][:] = [x for x in self._site_table[sp2][sublatt1]
+                                              if x != site1]
+        self._site_table[sp2][sublatt2].append(site2)
+
+    def _reset_site_table(self):
+        """Set site table based on current occupancy"""
+        self._site_table = {}
+        possible_sp = []
+        for site_space in self.processor.unique_site_spaces:
+            possible_sp += site_space.keys()
+        possible_sp = list(set(possible_sp))
+
+        for sp in possible_sp:
+            sp_str = str(sp)
+            self._site_table[sp_str] = {}
+            for sublatt in self.sublattices:
+                self._site_table[sp_str][sublatt] = [i for i in self._sublattices[sublatt]['sites']
+                                                     if self.processor.allowed_species[i][self._occupancy[i]] == sp_str]
 
     def as_dict(self) -> dict:
         """Json-serialization dict representation.
