@@ -58,6 +58,12 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         self._min_energy = self._property
         self._min_occupancy = self._init_occupancy
 
+        self._reset_site_table()
+        self._sites_to_sublattice = {}
+        for sublatt in self._sublattices:
+            for site in self._sublattices[sublatt]['sites']:
+                self._sites_to_sublattice[site] = sublatt
+
     @property
     def temperature(self):
         """Get the temperature of ensemble."""
@@ -177,6 +183,19 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         super().reset()
         self._min_energy = self.processor.compute_property(self._occupancy)
         self._min_occupancy = self._occupancy
+        self._reset_site_table()
+
+    def restrict_sites(self, sites):
+        """Restricts (freezes) the given sites.
+        This will exclude those sites from being flipped during a Monte Carlo
+        run. If some of the given indices refer to inactive sites, there will
+        be no effect.
+        Args:
+            sites (Sequence):
+                indices of sites in the occupancy string to restrict.
+        """
+        super().restrict_sites(sites)
+        self._reset_site_table()
 
     def _attempt_step(self, sublattices=None):
         """Attempt flips corresponding to an elementary canonical swap.
@@ -200,6 +219,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             self._property += delta_e
             for f in flips:
                 self._occupancy[f[0]] = f[1]
+                self._update_site_table(flips)
             if self._property < self._min_energy:
                 self._min_energy = self._property
                 self._min_occupancy = self._occupancy.copy()
@@ -223,6 +243,15 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         site1 = random.choice(sites)
         swap_options = [i for i in sites
                         if self._occupancy[i] != self._occupancy[site1]]
+
+        sp1 = self.processor.allowed_species[site1][self._occupancy[site1]]
+
+        # Build swap_options more quickly from self._site_table
+        swap_options = []
+        for sp in self._site_table:
+            if sp != sp1:
+                swap_options += self._site_table[sp][sublatt_name]
+
         if swap_options:
             site2 = random.choice(swap_options)
             return ((site1, self._occupancy[site2]),
@@ -236,6 +265,40 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         data = super()._get_current_data()
         data['energy'] = self.current_energy
         return data
+
+    def _update_site_table(self, swap):
+        """Update site table based on a given swap."""
+        if len(swap) == 2:
+            site1 = swap[0][0]
+            site2 = swap[1][0]
+            sublatt1 = self._sites_to_sublattice[site1]
+            sublatt2 = self._sites_to_sublattice[site2]
+            sp1 = self.processor.allowed_species[site1][swap[0][1]]
+            sp2 = self.processor.allowed_species[site2][swap[1][1]]
+
+            # update self._site_table
+            self._site_table[sp1][sublatt2][:] = [x for x in self._site_table[sp1][sublatt2]
+                                                  if x != site2]
+            self._site_table[sp1][sublatt1].append(site1)
+            self._site_table[sp2][sublatt1][:] = [x for x in self._site_table[sp2][sublatt1]
+                                                  if x != site1]
+            self._site_table[sp2][sublatt2].append(site2)
+
+    def _reset_site_table(self):
+        """Set site table based on current occupancy."""
+        self._site_table = {}
+        possible_sp = []
+        for site_space in self.processor.unique_site_spaces:
+            possible_sp += site_space.keys()
+        possible_sp = list(set(possible_sp))
+
+        for sp in possible_sp:
+            sp_str = str(sp)
+            self._site_table[sp_str] = {}
+            for sublatt in self._active_sublatts:
+                self._site_table[sp_str][sublatt] = [i for i in self._active_sublatts[sublatt]['sites']
+                                                     if self.processor.allowed_species[i][self._occupancy[i]] == sp_str]
+
 
     def as_dict(self) -> dict:
         """Json-serialization dict representation.
