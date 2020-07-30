@@ -6,6 +6,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 from smol.constants import kB
+from smol.moca import CompositeProcessor, CEProcessor, EwaldProcessor
 from .sublattice import Sublattice
 
 
@@ -35,6 +36,49 @@ class Ensemble(ABC):
         self._sublattices = sublattices
         self.restricted_sites = []
         self.thermo_boundaries = {}  # not pretty way to save general info
+
+    @classmethod
+    def from_cluster_expansion(cls, cluster_expansion, supercell_matrix,
+                               temperature, optimize_indicator=False,
+                               **kwargs):
+        """Initialize an ensemble from a cluster expansion.
+
+        Convenience constructor to instantiate an ensemble. This will take
+        care of initializing the correct processor based on the
+        ClusterExpansion.
+
+        Args:
+            cluster_expansion (ClusterExpansion):
+                A cluster expansion object.
+            supercell_matrix (ndarray):
+                Supercell matrix defining the system size.
+            temperature (float):
+                Ensemble temperature.
+            optimize_indicator (bool): optional
+                Wether to optimize calculations for indicator basis.
+            **kwargs:
+                Keyword arguments to pass to ensemble constructor. Such as
+                sublattices, sublattice_probabilities, chemical_potentials,
+                fugacity_fractions.
+
+        Returns:
+            Ensemble
+        """
+        if len(cluster_expansion.cluster_subspace.external_terms) > 0:
+            processor = CompositeProcessor(cluster_expansion.cluster_subspace,
+                                           supercell_matrix)
+            processor.add_processor(CEProcessor, cluster_expansion.coefs[:-1],
+                                    optimize_indicator=optimize_indicator)
+            # at some point determine term and spinup processor maybe with a
+            # factory, if we ever implement more external terms.
+            ewald_term = cluster_expansion.cluster_subspace.external_terms[0]
+            processor.add_processor(EwaldProcessor, ewald_term=ewald_term,
+                                    coefficient=cluster_expansion.coefs[-1])
+        else:
+            processor = CEProcessor(cluster_expansion.cluster_subspace,
+                                    supercell_matrix, cluster_expansion.coefs,
+                                    optimize_indicator=optimize_indicator)
+        return cls(processor, temperature, **kwargs)
 
     @property
     def temperature(self):
@@ -108,7 +152,7 @@ class Ensemble(ABC):
 
     @abstractmethod
     def compute_feature_vector_change(self, occupancy, step):
-        """Return the change in the feature vector from a step.
+        """Compute the change in the feature vector from a step.
 
         Args:
             occupancy (ndarray):

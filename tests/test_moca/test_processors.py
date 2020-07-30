@@ -398,7 +398,6 @@ class TestCompositeProcessor(unittest.TestCase):
     def test_msonable(self):
         d = self.pr.as_dict()
         pr = CompositeProcessor.from_dict(d)
-        print(self.pr.__processors)
         self.assertEqual(self.pr.compute_property(self.enc_occu),
                          pr.compute_property(self.enc_occu))
         j = json.dumps(d)

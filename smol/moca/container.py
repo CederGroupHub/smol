@@ -75,23 +75,31 @@ class SampleContainer(MSONable):
         """Get the shape of the samples in chain."""
         return self.__chain.shape[1:]
 
-    @property
+    @property  # TODO check why this is buggy and wrong
     def sampling_efficiency(self):
         """Return the sampling efficiency for each chain."""
         return self._accepted / self.num_samples
 
     def get_occupancies(self, thin_by=1, discard=0, flat=False):
         """Get an occupancy chain from samples."""
-        # TODO implement flat part
-        return self.__chain[discard + thin_by - 1::thin_by]
+        chain = self.__chain[discard + thin_by - 1::thin_by]
+        if flat:
+            chain = self._flatten_chain(chain)
+        return chain
 
     def get_ethalpy_changes(self, thin_by=1, discard=0, flat=False):
         """Get the entalpy changes from chain"""
-        return self.__denthalpy[discard + thin_by - 1::thin_by]
+        chain = self.__denthalpy[discard + thin_by - 1::thin_by]
+        if flat:
+            chain = self._flatten_chain(chain)
+        return chain
 
     def get_feature_changes(self, thin_by=1, discard=0, flat=False):
         """Get the feature vector changes from chain"""
-        return self.__dfeature_blob[discard + thin_by - 1::thin_by]
+        chain = self.__dfeature_blob[discard + thin_by - 1::thin_by]
+        if flat:
+            chain = self._flatten_chain(chain)
+        return chain
 
     def mean_energy(self):
         """Calculate the mean energy from samples."""
@@ -142,6 +150,14 @@ class SampleContainer(MSONable):
         return
 
     def get_minimum_energy_occupancy(self):
+        """Find the occupancy with minimum energy from samples."""
+        return
+
+    def get_minimum_enthalpy(self):
+        """Get the minimum energy from samples."""
+        return
+
+    def get_minimum_enthalpy_occupancy(self):
         """Find the occupancy with minimum energy from samples."""
         return
 

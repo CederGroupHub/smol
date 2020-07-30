@@ -249,7 +249,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         self._fu_table = self._build_fu_table(value)
 
     def compute_feature_vector_change(self, occupancy, step):
-        """Return the change in the sufficient statistics vector from a step.
+        """"Compute the change in the feature vector from a step.
 
         Args:
             occupancy (ndarray):

@@ -38,7 +38,7 @@ class CanonicalEnsemble(Ensemble):
         return self.processor.coefs
 
     def compute_feature_vector(self, occupancy):
-        """Compute the sufficient statistics for a give occupancy.
+        """Compute the feature vector for a give occupancy
 
 
         In the canonical case it is just the feature vector.
@@ -53,7 +53,7 @@ class CanonicalEnsemble(Ensemble):
         return self.processor.compute_feature_vector(occupancy)
 
     def compute_feature_vector_change(self, occupancy, step):
-        """Return the change in the feature vector from a step.
+        """Compute the change in the feature vector from a step.
 
         Args:
             occupancy (ndarray):
