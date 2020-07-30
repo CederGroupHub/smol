@@ -21,7 +21,7 @@ class Sampler(ABC):
     the ensemble classes.
     """
 
-    def __init__(self, ensemble, usher, num_walkers=1, container=None,
+    def __init__(self, ensemble, usher, nwalkers=1, container=None,
                  seed=None):
         """Initialize BaseSampler.
 
@@ -30,7 +30,7 @@ class Sampler(ABC):
                 an Ensemble instance to sample from.
             usher (MCUsher)
                 MC Usher to suggest MCMC steps.
-            num_walkers (int):
+            nwalkers (int):
                 Number of walkers used to generate chain. Default is 1
             container (SampleContainer)
                 A containter to store samples. If given num_walkers is taken
@@ -45,16 +45,17 @@ class Sampler(ABC):
             ensemble_metadata = {'name': type(ensemble).__name__}
             ensemble_metadata.update(ensemble.thermo_boundaries)
             container = SampleContainer(ensemble.temperature,
-                                        ensemble.system_size,
+                                        ensemble.num_sites,
                                         ensemble.sublattices,
                                         ensemble.natural_parameters,
-                                        ensemble_metadata, num_walkers)
+                                        ensemble_metadata, nwalkers)
         self._container = container
 
         if seed is None:
             seed = random.randint(1, 1E24)
 
         self.__seed = seed
+        self.__nwalkers = nwalkers
         random.seed(seed)
 
     @property
@@ -77,6 +78,11 @@ class Sampler(ABC):
     def samples(self):
         return self._container
 
+    @property
+    def efficiency(self):
+        """Return the sampling efficiency for each walker."""
+        return self.samples.sampling_efficiency
+
     @abstractmethod
     def _attempt_step(self, occupancy):
         """Attempts a MC step.
@@ -89,7 +95,7 @@ class Sampler(ABC):
                 encoded occupancy.
 
         Returns:
-            tuple: (acceptance, occupancy, features, enthalpy)
+            tuple: (acceptance, occupancy, features change, enthalpy change)
         """
         return tuple()
 
@@ -108,11 +114,12 @@ class Sampler(ABC):
                 Number to thin iterations by and provide samples.
 
         Yields:
-            tuple: accepted, occupancies, feature_blob, enthalpies
+            tuple: accepted, occupancies, features change, enthalpies change
         """
         occupancies = initial_occupancies.copy()
         if initial_occupancies.shape != self.samples.shape:
-            if len(initial_occupancies.shape) == 1:
+            # check if this is only a single walker.
+            if len(initial_occupancies.shape) == 1 and self.__nwalkers == 1:
                 occupancies = np.reshape(occupancies, (1, len(occupancies)))
             else:
                 raise AttributeError('The given initial occcupancies have '
@@ -127,9 +134,9 @@ class Sampler(ABC):
         # allocate arrays for states
         occupancies = np.ascontiguousarray(occupancies, dtype=int)
         accepted = np.zeros(occupancies.shape[0], dtype=int)
-        enthalpies = np.empty(occupancies.shape[0])
-        feature_blob = np.empty((occupancies.shape[0],
-                                len(self.ensemble.natural_parameters)))
+        delta_enthalpies = np.empty(occupancies.shape[0])
+        delta_feature_blob = np.empty((occupancies.shape[0],
+                                      len(self.ensemble.natural_parameters)))
 
         for _ in range(nsteps // thin_by):
             for _ in range(thin_by):
@@ -137,11 +144,11 @@ class Sampler(ABC):
                   enumerate(map(self._attempt_step, occupancies)):
                     accepted[i] += accept
                     occupancies[i] = occupancy
-                    feature_blob[i] = features
-                    enthalpies[i] = enthalpy
+                    delta_feature_blob[i] = features
+                    delta_enthalpies[i] = enthalpy
             # yield copies
-            yield (accepted.copy(), occupancies.copy(), feature_blob.copy(),
-                   enthalpies.copy())
+            yield (accepted.copy(), occupancies.copy(),
+                   delta_feature_blob.copy(), delta_enthalpies.copy())
 
     # TODO add progress option and streaming
     def run(self, nsteps, initial_occupancies=None, thin_by=1):
@@ -157,12 +164,17 @@ class Sampler(ABC):
         """
         if initial_occupancies is None:
             try:
-                initial_occupancies = self.samples.get_occupancy_chain()[-1]
+                initial_occupancies = self.samples.get_occupancies()[-1]
             except IndexError:
                 raise RuntimeError('There are no saved samples to obtain the '
                                    'initial occupancies. These must be '
                                    'provided.')
+        elif self.samples.num_samples > 0:
+            warn('Initial occupancies where provided with a pre-existing '
+                 'set of samples. This basically breaks the existing chain. '
+                 'Make real sure that is what you want. If not, reset the '
+                 'sampler', RuntimeWarning)
 
-        for result in self.sample(nsteps, initial_occupancies,
-                                  thin_by=thin_by):
-            self.samples.save_sample(*result)
+        self.samples.allocate(nsteps)
+        for state in self.sample(nsteps, initial_occupancies, thin_by=thin_by):
+            self.samples.save_sample(*state)

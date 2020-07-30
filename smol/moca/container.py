@@ -34,7 +34,7 @@ class SampleContainer(MSONable):
     # To get sublattices, ensemble name, temperature, usher type
 
     def __init__(self, temperature, num_sites, sublattices,
-                 natural_parameters, ensemble_metadata=None, num_walkers=1):
+                 natural_parameters, ensemble_metadata=None, nwalkers=1):
         """Initialize a sample container.
 
         Args:
@@ -48,7 +48,7 @@ class SampleContainer(MSONable):
                 array of natural parameters used in the ensemble.
             ensemble_metadata (Ensemble):
                 Metadata of the ensemble that was sampled.
-            num_walkers (int):
+            nwalkers (int):
                 Number of walkers used to generate chain. Default is 1
         """
 
@@ -59,11 +59,11 @@ class SampleContainer(MSONable):
         self.metadata = {} if ensemble_metadata is None else ensemble_metadata
         self.total_iterations = 0
         self.__nsamples = 0
-        self.__chain = np.empty((0, num_walkers, num_sites), dtype=int)
-        self.__feature_blob = np.empty((0, num_walkers,
-                                        len(natural_parameters)))
-        self.__enthalpy = np.empty((0, num_walkers, 1))
-        self.__accepted = np.zeros(num_walkers)
+        self.__chain = np.empty((0, nwalkers, num_sites), dtype=int)
+        self.__dfeature_blob = np.empty((0, nwalkers,
+                                         len(natural_parameters)))
+        self.__denthalpy = np.empty((0, nwalkers))
+        self._accepted = np.zeros(nwalkers, dtype=int)
 
     @property
     def num_samples(self):
@@ -75,10 +75,23 @@ class SampleContainer(MSONable):
         """Get the shape of the samples in chain."""
         return self.__chain.shape[1:]
 
-    def get_occupancy_chain(self, thin_by=1, discard=0, flat=False):
+    @property
+    def sampling_efficiency(self):
+        """Return the sampling efficiency for each chain."""
+        return self._accepted / self.num_samples
+
+    def get_occupancies(self, thin_by=1, discard=0, flat=False):
         """Get an occupancy chain from samples."""
         # TODO implement flat part
         return self.__chain[discard + thin_by - 1::thin_by]
+
+    def get_ethalpy_changes(self, thin_by=1, discard=0, flat=False):
+        """Get the entalpy changes from chain"""
+        return self.__denthalpy[discard + thin_by - 1::thin_by]
+
+    def get_feature_changes(self, thin_by=1, discard=0, flat=False):
+        """Get the feature vector changes from chain"""
+        return self.__dfeature_blob[discard + thin_by - 1::thin_by]
 
     def mean_energy(self):
         """Calculate the mean energy from samples."""
@@ -146,25 +159,35 @@ class SampleContainer(MSONable):
                 array of enthalpies
         """
         self.__chain[self.__nsamples, :, :] = occupancies
-        self.__feature_blob[self.__nsamples, :, :] = feature_blob
-        self.__enthalpy[self.__nsamples, :] = enthalpies
-        self.__accepted += accepted
+        self.__dfeature_blob[self.__nsamples, :, :] = feature_blob
+        self.__denthalpy[self.__nsamples, :] = enthalpies
+        self._accepted += accepted
         self.__nsamples += 1
 
     def allocate(self, nsamples):
         """allocate more space in arrays for more samples."""
         arr = np.empty((nsamples, *self.__chain.shape[1:]), dtype=int)
         self.__chain = np.append(self.__chain, arr, axis=0)
-        arr = np.empty((nsamples, *self.__feature_blob.shape[1:]))
-        self.__feature_blob = np.append(self.__feature_blob, arr, axis=0)
-        arr = np.empty((nsamples, *self.__enthalpy.shape[1:]), dtype=int)
-        self.__enthalpy = np.append(self.__enthalpy, arr, axis=0)
+        arr = np.empty((nsamples, *self.__dfeature_blob.shape[1:]))
+        self.__dfeature_blob = np.append(self.__dfeature_blob, arr, axis=0)
+        arr = np.empty((nsamples, *self.__denthalpy.shape[1:]))
+        self.__denthalpy = np.append(self.__denthalpy, arr, axis=0)
 
     def stream(self, file_path=None):
         if file_path is None:
             now = datetime.now()
             file_name = 'moca-samples-' + now.strftime('%Y-%m-%d-%H%M%S%f')
             file_path = os.path.join(os.getcwd(), file_name + '.json')
+
+    def _flatten_chain(self, chain):
+        """Flatten values in chain with multiple walkers."""
+        s = chain.shape[1:]
+        s[0] = np.prod(chain.shape[:2])
+        return chain.reshape(s)
+
+    def __len__(self):
+        """Return the number of samples."""
+        return self.__nsamples
 
     def as_dict(self):
         pass

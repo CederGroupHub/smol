@@ -18,7 +18,7 @@ class MetropolisSampler(Sampler):
     valid_mcmc_ushers = {'flip': 'Flipper', 'swap': 'Swapper'}
 
     def __init__(self, ensemble, step_type=None, sublattices=None,
-                 sublattice_probabilities=None, num_walkers=1, container=None,
+                 sublattice_probabilities=None, nwalkers=1, container=None,
                  seed=None):
         """Initialize a Metropolis-Hastings sampler.
 
@@ -34,7 +34,7 @@ class MetropolisSampler(Sampler):
             sublattice_probabilities (list of float): optional
                 list of probability to pick a site from a specific sublattice.
                 The order must correspond to the same order of the sublattices.
-            num_walkers (int): optional
+            nwalkers (int): optional
                 Number of walkers used to generate chain. Default is 1
             container (SampleContainer): optional
                 A containter to store samples. If given num_walkers is taken
@@ -54,7 +54,7 @@ class MetropolisSampler(Sampler):
                                  f'{self.valid_mcmc_ushers.keys()}')
             usher = mcmc_usher_factory(self.valid_mcmc_ushers[step_type],
                                        sublattices, sublattice_probabilities)
-        super().__init__(ensemble, usher, num_walkers, container, seed)
+        super().__init__(ensemble, usher, nwalkers, container, seed)
 
     def _attempt_step(self, occupancy):
         """Attempts a MC step.
@@ -67,7 +67,7 @@ class MetropolisSampler(Sampler):
                 encoded occupancy.
 
         Returns:
-            tuple: (acceptance, occupancy, features, enthalpy)
+            tuple: (acceptance, occupancy, features change, enthalpy change)
         """
         step = self._usher.propose_step(occupancy)
         delta_features = self.ensemble.compute_feature_vector_change(occupancy,
