@@ -11,7 +11,7 @@ import random
 from warnings import warn
 import numpy as np
 
-from smol.moca.container import SampleContainer
+from smol.moca.sampler.container import SampleContainer
 
 
 class Sampler(ABC):
@@ -52,8 +52,9 @@ class Sampler(ABC):
         self._container = container
 
         if seed is None:
-            seed = random.randint(1, 1E24)
-
+            seed = random.randint(1, np.iinfo(np.uint64).max)
+        #  Save the seed for reproducibility
+        self._container.metadata['seed'] = seed
         self.__seed = seed
         self.__nwalkers = nwalkers
         random.seed(seed)
@@ -178,3 +179,7 @@ class Sampler(ABC):
         self.samples.allocate(nsteps)
         for state in self.sample(nsteps, initial_occupancies, thin_by=thin_by):
             self.samples.save_sample(*state)
+
+
+# TODO write an embrassingly parallel sampler base class with a _run_parallel
+#  or something and flag in run to call that instead.

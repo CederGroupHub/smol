@@ -24,15 +24,16 @@ class MetropolisSampler(Sampler):
 
         Args:
             ensemble (Ensemble):
-                an Ensemble instance to sample from.
+                An Ensemble instance to sample from.
             step_type (str): optional
-                string specifying the MCMC step type.
-            sublattices (list of Sublattice):
-                list of Sublattices to propose steps for. This must be a subset
-                of the ensemble.sublattices. If not given all
-                ensemble.sublattices are used. Use this to freeze sublattices.
+                String specifying the MCMC step type.
+            sublattices (list of Sublattice): optional
+                List of Sublattices to propose steps for. This must be a subset
+                of the ensemble.sublattices. If not given all sublattices in
+                the ensemble will be used. Use this if you want to restrict
+                or freeze some sublattices.
             sublattice_probabilities (list of float): optional
-                list of probability to pick a site from a specific sublattice.
+                List of probability to pick a site from a specific sublattice.
                 The order must correspond to the same order of the sublattices.
             nwalkers (int): optional
                 Number of walkers used to generate chain. Default is 1
@@ -40,7 +41,7 @@ class MetropolisSampler(Sampler):
                 A containter to store samples. If given num_walkers is taken
                 from the container.
             seed (int): optional
-                seed for random number generator.
+                Seed for random number generator.
         """
         if sublattices is None:
             sublattices = ensemble.sublattices
