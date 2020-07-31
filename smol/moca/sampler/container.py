@@ -9,6 +9,7 @@ __author__ = "Luis Barroso-Luque"
 
 import os
 from datetime import datetime
+from collections import defaultdict
 import numpy as np
 
 from monty.json import MSONable
@@ -18,6 +19,15 @@ class SampleContainer(MSONable):
     """A SampleContainter class stores Monte Carlo simulation samples.
 
     It also provides some minor functionality to get sample statistics.
+    When getting any value from the provided attributes, the highly repeated
+    args are:
+        discard (int): optional
+            Number of samples to discard to obtain the value requested.
+        thin_by (int): optional
+            Use every thin by sample to obtain the value requested.
+        flat (bool): optional
+            If more than 1 walkers are used flattening will flatten all
+            chains into one. Defaults to True.
 
     Attributes:
         temperature (float):
@@ -27,6 +37,8 @@ class SampleContainer(MSONable):
             can be anything representative i.e. number of sites)
         sublattices (list of Sublattice)
             Sublattices of the ensemble sampled.
+        natural_parameters (ndarray):
+                array of natural parameters used in the ensemble.
         total_mc_steps (int)
             Number of iterations used in sampling
         metadata (dict):
@@ -41,7 +53,7 @@ class SampleContainer(MSONable):
                 Temperature of the ensemble.
             num_sites (int):
                 Total number of sites in supercell of the ensemble.
-            sublattices (list of Sublattice)
+            sublattices (list of Sublattice):
                 Sublattices of the ensemble sampled.
             natural_parameters (ndarray):
                 array of natural parameters used in the ensemble.
@@ -79,9 +91,9 @@ class SampleContainer(MSONable):
         return self.__chain.shape[1:]
 
     @property
-    def sampling_efficiency(self, flat=True):
-        """Return the sampling efficiency for each chain."""
-        efficiency = self.__accepted / self.total_mc_steps
+    def sampling_efficiency(self, discard=0, flat=True):
+        """Return the sampling efficiency for chains."""
+        efficiency = self.__accepted[discard:]/(self.total_mc_steps - discard)
         if flat:
             efficiency = efficiency.mean()
         return efficiency
@@ -94,14 +106,14 @@ class SampleContainer(MSONable):
         return chain
 
     def get_enthalpies(self, discard=0, thin_by=1, flat=True):
-        """Get the generalized entalpy changes from samples in chain"""
+        """Get the generalized entalpy changes from samples in chain."""
         chain = self.__enthalpy[discard + thin_by - 1::thin_by]
         if flat:
             chain = self._flatten(chain)
         return chain
 
     def get_feature_vectors(self, discard=0, thin_by=1, flat=True):
-        """Get the feature vector changes from samples in chain"""
+        """Get the feature vector changes from samples in chain."""
         chain = self.__feature_blob[discard + thin_by - 1::thin_by]
         if flat:
             chain = self._flatten(chain)
@@ -116,13 +128,20 @@ class SampleContainer(MSONable):
             energies = self._flatten(energies)
         return energies
 
+    def get_sublattice_compositions(self, sublattice, discard=0, thin_by=1,
+                                    flat=True):
+        """Get the compositions of a specific sublattice."""
+        counts = self.get_sublattice_species_counts(sublattice, discard,
+                                                    thin_by, flat)
+        return counts/len(sublattice.sites)
+
     def mean_enthalpy(self, discard=0, thin_by=1, flat=True):
         """Get the mean generalized enthalpy."""
         return self.get_enthalpies(discard, thin_by, flat).mean(axis=0)
 
     def enthalpy_variance(self, discard=0, thin_by=1, flat=True):
         """Get the variance in enthalpy"""
-        return np.var(self.get_enthalpies(discard, thin_by, flat), axis=0)
+        return self.get_enthalpies(discard, thin_by, flat).var(axis=0)
 
     def mean_energy(self, discard=0, thin_by=1, flat=True):
         """Calculate the mean energy from samples."""
@@ -130,7 +149,7 @@ class SampleContainer(MSONable):
 
     def energy_variance(self, discard=0, thin_by=1, flat=True):
         """Calculate the variance of sampled energies."""
-        return np.var(self.get_energies(discard, thin_by, flat), axis=0)
+        return self.get_energies(discard, thin_by, flat).var(axis=0)
 
     def mean_feature_vector(self, discard=0, thin_by=1, flat=True):
         """Get the mean feature vector from samples."""
@@ -138,25 +157,28 @@ class SampleContainer(MSONable):
 
     def feature_vector_variance(self, discard=0, thin_by=1, flat=True):
         """Get the variance of feature vector elements."""
-        return np.var(self.get_feature_vectors(discard, thin_by, flat), axis=0)
+        return self.get_feature_vectors(discard, thin_by, flat).var(axis=0)
 
+    # TODO implement these
     def mean_composition(self, discard=0, thin_by=1, flat=True):
-        """Get the mean composition for all species."""
-        return
+        """Get mean composition for all species regardless of sublattice."""
+        raise NotImplementedError('You want to implement this?')
 
     def composition_variance(self, discard=0, thin_by=1, flat=True):
         """Get the variance in composition of all species."""
-        return
+        raise NotImplementedError('You want to implement this?')
 
-    def sublattice_composition(self, sublattice, discard=0, thin_by=1,
-                               flat=True):
-        """Get the compositions of a specific sublattice."""
-        return
+    def mean_sublattice_composition(self, sublattice, discard=0, thin_by=1,
+                                    flat=True):
+        """Get the mean composition of a specific sublattice."""
+        return self.get_sublattice_compositions(sublattice, discard,
+                                                thin_by, flat).mean(axis=0)
 
     def sublattice_composition_variance(self, sublattice, discard=0, thin_by=1,
                                         flat=True):
         """Get the varience in composition of a specific sublattice."""
-        return
+        return self.get_sublattice_compositions(sublattice, discard,
+                                                thin_by, flat).var(axis=0)
 
     def get_minimum_enthalpy(self, discard=0, thin_by=1,  flat=True):
         """Get the minimum energy from samples."""
@@ -183,6 +205,30 @@ class SampleContainer(MSONable):
         else:
             occus = self.get_occupancies(discard, thin_by, flat)[inds, np.arange(self.shape[0])]  # noqa
         return occus
+
+    def get_sublattice_species_counts(self, sublattice, discard=0, thin_by=1,
+                                      flat=True):
+        """Get the counts of each species in a sublattices.
+
+        Returns:
+            ndarray: where last axis is the count for each species in same
+                     order as the underlying site space.
+        """
+        if sublattice not in self.sublattices:
+            raise ValueError('Sublattice provided is not recognized. '
+                             'Provide one included in the sublattices '
+                             'attribute of this SampleContainer.')
+        occu_chain = self.get_occupancies(discard, thin_by, flat=False)
+        counts = np.zeros((*occu_chain.shape[:-1], len(sublattice.species)))
+        #  This can probably be re-written in a clean/faster way
+        for i, occupancies in enumerate(occu_chain):
+            for j, occupancy in enumerate(occupancies):
+                codes, count = np.unique(occupancy[sublattice.sites],
+                                         return_counts=True)
+                counts[i][j] = count[codes.argsort()]  # order them accordingly
+        if flat:
+            counts = self._flatten(counts)
+        return counts
 
     def save_sample(self, accepted, occupancies, delta_enthalpy,
                     delta_feature_blob):
