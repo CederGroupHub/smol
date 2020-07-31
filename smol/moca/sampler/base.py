@@ -21,7 +21,7 @@ class Sampler(ABC):
     the ensemble classes.
     """
 
-    def __init__(self, ensemble, usher, nwalkers=1, container=None,
+    def __init__(self, ensemble, usher, nwalkers=1, samples=None,
                  seed=None):
         """Initialize BaseSampler.
 
@@ -32,24 +32,25 @@ class Sampler(ABC):
                 MC Usher to suggest MCMC steps.
             nwalkers (int):
                 Number of walkers used to generate chain. Default is 1
-            container (SampleContainer)
-                A containter to store samples. If given num_walkers is taken
-                from the container.
+            samples (SampleContainer)
+                A sample containter to store samples. If given num_walkers is
+                taken from the container.
             seed (int): optional
                 seed for random number generator.
         """
         # Set and save the seed for random. This allows reproducible results.
         self.__ensemble = ensemble
         self._usher = usher
-        if container is None:
+        if samples is None:
             ensemble_metadata = {'name': type(ensemble).__name__}
             ensemble_metadata.update(ensemble.thermo_boundaries)
-            container = SampleContainer(ensemble.temperature,
-                                        ensemble.num_sites,
-                                        ensemble.sublattices,
-                                        ensemble.natural_parameters,
-                                        ensemble_metadata, nwalkers)
-        self.__container = container
+            samples = SampleContainer(ensemble.temperature,
+                                      ensemble.num_sites,
+                                      ensemble.sublattices,
+                                      ensemble.natural_parameters,
+                                      ensemble.num_energy_coefs,
+                                      ensemble_metadata, nwalkers)
+        self.__container = samples
         self.__nwalkers = nwalkers
         if seed is None:
             seed = random.randint(1, np.iinfo(np.uint64).max)
@@ -103,10 +104,11 @@ class Sampler(ABC):
         """Generate samples
 
         Yield a sample state every thin_by iterations. A state is give by
-        a tuple of (occupanices, feature_blob, enthalpies)
+        a tuple of (occupancies, feature_blob, enthalpy)
 
         Args:
             nsteps (int):
+
                 Number of iterations to run.
             initial_occupancies (ndarray):
                 array of occupancies
@@ -117,38 +119,35 @@ class Sampler(ABC):
             tuple: accepted, occupancies, features change, enthalpies change
         """
         occupancies = initial_occupancies.copy()
-        if initial_occupancies.shape != self.samples.shape:
-            # check if this is only a single walker.
-            if len(initial_occupancies.shape) == 1 and self.__nwalkers == 1:
-                occupancies = np.reshape(occupancies, (1, len(occupancies)))
-            else:
-                raise AttributeError('The given initial occcupancies have '
-                                     'incompompatible dimensions. Shape should'
-                                     f' be {self.samples.shape}')
+        if occupancies.shape != self.samples.shape:
+            occupancies = self.__reshape_occu(occupancies)
         if nsteps % thin_by != 0:
             warn(f'The number of steps {nsteps} is not a multiple of thin_by '
                  f' {thin_by}. The last {nsteps % thin_by} will be ignored.',
                  category=RuntimeWarning)
         # TODO check that initial states are independent if num_walkers > 1
 
+        self.samples.total_mc_steps += nsteps  # update iterations in samples
         # allocate arrays for states
         occupancies = np.ascontiguousarray(occupancies, dtype=int)
         accepted = np.zeros(occupancies.shape[0], dtype=int)
-        delta_enthalpies = np.empty(occupancies.shape[0])
-        delta_feature_blob = np.empty((occupancies.shape[0],
-                                      len(self.ensemble.natural_parameters)))
+        feature_blob = list(map(self.ensemble.compute_feature_vector,
+                                occupancies))
+        feature_blob = np.ascontiguousarray(feature_blob)
+        enthalpy = np.dot(self.ensemble.natural_parameters, feature_blob.T)
 
         for _ in range(nsteps // thin_by):
             for _ in range(thin_by):
-                for i, (accept, occupancy, enthalpy, features) in \
+                for i, (accept, occupancy, delta_enthalpy, delta_features) in \
                   enumerate(map(self._attempt_step, occupancies)):
-                    accepted[i] = accept
+                    accepted[i] += accept
                     occupancies[i] = occupancy
-                    delta_enthalpies[i] = enthalpy
-                    delta_feature_blob[i] = features
+                    if accept:
+                        enthalpy[i] = enthalpy[i] + delta_enthalpy
+                        feature_blob[i] = feature_blob[i] + delta_features
             # yield copies
-            yield (accepted.copy(), occupancies.copy(),
-                   delta_enthalpies.copy(), delta_feature_blob.copy())
+            yield (accepted.copy(), occupancies.copy(), enthalpy.copy(),
+                   feature_blob.copy())
 
     # TODO add progress option and streaming
     def run(self, nsteps, initial_occupancies=None, thin_by=1):
@@ -181,16 +180,24 @@ class Sampler(ABC):
                  'Make real sure that is what you want. If not, reset the '
                  'sampler', RuntimeWarning)
         else:
-            self.__initialize_container()
+            if initial_occupancies.shape != self.samples.shape:
+                initial_occupancies = self.__reshape_occu(initial_occupancies)
 
         self.samples.allocate(nsteps)
         for state in self.sample(nsteps, initial_occupancies, thin_by=thin_by):
             self.samples.save_sample(*state)
 
-    def __initialize_container(self, occupancies):
-        """Sets the initial values in the SampleContainer for a fresh run."""
-        self.samples.initial_feature_blob = [self.ensemble.compute_feature_vector(occu)  # noqa
-                                             for occu in occupancies]
+    def __reshape_occu(self, occupancies):
+        """Reshape occupancies for the single walker case."""
+        # check if this is only a single walker.
+        if len(occupancies.shape) == 1 and self.__nwalkers == 1:
+            occupancies = np.reshape(occupancies, (1, len(occupancies)))
+        else:
+            raise AttributeError('The given initial occcupancies have '
+                                 'incompompatible dimensions. Shape should'
+                                 f' be {self.samples.shape}')
+        return occupancies
+
 
 # TODO write an embrassingly parallel sampler base class with a _run_parallel
 #  or something and flag in run to call that instead.
