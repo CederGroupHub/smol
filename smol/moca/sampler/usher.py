@@ -117,16 +117,15 @@ class Swapper(MCMCUsher):
         """
         sublattice = self.get_random_sublattice()
         site1 = random.choice(sublattice.active_sites)
-        swap_options = [i for i in sublattice.active_sites
-                        if occupancy[i] != occupancy[site1]]
-        if swap_options:
+        species1 = occupancy[site1]
+        sublattice_occu = occupancy[sublattice.active_sites]
+        swap_options = sublattice.active_sites[sublattice_occu != species1]
+        if swap_options.size > 0:  # check if swap_options are not empty
             site2 = random.choice(swap_options)
-            swap = [(site1, occupancy[site2]),
-                    (site2, occupancy[site1])]
+            swap = [(site1, occupancy[site2]), (site2, species1)]
         else:
             # inefficient, maybe re-call method? infinite recursion problem
             swap = []
-
         return swap
 
 
