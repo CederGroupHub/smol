@@ -8,7 +8,7 @@ concentration of species.
 __author__ = "Luis Barroso-Luque"
 
 from smol.moca.ensemble.base import Ensemble
-from smol.moca.processor.base import Processor
+from smol.moca.processor.base import Processor  # noqa
 
 
 class CanonicalEnsemble(Ensemble):

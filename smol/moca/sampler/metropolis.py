@@ -81,4 +81,4 @@ class MetropolisSampler(Sampler):
             for f in step:
                 occupancy[f[0]] = f[1]
 
-        return accept, occupancy, delta_features, delta_enthalpy
+        return accept, occupancy, delta_enthalpy, delta_features,

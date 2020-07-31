@@ -26,14 +26,15 @@ class Ensemble(ABC):
         """
         if sublattices is None:
             sublattices = [Sublattice(site_space,
-                                      np.array([i for i, sp in
-                                                enumerate(processor.allowed_species)  # noqa
-                                                if sp == list(site_space.keys())]))  # noqa
+                              np.array([i for i, sp in  # noqa
+                                        enumerate(processor.allowed_species)  # noqa
+                                        if sp == list(site_space.keys())]))  # noqa
                            for site_space in processor.unique_site_spaces]
 
         self.temperature = temperature
-        self._processor = processor
-        self._sublattices = sublattices
+        self.__processor = processor
+        self.__sublattices = sublattices
+        self.num_energy_coefs = len(processor.coefs)
         self.restricted_sites = []
         self.thermo_boundaries = {}  # not pretty way to save general info
 
@@ -109,7 +110,7 @@ class Ensemble(ABC):
     @property
     def processor(self):
         """Get the system processor."""
-        return self._processor
+        return self.__processor
 
     # TODO make a setter for this that checks sublattices are correct and
     #  all sites are included.
@@ -119,7 +120,7 @@ class Ensemble(ABC):
 
         Useful if allowing flips only from certain sublattices is needed.
         """
-        return self._sublattices
+        return self.__sublattices
 
     @property
     @abstractmethod

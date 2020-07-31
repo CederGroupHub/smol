@@ -11,7 +11,6 @@ More complex steps can be defined simply by deriving from the MCUsher
 __author__ = "Luis Barroso-Luque"
 
 from abc import ABC, abstractmethod
-from functools import wraps
 import random
 
 from smol.utils import derived_class_factory
@@ -51,7 +50,7 @@ class MCMCUsher(ABC):
         if len(value) != len(self.sublattices):
             raise AttributeError('Can not set sublattice probabilities. '
                                  'Length must be the the same as the number '
-                                  f'of sublattices {len(self.sublattices)}')
+                                 f'of sublattices {len(self.sublattices)}')
         elif sum(value) != 1:
             raise ValueError('Can not set sublattice probabilities. '
                              'Sublattice probabilites must sum to one.')

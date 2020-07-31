@@ -39,7 +39,7 @@ class Sampler(ABC):
                 seed for random number generator.
         """
         # Set and save the seed for random. This allows reproducible results.
-        self._ensemble = ensemble
+        self.__ensemble = ensemble
         self._usher = usher
         if container is None:
             ensemble_metadata = {'name': type(ensemble).__name__}
@@ -49,26 +49,25 @@ class Sampler(ABC):
                                         ensemble.sublattices,
                                         ensemble.natural_parameters,
                                         ensemble_metadata, nwalkers)
-        self._container = container
-
+        self.__container = container
+        self.__nwalkers = nwalkers
         if seed is None:
             seed = random.randint(1, np.iinfo(np.uint64).max)
         #  Save the seed for reproducibility
-        self._container.metadata['seed'] = seed
+        self.__container.metadata['seed'] = seed
         self.__seed = seed
-        self.__nwalkers = nwalkers
         random.seed(seed)
 
     @property
     def ensemble(self):
         """Get the underlying ensemble."""
-        return self._ensemble
+        return self.__ensemble
 
     @property
     def seed(self):
         """Seed for the random number generator."""
         return self.__seed
-    
+
     @seed.setter
     def seed(self, seed):
         """Set the seed for the PRNG."""
@@ -77,7 +76,7 @@ class Sampler(ABC):
 
     @property
     def samples(self):
-        return self._container
+        return self.__container
 
     @property
     def efficiency(self):
@@ -96,7 +95,7 @@ class Sampler(ABC):
                 encoded occupancy.
 
         Returns:
-            tuple: (acceptance, occupancy, features change, enthalpy change)
+            tuple: (acceptance, occupancy, enthalpy change, features change)
         """
         return tuple()
 
@@ -141,25 +140,31 @@ class Sampler(ABC):
 
         for _ in range(nsteps // thin_by):
             for _ in range(thin_by):
-                for i, (accept, occupancy, features, enthalpy) in \
+                for i, (accept, occupancy, enthalpy, features) in \
                   enumerate(map(self._attempt_step, occupancies)):
-                    accepted[i] += accept
+                    accepted[i] = accept
                     occupancies[i] = occupancy
-                    delta_feature_blob[i] = features
                     delta_enthalpies[i] = enthalpy
+                    delta_feature_blob[i] = features
             # yield copies
             yield (accepted.copy(), occupancies.copy(),
-                   delta_feature_blob.copy(), delta_enthalpies.copy())
+                   delta_enthalpies.copy(), delta_feature_blob.copy())
 
     # TODO add progress option and streaming
     def run(self, nsteps, initial_occupancies=None, thin_by=1):
         """Run an MCMC sampling simulations.
+
+        This will run and save the samples every thin_by into a
+        SampleContainer.
 
         Args:
             nsteps (int):
                 number of total MC steps.
             initial_occupancies (ndarray):
                 array of occupancies. If None, the last sample will be taken.
+                You should only provide this the first time you call run. If
+                you want to reset then you should call reset before to start
+                a fresh run.
             thin_by (int): optional
                 the amount to thin by for saving samples.
         """
@@ -175,11 +180,17 @@ class Sampler(ABC):
                  'set of samples. This basically breaks the existing chain. '
                  'Make real sure that is what you want. If not, reset the '
                  'sampler', RuntimeWarning)
+        else:
+            self.__initialize_container()
 
         self.samples.allocate(nsteps)
         for state in self.sample(nsteps, initial_occupancies, thin_by=thin_by):
             self.samples.save_sample(*state)
 
+    def __initialize_container(self, occupancies):
+        """Sets the initial values in the SampleContainer for a fresh run."""
+        self.samples.initial_feature_blob = [self.ensemble.compute_feature_vector(occu)  # noqa
+                                             for occu in occupancies]
 
 # TODO write an embrassingly parallel sampler base class with a _run_parallel
 #  or something and flag in run to call that instead.

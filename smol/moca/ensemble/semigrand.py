@@ -15,7 +15,7 @@ from math import log, prod
 import numpy as np
 
 from monty.json import MSONable
-from smol.moca.processor.base import Processor
+from smol.moca.processor.base import Processor  # noqa
 from smol.moca.ensemble.base import Ensemble
 
 
@@ -73,7 +73,8 @@ class BaseSemiGrandEnsemble(Ensemble):
         """
         feature_vector = self.processor.compute_feature_vector(occupancy)
         chemical_work = self.compute_chemical_work(occupancy)
-        return np.append(feature_vector, chemical_work)  # prellocate to improve speed
+        # prellocate to improve speed
+        return np.append(feature_vector, chemical_work)
 
 
 class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
@@ -154,7 +155,8 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
                                                                      step)
         delta_mu = sum(self._mu_table[f[0]][f[1]]
                        - self._mu_table[f[0]][occupancy[f[0]]] for f in step)
-        return np.append(delta_feature, delta_mu)  # prellocate to improve speed
+        # prellocate to improve speed
+        return np.append(delta_feature, delta_mu)
 
     def compute_chemical_work(self, occupancy):
         """Compute sum of mu * N for given occupancy"""
@@ -265,7 +267,8 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         delta_log_fu = log(prod(self._fu_table[f[0]][f[1]] /
                                 self._fu_table[f[0]][occupancy[f[0]]]
                                 for f in step))
-        return np.append(delta_feature, delta_log_fu)  # prellocate to improve speed
+        # prellocate to improve speed
+        return np.append(delta_feature, delta_log_fu)
 
     def compute_chemical_work(self, occupancy):
         """Compute log of product of fugacities for given occupancy"""

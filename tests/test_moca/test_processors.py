@@ -159,7 +159,7 @@ class TestCEProcessor(unittest.TestCase):
                                         rtol=RTOL, atol=ATOL))
 
     def test_get_average_drift(self):
-        forward, reverse = self.pr.get_average_drift()
+        forward, reverse = self.pr.compute_average_drift()
         self.assertTrue(forward <= DRIFT_TOL and reverse <= DRIFT_TOL)
 
     def test_structure_from_occupancy(self):
@@ -261,7 +261,7 @@ class TestEwaldProcessor(unittest.TestCase):
                                        rtol=RTOL, atol=EWALD_ATOL))
 
     def test_get_average_drift(self):
-        forward, reverse = self.pr.get_average_drift()
+        forward, reverse = self.pr.compute_average_drift()
         self.assertTrue(forward <= DRIFT_TOL and reverse <= DRIFT_TOL)
 
     def test_msonable(self):
@@ -392,7 +392,7 @@ class TestCompositeProcessor(unittest.TestCase):
             self.assertTrue(np.array_equal(dcorr, -1*rdcorr))
 
     def test_get_average_drift(self):
-        forward, reverse = self.pr.get_average_drift()
+        forward, reverse = self.pr.compute_average_drift()
         self.assertTrue(forward <= DRIFT_TOL and reverse <= DRIFT_TOL)
 
     def test_msonable(self):

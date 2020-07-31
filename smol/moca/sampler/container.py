@@ -17,6 +17,8 @@ from monty.json import MSONable
 class SampleContainer(MSONable):
     """A SampleContainter class stores Monte Carlo simulation samples.
 
+    It also provides some minor functionality to get sample statistics.
+
     Attributes:
         temperature (float):
             temperature of ensemble that was sampled.
@@ -33,8 +35,8 @@ class SampleContainer(MSONable):
 
     # To get sublattices, ensemble name, temperature, usher type
 
-    def __init__(self, temperature, num_sites, sublattices,
-                 natural_parameters, ensemble_metadata=None, nwalkers=1):
+    def __init__(self, temperature, num_sites, sublattices, natural_parameters,
+                 num_energy_coefs, ensemble_metadata=None, nwalkers=1):
         """Initialize a sample container.
 
         Args:
@@ -46,6 +48,9 @@ class SampleContainer(MSONable):
                 Sublattices of the ensemble sampled.
             natural_parameters (ndarray):
                 array of natural parameters used in the ensemble.
+            num_energy_coefs (int):
+                the number of coeficients in the natural parameters that
+                correspond to the energy only.
             ensemble_metadata (Ensemble):
                 Metadata of the ensemble that was sampled.
             nwalkers (int):
@@ -58,12 +63,16 @@ class SampleContainer(MSONable):
         self.natural_parameters = natural_parameters
         self.metadata = {} if ensemble_metadata is None else ensemble_metadata
         self.total_iterations = 0
+        self._num_energy_coefs = num_energy_coefs
         self.__nsamples = 0
         self.__chain = np.empty((0, nwalkers, num_sites), dtype=int)
         self.__dfeature_blob = np.empty((0, nwalkers,
                                          len(natural_parameters)))
         self.__denthalpy = np.empty((0, nwalkers))
-        self._accepted = np.zeros(nwalkers, dtype=int)
+        self.__accepted = np.zeros(nwalkers, dtype=int)
+        # Set these from initial occupancy for calculating properties after
+        # the run.
+        self.initial_feature_blob = None
 
     @property
     def num_samples(self):
@@ -75,93 +84,125 @@ class SampleContainer(MSONable):
         """Get the shape of the samples in chain."""
         return self.__chain.shape[1:]
 
-    @property  # TODO check why this is buggy and wrong
-    def sampling_efficiency(self):
+    @property
+    def sampling_efficiency(self, flat=True):
         """Return the sampling efficiency for each chain."""
-        return self._accepted / self.num_samples
+        efficiency = self.__accepted / self.num_samples
+        if flat:
+            efficiency = efficiency.mean()
+        return efficiency
 
-    def get_occupancies(self, thin_by=1, discard=0, flat=False):
+    @property
+    def initial_enthalpies(self):
+        """Get the inital generalized enthalpies"""
+        if self.initial_feature_blob is not None:
+            return np.dot(self.natural_parameters, self.initial_feature_blob)
+        else:
+            return None
+
+    @property
+    def initial_energies(self):
+        """Get the initial energies"""
+        if self.initial_feature_blob is not None:
+            return np.dot(self.natural_parameters[:self._num_energy_coefs],
+                          self.initial_feature_blob[:, self._num_energy_coefs])
+        else:
+            return None
+
+    def get_occupancies(self, discard=0, thin_by=1, flat=False):
         """Get an occupancy chain from samples."""
         chain = self.__chain[discard + thin_by - 1::thin_by]
         if flat:
             chain = self._flatten_chain(chain)
         return chain
 
-    def get_ethalpy_changes(self, thin_by=1, discard=0, flat=False):
-        """Get the entalpy changes from chain"""
+    def get_ethalpy_changes(self, discard=0, thin_by=1, flat=False):
+        """Get the generalized entalpy changes from chain"""
         chain = self.__denthalpy[discard + thin_by - 1::thin_by]
         if flat:
             chain = self._flatten_chain(chain)
         return chain
 
-    def get_feature_changes(self, thin_by=1, discard=0, flat=False):
+    def get_feature_vector_changes(self, discard=0, thin_by=1, flat=False):
         """Get the feature vector changes from chain"""
         chain = self.__dfeature_blob[discard + thin_by - 1::thin_by]
         if flat:
             chain = self._flatten_chain(chain)
         return chain
 
-    def mean_energy(self):
-        """Calculate the mean energy from samples."""
-        return
+    def get_enthalpies(self, discard=0, thin_by=1, flat=False):
+        pass
 
-    def energy_variance(self):
-        """Calculate the variance of sampled energies."""
-        return
+    def get_feature_vectors(self, discard=0, thin_by=1, flat=False):
+        pass
 
-    def mean_composition(self):
-        """Get the mean composition for all species."""
-        return
+    def get_energies(self, discard=0, thin_by=1, flat_by=False):
+        pass
 
-    def composition_variance(self):
-        """Get the variance in composition of all species."""
-        return
-
-    def sublattice_composition(self, sublattice):
-        """Get the compositions of a specific sublattice."""
-        return
-
-    def sublattice_composition_variance(self, sublattice):
-        """Get the varience in composition of a specific sublattice."""
-        return
-
-    def mean_features(self):
-        """Get the mean feature vector from samples."""
-        return
-
-    def features_variance(self):
-        """Get the variance of feature vector elements."""
-        return
-
-    def mean_enthalpy(self):
+    def mean_enthalpy(self, discard=0, thin_by=1, flat=False):
         """Get the mean generalized enthalpy."""
         return
 
-    def enthalpy_variance(self):
+    def enthalpy_variance(self, discard=0, thin_by=1, flat=False):
         """Get the variance in enthalpy"""
         return
 
-    def heat_capacity(self):
+    def mean_energy(self, discard=0, thin_by=1, flat=False):
+        """Calculate the mean energy from samples."""
+        return
+
+    def energy_variance(self, discard=0, thin_by=1, flat=False):
+        """Calculate the variance of sampled energies."""
+        return
+
+    def mean_composition(self, discard=0, thin_by=1, flat=False):
+        """Get the mean composition for all species."""
+        return
+
+    def composition_variance(self, discard=0, thin_by=1, flat=False):
+        """Get the variance in composition of all species."""
+        return
+
+    def sublattice_composition(self, sublattice, discard=0, thin_by=1,
+                               flat=False):
+        """Get the compositions of a specific sublattice."""
+        return
+
+    def sublattice_composition_variance(self, sublattice, discard=0, thin_by=1,
+                                        flat=False):
+        """Get the varience in composition of a specific sublattice."""
+        return
+
+    def mean_features(self, discard=0, thin_by=1, flat=False):
+        """Get the mean feature vector from samples."""
+        return
+
+    def features_variance(self, discard=0, thin_by=1, flat=False):
+        """Get the variance of feature vector elements."""
+        return
+
+    def heat_capacity(self, discard=0, thin_by=1, flat=False):
         """Get the heat capacity."""
         return
 
-    def get_minimum_energy(self):
+    def get_minimum_energy(self, flat=True):
         """Get the minimum energy from samples."""
         return
 
-    def get_minimum_energy_occupancy(self):
+    def get_minimum_energy_occupancy(self, flat=True):
         """Find the occupancy with minimum energy from samples."""
         return
 
-    def get_minimum_enthalpy(self):
+    def get_minimum_enthalpy(self, flat=True):
         """Get the minimum energy from samples."""
         return
 
-    def get_minimum_enthalpy_occupancy(self):
+    def get_minimum_enthalpy_occupancy(self, flat=True):
         """Find the occupancy with minimum energy from samples."""
         return
 
-    def save_sample(self, accepted, occupancies, feature_blob, enthalpies):
+    def save_sample(self, accepted, occupancies, delta_enthalpies,
+                    delta_feature_blob):
         """Save a sample from the generated chain
 
         Args:
@@ -169,15 +210,15 @@ class SampleContainer(MSONable):
                 boolean array of acceptances.
             occupancies (ndarray):
                 array of occupancies
-            feature_blob (ndarray):
-                array of feature vectors
-            enthalpies (ndarray):
-                array of enthalpies
+            delta_enthalpies (ndarray):
+                array of generalized enthalpy changes
+            delta_feature_blob (ndarray):
+                array of feature vector changes
         """
         self.__chain[self.__nsamples, :, :] = occupancies
-        self.__dfeature_blob[self.__nsamples, :, :] = feature_blob
-        self.__denthalpy[self.__nsamples, :] = enthalpies
-        self._accepted += accepted
+        self.__denthalpy[self.__nsamples, :] = delta_enthalpies
+        self.__dfeature_blob[self.__nsamples, :, :] = delta_feature_blob
+        self.__accepted += accepted
         self.__nsamples += 1
 
     def allocate(self, nsamples):
@@ -195,7 +236,8 @@ class SampleContainer(MSONable):
             file_name = 'moca-samples-' + now.strftime('%Y-%m-%d-%H%M%S%f')
             file_path = os.path.join(os.getcwd(), file_name + '.json')
 
-    def _flatten_chain(self, chain):
+    @staticmethod
+    def _flatten_chain(chain):
         """Flatten values in chain with multiple walkers."""
         s = chain.shape[1:]
         s[0] = np.prod(chain.shape[:2])

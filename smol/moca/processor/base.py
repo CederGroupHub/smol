@@ -190,8 +190,8 @@ class Processor(MSONable, metaclass=ABCMeta):
         return [species[i] for i, species in
                 zip(encoded_occupancy, self.allowed_species)]
 
-    def get_average_drift(self, iterations=1000):
-        """Get the average forward and reverse drift for the given property.
+    def compute_average_drift(self, iterations=1000):
+        """Compute average forward and reverse drift for the given property.
 
         This is a sanity check function. The drift value should be very, very,
         very small, the smaller the better...think machine precision values.
