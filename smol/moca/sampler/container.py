@@ -86,28 +86,28 @@ class SampleContainer(MSONable):
             efficiency = efficiency.mean()
         return efficiency
 
-    def get_occupancies(self, discard=0, thin_by=1, flat=False):
+    def get_occupancies(self, discard=0, thin_by=1, flat=True):
         """Get an occupancy chain from samples."""
         chain = self.__chain[discard + thin_by - 1::thin_by]
         if flat:
             chain = self._flatten(chain)
         return chain
 
-    def get_enthalpies(self, discard=0, thin_by=1, flat=False):
+    def get_enthalpies(self, discard=0, thin_by=1, flat=True):
         """Get the generalized entalpy changes from samples in chain"""
         chain = self.__enthalpy[discard + thin_by - 1::thin_by]
         if flat:
             chain = self._flatten(chain)
         return chain
 
-    def get_feature_vectors(self, discard=0, thin_by=1, flat=False):
+    def get_feature_vectors(self, discard=0, thin_by=1, flat=True):
         """Get the feature vector changes from samples in chain"""
         chain = self.__feature_blob[discard + thin_by - 1::thin_by]
         if flat:
             chain = self._flatten(chain)
         return chain
 
-    def get_energies(self, discard=0, thin_by=1, flat=False):
+    def get_energies(self, discard=0, thin_by=1, flat=True):
         """Get the energies from samples in chain."""
         feature_blob = self.get_feature_vectors(discard, thin_by)
         energies = np.array([np.dot(self.natural_parameters[:self._num_energy_coefs],  # noqa
@@ -116,67 +116,73 @@ class SampleContainer(MSONable):
             energies = self._flatten(energies)
         return energies
 
-    def mean_enthalpy(self, discard=0, thin_by=1, flat=False):
+    def mean_enthalpy(self, discard=0, thin_by=1, flat=True):
         """Get the mean generalized enthalpy."""
         return self.get_enthalpies(discard, thin_by, flat).mean(axis=0)
 
-    def enthalpy_variance(self, discard=0, thin_by=1, flat=False):
+    def enthalpy_variance(self, discard=0, thin_by=1, flat=True):
         """Get the variance in enthalpy"""
         return np.var(self.get_enthalpies(discard, thin_by, flat), axis=0)
 
-    def mean_energy(self, discard=0, thin_by=1, flat=False):
+    def mean_energy(self, discard=0, thin_by=1, flat=True):
         """Calculate the mean energy from samples."""
         return self.get_energies(discard, thin_by, flat).mean(axis=0)
 
-    def energy_variance(self, discard=0, thin_by=1, flat=False):
+    def energy_variance(self, discard=0, thin_by=1, flat=True):
         """Calculate the variance of sampled energies."""
         return np.var(self.get_energies(discard, thin_by, flat), axis=0)
 
-    def mean_feature_vector(self, discard=0, thin_by=1, flat=False):
+    def mean_feature_vector(self, discard=0, thin_by=1, flat=True):
         """Get the mean feature vector from samples."""
         return self.get_feature_vectors(discard, thin_by, flat).mean(axis=0)
 
-    def feature_vector_variance(self, discard=0, thin_by=1, flat=False):
+    def feature_vector_variance(self, discard=0, thin_by=1, flat=True):
         """Get the variance of feature vector elements."""
         return np.var(self.get_feature_vectors(discard, thin_by, flat), axis=0)
 
-    def mean_composition(self, discard=0, thin_by=1, flat=False):
+    def mean_composition(self, discard=0, thin_by=1, flat=True):
         """Get the mean composition for all species."""
         return
 
-    def composition_variance(self, discard=0, thin_by=1, flat=False):
+    def composition_variance(self, discard=0, thin_by=1, flat=True):
         """Get the variance in composition of all species."""
         return
 
     def sublattice_composition(self, sublattice, discard=0, thin_by=1,
-                               flat=False):
+                               flat=True):
         """Get the compositions of a specific sublattice."""
         return
 
     def sublattice_composition_variance(self, sublattice, discard=0, thin_by=1,
-                                        flat=False):
+                                        flat=True):
         """Get the varience in composition of a specific sublattice."""
         return
 
-    def heat_capacity(self, discard=0, thin_by=1, flat=False):
-        """Get the heat capacity."""
-        return
-
-    def get_minimum_energy(self, flat=True):
+    def get_minimum_enthalpy(self, discard=0, thin_by=1,  flat=True):
         """Get the minimum energy from samples."""
-        return
+        return self.get_enthalpies(discard, thin_by, flat).min(axis=0)
 
-    def get_minimum_energy_occupancy(self, flat=True):
+    def get_minimum_enthalpy_occupancy(self, discard=0, thin_by=1, flat=True):
         """Find the occupancy with minimum energy from samples."""
-        return
+        inds = self.get_enthalpies(discard, thin_by, flat).argmin(axis=0)
+        if flat:
+            occus = self.get_occupancies(discard, thin_by, flat)[inds]
+        else:
+            occus = self.get_occupancies(discard, thin_by, flat)[inds, np.arange(self.shape[0])]  # noqa
+        return occus
 
-    def get_minimum_enthalpy(self, flat=True):
+    def get_minimum_energy(self, discard=0, thin_by=1, flat=True):
         """Get the minimum energy from samples."""
-        return
+        return self.get_energies(discard, thin_by, flat).min(axis=0)
 
-    def get_minimum_enthalpy_occupancy(self, flat=True):
+    def get_minimum_energy_occupancy(self, discard=0, thin_by=1, flat=True):
         """Find the occupancy with minimum energy from samples."""
-        return
+        inds = self.get_energies(discard, thin_by, flat).argmin(axis=0)
+        if flat:
+            occus = self.get_occupancies(discard, thin_by, flat)[inds]
+        else:
+            occus = self.get_occupancies(discard, thin_by, flat)[inds, np.arange(self.shape[0])]  # noqa
+        return occus
 
     def save_sample(self, accepted, occupancies, delta_enthalpy,
                     delta_feature_blob):
@@ -218,6 +224,7 @@ class SampleContainer(MSONable):
         arr = np.empty((nsamples, *self.__enthalpy.shape[1:]))
         self.__enthalpy = np.append(self.__enthalpy, arr, axis=0)
 
+    # TODO write this up
     def stream(self, file_path=None):
         if file_path is None:
             now = datetime.now()

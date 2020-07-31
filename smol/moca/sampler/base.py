@@ -18,7 +18,8 @@ class Sampler(ABC):
     """Abtract base class for sampler.
 
     A sampler is used to implement a specific MCMC algorithm used to sample
-    the ensemble classes.
+    the ensemble classes. For an illustrtive example of how to derive from this
+    and write a specific sampler see the MetropolisSampler.
     """
 
     def __init__(self, ensemble, usher, nwalkers=1, samples=None,
