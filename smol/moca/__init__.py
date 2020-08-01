@@ -11,7 +11,8 @@ from .processor.composite import CompositeProcessor
 from .ensemble.canonical import CanonicalEnsemble
 from .ensemble.semigrand import MuSemiGrandEnsemble, FuSemiGrandEnsemble
 from .sampler.metropolis import MetropolisSampler
+from .sampler.container import SampleContainer
 
 __all__ = ['CEProcessor', 'EwaldProcessor', 'CompositeProcessor',
            'CanonicalEnsemble', 'MuSemiGrandEnsemble', 'FuSemiGrandEnsemble',
-           'MetropolisSampler']
+           'MetropolisSampler', 'SampleContainer']

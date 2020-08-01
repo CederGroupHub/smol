@@ -321,9 +321,10 @@ class SampleContainer(MSONable):
         sublattices = [Sublattice.from_dict(s) for s in d['sublattices']]
         container = cls(d['temperature'], d['num_sites'], sublattices,
                         d['natural_parameters'], d['num_energy_coefs'],
-                        d['ensemble_metadata'])
+                        d['metadata'])
         container._nsamples = np.array(d['nsamples'])
         container._chain = np.array(d['chain'], dtype=int)
         container._feature_blob = np.array(d['feature_blob'])
         container._enthalpy = np.array(d['enthalpy'])
-        container._accepted = np.array(d['accpeted'], dtype=int)
+        container._accepted = np.array(d['accepted'], dtype=int)
+        return container
