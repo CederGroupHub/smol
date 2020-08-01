@@ -55,18 +55,18 @@ class EwaldProcessor(Processor):
         self._ewald_structure = struct
         self._ewald_inds = np.ascontiguousarray(inds)
         # Lazy set up Ewald Summation since it can be slow
-        self.__ewald = ewald_summation
-        self.__matrix = None  # to cache matrix for now, the use cached_prop
+        self._ewald = ewald_summation
+        self._matrix = None  # to cache matrix for now, the use cached_prop
 
     @property
     def ewald_summation(self):
         """Get the pymatgen EwaldSummation object."""
-        if self.__ewald is None:
-            self.__ewald = EwaldSummation(self._ewald_structure,
-                                          real_space_cut=self._ewald_term.real_space_cut,  # noqa
-                                          recip_space_cut=self._ewald_term.recip_space_cut,  # noqa
-                                          eta=self._ewald_term.eta)
-        return self.__ewald
+        if self._ewald is None:
+            self._ewald = EwaldSummation(self._ewald_structure,
+                                         real_space_cut=self._ewald_term.real_space_cut,  # noqa
+                                         recip_space_cut=self._ewald_term.recip_space_cut,  # noqa
+                                         eta=self._ewald_term.eta)
+        return self._ewald
 
     @property  # TODO use cached_property (only for python 3.8)
     def ewald_matrix(self):
@@ -75,10 +75,10 @@ class EwaldProcessor(Processor):
         The matrix used is the one set in the EwaldTerm of the given
         ClusterExpansion.
         """
-        if self.__matrix is None:
+        if self._matrix is None:
             matrix = self._ewald_term.get_ewald_matrix(self.ewald_summation)
-            self.__matrix = np.ascontiguousarray(matrix)
-        return self.__matrix
+            self._matrix = np.ascontiguousarray(matrix)
+        return self._matrix
 
     def compute_property(self, occupancy):
         """Compute the Ewald electrostatic energy for a given occupancy array.

@@ -32,8 +32,8 @@ class Ensemble(ABC):
                            for site_space in processor.unique_site_spaces]
 
         self.temperature = temperature
-        self.__processor = processor
-        self.__sublattices = sublattices
+        self._processor = processor
+        self._sublattices = sublattices
         self.num_energy_coefs = len(processor.coefs)
         self.restricted_sites = []
         self.thermo_boundaries = {}  # not pretty way to save general info
@@ -84,18 +84,18 @@ class Ensemble(ABC):
     @property
     def temperature(self):
         """Get the temperature of ensemble."""
-        return self.__temperature
+        return self._temperature
 
     @temperature.setter
     def temperature(self, temperature):
         """Set the temperature and beta accordingly."""
-        self.__temperature = temperature
-        self.__beta = 1.0 / (kB * temperature)
+        self._temperature = temperature
+        self._beta = 1.0 / (kB * temperature)
 
     @property
     def beta(self):
         """Get 1/kBT."""
-        return self.__beta
+        return self._beta
 
     @property
     def num_sites(self):
@@ -110,7 +110,7 @@ class Ensemble(ABC):
     @property
     def processor(self):
         """Get the system processor."""
-        return self.__processor
+        return self._processor
 
     # TODO make a setter for this that checks sublattices are correct and
     #  all sites are included.
@@ -120,7 +120,7 @@ class Ensemble(ABC):
 
         Useful if allowing flips only from certain sublattices is needed.
         """
-        return self.__sublattices
+        return self._sublattices
 
     @property
     @abstractmethod

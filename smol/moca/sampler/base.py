@@ -40,7 +40,7 @@ class Sampler(ABC):
                 seed for random number generator.
         """
         # Set and save the seed for random. This allows reproducible results.
-        self.__ensemble = ensemble
+        self._ensemble = ensemble
         self._usher = usher
         if samples is None:
             ensemble_metadata = {'name': type(ensemble).__name__}
@@ -51,34 +51,34 @@ class Sampler(ABC):
                                       ensemble.natural_parameters,
                                       ensemble.num_energy_coefs,
                                       ensemble_metadata, nwalkers)
-        self.__container = samples
-        self.__nwalkers = nwalkers
+        self._container = samples
+        self._nwalkers = nwalkers
         if seed is None:
             seed = random.randint(1, np.iinfo(np.uint64).max)
         #  Save the seed for reproducibility
-        self.__container.metadata['seed'] = seed
-        self.__seed = seed
+        self._container.metadata['seed'] = seed
+        self._seed = seed
         random.seed(seed)
 
     @property
     def ensemble(self):
         """Get the underlying ensemble."""
-        return self.__ensemble
+        return self._ensemble
 
     @property
     def seed(self):
         """Seed for the random number generator."""
-        return self.__seed
+        return self._seed
 
     @seed.setter
     def seed(self, seed):
         """Set the seed for the PRNG."""
         random.seed(seed)
-        self.__seed = seed
+        self._seed = seed
 
     @property
     def samples(self):
-        return self.__container
+        return self._container
 
     @property
     def efficiency(self):
@@ -121,7 +121,7 @@ class Sampler(ABC):
         """
         occupancies = initial_occupancies.copy()
         if occupancies.shape != self.samples.shape:
-            occupancies = self.__reshape_occu(occupancies)
+            occupancies = self._reshape_occu(occupancies)
         if nsteps % thin_by != 0:
             warn(f'The number of steps {nsteps} is not a multiple of thin_by '
                  f' {thin_by}. The last {nsteps % thin_by} will be ignored.',
@@ -182,16 +182,16 @@ class Sampler(ABC):
                  'sampler', RuntimeWarning)
         else:
             if initial_occupancies.shape != self.samples.shape:
-                initial_occupancies = self.__reshape_occu(initial_occupancies)
+                initial_occupancies = self._reshape_occu(initial_occupancies)
 
         self.samples.allocate(nsteps)
         for state in self.sample(nsteps, initial_occupancies, thin_by=thin_by):
             self.samples.save_sample(*state)
 
-    def __reshape_occu(self, occupancies):
+    def _reshape_occu(self, occupancies):
         """Reshape occupancies for the single walker case."""
         # check if this is only a single walker.
-        if len(occupancies.shape) == 1 and self.__nwalkers == 1:
+        if len(occupancies.shape) == 1 and self._nwalkers == 1:
             occupancies = np.reshape(occupancies, (1, len(occupancies)))
         else:
             raise AttributeError('The given initial occcupancies have '
