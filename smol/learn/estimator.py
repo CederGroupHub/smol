@@ -17,6 +17,10 @@ class WDRLasso(BaseEstimator):
     """
 
     def __init__(self):
+        warnings.warn('This class will be deprecated soon, so do not get too '
+                      'attached to it.\nConsider using 3rd party estimators '
+                      'such as scikit learn.', category=DeprecationWarning,
+                      stacklevel=2)
         super().__init__()
         self.mus = None
         self.cvs = None
