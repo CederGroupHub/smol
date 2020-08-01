@@ -184,6 +184,19 @@ class Sampler(ABC):
             if initial_occupancies.shape != self.samples.shape:
                 initial_occupancies = self._reshape_occu(initial_occupancies)
 
+        if self.ensemble.temperature != self.samples.temperature:
+            if len(self.samples) > 0:
+                warn('The ensemble temperature has been changed from '
+                     f'{self.samples.temperature} to '
+                     f'{self.ensemble.temperature}, and samples have already'
+                     f' been taken.\n This is not recommended practice. You '
+                     f'should consider creating a new sampler in this case')
+            else:
+                warn('Sample temperature has been updated from '
+                     f'{self.samples.temperature} to '
+                     f'{self.ensemble.temperature}')
+                self.samples.temperature = self.ensemble.temperature
+
         self.samples.allocate(nsteps)
         for state in self.sample(nsteps, initial_occupancies, thin_by=thin_by):
             self.samples.save_sample(*state)
