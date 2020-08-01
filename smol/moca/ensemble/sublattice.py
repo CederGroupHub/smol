@@ -7,10 +7,13 @@ random structure supercell being sampled in a Monte Carlo simulation.
 
 __author__ = "Luis Barroso-Luque"
 
+from collections import OrderedDict
 import numpy as np
+from monty.json import MSONable
 
 
-class Sublattice:
+# TODO consider adding the inactive sublattices?
+class Sublattice(MSONable):
     """Sublattice class.
 
      A Sublattice is used to represent a subset of supercell sites that have
@@ -66,4 +69,40 @@ class Sublattice:
 
     def __str__(self):
         """Pretty print the sublattice species."""
-        return '/'.join(self.species)
+        string = f'Sublattice\n Site space: {dict(self.site_space)}\n'
+        string += f' Number of sites: {len(self.sites)}\n'
+        return string
+
+    def __repr__(self):
+        """Repr for nice viewing."""
+        rep = f'Sublattice Summary \n\n   site_space: {self.site_space}\n\n'
+        rep += f'   sites: {self.sites}\n\n active_sites: {self.active_sites}'
+        return rep
+
+    def as_dict(self):
+        """Get Json-serialization dict representation.
+
+        Returns:
+            MSONable dict
+        """
+        d = {'site_space': self.site_space,
+             'sites': self.sites.tolist(),
+             'active_sites': self.active_sites.tolist(),
+             'restricted_sites': self.restricted_sites}
+        return d
+
+    @classmethod
+    def from_dict(cls, d):
+        """Instantiate a sublattice from dict representation.
+
+        Args:
+            d (dict):
+                dictionary representation.
+        Returns:
+            Sublattice
+        """
+        sublattice = cls(OrderedDict(d['site_space']),  # order conserved?
+                         sites=np.array(d['sites']))
+        sublattice.active_sites = np.array(d['active_sites'])
+        sublattice.restricted_sites = d['restricted_sites']
+        return sublattice

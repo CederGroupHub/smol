@@ -9,10 +9,10 @@ __author__ = "Luis Barroso-Luque"
 
 import os
 from datetime import datetime
-from collections import defaultdict
 import numpy as np
 
 from monty.json import MSONable
+from smol.moca.ensemble.sublattice import Sublattice
 
 
 class SampleContainer(MSONable):
@@ -73,48 +73,48 @@ class SampleContainer(MSONable):
         self.metadata = {} if ensemble_metadata is None else ensemble_metadata
         self._num_energy_coefs = num_energy_coefs
         self.total_mc_steps = 0
-        self.__nsamples = 0
-        self.__chain = np.empty((0, nwalkers, num_sites), dtype=int)
-        self.__feature_blob = np.empty((0, nwalkers,
-                                        len(natural_parameters)))
-        self.__enthalpy = np.empty((0, nwalkers))
-        self.__accepted = np.zeros(nwalkers, dtype=int)
+        self._nsamples = 0
+        self._chain = np.empty((0, nwalkers, num_sites), dtype=int)
+        self._feature_blob = np.empty((0, nwalkers,
+                                       len(natural_parameters)))
+        self._enthalpy = np.empty((0, nwalkers))
+        self._accepted = np.zeros(nwalkers, dtype=int)
 
     @property
     def num_samples(self):
         """Get the total number of samples."""
-        return self.__nsamples
+        return self._nsamples
 
     @property
     def shape(self):
         """Get the shape of the samples in chain."""
-        return self.__chain.shape[1:]
+        return self._chain.shape[1:]
 
     @property
     def sampling_efficiency(self, discard=0, flat=True):
         """Return the sampling efficiency for chains."""
-        efficiency = self.__accepted[discard:]/(self.total_mc_steps - discard)
+        efficiency = self._accepted[discard:] / (self.total_mc_steps - discard)
         if flat:
             efficiency = efficiency.mean()
         return efficiency
 
     def get_occupancies(self, discard=0, thin_by=1, flat=True):
         """Get an occupancy chain from samples."""
-        chain = self.__chain[discard + thin_by - 1::thin_by]
+        chain = self._chain[discard + thin_by - 1::thin_by]
         if flat:
             chain = self._flatten(chain)
         return chain
 
     def get_enthalpies(self, discard=0, thin_by=1, flat=True):
         """Get the generalized entalpy changes from samples in chain."""
-        chain = self.__enthalpy[discard + thin_by - 1::thin_by]
+        chain = self._enthalpy[discard + thin_by - 1::thin_by]
         if flat:
             chain = self._flatten(chain)
         return chain
 
     def get_feature_vectors(self, discard=0, thin_by=1, flat=True):
         """Get the feature vector changes from samples in chain."""
-        chain = self.__feature_blob[discard + thin_by - 1::thin_by]
+        chain = self._feature_blob[discard + thin_by - 1::thin_by]
         if flat:
             chain = self._flatten(chain)
         return chain
@@ -215,7 +215,7 @@ class SampleContainer(MSONable):
                      order as the underlying site space.
         """
         if sublattice not in self.sublattices:
-            raise ValueError('Sublattice provided is not recognized. '
+            raise ValueError('Sublattice provided is not recognized.\n'
                              'Provide one included in the sublattices '
                              'attribute of this SampleContainer.')
         occu_chain = self.get_occupancies(discard, thin_by, flat=False)
@@ -244,31 +244,31 @@ class SampleContainer(MSONable):
             delta_feature_blob (ndarray):
                 array of feature vector changes
         """
-        self.__chain[self.__nsamples, :, :] = occupancies
-        self.__enthalpy[self.__nsamples, :] = delta_enthalpy
-        self.__feature_blob[self.__nsamples, :, :] = delta_feature_blob
-        self.__accepted += accepted
-        self.__nsamples += 1
+        self._chain[self._nsamples, :, :] = occupancies
+        self._enthalpy[self._nsamples, :] = delta_enthalpy
+        self._feature_blob[self._nsamples, :, :] = delta_feature_blob
+        self._accepted += accepted
+        self._nsamples += 1
 
     def clear(self):
         """Clear all samples from container."""
         nwalkers, num_sites = self.shape
         self.total_mc_steps = 0
-        self.__nsamples = 0
-        self.__chain = np.empty((0, nwalkers, num_sites), dtype=int)
-        self.__feature_blob = np.empty((0, nwalkers,
-                                        len(self.natural_parameters)))
-        self.__enthalpy = np.empty((0, nwalkers))
-        self.__accepted = np.zeros(nwalkers, dtype=int)
+        self._nsamples = 0
+        self._chain = np.empty((0, nwalkers, num_sites), dtype=int)
+        self._feature_blob = np.empty((0, nwalkers,
+                                       len(self.natural_parameters)))
+        self._enthalpy = np.empty((0, nwalkers))
+        self._accepted = np.zeros(nwalkers, dtype=int)
 
     def allocate(self, nsamples):
         """allocate more space in arrays for more samples."""
-        arr = np.empty((nsamples, *self.__chain.shape[1:]), dtype=int)
-        self.__chain = np.append(self.__chain, arr, axis=0)
-        arr = np.empty((nsamples, *self.__feature_blob.shape[1:]))
-        self.__feature_blob = np.append(self.__feature_blob, arr, axis=0)
-        arr = np.empty((nsamples, *self.__enthalpy.shape[1:]))
-        self.__enthalpy = np.append(self.__enthalpy, arr, axis=0)
+        arr = np.empty((nsamples, *self._chain.shape[1:]), dtype=int)
+        self._chain = np.append(self._chain, arr, axis=0)
+        arr = np.empty((nsamples, *self._feature_blob.shape[1:]))
+        self._feature_blob = np.append(self._feature_blob, arr, axis=0)
+        arr = np.empty((nsamples, *self._enthalpy.shape[1:]))
+        self._enthalpy = np.append(self._enthalpy, arr, axis=0)
 
     # TODO write this up
     def stream(self, file_path=None):
@@ -286,10 +286,44 @@ class SampleContainer(MSONable):
 
     def __len__(self):
         """Return the number of samples."""
-        return self.__nsamples
+        return self._nsamples
 
     def as_dict(self):
-        pass
+        """Get Json-serialization dict representation.
 
+        Returns:
+            MSONable dict
+        """
+        d = {'temperature': self.temperature,
+             'num_sites': self.num_sites,
+             'sublattices': [s.as_dict() for s in self.sublattices],
+             'natural_parameters': self.natural_parameters,
+             'metadata': self.metadata,
+             'num_energy_coefs': self._num_energy_coefs,
+             'total_mc_steps': self.total_mc_steps,
+             'nsamples': self._nsamples,
+             'chain': self._chain.tolist(),
+             'feature_blob': self._feature_blob.tolist(),
+             'enthalpy': self._enthalpy.tolist(),
+             'accepted': self._accepted.tolist()}
+        return d
+
+    @classmethod
     def from_dict(cls, d):
-        pass
+        """Instantiate a sublattice from dict representation.
+
+        Args:
+            d (dict):
+                dictionary representation.
+        Returns:
+            Sublattice
+        """
+        sublattices = [Sublattice.from_dict(s) for s in d['sublattices']]
+        container = cls(d['temperature'], d['num_sites'], sublattices,
+                        d['natural_parameters'], d['num_energy_coefs'],
+                        d['ensemble_metadata'])
+        container._nsamples = np.array(d['nsamples'])
+        container._chain = np.array(d['chain'], dtype=int)
+        container._feature_blob = np.array(d['feature_blob'])
+        container._enthalpy = np.array(d['enthalpy'])
+        container._accepted = np.array(d['accpeted'], dtype=int)

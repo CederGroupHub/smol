@@ -170,7 +170,7 @@ class Sampler(ABC):
         """
         if initial_occupancies is None:
             try:
-                initial_occupancies = self.samples.get_occupancies()[-1]
+                initial_occupancies = self.samples.get_occupancies(flat=False)[-1]  # noqa
             except IndexError:
                 raise RuntimeError('There are no saved samples to obtain the '
                                    'initial occupancies. These must be '
