@@ -507,8 +507,8 @@ class StructureWrangler(MSONable):
         """
         warnings.warn('the filter_by_ewald method is going to be deprecated.\n'
                       'The functionality will still be available but with '
-                      'a different interface', category=DeprecationWarning,
-                      stacklevel=2)
+                      'a different general filters interface.',
+                      category=DeprecationWarning, stacklevel=2)
         ewald_corr = None
         for term in self._subspace.external_terms:
             if isinstance(term, EwaldTerm):
@@ -581,6 +581,10 @@ class StructureWrangler(MSONable):
                 The criteria for the property value to keep. Options are min
                 or max
         """
+        warnings.warn('filter_duplicate_corrs method is going to be '
+                      'deprecated.\n The functionality will still be available'
+                      'with a different general filters interface.',
+                      category=DeprecationWarning, stacklevel=2)
         if filter_by not in ('max', 'min'):
             raise ValueError(f'Filtering by {filter_by} is not an option.')
 
