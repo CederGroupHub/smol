@@ -15,8 +15,9 @@ from math import log, prod
 import numpy as np
 
 from monty.json import MSONable
-from smol.moca.processor.base import Processor  # noqa
-from smol.moca.ensemble.base import Ensemble
+from smol.moca.processor.base import Processor
+from .base import Ensemble
+from .sublattice import Sublattice
 
 
 class BaseSemiGrandEnsemble(Ensemble):
@@ -87,6 +88,10 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
     absolute values. To obtain the absolute values you must calculate the
     reference chemical potential and then simply subtract it from the given
     values.
+
+    Attributes:
+        thermo_boundaries (dict):
+            dict of chemical potentials.
     """
 
     def __init__(self, processor, temperature, chemical_potentials,
@@ -119,7 +124,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
                 raise ValueError(f'Species {sp} was not assigned a chemical '
                                  ' potential, a value must be provided.')
 
-        self.__mus = chemical_potentials
+        self._mus = chemical_potentials
         self._mu_table = self._build_mu_table(chemical_potentials)
         self.thermo_boundaries = {'chemical-potentials':
                                   self.chemical_potentials}
@@ -127,16 +132,16 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
     @property
     def chemical_potentials(self):
         """Get the chemical potentials for species in system."""
-        return self.__mus
+        return self._mus
 
     @chemical_potentials.setter
     def chemical_potentials(self, value):
         """Set the chemical potentials and update table"""
-        if not all(val in self.__mus.keys() for val in value.keys()):
+        if not all(val in self._mus.keys() for val in value.keys()):
             raise ValueError('Chemical potentials given are missing species. '
                              'Values must be given for each of the following:'
-                             f' {self.__mus.keys()}')
-        self.__mus = value
+                             f' {self._mus.keys()}')
+        self._mus = value
         self._mu_table = self._build_mu_table(value)
 
     def compute_feature_vector_change(self, occupancy, step):
@@ -181,6 +186,31 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
             table[sublatt.sites, :len(ordered_pots)] = ordered_pots
         return table
 
+    def as_dict(self):
+        """Get Json-serialization dict representation.
+
+        Returns:
+            MSONable dict
+        """
+        d = super().as_dict()
+        d['chemical_potentials'] = self.chemical_potentials
+        return d
+
+    @classmethod
+    def from_dict(cls, d):
+        """Instantiate a MuSemiGrandEnsemble from dict representation.
+
+        Args:
+            d (dict):
+                dictionary representation.
+        Returns:
+            CanonicalEnsemble
+        """
+        return cls(Processor.from_dict(d['processor']), d['temperature'],
+                   chemical_potentials=d['chemical_potentials'],
+                   sublattices=[Sublattice.from_dict(s)
+                                for s in d['sublattices']])
+
 
 class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     """Fugacity fraction SemiGrandEnsemble.
@@ -192,6 +222,10 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     reference fugacity must be computed as an ensemble average and all other
     fugacities can then be calculated. From the fugacities and the set
     temperature the corresponding chemical potentials can then be calculated.
+
+    Attributes:
+        thermo_boundaries (dict):
+            dictionary of fugacity fractions.
     """
     def __init__(self, processor, temperature, fugacity_fractions=None,
                  sublattices=None):
@@ -224,9 +258,9 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
                     raise ValueError('Fugacity fractions given are missing or '
                                      'not valid species. Values must be given '
                                      'for each of the following: '
-                                     f'{[f.keys() for f in self.__fus]}')
+                                     f'{[f.keys() for f in self._fus]}')
 
-        self.__fus = fugacity_fractions
+        self._fus = fugacity_fractions
         self._fu_table = self._build_fu_table(fugacity_fractions)
         self.thermo_boundaries = {'fugacity-fractions':
                                   self.fugacity_fractions}
@@ -234,20 +268,20 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     @property
     def fugacity_fractions(self):
         """Get the fugacity fractions for species in system."""
-        return self.__fus
+        return self._fus
 
     @fugacity_fractions.setter
     def fugacity_fractions(self, value):
         """Set the fugacity fractions and update table"""
         if not all(sum(fus.values()) == 1 for fus in value):
             raise ValueError('Fugacity ratios must add to one.')
-        for (fus, vals) in zip(self.__fus, value):
+        for (fus, vals) in zip(self._fus, value):
             if not all(val in fus.keys() for val in vals.keys()):
                 raise ValueError('Fugacity fractions given are missing or not '
                                  'valid species. Values must be given for each'
                                  ' of the following: '
-                                 f'{[f.keys() for f in self.__fus]}')
-        self.__fus = value
+                                 f'{[f.keys() for f in self._fus]}')
+        self._fus = value
         self._fu_table = self._build_fu_table(value)
 
     def compute_feature_vector_change(self, occupancy, step):
@@ -292,3 +326,28 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             ordered_fus = [fugacity_fractions[sp] for sp in sublatt.species]
             table[sublatt.sites, :len(ordered_fus)] = ordered_fus
         return table
+
+    def as_dict(self):
+        """Get Json-serialization dict representation.
+
+        Returns:
+            MSONable dict
+        """
+        d = super().as_dict()
+        d['fugacity_fractions'] = self.fugacity_fractions
+        return d
+
+    @classmethod
+    def from_dict(cls, d):
+        """Instantiate a FuSemiGrandEnsemble from dict representation.
+
+        Args:
+            d (dict):
+                dictionary representation.
+        Returns:
+            FuSemiGrandEnsemble
+        """
+        return cls(Processor.from_dict(d['processor']), d['temperature'],
+                   fugacity_fractions=d['fugacity_fractions'],
+                   sublattices=[Sublattice.from_dict(s)
+                                for s in d['sublattices']])

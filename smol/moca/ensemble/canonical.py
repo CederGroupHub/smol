@@ -7,11 +7,15 @@ concentration of species.
 
 __author__ = "Luis Barroso-Luque"
 
+
+from monty.json import MSONable
+
 from smol.moca.ensemble.base import Ensemble
-from smol.moca.processor.base import Processor  # noqa
+from smol.moca.processor.base import Processor
+from .sublattice import Sublattice
 
 
-class CanonicalEnsemble(Ensemble):
+class CanonicalEnsemble(Ensemble, MSONable):
     """
     A Canonical Ensemble class to run Monte Carlo Simulations.
     """
@@ -65,3 +69,16 @@ class CanonicalEnsemble(Ensemble):
             ndarray: difference in feature vector
         """
         return self.processor.compute_feature_vector_change(occupancy, step)
+
+    @classmethod
+    def from_dict(cls, d):
+        """Instantiate a CanonicalEnsemble from dict representation.
+
+        Args:
+            d (dict):
+                dictionary representation.
+        Returns:
+            CanonicalEnsemble
+        """
+        return cls(Processor.from_dict(d['processor']), d['temperature'],
+                   [Sublattice.from_dict(s) for s in d['sublattices']])

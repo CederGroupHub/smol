@@ -11,7 +11,17 @@ from .sublattice import Sublattice
 
 
 class Ensemble(ABC):
-    """Abstract Base Class for Monte Carlo Ensembles."""
+    """Abstract Base Class for Monte Carlo Ensembles.
+
+    Attributes:
+        num_energy_coefs (int):
+            Number of coefficients in the natural parameters array that
+            correspond to energy only.
+        thermo_boundaries (dict):
+            dictionary with corresponding thermodynamic boundaries, i.e.
+            chemical potentials or fugacity fractions. This is kept only for
+            descriptive purposes.
+    """
 
     def __init__(self, processor, temperature, sublattices=None):
         """Initialize class instance.
@@ -32,11 +42,10 @@ class Ensemble(ABC):
                            for site_space in processor.unique_site_spaces]
 
         self.temperature = temperature
+        self.num_energy_coefs = len(processor.coefs)
+        self.thermo_boundaries = {}  # not pretty way to save general info
         self._processor = processor
         self._sublattices = sublattices
-        self.num_energy_coefs = len(processor.coefs)
-        self.restricted_sites = []
-        self.thermo_boundaries = {}  # not pretty way to save general info
 
     @classmethod
     def from_cluster_expansion(cls, cluster_expansion, supercell_matrix,
@@ -123,6 +132,14 @@ class Ensemble(ABC):
         return self._sublattices
 
     @property
+    def restricted_sites(self):
+        """Get indices of all restricted sites."""
+        sites = []
+        for sublattice in self.sublattices:
+            sites += sublattice.restricted_sites
+        return sites
+
+    @property
     @abstractmethod
     def natural_parameters(self):
         """Get the vector of natural parameters.
@@ -184,3 +201,11 @@ class Ensemble(ABC):
         """Unfreeze all previously restricted sites."""
         for sublattice in self.sublattices:
             sublattice.reset_restricted_sites()
+
+    def as_dict(self):
+        """Get dictionary representation."""
+        d = {'temperature': self.temperature,
+             'thermo_boundaries': self.thermo_boundaries,
+             'processor': self._processor.as_dict(),
+             'sublattices': [s.as_dict() for s in self._sublattices]}
+        return d
