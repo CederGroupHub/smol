@@ -240,7 +240,7 @@ class StructureWrangler(MSONable):
                 You are free to make up the keys for each property but make
                 sure you are consistent for all structures that you add.
             normalized (bool):
-                Wether the given properties have already been normalized.
+                Whether the given properties have already been normalized.
             weights (dict):
                 The weight given to the structure when doing the fit. The key
                 must match at least one of the given properties.
