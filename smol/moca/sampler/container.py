@@ -121,9 +121,10 @@ class SampleContainer(MSONable):
 
     def get_energies(self, discard=0, thin_by=1, flat=True):
         """Get the energies from samples in chain."""
-        feature_blob = self.get_feature_vectors(discard, thin_by)
+        feature_blob = self.get_feature_vectors(discard, thin_by, flat=False)
         energies = np.array([np.dot(self.natural_parameters[:self._num_energy_coefs],  # noqa
-                             features.T) for features in feature_blob])
+                             features[:, :self._num_energy_coefs].T)
+                             for features in feature_blob])
         if flat:
             energies = self._flatten(energies)
         return energies

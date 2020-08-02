@@ -3,6 +3,7 @@
 __author__ = "Luis Barroso-Luque"
 
 import inspect
+import warnings
 from typing import Dict, Any
 
 
@@ -61,3 +62,54 @@ def get_subclasses(base_class: object) -> Dict[str, object]:
         else:
             sub_classes[sub_class.__name__] = sub_class
     return sub_classes
+
+
+def progress_bar(display, total, description):
+    """Get a tqdm progress bar interface.
+
+    If the tqdm library is not installed, this will an empty progress bar that
+    does nothing.
+
+    Args:
+        display (bool):
+            If true a real progress bar will be returned.
+        total (int):
+            The total size of the progress bar.
+        description (str):
+            Description to print in progress bar.
+    """
+    try:
+        import tqdm
+    except ImportError:
+        tqdm = None
+
+    if display:
+        if tqdm is None:
+            warnings.warn("tqdm libary needs to be installed to show a "
+                          " progress bar.")
+            return _EmptyBar()
+        else:
+            return tqdm.tqdm(total=total, desc=description)
+            # if display is True:
+            #   return tqdm.tqdm(total=total, desc=description)
+            # else:
+            #    return getattr(tqdm, "tqdm_" + display)(total=total)
+    return _EmptyBar()
+
+
+class _EmptyBar:
+    """A dummy progress bar.
+    Idea take from emce:
+    https://github.com/dfm/emcee/blob/main/src/emcee/pbar.py
+    """
+    def __init__(self):
+        pass
+
+    def __enter__(self, *args, **kwargs):
+        return self
+
+    def __exit__(self, *args, **kwargs):
+        pass
+
+    def update(self, *args):
+        pass

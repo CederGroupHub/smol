@@ -11,6 +11,7 @@ import random
 from warnings import warn
 import numpy as np
 
+from smol.utils import progress_bar
 from smol.moca.sampler.container import SampleContainer
 
 
@@ -22,8 +23,7 @@ class Sampler(ABC):
     and write a specific sampler see the MetropolisSampler.
     """
 
-    def __init__(self, ensemble, usher, nwalkers=1, samples=None,
-                 seed=None):
+    def __init__(self, ensemble, usher, nwalkers=1, samples=None, seed=None):
         """Initialize BaseSampler.
 
         Args:
@@ -101,7 +101,12 @@ class Sampler(ABC):
         """
         return tuple()
 
-    def sample(self, nsteps, initial_occupancies, thin_by=1):
+    def clear_samples(self):
+        """Clear samples from sample container."""
+        self.samples.clear()
+
+    # TODO add a check to try and import tqdm if not warn and dont show
+    def sample(self, nsteps, initial_occupancies, thin_by=1, progress=False):
         """Generate samples
 
         Yield a sample state every thin_by iterations. A state is give by
@@ -109,12 +114,13 @@ class Sampler(ABC):
 
         Args:
             nsteps (int):
-
                 Number of iterations to run.
             initial_occupancies (ndarray):
                 array of occupancies
             thin_by (int): optional
                 Number to thin iterations by and provide samples.
+            progress (bool):
+                If true will show a progress bar.
 
         Yields:
             tuple: accepted, occupancies, features change, enthalpies change
@@ -137,21 +143,27 @@ class Sampler(ABC):
         feature_blob = np.ascontiguousarray(feature_blob)
         enthalpy = np.dot(self.ensemble.natural_parameters, feature_blob.T)
 
-        for _ in range(nsteps // thin_by):
-            for _ in range(thin_by):
-                for i, (accept, occupancy, delta_enthalpy, delta_features) in \
-                  enumerate(map(self._attempt_step, occupancies)):
-                    accepted[i] += accept
-                    occupancies[i] = occupancy
-                    if accept:
-                        enthalpy[i] = enthalpy[i] + delta_enthalpy
-                        feature_blob[i] = feature_blob[i] + delta_features
-            # yield copies
-            yield (accepted.copy(), occupancies.copy(), enthalpy.copy(),
-                   feature_blob.copy())
+        # Initialise progress bar
+        nwalkers, nsites = self.samples.shape
+        desc = (f'Sampling {nwalkers} chains at {self.ensemble.temperature} K'
+                f' from a cell with {nsites} sites')
+        with progress_bar(progress, total=nsteps, description=desc) as bar:
+            for _ in range(nsteps // thin_by):
+                for _ in range(thin_by):
+                    for i, (accept, occupancy, delta_enthalpy, delta_features)\
+                      in enumerate(map(self._attempt_step, occupancies)):
+                        accepted[i] += accept
+                        occupancies[i] = occupancy
+                        if accept:
+                            enthalpy[i] = enthalpy[i] + delta_enthalpy
+                            feature_blob[i] = feature_blob[i] + delta_features
+                    bar.update()
+                # yield copies
+                yield (accepted.copy(), occupancies.copy(), enthalpy.copy(),
+                       feature_blob.copy())
 
-    # TODO add progress option and streaming
-    def run(self, nsteps, initial_occupancies=None, thin_by=1):
+    # TODO add streaming to disk
+    def run(self, nsteps, initial_occupancies=None, thin_by=1, progress=False):
         """Run an MCMC sampling simulations.
 
         This will run and save the samples every thin_by into a
@@ -167,6 +179,8 @@ class Sampler(ABC):
                 a fresh run.
             thin_by (int): optional
                 the amount to thin by for saving samples.
+            progress (bool):
+                If true will show a progress bar.
         """
         if initial_occupancies is None:
             try:
@@ -177,9 +191,9 @@ class Sampler(ABC):
                                    'provided.')
         elif self.samples.num_samples > 0:
             warn('Initial occupancies where provided with a pre-existing '
-                 'set of samples. This basically breaks the existing chain. '
+                 'set of samples.\n This basically breaks the existing chain. '
                  'Make real sure that is what you want. If not, reset the '
-                 'sampler', RuntimeWarning)
+                 'samples in the sampler.', RuntimeWarning)
         else:
             if initial_occupancies.shape != self.samples.shape:
                 initial_occupancies = self._reshape_occu(initial_occupancies)
@@ -189,16 +203,17 @@ class Sampler(ABC):
                 warn('The ensemble temperature has been changed from '
                      f'{self.samples.temperature} to '
                      f'{self.ensemble.temperature}, and samples have already'
-                     f' been taken.\n This is not recommended practice. You '
-                     f'should consider creating a new sampler in this case')
+                     f' been taken.\n This is not recommended practice.\n You '
+                     f'should consider creating a new sampler in this case.')
             else:
                 warn('Sample temperature has been updated from '
                      f'{self.samples.temperature} to '
-                     f'{self.ensemble.temperature}')
+                     f'{self.ensemble.temperature}.')
                 self.samples.temperature = self.ensemble.temperature
 
         self.samples.allocate(nsteps)
-        for state in self.sample(nsteps, initial_occupancies, thin_by=thin_by):
+        for state in self.sample(nsteps, initial_occupancies,
+                                 thin_by=thin_by, progress=progress):
             self.samples.save_sample(*state)
 
     def _reshape_occu(self, occupancies):
@@ -209,7 +224,7 @@ class Sampler(ABC):
         else:
             raise AttributeError('The given initial occcupancies have '
                                  'incompompatible dimensions. Shape should'
-                                 f' be {self.samples.shape}')
+                                 f' be {self.samples.shape}.')
         return occupancies
 
 
