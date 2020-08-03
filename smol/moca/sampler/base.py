@@ -159,8 +159,9 @@ class Sampler(ABC):
                             feature_blob[i] = feature_blob[i] + delta_features
                     bar.update()
                 # yield copies
-                yield (accepted.copy(), occupancies.copy(), enthalpy.copy(),
+                yield (accepted, occupancies.copy(), enthalpy.copy(),
                        feature_blob.copy())
+                accepted[:] = 0  # reset acceptance array
 
     # TODO add streaming to disk
     def run(self, nsteps, initial_occupancies=None, thin_by=1, progress=False):
