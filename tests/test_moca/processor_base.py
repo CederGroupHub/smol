@@ -86,7 +86,7 @@ class TestProcessor(unittest.TestCase):
             rdprop = self.pr.compute_property_change(new_occu, [(site, old_sp)])
             self.assertEqual(dprop, -1 * rdprop)
 
-    def test_feature_update(self):
+    def test_compute_feature_change(self):
         occu = self.enc_occu.copy()
         for _ in range(50):
             sublatt = np.random.choice(self.sublattices)
