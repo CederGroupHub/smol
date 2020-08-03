@@ -7,7 +7,7 @@ from random import random
 import numpy as np
 
 from .base import Sampler
-from .usher import mcmc_usher_factory
+from .mcusher import mcmc_usher_factory
 
 
 class MetropolisSampler(Sampler):

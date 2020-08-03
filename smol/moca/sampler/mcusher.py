@@ -91,7 +91,7 @@ class Flipper(MCMCUsher):
                 encoded occupancy string.
 
         Returns:
-            list(tuple): list of tuples each with (idex, code)
+            list(tuple): list of tuples each with (index, code)
         """
         sublattice = self.get_random_sublattice()
         site = random.choice(sublattice.active_sites)
