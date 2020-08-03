@@ -6,8 +6,6 @@ import argparse
 import json
 from copy import deepcopy
 import numpy as np
-import numpy.linalg as la
-from pyabinitio.cluster_expansion.ce import ClusterExpansion
 from pymatgen.transformations.standard_transformations import OrderDisorderedStructureTransformation
 from pymatgen.analysis.structure_matcher import StructureMatcher, ElementComparator
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer

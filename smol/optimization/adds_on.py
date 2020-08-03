@@ -1,3 +1,8 @@
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+
+
 def heatmap(data, row_labels, col_labels, ax=None, cbar_kw={}, cbarlabel="", **kwargs):
     """
     Create a heatmap from a numpy array and two lists of labels.
@@ -61,21 +66,31 @@ def heatmap(data, row_labels, col_labels, ax=None, cbar_kw={}, cbarlabel="", **k
 
     return im, cbar
 
-def cluster_properties(ce):
+def cluster_properties(subsapce):
     """
     return max radius and number of atoms in cluster
 
     input ce is cluster expansion class object
+
+    subspace: a Cluster_subspace object defined in smol
     """
     cluster_n = [0]
     cluster_r = [0]
-    for sc in ce.symmetrized_clusters:
+    for sc in subsapce.iterorbits():
         for j in range(len(sc.bit_combos)):
             cluster_n.append(sc.bit_combos[j].shape[1])
-            cluster_r.append(sc.max_radius)
+            cluster_r.append(sc.radius)
     return np.array(cluster_n), np.array(cluster_r)  # without ewald term
 
+
 def rmse(ecis, A, f):
+    """
+    Calculating the RMSE of fitting in CE
+    :param ecis:
+    :param A:
+    :param f:
+    :return:
+    """
     e = np.dot(A, ecis)
     #     print(e)
     return np.average((e - f) ** 2) ** 0.5

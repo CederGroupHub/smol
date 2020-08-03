@@ -1,6 +1,8 @@
 import warnings
 import numpy as np
 import itertools
+from smol.optimization.adds_on import *
+
 
 """
 In this optimization method file, some terminology shall be defined here:
@@ -140,7 +142,7 @@ def gcv_score_Bayes(A, f, cov):
 
     """
     m, d = A.shape
-    ecis = ridge_optimize(A=A, f=f, cov=cov)
+    ecis = Bayes_optimize(A=A, f=f, cov=cov)
     rss = np.average((np.dot(A, ecis) - f) ** 2)
     inv = np.linalg.pinv(np.dot(np.transpose(A), A) + cov)
 
@@ -149,8 +151,8 @@ def gcv_score_Bayes(A, f, cov):
     return GCV
 
 
-def get_optimal_gamma(ce, A, f):
-    cluster_n, cluster_r = cluster_properties(ce=ce)
+def get_optimal_gamma(subspace, A, f, if_Ewald = False):
+    cluster_n, cluster_r = cluster_properties(subspace)
     gamma0 = np.logspace(-9, 0, 10)
     gammas = [np.append(gamma0, 0), np.logspace(-4, 0, 5), np.logspace(-4, 0, 5),
               np.linspace(0, 10, 5), np.linspace(0, 10, 5)]
@@ -160,22 +162,20 @@ def get_optimal_gamma(ce, A, f):
 
     for i in range(len(gammas)):
         gamma = gammas[i]
-        #         print(gamma[3])
-        #         print(cluster_n*gamma[3])
         regu = gamma[0] * (cluster_r * gamma[1] + gamma[2] + 1) ** (cluster_n * gamma[3] + gamma[4])
 
-        regu = np.append(regu, gamma[0])
-        #         ecis_i = l2_Bayessian(A=A, f=f, cov = np.diag(regu))
+        if if_Ewald:
+            regu = np.append(regu, gamma[0])
 
         gcv = gcv_score_Bayes(A=A, f=f, cov=np.diag(regu))
         gcvs[i] = gcv
 
 
-    print(np.min(gcvs))
     opt_gamma = gammas[np.nanargmin(gcvs)]
 
     regu = opt_gamma[0] * (cluster_r * opt_gamma[1] + opt_gamma[2] + 1) ** (cluster_n * opt_gamma[3] + opt_gamma[4])
-    regu = np.append(regu, opt_gamma[0])
+    if if_Ewald:
+        regu = np.append(regu, opt_gamma[0])
 
     return opt_gamma, regu
 
