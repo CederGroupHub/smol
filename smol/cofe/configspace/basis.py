@@ -119,7 +119,7 @@ class SiteBasis:
                               'Are you sure this is what you want?',
                               RuntimeWarning)
         else:
-            raise TypeError('species argument must be Sequence like or an'
+            raise TypeError('species argument must be Sequence like or an '
                             'OrderedDict.')
 
         self.flavor = basis_functions.flavor
