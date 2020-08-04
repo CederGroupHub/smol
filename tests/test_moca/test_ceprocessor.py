@@ -4,7 +4,7 @@ from pymatgen.transformations.standard_transformations import \
 from smol.moca import CEProcessor
 from smol.cofe import ClusterExpansion, StructureWrangler, ClusterSubspace
 from tests.data import lno_prim, lno_data, synthetic_CE_binary
-from tests.test_moca import processor_base as pb
+from tests.test_moca import base_processor_test as bp
 
 # TODO test with all synthetic data binary/ternary/electrostatic
 # TODO check that delta_corr gives same values for random sympos shuffles of same structure
@@ -13,7 +13,7 @@ from tests.test_moca import processor_base as pb
 
 class BaseTest:
     """Wrap this up so it is not run as a test."""
-    class TestCEProcessor(pb.TestProcessor):
+    class TestCEProcessor(bp.TestProcessor):
         """Speficic to test some CEProcessors only."""
 
         @classmethod
@@ -60,12 +60,12 @@ class BaseTest:
                 corr_f = pr.compute_feature_vector(new_occu)
                 corr_i = pr.compute_feature_vector(occu)
                 self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
-                                            rtol=pb.RTOL, atol=self.atol))
+                                            rtol=bp.RTOL, atol=self.atol))
                 # Test reverse matches forward
                 old_sp = occu[site]
                 rdcorr = pr.compute_feature_vector_change(new_occu, [(site, old_sp)])
                 self.assertTrue(np.allclose(dcorr, -1 * rdcorr,
-                                            rtol=pb.RTOL, atol=self.atol))
+                                            rtol=bp.RTOL, atol=self.atol))
 
         def test_constructor_except(self):
             coefs = np.random.random(self.pr.n_orbit_functions + 1)
@@ -75,8 +75,8 @@ class BaseTest:
 
 class TestCEProcessorSynthBinary(BaseTest.TestCEProcessor):
     """Test on binary synthetic data."""
-    atol = 10*pb.ATOL
-    drift_tol = 10*pb.DRIFT_TOL
+    atol = 10 * bp.ATOL
+    drift_tol = 10 * bp.DRIFT_TOL
 
     @classmethod
     def setUpClass(cls):

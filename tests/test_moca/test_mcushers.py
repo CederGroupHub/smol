@@ -50,9 +50,9 @@ class BaseTest:
                         count2 += 1
                         self.assertTrue(flip[1] in range(len(self.sublattices[1].species)))
                     else:
-                        raise RuntimeError('Something went wrong in proposing a step '
-                                           f'site proposed in {step} is not in any of'
-                                           ' the allowed sites')
+                        raise RuntimeError('Something went wrong in proposing'
+                                           f'a step site proposed in {step} is'
+                                           ' not in any of the allowed sites')
                     total += 1
                 flipped_sites.append(flip[0])
 
@@ -78,9 +78,9 @@ class BaseTest:
                         count2 += 1
                         self.assertTrue(flip[1] in range(len(self.sublattices[1].species)))
                     else:
-                        raise RuntimeError('Something went wrong in proposing a step '
-                                           f'site proposed in {step} is not in any of'
-                                           ' the allowed sites')
+                        raise RuntimeError('Something went wrong in proposing'
+                                           f'a step site proposed in {step} is'
+                                           ' not in any of the allowed sites')
                     total += 1
                 flipped_sites.append(flip[0])
 
@@ -100,5 +100,3 @@ class TestSwapper(BaseTest.TestMCMCUsher):
     def setUpClass(cls) -> None:
         super().setUpClass()
         cls.mcusher = Swapper(cls.sublattices)
-
-

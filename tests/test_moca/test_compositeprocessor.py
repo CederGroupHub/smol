@@ -5,16 +5,16 @@ from smol.moca import CompositeProcessor, CEProcessor, EwaldProcessor
 from smol.cofe import ClusterExpansion, StructureWrangler, ClusterSubspace
 from smol.cofe.extern import EwaldTerm
 from tests.data import lno_prim, lno_data, synthetic_CEewald_binary
-from tests.test_moca import processor_base as pb
+from tests.test_moca import base_processor_test as bp
 
 
 # Note that in these tests the flips are not constrained to neutral.
 # Tolerances need more slack to pass, its still pretty tight though
-ATOL = 3*pb.ATOL
-DRIFT_TOL = pb.DRIFT_TOL
+ATOL = 3 * bp.ATOL
+DRIFT_TOL = bp.DRIFT_TOL
 
 
-class TestCompositeProcessorLNO(pb.TestProcessor):
+class TestCompositeProcessorLNO(bp.TestProcessor):
     atol = ATOL
     drift_tol = DRIFT_TOL
 

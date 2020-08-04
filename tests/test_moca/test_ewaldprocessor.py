@@ -7,16 +7,16 @@ from smol.cofe.extern import EwaldTerm
 from smol.moca import EwaldProcessor
 from smol.cofe import ClusterSubspace
 from tests.data import synthetic_CEewald_binary, lno_prim
-from tests.test_moca import processor_base as pb
+from tests.test_moca import base_processor_test as bp
 
 
 # Note that in these tests the flips are not constrained to neutral.
 # Tolerances need more slack to pass, its still pretty tight though
-ATOL = 3*pb.ATOL
-DRIFT_TOL = 3*pb.DRIFT_TOL
+ATOL = 3 * bp.ATOL
+DRIFT_TOL = 3 * bp.DRIFT_TOL
 
 
-class testEwaldProcessorSynthBinary(pb.TestProcessor):
+class testEwaldProcessorSynthBinary(bp.TestProcessor):
     atol = ATOL
     drift_tol = DRIFT_TOL
 
@@ -37,7 +37,7 @@ class testEwaldProcessorSynthBinary(pb.TestProcessor):
                                                        cls.pr.allowed_species)
 
 
-class TestEwaldProcessorLNO(pb.TestProcessor):
+class TestEwaldProcessorLNO(bp.TestProcessor):
     atol = ATOL
     drift_tol = DRIFT_TOL
 
