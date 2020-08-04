@@ -18,17 +18,6 @@ import time
 import itertools
 import warnings
 
-Mn_flip_table = {('Mn2+', 'Mn2+'): ['None'],
-                 ('Mn2+', 'Mn3+'): ['swap'],
-                 ('Mn3+', 'Mn2+'): ['swap'],
-                 ('Mn2+', 'Mn4+'): ['dispropA', 'swap'],
-                 ('Mn4+', 'Mn2+'): ['dispropA', 'swap'],
-                 ('Mn3+', 'Mn3+'): ['dispropB', 'dispropC'],
-                 ('Mn3+', 'Mn4+'): ['swap'],
-                 ('Mn4+', 'Mn3+'): ['swap'],
-                 ('Mn4+', 'Mn4+'): ['None']}
-
-
 class CanonicalEnsemble(BaseEnsemble, MSONable):
     """
     A Canonical Ensemble class to run Monte Carlo Simulations.
@@ -77,46 +66,6 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             for site in self._sublattices[sublatt]['sites']:
                 self._sites_to_sublattice[site] = sublatt
         self.swap_table = None
-
-        #self.accepted_flip_table = {}
-        #self.proposed_flip_table = {}
-        #possible_sp = []
-        #for site_space in self.processor.unique_site_spaces:
-        #    possible_sp += site_space.keys()
-        #possible_sp = list(set(possible_sp))
-        #sp_sublatt_pairs = []
-        #for sp in possible_sp:
-        #    sp_str = str(sp)
-        #    if 'O' in sp_str or 'F' in sp_str:
-        #        sp_sublatt_pairs.append((sp_str, 'anion'))
-        #    else:
-        #        sp_sublatt_pairs.append((sp_str, 'oct'))
-        #        sp_sublatt_pairs.append((sp_str, 'tet'))
-        #allowed_swaps = [tuple(sorted([pair1, pair2]))
-        #                 for pair1, pair2 in itertools.combinations(sp_sublatt_pairs, 2)]
-        #for swap in allowed_swaps:
-        #    self.accepted_flip_table[swap] = 0
-        #    self.proposed_flip_table[swap] = 0
-
-        #self.flip_type_indices = {}
-        #for i, flip_type in enumerate(self.accepted_flip_table):
-        #    self.flip_type_indices[flip_type] = i
-        #self.acceptance_tracker = []
-
-        # check whether site is oct/tet
-        #self._oct_tet_indicator = []
-        #for site in self.processor.structure:
-        #    neighbors = self.processor.structure.get_neighbors(site, 2.2)
-        #    num_neighbors = len([n for n in neighbors if 'O' in n.species_string])
-        #    if num_neighbors == 4:
-        #        self._oct_tet_indicator.append('tet')
-        #    elif num_neighbors == 6:
-        #        self._oct_tet_indicator.append('oct')
-        #    elif num_neighbors == 0:
-        #        self._oct_tet_indicator.append('anion')
-        #    else:
-        #        print("Calculated incorrect coordination")
-
 
     @property
     def temperature(self):
@@ -251,7 +200,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         super().restrict_sites(sites)
         self._reset_site_table()
 
-    def _attempt_step(self, sublattices=None, new_method=False):
+    def _attempt_step(self, sublattices=None, table_swap=False, table=None):
         """Attempt flips corresponding to an elementary canonical swap.
 
         Will pick a sublattice at random and then a canonical swap at random
@@ -265,18 +214,10 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             bool
         """
 
-        if new_method:
-            #flips, flip_metadata = self._get_swaps_from_table()
-            flips = self._get_swaps_from_table()
+        if table_swap:
+            flips = self._get_swaps_from_table(table)
         else:
-            #flips, flip_metadata  = self._get_flips(sublattices)
             flips  = self._get_flips(sublattices)
-        #if flip_metadata:
-        #    sp1, sp2, site1, site2 = flip_metadata
-        #    site1_type = self._oct_tet_indicator[site1]
-        #    site2_type = self._oct_tet_indicator[site2]
-        #    flip_type = tuple(sorted([(sp1, site1_type), (sp2, site2_type)]))
-        #    self.proposed_flip_table[flip_type] += 1
         delta_e = self.processor.compute_property_change(self._occupancy,
                                                          flips)
 
@@ -286,56 +227,11 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             self._property += delta_e
             for f in flips:
                 self._occupancy[f[0]] = f[1]
+            if table_swap:
                 self._update_site_table(flips)
             if self._property < self._min_energy:
                 self._min_energy = self._property
                 self._min_occupancy = self._occupancy.copy()
-            # update accepted flip data
-            #if flip_metadata:
-            #    self.accepted_flip_table[flip_type] += 1
-            #    self.acceptance_tracker.append((self.current_step, self.flip_type_indices[flip_type]))
-
-        return accept
-
-    def _attempt_step_new(self, sublattices=None, new_method=False):
-        """Attempt flips corresponding to an elementary canonical swap.
-
-        Will pick a sublattice at random and then a canonical swap at random
-        from that sublattice (frozen sites will be excluded).
-
-        Args:
-            sublattices (list of str): optional
-                If only considering one sublattice.
-
-        Returns: Flip acceptance
-            bool
-        """
-
-        flips = self._get_swaps_from_table()
-
-        #if flip_metadata:
-        #    sp1, sp2, site1, site2 = flip_metadata
-        #    site1_type = self._oct_tet_indicator[site1]
-        #    site2_type = self._oct_tet_indicator[site2]
-        #    flip_type = tuple(sorted([(sp1, site1_type), (sp2, site2_type)]))
-        #    self.proposed_flip_table[flip_type] += 1
-        delta_e = self.processor.compute_property_change(self._occupancy,
-                                                         flips)
-
-        accept = self._accept(delta_e, self.beta)
-
-        if accept:
-            self._property += delta_e
-            for f in flips:
-                self._occupancy[f[0]] = f[1]
-                self._update_site_table(flips)
-            if self._property < self._min_energy:
-                self._min_energy = self._property
-                self._min_occupancy = self._occupancy.copy()
-            # update accepted flip data
-            #if flip_metadata:
-            #    self.accepted_flip_table[flip_type] += 1
-            #    self.acceptance_tracker.append((self.current_step, self.flip_type_indices[flip_type]))
 
         return accept
 
@@ -368,7 +264,6 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
 
             return ((site1, self._occupancy[site2]),
                     (site2, self._occupancy[site1]))
-                   #(sp1, sp2, site1, site2)
         else:
             # inefficient, maybe re-call method? infinite recursion problem
             return tuple(), tuple()
@@ -459,7 +354,6 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
                               "sublattice in the list of possible flip types "
                               "(list of species on the sublattice is empty). "
                               "Continuing, returning an empty flip")
-                #return tuple(), tuple()
                 return tuple()
 
         else:
@@ -469,56 +363,6 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         # Use processor.allowed_species to ensure correct bit if sublattice changes
         return ((site1, self.processor.allowed_species[site1].index(sp2)),
                 (site2, self.processor.allowed_species[site2].index(sp1)))
-               #(sp1, sp2, site1, site2)
-
-    def _get_Mn_swaps(self):
-        """Get a possible canonical flip between Mn species, which
-        can be either a swap or a disproportionation flip, resulting
-        in a change of species.
-
-        Returns: tuple
-
-        """
-        Mn_sp = ['Mn2+', 'Mn3+', 'Mn4+']
-        site1_options = []
-        for sp in Mn_sp:
-            for sublatt in self._site_table[sp]:
-                site1_options += self._site_table[sp][sublatt]
-        if len(site1_options) < 2:
-            raise ValueError("Only 1 Mn in the system. Cannot do Mn swaps.")
-        site1 = random.choice(site1_options)
-
-        # This implementation should still have p(s2) = 1/(N_Mn-1) for a given s2
-        # and be faster than looking
-        site2 = None
-        while site2 is None:
-            site2_proposal = random.choice(site1_options)
-            if site2_proposal != site1:
-                site2 = site2_proposal
-
-        sp1 = self.processor.allowed_species[site1][self._occupancy[site1]]
-        sp2 = self.processor.allowed_species[site2][self._occupancy[site2]]
-
-        flip_type = random.choice(Mn_flip_table[(sp1, sp2)])
-
-        if flip_type == 'None':
-            # Unproductive swap, faster just to not return any flips
-            return tuple()
-        elif flip_type == 'swap':
-            return ((site1, self.processor.allowed_species[site1].index(sp2)),
-                    (site2, self.processor.allowed_species[site2].index(sp1)))
-        elif flip_type == 'dispropA':
-            return ((site1, self.processor.allowed_species[site1].index('Mn3+')),
-                    (site2, self.processor.allowed_species[site2].index('Mn3+')))
-        elif flip_type == 'dispropB':
-            return ((site1, self.processor.allowed_species[site1].index('Mn2+')),
-                    (site2, self.processor.allowed_species[site2].index('Mn4+')))
-        elif flip_type == 'dispropC':
-            return ((site1, self.processor.allowed_species[site1].index('Mn4+')),
-                    (site2, self.processor.allowed_species[site2].index('Mn2+')))
-        else:
-            raise ValueError("No appropriate flip type in Mn flip table")
-            return tuple()
 
     def _get_current_data(self):
         """Get ensemble specific data for current MC step."""

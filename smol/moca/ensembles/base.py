@@ -171,7 +171,7 @@ class BaseEnsemble(ABC):
         self._active_sublatts = deepcopy(self._sublattices)
         self.restricted_sites = []
 
-    def run(self, iterations, sublattices=None, new_flip=False):
+    def run(self, iterations, sublattices=None, table_swap=False, table=None):
         """Run the ensembles for the given number of iterations.
 
         Samples are taken at the set intervals specified in constructur.
@@ -193,7 +193,7 @@ class BaseEnsemble(ABC):
             no_interrupt = min(remaining, self.sample_interval)
 
             for _ in range(no_interrupt):
-                success = self._attempt_step(sublattices, new_flip)
+                success = self._attempt_step(sublattices, table_swap, table)
                 self._ssteps += success
 
             self._step += no_interrupt
