@@ -14,7 +14,7 @@ ATOL = 3 * bp.ATOL
 DRIFT_TOL = bp.DRIFT_TOL
 
 
-class TestCompositeProcessorLNO(bp.TestProcessor):
+class TestCompositeProcessorLNO(bp._TestProcessor):
     atol = ATOL
     drift_tol = DRIFT_TOL
 

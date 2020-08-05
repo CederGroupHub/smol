@@ -15,7 +15,7 @@ ATOL = 3E2 * np.finfo(float).eps
 DRIFT_TOL = np.finfo(float).eps  # tolerance of average drift
 
 
-class TestProcessor(unittest.TestCase):
+class _TestProcessor(unittest.TestCase):
     """Class for all processor tests. Inherit from this.
     And write the appropriate setUp or setUpClass"""
     atol = ATOL  # set tolerances, some are loosened for some tests
@@ -30,6 +30,7 @@ class TestProcessor(unittest.TestCase):
         cls.enc_occu = None
         cls.pr = None
         cls.sublattices = None
+        raise NotImplemented(f'This method is not implemented in class {cls}')
 
     @staticmethod
     def _create_sublattice_dicts(unique_site_spaces, allowed_species):

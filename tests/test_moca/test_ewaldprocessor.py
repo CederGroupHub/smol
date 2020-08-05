@@ -16,7 +16,7 @@ ATOL = 3 * bp.ATOL
 DRIFT_TOL = 3 * bp.DRIFT_TOL
 
 
-class testEwaldProcessorSynthBinary(bp.TestProcessor):
+class testEwaldProcessorSynthBinary(bp._TestProcessor):
     atol = ATOL
     drift_tol = DRIFT_TOL
 
@@ -37,7 +37,7 @@ class testEwaldProcessorSynthBinary(bp.TestProcessor):
                                                        cls.pr.allowed_species)
 
 
-class TestEwaldProcessorLNO(bp.TestProcessor):
+class TestEwaldProcessorLNO(bp._TestProcessor):
     atol = ATOL
     drift_tol = DRIFT_TOL
 

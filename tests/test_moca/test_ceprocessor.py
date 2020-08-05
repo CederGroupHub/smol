@@ -13,12 +13,14 @@ from tests.test_moca import base_processor_test as bp
 
 class BaseTest:
     """Wrap this up so it is not run as a test."""
-    class TestCEProcessor(bp.TestProcessor):
+    class TestCEProcessor(bp._TestProcessor):
         """Speficic to test some CEProcessors only."""
 
         @classmethod
         def setUpClass(cls):
             cls.sw = None  # define this as well
+            raise NotImplementedError(f'This needs to be implemented this for '
+                                      f'class {cls}.')
 
         def test_compute_property(self):
             self.assertTrue(np.isclose(
