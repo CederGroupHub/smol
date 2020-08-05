@@ -113,7 +113,8 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
         super().__init__(processor, temperature, sublattices)
 
         # check that species are valid
-        species = [sp for sps in processor.unique_site_spaces for sp in sps]
+        species = set([sp for sps in processor.unique_site_spaces
+                       for sp in sps])
         for sp in chemical_potentials.keys():
             if sp not in species:
                 raise ValueError(f'Species {sp} in provided chemical '
@@ -137,7 +138,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
     @chemical_potentials.setter
     def chemical_potentials(self, value):
         """Set the chemical potentials and update table"""
-        if not all(val in self._mus.keys() for val in value.keys()):
+        if set(value.keys()) != set(self._mus.keys()):
             raise ValueError('Chemical potentials given are missing species. '
                              'Values must be given for each of the following:'
                              f' {self._mus.keys()}')
@@ -254,12 +255,14 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             for fus, sublatt in zip(fugacity_fractions, self.sublattices):
                 if sum([fu for fu in fus.values()]) != 1:
                     raise ValueError('Fugacity ratios must add to one.')
-                if not all(fu in sublatt.species for fu in fus.keys()):
+                if set(sublatt.species) != set(fus.keys()):
                     raise ValueError('Fugacity fractions given are missing or '
                                      'not valid species. Values must be given '
                                      'for each of the following: '
-                                     f'{[f.keys() for f in self._fus]}')
-
+                        f'{[sublatt.species for sublatt in self.sublattices]}')  # noqa
+        else:
+            fugacity_fractions = [sublatt.site_space for sublatt
+                                  in self.sublattices]
         self._fus = fugacity_fractions
         self._fu_table = self._build_fu_table(fugacity_fractions)
         self.thermo_boundaries = {'fugacity-fractions':
@@ -276,7 +279,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         if not all(sum(fus.values()) == 1 for fus in value):
             raise ValueError('Fugacity ratios must add to one.')
         for (fus, vals) in zip(self._fus, value):
-            if not all(val in fus.keys() for val in vals.keys()):
+            if set(fus.keys()) != set(vals.keys()):
                 raise ValueError('Fugacity fractions given are missing or not '
                                  'valid species. Values must be given for each'
                                  ' of the following: '
@@ -316,14 +319,14 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         of fugacity fraction changes from flips. Not that the total number
         of columns will be the number of species in the largest site space. For
         smaller site spaces the values at those rows are meaningless and will
-        be given values of 0. Also rows representing sites with not partial
-        occupancy will have all 0 values and should never be used.
+        be given values of 1. Also rows representing sites with not partial
+        occupancy will have all 1 values and should never be used.
         """
         num_cols = max(len(site_space) for site_space
                        in self.processor.unique_site_spaces)
-        table = np.zeros((self.num_sites, num_cols))
-        for fus, sublatt in zip(self.sublattices, fugacity_fractions):
-            ordered_fus = [fugacity_fractions[sp] for sp in sublatt.species]
+        table = np.ones((self.num_sites, num_cols))
+        for fus, sublatt in zip(fugacity_fractions, self.sublattices):
+            ordered_fus = [fus[sp] for sp in sublatt.species]
             table[sublatt.sites, :len(ordered_fus)] = ordered_fus
         return table
 
