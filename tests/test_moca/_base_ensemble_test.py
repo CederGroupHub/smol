@@ -22,7 +22,7 @@ class _EnsembleTest(unittest.TestCase):
         cls.processor = None
         cls.ensemble = None
         cls.ensemble_kwargs = {}
-        raise NotImplemented(f'This method is not implemented in class {cls}')
+        raise unittest.SkipTest(f'This method is not implemented in class {cls}')
 
     def setUp(self):
         self.enc_occu = np.random.randint(0, self.n_allowed_species,

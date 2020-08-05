@@ -4,7 +4,7 @@ from pymatgen.transformations.standard_transformations import \
 from smol.moca import CEProcessor
 from smol.cofe import ClusterExpansion, StructureWrangler, ClusterSubspace
 from tests.data import lno_prim, lno_data, synthetic_CE_binary
-from tests.test_moca import base_processor_test as bp
+from tests.test_moca import _base_processor_test as bp
 
 # TODO test with all synthetic data binary/ternary/electrostatic
 # TODO check that delta_corr gives same values for random sympos shuffles of same structure

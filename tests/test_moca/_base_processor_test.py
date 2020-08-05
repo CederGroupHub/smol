@@ -30,7 +30,7 @@ class _TestProcessor(unittest.TestCase):
         cls.enc_occu = None
         cls.pr = None
         cls.sublattices = None
-        raise NotImplemented(f'This method is not implemented in class {cls}')
+        raise unittest.SkipTest(f'This method is not implemented in class {cls}')
 
     @staticmethod
     def _create_sublattice_dicts(unique_site_spaces, allowed_species):

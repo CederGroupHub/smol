@@ -7,7 +7,7 @@ from smol.moca import (CEProcessor, EwaldProcessor, CompositeProcessor,
                        MuSemiGrandEnsemble, FuSemiGrandEnsemble)
 from tests.data import (synthetic_CE_binary, synthetic_CEewald_binary,
                         lno_data, lno_prim)
-import tests.test_moca.base_ensemble_test as be
+import tests.test_moca._base_ensemble_test as be
 
 
 class TestMuSemiGrandEnsembleSynthBinary(be._EnsembleTest):

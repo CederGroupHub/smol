@@ -5,7 +5,7 @@ from smol.moca import CompositeProcessor, CEProcessor, EwaldProcessor
 from smol.cofe import ClusterExpansion, StructureWrangler, ClusterSubspace
 from smol.cofe.extern import EwaldTerm
 from tests.data import lno_prim, lno_data, synthetic_CEewald_binary
-from tests.test_moca import base_processor_test as bp
+from tests.test_moca import _base_processor_test as bp
 
 
 # Note that in these tests the flips are not constrained to neutral.
