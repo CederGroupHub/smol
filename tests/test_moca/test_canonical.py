@@ -2,6 +2,7 @@ import unittest
 import os
 import json
 import numpy as np
+from copy import deepcopy
 from monty.json import MontyEncoder, MontyDecoder
 from smol.cofe import ClusterSubspace, StructureWrangler, ClusterExpansion
 from smol.moca import CEProcessor, CanonicalEnsemble
@@ -65,7 +66,7 @@ class TestCanonicalEnsemble(unittest.TestCase):
             energy = self.ensemble.current_energy
             acc = self.ensemble._attempt_step()
             if acc:
-                self.assertNotEqual(occu, self.ensemble.current_occupancy)
+                self.assertNotEqual(occu, self.ensemble.current_occupancy)    
             else:
                 self.assertEqual(occu, self.ensemble.current_occupancy)
                 self.assertEqual(energy, self.ensemble.current_energy)
@@ -122,3 +123,26 @@ class TestCanonicalEnsemble(unittest.TestCase):
         # TODO without MontyEncoder, fails because something still has an
         #  numpy array in its as_dict
         # json.dumps(d)
+
+    def test_site_table(self):
+        for _ in range(100):
+            site_table = deepcopy(self.ensemble._site_table)
+            acc = self.ensemble._attempt_step()
+            if acc:
+                self.assertNotEqual(site_table, 
+                                    self.ensemble._site_table)
+                for sp in self.ensemble._site_table:
+                    for sublatt in self.ensemble._site_table[sp]:
+                        for site in self.ensemble._site_table[sp][sublatt]:
+                            self.assertTrue(site in self.ensemble._active_sublatts[sublatt]['sites'])
+                            bit = self.ensemble._occupancy[site]
+                            sp_from_occu = self.ensemble.processor.allowed_species[site][bit]
+                            self.assertEqual(sp, sp_from_occu)
+            else:
+                self.assertEqual(self.ensemble._site_table, self.ensemble._site_table)
+        site_table = deepcopy(self.ensemble._site_table)
+        self.ensemble._reset_site_table()
+        for sp in self.ensemble._site_table:
+            for sublatt in self.ensemble._site_table[sp]:
+                self.assertEqual(set(self.ensemble._site_table[sp][sublatt]), 
+                                 set(site_table[sp][sublatt]))
