@@ -97,7 +97,7 @@ class ClusterExpansion(MSONable):
         Prim structure with only sites included in the expansion.
         (i.e. sites with partial occupancies)
         """
-        return self.cluster_subspace.exp_structure
+        return self.cluster_subspace.expansion_structure
 
     @property
     def cluster_subspace(self):

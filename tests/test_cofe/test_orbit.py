@@ -126,7 +126,8 @@ class TestOrbit(unittest.TestCase):
 
     def test_exceptions(self):
         self.assertRaises(AttributeError, Orbit, self.coords[:3],
-                          self.lattice, [[0, 1], [0, 1]], self.bases, self.symops)
+                          self.lattice, [[0, 1], [0, 1]], self.bases,
+                          self.symops)
         self.assertRaises(RuntimeError, self.orbit.remove_bit_combos_by_inds,
                           [4])
 
@@ -139,5 +140,6 @@ class TestOrbit(unittest.TestCase):
     def test_msonable(self):
         d = self.orbit.as_dict()
         self.assertEqual(self.orbit, Orbit.from_dict(d))
+        # test serialization
         j = json.dumps(d)
         json.loads(j)
