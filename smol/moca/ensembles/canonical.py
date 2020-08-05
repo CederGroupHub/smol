@@ -14,9 +14,9 @@ from monty.json import MSONable
 from smol.moca.ensembles.base import BaseEnsemble
 from smol.moca.processor import BaseProcessor
 from smol.constants import kB
-import time
 import itertools
 import warnings
+
 
 class CanonicalEnsemble(BaseEnsemble, MSONable):
     """
@@ -217,18 +217,16 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         if table_swap:
             flips = self._get_swaps_from_table(table)
         else:
-            flips  = self._get_flips(sublattices)
+            flips = self._get_flips(sublattices)
         delta_e = self.processor.compute_property_change(self._occupancy,
                                                          flips)
-
         accept = self._accept(delta_e, self.beta)
 
         if accept:
             self._property += delta_e
             for f in flips:
                 self._occupancy[f[0]] = f[1]
-            if table_swap:
-                self._update_site_table(flips)
+            self._update_site_table(flips)
             if self._property < self._min_energy:
                 self._min_energy = self._property
                 self._min_occupancy = self._occupancy.copy()
@@ -260,13 +258,12 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
 
         if swap_options:
             site2 = random.choice(swap_options)
-            sp2 = self.processor.allowed_species[site2][self._occupancy[site2]]
 
             return ((site1, self._occupancy[site2]),
                     (site2, self._occupancy[site1]))
         else:
             # inefficient, maybe re-call method? infinite recursion problem
-            return tuple(), tuple()
+            return tuple()
 
     def _get_swaps_from_table(self, swap_table=None):
         """Get a possible canonical flip, which is a swap between
@@ -296,10 +293,11 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         # -Swaps of different species over a set of shared sublattices
         # ('shared') or actually any subset of sublattices should work too
         # (although in this case, care needs to be taken that species do not
-        # end up on the wrong sites) with a different species over all sublattices,
-        # e.g. ('Li+', 'shared'), ('Mn2+', 'shared'). Given this, it may be
-        # a good idea to allow lists of sublattices, although again this may
-        # increase the burden on the user associated with creating this table
+        # end up on the wrong sites) with a different species over all
+        # sublattices,e.g. ('Li+', 'shared'), ('Mn2+', 'shared').
+        # Given this, it may be a good idea to allow lists of sublattices,
+        # although again this may increase the burden on the user
+        # associated with creating this table
 
         # Create a swap_table if not given; the automatic swap table consists
         # only of swap types between different species in the same sublattice,
@@ -316,14 +314,14 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
                 for sp in possible_sp:
                     sp_str = str(sp)
                     for sublatt in self._active_sublatts:
-                        if sp_str in self._active_sublatts[sublatt]['site_space'].keys() \
-                                and len(self._site_table[sp_str][sublatt]) > 0:
+                        ss_sp = self._active_sublatts[sublatt]['site_space'].keys()  # noqa
+                        if sp_str in ss_sp and len(self._site_table[sp_str][sublatt]) > 0:  # noqa
                             sp_sublatt_pairs.append((sp_str, sublatt))
                 allowed_swaps = [(pair1, pair2)
-                                 for pair1, pair2 in itertools.combinations(sp_sublatt_pairs, 2)
-                                 if pair1[0] != pair2[0] and pair1[1] == pair2[1]]
+                                 for pair1, pair2 in itertools.combinations(sp_sublatt_pairs, 2)  # noqa
+                                 if pair1[0] != pair2[0] and \
+                                 pair1[1] == pair2[1]]
                 for swap in allowed_swaps:
-                    # for default option, give equal probability to each swap type
                     self.swap_table[swap] = 1.0/len(allowed_swaps)
                 swap_table = self.swap_table
             else:
@@ -349,10 +347,10 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             try:
                 site1 = random.choice(swap_options_1)
                 site2 = random.choice(swap_options_2)
-            except:
-                warnings.warn("At least one species does not exist on its given "
-                              "sublattice in the list of possible flip types "
-                              "(list of species on the sublattice is empty). "
+            except IndexError:
+                warnings.warn("At least one species does not exist given "
+                              "sublattice in list of possible flip types "
+                              "(list of species on sublattice is empty). "
                               "Continuing, returning an empty flip")
                 return tuple()
 
@@ -360,7 +358,8 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             site1 = random.choice(self._site_table[sp1][sublatt1])
             site2 = random.choice(self._site_table[sp2][sublatt2])
 
-        # Use processor.allowed_species to ensure correct bit if sublattice changes
+        # Use processor.allowed_species to ensure correct bit
+        # if sublattice changes
         return ((site1, self.processor.allowed_species[site1].index(sp2)),
                 (site2, self.processor.allowed_species[site2].index(sp1)))
 
@@ -402,11 +401,10 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             sp_str = str(sp)
             self._site_table[sp_str] = {}
             for sublatt in self._active_sublatts:
-                if sp_str in self._active_sublatts[sublatt]['site_space'].keys():
+                if sp_str in self._active_sublatts[sublatt]['site_space'].keys():  # noqa
                     self._site_table[sp_str][sublatt] = \
                         [i for i in self._active_sublatts[sublatt]['sites']
-                         if self.processor.allowed_species[i][self._occupancy[i]] == sp_str]
-
+                         if self.processor.allowed_species[i][self._occupancy[i]] == sp_str]  # noqa
 
     def as_dict(self) -> dict:
         """Json-serialization dict representation.

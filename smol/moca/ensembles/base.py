@@ -9,7 +9,6 @@ import json
 import numpy as np
 from math import exp
 from abc import ABC, abstractmethod
-import time
 
 
 # TODO it would be great to use the design paradigm of observers to extract
@@ -220,7 +219,7 @@ class BaseEnsemble(ABC):
         self._data = []
 
     @abstractmethod
-    def _attempt_step(self, timing, sublattices=None):
+    def _attempt_step(self, sublattices=None):
         """Attempt a MC step and return if the step was accepted or not."""
         return
 
