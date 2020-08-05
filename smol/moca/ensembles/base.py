@@ -180,6 +180,20 @@ class BaseEnsemble(ABC):
                 Total number of monte carlo steps to attempt
             sublattices (list of str):
                 List of sublattice names to consider in site flips.
+            table_swap (bool):
+                Whether to use a table of possible swaps to propose
+                swaps.
+            table (dict):
+                dictionary with keys identifying the possible swap types,
+                including the species and sublattice of the two members of
+                the swap type, i.e. (('Li+', 'Li+/Mn2+/Vacancy'), ('Li+',
+                'Li+/Mn2+/Mn3+/Mn4+/Vacancy')). Instead of a sublattice, the
+                keyword 'shared' can be specified for both members to indicate
+                that the sites can be picked from any sublattice shared between
+                the first and second species in the two flips. The values
+                should be the probability at which the swap type is picked.
+                The values must sum to 1.
+
         """
         write_loops = iterations//self.sample_interval
         if iterations % self.sample_interval > 0:
@@ -192,7 +206,9 @@ class BaseEnsemble(ABC):
             no_interrupt = min(remaining, self.sample_interval)
 
             for _ in range(no_interrupt):
-                success = self._attempt_step(sublattices, table_swap, table)
+                success = self._attempt_step(sublattices,
+                                             table_swap=table_swap,
+                                             table=table)
                 self._ssteps += success
 
             self._step += no_interrupt
