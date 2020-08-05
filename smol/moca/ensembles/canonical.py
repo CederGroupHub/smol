@@ -305,27 +305,10 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         # the same probability of being chosen
         if swap_table is None:
             if self.swap_table is None:
-                self.swap_table = {}
-                possible_sp = []
-                for site_space in self.processor.unique_site_spaces:
-                    possible_sp += site_space.keys()
-                possible_sp = list(set(possible_sp))
-                sp_sublatt_pairs = []
-                for sp in possible_sp:
-                    sp_str = str(sp)
-                    for sublatt in self._active_sublatts:
-                        ss_sp = self._active_sublatts[sublatt]['site_space'].keys()  # noqa
-                        if sp_str in ss_sp and len(self._site_table[sp_str][sublatt]) > 0:  # noqa
-                            sp_sublatt_pairs.append((sp_str, sublatt))
-                allowed_swaps = [(pair1, pair2)
-                                 for pair1, pair2 in itertools.combinations(sp_sublatt_pairs, 2)  # noqa
-                                 if pair1[0] != pair2[0] and \
-                                 pair1[1] == pair2[1]]
-                for swap in allowed_swaps:
-                    self.swap_table[swap] = 1.0/len(allowed_swaps)
-                swap_table = self.swap_table
-            else:
-                swap_table = self.swap_table
+                self._initialize_swap_table()
+            swap_table = self.swap_table
+        else:
+            self.swap_table = swap_table
 
         # Choose random swap type weighted by given probabilities in table
         chosen_flip = random.choices(list(swap_table.keys()),
@@ -369,6 +352,65 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         data['energy'] = self.current_energy
         return data
 
+    def _initialize_swap_table(self, allow_crossover=False):
+        """
+
+        Args:
+            allow_crossover (bool): whether to allow swaps across
+            sublattices for species with overlap between sublattices
+
+        """
+        self.swap_table = {}
+        possible_sp = []
+        for site_space in self.processor.unique_site_spaces:
+            possible_sp += site_space.keys()
+        possible_sp = [str(sp) for sp in set(possible_sp)]
+        sp_sublatt_pairs = []
+        for sp in possible_sp:
+            # within each sublattice, allow swaps between diff species
+            for sublatt in self._active_sublatts:
+                ss_sp = self._active_sublatts[sublatt]['site_space'].keys()  # noqa
+                if sp in ss_sp and len(self._site_table[sp][sublatt]) > 0:  # noqa
+                    sp_sublatt_pairs.append((sp, sublatt))
+        allowed_swaps = [(pair1, pair2)
+                         for pair1, pair2 in itertools.combinations(sp_sublatt_pairs, 2)  # noqa
+                         if pair1[0] != pair2[0] and \
+                         pair1[1] == pair2[1]]
+        if allow_crossover:
+            for sp1, sp2 in itertools.combinations(possible_sp, 2):
+                # allow swaps within a set of shared sublattices
+                sp1_sublatts = self._site_table[sp1].keys()
+                sp2_sublatts = self._site_table[sp2].keys()
+                shared_sublatts = list(set(sp1_sublatts) & set(sp2_sublatts))
+                if len(shared_sublatts) > 1:
+                    # if any list of sites would be empty, remove
+                    # it from list of flip types to try
+                    sp1_shared_num_sites = 0
+                    sp2_shared_num_sites = 0
+                    for sublatt in shared_sublatts:
+                        sp1_shared_num_sites +=\
+                            len(self._site_table[sp1][sublatt])
+                        sp2_shared_num_sites +=\
+                            len(self._site_table[sp2][sublatt])
+                    if sp1_shared_num_sites == 0 or sp2_shared_num_sites == 0:
+                        continue
+                    allowed_swaps.append(((sp1, 'shared'), (sp2, 'shared')))
+                    # remove extra swaps between species with shared
+                    # sublattices that are only between single sublattices
+                    for sublatt in shared_sublatts:
+                        to_remove = [((sp1, sublatt), (sp2, sublatt)),
+                                     ((sp2, sublatt), (sp1, sublatt))]
+                        allowed_swaps = [x for x in allowed_swaps
+                                        if x not in to_remove]
+        for swap in allowed_swaps:
+            self.swap_table[swap] = 1.0/len(allowed_swaps)
+
+    def _normalize_swap_table(self):
+        """Normalize swap table so values sum to 1."""
+        sum_probs = np.sum([self.swap_table[flip] for flip in self.swap_table])
+        for flip in self.swap_table:
+            self.swap_table[flip] = self.swap_table[flip]/sum_probs
+
     def _update_site_table(self, swap):
         """Update site table based on a given swap."""
         if len(swap) == 2:
@@ -395,16 +437,15 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         possible_sp = []
         for site_space in self.processor.unique_site_spaces:
             possible_sp += site_space.keys()
-        possible_sp = list(set(possible_sp))
+        possible_sp = [str(sp) for sp in set(possible_sp)]
 
         for sp in possible_sp:
-            sp_str = str(sp)
-            self._site_table[sp_str] = {}
+            self._site_table[sp] = {}
             for sublatt in self._active_sublatts:
-                if sp_str in self._active_sublatts[sublatt]['site_space'].keys():  # noqa
-                    self._site_table[sp_str][sublatt] = \
+                if sp in self._active_sublatts[sublatt]['site_space'].keys():  # noqa
+                    self._site_table[sp][sublatt] = \
                         [i for i in self._active_sublatts[sublatt]['sites']
-                         if self.processor.allowed_species[i][self._occupancy[i]] == sp_str]  # noqa
+                         if self.processor.allowed_species[i][self._occupancy[i]] == sp]  # noqa
 
     def as_dict(self) -> dict:
         """Json-serialization dict representation.
