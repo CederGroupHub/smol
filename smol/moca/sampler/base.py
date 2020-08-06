@@ -134,7 +134,6 @@ class Sampler(ABC):
                  category=RuntimeWarning)
         # TODO check that initial states are independent if num_walkers > 1
 
-        self.samples.total_mc_steps += nsteps  # update iterations in samples
         # allocate arrays for states
         occupancies = np.ascontiguousarray(occupancies, dtype=int)
         accepted = np.zeros(occupancies.shape[0], dtype=int)
@@ -160,7 +159,7 @@ class Sampler(ABC):
                     bar.update()
                 # yield copies
                 yield (accepted, occupancies.copy(), enthalpy.copy(),
-                       feature_blob.copy())
+                       feature_blob.copy(), thin_by)
                 accepted[:] = 0  # reset acceptance array
 
     # TODO add streaming to disk

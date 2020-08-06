@@ -78,7 +78,7 @@ class SampleContainer(MSONable):
         self._feature_blob = np.empty((0, nwalkers,
                                        len(natural_parameters)))
         self._enthalpy = np.empty((0, nwalkers))
-        self._accepted = np.zeros(nwalkers, dtype=int)
+        self._accepted = np.zeros((0, nwalkers), dtype=int)
 
     @property
     def num_samples(self):
@@ -90,10 +90,10 @@ class SampleContainer(MSONable):
         """Get the shape of the samples in chain."""
         return self._chain.shape[1:]
 
-    @property
     def sampling_efficiency(self, discard=0, flat=True):
         """Return the sampling efficiency for chains."""
-        efficiency = self._accepted[discard:] / (self.total_mc_steps - discard)
+        total_accepted = self._accepted[discard:].sum(axis=0)
+        efficiency = total_accepted/(self.total_mc_steps - discard)
         if flat:
             efficiency = efficiency.mean()
         return efficiency
@@ -231,8 +231,8 @@ class SampleContainer(MSONable):
             counts = self._flatten(counts)
         return counts
 
-    def save_sample(self, accepted, occupancies, delta_enthalpy,
-                    delta_feature_blob):
+    def save_sample(self, accepted, occupancies, enthalpy, feature_blob,
+                    thinned_by):
         """Save a sample from the generated chain
 
         Args:
@@ -240,16 +240,20 @@ class SampleContainer(MSONable):
                 boolean array of acceptances.
             occupancies (ndarray):
                 array of occupancies
-            delta_enthalpy (ndarray):
+            enthalpy (ndarray):
                 array of generalized enthalpy changes
-            delta_feature_blob (ndarray):
+            feature_blob (ndarray):
                 array of feature vector changes
+            thinned_by (int):
+                the amount that the sampling was thinned by. Used to update
+                the total mc iterations.
         """
         self._chain[self._nsamples, :, :] = occupancies
-        self._enthalpy[self._nsamples, :] = delta_enthalpy
-        self._feature_blob[self._nsamples, :, :] = delta_feature_blob
-        self._accepted += accepted
+        self._enthalpy[self._nsamples, :] = enthalpy
+        self._feature_blob[self._nsamples, :, :] = feature_blob
+        self._accepted[self._nsamples, :] = accepted
         self._nsamples += 1
+        self.total_mc_steps += thinned_by
 
     def clear(self):
         """Clear all samples from container."""
@@ -260,7 +264,7 @@ class SampleContainer(MSONable):
         self._feature_blob = np.empty((0, nwalkers,
                                        len(self.natural_parameters)))
         self._enthalpy = np.empty((0, nwalkers))
-        self._accepted = np.zeros(nwalkers, dtype=int)
+        self._accepted = np.zeros((0, nwalkers), dtype=int)
 
     def allocate(self, nsamples):
         """allocate more space in arrays for more samples."""
@@ -270,6 +274,8 @@ class SampleContainer(MSONable):
         self._feature_blob = np.append(self._feature_blob, arr, axis=0)
         arr = np.empty((nsamples, *self._enthalpy.shape[1:]))
         self._enthalpy = np.append(self._enthalpy, arr, axis=0)
+        arr = np.empty((nsamples, *self._accepted.shape[1:]), dtype=int)
+        self._accepted = np.append(self._accepted, arr, axis=0)
 
     # TODO write this up
     def stream(self, file_path=None):
