@@ -17,6 +17,15 @@ from smol.constants import kB
 import itertools
 import warnings
 
+Mn_flip_table = {('Mn2+', 'Mn2+'): ['None'],
+                 ('Mn2+', 'Mn3+'): ['swap'],
+                 ('Mn3+', 'Mn2+'): ['swap'],
+                 ('Mn2+', 'Mn4+'): ['dispropA', 'swap'],
+                 ('Mn4+', 'Mn2+'): ['dispropA', 'swap'],
+                 ('Mn3+', 'Mn3+'): ['dispropB', 'dispropC'],
+                 ('Mn3+', 'Mn4+'): ['swap'],
+                 ('Mn4+', 'Mn3+'): ['swap'],
+                 ('Mn4+', 'Mn4+'): ['None']}
 
 class CanonicalEnsemble(BaseEnsemble, MSONable):
     """
@@ -345,6 +354,55 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         # if sublattice changes
         return ((site1, self.processor.allowed_species[site1].index(sp2)),
                 (site2, self.processor.allowed_species[site2].index(sp1)))
+
+    def _get_Mn_swaps(self):
+        """Get a possible canonical flip between Mn species, which
+        can be either a swap or a disproportionation flip, resulting
+        in a change of species.
+
+        Returns: tuple
+
+        """
+        Mn_sp = ['Mn2+', 'Mn3+', 'Mn4+']
+        site1_options = []
+        for sp in Mn_sp:
+            for sublatt in self._site_table[sp]:
+                site1_options += self._site_table[sp][sublatt]
+        if len(site1_options) < 2:
+            raise ValueError("Only 1 Mn in the system. Cannot do Mn swaps.")
+        site1 = random.choice(site1_options)
+
+        # This implementation should still have p(s2) = 1/(N_Mn-1) for a given s2
+        # and be faster than looking
+        site2 = None
+        while site2 is None:
+            site2_proposal = random.choice(site1_options)
+            if site2_proposal != site1:
+                site2 = site2_proposal
+
+        sp1 = self.processor.allowed_species[site1][self._occupancy[site1]]
+        sp2 = self.processor.allowed_species[site2][self._occupancy[site2]]
+
+        flip_type = random.choice(Mn_flip_table[(sp1, sp2)])
+
+        if flip_type == 'None':
+            # Unproductive swap, faster just to not return any flips
+            return tuple()
+        elif flip_type == 'swap':
+            return ((site1, self.processor.allowed_species[site1].index(sp2)),
+                    (site2, self.processor.allowed_species[site2].index(sp1)))
+        elif flip_type == 'dispropA':
+            return ((site1, self.processor.allowed_species[site1].index('Mn3+')),
+                    (site2, self.processor.allowed_species[site2].index('Mn3+')))
+        elif flip_type == 'dispropB':
+            return ((site1, self.processor.allowed_species[site1].index('Mn2+')),
+                    (site2, self.processor.allowed_species[site2].index('Mn4+')))
+        elif flip_type == 'dispropC':
+            return ((site1, self.processor.allowed_species[site1].index('Mn4+')),
+                    (site2, self.processor.allowed_species[site2].index('Mn2+')))
+        else:
+            raise ValueError("No appropriate flip type in Mn flip table")
+            return tuple()
 
     def _get_current_data(self):
         """Get ensemble specific data for current MC step."""
