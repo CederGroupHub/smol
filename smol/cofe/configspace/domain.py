@@ -1,76 +1,74 @@
 """
-Implementation of the SiteSpace and functions to generate site spaces for a
-given disordered strucuture.
+Implementation functions to generate lists of site spaces and allowed species
+for a given disordered strucuture.
 
 A site space is simply made up of the allowed species and their concentrations
 including dummy species such as vacancies. A site spaces makes up the domain
 of a site function and many site spaces make up the space of configurations.
 """
+
 __author__ = "Luis Barroso-Luque, Fengyu Xie"
 
 from collections import OrderedDict
-from pymatgen.core.periodic_table import Specie, DummySpecie
+from pymatgen.core.periodic_table import DummySpecie
 
 
 # class CESpecie(Specie)
 # Will be defined if we need more specie dimensions in the future.
 
 
-def get_site_space(composition, include_measure=False):
+def get_allowed_species(structure):
+    """Get the allowed species for each site in a disoredered structure.
+
+    This will get all the allowed species for each site in a pymatgen structure
+    If the site composition does not add to 1, a vacancy DummySpecie will
+    be appended to the allowed species at that site.
+
+    Args:
+        structure (Structure):
+            Structure to determine site spaces from at least some sites should
+            be disordered, otherwise there is no point in using this.
+
+    Returns:
+        list of Specie: of allowed species for each site
     """
-    Inputs:
-        composition: pymatgen.core.composition, must be
-                     fractional composition.
-        include_measure: Boolean. If ture, will keep
-                     concentration values as a measure
-                     in concentration dependent basis;
-                     otherwise, all species will be given
-                     equal weights.
-    Output:
-        site_space:
-            OrderedDict: {Specie: measure}
-    """
-    if composition._natoms > 1:
-        raise ValueError("Given measures does not sum to 1! Are you sure you are \
-                          using a fractional composition?")
-
-    site_space = OrderedDict(sorted(composition.items()))
-    if composition._natoms < 0.99:
-        vac = DummySpecie('_Vacancy')
-        site_space[vac] = 1 - composition._natoms
-
-    if not include_measure:
-        d = len(site_space)
-        for sp in site_space:
-            site_space[sp] = float(1) / d
-
-    return site_space
+    all_site_spaces = get_site_spaces(structure)
+    return [list(site_space.keys()) for site_space in all_site_spaces]
 
 
-def get_site_spaces_from_structure(structure, include_measure=False):
-    """Get site domains for sites in a disordered structure, from a pymatgen.structure
-    object.
+def get_site_spaces(structure, include_measure=False):
+    """Get site spaces for each site in a disordered structure.
 
-    Not recommended, because this type of domains will only contain elemental and charge
-    information, and no additional information such as magentization can be included.
-    We recommend users to initialize a cluster expansion from lattice, site_coords, custom
-    site_spaces, and sublattice list.
+    Method to obtain the single site spaces for the sites in a structure.
+    The single site spaces are represented by the allowed species for each site
+    and the measure/concentration for disordered sites.
 
     Vacancies are included in sites where the site element composition does not
     sum to 1 (i.e. the total occupation is not 1)
 
     Args:
         structure (Structure):
-            Structure to determine site domains from at least some sites should
+            Structure to determine site spaces from at least some sites should
             be disordered, otherwise there is no point in using this.
-        include_measure (bool): (optional)
-             To include the site element compositions as the domain measure.
+        include_measure (bool): optional
+            If true will take the site compositions as the site space measure,
+            otherwise a uniform measure is assumed.
 
     Returns:
-        List of site_space, each site_space is an instance of SiteSpace class.
+        Ordereddict: Of allowed species and their corresponding measure.
     """
-    return [get_site_space(st.species, include_measure=include_measure) \
-            for st in structure]
-
-
-
+    all_site_spaces = []
+    for site in structure:
+        # sorting is crucial to ensure consistency!
+        site_space = OrderedDict((spec, comp) for spec, comp
+                                 in sorted(site.species.items()))
+        if not include_measure:  # make uniform if measure not included
+            for spec in site_space.keys():
+                site_space[spec] = 1.0 / len(site_space)
+        if site.species.num_atoms < 0.99:
+            site_space[DummySpecie("_vacancy")] = 1 - site.species.num_atoms
+        elif site.species.num_atoms > 1:
+            raise ValueError(f"The composition in site {site} is greater than "
+                             "1. Makes sure compositions are fractional.")
+        all_site_spaces.append(site_space)
+    return all_site_spaces
