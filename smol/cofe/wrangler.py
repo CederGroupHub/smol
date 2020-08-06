@@ -240,7 +240,7 @@ class StructureWrangler(MSONable):
                 You are free to make up the keys for each property but make
                 sure you are consistent for all structures that you add.
             normalized (bool):
-                Wether the given properties have already been normalized.
+                Whether the given properties have already been normalized.
             weights (dict):
                 The weight given to the structure when doing the fit. The key
                 must match at least one of the given properties.
@@ -507,8 +507,8 @@ class StructureWrangler(MSONable):
         """
         warnings.warn('the filter_by_ewald method is going to be deprecated.\n'
                       'The functionality will still be available but with '
-                      'a different interface', category=DeprecationWarning,
-                      stacklevel=2)
+                      'a different general filters interface.',
+                      category=DeprecationWarning, stacklevel=2)
         ewald_corr = None
         for term in self._subspace.external_terms:
             if isinstance(term, EwaldTerm):
@@ -581,6 +581,10 @@ class StructureWrangler(MSONable):
                 The criteria for the property value to keep. Options are min
                 or max
         """
+        warnings.warn('filter_duplicate_corrs method is going to be '
+                      'deprecated.\n The functionality will still be available'
+                      'with a different general filters interface.',
+                      category=DeprecationWarning, stacklevel=2)
         if filter_by not in ('max', 'min'):
             raise ValueError(f'Filtering by {filter_by} is not an option.')
 

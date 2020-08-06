@@ -14,6 +14,8 @@ from monty.json import MSONable
 from smol.moca.ensembles.base import BaseEnsemble
 from smol.moca.processor import BaseProcessor
 from smol.constants import kB
+import itertools
+import warnings
 
 
 class CanonicalEnsemble(BaseEnsemble, MSONable):
@@ -57,6 +59,13 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         self.temperature = temperature
         self._min_energy = self._property
         self._min_occupancy = self._init_occupancy
+
+        self._reset_site_table()
+        self._sites_to_sublattice = {}
+        for sublatt in self._sublattices:
+            for site in self._sublattices[sublatt]['sites']:
+                self._sites_to_sublattice[site] = sublatt
+        self.swap_table = None
 
     @property
     def temperature(self):
@@ -177,8 +186,21 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         super().reset()
         self._min_energy = self.processor.compute_property(self._occupancy)
         self._min_occupancy = self._occupancy
+        self._reset_site_table()
 
-    def _attempt_step(self, sublattices=None):
+    def restrict_sites(self, sites):
+        """Restricts (freezes) the given sites.
+        This will exclude those sites from being flipped during a Monte Carlo
+        run. If some of the given indices refer to inactive sites, there will
+        be no effect.
+        Args:
+            sites (Sequence):
+                indices of sites in the occupancy string to restrict.
+        """
+        super().restrict_sites(sites)
+        self._reset_site_table()
+
+    def _attempt_step(self, sublattices=None, table_swap=False, table=None):
         """Attempt flips corresponding to an elementary canonical swap.
 
         Will pick a sublattice at random and then a canonical swap at random
@@ -191,7 +213,11 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         Returns: Flip acceptance
             bool
         """
-        flips = self._get_flips(sublattices)
+
+        if table_swap:
+            flips = self._get_swaps_from_table(table)
+        else:
+            flips = self._get_flips(sublattices)
         delta_e = self.processor.compute_property_change(self._occupancy,
                                                          flips)
         accept = self._accept(delta_e, self.beta)
@@ -200,6 +226,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             self._property += delta_e
             for f in flips:
                 self._occupancy[f[0]] = f[1]
+            self._update_site_table(flips)
             if self._property < self._min_energy:
                 self._min_energy = self._property
                 self._min_occupancy = self._occupancy.copy()
@@ -221,21 +248,163 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         sublattice_name = random.choice(sublattices)
         sites = self._active_sublatts[sublattice_name]['sites']
         site1 = random.choice(sites)
-        swap_options = [i for i in sites
-                        if self._occupancy[i] != self._occupancy[site1]]
+        sp1 = self.processor.allowed_species[site1][self._occupancy[site1]]
+
+        # Build swap_options more quickly from self._site_table
+        swap_options = []
+        for sp in self._site_table:
+            if sp != sp1 and sublattice_name in self._site_table[sp]:
+                swap_options += self._site_table[sp][sublattice_name]
+
         if swap_options:
             site2 = random.choice(swap_options)
+
             return ((site1, self._occupancy[site2]),
                     (site2, self._occupancy[site1]))
         else:
             # inefficient, maybe re-call method? infinite recursion problem
             return tuple()
 
+    def _get_swaps_from_table(self, swap_table=None):
+        """Get a possible canonical flip, which is a swap between
+        two sites based on a given swap table.
+
+        Args:
+            swap_table (dict): optional
+                dictionary with keys identifying the possible swap types,
+                including the species and sublattice of the two members of
+                the swap type, i.e. (('Li+', 'Li+/Mn2+/Vacancy'), ('Li+',
+                'Li+/Mn2+/Mn3+/Mn4+/Vacancy')). Instead of a sublattice, the
+                keyword 'shared' can be specified for both members to indicate
+                that the sites can be picked from any sublattice shared between
+                the first and second species in the two flips. The values
+                should be the probability at which the swap type is picked.
+                The values must sum to 1.
+
+        Returns: tuple
+
+        """
+
+        # TODO: helper function to aid in building swap table? care needs
+        # to be taken by user that the given swap table satisfies detailed
+        # balance. As a baseline, the following should definitely satisfy
+        # detailed balance:
+        # -Swaps between different species within a sublattice
+        # -Swaps of different species over a set of shared sublattices
+        # ('shared') or actually any subset of sublattices should work too
+        # (although in this case, care needs to be taken that species do not
+        # end up on the wrong sites) with a different species over all
+        # sublattices,e.g. ('Li+', 'shared'), ('Mn2+', 'shared').
+        # Given this, it may be a good idea to allow lists of sublattices,
+        # although again this may increase the burden on the user
+        # associated with creating this table
+
+        # Create a swap_table if not given; the automatic swap table consists
+        # only of swap types between different species in the same sublattice,
+        # similar to what is given by the normal _get_flips method, all with
+        # the same probability of being chosen
+        if swap_table is None:
+            if self.swap_table is None:
+                self.swap_table = {}
+                possible_sp = []
+                for site_space in self.processor.unique_site_spaces:
+                    possible_sp += site_space.keys()
+                possible_sp = list(set(possible_sp))
+                sp_sublatt_pairs = []
+                for sp in possible_sp:
+                    sp_str = str(sp)
+                    for sublatt in self._active_sublatts:
+                        ss_sp = self._active_sublatts[sublatt]['site_space'].keys()  # noqa
+                        if sp_str in ss_sp and len(self._site_table[sp_str][sublatt]) > 0:  # noqa
+                            sp_sublatt_pairs.append((sp_str, sublatt))
+                allowed_swaps = [(pair1, pair2)
+                                 for pair1, pair2 in itertools.combinations(sp_sublatt_pairs, 2)  # noqa
+                                 if pair1[0] != pair2[0] and \
+                                 pair1[1] == pair2[1]]
+                for swap in allowed_swaps:
+                    self.swap_table[swap] = 1.0/len(allowed_swaps)
+                swap_table = self.swap_table
+            else:
+                swap_table = self.swap_table
+
+        # Choose random swap type weighted by given probabilities in table
+        chosen_flip = random.choices(list(swap_table.keys()),
+                                     weights=list(swap_table.values()))[0]
+        # Order shouldn't matter for independent distributions
+        ((sp1, sublatt1), (sp2, sublatt2)) = chosen_flip
+
+        if sublatt1 == 'shared' and sublatt2 == 'shared':
+            sp1_sublatts = self._site_table[sp1].keys()
+            sp2_sublatts = self._site_table[sp2].keys()
+            shared_sublatts = list(set(sp1_sublatts) & set(sp2_sublatts))
+
+            swap_options_1 = []
+            swap_options_2 = []
+            for sublatt in shared_sublatts:
+                swap_options_1 += self._site_table[sp1][sublatt]
+                swap_options_2 += self._site_table[sp2][sublatt]
+
+            try:
+                site1 = random.choice(swap_options_1)
+                site2 = random.choice(swap_options_2)
+            except IndexError:
+                warnings.warn("At least one species does not exist given "
+                              "sublattice in list of possible flip types "
+                              "(list of species on sublattice is empty). "
+                              "Continuing, returning an empty flip")
+                return tuple()
+
+        else:
+            site1 = random.choice(self._site_table[sp1][sublatt1])
+            site2 = random.choice(self._site_table[sp2][sublatt2])
+
+        # Use processor.allowed_species to ensure correct bit
+        # if sublattice changes
+        return ((site1, self.processor.allowed_species[site1].index(sp2)),
+                (site2, self.processor.allowed_species[site2].index(sp1)))
+
     def _get_current_data(self):
         """Get ensemble specific data for current MC step."""
         data = super()._get_current_data()
         data['energy'] = self.current_energy
         return data
+
+    def _update_site_table(self, swap):
+        """Update site table based on a given swap."""
+        if len(swap) == 2:
+            site1 = swap[0][0]
+            site2 = swap[1][0]
+            sublatt1 = self._sites_to_sublattice[site1]
+            sublatt2 = self._sites_to_sublattice[site2]
+            sp1 = self.processor.allowed_species[site1][swap[0][1]]
+            sp2 = self.processor.allowed_species[site2][swap[1][1]]
+
+            # update self._site_table
+            self._site_table[sp1][sublatt2][:] = \
+                [x for x in self._site_table[sp1][sublatt2]
+                 if x != site2]
+            self._site_table[sp1][sublatt1].append(site1)
+            self._site_table[sp2][sublatt1][:] = \
+                [x for x in self._site_table[sp2][sublatt1]
+                 if x != site1]
+            self._site_table[sp2][sublatt2].append(site2)
+
+    def _reset_site_table(self):
+        """Set site table based on current occupancy."""
+        self._site_table = {}
+        possible_sp = []
+        for site_space in self.processor.unique_site_spaces:
+            possible_sp += site_space.keys()
+        possible_sp = list(set(possible_sp))
+
+        for sp in possible_sp:
+            sp_str = str(sp)
+            self._site_table[sp_str] = {}
+            for sublatt in self._active_sublatts:
+                if sp_str in self._active_sublatts[sublatt]['site_space'].keys():  # noqa
+                    self._site_table[sp_str][sublatt] = \
+                        [i for i in self._active_sublatts[sublatt]['sites']
+                         if self.processor.allowed_species[i][self._occupancy[i]] == sp_str]  # noqa
 
     def as_dict(self) -> dict:
         """Json-serialization dict representation.

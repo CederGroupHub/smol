@@ -132,7 +132,7 @@ class BaseSemiGrandEnsemble(CanonicalEnsemble, metaclass=ABCMeta):
                      for comps in self.sublattice_composition_samples)
 
     @abstractmethod
-    def _attempt_step(self, sublattices=None):
+    def _attempt_step(self, sublattices=None, **kwargs):
         """Attempt an MC step and returns 0, 1 based on acceptance."""
         return
 
@@ -268,7 +268,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
             chem_pots.update(sublattice['mu'])
         return chem_pots
 
-    def _attempt_step(self, sublattices=None):
+    def _attempt_step(self, sublattices=None, **kwargs):
         """Attempt a single SGC swap.
 
         Args:
@@ -399,7 +399,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble):
         # recopy active_sublatts to include fugacity info
         self._active_sublatts = deepcopy(self._sublattices)
 
-    def _attempt_step(self, sublattices=None):
+    def _attempt_step(self, sublattices=None, **kwargs):
         """
         Attempt an SGC flip.
 
