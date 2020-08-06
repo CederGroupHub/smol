@@ -27,6 +27,7 @@ Mn_flip_table = {('Mn2+', 'Mn2+'): ['None'],
                  ('Mn4+', 'Mn3+'): ['swap'],
                  ('Mn4+', 'Mn4+'): ['None']}
 
+
 class CanonicalEnsemble(BaseEnsemble, MSONable):
     """
     A Canonical Ensemble class to run Monte Carlo Simulations.
@@ -372,16 +373,18 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             raise ValueError("Only 1 Mn in the system. Cannot do Mn swaps.")
         site1 = random.choice(site1_options)
 
-        # This implementation should still have p(s2) = 1/(N_Mn-1) for a given s2
-        # and be faster than looking
+        # This implementation should still have p(s2) = 1/(N_Mn-1) for a
+        # given s2 and be faster than looking
         site2 = None
         while site2 is None:
             site2_proposal = random.choice(site1_options)
             if site2_proposal != site1:
                 site2 = site2_proposal
 
-        sp1 = self.processor.allowed_species[site1][self._occupancy[site1]]
-        sp2 = self.processor.allowed_species[site2][self._occupancy[site2]]
+        allowed_species = self.processor.allowed_species
+
+        sp1 = allowed_species[site1][self._occupancy[site1]]
+        sp2 = allowed_species[site2][self._occupancy[site2]]
 
         flip_type = random.choice(Mn_flip_table[(sp1, sp2)])
 
@@ -389,17 +392,17 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             # Unproductive swap, faster just to not return any flips
             return tuple()
         elif flip_type == 'swap':
-            return ((site1, self.processor.allowed_species[site1].index(sp2)),
-                    (site2, self.processor.allowed_species[site2].index(sp1)))
+            return ((site1, allowed_species[site1].index(sp2)),
+                    (site2, allowed_species[site2].index(sp1)))
         elif flip_type == 'dispropA':
-            return ((site1, self.processor.allowed_species[site1].index('Mn3+')),
-                    (site2, self.processor.allowed_species[site2].index('Mn3+')))
+            return ((site1, allowed_species[site1].index('Mn3+')),
+                    (site2, allowed_species[site2].index('Mn3+')))
         elif flip_type == 'dispropB':
-            return ((site1, self.processor.allowed_species[site1].index('Mn2+')),
-                    (site2, self.processor.allowed_species[site2].index('Mn4+')))
+            return ((site1, allowed_species[site1].index('Mn2+')),
+                    (site2, allowed_species[site2].index('Mn4+')))
         elif flip_type == 'dispropC':
-            return ((site1, self.processor.allowed_species[site1].index('Mn4+')),
-                    (site2, self.processor.allowed_species[site2].index('Mn2+')))
+            return ((site1, allowed_species[site1].index('Mn4+')),
+                    (site2, allowed_species[site2].index('Mn2+')))
         else:
             raise ValueError("No appropriate flip type in Mn flip table")
             return tuple()
@@ -459,7 +462,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
                         to_remove = [((sp1, sublatt), (sp2, sublatt)),
                                      ((sp2, sublatt), (sp1, sublatt))]
                         allowed_swaps = [x for x in allowed_swaps
-                                        if x not in to_remove]
+                                         if x not in to_remove]
         for swap in allowed_swaps:
             self.swap_table[swap] = 1.0/len(allowed_swaps)
 
