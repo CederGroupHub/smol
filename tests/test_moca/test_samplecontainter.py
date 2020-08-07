@@ -9,12 +9,13 @@ from smol.moca.sampler import SampleContainer
 
 
 class TestSamplerContainer(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls) -> None:
         # define some face sublattices
         cls.num_sites = 500
         cls.natural_parameters = np.zeros(10)
-        cls.natural_parameters[[0, -1]] = 1  # make first and last 1
+        cls.natural_parameters[[0, -1]] = -1  # make first and last 1
         cls.num_energy_coefs = 9
         sites = np.random.choice(range(500), size=300, replace=False)
         site_space = OrderedDict({'A': 0.2, 'B': 0.5, 'C': 0.3})
@@ -28,7 +29,7 @@ class TestSamplerContainer(unittest.TestCase):
         # generate some fake data
         cls.nsamples, nwalkers = 1000, 5
         cls.occus = np.empty((cls.nsamples, nwalkers, cls.num_sites))
-        cls.enths = 5*np.ones((cls.nsamples, nwalkers))
+        cls.enths = -5*np.ones((cls.nsamples, nwalkers))
         cls.featblob = np.zeros((cls.nsamples, nwalkers,
                                  len(cls.natural_parameters)))
         cls.accepted = np.random.randint(2, size=(cls.nsamples, nwalkers))
@@ -46,7 +47,7 @@ class TestSamplerContainer(unittest.TestCase):
                 cls.occus[i, j, np.setdiff1d(sites2, s)] = 1
                 # first and last feature real fake
                 cls.featblob[i, j, [0, -1]] = 2.5
-        print(np.unique(cls.occus, return_counts=True))
+
         cls.container_1w = SampleContainer(10, cls.num_sites, cls.sublattices,
                                            cls.natural_parameters,
                                            cls.num_energy_coefs)
@@ -134,7 +135,7 @@ class TestSamplerContainer(unittest.TestCase):
                     npt.assert_array_equal(c, comp*np.ones_like(c))
                 # get non flattened values
                 npt.assert_array_equal(container.sampling_efficiency(discard=d, flat=False),
-                                      (self.accepted[d:, :i].sum(axis=0) / (container.total_mc_steps - d)))
+                                       (self.accepted[d:, :i].sum(axis=0) / (container.total_mc_steps - d)))
                 self.assertEqual(container.get_occupancies(discard=d, thin_by=t, flat=False).shape,
                                  (nsamples, nwalkers, self.num_sites))
                 self.assertEqual(container.get_feature_vectors(discard=d, thin_by=t, flat=False).shape,
@@ -149,18 +150,68 @@ class TestSamplerContainer(unittest.TestCase):
                     self.assertEqual(c.shape, (nsamples, nwalkers, len(sublattice.species)))
                     npt.assert_array_equal(c, comp*np.ones_like(c))
 
-    def test_means(self):
+    def test_means_variances(self):
         for container in (self.container_1w, self.container_5w):
             nwalkers = container.shape[0]
-            i = container.shape[0]
             for d, t in product((0, 100), (1, 10)):
-                pass
+                self.assertEqual(container.mean_enthalpy(discard=d, thin_by=t), -5)
+                self.assertEqual(container.enthalpy_variance(discard=d, thin_by=t), 0)
+                self.assertEqual(container.mean_energy(discard=d, thin_by=t), -2.5)
+                self.assertEqual(container.energy_variance(discard=d, thin_by=t), 0)
+                npt.assert_array_equal(container.mean_feature_vector(discard=d, thin_by=t),
+                                       [2.5] + 8 * [0, ] + [2.5])
+                npt.assert_array_equal(container.feature_vector_variance(discard=d, thin_by=t),
+                                       10 * [0, ])
+                for sublattice, comp in zip(self.sublattices, self.sublatt_comps):
+                    npt.assert_array_almost_equal(container.mean_sublattice_composition(sublattice, discard=d, thin_by=t),
+                                                  len(sublattice.species)*[comp, ])
+                    npt.assert_array_almost_equal(container.sublattice_composition_variance(sublattice, discard=d, thin_by=t),
+                                                  len(sublattice.species) * [0, ])
 
-    def test_variances(self):
-        pass
+                # without flattening
+                npt.assert_array_equal(container.mean_enthalpy(discard=d, thin_by=t,
+                                                               flat=False),
+                                       nwalkers * [-5])
+                npt.assert_array_equal(container.enthalpy_variance(discard=d, thin_by=t,
+                                                                   flat=False),
+                                       nwalkers * [0])
+                npt.assert_array_equal(container.mean_energy(discard=d, thin_by=t,
+                                                             flat=False),
+                                       nwalkers * [-2.5])
+                npt.assert_array_equal(container.energy_variance(discard=d, thin_by=t,
+                                                                 flat=False),
+                                       nwalkers * [0])
+                npt.assert_array_equal(container.mean_feature_vector(discard=d,
+                                                                     thin_by=t, flat=False),
+                                       nwalkers * [[2.5] + 8 * [0, ] + [2.5]])
+                npt.assert_array_equal(container.feature_vector_variance(discard=d,
+                                                                         thin_by=t, flat=False),
+                                       nwalkers * [10 * [0, ]])
+                for sublattice, comp in zip(self.sublattices, self.sublatt_comps):
+                    npt.assert_array_almost_equal(container.mean_sublattice_composition(sublattice, discard=d,
+                                                                                        thin_by=t, flat=False),
+                                                  nwalkers * [len(sublattice.species)*[comp]])
+                    npt.assert_array_almost_equal(container.sublattice_composition_variance(sublattice, discard=d,
+                                                                                            thin_by=t, flat=False),
+                                                  nwalkers * [len(sublattice.species) * [0]])
 
     def test_get_mins(self):
-        pass
+        # set a fake minimum
+        i = np.random.choice(range(self.nsamples))
+        for container in (self.container_1w, self.container_5w):
+            nwalkers = container.shape[0]
+            container._enthalpy[i, :] = -10
+            container._feature_blob[i, :, :] = 5.0
+            self.assertEqual(container.get_minimum_enthalpy(), -10)
+            self.assertEqual(container.get_minimum_energy(), -5)
+            npt.assert_array_equal(container.get_minimum_enthalpy(flat=False),
+                                   nwalkers * [-10])
+            npt.assert_array_equal(container.get_minimum_energy(flat=False),
+                                   nwalkers * [-5])
+            npt.assert_array_equal(container.get_minimum_enthalpy_occupancy(flat=False),
+                                   container._chain[i])
+            npt.assert_array_equal(container.get_minimum_energy_occupancy(flat=False),
+                                   container._chain[i])
 
     def test_stream(self):
         pass
