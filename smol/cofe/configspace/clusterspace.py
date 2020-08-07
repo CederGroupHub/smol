@@ -15,7 +15,7 @@ import warnings
 import numpy as np
 
 from monty.json import MSONable
-from pymatgen import Structure, PeriodicSite
+from pymatgen import Structure, PeriodicSite, DummySpecie
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.analysis.structure_matcher import (StructureMatcher,
                                                  OrderDisorderElementComparator)  # noqa
@@ -395,12 +395,14 @@ class ClusterSubspace(MSONable):
 
         sites = []
         for sp, s in zip(occu, supercell_structure):
-            if sp != 'Vacancy':
+            if sp != DummySpecie('_vacancy'):
                 site = PeriodicSite(sp, s.frac_coords,
                                     supercell_structure.lattice)
                 sites.append(site)
         return Structure.from_sites(sites)
 
+    # TODO think of making this private, users don't really need this until
+    #  working with a processor.
     def occupancy_from_structure(self, structure, scmatrix=None,
                                  site_mapping=None, encode=False):
         """Occupancy string for a given structure.
@@ -450,19 +452,19 @@ class ClusterSubspace(MSONable):
 
         occu = []  # np.zeros(len(self.supercell_structure), dtype=np.int)
 
-        for i, site_space in enumerate(get_allowed_species(supercell)):
+        for i, allowed_species in enumerate(get_allowed_species(supercell)):
             # rather than starting with all vacancies and looping
             # only over mapping, explicitly loop over everything to
             # catch vacancies on improper sites
             if i in site_mapping:
-                sp = str(structure[site_mapping.index(i)].specie)
+                sp = structure[site_mapping.index(i)].specie
             else:
-                sp = 'Vacancy'
-            if sp not in site_space:
+                sp = DummySpecie('_vacancy')
+            if sp not in allowed_species:
                 raise StructureMatchError('A site in given structure has an'
                                           f' unrecognized species {sp}.')
             if encode:
-                occu.append(site_space.index(sp))
+                occu.append(allowed_species.index(sp))
             else:
                 occu.append(sp)
         return occu
