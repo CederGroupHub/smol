@@ -59,16 +59,16 @@ def get_site_spaces(structure, include_measure=False):
     """
     all_site_spaces = []
     for site in structure:
+        if site.species.num_atoms > 1:
+            raise ValueError(f"The composition in site {site} is greater than "
+                             "1. Makes sure compositions are fractional.")
         # sorting is crucial to ensure consistency!
         site_space = OrderedDict((spec, comp) for spec, comp
                                  in sorted(site.species.items()))
+        if site.species.num_atoms < 0.99:
+            site_space[DummySpecie("_vacancy")] = 1 - site.species.num_atoms
         if not include_measure:  # make uniform if measure not included
             for spec in site_space.keys():
                 site_space[spec] = 1.0 / len(site_space)
-        if site.species.num_atoms < 0.99:
-            site_space[DummySpecie("_vacancy")] = 1 - site.species.num_atoms
-        elif site.species.num_atoms > 1:
-            raise ValueError(f"The composition in site {site} is greater than "
-                             "1. Makes sure compositions are fractional.")
         all_site_spaces.append(site_space)
     return all_site_spaces
