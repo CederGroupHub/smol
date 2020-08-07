@@ -80,10 +80,9 @@ class Sampler(ABC):
     def samples(self):
         return self._container
 
-    @property
-    def efficiency(self):
+    def efficiency(self, discard=0, flat=True):
         """Return the sampling efficiency for each walker."""
-        return self.samples.sampling_efficiency
+        return self.samples.sampling_efficiency(discard=discard, flat=flat)
 
     @abstractmethod
     def _attempt_step(self, occupancy):
@@ -105,7 +104,6 @@ class Sampler(ABC):
         """Clear samples from sample container."""
         self.samples.clear()
 
-    # TODO add a check to try and import tqdm if not warn and dont show
     def sample(self, nsteps, initial_occupancies, thin_by=1, progress=False):
         """Generate samples
 

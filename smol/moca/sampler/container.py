@@ -237,7 +237,7 @@ class SampleContainer(MSONable):
 
         Args:
             accepted (ndarray):
-                boolean array of acceptances.
+                array of total acceptances.
             occupancies (ndarray):
                 array of occupancies
             enthalpy (ndarray):
@@ -274,7 +274,7 @@ class SampleContainer(MSONable):
         self._feature_blob = np.append(self._feature_blob, arr, axis=0)
         arr = np.empty((nsamples, *self._enthalpy.shape[1:]))
         self._enthalpy = np.append(self._enthalpy, arr, axis=0)
-        arr = np.empty((nsamples, *self._accepted.shape[1:]), dtype=int)
+        arr = np.zeros((nsamples, *self._accepted.shape[1:]), dtype=int)
         self._accepted = np.append(self._accepted, arr, axis=0)
 
     # TODO write this up
