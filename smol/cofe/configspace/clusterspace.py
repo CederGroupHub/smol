@@ -679,11 +679,7 @@ class ClusterSubspace(MSONable):
         Returns:
             dict: {size: list of Orbits within cutoff radius}
         """
-        if use_conc:
-            site_spaces = get_site_spaces(exp_struct)
-        else:
-            site_spaces = get_allowed_species(exp_struct)
-
+        site_spaces = get_site_spaces(exp_struct, include_measure=use_conc)
         nbits = np.array([len(b) - 1 for b in site_spaces])
         site_bases = tuple(basis_factory(basis, site_space)
                            for site_space in site_spaces)
