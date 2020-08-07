@@ -17,12 +17,10 @@ class TestSaveLoadWork(unittest.TestCase):
         for struct, energy in lno_data:
             cls.sw.add_data(struct, {'energy': energy})
 
-        ecis = np.ones(cls.cs.n_bit_orderings)
-        cls.ce = ClusterExpansion(cls.cs, ecis, cls.sw.feature_matrix)
-        cls.pr = CEProcessor(cls.ce, 2 * np.eye(3))
-        cls.en = CanonicalEnsemble(cls.pr, 500, 100,
-                                   np.zeros((len(cls.pr.structure)), dtype=int))
-        cls.en.run(100)
+        coefs = np.ones(cls.cs.n_bit_orderings)
+        cls.ce = ClusterExpansion(cls.cs, coefs, cls.sw.feature_matrix)
+        cls.pr = CEProcessor(cls.cs, 2 * np.eye(3), coefs)
+        cls.en = CanonicalEnsemble(cls.pr, 500)
         cls.file_path = './test_save_work.mson'
 
     def test_save_load_work(self):
