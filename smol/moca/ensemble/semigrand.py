@@ -78,7 +78,7 @@ class BaseSemiGrandEnsemble(Ensemble):
         return np.append(feature_vector, chemical_work)
 
 
-class MuSemiGrandEnsemble(BaseSemiGrandEnsemble):
+class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     """Relative chemical potential based SemiGrand Ensemble.
 
     A Semi-Grand Canonical Ensemble for Monte Carlo Simulations where species
