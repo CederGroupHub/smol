@@ -9,6 +9,7 @@ __author__ = "Luis Barroso-Luque"
 
 import os
 from datetime import datetime
+from collections import defaultdict
 import numpy as np
 
 from monty.json import MSONable
@@ -136,6 +137,11 @@ class SampleContainer(MSONable):
                                                     thin_by, flat)
         return counts/len(sublattice.sites)
 
+    def get_compositions(self, discard=0, thin_by=1, flat=True):
+        """Get the compositions for each occupancy in the chain."""
+        counts = self.get_species_counts(discard, thin_by, flat)
+        return {spec: count/self.shape[1] for spec, count in counts.items()}
+
     def mean_enthalpy(self, discard=0, thin_by=1, flat=True):
         """Get the mean generalized enthalpy."""
         return self.get_enthalpies(discard, thin_by, flat).mean(axis=0)
@@ -160,14 +166,15 @@ class SampleContainer(MSONable):
         """Get the variance of feature vector elements."""
         return self.get_feature_vectors(discard, thin_by, flat).var(axis=0)
 
-    # TODO implement these
     def mean_composition(self, discard=0, thin_by=1, flat=True):
         """Get mean composition for all species regardless of sublattice."""
-        raise NotImplementedError('You want to implement this?')
+        comps = self.get_compositions(discard, thin_by, flat)
+        return {spec: comp.mean(axis=0) for spec, comp in comps.items()}
 
     def composition_variance(self, discard=0, thin_by=1, flat=True):
         """Get the variance in composition of all species."""
-        raise NotImplementedError('You want to implement this?')
+        comps = self.get_compositions(discard, thin_by, flat)
+        return {spec: comp.var(axis=0) for spec, comp in comps.items()}
 
     def mean_sublattice_composition(self, sublattice, discard=0, thin_by=1,
                                     flat=True):
@@ -207,6 +214,18 @@ class SampleContainer(MSONable):
             occus = self.get_occupancies(discard, thin_by, flat)[inds, np.arange(self.shape[0])]  # noqa
         return occus
 
+    def get_species_counts(self, discard=0, thin_by=1, flat=True):
+        """Get the species counts for each occupancy in the chain."""
+        samples = self.num_samples // thin_by
+        shape = self.shape[0]*samples if flat else (self.shape[0], samples)
+        counts = defaultdict(lambda: np.zeros(shape=shape))
+        for sublattice in self.sublattices:
+            subcounts = self.get_sublattice_species_counts(sublattice, discard,
+                                                           thin_by, flat)
+            for species, count in zip(sublattice.species, subcounts.T):
+                counts[species] += count
+        return counts
+
     def get_sublattice_species_counts(self, sublattice, discard=0, thin_by=1,
                                       flat=True):
         """Get the counts of each species in a sublattices.
@@ -226,6 +245,13 @@ class SampleContainer(MSONable):
             for j, occupancy in enumerate(occupancies):
                 codes, count = np.unique(occupancy[sublattice.sites],
                                          return_counts=True)
+                # check for zero counts
+                if len(codes) != len(sublattice.sites):
+                    n = len(sublattice.species)
+                    missed = list(set(range(n)) - set(codes))
+                    codes = np.append(codes, missed)
+                    count = np.append(count, len(missed) * [0])
+
                 counts[i][j] = count[codes.argsort()]  # order them accordingly
         if flat:
             counts = self._flatten(counts)

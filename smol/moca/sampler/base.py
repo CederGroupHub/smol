@@ -209,7 +209,7 @@ class Sampler(ABC):
                      f'{self.ensemble.temperature}.')
                 self.samples.temperature = self.ensemble.temperature
 
-        self.samples.allocate(nsteps)
+        self.samples.allocate(nsteps // thin_by)
         for state in self.sample(nsteps, initial_occupancies,
                                  thin_by=thin_by, progress=progress):
             self.samples.save_sample(*state)
