@@ -11,7 +11,7 @@ Two classes are different SGC ensemble implemented:
 __author__ = "Luis Barroso-Luque"
 
 from abc import abstractmethod
-from math import log, prod
+from math import log
 import numpy as np
 
 from monty.json import MSONable
@@ -45,7 +45,7 @@ class BaseSemiGrandEnsemble(Ensemble):
                 supercell with same site spaces.
         """
         super().__init__(processor, temperature, sublattices=sublattices)
-        self.__params = np.append(self.processor.coefs, -1.0)
+        self._params = np.append(self.processor.coefs, -1.0)
 
     @property
     def natural_parameters(self):
@@ -53,7 +53,7 @@ class BaseSemiGrandEnsemble(Ensemble):
 
         For SGC an extra -1 is added for the chemical part of the LT.
         """
-        return self.__params
+        return self._params
 
     @abstractmethod
     def compute_chemical_work(self, occupancy):
@@ -261,7 +261,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
                                      'for each of the following: '
                         f'{[sublatt.species for sublatt in self.sublattices]}')  # noqa
         else:
-            fugacity_fractions = [sublatt.site_space for sublatt
+            fugacity_fractions = [dict(sublatt.site_space) for sublatt
                                   in self.sublattices]
         self._fus = fugacity_fractions
         self._fu_table = self._build_fu_table(fugacity_fractions)
@@ -301,16 +301,18 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         """
         delta_feature = self.processor.compute_feature_vector_change(occupancy,
                                                                      step)
-        delta_log_fu = log(prod(self._fu_table[f[0]][f[1]] /
-                                self._fu_table[f[0]][occupancy[f[0]]]
-                                for f in step))
+        # python > 3.8 has math.prod that works on generator
+        delta_log_fu = sum(log(self._fu_table[f[0]][f[1]] /
+                               self._fu_table[f[0]][occupancy[f[0]]])
+                           for f in step)
         # prellocate to improve speed
         return np.append(delta_feature, delta_log_fu)
 
     def compute_chemical_work(self, occupancy):
         """Compute log of product of fugacities for given occupancy"""
-        return log(prod(self._fu_table[site][species]
-                        for site, species in enumerate(occupancy)))
+        # python > 3.8 has math.prod
+        return sum(log(self._fu_table[site][species])
+                   for site, species in enumerate(occupancy))
 
     def _build_fu_table(self, fugacity_fractions):
         """Build an array for fugacity fractions for all sites in system.

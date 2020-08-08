@@ -104,33 +104,36 @@ class TestMetropolisSampler(unittest.TestCase):
                 sampler5.run(steps, self.occu_stack, thin_by=t)
                 self.assertEqual(len(sampler.samples), steps // t)
                 self.assertEqual(len(sampler5.samples), steps // t)
-                print(sampler.ensemble, sampler.efficiency(),
-                      sum(sampler.samples._accepted))
-                print(sampler5.ensemble, sampler5.efficiency(),
-                      sum(sampler5.samples._accepted))
                 self.assertTrue(0 < sampler.efficiency() <= 1)
                 self.assertTrue(0 < sampler5.efficiency() <= 1)
                 sampler.clear_samples(), sampler5.clear_samples()
 
-        return
-        # TODO finish implementing get_compositions in sample container to
-        #  test this
+        # test some high temp high potential values
+        steps = 10000
         chem_pots = {'Na+': 100.0, 'Cl-': 0.0}
         self.msgensemble.chemical_potentials = chem_pots
-        expected = [1.0, 0.0]
-        sampler_m.run(steps)
-        npt.assert_array_almost_equal(expected,
-                                      sampler5_m.samples.mean_composition())
+        expected = {'Na+': 1.0, 'Cl-': 0.0}
+        sampler_m.run(steps, self.occu)
+        comp = sampler_m.samples.mean_composition()
+        for sp in expected.keys():
+            self.assertAlmostEqual(expected[sp], comp[sp], places=2)
+        sampler_m.clear_samples()
+
         chem_pots = {'Na+': -100.0, 'Cl-': 0.0}
         self.msgensemble.chemical_potentials = chem_pots
-        expected = [0.0, 0.1]
-        sampler_m.run(steps)
-        npt.assert_array_almost_equal(expected,
-                                      sampler_m.samples.mean_composition())
-        sampler_f.run(steps)
-        expected = [0.5, 0.5]
-        npt.assert_array_almost_equal(expected,
-                                      sampler5_f.samples.mean_composition())
+        expected = {'Na+': 0.0, 'Cl-': 1.0}
+        sampler_m.run(steps, self.occu)
+        comp = sampler_m.samples.mean_composition()
+        for sp in expected.keys():
+            self.assertAlmostEqual(expected[sp], comp[sp], places=2)
+        sampler_m.clear_samples()
+
+        self.fsgensemble.temperature = 1E9  # go real high to be uniform
+        sampler_f.run(steps, self.occu)
+        expected = {'Na+': 0.5, 'Cl-': 0.5}
+        comp = sampler_f.samples.mean_composition()
+        for sp in expected.keys():
+            self.assertAlmostEqual(expected[sp], comp[sp], places=2)
 
     def test_reshape_occu(self):
         sampler = MetropolisSampler(self.censemble)
