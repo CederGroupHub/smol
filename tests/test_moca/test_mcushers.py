@@ -1,102 +1,98 @@
-import unittest
+import pytest
 from collections import OrderedDict
 import numpy as np
 from smol.moca.ensemble.sublattice import Sublattice
 from smol.moca.sampler.mcusher import Swapper, Flipper
 
-
-class BaseTest:
-    """Wrap this up so it is not run as a test."""
-    class TestMCMCUsher(unittest.TestCase):
-        @classmethod
-        def setUpClass(cls) -> None:
-            cls.sites = np.arange(100)
-            # set up two sublattices
-            sites1 = np.random.choice(cls.sites, size=40)
-            sites2 = np.setdiff1d(cls.sites, sites1)
-            site_space1 = OrderedDict({'A': 0.1, 'B': 0.4, 'C': 0.3, 'D': 0.2})
-            site_space2 = OrderedDict({'A': 0.1, 'B': 0.4, 'E': 0.5})
-            cls.sublattices = [Sublattice(site_space1, sites1),
-                               Sublattice(site_space2, sites2)]
-            # create a random test occu
-            cls.occu = np.zeros_like(cls.sites)
-            for site in cls.sites:
-                if site in sites1:
-                    cls.occu[site] = np.random.choice(range(len(site_space1)))
-                else:
-                    cls.occu[site] = np.random.choice(range(len(site_space2)))
-            # create an usher here
-            cls.mcusher = None
-
-        def test_bad_probabilities(self):
-            with self.assertRaises(ValueError):
-                self.mcusher.sublattice_probabilities = [0.6, 0.1]
-            with self.assertRaises(AttributeError):
-                self.mcusher.sublattice_probabilities = [0.5, 0.2, 0.3]
-
-        def test_propose_step(self):
-            iterations = 50000
-            # test with 50/50 probability
-            flipped_sites = []
-            count1, count2 = 0, 0
-            total = 0
-            for i in range(iterations):
-                step = self.mcusher.propose_step(self.occu)
-                for flip in step:
-                    if flip[0] in self.sublattices[0].sites:
-                        count1 += 1
-                        self.assertTrue(flip[1] in range(len(self.sublattices[0].species)))
-                    elif flip[0] in self.sublattices[1].sites:
-                        count2 += 1
-                        self.assertTrue(flip[1] in range(len(self.sublattices[1].species)))
-                    else:
-                        raise RuntimeError('Something went wrong in proposing'
-                                           f'a step site proposed in {step} is'
-                                           ' not in any of the allowed sites')
-                    total += 1
-                flipped_sites.append(flip[0])
-
-            # check probabilities seem sound
-            self.assertAlmostEqual(count1/total, 0.5, places=1)
-            self.assertAlmostEqual(count2/total, 0.5, places=1)
-
-            # check that every site was flipped at least once
-            self.assertTrue(all(i in flipped_sites for i in self.sites))
-
-            # Now check with a sublattice bias
-            self.mcusher.sublattice_probabilities = [0.8, 0.2]
-            flipped_sites = []
-            count1, count2 = 0, 0
-            total = 0
-            for i in range(iterations):
-                step = self.mcusher.propose_step(self.occu)
-                for flip in step:
-                    if flip[0] in self.sublattices[0].sites:
-                        count1 += 1
-                        self.assertTrue(flip[1] in range(len(self.sublattices[0].species)))
-                    elif flip[0] in self.sublattices[1].sites:
-                        count2 += 1
-                        self.assertTrue(flip[1] in range(len(self.sublattices[1].species)))
-                    else:
-                        raise RuntimeError('Something went wrong in proposing'
-                                           f'a step site proposed in {step} is'
-                                           ' not in any of the allowed sites')
-                    total += 1
-                flipped_sites.append(flip[0])
-
-            self.assertAlmostEqual(count1/total, 0.8, places=1)
-            self.assertAlmostEqual(count2/total, 0.2, places=1)
+mcmcusher_classes = [Flipper, Swapper]
+num_sites = 100
 
 
-class TestFlipper(BaseTest.TestMCMCUsher):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
-        cls.mcusher = Flipper(cls.sublattices)
+@pytest.fixture
+def sublattices():
+    # generate two tests sublattices
+    sites = np.arange(num_sites)
+    sites1 = np.random.choice(sites, size=40)
+    sites2 = np.setdiff1d(sites, sites1)
+    site_space1 = OrderedDict({'A': 0.1, 'B': 0.4, 'C': 0.3, 'D': 0.2})
+    site_space2 = OrderedDict({'A': 0.1, 'B': 0.4, 'E': 0.5})
+    sublattices = [Sublattice(site_space1, sites1),
+                   Sublattice(site_space2, sites2)]
+    return sublattices
 
 
-class TestSwapper(BaseTest.TestMCMCUsher):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
-        cls.mcusher = Swapper(cls.sublattices)
+@pytest.fixture
+def rand_occu(sublattices):
+    # generate a random occupancy according to the sublattices
+    occu = np.zeros(sum(len(s.sites) for s in sublattices), dtype=int)
+    for site in range(len(occu)):
+        for sublattice in sublattices:
+            if site in sublattice.sites:
+                occu[site] = np.random.choice(range(len(sublattice.site_space)))
+    return occu
+
+
+@pytest.fixture(params=mcmcusher_classes)
+def mcmcusher(request, sublattices):
+    # instantiate mcmcushers to test
+    return request.param(sublattices)
+
+
+def test_bad_propabilities(mcmcusher):
+    with pytest.raises(ValueError):
+        mcmcusher.sublattice_probabilities = [0.6, 0.1]
+    with pytest.raises(AttributeError):
+        mcmcusher.sublattice_probabilities = [0.5, 0.2, 0.3]
+
+
+def test_propose_step(mcmcusher, rand_occu):
+    iterations = 50000
+    # test with 50/50 probability
+    flipped_sites = []
+    count1, count2 = 0, 0
+    total = 0
+    for i in range(iterations):
+        step = mcmcusher.propose_step(rand_occu)
+        for flip in step:
+            if flip[0] in mcmcusher.sublattices[0].sites:
+                count1 += 1
+                assert flip[1] in range(len(mcmcusher.sublattices[0].species))
+            elif flip[0] in mcmcusher.sublattices[1].sites:
+                count2 += 1
+                assert flip[1] in range(len(mcmcusher.sublattices[1].species))
+            else:
+                raise RuntimeError('Something went wrong in proposing'
+                                   f'a step site proposed in {step} is'
+                                   ' not in any of the allowed sites')
+            total += 1
+            flipped_sites.append(flip[0])
+
+    # check probabilities seem sound
+    assert count1 / total == pytest.approx(0.5, abs=1E-2)
+    assert count2 / total == pytest.approx(0.5, abs=1E-2)
+
+    # check that every site was flipped at least once
+    assert all(i in flipped_sites for i in np.arange(num_sites))
+
+    # Now check with a sublattice bias
+    mcmcusher.sublattice_probabilities = [0.8, 0.2]
+    flipped_sites = []
+    count1, count2 = 0, 0
+    total = 0
+    for i in range(iterations):
+        step = mcmcusher.propose_step(rand_occu)
+        for flip in step:
+            if flip[0] in mcmcusher.sublattices[0].sites:
+                count1 += 1
+                assert flip[1] in range(len(mcmcusher.sublattices[0].species))
+            elif flip[0] in mcmcusher.sublattices[1].sites:
+                count2 += 1
+                assert flip[1] in range(len(mcmcusher.sublattices[1].species))
+            else:
+                raise RuntimeError('Something went wrong in proposing'
+                                   f'a step site proposed in {step} is'
+                                   ' not in any of the allowed sites')
+            total += 1
+            flipped_sites.append(flip[0])
+    assert count1 / total == pytest.approx(0.8, abs=1E-2)
+    assert count2 / total == pytest.approx(0.2, abs=1E-2)
