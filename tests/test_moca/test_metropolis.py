@@ -34,9 +34,9 @@ class TestMetropolisSampler(unittest.TestCase):
                                                                      cls.T)
 
     def setUp(self):
-        self.occu = np.random.randint(0, 2, size=self.censemble.num_sites)
+        self.occu = np.random.randint(0, 2, size=self.censemble.NUM_SITES)
         self.occu_stack = np.vstack([
-            np.random.randint(0, 2, size=self.censemble.num_sites)
+            np.random.randint(0, 2, size=self.censemble.NUM_SITES)
             for _ in range(5)])
 
     def test_constructor(self):

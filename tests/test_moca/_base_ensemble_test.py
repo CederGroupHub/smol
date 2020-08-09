@@ -26,7 +26,7 @@ class _EnsembleTest(unittest.TestCase):
 
     def setUp(self):
         self.enc_occu = np.random.randint(0, self.n_allowed_species,
-                                          size=self.processor.num_sites)
+                                          size=self.processor.NUM_SITES)
         self.init_occu = self.processor.decode_occupancy(self.enc_occu)
 
     def test_from_cluster_expansion(self):
@@ -43,7 +43,7 @@ class _EnsembleTest(unittest.TestCase):
         npt.assert_array_equal(self.processor.compute_feature_vector(self.enc_occu),
                                ensemble.processor.compute_feature_vector(self.enc_occu))
         for _ in range(10):  # test a few flips
-            site = np.random.choice(range(self.processor.num_sites))
+            site = np.random.choice(range(self.processor.NUM_SITES))
             spec = np.random.choice(list(set(range(self.n_allowed_species))-{self.enc_occu[site]}))
             flip = [(site, spec)]
             self.assertEqual(self.processor.compute_property_change(self.enc_occu, flip),
@@ -55,7 +55,7 @@ class _EnsembleTest(unittest.TestCase):
         self.assertEqual(self.ensemble.beta, 1/(kB*300))
 
     def test_restrict_sites(self):
-        sites = np.random.choice(range(self.processor.num_sites), size=5)
+        sites = np.random.choice(range(self.processor.NUM_SITES), size=5)
         self.ensemble.restrict_sites(sites)
         for sublatt in self.ensemble.sublattices:
             self.assertFalse(any(i in sublatt.active_sites for i in sites))

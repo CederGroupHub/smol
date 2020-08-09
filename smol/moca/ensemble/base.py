@@ -109,7 +109,7 @@ class Ensemble(ABC):
     @property
     def num_sites(self):
         """Get the total number of atoms in supercell."""
-        return self.processor.num_sites
+        return self.processor.NUM_SITES
 
     @property
     def system_size(self):
