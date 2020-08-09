@@ -46,7 +46,7 @@ class Sampler(ABC):
             ensemble_metadata = {'name': type(ensemble).__name__}
             ensemble_metadata.update(ensemble.thermo_boundaries)
             samples = SampleContainer(ensemble.temperature,
-                                      ensemble.NUM_SITES,
+                                      ensemble.num_sites,
                                       ensemble.sublattices,
                                       ensemble.natural_parameters,
                                       ensemble.num_energy_coefs,

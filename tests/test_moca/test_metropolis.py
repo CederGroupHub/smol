@@ -34,9 +34,9 @@ class TestMetropolisSampler(unittest.TestCase):
                                                                      cls.T)
 
     def setUp(self):
-        self.occu = np.random.randint(0, 2, size=self.censemble.NUM_SITES)
+        self.occu = np.random.randint(0, 2, size=self.censemble.num_sites)
         self.occu_stack = np.vstack([
-            np.random.randint(0, 2, size=self.censemble.NUM_SITES)
+            np.random.randint(0, 2, size=self.censemble.num_sites)
             for _ in range(5)])
 
     def test_constructor(self):
@@ -133,7 +133,7 @@ class TestMetropolisSampler(unittest.TestCase):
         expected = {'Na+': 0.5, 'Cl-': 0.5}
         comp = sampler_f.samples.mean_composition()
         for sp in expected.keys():
-            self.assertAlmostEqual(expected[sp], comp[sp], places=2)
+            self.assertAlmostEqual(expected[sp], comp[sp], places=1)
 
     def test_reshape_occu(self):
         sampler = MetropolisSampler(self.censemble)
