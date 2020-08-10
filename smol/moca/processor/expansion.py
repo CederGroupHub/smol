@@ -60,7 +60,7 @@ class CEProcessor(Processor):
 
         self.n_orbit_functions = self.cluster_subspace.n_bit_orderings
         if len(coefficients) != self.n_orbit_functions:
-            raise ValueError('The provided coeffiecients are not the right'
+            raise ValueError('The provided coeffiecients are not the right '
                              f'length. Got {len(coefficients)} coefficients, '
                              f'the length must be {self.n_orbit_functions} '
                              'based on the provided cluster subspace.')
