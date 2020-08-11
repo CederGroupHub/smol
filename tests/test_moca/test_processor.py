@@ -34,10 +34,11 @@ def gen_occupancy(sublattice_dicts):
     return rand_occu
 
 
+# Fixtures to run tests with
 @pytest.fixture(scope='module')
 def ceprocessor_data(ce_system):
     subspace, dataset = ce_system
-    scmatrix = np.array([[5, 0, 0], [0, 5, 0], [0, 0, 5]])
+    scmatrix = 5 * np.eye(3)
     proc = CEProcessor(subspace, scmatrix, coefficients=dataset['coefs'])
     sublattices = gen_sublattices(proc)
     rand_occu = gen_occupancy(sublattices)
@@ -47,7 +48,7 @@ def ceprocessor_data(ce_system):
 @pytest.fixture(scope='module')
 def comprocessor_data(composite_system):
     subspace, dataset = composite_system
-    scmatrix = np.array([[5, 0, 0], [0, 5, 0], [0, 0, 5]])
+    scmatrix = 5 * np.eye(3)
     ewald_term = EwaldTerm()
     subspace.add_external_term(ewald_term)
     proc = CompositeProcessor(subspace, scmatrix)
@@ -55,6 +56,17 @@ def comprocessor_data(composite_system):
     proc.add_processor(CEProcessor, coefficients=coeffs[:-1])
     proc.add_processor(EwaldProcessor, coefficient=coeffs[-1],
                        ewald_term=ewald_term)
+    sublattices = gen_sublattices(proc)
+    rand_occu = gen_occupancy(sublattices)
+    return proc, sublattices, rand_occu
+
+
+@pytest.fixture(scope='module', params=['real', 'reciprocal', 'point'])
+def ewaldprocessor_data(electrostatic_system, request):
+    subspace, dataset = electrostatic_system
+    ewald_term = EwaldTerm(use_term=request.param)
+    scmatrix = 5 * np.eye(3)
+    proc = EwaldProcessor(subspace, scmatrix, ewald_term=ewald_term)
     sublattices = gen_sublattices(proc)
     rand_occu = gen_occupancy(sublattices)
     return proc, sublattices, rand_occu
@@ -97,6 +109,7 @@ def test_compute_property_change(comprocessor_data):
         assert dprop == -1 * rdprop
 
 
+# TODO implement these
 def test_structure_from_occupancy():
     pass
 
@@ -180,4 +193,28 @@ def test_bad_coef_length(ce_system):
         CEProcessor(subspace, 5*np.eye(3), coefficients=dataset['coefs'][:-1])
 
 
-# Ewald only tests
+# Ewald only tests, these are basically copy and paste from above
+# read comment on parametrizing :(
+def test_get_average_drift(ewaldprocessor_data):
+    processor, _, _ = ewaldprocessor_data
+    forward, reverse = processor.compute_average_drift()
+    assert forward <= DRIFT_TOL and reverse <= DRIFT_TOL
+
+
+def test_compute_property_change(ewaldprocessor_data):
+    processor, sublatts, occu = ewaldprocessor_data
+    for _ in range(100):
+        sublatt = np.random.choice(sublatts)
+        site = np.random.choice(sublatt['sites'])
+        new_sp = np.random.choice(sublatt['codes'])
+        new_occu = occu.copy()
+        new_occu[site] = new_sp
+        prop_f = processor.compute_property(new_occu)
+        prop_i = processor.compute_property(occu)
+        dprop = processor.compute_property_change(occu, [(site, new_sp)])
+        # Check with some tight tolerances.
+        npt.assert_allclose(dprop, prop_f - prop_i, rtol=RTOL, atol=ATOL)
+        # Test reverse matches forward
+        old_sp = occu[site]
+        rdprop = processor.compute_property_change(new_occu, [(site, old_sp)])
+        assert dprop == -1 * rdprop

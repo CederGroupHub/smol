@@ -38,8 +38,9 @@ lno31['dataset'] = [(d['structure'], d['energy']) for d in lno31['dataset']]
 
 # Define some pytests fixtures to be used in tests
 synthetic_datasets = [toyCEFCC2, toyCEFCC2e]
-real_datasets = [lno31]
+real_datasets = [lno31, ]  # real datasets without external terms
 composite_datasets = [toyCEFCC2e, lno31]  # datasets with extern ewald term coefs
+electrostatic_datasets = [EwaldFCC2, ]  # datasets with ewald energy only
 
 
 @pytest.fixture(scope='module', params=synthetic_datasets)
@@ -85,9 +86,8 @@ def composite_system(request):
 @pytest.fixture(scope='module', params=electrostatic_datasets)
 def electrostatic_system(request):
     dataset = request.param
-    radii = {int(key): val for key, val in ['radii_cutoffs'].items()}
-    subspace = ClusterSubspace.from_radii(structure=EwaldFCC2['prim'],
+    radii = {int(key): val for key, val in dataset['radii_cutoffs'].items()}
+    subspace = ClusterSubspace.from_radii(structure=dataset['prim'],
                                           radii=radii,
-                                          **EwaldFCC2['subspace_kwargs'])
-    return subspace, EwaldFCC2
-
+                                          **dataset['subspace_kwargs'])
+    return subspace, dataset
