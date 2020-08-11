@@ -167,7 +167,8 @@ class ClusterSubspace(MSONable):
                 Typically the primitive cell
             radii (dict):
                 dict of {cluster_size: max_radius}. Radii should be strictly
-                decreasing. Typically something like {2:5, 3:4}
+                decreasing. Typically something like {2:5, 3:4}. To obtain a
+                subspace with empty and singlet terms use an empty dict {}
             basis (str):
                 A string specifying the site basis functions
             orthonormal (bool):
@@ -701,6 +702,10 @@ class ClusterSubspace(MSONable):
                 new_orbits.append(new_orbit)
 
         orbits[1] = sorted(new_orbits, key=lambda x: (np.round(x.radius, 6), -x.multiplicity))  # noqa
+
+        if len(radii) == 0:  # return singlets only if no radii provided
+            return orbits
+
         all_neighbors = exp_struct.lattice.get_points_in_sphere(exp_struct.frac_coords,  # noqa
                                                                 [0.5, 0.5, 0.5],  # noqa
                                                                 max(radii.values()) + sum(exp_struct.lattice.abc) / 2)  # noqa
