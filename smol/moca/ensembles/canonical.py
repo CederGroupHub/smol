@@ -193,12 +193,14 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
 
     def restrict_sites(self, sites):
         """Restricts (freezes) the given sites.
+
         This will exclude those sites from being flipped during a Monte Carlo
         run. If some of the given indices refer to inactive sites, there will
         be no effect.
         Args:
             sites (Sequence):
                 indices of sites in the occupancy string to restrict.
+
         """
         super().restrict_sites(sites)
         self._reset_site_table()
@@ -208,15 +210,14 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
 
         Will pick a sublattice at random and then a canonical swap at random
         from that sublattice (frozen sites will be excluded).
-
         Args:
             sublattices (list of str): optional
                 If only considering one sublattice.
 
         Returns: Flip acceptance
             bool
-        """
 
+        """
         if table_swap:
             flips = self._get_swaps_from_table(table)
         else:
@@ -269,8 +270,7 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
             return tuple()
 
     def _get_swaps_from_table(self, swap_table=None):
-        """Get a possible canonical flip, which is a swap between
-        two sites based on a given swap table.
+        """Get a possible canonical flip from table.
 
         Args:
             swap_table (dict): optional
@@ -287,7 +287,6 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         Returns: tuple
 
         """
-
         # TODO: helper function to aid in building swap table? care needs
         # to be taken by user that the given swap table satisfies detailed
         # balance. As a baseline, the following should definitely satisfy
