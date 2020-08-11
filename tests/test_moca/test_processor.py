@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 import numpy.testing as npt
-from tests.utils import assert_msonable
+from tests.utils import assert_msonable, gen_random_occupancy
 from smol.cofe.extern import EwaldTerm
 from smol.moca import CEProcessor, EwaldProcessor, CompositeProcessor
 from smol.moca.processor.base import Processor
@@ -12,7 +12,7 @@ ATOL = 2E4 * np.finfo(float).eps
 DRIFT_TOL = 10 * np.finfo(float).eps  # tolerance of average drift
 
 
-# helper functions to generate test data
+# helper functions to generate some sublattices
 def gen_sublattices(proc):
     # sublattices as simple dicts
     sublattices = []

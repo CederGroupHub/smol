@@ -12,6 +12,22 @@ import numpy as np
 from monty.json import MSONable
 
 
+def get_sublattices(processor):
+    """Get a list of sublattices from a processor
+
+    Args:
+        processor (Processor):
+            A processor object to extract sublattices from
+    Returns:
+        list of Sublattice
+    """
+    return [Sublattice(site_space,
+                       np.array([i for i, sp in
+                                 enumerate(processor.allowed_species)
+                                if sp == list(site_space.keys())]))
+            for site_space in processor.unique_site_spaces]
+
+
 # TODO consider adding the inactive sublattices?
 class Sublattice(MSONable):
     """Sublattice class.

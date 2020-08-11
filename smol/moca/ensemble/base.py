@@ -7,7 +7,7 @@ import numpy as np
 
 from smol.constants import kB
 from smol.moca import CompositeProcessor, CEProcessor, EwaldProcessor
-from .sublattice import Sublattice
+from .sublattice import Sublattice, get_sublattices
 
 
 class Ensemble(ABC):
@@ -35,12 +35,7 @@ class Ensemble(ABC):
                 supercell with same site spaces.
         """
         if sublattices is None:
-            sublattices = [Sublattice(site_space,
-                              np.array([i for i, sp in  # noqa
-                                        enumerate(processor.allowed_species)  # noqa
-                                        if sp == list(site_space.keys())]))  # noqa
-                           for site_space in processor.unique_site_spaces]
-
+            sublattices = get_sublattices(processor)
         self.temperature = temperature
         self.num_energy_coefs = len(processor.coefs)
         self.thermo_boundaries = {}  # not pretty way to save general info
