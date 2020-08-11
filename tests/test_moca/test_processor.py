@@ -25,6 +25,7 @@ def gen_sublattices(proc):
     return sublattices
 
 
+# TODO use the one in utils.py
 def gen_occupancy(sublattice_dicts):
     rand_occu = np.zeros(sum(len(s['sites']) for s in sublattice_dicts), dtype=int)
     for sublatt in sublattice_dicts:
@@ -34,6 +35,7 @@ def gen_occupancy(sublattice_dicts):
     return rand_occu
 
 
+# TODO use just structures and fake features like ensemble tests
 # Fixtures to run tests with
 @pytest.fixture(scope='module')
 def ceprocessor_data(ce_system):
@@ -49,13 +51,11 @@ def ceprocessor_data(ce_system):
 def comprocessor_data(composite_system):
     subspace, dataset = composite_system
     scmatrix = 5 * np.eye(3)
-    ewald_term = EwaldTerm()
-    subspace.add_external_term(ewald_term)
     proc = CompositeProcessor(subspace, scmatrix)
     coeffs = dataset['extern']['coefs']
     proc.add_processor(CEProcessor, coefficients=coeffs[:-1])
     proc.add_processor(EwaldProcessor, coefficient=coeffs[-1],
-                       ewald_term=ewald_term)
+                       ewald_term=subspace.external_terms[0])
     sublattices = gen_sublattices(proc)
     rand_occu = gen_occupancy(sublattices)
     return proc, sublattices, rand_occu

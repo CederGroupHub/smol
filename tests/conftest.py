@@ -1,11 +1,29 @@
 import os
 from copy import deepcopy
-from monty.serialization import loadfn
 import pytest
+from monty.serialization import loadfn
 from smol.cofe import ClusterSubspace
+from smol.cofe.extern import EwaldTerm
 
 # load test data files and set them up as fixtures
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
+
+# some test structures to use in tests
+files = ['AuPd_prim.json', 'CrFeW_prim.json', 'LiCaBr_prim.json',
+         'LiMOF_prim.json']
+test_structures = [loadfn(os.path.join(DATA_DIR, file)) for file in files]
+ionic_test_structures = test_structures[2:]
+
+
+@pytest.fixture(params=test_structures, scope='module')
+def test_structure(request):
+    return request.param
+
+
+@pytest.fixture(params=ionic_test_structures, scope='module')
+def ionic_test_structure(request):
+    return request.param
+
 
 # Synthetic ClusterExpansion FCC binary data
 file_name = 'toyCEFCC2.json'
@@ -80,6 +98,7 @@ def composite_system(request):
     subspace = ClusterSubspace.from_radii(structure=dataset['prim'],
                                           radii=radii,
                                           **dataset['subspace_kwargs'])
+    subspace.add_external_term(EwaldTerm())
     return subspace, dataset
 
 
