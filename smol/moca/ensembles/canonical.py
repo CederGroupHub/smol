@@ -175,6 +175,9 @@ class CanonicalEnsemble(BaseEnsemble, MSONable):
         if set_min_occu:
             self._occupancy = self.processor.encode_occupancy(min_occupancy)
             self._property = min_energy
+            self._reset_site_table()
+            self._min_energy = self.processor.compute_property(self._occupancy)
+            self._min_occupancy = self._occupancy
 
         return min_energy, min_occupancy, anneal_data
 
