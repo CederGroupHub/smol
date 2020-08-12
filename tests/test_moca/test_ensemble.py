@@ -79,7 +79,7 @@ def test_from_cluster_expansion(cluster_subspace, ensemble_cls):
     for _ in range(50):  # test a few flips
         sublatt = np.random.choice(ensemble.sublattices)
         site = np.random.choice(sublatt.sites)
-        spec = np.random.choice(range(len(sublatt.species)))
+        spec = np.random.choice(range(len(sublatt.site_space)))
         flip = [(site, spec)]
         assert proc.compute_property_change(occu, flip) == ensemble.processor.compute_property_change(occu, flip)
         assert proc.compute_property(occu) == ensemble.processor.compute_property(occu)
@@ -120,7 +120,7 @@ def test_compute_feature_vector(canonical_ensemble):
     for _ in range(50):  # test a few flips
         sublatt = np.random.choice(canonical_ensemble.sublattices)
         site = np.random.choice(sublatt.sites)
-        spec = np.random.choice(range(len(sublatt.species)))
+        spec = np.random.choice(range(len(sublatt.site_space)))
         flip = [(site, spec)]
         assert (np.dot(canonical_ensemble.natural_parameters,
                        canonical_ensemble.compute_feature_vector_change(occu, flip))
@@ -142,7 +142,7 @@ def test_compute_feature_vector(mugrand_ensemble):
     for _ in range(50):  # test a few flips
         sublatt = np.random.choice(mugrand_ensemble.sublattices)
         site = np.random.choice(sublatt.sites)
-        spec = np.random.choice(range(len(sublatt.species)))
+        spec = np.random.choice(range(len(sublatt.site_space)))
         flip = [(site, spec)]
         dmu = mugrand_ensemble._mu_table[site][spec] - mugrand_ensemble._mu_table[site][occu[site]]
         assert (np.dot(mugrand_ensemble.natural_parameters,
@@ -192,7 +192,7 @@ def test_compute_feature_vector(fugrand_ensemble):
     for _ in range(50):  # test a few flips
         sublatt = np.random.choice(fugrand_ensemble.sublattices)
         site = np.random.choice(sublatt.sites)
-        spec = np.random.choice(range(len(sublatt.species)))
+        spec = np.random.choice(range(len(sublatt.site_space)))
         flip = [(site, spec)]
         dfu = np.log(fugrand_ensemble._fu_table[site][spec]/fugrand_ensemble._fu_table[site][occu[site]])
         assert (np.dot(fugrand_ensemble.natural_parameters,

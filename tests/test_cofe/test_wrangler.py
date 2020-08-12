@@ -38,7 +38,6 @@ class TestStructureWrangler(unittest.TestCase):
 
     def test_matrix_properties(self):
         self.assertGreaterEqual(self.sw.get_condition_number(), 1)
-        print(self.sw.feature_matrix.shape)
         rows = np.random.choice(range(self.sw.num_structures), 8)
         cols = np.random.choice(range(self.sw.num_features), 10)
         self.assertGreaterEqual(self.sw.get_condition_number(), 1)

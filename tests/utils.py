@@ -6,7 +6,6 @@ Some of these are borrowed from pymatgen test scripts.
 import json
 import numpy as np
 from monty.json import MontyDecoder, MSONable
-from monty.serialization import loadfn
 
 
 def assert_msonable(obj, test_if_subclass=True):
@@ -36,7 +35,7 @@ def gen_random_occupancy(sublattices, num_sites):
     """
     rand_occu = np.zeros(num_sites, dtype=int)
     for sublatt in sublattices:
-        codes = range(len(sublatt.species))
+        codes = range(len(sublatt.site_space))
         rand_occu[sublatt.sites] = np.random.choice(codes,
                                                     size=len(sublatt.sites),
                                                     replace=True)

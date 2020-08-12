@@ -3,13 +3,13 @@ import random
 import numpy as np
 from itertools import combinations
 import json
-from pymatgen import Lattice, Structure
+from pymatgen import Lattice, Structure, Specie, DummySpecie
 from pymatgen.util.coord import is_coord_subset_pbc
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe import ClusterSubspace
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.configspace.constants import SITE_TOL
-from smol.cofe.configspace.domain import get_allowed_species, get_site_spaces
+from smol.cofe.configspace.domain import get_allowed_species
 from smol.exceptions import StructureMatchError
 from src.mc_utils import corr_from_occupancy
 
@@ -19,7 +19,7 @@ from src.mc_utils import corr_from_occupancy
 class TestClusterSubSpace(unittest.TestCase):
     def setUp(self) -> None:
         self.lattice = Lattice([[3, 3, 0], [0, 3, 3], [3, 0, 3]])
-        self.species = [{'Li': 0.1, 'Ca': 0.1}] * 3 + ['Br']
+        self.species = [{'Li+': 0.1, 'Ca+': 0.1}] * 3 + ['Br-']
         self.coords = ((0.25, 0.25, 0.25), (0.75, 0.75, 0.75),
                        (0.5, 0.5, 0.5), (0, 0, 0))
         self.structure = Structure(self.lattice, self.species, self.coords)
@@ -124,7 +124,7 @@ class TestClusterSubSpace(unittest.TestCase):
 
     def test_refine_structure(self):
         lattice = Lattice([[2.95, 3, 0], [0, 3, 2.9], [3, 0, 3]])
-        structure = Structure(lattice, ['Li', ]*2 + ['Ca'] + ['Br'],
+        structure = Structure(lattice, ['Li+', ]*2 + ['Ca+'] + ['Br-'],
                               self.coords)
         structure.make_supercell(2)
         ref_structure = self.cs.refine_structure(structure)
@@ -139,7 +139,7 @@ class TestClusterSubSpace(unittest.TestCase):
                                     self.cs.corr_from_structure(ref_structure)))
 
     def test_corr_from_structure(self):
-        structure = Structure(self.lattice, ['Li',] * 2 + ['Ca'] + ['Br'],
+        structure = Structure(self.lattice, ['Li+',] * 2 + ['Ca+'] + ['Br-'],
                               self.coords)
         corr = self.cs.corr_from_structure(structure)
         self.assertEqual(len(corr),
@@ -152,7 +152,7 @@ class TestClusterSubSpace(unittest.TestCase):
         # make an ordered supercell_structure
         s = self.structure.copy()
         s.make_supercell([2, 1, 1])
-        species = ('Li', 'Ca', 'Li', 'Ca', 'Br', 'Br')
+        species = ('Li+', 'Ca+', 'Li+', 'Ca+', 'Br-', 'Br-')
         coords = ((0.125, 0.25, 0.25),
                   (0.625, 0.25, 0.25),
                   (0.375, 0.75, 0.75),
@@ -166,7 +166,9 @@ class TestClusterSubSpace(unittest.TestCase):
         self.assertTrue(np.allclose(cs.corr_from_structure(s), expected))
 
         # Test occu_from_structure
-        occu = ['Vacancy', 'Li', 'Ca', 'Li', 'Vacancy', 'Ca', 'Br', 'Br']
+        occu = [DummySpecie('_Vacancy'), Specie('Li', 1), Specie('Ca', 1),
+                Specie('Li', 1), DummySpecie('_Vacancy'), Specie('Ca', 1),
+                Specie('Br', -1), Specie('Br', -1)]
         self.assertTrue(all(s1 == s2 for s1, s2
                             in zip(occu, cs.occupancy_from_structure(s))))
 
@@ -180,7 +182,7 @@ class TestClusterSubSpace(unittest.TestCase):
                                         basis='indicator')
         s = self.structure.copy()
         s.make_supercell([2, 1, 1])
-        species = ('Li', 'Ca', 'Li', 'Ca', 'Br', 'Br')
+        species = ('Li+', 'Ca+', 'Li+', 'Ca+', 'Br-', 'Br-')
         coords = ((0.125, 0.25, 0.25),
                   (0.625, 0.25, 0.25),
                   (0.375, 0.75, 0.75),
@@ -204,7 +206,7 @@ class TestClusterSubSpace(unittest.TestCase):
                                         basis='indicator')
         s = self.structure.copy()
         s.make_supercell([2, 1, 1])
-        species = ('Li', 'Ca', 'Li', 'Ca', 'Br', 'Br')
+        species = ('Li+', 'Ca+', 'Li+', 'Ca+', 'Br-', 'Br-')
         coords = ((0.125, 0.25, 0.25),
                   (0.625, 0.25, 0.25),
                   (0.375, 0.75, 0.75),
@@ -257,7 +259,7 @@ class TestClusterSubSpace(unittest.TestCase):
         supercell = self.structure.copy()
         supercell.make_supercell(m)
         s = Structure(supercell.lattice,
-                      ['Ca', 'Li', 'Li', 'Br', 'Br', 'Br', 'Br'],
+                      ['Ca+', 'Li+', 'Li+', 'Br-', 'Br-', 'Br-', 'Br-'],
                       [[0.125, 1, 0.25], [0.125, 0.5, 0.25],
                        [0.375, 0.5, 0.75], [0, 0, 0], [0, 0.5, 1],
                        [0.5, 1, 0], [0.5, 0.5, 0]])
@@ -274,7 +276,7 @@ class TestClusterSubSpace(unittest.TestCase):
         return np.array([bit.index(sp) for sp, bit in zip(occu, bits)])
 
     def test_vs_CASM_pairs(self):
-        species = [{'Li':0.1}] * 3 + ['Br']
+        species = [{'Li+':0.1}] * 3 + ['Br-']
         coords = ((0.25, 0.25, 0.25), (0.75, 0.75, 0.75),
                   (0.5, 0.5, 0.5),  (0, 0, 0))
         structure = Structure(self.lattice, species, coords)
@@ -287,32 +289,40 @@ class TestClusterSubSpace(unittest.TestCase):
 
         # last two clusters are switched from CASM output (occupancy basis)
         # all_li (ignore casm point term)
-        occu = self._encode_occu(['Li', 'Li', 'Li'], bits)
+        occu = self._encode_occu([Specie('Li', 1), Specie('Li', 1),
+                                  Specie('Li', 1)], bits)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr, np.array([1]*12)))
 
         # all_vacancy
-        occu = self._encode_occu(['Vacancy', 'Vacancy', 'Vacancy'], bits)
+        occu = self._encode_occu([DummySpecie('_Vacancy'),
+                                  DummySpecie('_Vacancy'),
+                                  DummySpecie('_Vacancy')], bits)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
                                     np.array([1]+[0]*11)))
         # octahedral
-        occu = self._encode_occu(['Vacancy', 'Vacancy', 'Li'], bits)
+        occu = self._encode_occu([DummySpecie('_Vacancy'),
+                                  DummySpecie('_Vacancy'),
+                                  Specie('Li', 1)], bits)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
                                     [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1]))
         # tetrahedral
-        occu = self._encode_occu(['Li', 'Li', 'Vacancy'], bits)
+        occu = self._encode_occu([Specie('Li', 1), Specie('Li', 1),
+                                  DummySpecie('_Vacancy')], bits)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
                                     [1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0]))
         # mixed
-        occu = self._encode_occu(['Li', 'Vacancy', 'Li'], bits)
+        occu = self._encode_occu([Specie('Li', 1), DummySpecie('_Vacancy'),
+                                  Specie('Li', 1)], bits)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
                                     [1, 0.5, 1, 0.5, 0, 0.5, 1, 0.5, 0, 0, 0.5, 1]))
         # single_tet
-        occu = self._encode_occu(['Li', 'Vacancy', 'Vacancy'], bits)
+        occu = self._encode_occu([Specie('Li', 1), DummySpecie('_Vacancy'),
+                                  DummySpecie('_Vacancy')], bits)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
                                     [1, 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.5, 0]))
@@ -321,7 +331,7 @@ class TestClusterSubSpace(unittest.TestCase):
         """
         Test vs casm generated correlation with occupancy basis.
         """
-        species = [{'Li': 0.1}] * 3 + ['Br']
+        species = [{'Li+': 0.1}] * 3 + ['Br-']
         coords = ((0.25, 0.25, 0.25), (0.75, 0.75, 0.75),
                   (0.5, 0.5, 0.5), (0, 0, 0))
         structure = Structure(self.lattice, species, coords)
@@ -334,34 +344,42 @@ class TestClusterSubSpace(unittest.TestCase):
                       for orb, inds in cs.supercell_orbit_mappings(m)]
         # last two pair terms are switched from CASM output (occupancy basis)
         # all_vacancy (ignore casm point term)
-        occu = self._encode_occu(['Vacancy', 'Vacancy', 'Vacancy'], spaces)
+        occu = self._encode_occu([DummySpecie('_Vacancy'),
+                                  DummySpecie('_Vacancy'),
+                                  DummySpecie('_Vacancy')], spaces)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr, np.array([1] + [0] * 18)))
         # all_li
-        occu = self._encode_occu(['Li', 'Li', 'Li'], spaces)
+        occu = self._encode_occu([Specie('Li', 1), Specie('Li', 1),
+                                  Specie('Li', 1)], spaces)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr, np.array([1] * 19)))
         # octahedral
-        occu = self._encode_occu(['Vacancy', 'Vacancy', 'Li'], spaces)
+        occu = self._encode_occu([DummySpecie('_Vacancy'),
+                                  DummySpecie('_Vacancy'), Specie('Li', 1)],
+                                 spaces)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
                                     [1, 0, 1, 0, 0, 0, 1, 0, 0, 0,
                                      0, 1, 0, 0, 0, 0, 0, 0, 1]))
 
         # tetrahedral
-        occu = self._encode_occu(['Li', 'Li', 'Vacancy'], spaces)
+        occu = self._encode_occu([Specie('Li', 1), Specie('Li', 1),
+                                  DummySpecie('_Vacancy')], spaces)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
                                     [1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1,
                                      0, 0, 1, 0, 0, 1, 1, 0]))
         # mixed
-        occu = self._encode_occu(['Li', 'Vacancy', 'Li'], spaces)
+        occu = self._encode_occu([Specie('Li', 1), DummySpecie('_Vacancy'),
+                                  Specie('Li', 1)], spaces)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
                                     [1, 0.5, 1, 0.5, 0, 0.5, 1, 0.5, 0, 0,
                                      0.5, 1, 0, 0, 0.5, 0.5, 0.5, 0.5, 1]))
         # single_tet
-        occu = self._encode_occu(['Li', 'Vacancy', 'Vacancy'], spaces)
+        occu = self._encode_occu([Specie('Li', 1), DummySpecie('_Vacancy'),
+                                  DummySpecie('_Vacancy')], spaces)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
                                     [1, 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0,
@@ -375,13 +393,15 @@ class TestClusterSubSpace(unittest.TestCase):
         orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
                       for orb, inds in cs.supercell_orbit_mappings(m)]
         # mixed
-        occu = self._encode_occu(['Vacancy', 'Li', 'Li'], self.domains)
+        occu = self._encode_occu([DummySpecie('_Vacancy'), Specie('Li', 1),
+                                  Specie('Li', 1)], self.domains)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
                                     [1, 0.5, 0, 1, 0, 0.5, 0, 0, 0, 0, 0,
                                      0, 0.5, 0, 0, 1, 0, 0, 0.5, 0, 0, 0]))
         # Li_tet_ca_oct
-        occu = self._encode_occu(['Vacancy', 'Li', 'Ca'], self.domains)
+        occu = self._encode_occu([DummySpecie('_Vacancy'), Specie('Li', 1),
+                                  Specie('Ca', 1)], self.domains)
         corr = corr_from_occupancy(occu, cs.n_bit_orderings, orbit_list)
         self.assertTrue(np.allclose(corr,
                                     [1, 0.5, 0, 0, 1, 0, 0.5, 0, 0, 0, 0,
@@ -396,7 +416,7 @@ class TestClusterSubSpace(unittest.TestCase):
         # make an ordered supercell_structure
         s = self.structure.copy()
         s.make_supercell([2, 1, 1])
-        species = ('Li', 'Ca', 'Li', 'Ca', 'Br', 'Br')
+        species = ('Li+', 'Ca+', 'Li+', 'Ca+', 'Br-', 'Br-')
         coords = ((0.125, 0.25, 0.25),
                   (0.625, 0.25, 0.25),
                   (0.375, 0.75, 0.75),
@@ -427,7 +447,7 @@ class TestClusterSubSpace(unittest.TestCase):
         cs = ClusterSubspace.from_radii(self.structure, {2: 5})
         s = self.structure.copy()
         s.make_supercell([2, 1, 1])
-        species = ('X', 'Ca', 'Li', 'Ca', 'Br', 'Br')
+        species = ('X', 'Ca+', 'Li+', 'Ca+', 'Br-', 'Br-')
         coords = ((0.125, 0.25, 0.25),
                   (0.625, 0.25, 0.25),
                   (0.375, 0.75, 0.75),
@@ -445,7 +465,7 @@ class TestClusterSubSpace(unittest.TestCase):
 
     def test_msonable(self):
         # get corr for a few supercells to cache their orbit indices
-        struct = Structure(self.lattice, ['Li',]*2 + ['Ca'] + ['Br'],
+        struct = Structure(self.lattice, ['Li+',]*2 + ['Ca+'] + ['Br-'],
                               self.coords)
         struct1 = struct.copy()
         struct1.make_supercell(2)

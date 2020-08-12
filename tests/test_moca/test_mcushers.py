@@ -56,10 +56,10 @@ def test_propose_step(mcmcusher, rand_occu):
         for flip in step:
             if flip[0] in mcmcusher.sublattices[0].sites:
                 count1 += 1
-                assert flip[1] in range(len(mcmcusher.sublattices[0].species))
+                assert flip[1] in range(len(mcmcusher.sublattices[0].site_space))
             elif flip[0] in mcmcusher.sublattices[1].sites:
                 count2 += 1
-                assert flip[1] in range(len(mcmcusher.sublattices[1].species))
+                assert flip[1] in range(len(mcmcusher.sublattices[1].site_space))
             else:
                 raise RuntimeError('Something went wrong in proposing'
                                    f'a step site proposed in {step} is'
@@ -84,10 +84,10 @@ def test_propose_step(mcmcusher, rand_occu):
         for flip in step:
             if flip[0] in mcmcusher.sublattices[0].sites:
                 count1 += 1
-                assert flip[1] in range(len(mcmcusher.sublattices[0].species))
+                assert flip[1] in range(len(mcmcusher.sublattices[0].site_space))
             elif flip[0] in mcmcusher.sublattices[1].sites:
                 count2 += 1
-                assert flip[1] in range(len(mcmcusher.sublattices[1].species))
+                assert flip[1] in range(len(mcmcusher.sublattices[1].site_space))
             else:
                 raise RuntimeError('Something went wrong in proposing'
                                    f'a step site proposed in {step} is'

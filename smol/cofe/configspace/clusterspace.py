@@ -92,7 +92,6 @@ class ClusterSubspace(MSONable):
                 in the expansion. Easiest option for supercell_size is usually
                 to use a species that has a constant amount per formula unit.
         """
-
         # keep as private attributes
         self._structure = structure
         self._exp_structure = expansion_structure
@@ -396,7 +395,7 @@ class ClusterSubspace(MSONable):
 
         sites = []
         for sp, s in zip(occu, supercell_structure):
-            if sp != DummySpecie('_vacancy'):
+            if sp != DummySpecie('_Vacancy'):
                 site = PeriodicSite(sp, s.frac_coords,
                                     supercell_structure.lattice)
                 sites.append(site)
@@ -460,7 +459,7 @@ class ClusterSubspace(MSONable):
             if i in site_mapping:
                 sp = structure[site_mapping.index(i)].specie
             else:
-                sp = DummySpecie('_vacancy')
+                sp = DummySpecie('_Vacancy')
             if sp not in allowed_species:
                 raise StructureMatchError('A site in given structure has an'
                                           f' unrecognized species {sp}.')

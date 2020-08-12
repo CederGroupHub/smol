@@ -183,7 +183,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
                        in self.processor.unique_site_spaces)
         table = np.zeros((self.num_sites, num_cols))
         for sublatt in self.sublattices:
-            ordered_pots = [chemical_potentials[sp] for sp in sublatt.species]
+            ordered_pots = [chemical_potentials[sp] for sp in sublatt.site_space]
             table[sublatt.sites, :len(ordered_pots)] = ordered_pots
         return table
 
@@ -255,11 +255,11 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             for fus, sublatt in zip(fugacity_fractions, self.sublattices):
                 if sum([fu for fu in fus.values()]) != 1:
                     raise ValueError('Fugacity ratios must add to one.')
-                if set(sublatt.species) != set(fus.keys()):
+                if set(sublatt.site_space) != set(fus.keys()):
                     raise ValueError('Fugacity fractions given are missing or '
                                      'not valid species. Values must be given '
                                      'for each of the following: '
-                        f'{[sublatt.species for sublatt in self.sublattices]}')  # noqa
+                        f'{[sublatt.site_space for sublatt in self.sublattices]}')  # noqa
         else:
             fugacity_fractions = [dict(sublatt.site_space) for sublatt
                                   in self.sublattices]
@@ -328,7 +328,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
                        in self.processor.unique_site_spaces)
         table = np.ones((self.num_sites, num_cols))
         for fus, sublatt in zip(fugacity_fractions, self.sublattices):
-            ordered_fus = [fus[sp] for sp in sublatt.species]
+            ordered_fus = [fus[sp] for sp in sublatt.site_space]
             table[sublatt.sites, :len(ordered_fus)] = ordered_fus
         return table
 

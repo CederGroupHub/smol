@@ -95,7 +95,7 @@ class Flipper(MCMCUsher):
         """
         sublattice = self.get_random_sublattice()
         site = random.choice(sublattice.active_sites)
-        choices = set(range(len(sublattice.species))) - {occupancy[site]}
+        choices = set(range(len(sublattice.site_space))) - {occupancy[site]}
         return [(site, random.choice(list(choices)))]
 
 

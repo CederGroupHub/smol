@@ -239,7 +239,7 @@ class SampleContainer(MSONable):
                              'Provide one included in the sublattices '
                              'attribute of this SampleContainer.')
         occu_chain = self.get_occupancies(discard, thin_by, flat=False)
-        counts = np.zeros((*occu_chain.shape[:-1], len(sublattice.species)))
+        counts = np.zeros((*occu_chain.shape[:-1], len(sublattice.site_space)))
         #  This can probably be re-written in a clean/faster way
         for i, occupancies in enumerate(occu_chain):
             for j, occupancy in enumerate(occupancies):
@@ -247,7 +247,7 @@ class SampleContainer(MSONable):
                                          return_counts=True)
                 # check for zero counts
                 if len(codes) != len(sublattice.sites):
-                    n = len(sublattice.species)
+                    n = len(sublattice.site_space)
                     missed = list(set(range(n)) - set(codes))
                     codes = np.append(codes, missed)
                     count = np.append(count, len(missed) * [0])

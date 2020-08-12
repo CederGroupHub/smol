@@ -6,14 +6,14 @@ from pymatgen import Structure
 DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')
 
 # Synthetic ClusterExpansion FCC binary data
-file_name = 'synthetic-CE-fccbinary-sinebasis.json'
+file_name = 'synthetic-CE-fccbinary-sinebasisF.json'
 with open(os.path.join(DATA_DIR, file_name), 'r') as f:
     synthetic_CE_binary = json.load(f)
     synthetic_CE_binary['data'] = [(Structure.from_dict(s[0]), s[1])
                                    for s in synthetic_CE_binary['data']]
 
 # Synthetic ClusterExpansion with Ewald electrostatics FCC binary data
-file_name = 'synthetic-CE-ewald-neutral-fccbinary-sinebasis.json'
+file_name = 'synthetic-CE-ewald-neutral-fccbinary-sinebasisF.json'
 with open(os.path.join(DATA_DIR, file_name), 'r') as f:
     synthetic_CEewald_binary = json.load(f)
     # Load ewald only energy

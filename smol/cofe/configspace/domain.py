@@ -1,4 +1,5 @@
-"""
+"""Functions to obtain site spaces and allowed species.
+
 Implementation functions to generate lists of site spaces and allowed species
 for a given disordered strucuture.
 
@@ -11,10 +12,6 @@ __author__ = "Luis Barroso-Luque, Fengyu Xie"
 
 from collections import OrderedDict
 from pymatgen.core.periodic_table import DummySpecie
-
-
-# class CESpecie(Specie)
-# Will be defined if we need more specie dimensions in the future.
 
 
 def get_allowed_species(structure):
@@ -66,7 +63,7 @@ def get_site_spaces(structure, include_measure=False):
         site_space = OrderedDict((spec, comp) for spec, comp
                                  in sorted(site.species.items()))
         if site.species.num_atoms < 0.99:
-            site_space[DummySpecie("_vacancy")] = 1 - site.species.num_atoms
+            site_space[DummySpecie("_Vacancy")] = 1 - site.species.num_atoms
         if not include_measure:  # make uniform if measure not included
             for spec in site_space.keys():
                 site_space[spec] = 1.0 / len(site_space)

@@ -56,7 +56,7 @@ class SiteBasis:
                               'Are you sure this is what you want?',
                               RuntimeWarning)
         else:
-            raise TypeError('species argument must be OrderedDict.')
+            raise TypeError('site_space argument must be OrderedDict.')
 
         self.flavor = basis_functions.flavor
         self._domain = site_space
@@ -64,7 +64,8 @@ class SiteBasis:
         if len(basis_functions) != len(self.species) - 1:
             raise ValueError(f'Must provid {len(self.species) - 1 } total non-'
                              'constant basis functions.'
-                             f'Got only {basis_functions} basis functions.')
+                             f' Got only {len(basis_functions)} basis '
+                             'functions.')
 
         func_arr = np.array([[function(sp) for sp in self.species]
                              for function in basis_functions])
@@ -159,10 +160,11 @@ class BasisIterator(Iterator):
 
     A basis iterator iterates through non-constant basis functions only.
     """
+
     flavor = 'abstract'
 
     def __init__(self, species):
-        """BasisIterator constructor
+        """Initialize a BasisIterator.
 
         Args:
             species (tuple):
@@ -181,9 +183,11 @@ class IndicatorIterator(BasisIterator):
 
     The basis generated as defined is not orthogonal for any number of species.
     """
+
     flavor = 'indicator'
 
     def __next__(self):
+        """Generate the next basis function."""
         func = partial(indicator, sp=next(self.species_iter))
         return func
 
@@ -196,10 +200,11 @@ class SinusoidIterator(BasisIterator):
     This basis is properly orthogonal for any number of allowed species out of
     the box, but it is not orthonormal for allowed species > 2.
     """
+
     flavor = 'sinusoid'
 
     def __init__(self, species):
-        """SinusoidIterator constructor
+        """Initialize a SinusoidIterator.
 
         Args:
             species (tuple):
@@ -209,16 +214,17 @@ class SinusoidIterator(BasisIterator):
         self.encoding = {s: i for (i, s) in enumerate(self.species)}
 
     def __next__(self):
+        """Generate the next basis function."""
         n = self.encoding[next(self.species_iter)] + 1
         func = encode_domain(self.encoding)(sinusoid_factory(n, len(self.species)))  # noqa
         return func
 
 
 class NumpyPolyIterator(BasisIterator):
-    """Class to quickly implement polynomial basis sets included in numpy"""
+    """Class to quickly implement polynomial basis sets included in numpy."""
 
     def __init__(self, species, low=-1, high=1):
-        """NumpyPolyIterator Constructor
+        """Initialize a NumpyPolyIterator.
 
         Args:
             species (tuple):
@@ -239,6 +245,7 @@ class NumpyPolyIterator(BasisIterator):
         return
 
     def __next__(self):
+        """Generate the next basis function."""
         n = self.species.index(next(self.species_iter)) + 1
         coeffs = n*[0, ] + [1]
         func = encode_domain(self.encoding)(partial(self.polyval, c=coeffs))
@@ -247,6 +254,7 @@ class NumpyPolyIterator(BasisIterator):
 
 class PolynomialIterator(NumpyPolyIterator):
     """A standard polynomial basis set iterator."""
+
     @property
     def polyval(self):
         """Return numpy Chebyshev polynomial eval."""
@@ -255,6 +263,7 @@ class PolynomialIterator(NumpyPolyIterator):
 
 class ChebyshevIterator(NumpyPolyIterator):
     """Chebyshev polynomial basis set iterator."""
+
     @property
     def polyval(self):
         """Return numpy Chebyshev polynomial eval."""
@@ -263,6 +272,7 @@ class ChebyshevIterator(NumpyPolyIterator):
 
 class LegendreIterator(NumpyPolyIterator):
     """Legendre polynomial basis set iterator."""
+
     @property
     def polyval(self):
         """Return numpy Legendre polynomial eval."""

@@ -6,68 +6,71 @@ from numpy.polynomial.legendre import legval
 from smol.cofe.configspace import basis
 
 
+# TODO add test for out-of-box basis not orthogonal with non-uniform measure
 class TestBasis(unittest.TestCase):
     def setUp(self) -> None:
-        self.species = OrderedDict((('Li+', 0.5), ('Mn2+', 0.2),
-                                   ('Vacancy', 0.3)))
+        self.site_space = OrderedDict((('A', 0.25), ('B', 0.25),
+                                       ('C', 0.25), ('D', 0.25)))
 
-    def _test_basis_uniform_measure(self, basis_iterator):
-        species = tuple(self.species.keys())
-        b = basis.SiteBasis(species, basis_iterator(species))
-        measure = measure = list(b.measure_vector)
-        self.assertEqual(measure, len(self.species)*[1/len(self.species), ])
+    def _test_basis_measure_warn(self, basis_iterator):
+        species = tuple(self.site_space.keys())
+        self.site_space['C'] = 0.8
+        with self.assertWarns(RuntimeWarning):
+            b = basis.SiteBasis(self.site_space, basis_iterator(species))
 
     def _test_measure(self, basis_iterator):
-        species = tuple(self.species.keys())
-        b = basis.SiteBasis(self.species, basis_iterator(species))
+        species = tuple(self.site_space.keys())
+        b = basis.SiteBasis(self.site_space, basis_iterator(species))
         measure = list(b.measure_vector)
-        self.assertEqual(measure, list(self.species.values()))
+        self.assertEqual(measure, list(self.site_space.values()))
 
     def test_indicator_basis(self):
-        species = tuple(self.species.keys())
-        b = basis.SiteBasis(species, basis.IndicatorIterator(species))
+        species = tuple(self.site_space.keys())
+        b = basis.SiteBasis(self.site_space, basis.IndicatorIterator(species))
         self.assertFalse(b.is_orthogonal)
 
         # test evaluation of basis functions
-        n = len(self.species) - 1
+        n = len(self.site_space) - 1
         for i in range(n):
             self.assertEqual(b.function_array[i, i], 1)
 
-        self._test_basis_uniform_measure(basis.IndicatorIterator)
+        self._test_basis_measure_warn(basis.IndicatorIterator)
         self._test_measure(basis.IndicatorIterator)
 
         b.orthonormalize()
         self.assertTrue(b.is_orthonormal)
 
     def test_sinusoid_basis(self):
-        species = tuple(self.species.keys())
-        b = basis.SiteBasis(species, basis.SinusoidIterator(species))
+        species = tuple(self.site_space.keys())
+        b = basis.SiteBasis(self.site_space, basis.SinusoidIterator(species))
         self.assertTrue(b.is_orthogonal)
 
         # test evaluation of basis functions
-        m = len(self.species)
-        for n in range(1, len(self.species)):
+        m = len(self.site_space)
+        for n in range(1, len(self.site_space)):
             a = -(-n//2)
             f = lambda s: -np.sin(2*np.pi*a*s/m) if n % 2 == 0 else -np.cos(2*np.pi*a*s/m)
-            for i, _ in enumerate(self.species):
+            for i, _ in enumerate(self.site_space):
                 self.assertEqual(b.function_array[n-1, i], f(i))
 
-        self._test_basis_uniform_measure(basis.SinusoidIterator)
+        self._test_basis_measure_warn(basis.SinusoidIterator)
         self._test_measure(basis.SinusoidIterator)
-        b = basis.SiteBasis(self.species, basis.SinusoidIterator(species))
+        b = basis.SiteBasis(self.site_space, basis.SinusoidIterator(species))
         self.assertFalse(b.is_orthogonal)
         b.orthonormalize()
         self.assertTrue(b.is_orthonormal)
 
     def test_chebyshev_basis(self):
-        species = tuple(self.species.keys())
-        b = basis.SiteBasis(species[:2], basis.ChebyshevIterator(species[:2]))
+        species = tuple(self.site_space.keys())
+        site_space = OrderedDict(tuple(self.site_space.items())[:2])
+        b = basis.SiteBasis(site_space, basis.ChebyshevIterator(species[:2]))
         self.assertTrue(b.is_orthogonal)  # orthogonal only for 2 species
-        b = basis.SiteBasis(species, basis.ChebyshevIterator(species))
+        b = basis.SiteBasis(self.site_space,
+                            basis.ChebyshevIterator(tuple(self.site_space.keys())))
         self.assertFalse(b.is_orthogonal)
 
         # test evaluation of basis functions
-        m, coeffs = len(self.species), [1]
+        m, coeffs = len(self.site_space), [1]
         fun_range = np.linspace(-1, 1, m)
         for n in range(m-1):
             coeffs.append(0)
@@ -75,22 +78,24 @@ class TestBasis(unittest.TestCase):
                 self.assertEqual(b.function_array[n, sp],
                                  chebval(x, c=coeffs[::-1]))
 
-        self._test_basis_uniform_measure(basis.ChebyshevIterator)
+        self._test_basis_measure_warn(basis.ChebyshevIterator)
         self._test_measure(basis.ChebyshevIterator)
-        b = basis.SiteBasis(self.species, basis.ChebyshevIterator(species))
+        b = basis.SiteBasis(self.site_space, basis.ChebyshevIterator(species))
         self.assertFalse(b.is_orthogonal)
         b.orthonormalize()
         self.assertTrue(b.is_orthonormal)
 
     def test_legendre_basis(self):
-        species = tuple(self.species.keys())
-        b = basis.SiteBasis(species[:2], basis.LegendreIterator(species[:2]))
+        species = tuple(self.site_space.keys())
+        site_space = OrderedDict(tuple(self.site_space.items())[:2])
+        b = basis.SiteBasis(site_space, basis.LegendreIterator(species[:2]))
         self.assertTrue(b.is_orthogonal)  # orthogonal only for 2 species
-        b = basis.SiteBasis(species, basis.LegendreIterator(species))
+        b = basis.SiteBasis(self.site_space,
+                            basis.LegendreIterator(species))
         self.assertFalse(b.is_orthogonal)
 
         # test evaluation of basis functions
-        m, coeffs = len(self.species), [1]
+        m, coeffs = len(self.site_space), [1]
         fun_range = np.linspace(-1, 1, m)
         for n in range(m-1):
             coeffs.append(0)
@@ -98,10 +103,10 @@ class TestBasis(unittest.TestCase):
                 self.assertEqual(b.function_array[n, sp],
                                  legval(x, c=coeffs[::-1]))
 
-        self._test_basis_uniform_measure(basis.LegendreIterator)
+        self._test_basis_measure_warn(basis.LegendreIterator)
         self._test_measure(basis.LegendreIterator)
 
-        b = basis.SiteBasis(self.species, basis.LegendreIterator(species))
+        b = basis.SiteBasis(self.site_space, basis.LegendreIterator(species))
         self.assertFalse(b.is_orthogonal)
         b.orthonormalize()
         self.assertTrue(b.is_orthonormal)

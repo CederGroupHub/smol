@@ -7,10 +7,11 @@ symmetry) clusters.
 __author__ = "Luis Barroso-Luque, William Davidson Richard"
 
 import itertools
+from collections import OrderedDict
 import numpy as np
 
 from monty.json import MSONable
-from pymatgen import Lattice, SymmOp
+from pymatgen import Lattice, SymmOp, Element, Specie, DummySpecie
 from pymatgen.util.coord import coord_list_mapping
 
 from smol.utils import _repr
@@ -340,7 +341,20 @@ class Orbit(MSONable):
         """Create Orbit from serialized MSONable dict."""
         structure_symops = [SymmOp.from_dict(so_d)
                             for so_d in d['structure_symops']]
-        site_bases = [basis_factory(*sb_d) for sb_d in d['site_bases']]
+        site_bases = []
+        for flavor, space in d['site_bases']:
+            site_space = []
+            for sp, m in space:
+                if ("oxidation_state" in sp
+                        and Element.is_valid_symbol(sp["element"])):
+                    sp = Specie.from_dict(sp)
+                elif "oxidation_state" in sp:
+                    sp = DummySpecie.from_dict(sp)
+                else:
+                    sp = Element(sp["element"])
+                site_space.append((sp, m))
+            site_bases.append((flavor, OrderedDict(site_space)))
+        site_bases = [basis_factory(*sb_d) for sb_d in site_bases]
         return cls(d['sites'], Lattice.from_dict(d['lattice']),
                    d['bits'], site_bases, structure_symops)
 
@@ -355,7 +369,9 @@ class Orbit(MSONable):
              "sites": self.base_cluster.sites.tolist(),
              "lattice": self.lattice.as_dict(),
              "bits": self.bits,
-             "site_bases": [(sb.flavor, sb.site_space)
+             "site_bases": [(sb.flavor,
+                             tuple((s.as_dict(), m)
+                                   for s, m in sb.site_space.items()))
                             for sb in self.site_bases],
              "structure_symops": [so.as_dict() for so in self.structure_symops]
              }
