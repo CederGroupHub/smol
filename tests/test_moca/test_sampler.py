@@ -11,12 +11,10 @@ from tests.utils import gen_random_occupancy
 ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble]
 
 
-@pytest.fixture(params=ensembles, scope='module')
-def ensemble(structure, request):
-    subspace = ClusterSubspace.from_radii(structure,
-                                          radii={2: 6, 3: 5, 4: 4})
-    coefs = np.random.random(subspace.n_bit_orderings)
-    proc = CEProcessor(subspace, 4*np.eye(3), coefs)
+@pytest.fixture(params=ensembles)
+def ensemble(cluster_subspace, request):
+    coefs = np.random.random(cluster_subspace.n_bit_orderings)
+    proc = CEProcessor(cluster_subspace, 4*np.eye(3), coefs)
     if request.param is MuSemiGrandEnsemble:
         kwargs = {'chemical_potentials':
                   {sp: 0.3 for space in proc.unique_site_spaces
@@ -26,7 +24,7 @@ def ensemble(structure, request):
     return request.param(proc, temperature=5000, **kwargs)
 
 
-@pytest.fixture(scope='module', params=[1, 5])
+@pytest.fixture(params=[1, 5])
 def sampler(ensemble, request):
     return MetropolisSampler(ensemble, nwalkers=request.param)
 

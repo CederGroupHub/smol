@@ -4,7 +4,7 @@ import numpy.testing as npt
 import numpy as np
 
 from smol.constants import kB
-from smol.cofe import ClusterExpansion, ClusterSubspace
+from smol.cofe import ClusterExpansion
 from smol.cofe.extern import EwaldTerm
 from smol.moca import (CanonicalEnsemble, MuSemiGrandEnsemble,
                        FuSemiGrandEnsemble, CompositeProcessor,
