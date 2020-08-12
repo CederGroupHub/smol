@@ -16,55 +16,53 @@ TEMPERATURE = 1000
 
 
 @pytest.fixture
-def processor(cluster_subspace):
+def composite_processor(cluster_subspace):
     coefs = 2 * np.random.random(cluster_subspace.n_bit_orderings)
     scmatrix = 4 * np.eye(3)
     return CEProcessor(cluster_subspace, scmatrix, coefs)
 
 
 @pytest.fixture(params=ensembles)
-def ensemble(processor, request):
+def ensemble(composite_processor, request):
     if request.param is MuSemiGrandEnsemble:
         kwargs = {'chemical_potentials':
-                  {sp: 0.3 for space in processor.unique_site_spaces
+                  {sp: 0.3 for space in composite_processor.unique_site_spaces
                    for sp in space.keys()}}
     else:
         kwargs = {}
-    return request.param(processor, temperature=TEMPERATURE, **kwargs)
+    return request.param(composite_processor, temperature=TEMPERATURE, **kwargs)
 
 
 @pytest.fixture
-def canonical_ensemble(processor):
-    return CanonicalEnsemble(processor, temperature=TEMPERATURE)
+def canonical_ensemble(composite_processor):
+    return CanonicalEnsemble(composite_processor, temperature=TEMPERATURE)
 
 
 @pytest.fixture
-def mugrand_ensemble(processor):
-    chemical_potentials= {sp: 0.3 for space in processor.unique_site_spaces
+def mugrand_ensemble(composite_processor):
+    chemical_potentials= {sp: 0.3 for space in composite_processor.unique_site_spaces
                           for sp in space.keys()}
-    return MuSemiGrandEnsemble(processor, temperature=TEMPERATURE,
+    return MuSemiGrandEnsemble(composite_processor, temperature=TEMPERATURE,
                                chemical_potentials=chemical_potentials)
 
 
 @pytest.fixture
-def fugrand_ensemble(processor):
-    return FuSemiGrandEnsemble(processor, temperature=TEMPERATURE)
+def fugrand_ensemble(composite_processor):
+    return FuSemiGrandEnsemble(composite_processor, temperature=TEMPERATURE)
 
 
 # Test with composite processors to cover more ground
 @pytest.mark.parametrize('ensemble_cls', ensembles)
-def test_from_cluster_expansion(ionic_structure, ensemble_cls):
-    subspace = ClusterSubspace.from_radii(ionic_structure,
-                                          radii={2: 6, 3: 5, 4: 4})
-    subspace.add_external_term(EwaldTerm())
-    coefs = np.random.random(subspace.n_bit_orderings + 1)
+def test_from_cluster_expansion(cluster_subspace, ensemble_cls):
+    cluster_subspace.add_external_term(EwaldTerm())
+    coefs = np.random.random(cluster_subspace.n_bit_orderings + 1)
     scmatrix = 3 * np.eye(3)
-    proc = CompositeProcessor(subspace, scmatrix)
+    proc = CompositeProcessor(cluster_subspace, scmatrix)
     proc.add_processor(CEProcessor, coefficients=coefs[:-1])
     proc.add_processor(EwaldProcessor, coefficient=coefs[-1],
-                       ewald_term=subspace.external_terms[0])
+                       ewald_term=cluster_subspace.external_terms[0])
     fake_feature_matrix = np.random.random((5, len(coefs)))
-    expansion = ClusterExpansion(subspace, coefs, fake_feature_matrix)
+    expansion = ClusterExpansion(cluster_subspace, coefs, fake_feature_matrix)
     if ensemble_cls is MuSemiGrandEnsemble:
         kwargs = {'chemical_potentials':
                   {sp: 0.3 for space in proc.unique_site_spaces

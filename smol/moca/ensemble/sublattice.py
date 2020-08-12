@@ -39,8 +39,6 @@ class Sublattice(MSONable):
          site_space (OrderedDict):
             Ordered dict with the allowed species and their random
             state composition. See definitions in cofe.cofigspace.basis
-         species (tuple)
-            Allowed species at each site. A tuple of site_space keys
          sites (ndarray):
             array of site indices for all sites in sublattice
          active_sites (ndarray):
@@ -63,9 +61,18 @@ class Sublattice(MSONable):
         """
         self.sites = sites
         self.site_space = site_space
-        self.species = tuple(site_space.keys())
         self.active_sites = sites.copy()
         self.restricted_sites = []
+
+    @property
+    def species(self):
+        """Get allowed species for sites in sublattice."""
+        return tuple(self.site_space.keys())
+
+    @property
+    def encoding(self):
+        """Get the encoding for the allowed species."""
+        return list(range(len(self.site_space)))
 
     def restrict_sites(self, sites):
         """Restricts (freezes) the given sites.

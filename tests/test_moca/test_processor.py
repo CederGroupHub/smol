@@ -13,103 +13,71 @@ ATOL = 2E4 * np.finfo(float).eps
 DRIFT_TOL = 10 * np.finfo(float).eps  # tolerance of average drift
 
 
-# helper functions to generate some sublattices
-def gen_sublattices(proc):
-    # sublattices as simple dicts
-    sublattices = []
-    for space in proc.unique_site_spaces:
-        sites = np.array([i for i, b in enumerate(proc.allowed_species)
-                          if b == list(space.keys())])
-        sublattices.append({'codes': list(range(len(space))),
-                            'space': space,
-                            'sites': sites})
-    return sublattices
+@pytest.fixture
+def ce_processor(cluster_subspace):
+    coefs = 2 * np.random.random(cluster_subspace.n_bit_orderings)
+    scmatrix = 3 * np.eye(3)
+    return CEProcessor(cluster_subspace, supercell_matrix=scmatrix,
+                       coefficients=coefs)
 
 
-# TODO use the one in utils.py
-def gen_occupancy(sublattice_dicts):
-    rand_occu = np.zeros(sum(len(s['sites']) for s in sublattice_dicts), dtype=int)
-    for sublatt in sublattice_dicts:
-        rand_occu[sublatt['sites']] = np.random.choice(sublatt['codes'],
-                                                       size=len(sublatt['sites']),
-                                                       replace=True)
-    return rand_occu
-
-
-# TODO use just structures and fake features like ensemble tests
-# Fixtures to run tests with
-@pytest.fixture(scope='module')
-def ceprocessor_data(ce_system):
-    subspace = ClusterSubspace.from_radii(test_structure,
-                                          radii={2: 6, 3: 5, 4: 4})
-    coefs = np.random.random(subspace.n_bit_orderings)
-    proc = CEProcessor(subspace, 4 * np.eye(3), coefs)
-    scmatrix = 5 * np.eye(3)
-    proc = CEProcessor(subspace, scmatrix, coefficients=dataset['coefs'])
-    sublattices = gen_sublattices(proc)
-    rand_occu = gen_occupancy(sublattices)
-    return proc, sublattices, rand_occu
-
-
-@pytest.fixture(scope='module')
-def comprocessor_data(composite_system):
-    subspace, dataset = composite_system
-    scmatrix = 5 * np.eye(3)
-    proc = CompositeProcessor(subspace, scmatrix)
-    coeffs = dataset['extern']['coefs']
-    proc.add_processor(CEProcessor, coefficients=coeffs[:-1])
-    proc.add_processor(EwaldProcessor, coefficient=coeffs[-1],
-                       ewald_term=subspace.external_terms[0])
-    sublattices = gen_sublattices(proc)
-    rand_occu = gen_occupancy(sublattices)
-    return proc, sublattices, rand_occu
-
-
-@pytest.fixture(scope='module', params=['real', 'reciprocal', 'point'])
-def ewaldprocessor_data(electrostatic_system, request):
-    subspace, dataset = electrostatic_system
+@pytest.fixture(params=['real', 'reciprocal', 'point'])
+def ewald_processor(cluster_subspace, request):
+    coef = np.random.random(1)
+    scmatrix = 3 * np.eye(3)
     ewald_term = EwaldTerm(use_term=request.param)
-    scmatrix = 5 * np.eye(3)
-    proc = EwaldProcessor(subspace, scmatrix, ewald_term=ewald_term)
-    sublattices = gen_sublattices(proc)
-    rand_occu = gen_occupancy(sublattices)
-    return proc, sublattices, rand_occu
+    return EwaldProcessor(cluster_subspace, supercell_matrix=scmatrix,
+                          coefficient=coef, ewald_term=ewald_term)
+
+
+@pytest.fixture
+def composite_processor(cluster_subspace):
+    coefs = 2 * np.random.random(cluster_subspace.n_bit_orderings + 1)
+    scmatrix = 3 * np.eye(3)
+    ewald_term = EwaldTerm()
+    cluster_subspace.add_external_term(ewald_term)
+    proc = CompositeProcessor(cluster_subspace, supercell_matrix=scmatrix)
+    proc.add_processor(CEProcessor, coefficients=coefs[:-1])
+    proc.add_processor(EwaldProcessor, coefficient=coefs[-1],
+                       ewald_term=ewald_term)
+    return proc
 
 
 # General tests for all processors
 # Currently being done only on composites because I can not for the life of
 # me figure out a clean way to parametrize with parametrized fixtures or use a
 # fixture union from pytest_cases that works.
-def test_encode_decode_property(comprocessor_data):
-    processor, sublatts, occu = comprocessor_data
-    decoccu = processor.decode_occupancy(occu)
-    for species, space in zip(decoccu, processor.allowed_species):
+def test_encode_decode_property(composite_processor):
+    occu = gen_random_occupancy(get_sublattices(composite_processor),
+                                composite_processor.num_sites)
+    decoccu = composite_processor.decode_occupancy(occu)
+    for species, space in zip(decoccu, composite_processor.allowed_species):
         assert species in space
-    npt.assert_equal(occu, processor.encode_occupancy(decoccu))
+    npt.assert_equal(occu, composite_processor.encode_occupancy(decoccu))
 
 
-def test_get_average_drift(comprocessor_data):
-    processor, _, _ = comprocessor_data
-    forward, reverse = processor.compute_average_drift()
+def test_get_average_drift(composite_processor):
+    forward, reverse = composite_processor.compute_average_drift()
     assert forward <= DRIFT_TOL and reverse <= DRIFT_TOL
 
 
-def test_compute_property_change(comprocessor_data):
-    processor, sublatts, occu = comprocessor_data
+def test_compute_property_change(composite_processor):
+    sublattices = get_sublattices(composite_processor)
+    occu = gen_random_occupancy(sublattices, composite_processor.num_sites)
     for _ in range(100):
-        sublatt = np.random.choice(sublatts)
-        site = np.random.choice(sublatt['sites'])
-        new_sp = np.random.choice(sublatt['codes'])
+        sublatt = np.random.choice(sublattices)
+        site = np.random.choice(sublatt.sites)
+        new_sp = np.random.choice(sublatt.encoding)
         new_occu = occu.copy()
         new_occu[site] = new_sp
-        prop_f = processor.compute_property(new_occu)
-        prop_i = processor.compute_property(occu)
-        dprop = processor.compute_property_change(occu, [(site, new_sp)])
+        prop_f = composite_processor.compute_property(new_occu)
+        prop_i = composite_processor.compute_property(occu)
+        dprop = composite_processor.compute_property_change(occu, [(site, new_sp)])
         # Check with some tight tolerances.
         npt.assert_allclose(dprop, prop_f - prop_i, rtol=RTOL, atol=ATOL)
         # Test reverse matches forward
         old_sp = occu[site]
-        rdprop = processor.compute_property_change(new_occu, [(site, old_sp)])
+        rdprop = composite_processor.compute_property_change(new_occu, [(site, old_sp)])
         assert dprop == -1 * rdprop
 
 
@@ -122,103 +90,109 @@ def test_occupancy_from_structure():
     pass
 
 
-def test_compute_feature_change(comprocessor_data):
-    processor, sublatts, occu = comprocessor_data
+def test_compute_feature_change(composite_processor):
+    sublattices = get_sublattices(composite_processor)
+    occu = gen_random_occupancy(sublattices, composite_processor.num_sites)
+    composite_processor.cluster_subspace.change_site_bases('indicator')
     for _ in range(100):
-        sublatt = np.random.choice(sublatts)
-        site = np.random.choice(sublatt['sites'])
-        new_sp = np.random.choice(sublatt['codes'])
+        sublatt = np.random.choice(sublattices)
+        site = np.random.choice(sublatt.sites)
+        new_sp = np.random.choice(sublatt.encoding)
         new_occu = occu.copy()
         new_occu[site] = new_sp
-        # Test forward
-        dcorr = processor.compute_feature_vector_change(occu, [(site, new_sp)])
-        corr_f = processor.compute_feature_vector(new_occu)
-        corr_i = processor.compute_feature_vector(occu)
-
-        npt.assert_allclose(dcorr, corr_f - corr_i, rtol=RTOL, atol=ATOL)
+        prop_f = composite_processor.compute_property(new_occu)
+        prop_i = composite_processor.compute_property(occu)
+        dprop = composite_processor.compute_property_change(occu, [(site, new_sp)])
+        # Check with some tight tolerances.
+        npt.assert_allclose(dprop, prop_f - prop_i, rtol=RTOL, atol=ATOL)
         # Test reverse matches forward
         old_sp = occu[site]
-        rdcorr = processor.compute_feature_vector_change(new_occu, [(site, old_sp)])
-        npt.assert_array_equal(dcorr, -1 * rdcorr)
+        rdprop = composite_processor.compute_property_change(new_occu, [(site, old_sp)])
+        assert dprop == -1 * rdprop
 
 
-def test_compute_property(comprocessor_data):
-    processor, _, occu = comprocessor_data
-    struct = processor.structure_from_occupancy(occu)
-    pred = np.dot(processor.coefs,
-                  processor.cluster_subspace.corr_from_structure(struct, False))
-    assert processor.compute_property(occu) == pytest.approx(pred, abs=ATOL)
+def test_compute_property(composite_processor):
+    occu = gen_random_occupancy(get_sublattices(composite_processor),
+                                composite_processor.num_sites)
+    struct = composite_processor.structure_from_occupancy(occu)
+    pred = np.dot(composite_processor.coefs,
+                  composite_processor.cluster_subspace.corr_from_structure(struct, False))
+    assert composite_processor.compute_property(occu) == pytest.approx(pred, abs=ATOL)
 
 
-def test_msonable(comprocessor_data):
-    processor, _, occu = comprocessor_data
-    d = processor.as_dict()
+def test_msonable(composite_processor):
+    occu = gen_random_occupancy(get_sublattices(composite_processor),
+                                composite_processor.num_sites)
+    d = composite_processor.as_dict()
     pr = Processor.from_dict(d)
-    assert processor.compute_property(occu) == pr.compute_property(occu)
+    assert composite_processor.compute_property(occu) == pr.compute_property(occu)
     # TODO error in constructor of basis functions
     #assert_msonable(ceprocessor)
 
 
 # CEProcessor only tests
-def test_compute_feature_vector(ceprocessor_data):
-    processor, _, occu = ceprocessor_data
-    struct = processor.structure_from_occupancy(occu)
+def test_compute_feature_vector(ce_processor):
+    occu = gen_random_occupancy(get_sublattices(ce_processor),
+                                ce_processor.num_sites)
+    struct = ce_processor.structure_from_occupancy(occu)
     # same as normalize=False in corr_from_structure
-    npt.assert_allclose(processor.compute_feature_vector(occu) / processor.size,
-                        processor.cluster_subspace.corr_from_structure(struct))
+    npt.assert_allclose(ce_processor.compute_feature_vector(occu) / ce_processor.size,
+                        ce_processor.cluster_subspace.corr_from_structure(struct))
 
 
-def test_feature_change_indictator(ceprocessor_data):
-    processor, sublatts, occu = ceprocessor_data
-    processor.cluster_subspace.change_site_bases('indicator')
-    pr = CEProcessor(processor.cluster_subspace,
-                     processor.supercell_matrix, processor.coefs,
-                     optimize_indicator=True)
+def test_feature_change_indictator(cluster_subspace):
+    coefs = 2 * np.random.random(cluster_subspace.n_bit_orderings)
+    scmatrix = 4 * np.eye(3)
+    cluster_subspace.change_site_bases('indicator')
+    proc = CEProcessor(cluster_subspace, supercell_matrix=scmatrix,
+                       coefficients=coefs)
+    sublattices = get_sublattices(proc)
+    occu = gen_random_occupancy(sublattices, proc.num_sites)
     for _ in range(100):
-        sublatt = np.random.choice(sublatts)
-        site = np.random.choice(sublatt['sites'])
-        new_sp = np.random.choice(sublatt['codes'])
+        sublatt = np.random.choice(sublattices)
+        site = np.random.choice(sublatt.sites)
+        new_sp = np.random.choice(sublatt.encoding)
         new_occu = occu.copy()
         new_occu[site] = new_sp
-        # Test forward
-        dcorr = pr.compute_feature_vector_change(occu, [(site, new_sp)])
-        corr_f = pr.compute_feature_vector(new_occu)
-        corr_i = pr.compute_feature_vector(occu)
-        npt.assert_allclose(dcorr, corr_f - corr_i, rtol=RTOL, atol=ATOL)
-        # Test reverse matches forward
-        old_sp = occu[site]
-        rdcorr = pr.compute_feature_vector_change(new_occu, [(site, old_sp)])
-        npt.assert_allclose(dcorr, -1 * rdcorr, rtol=RTOL, atol=ATOL)
-
-
-def test_bad_coef_length(ce_system):
-    subspace, dataset = ce_system
-    with pytest.raises(ValueError):
-        CEProcessor(subspace, 5*np.eye(3), coefficients=dataset['coefs'][:-1])
-
-
-# Ewald only tests, these are basically copy and paste from above
-# read comment on parametrizing :(
-def test_get_average_drift(ewaldprocessor_data):
-    processor, _, _ = ewaldprocessor_data
-    forward, reverse = processor.compute_average_drift()
-    assert forward <= DRIFT_TOL and reverse <= DRIFT_TOL
-
-
-def test_compute_property_change(ewaldprocessor_data):
-    processor, sublatts, occu = ewaldprocessor_data
-    for _ in range(100):
-        sublatt = np.random.choice(sublatts)
-        site = np.random.choice(sublatt['sites'])
-        new_sp = np.random.choice(sublatt['codes'])
-        new_occu = occu.copy()
-        new_occu[site] = new_sp
-        prop_f = processor.compute_property(new_occu)
-        prop_i = processor.compute_property(occu)
-        dprop = processor.compute_property_change(occu, [(site, new_sp)])
+        prop_f = proc.compute_property(new_occu)
+        prop_i = proc.compute_property(occu)
+        dprop = proc.compute_property_change(occu, [(site, new_sp)])
         # Check with some tight tolerances.
         npt.assert_allclose(dprop, prop_f - prop_i, rtol=RTOL, atol=ATOL)
         # Test reverse matches forward
         old_sp = occu[site]
-        rdprop = processor.compute_property_change(new_occu, [(site, old_sp)])
+        rdprop = proc.compute_property_change(new_occu, [(site, old_sp)])
+        assert dprop == -1 * rdprop
+
+
+def test_bad_coef_length(cluster_subspace):
+    coefs = np.random.random(cluster_subspace.n_bit_orderings - 1)
+    with pytest.raises(ValueError):
+        CEProcessor(cluster_subspace, 5*np.eye(3), coefficients=coefs)
+
+
+# Ewald only tests, these are basically copy and paste from above
+# read comment on parametrizing :(
+def test_get_average_drift(ewald_processor):
+    forward, reverse = ewald_processor.compute_average_drift()
+    assert forward <= DRIFT_TOL and reverse <= DRIFT_TOL
+
+
+def test_compute_property_change(ewald_processor):
+    sublattices = get_sublattices(ewald_processor)
+    occu = gen_random_occupancy(sublattices, ewald_processor.num_sites)
+    for _ in range(100):
+        sublatt = np.random.choice(sublattices)
+        site = np.random.choice(sublatt.sites)
+        new_sp = np.random.choice(sublatt.encoding)
+        new_occu = occu.copy()
+        new_occu[site] = new_sp
+        prop_f = ewald_processor.compute_property(new_occu)
+        prop_i = ewald_processor.compute_property(occu)
+        dprop = ewald_processor.compute_property_change(occu, [(site, new_sp)])
+        # Check with some tight tolerances.
+        npt.assert_allclose(dprop, prop_f - prop_i, rtol=RTOL, atol=ATOL)
+        # Test reverse matches forward
+        old_sp = occu[site]
+        rdprop = ewald_processor.compute_property_change(new_occu, [(site, old_sp)])
         assert dprop == -1 * rdprop
