@@ -12,8 +12,8 @@ ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble]
 
 
 @pytest.fixture(params=ensembles, scope='module')
-def ensemble(test_structure, request):
-    subspace = ClusterSubspace.from_radii(test_structure,
+def ensemble(structure, request):
+    subspace = ClusterSubspace.from_radii(structure,
                                           radii={2: 6, 3: 5, 4: 4})
     coefs = np.random.random(subspace.n_bit_orderings)
     proc = CEProcessor(subspace, 4*np.eye(3), coefs)

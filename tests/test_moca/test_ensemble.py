@@ -12,56 +12,49 @@ from smol.moca import (CanonicalEnsemble, MuSemiGrandEnsemble,
 from tests.utils import assert_msonable, gen_random_occupancy
 
 ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble]
+TEMPERATURE = 1000
+
+
+@pytest.fixture
+def processor(cluster_subspace):
+    coefs = 2 * np.random.random(cluster_subspace.n_bit_orderings)
+    scmatrix = 4 * np.eye(3)
+    return CEProcessor(cluster_subspace, scmatrix, coefs)
 
 
 @pytest.fixture(params=ensembles)
-def ensemble(test_structure, request):
-    subspace = ClusterSubspace.from_radii(test_structure,
-                                          radii={2: 6, 3: 5, 4: 4})
-    coefs = np.random.random(subspace.n_bit_orderings)
-    proc = CEProcessor(subspace, 4*np.eye(3), coefs)
+def ensemble(processor, request):
     if request.param is MuSemiGrandEnsemble:
         kwargs = {'chemical_potentials':
-                  {sp: 0.3 for space in proc.unique_site_spaces
+                  {sp: 0.3 for space in processor.unique_site_spaces
                    for sp in space.keys()}}
     else:
         kwargs = {}
-    return request.param(proc, temperature=500, **kwargs)
+    return request.param(processor, temperature=TEMPERATURE, **kwargs)
 
 
 @pytest.fixture
-def canonical_ensemble(test_structure):
-    subspace = ClusterSubspace.from_radii(test_structure,
-                                          radii={2: 6, 3: 5, 4: 4})
-    coefs = np.random.random(subspace.n_bit_orderings)
-    proc = CEProcessor(subspace, 4 * np.eye(3), coefs)
-    return CanonicalEnsemble(proc, 500)
+def canonical_ensemble(processor):
+    return CanonicalEnsemble(processor, temperature=TEMPERATURE)
 
 
 @pytest.fixture
-def mugrand_ensemble(test_structure):
-    subspace = ClusterSubspace.from_radii(test_structure,
-                                          radii={2: 6, 3: 5, 4: 4})
-    coefs = np.random.random(subspace.n_bit_orderings)
-    proc = CEProcessor(subspace, 4 * np.eye(3), coefs)
-    chemical_potentials= {sp: 0.3 for space in proc.unique_site_spaces
+def mugrand_ensemble(processor):
+    chemical_potentials= {sp: 0.3 for space in processor.unique_site_spaces
                           for sp in space.keys()}
-    return MuSemiGrandEnsemble(proc, 500, chemical_potentials)
+    return MuSemiGrandEnsemble(processor, temperature=TEMPERATURE,
+                               chemical_potentials=chemical_potentials)
 
 
 @pytest.fixture
-def fugrand_ensemble(test_structure):
-    subspace = ClusterSubspace.from_radii(test_structure,
-                                          radii={2: 6, 3: 5, 4: 4})
-    coefs = np.random.random(subspace.n_bit_orderings)
-    proc = CEProcessor(subspace, 4 * np.eye(3), coefs)
-    return FuSemiGrandEnsemble(proc, 500)
+def fugrand_ensemble(processor):
+    return FuSemiGrandEnsemble(processor, temperature=TEMPERATURE)
 
 
 # Test with composite processors to cover more ground
 @pytest.mark.parametrize('ensemble_cls', ensembles)
-def test_from_cluster_expansion(ionic_test_structure, ensemble_cls):
-    subspace = ClusterSubspace.from_radii(ionic_test_structure,
+def test_from_cluster_expansion(ionic_structure, ensemble_cls):
+    subspace = ClusterSubspace.from_radii(ionic_structure,
                                           radii={2: 6, 3: 5, 4: 4})
     subspace.add_external_term(EwaldTerm())
     coefs = np.random.random(subspace.n_bit_orderings + 1)

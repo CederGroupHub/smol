@@ -5,6 +5,7 @@ from tests.utils import assert_msonable, gen_random_occupancy
 from smol.cofe.extern import EwaldTerm
 from smol.moca import CEProcessor, EwaldProcessor, CompositeProcessor
 from smol.moca.processor.base import Processor
+from smol.moca.ensemble.sublattice import get_sublattices
 
 RTOL = 0.0  # relative tolerance to check property change functions
 # absolute tolerance to check property change functions (eps is approx 2E-16)
@@ -39,7 +40,10 @@ def gen_occupancy(sublattice_dicts):
 # Fixtures to run tests with
 @pytest.fixture(scope='module')
 def ceprocessor_data(ce_system):
-    subspace, dataset = ce_system
+    subspace = ClusterSubspace.from_radii(test_structure,
+                                          radii={2: 6, 3: 5, 4: 4})
+    coefs = np.random.random(subspace.n_bit_orderings)
+    proc = CEProcessor(subspace, 4 * np.eye(3), coefs)
     scmatrix = 5 * np.eye(3)
     proc = CEProcessor(subspace, scmatrix, coefficients=dataset['coefs'])
     sublattices = gen_sublattices(proc)

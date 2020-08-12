@@ -16,13 +16,18 @@ ionic_test_structures = test_structures[2:]
 
 
 @pytest.fixture(params=test_structures, scope='module')
-def test_structure(request):
+def structure(request):
     return request.param
 
 
 @pytest.fixture(params=ionic_test_structures, scope='module')
-def ionic_test_structure(request):
+def ionic_structure(request):
     return request.param
+
+
+@pytest.fixture(params=test_structures)
+def cluster_subspace(request):
+    return ClusterSubspace.from_radii(request.param, radii={2: 6, 3: 5, 4: 4})
 
 
 # Synthetic ClusterExpansion FCC binary data
@@ -53,7 +58,6 @@ lno31 = loadfn(path)
 lno31['dataset'] = [(d['structure'], d['energy']) for d in lno31['dataset']]
 
 # TODO add a few more real datasets?
-
 # Define some pytests fixtures to be used in tests
 synthetic_datasets = [toyCEFCC2, toyCEFCC2e]
 real_datasets = [lno31, ]  # real datasets without external terms
