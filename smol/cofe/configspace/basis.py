@@ -12,7 +12,6 @@ this can be changed to use "concentration" biased bases.
 __author__ = "Luis Barroso-Luque"
 
 import warnings
-from typing import Sequence
 from abc import abstractmethod
 from collections import OrderedDict
 from collections.abc import Iterator
@@ -23,63 +22,6 @@ from numpy.polynomial.chebyshev import chebval
 from numpy.polynomial.legendre import legval
 
 from smol.utils import derived_class_factory
-
-
-def get_allowed_species(structure):
-    """Get the allowed species for each site in a disoredered structure.
-
-    Method to obtain the single site spaces for the sites in a structure.
-    The single site spaces are represented by the allowed species for each site
-    and the measure/concentration for disordered sites.
-
-    Vacancies are included in sites where the site element composition does not
-    sum to 1 (i.e. the total occupation is not 1)
-
-    Args:
-        structure (Structure):
-            Structure to determine site spaces from at least some sites should
-            be disordered, otherwise there is no point in using this.
-
-    Returns:
-        list: Of allowed species for each site
-    """
-    all_allowed_species = []
-    for site in structure:
-        # sorting is crucial to ensure consistency!
-        allowed_species = [str(sp) for sp in sorted(site.species.keys())]
-        if site.species.num_atoms < 0.99:
-            allowed_species.append("Vacancy")
-        all_allowed_species.append(allowed_species)
-    return all_allowed_species
-
-
-def get_site_spaces(structure):
-    """Get site spaces for each site in a disordered structure.
-
-    Method to obtain the single site spaces for the sites in a structure.
-    The single site spaces are represented by the allowed species for each site
-    and the measure/concentration for disordered sites.
-
-    Vacancies are included in sites where the site element composition does not
-    sum to 1 (i.e. the total occupation is not 1)
-
-    Args:
-        structure (Structure):
-            Structure to determine site spaces from at least some sites should
-            be disordered, otherwise there is no point in using this.
-
-    Returns:
-        Ordereddict: Of allowed species and their corresponding measure.
-    """
-    all_site_spaces = []
-    for site in structure:
-        # sorting is crucial to ensure consistency!
-        site_space = OrderedDict((str(sp), c) for sp, c
-                                 in sorted(site.species.items()))
-        if site.species.num_atoms < 0.99:
-            site_space["Vacancy"] = 1 - site.species.num_atoms
-        all_site_spaces.append(site_space)
-    return all_site_spaces
 
 
 class SiteBasis:
@@ -98,32 +40,26 @@ class SiteBasis:
     compute the function array
     """
 
-    def __init__(self, species, basis_functions):
+    def __init__(self, site_space, basis_functions):
         """Initialize a SiteBasis.
 
         Args:
-            species (Sequence or OrderedDict):
-                Species. If dict, the species should be the keys and
-                the value should should correspond to the probability measure
-                associated to that specie. If a tuple is given a uniform
-                probability is assumed.
+            site_space (OrderedDict):
+                Dict representing site space (Specie, measure)
             basis_functions (Sequence like):
                 A Sequence of the nonconstant basis functions. Must take the
                 valuves of species as input.
         """
-        if isinstance(species, Sequence):
-            species = {specie: 1 / len(species) for specie in species}
-        elif isinstance(species, OrderedDict):
-            if not np.allclose(sum(species.values()), 1):
+        if isinstance(site_space, OrderedDict):
+            if not np.allclose(sum(site_space.values()), 1):
                 warnings.warn('The measure given does not sum to 1.'
                               'Are you sure this is what you want?',
                               RuntimeWarning)
         else:
-            raise TypeError('species argument must be Sequence like or an '
-                            'OrderedDict.')
+            raise TypeError('species argument must be OrderedDict.')
 
         self.flavor = basis_functions.flavor
-        self._domain = OrderedDict(species)
+        self._domain = site_space
         # add non constant basis functions to array
         if len(basis_functions) != len(self.species) - 1:
             raise ValueError(f'Must provid {len(self.species) - 1 } total non-'

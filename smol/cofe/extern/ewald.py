@@ -10,10 +10,10 @@ W. D. Richards, et al., Energy Environ. Sci., 2016, 9, 3272–3278
 __author__ = "William Davidson Richard, Luis Barroso-Luque"
 
 import numpy as np
-from pymatgen import Structure, PeriodicSite
+from pymatgen import Structure, PeriodicSite, DummySpecie
 from pymatgen.analysis.ewald import EwaldSummation
 from monty.json import MSONable
-from smol.cofe.configspace.basis import get_allowed_species
+from smol.cofe.configspace.domain import get_allowed_species
 
 
 class EwaldTerm(MSONable):
@@ -85,7 +85,7 @@ class EwaldTerm(MSONable):
             # allocate array with all -1 for vacancies
             inds = np.zeros(max(nbits) + 1) - 1
             for i, b in enumerate(space):
-                if b == 'Vacancy':  # skip vacancies
+                if b == DummySpecie('_vacancy'):  # skip vacancies
                     continue
                 inds[i] = len(ewald_sites)
                 ewald_sites.append(PeriodicSite(b, site.frac_coords,

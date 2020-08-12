@@ -9,7 +9,7 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe import ClusterSubspace
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.configspace.constants import SITE_TOL
-from smol.cofe.configspace.basis import get_site_spaces, get_allowed_species
+from smol.cofe.configspace.domain import get_allowed_species, get_site_spaces
 from smol.exceptions import StructureMatchError
 from src.mc_utils import corr_from_occupancy
 
