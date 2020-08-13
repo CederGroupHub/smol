@@ -3,11 +3,10 @@
 __author__ = "Luis Barroso-Luque"
 
 from abc import ABC, abstractmethod
-import numpy as np
 
 from smol.constants import kB
 from smol.moca import CompositeProcessor, CEProcessor, EwaldProcessor
-from .sublattice import Sublattice, get_sublattices
+from .sublattice import get_sublattices
 
 
 class Ensemble(ABC):

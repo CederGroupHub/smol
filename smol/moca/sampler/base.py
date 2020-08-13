@@ -142,7 +142,7 @@ class Sampler(ABC):
 
         # Initialise progress bar
         nwalkers, nsites = self.samples.shape
-        desc = (f'Sampling with {nwalkers} walkers at'
+        desc = (f'Sampling with {nwalkers} walkers at '
                 f'{self.ensemble.temperature} K from a cell with '
                 f'{nsites} sites.')
         with progress_bar(progress, total=nsteps, description=desc) as bar:

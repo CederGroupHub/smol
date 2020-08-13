@@ -3,10 +3,11 @@ from collections import OrderedDict
 from itertools import combinations_with_replacement
 import json
 import numpy as np
-from pymatgen import Lattice, Structure, Specie, DummySpecie
+from pymatgen import Lattice, Structure, Specie
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe.configspace import Orbit, Cluster
 from smol.cofe.configspace.basis import basis_factory
+from smol.cofe.configspace.domain import Vacancy
 
 
 class TestOrbit(unittest.TestCase):
@@ -20,10 +21,10 @@ class TestOrbit(unittest.TestCase):
         self.symops = sf.get_symmetry_operations()
         self.spaces = [OrderedDict({Specie('Li'): 1.0/3.0,
                                     Specie('Ca'): 1.0/3.0,
-                                    DummySpecie('_Vacancy'): 1.0/3.0}),
+                                    Vacancy(): 1.0/3.0}),
                        OrderedDict({Specie('Li'): 1.0 / 3.0,
                                     Specie('Ca'): 1.0 / 3.0,
-                                    DummySpecie('_Vacancy'): 1.0 / 3.0})]
+                                    Vacancy(): 1.0 / 3.0})]
         self.bases = [basis_factory('indicator', bit) for bit in self.spaces]
         self.basecluster = Cluster(self.coords[:2], self.lattice)
         self.orbit = Orbit(self.coords[:2], self.lattice, [[0, 1], [0, 1]],

@@ -15,9 +15,10 @@ from abc import ABCMeta, abstractmethod
 from collections import OrderedDict
 import numpy as np
 
-from pymatgen import Structure, PeriodicSite, DummySpecie
+from pymatgen import Structure, PeriodicSite
 from monty.json import MSONable
-from smol.cofe.configspace.domain import get_allowed_species, get_site_spaces
+from smol.cofe.configspace.domain import (get_allowed_species, get_site_spaces,
+                                          Vacancy)
 
 
 class Processor(MSONable, metaclass=ABCMeta):
@@ -173,7 +174,7 @@ class Processor(MSONable, metaclass=ABCMeta):
         occupancy = self.decode_occupancy(occupancy)
         sites = []
         for sp, s in zip(occupancy, self.structure):
-            if sp != DummySpecie('_vacancy'):
+            if sp != Vacancy():
                 site = PeriodicSite(sp, s.frac_coords, self.structure.lattice)
                 sites.append(site)
         return Structure.from_sites(sites)

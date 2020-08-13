@@ -63,9 +63,50 @@ def get_site_spaces(structure, include_measure=False):
         site_space = OrderedDict((spec, comp) for spec, comp
                                  in sorted(site.species.items()))
         if site.species.num_atoms < 0.99:
-            site_space[DummySpecie("_Vacancy")] = 1 - site.species.num_atoms
+            site_space[Vacancy()] = 1 - site.species.num_atoms
         if not include_measure:  # make uniform if measure not included
             for spec in site_space.keys():
                 site_space[spec] = 1.0 / len(site_space)
         all_site_spaces.append(site_space)
     return all_site_spaces
+
+
+class Vacancy(DummySpecie):
+    """Wrapper class around DummySpecie to treat vacancies as their own."""
+
+    def __init__(self, symbol: str = "A", oxidation_state: float = 0,
+                 properties: dict = None):
+        """
+        Args:
+            symbol (str): An assigned symbol for the vacancy. Strict
+                rules are applied to the choice of the symbol. The vacancy
+                symbol cannot have any part of first two letters that will
+                constitute an Element symbol. Otherwise, a composition may
+                be parsed wrongly. E.g., "X" is fine, but "Vac" is not
+                because Vac contains V, a valid Element.
+            oxidation_state (float): Oxidation state for Vacancy. More like
+                the charge of a point defect. Defaults to zero.
+        """
+        super().__init__(symbol=symbol, oxidation_state=oxidation_state,
+                         properties=properties)
+
+    def __eq__(self, other):
+        """Test equality, only equal if isinstance"""
+        if not isinstance(other, Vacancy):
+            return False
+        else:
+            return super().__eq__(other)
+
+    def __hash__(self):
+        """Unique hash, append an underscore to avoid clash with Dummy."""
+        # this should prevent any hash collisions with other Specie instances
+        # since the symbol for a DummySpecie can not start with "v"
+        return hash("v" + self.symbol)
+
+    def __str__(self):
+        """Get string representation, add a v to differentiate."""
+        return "v" + super().__str__()
+
+    def __repr__(self):
+        """Get an explicit representation."""
+        return "Vacancy " + self.__str__()

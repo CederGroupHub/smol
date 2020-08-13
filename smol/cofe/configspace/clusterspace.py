@@ -15,7 +15,7 @@ import warnings
 import numpy as np
 
 from monty.json import MSONable
-from pymatgen import Structure, PeriodicSite, DummySpecie
+from pymatgen import Structure, PeriodicSite
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.analysis.structure_matcher import (StructureMatcher,
                                                  OrderDisorderElementComparator)  # noqa
@@ -26,7 +26,8 @@ from pymatgen.util.coord import (is_coord_subset, is_coord_subset_pbc,
 from src.mc_utils import corr_from_occupancy
 from smol.cofe.configspace import Orbit
 from smol.cofe.configspace.basis import (basis_factory)
-from smol.cofe.configspace.domain import get_allowed_species, get_site_spaces
+from smol.cofe.configspace.domain import (get_allowed_species, get_site_spaces,
+                                          Vacancy)
 from smol.cofe.configspace.constants import SITE_TOL
 from smol.exceptions import (SymmetryError, StructureMatchError,
                              SYMMETRY_ERROR_MESSAGE)
@@ -395,7 +396,7 @@ class ClusterSubspace(MSONable):
 
         sites = []
         for sp, s in zip(occu, supercell_structure):
-            if sp != DummySpecie('_Vacancy'):
+            if not isinstance(sp, Vacancy):  # skip vacancies
                 site = PeriodicSite(sp, s.frac_coords,
                                     supercell_structure.lattice)
                 sites.append(site)
@@ -459,7 +460,7 @@ class ClusterSubspace(MSONable):
             if i in site_mapping:
                 sp = structure[site_mapping.index(i)].specie
             else:
-                sp = DummySpecie('_Vacancy')
+                sp = Vacancy()
             if sp not in allowed_species:
                 raise StructureMatchError('A site in given structure has an'
                                           f' unrecognized species {sp}.')

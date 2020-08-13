@@ -18,6 +18,7 @@ from smol.utils import _repr
 from smol.exceptions import SymmetryError, SYMMETRY_ERROR_MESSAGE
 from .constants import SITE_TOL
 from .cluster import Cluster
+from .domain import Vacancy
 from .basis import basis_factory
 
 
@@ -349,7 +350,10 @@ class Orbit(MSONable):
                         and Element.is_valid_symbol(sp["element"])):
                     sp = Specie.from_dict(sp)
                 elif "oxidation_state" in sp:
-                    sp = DummySpecie.from_dict(sp)
+                    if sp['@class'] == 'Vacancy':
+                        sp = Vacancy.from_dict(sp)
+                    else:
+                        sp = DummySpecie.from_dict(sp)
                 else:
                     sp = Element(sp["element"])
                 site_space.append((sp, m))
