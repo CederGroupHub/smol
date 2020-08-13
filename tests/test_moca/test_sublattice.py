@@ -3,13 +3,15 @@ from collections import OrderedDict
 import numpy as np
 import numpy.testing as npt
 
+from pymatgen import DummySpecie
 from smol.moca.ensemble.sublattice import Sublattice
 from tests.utils import assert_msonable
 
 
 @pytest.fixture
 def sublattice():
-    site_space = OrderedDict({'A': 0.3, 'B': 0.3, 'C': 0.2, 'D': 0.2})
+    site_space = OrderedDict({DummySpecie('A'): 0.3, DummySpecie('X'): 0.3,
+                              DummySpecie('D'): 0.2, DummySpecie('E'): 0.2})
     sites = np.random.choice(range(100), size=60)
     return Sublattice(site_space, sites)
 

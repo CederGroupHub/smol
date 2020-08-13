@@ -10,7 +10,8 @@ __author__ = "Luis Barroso-Luque"
 from collections import OrderedDict
 import numpy as np
 from monty.json import MSONable
-
+from pymatgen import Specie, DummySpecie, Element
+from smol.cofe.configspace.domain import Vacancy
 
 def get_sublattices(processor):
     """Get a list of sublattices from a processor
@@ -108,7 +109,8 @@ class Sublattice(MSONable):
         Returns:
             MSONable dict
         """
-        d = {'site_space': self.site_space,
+        d = {'site_space': tuple((s.as_dict(), m)
+                                 for s, m in self.site_space.items()),
              'sites': self.sites.tolist(),
              'active_sites': self.active_sites.tolist(),
              'restricted_sites': self.restricted_sites}
@@ -124,7 +126,20 @@ class Sublattice(MSONable):
         Returns:
             Sublattice
         """
-        sublattice = cls(OrderedDict(d['site_space']),  # order conserved?
+        site_space = []
+        for sp, m in d['site_space']:
+            if ("oxidation_state" in sp
+                    and Element.is_valid_symbol(sp["element"])):
+                sp = Specie.from_dict(sp)
+            elif "oxidation_state" in sp:
+                if sp['@class'] == 'Vacancy':
+                    sp = Vacancy.from_dict(sp)
+                else:
+                    sp = DummySpecie.from_dict(sp)
+            else:
+                sp = Element(sp["element"])
+            site_space.append((sp, m))
+        sublattice = cls(OrderedDict(site_space),
                          sites=np.array(d['sites']))
         sublattice.active_sites = np.array(d['active_sites'])
         sublattice.restricted_sites = d['restricted_sites']

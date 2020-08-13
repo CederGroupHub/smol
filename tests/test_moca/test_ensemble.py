@@ -103,8 +103,7 @@ def test_restrict_sites(ensemble):
 
 
 def test_msonable(ensemble):
-    # assert_msonable(ensemble)
-    pass
+    assert_msonable(ensemble)
 
 
 # Canonical Ensemble tests

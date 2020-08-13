@@ -15,7 +15,8 @@ from math import log
 import numpy as np
 
 from monty.json import MSONable
-from smol.cofe.configspace.domain import get_specie
+from pymatgen import Specie, DummySpecie, Element
+from smol.cofe.configspace.domain import get_specie, Vacancy
 from smol.moca.processor.base import Processor
 from .base import Ensemble
 from .sublattice import Sublattice
@@ -200,7 +201,8 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             MSONable dict
         """
         d = super().as_dict()
-        d['chemical_potentials'] = self.chemical_potentials
+        d['chemical_potentials'] = tuple((s.as_dict(), c)
+                                         for s, c in self.chemical_potentials.items())
         return d
 
     @classmethod
@@ -213,8 +215,21 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         Returns:
             CanonicalEnsemble
         """
+        chemical_potentials = {}
+        for sp, c in d['chemical_potentials']:
+            if ("oxidation_state" in sp
+                    and Element.is_valid_symbol(sp["element"])):
+                sp = Specie.from_dict(sp)
+            elif "oxidation_state" in sp:
+                if sp['@class'] == 'Vacancy':
+                    sp = Vacancy.from_dict(sp)
+                else:
+                    sp = DummySpecie.from_dict(sp)
+            else:
+                sp = Element(sp["element"])
+            chemical_potentials[sp] = c
         return cls(Processor.from_dict(d['processor']), d['temperature'],
-                   chemical_potentials=d['chemical_potentials'],
+                   chemical_potentials=chemical_potentials,
                    sublattices=[Sublattice.from_dict(s)
                                 for s in d['sublattices']])
 
@@ -274,7 +289,8 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         self._fus = fugacity_fractions
         self._fu_table = self._build_fu_table(fugacity_fractions)
         self.thermo_boundaries = {'fugacity-fractions':
-                                  self.fugacity_fractions}
+                                  [{str(k): v for k, v in sub.items()}
+                                   for sub in fugacity_fractions]}
 
     @property
     def fugacity_fractions(self):
@@ -348,7 +364,9 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             MSONable dict
         """
         d = super().as_dict()
-        d['fugacity_fractions'] = self.fugacity_fractions
+        d['fugacity_fractions'] = [tuple((sp.as_dict(), fu)
+                                         for sp, fu in fus.items())
+                                   for fus in self.fugacity_fractions]
         return d
 
     @classmethod
@@ -361,7 +379,23 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         Returns:
             FuSemiGrandEnsemble
         """
+        fugacity_fractions = []
+        for sublatt in d['fugacity_fractions']:
+            fus = {}
+            for sp, fu in sublatt:
+                if ("oxidation_state" in sp
+                        and Element.is_valid_symbol(sp["element"])):
+                    sp = Specie.from_dict(sp)
+                elif "oxidation_state" in sp:
+                    if sp['@class'] == 'Vacancy':
+                        sp = Vacancy.from_dict(sp)
+                    else:
+                        sp = DummySpecie.from_dict(sp)
+                else:
+                    sp = Element(sp["element"])
+                fus[sp] = fu
+            fugacity_fractions.append(fus)
         return cls(Processor.from_dict(d['processor']), d['temperature'],
-                   fugacity_fractions=d['fugacity_fractions'],
+                   fugacity_fractions=fugacity_fractions,
                    sublattices=[Sublattice.from_dict(s)
                                 for s in d['sublattices']])

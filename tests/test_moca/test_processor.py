@@ -126,8 +126,9 @@ def test_msonable(composite_processor):
     d = composite_processor.as_dict()
     pr = Processor.from_dict(d)
     assert composite_processor.compute_property(occu) == pr.compute_property(occu)
-    # TODO error in constructor of basis functions
-    #assert_msonable(ceprocessor)
+    # send in pr bc composite_processor is scoped for function and new random
+    # coefficients will be created.
+    assert_msonable(pr)
 
 
 # CEProcessor only tests
