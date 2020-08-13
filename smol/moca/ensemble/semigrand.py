@@ -15,6 +15,7 @@ from math import log
 import numpy as np
 
 from monty.json import MSONable
+from smol.cofe.configspace.domain import get_specie
 from smol.moca.processor.base import Processor
 from .base import Ensemble
 from .sublattice import Sublattice
@@ -113,6 +114,8 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         super().__init__(processor, temperature, sublattices)
 
         # check that species are valid
+        chemical_potentials = {get_specie(k): v for k, v
+                               in chemical_potentials.items()}
         species = set([sp for sps in processor.unique_site_spaces
                        for sp in sps])
         for sp in chemical_potentials.keys():
@@ -128,7 +131,8 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         self._mus = chemical_potentials
         self._mu_table = self._build_mu_table(chemical_potentials)
         self.thermo_boundaries = {'chemical-potentials':
-                                  self.chemical_potentials}
+                                  {str(k): v for k, v
+                                   in chemical_potentials.items()}}
 
     @property
     def chemical_potentials(self):
@@ -138,6 +142,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     @chemical_potentials.setter
     def chemical_potentials(self, value):
         """Set the chemical potentials and update table"""
+        value = {get_specie(k): v for k, v in value.items()}
         if set(value.keys()) != set(self._mus.keys()):
             raise ValueError('Chemical potentials given are missing species. '
                              'Values must be given for each of the following:'
@@ -253,6 +258,8 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
 
         if fugacity_fractions is not None:
             # check that species are valid
+            fugacity_fractions = [{get_specie(k): v for k, v in sub.items()}
+                                  for sub in fugacity_fractions]
             for fus, sublatt in zip(fugacity_fractions, self.sublattices):
                 if sum([fu for fu in fus.values()]) != 1:
                     raise ValueError('Fugacity ratios must add to one.')
@@ -260,7 +267,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
                     raise ValueError('Fugacity fractions given are missing or '
                                      'not valid species. Values must be given '
                                      'for each of the following: '
-                        f'{[sublatt.site_space for sublatt in self.sublattices]}')  # noqa
+                     f'{[sublatt.site_space for sublatt in self.sublattices]}')  # noqa
         else:
             fugacity_fractions = [dict(sublatt.site_space) for sublatt
                                   in self.sublattices]
@@ -277,6 +284,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     @fugacity_fractions.setter
     def fugacity_fractions(self, value):
         """Set the fugacity fractions and update table"""
+        value = [{get_specie(k): v for k, v in sub.items()} for sub in value]
         if not all(sum(fus.values()) == 1 for fus in value):
             raise ValueError('Fugacity ratios must add to one.')
         for (fus, vals) in zip(self._fus, value):

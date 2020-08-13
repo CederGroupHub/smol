@@ -11,11 +11,11 @@ of a site function and many site spaces make up the space of configurations.
 __author__ = "Luis Barroso-Luque, Fengyu Xie"
 
 from collections import OrderedDict
-from pymatgen.core.periodic_table import DummySpecie
+from pymatgen.core.periodic_table import DummySpecie, get_el_sp
 
 
 def get_allowed_species(structure):
-    """Get the allowed species for each site in a disoredered structure.
+    """Get the allowed species for each site in a disordered structure.
 
     This will get all the allowed species for each site in a pymatgen structure
     If the site composition does not add to 1, a vacancy DummySpecie will
@@ -69,6 +69,34 @@ def get_site_spaces(structure, include_measure=False):
                 site_space[spec] = 1.0 / len(site_space)
         all_site_spaces.append(site_space)
     return all_site_spaces
+
+
+def get_specie(obj):
+    """Method wrapping pymatgen.core.periodic_table.get_el_sp to catch and
+    return Vacancies when desired.
+
+    Args:
+        obj (Element/Specie/str/int):
+            An arbitrary object.  Supported objects
+            are actual Element/Specie objects, integers (representing atomic
+            numbers) or strings (element symbols or species strings).
+
+    Returns:
+        Specie, Element or Vacancy, with a bias for the maximum number of
+        properties that can be determined.
+    Raises:
+        ValueError if obj cannot be converted into an Element or Specie.
+    """
+    if isinstance(obj, Vacancy):
+        return obj
+
+    if isinstance(obj, (list, tuple)):
+        return [get_specie(o) for o in obj]
+
+    if isinstance(obj, str) and 'Vac' in obj.capitalize():
+        return Vacancy()
+
+    return get_el_sp(obj)
 
 
 class Vacancy(DummySpecie):
