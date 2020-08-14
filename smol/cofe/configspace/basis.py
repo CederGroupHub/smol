@@ -21,31 +21,33 @@ from numpy.polynomial.polynomial import polyval
 from numpy.polynomial.chebyshev import chebval
 from numpy.polynomial.legendre import legval
 
+from .domain import SiteSpace
 from smol.utils import derived_class_factory
 
 
 class SiteBasis:
-    """Abstract base class to represent the basis for a site function space.
-
-    This abstract class must by derived from for specific bases to represent a
-    site function space.
-
-    Name all derived classes NameBasis. See implementations below.
+    """Class to represent the basis for a site function space.
 
     Note that all SiteBasis in theory have the first basis function = 1, but
     this should not be defined since it is handled implicitly when computing
     bit_combos using total no. species - 1 in the Orbit class.
 
-    Derived classes must define a list of functions self._functions used to
-    compute the function array
+    The particular basis set is set by giving an iterable of basis functions.
+    See BasisIterator classes for details.
     """
 
     def __init__(self, site_space, basis_functions):
         """Initialize a SiteBasis.
 
+        Currently also accepts an OrderedDict but if you find yourself creating
+        one like so for use in production and not debuging know that it will
+        break MSONable methods in classes that use these, and at any point I
+        could change this to not allow OrderedDicts.
+
         Args:
-            site_space (OrderedDict):
-                Dict representing site space (Specie, measure)
+            site_space (OrderedDict or SiteSpace):
+                Dict representing site space (Specie, measure) or a SiteSpace
+                object.
             basis_functions (Sequence like):
                 A Sequence of the nonconstant basis functions. Must take the
                 valuves of species as input.
@@ -55,8 +57,9 @@ class SiteBasis:
                 warnings.warn('The measure given does not sum to 1.'
                               'Are you sure this is what you want?',
                               RuntimeWarning)
-        else:
-            raise TypeError('site_space argument must be OrderedDict.')
+        elif not isinstance(site_space, SiteSpace):
+            raise TypeError('site_space argument must be a SiteSpaces or an '
+                            'OrderedDict.')
 
         self.flavor = basis_functions.flavor
         self._domain = site_space
@@ -303,6 +306,7 @@ def sinusoid_factory(n, m):
 def sin_f(s, a, m):
     """Return basis function for even indices."""
     return -np.sin(2 * np.pi * a * s / m)
+
 
 
 def cos_f(s, a, m):

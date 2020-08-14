@@ -1,16 +1,19 @@
-"""Functions to obtain site spaces and allowed species.
+"""Implementation of SiteSpace and functions to get spaces and allowed species.
 
 Implementation functions to generate lists of site spaces and allowed species
 for a given disordered strucuture.
 
 A site space is simply made up of the allowed species and their concentrations
-including dummy species such as vacancies. A site spaces makes up the domain
+including special species such as vacancies. A site spaces makes up the domain
 of a site function and many site spaces make up the space of configurations.
 """
 
 __author__ = "Luis Barroso-Luque, Fengyu Xie"
 
+from collections.abc import Mapping, Hashable
 from collections import OrderedDict
+from monty.json import MSONable
+from pymatgen import Composition
 from pymatgen.core.periodic_table import DummySpecie, get_el_sp
 
 
@@ -56,17 +59,14 @@ def get_site_spaces(structure, include_measure=False):
     """
     all_site_spaces = []
     for site in structure:
-        if site.species.num_atoms > 1:
-            raise ValueError(f"The composition in site {site} is greater than "
-                             "1. Makes sure compositions are fractional.")
-        # sorting is crucial to ensure consistency!
-        site_space = OrderedDict((spec, comp) for spec, comp
-                                 in sorted(site.species.items()))
-        if site.species.num_atoms < 0.99:
-            site_space[Vacancy()] = 1 - site.species.num_atoms
-        if not include_measure:  # make uniform if measure not included
-            for spec in site_space.keys():
-                site_space[spec] = 1.0 / len(site_space)
+        if include_measure:
+            site_space = SiteSpace(site.species)
+        else:  # make comp uniform if measure not included
+            num_species = len(site.species)
+            if site.species.num_atoms < 0.99:
+                num_species += 1
+            site_space = SiteSpace(Composition({sp: 1.0 / num_species for sp
+                                                in site.species.keys()}))
         all_site_spaces.append(site_space)
     return all_site_spaces
 
@@ -93,10 +93,104 @@ def get_specie(obj):
     if isinstance(obj, (list, tuple)):
         return [get_specie(o) for o in obj]
 
-    if isinstance(obj, str) and 'Vac' in obj.capitalize():
+    if isinstance(obj, str) and 'vac' in obj.lower():
         return Vacancy()
 
     return get_el_sp(obj)
+
+
+class SiteSpace(Mapping, Hashable, MSONable):
+    """Represents a site space.
+
+    A site spaces is a set of allowed species at a site and their corresponding
+    measure (composition in the disordered state).
+
+    This class is somewhat similar to pymatgen Composition. However a SiteSpace
+    must always have a total composition = 1 since vacancies are explititly
+    included as species. A sorted order of the included species is also kept to
+    ensure a consistent encoding when creating basis functions. Vacancies are
+    always the last species. Key errors are raised for species not in space.
+    """
+
+    def __init__(self, composition):
+        """Initialize a site space.
+
+        Args:
+            composition (Composition):
+                Composition object that specifies the site space.
+        """
+        if composition.num_atoms <= 0 or composition.num_atoms > 1:
+            raise ValueError("Number of atoms in Composition must be in (0, 1]"
+                             f" got {composition.num_atoms}!")
+        elif any(isinstance(sp, Vacancy) for sp in composition):
+            if composition.num_atoms != 1:
+                raise ValueError(f"Composition {composition} has a Vacancy but"
+                                 "  number of atoms is not 1.")
+            elif sum(isinstance(sp, Vacancy) for sp in composition) > 1:
+                raise ValueError("There are multiple vacancies in this " 
+                                 f"composition {composition}.")
+        self._composition = composition
+        self._data = OrderedDict((spec, comp) for spec, comp
+                                 in sorted(composition.items()))
+        if composition.num_atoms < 0.99:
+            self._data[Vacancy()] = 1 - composition.num_atoms
+
+    @property
+    def composition(self):
+        """Return the underlying composition."""
+        return self._composition
+
+    def __getitem__(self, item):
+        """Get a specie in the sitespace."""
+        try:
+            sp = get_specie(item)
+            return self._data[sp]
+        except ValueError as ex:
+            raise TypeError(f"Invalid key {item}, {type(item)} for Composition"
+                            f".\nValueError exception:\n{ex}")
+
+    def __len__(self):
+        """Get number os species."""
+        return len(self._data)
+
+    def __iter__(self):
+        """Return OrderedDict iter."""
+        return self._data.keys().__iter__()
+
+    def __eq__(self, other):
+        """Compare equality, requires same order."""
+        if not isinstance(other, SiteSpace):
+            return False
+
+        return all(item1 == item2 for item1, item2
+                   in zip(self._data.items(), other.items()))
+
+    def __hash__(self):
+        """Take the hash of the composition for now."""
+        return hash(self.composition)
+
+    def __str__(self):
+        """Get pretty string."""
+        string = str(self._composition)
+        if len(self._data) > len(self._composition):
+            string += f" {list(self._data.keys())[-1]}"\
+                      f"{self.__getitem__('Vacancy')}"
+        return string
+
+    def __repr__(self):
+        """Get repr."""
+        return "SiteSpace: " + self._composition.formula
+
+    def as_dict(self) -> dict:
+        """Get MSONable dict representation."""
+        d = super().as_dict()
+        d["composition"] = self._composition.as_dict()
+        return d
+
+    @classmethod
+    def from_dict(cls, d):
+        """Create a SiteSpace from dict representation."""
+        return cls(Composition.from_dict(d["composition"]))
 
 
 class Vacancy(DummySpecie):

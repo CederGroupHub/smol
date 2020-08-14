@@ -12,13 +12,12 @@ can be combined into composite processor for mixed models.
 __author__ = "Luis Barroso-Luque"
 
 from abc import ABCMeta, abstractmethod
-from collections import OrderedDict
 import numpy as np
 
 from pymatgen import Structure, PeriodicSite
 from monty.json import MSONable
-from smol.cofe.configspace.domain import (get_allowed_species, get_site_spaces,
-                                          Vacancy)
+from smol.cofe.configspace import (get_allowed_species, get_site_spaces,
+                                   Vacancy)
 
 
 class Processor(MSONable, metaclass=ABCMeta):
@@ -56,9 +55,7 @@ class Processor(MSONable, metaclass=ABCMeta):
         self.coefs = coefficients
         # this can be used (maybe should) to check if a flip is valid
         site_spaces = get_site_spaces(self._subspace.expansion_structure)
-        self.unique_site_spaces = tuple(OrderedDict(space) for space in
-                                        set(tuple(spaces.items())
-                                            for spaces in site_spaces))
+        self.unique_site_spaces = tuple(set(site_spaces))
 
         self.allowed_species = get_allowed_species(self.structure)
         self.size = self._subspace.num_prims_from_matrix(supercell_matrix)

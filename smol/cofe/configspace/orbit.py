@@ -18,8 +18,7 @@ from smol.utils import _repr
 from smol.exceptions import SymmetryError, SYMMETRY_ERROR_MESSAGE
 from .constants import SITE_TOL
 from .cluster import Cluster
-from .domain import Vacancy
-from .basis import basis_factory
+from .basis import basis_factory, SiteSpace
 
 
 class Orbit(MSONable):
@@ -342,22 +341,8 @@ class Orbit(MSONable):
         """Create Orbit from serialized MSONable dict."""
         structure_symops = [SymmOp.from_dict(so_d)
                             for so_d in d['structure_symops']]
-        site_bases = []
-        for flavor, space in d['site_bases']:
-            site_space = []
-            for sp, m in space:
-                if ("oxidation_state" in sp
-                        and Element.is_valid_symbol(sp["element"])):
-                    sp = Specie.from_dict(sp)
-                elif "oxidation_state" in sp:
-                    if sp['@class'] == 'Vacancy':
-                        sp = Vacancy.from_dict(sp)
-                    else:
-                        sp = DummySpecie.from_dict(sp)
-                else:
-                    sp = Element(sp["element"])
-                site_space.append((sp, m))
-            site_bases.append((flavor, OrderedDict(site_space)))
+        site_bases = [(flav, SiteSpace.from_dict(space)) for flav, space in
+                      d['site_bases']]
         site_bases = [basis_factory(*sb_d) for sb_d in site_bases]
         return cls(d['sites'], Lattice.from_dict(d['lattice']),
                    d['bits'], site_bases, structure_symops)
@@ -373,9 +358,7 @@ class Orbit(MSONable):
              "sites": self.base_cluster.sites.tolist(),
              "lattice": self.lattice.as_dict(),
              "bits": self.bits,
-             "site_bases": [(sb.flavor,
-                             tuple((s.as_dict(), m)
-                                   for s, m in sb.site_space.items()))
+             "site_bases": [(sb.flavor, sb.site_space.as_dict())
                             for sb in self.site_bases],
              "structure_symops": [so.as_dict() for so in self.structure_symops]
              }
