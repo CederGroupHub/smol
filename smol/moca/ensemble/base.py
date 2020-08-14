@@ -198,7 +198,9 @@ class Ensemble(ABC):
 
     def as_dict(self):
         """Get dictionary representation."""
-        d = {'temperature': self.temperature,
+        d = {'@module': self.__class__.__module__,
+             '@class': self.__class__.__name__,
+             'temperature': self.temperature,
              'thermo_boundaries': self.thermo_boundaries,
              'processor': self._processor.as_dict(),
              'sublattices': [s.as_dict() for s in self._sublattices]}
