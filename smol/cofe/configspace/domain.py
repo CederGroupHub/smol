@@ -21,8 +21,12 @@ def get_allowed_species(structure):
     """Get the allowed species for each site in a disordered structure.
 
     This will get all the allowed species for each site in a pymatgen structure
-    If the site composition does not add to 1, a vacancy DummySpecie will
-    be appended to the allowed species at that site.
+    If the site composition does not add to 1, a Vacancy will be appended to
+    the allowed species at that site.
+
+    Same as in a site space the order of the allowed species at each site is
+    important because that implicitly represents the code that will be used
+    when evaluating site basis functions.
 
     Args:
         structure (Structure):
@@ -41,7 +45,9 @@ def get_site_spaces(structure, include_measure=False):
 
     Method to obtain the single site spaces for the sites in a structure.
     The single site spaces are represented by the allowed species for each site
-    and the measure/concentration for disordered sites.
+    and the measure/concentration for disordered sites. The order important so
+    the species need to be sorted, since that implicitly sets the code/index
+    used to evaluate basis functions.
 
     Vacancies are included in sites where the site element composition does not
     sum to 1 (i.e. the total occupation is not 1)
@@ -55,7 +61,7 @@ def get_site_spaces(structure, include_measure=False):
             otherwise a uniform measure is assumed.
 
     Returns:
-        Ordereddict: Of allowed species and their corresponding measure.
+        SiteSpace: Allowed species and their corresponding measure.
     """
     all_site_spaces = []
     for site in structure:
@@ -127,7 +133,7 @@ class SiteSpace(Mapping, Hashable, MSONable):
                 raise ValueError(f"Composition {composition} has a Vacancy but"
                                  "  number of atoms is not 1.")
             elif sum(isinstance(sp, Vacancy) for sp in composition) > 1:
-                raise ValueError("There are multiple vacancies in this " 
+                raise ValueError("There are multiple vacancies in this "
                                  f"composition {composition}.")
         self._composition = composition
         self._data = OrderedDict((spec, comp) for spec, comp
@@ -139,6 +145,11 @@ class SiteSpace(Mapping, Hashable, MSONable):
     def composition(self):
         """Return the underlying composition."""
         return self._composition
+
+    @property
+    def codes(self):
+        """Return range of species"""
+        return tuple(range(len(self)))
 
     def __getitem__(self, item):
         """Get a specie in the sitespace."""
@@ -227,7 +238,7 @@ class Vacancy(DummySpecie):
 
     def __str__(self):
         """Get string representation, add a v to differentiate."""
-        return "v" + super().__str__()
+        return "vac" + super().__str__()
 
     def __repr__(self):
         """Get an explicit representation."""

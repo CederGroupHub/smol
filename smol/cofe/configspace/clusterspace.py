@@ -400,8 +400,6 @@ class ClusterSubspace(MSONable):
                 sites.append(site)
         return Structure.from_sites(sites)
 
-    # TODO think of making this private, users don't really need this until
-    #  working with a processor.
     def occupancy_from_structure(self, structure, scmatrix=None,
                                  site_mapping=None, encode=False):
         """Occupancy string for a given structure.
