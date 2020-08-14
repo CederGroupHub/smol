@@ -78,6 +78,7 @@ class Sampler(ABC):
 
     @property
     def samples(self):
+        """Get the samplecontainer."""
         return self._container
 
     def efficiency(self, discard=0, flat=True):
@@ -86,7 +87,7 @@ class Sampler(ABC):
 
     @abstractmethod
     def _attempt_step(self, occupancy):
-        """Attempts a MC step.
+        """Attempt an MC step.
 
         Returns the next state in the chain and if the attempted step was
         successful.
@@ -105,7 +106,7 @@ class Sampler(ABC):
         self.samples.clear()
 
     def sample(self, nsteps, initial_occupancies, thin_by=1, progress=False):
-        """Generate samples
+        """Generate MC samples.
 
         Yield a sample state every thin_by iterations. A state is give by
         a tuple of (occupancies, feature_blob, enthalpy)

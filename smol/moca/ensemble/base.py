@@ -146,7 +146,7 @@ class Ensemble(ABC):
 
     @abstractmethod
     def compute_feature_vector(self, occupancy):
-        """Compute the feature vector for a give occupancy
+        """Compute the feature vector for a give occupancy.
 
         The feature vector is the necessary features required to compute
         the exponent determining in the relative probability for the given

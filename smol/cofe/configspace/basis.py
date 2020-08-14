@@ -308,7 +308,6 @@ def sin_f(s, a, m):
     return -np.sin(2 * np.pi * a * s / m)
 
 
-
 def cos_f(s, a, m):
     """Return basis function for odd indices."""
     return -np.cos(2 * np.pi * a * s / m)

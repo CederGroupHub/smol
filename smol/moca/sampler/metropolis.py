@@ -15,6 +15,7 @@ class MetropolisSampler(Sampler):
 
     The classic and nothing but the classic.
     """
+
     valid_mcmc_ushers = {'flip': 'Flipper', 'swap': 'Swapper'}
 
     def __init__(self, ensemble, step_type=None, sublattices=None,
@@ -58,7 +59,7 @@ class MetropolisSampler(Sampler):
         super().__init__(ensemble, usher, nwalkers, samples, seed)
 
     def _attempt_step(self, occupancy):
-        """Attempts a MC step.
+        """Attempt an MC step.
 
         Returns the next state in the chain and if the attempted step was
         successful.

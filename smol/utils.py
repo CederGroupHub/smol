@@ -99,9 +99,11 @@ def progress_bar(display, total, description):
 
 class _EmptyBar:
     """A dummy progress bar.
+
     Idea take from emce:
     https://github.com/dfm/emcee/blob/main/src/emcee/pbar.py
     """
+
     def __init__(self):
         pass
 

@@ -16,9 +16,8 @@ from .sublattice import Sublattice
 
 
 class CanonicalEnsemble(Ensemble, MSONable):
-    """
-    A Canonical Ensemble class to run Monte Carlo Simulations.
-    """
+    """Canonical Ensemble class to run Monte Carlo Simulations."""
+
     valid_mcmc_ushers = ('Swapper',)
 
     def __init__(self, processor, temperature, sublattices=None):
@@ -42,8 +41,7 @@ class CanonicalEnsemble(Ensemble, MSONable):
         return self.processor.coefs
 
     def compute_feature_vector(self, occupancy):
-        """Compute the feature vector for a give occupancy
-
+        """Compute the feature vector for a give occupancy.
 
         In the canonical case it is just the feature vector.
 

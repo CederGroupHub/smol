@@ -31,6 +31,7 @@ class BaseSemiGrandEnsemble(Ensemble):
     This class can not be instantiated. See MuSemiGrandEnsemble and
     FuSemiGrandEnsemble below.
     """
+
     valid_mcmc_ushers = ('Flipper',)
 
     def __init__(self, processor, temperature, sublattices=None):
@@ -59,7 +60,7 @@ class BaseSemiGrandEnsemble(Ensemble):
 
     @abstractmethod
     def compute_chemical_work(self, occupancy):
-        """Compute the chemical work term"""
+        """Compute the chemical work term."""
         return []
 
     def compute_feature_vector(self, occupancy):
@@ -142,7 +143,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
 
     @chemical_potentials.setter
     def chemical_potentials(self, value):
-        """Set the chemical potentials and update table"""
+        """Set the chemical potentials and update table."""
         value = {get_specie(k): v for k, v in value.items()}
         if set(value.keys()) != set(self._mus.keys()):
             raise ValueError('Chemical potentials given are missing species. '
@@ -171,7 +172,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         return np.append(delta_feature, delta_mu)
 
     def compute_chemical_work(self, occupancy):
-        """Compute sum of mu * N for given occupancy"""
+        """Compute sum of mu * N for given occupancy."""
         return sum(self._mu_table[site][species]
                    for site, species in enumerate(occupancy))
 
@@ -201,8 +202,8 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             MSONable dict
         """
         d = super().as_dict()
-        d['chemical_potentials'] = tuple((s.as_dict(), c)
-                                         for s, c in self.chemical_potentials.items())
+        d['chemical_potentials'] = tuple((s.as_dict(), c) for s, c
+                                         in self.chemical_potentials.items())
         return d
 
     @classmethod
@@ -249,6 +250,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         thermo_boundaries (dict):
             dictionary of fugacity fractions.
     """
+
     def __init__(self, processor, temperature, fugacity_fractions=None,
                  sublattices=None):
         """Initialize MuSemiGrandEnsemble.
@@ -299,7 +301,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
 
     @fugacity_fractions.setter
     def fugacity_fractions(self, value):
-        """Set the fugacity fractions and update table"""
+        """Set the fugacity fractions and update table."""
         value = [{get_specie(k): v for k, v in sub.items()} for sub in value]
         if not all(sum(fus.values()) == 1 for fus in value):
             raise ValueError('Fugacity ratios must add to one.')
@@ -313,7 +315,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         self._fu_table = self._build_fu_table(value)
 
     def compute_feature_vector_change(self, occupancy, step):
-        """"Compute the change in the feature vector from a step.
+        """Compute the change in the feature vector from a step.
 
         Args:
             occupancy (ndarray):
@@ -334,7 +336,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         return np.append(delta_feature, delta_log_fu)
 
     def compute_chemical_work(self, occupancy):
-        """Compute log of product of fugacities for given occupancy"""
+        """Compute log of product of fugacities for given occupancy."""
         # python > 3.8 has math.prod
         return sum(log(self._fu_table[site][species])
                    for site, species in enumerate(occupancy))

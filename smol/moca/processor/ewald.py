@@ -89,7 +89,6 @@ class EwaldProcessor(Processor):
         Returns:
             float: Ewald electrostatic energy
         """
-
         return self.coefs * self.compute_feature_vector(occupancy)
 
     def compute_property_change(self, occupancy, flips):
@@ -104,7 +103,6 @@ class EwaldProcessor(Processor):
         Returns:
             float: electrostatic energy change
         """
-
         return self.coefs*self.compute_feature_vector_change(occupancy, flips)
 
     def compute_feature_vector(self, occupancy):

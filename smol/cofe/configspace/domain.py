@@ -78,8 +78,10 @@ def get_site_spaces(structure, include_measure=False):
 
 
 def get_specie(obj):
-    """Method wrapping pymatgen.core.periodic_table.get_el_sp to catch and
-    return Vacancies when desired.
+    """Get specie object.
+
+    Wraps pymatgen.core.periodic_table.get_el_sp. to be able to catch and
+    return Vacancies when needed.
 
     Args:
         obj (Element/Specie/str/int):
@@ -148,7 +150,7 @@ class SiteSpace(Mapping, Hashable, MSONable):
 
     @property
     def codes(self):
-        """Return range of species"""
+        """Return range of species."""
         return tuple(range(len(self)))
 
     def __getitem__(self, item):
@@ -209,7 +211,8 @@ class Vacancy(DummySpecie):
 
     def __init__(self, symbol: str = "A", oxidation_state: float = 0,
                  properties: dict = None):
-        """
+        """Initialize a Vacancy.
+
         Args:
             symbol (str): An assigned symbol for the vacancy. Strict
                 rules are applied to the choice of the symbol. The vacancy
@@ -224,14 +227,14 @@ class Vacancy(DummySpecie):
                          properties=properties)
 
     def __eq__(self, other):
-        """Test equality, only equal if isinstance"""
+        """Test equality, only equal if isinstance."""
         if not isinstance(other, Vacancy):
             return False
         else:
             return super().__eq__(other)
 
     def __hash__(self):
-        """Unique hash, append an underscore to avoid clash with Dummy."""
+        """Get hash, append an underscore to avoid clash with Dummy."""
         # this should prevent any hash collisions with other Specie instances
         # since the symbol for a DummySpecie can not start with "v"
         return hash("v" + self.symbol)

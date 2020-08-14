@@ -35,6 +35,7 @@ class Processor(MSONable, metaclass=ABCMeta):
         size (int):
             Number of prims in the supercell structure.
     """
+
     def __init__(self, cluster_subspace, supercell_matrix, coefficients):
         """Initialize a BaseProcessor.
 

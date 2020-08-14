@@ -7,11 +7,10 @@ symmetry) clusters.
 __author__ = "Luis Barroso-Luque, William Davidson Richard"
 
 import itertools
-from collections import OrderedDict
 import numpy as np
 
 from monty.json import MSONable
-from pymatgen import Lattice, SymmOp, Element, Specie, DummySpecie
+from pymatgen import Lattice, SymmOp
 from pymatgen.util.coord import coord_list_mapping
 
 from smol.utils import _repr

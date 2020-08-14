@@ -13,8 +13,9 @@ from monty.json import MSONable
 from pymatgen import Specie, DummySpecie, Element
 from smol.cofe.configspace.domain import Vacancy
 
+
 def get_sublattices(processor):
-    """Get a list of sublattices from a processor
+    """Get a list of sublattices from a processor.
 
     Args:
         processor (Processor):
@@ -33,20 +34,20 @@ def get_sublattices(processor):
 class Sublattice(MSONable):
     """Sublattice class.
 
-     A Sublattice is used to represent a subset of supercell sites that have
-     the same site space.
+    A Sublattice is used to represent a subset of supercell sites that have
+    the same site space.
 
-     Attributes:
-         site_space (OrderedDict):
-            Ordered dict with the allowed species and their random
-            state composition. See definitions in cofe.cofigspace.basis
-         sites (ndarray):
-            array of site indices for all sites in sublattice
-         active_sites (ndarray):
-            array of site indices for all unrestricted sites in the sublattice.
-         restricted_sites (ndarray):
-            list of site indices for all restricted sites in the sublattice.
-            restricted sites are excluded from flip proposals.
+    Attributes:
+     site_space (OrderedDict):
+        Ordered dict with the allowed species and their random
+        state composition. See definitions in cofe.cofigspace.basis
+     sites (ndarray):
+        array of site indices for all sites in sublattice
+     active_sites (ndarray):
+        array of site indices for all unrestricted sites in the sublattice.
+     restricted_sites (ndarray):
+        list of site indices for all restricted sites in the sublattice.
+        restricted sites are excluded from flip proposals.
 
     """
 
@@ -77,6 +78,7 @@ class Sublattice(MSONable):
 
     def restrict_sites(self, sites):
         """Restricts (freezes) the given sites.
+
         Args:
             sites (Sequence):
                 indices of sites in the occupancy string to restrict.
@@ -87,7 +89,7 @@ class Sublattice(MSONable):
                                   if i not in self.restricted_sites]
 
     def reset_restricted_sites(self):
-        """Resets all restricted sites to active."""
+        """Reset all restricted sites to active."""
         self.active_sites = self.sites.copy()
         self.restricted_sites = []
 

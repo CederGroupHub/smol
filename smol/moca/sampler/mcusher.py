@@ -1,4 +1,4 @@
-""""Implementations of MCMC Usher classes.
+"""Implementations of MCMC Usher classes.
 
 An usher is used to generate step proposals for MC Monte Carlo sampling.
 For example a Flipper simply proposes a change of the identity of a species
@@ -20,7 +20,7 @@ class MCMCUsher(ABC):
     """Abstract base class for MCMC usher classes."""
 
     def __init__(self, sublattices, sublattice_probabilities=None):
-        """Initialize MCMCStep
+        """Initialize MCMCStep.
 
         Args:
             sublattices (list of Sublattice):
@@ -130,7 +130,7 @@ class Swapper(MCMCUsher):
 
 
 def mcmc_usher_factory(usher_type, sublattices, *args, **kwargs):
-    """"Get a MCMC Usher from string name.
+    """Get a MCMC Usher from string name.
 
     Args:
         usher_type (str):

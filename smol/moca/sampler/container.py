@@ -1,4 +1,4 @@
-"""Implementation of SampleContainer class
+"""Implementation of SampleContainer class.
 
 A SampleContainer is used to store data from Monte Carlo sampling simulation.
 It has some minimimal methods and properties useful to start analyzing the
@@ -45,6 +45,7 @@ class SampleContainer(MSONable):
         metadata (dict):
             dictionary of metadata from the MC run that generated the samples.
     """
+
     def __init__(self, temperature, num_sites, sublattices, natural_parameters,
                  num_energy_coefs, ensemble_metadata=None, nwalkers=1):
         """Initialize a sample container.
@@ -66,7 +67,6 @@ class SampleContainer(MSONable):
             nwalkers (int):
                 Number of walkers used to generate chain. Default is 1
         """
-
         self.temperature = temperature
         self.num_sites = num_sites
         self.sublattices = sublattices
@@ -147,7 +147,7 @@ class SampleContainer(MSONable):
         return self.get_enthalpies(discard, thin_by, flat).mean(axis=0)
 
     def enthalpy_variance(self, discard=0, thin_by=1, flat=True):
-        """Get the variance in enthalpy"""
+        """Get the variance in enthalpy."""
         return self.get_enthalpies(discard, thin_by, flat).var(axis=0)
 
     def mean_energy(self, discard=0, thin_by=1, flat=True):
@@ -214,6 +214,8 @@ class SampleContainer(MSONable):
             occus = self.get_occupancies(discard, thin_by, flat)[inds, np.arange(self.shape[0])]  # noqa
         return occus
 
+    # TODO there is a bug here when using discard > 0 that also trickles into
+    #  other methods that use this.
     def get_species_counts(self, discard=0, thin_by=1, flat=True):
         """Get the species counts for each occupancy in the chain."""
         samples = self.num_samples // thin_by
@@ -259,7 +261,7 @@ class SampleContainer(MSONable):
 
     def save_sample(self, accepted, occupancies, enthalpy, feature_blob,
                     thinned_by):
-        """Save a sample from the generated chain
+        """Save a sample from the generated chain.
 
         Args:
             accepted (ndarray):
@@ -293,7 +295,7 @@ class SampleContainer(MSONable):
         self._accepted = np.zeros((0, nwalkers), dtype=int)
 
     def allocate(self, nsamples):
-        """allocate more space in arrays for more samples."""
+        """Allocate more space in arrays for more samples."""
         arr = np.empty((nsamples, *self._chain.shape[1:]), dtype=int)
         self._chain = np.append(self._chain, arr, axis=0)
         arr = np.empty((nsamples, *self._feature_blob.shape[1:]))
@@ -305,6 +307,7 @@ class SampleContainer(MSONable):
 
     # TODO write this up
     def stream(self, file_path=None):
+        """Stream samples to disk to clear up memory."""
         if file_path is None:
             now = datetime.now()
             file_name = 'moca-samples-' + now.strftime('%Y-%m-%d-%H%M%S%f')
