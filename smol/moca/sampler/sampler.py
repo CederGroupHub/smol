@@ -167,8 +167,8 @@ class Sampler:
 
         # Initialise progress bar
         chains, nsites = self.samples.shape
-        desc = (f"Sampling {chains} chain(s) at {self._kernel.temperature} K "
-                f"from a cell with {nsites} sites.")
+        desc = (f"Sampling {chains} chain(s) at {self._kernel.temperature:.2f}"
+                f" K from a cell with {nsites} sites.")
         with progress_bar(progress, total=nsteps, description=desc) as bar:
             for _ in range(nsteps // thin_by):
                 for _ in range(thin_by):
@@ -224,6 +224,40 @@ class Sampler:
         for state in self.sample(nsteps, initial_occupancies,
                                  thin_by=thin_by, progress=progress):
             self.samples.save_sample(*state)
+
+    def anneal(self, temperatures, mcmc_steps, initial_occupancies=None,
+               thin_by=1, progress=False):
+        """Carry out a simulated annealing procedure.
+
+        Uses the total number of temperatures given by "steps" interpolating
+        between the start and end temperature according to a cooling function.
+        The start temperature is the temperature set for the ensemble.
+
+        Args:
+            temperatures (Sequence):
+               Sequence of temperatures to anneal, should be strictly
+               decreasing.
+            mcmc_steps (int):
+               number of Monte Carlo steps to run at each temperature.
+            initial_occupancies (ndarray):
+                array of occupancies. If None, the last sample will be taken.
+                You should only provide this the first time you call run.
+            thin_by (int): optional
+                the amount to thin by for saving samples.
+            progress (bool):
+                If true will show a progress bar.
+        """
+        if temperatures[0] < temperatures[-1]:
+            raise ValueError('End temperature is greater than start '
+                             f'temperature {temperatures[-1]:.2f} > '
+                             f'{temperatures[0]:.2f}.')
+        # initialize for first temperature.
+        self._kernel.temperature = temperatures[0]
+        self.run(mcmc_steps, initial_occupancies=initial_occupancies,
+                 thin_by=thin_by, progress=progress)
+        for temperature in temperatures[1:]:
+            self._kernel.temperature = temperature
+            self.run(mcmc_steps, thin_by=thin_by, progress=progress)
 
     def _reshape_occu(self, occupancies):
         """Reshape occupancies for the single walker case."""

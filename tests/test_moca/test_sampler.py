@@ -1,5 +1,6 @@
 import pytest
 import numpy as np
+import numpy.testing as npt
 from smol.moca import (CanonicalEnsemble, FuSemiGrandEnsemble,
                        MuSemiGrandEnsemble, CEProcessor, Sampler)
 from smol.moca.sampler.mcusher import Swapper, Flipper
@@ -63,6 +64,23 @@ def test_run(sampler, thin):
     assert len(sampler.samples) == steps // thin
     assert 0 < sampler.efficiency() <= 1
     sampler.clear_samples()
+
+
+def test_anneal(sampler):
+    temperatures = np.linspace(2000, 500, 5)
+    occu = np.vstack([gen_random_occupancy(sampler.mcmckernel._usher.sublattices,
+                                           sampler.num_sites)
+                      for _ in range(sampler.samples.shape[0])])
+    steps = 100
+    sampler.anneal(temperatures, steps, occu)
+    expected = []
+    for T in temperatures:
+        expected += steps*sampler.samples.shape[0]*[T, ]
+    npt.assert_array_equal(sampler.samples.get_temperatures(), expected)
+    # test temp error
+    with pytest.raises(ValueError):
+        sampler.anneal([100, 200], steps)
+
 
 # TODO test run sgensembles at high temp
 """
