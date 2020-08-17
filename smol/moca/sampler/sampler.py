@@ -44,7 +44,7 @@ class Sampler:
         if seed is None:
             seed = random.randint(1, np.iinfo(np.uint64).max)
         #  Save the seed for reproducibility
-        self._container.metadata['seed'] = seed
+        self._container.metadata["seed"] = seed
         self._seed = seed
         random.seed(seed)
 
@@ -91,10 +91,9 @@ class Sampler:
         mcmckernel = mcmckernel_factory(kernel_type, ensemble, step_type,
                                         *args, **kwargs)
 
-        ensemble_metadata = {'name': type(ensemble).__name__}
+        ensemble_metadata = {"name": type(ensemble).__name__}
         ensemble_metadata.update(ensemble.thermo_boundaries)
-        container = SampleContainer(ensemble.temperature,
-                                    ensemble.num_sites,
+        container = SampleContainer(ensemble.num_sites,
                                     ensemble.sublattices,
                                     ensemble.natural_parameters,
                                     ensemble.num_energy_coefs,
@@ -153,37 +152,38 @@ class Sampler:
         if occupancies.shape != self.samples.shape:
             occupancies = self._reshape_occu(occupancies)
         if nsteps % thin_by != 0:
-            warn(f'The number of steps {nsteps} is not a multiple of thin_by '
-                 f' {thin_by}. The last {nsteps % thin_by} will be ignored.',
+            warn(f"The number of steps {nsteps} is not a multiple of thin_by "
+                 f" {thin_by}. The last {nsteps % thin_by} will be ignored.",
                  category=RuntimeWarning)
         # TODO check that initial states are independent if num_walkers > 1
 
         # allocate arrays for states
         occupancies = np.ascontiguousarray(occupancies, dtype=int)
         accepted = np.zeros(occupancies.shape[0], dtype=int)
+        temperature = np.zeros(occupancies.shape[0])
         feature_blob = list(map(self._kernel.feature_fun, occupancies))
         feature_blob = np.ascontiguousarray(feature_blob)
         enthalpy = np.dot(self._kernel.natural_params, feature_blob.T)
 
         # Initialise progress bar
         chains, nsites = self.samples.shape
-        desc = (f'Sampling {chains} chain(s) at '
-                f'{self.samples.temperature} K from a cell with '
-                f'{nsites} sites.')
+        desc = (f"Sampling {chains} chain(s) at {self._kernel.temperature} K "
+                f"from a cell with {nsites} sites.")
         with progress_bar(progress, total=nsteps, description=desc) as bar:
             for _ in range(nsteps // thin_by):
                 for _ in range(thin_by):
                     for i, (accept, occupancy, delta_enthalpy, delta_features)\
                       in enumerate(map(self._kernel.single_step, occupancies)):
                         accepted[i] += accept
+                        temperature[i] = self._kernel.temperature
                         occupancies[i] = occupancy
                         if accept:
                             enthalpy[i] = enthalpy[i] + delta_enthalpy
                             feature_blob[i] = feature_blob[i] + delta_features
                     bar.update()
                 # yield copies
-                yield (accepted, occupancies.copy(), enthalpy.copy(),
-                       feature_blob.copy(), thin_by)
+                yield (accepted, temperature, occupancies.copy(),
+                       enthalpy.copy(), feature_blob.copy(), thin_by)
                 accepted[:] = 0  # reset acceptance array
 
     def run(self, nsteps, initial_occupancies=None, thin_by=1, progress=False):
@@ -209,14 +209,13 @@ class Sampler:
             try:
                 initial_occupancies = self.samples.get_occupancies(flat=False)[-1]  # noqa
             except IndexError:
-                raise RuntimeError('There are no saved samples to obtain the '
-                                   'initial occupancies. These must be '
-                                   'provided.')
+                raise RuntimeError("There are no saved samples to obtain the "
+                                   "initial occupancies. These must be "
+                                   "provided.")
         elif self.samples.num_samples > 0:
-            warn('Initial occupancies where provided with a pre-existing '
-                 'set of samples.\n This basically breaks the existing chain. '
-                 'Make real sure that is what you want. If not, reset the '
-                 'samples in the sampler.', RuntimeWarning)
+            warn("Initial occupancies where provided with a pre-existing "
+                 "set of samples.\n Make real sure that is what you want. "
+                 "If not, reset the samples in the sampler.", RuntimeWarning)
         else:
             if initial_occupancies.shape != self.samples.shape:
                 initial_occupancies = self._reshape_occu(initial_occupancies)
@@ -232,9 +231,9 @@ class Sampler:
         if len(occupancies.shape) == 1 and self.samples.shape[0] == 1:
             occupancies = np.reshape(occupancies, (1, len(occupancies)))
         else:
-            raise AttributeError('The given initial occcupancies have '
-                                 'incompompatible dimensions. Shape should'
-                                 f' be {self.samples.shape}.')
+            raise AttributeError("The given initial occcupancies have "
+                                 "incompompatible dimensions. Shape should"
+                                 f" be {self.samples.shape}.")
         return occupancies
 
 

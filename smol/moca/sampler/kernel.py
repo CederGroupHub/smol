@@ -107,7 +107,7 @@ class Metropolis(MCMCKernel):
         delta_features = self._feature_change(occupancy, step)
         delta_enthalpy = np.dot(self.natural_params, delta_features)
         accept = (True if delta_enthalpy <= 0
-                  else -self._beta * delta_enthalpy > log(random()))
+                  else -self.beta * delta_enthalpy > log(random()))
         if accept:
             for f in step:
                 occupancy[f[0]] = f[1]
