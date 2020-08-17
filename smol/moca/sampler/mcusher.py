@@ -129,7 +129,7 @@ class Swapper(MCMCUsher):
         return swap
 
 
-def mcmc_usher_factory(usher_type, sublattices, *args, **kwargs):
+def mcusher_factory(usher_type, sublattices, *args, **kwargs):
     """Get a MCMC Usher from string name.
 
     Args:

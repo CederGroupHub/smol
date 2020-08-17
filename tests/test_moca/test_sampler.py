@@ -41,7 +41,7 @@ def test_attempt_step(sampler):
                                  sampler.ensemble.num_sites)
     for _ in range(20):
         init_occu = occu_.copy()
-        acc, occu, denth, dfeat = sampler._attempt_step(init_occu)
+        acc, occu, denth, dfeat = sampler.single_step(init_occu)
         if acc:
             assert not np.array_equal(occu, occu_)
         else:

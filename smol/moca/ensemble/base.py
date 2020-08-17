@@ -22,6 +22,8 @@ class Ensemble(ABC):
             descriptive purposes.
     """
 
+    valid_mcmc_steps = None  # add this in derived classes
+
     def __init__(self, processor, temperature, sublattices=None):
         """Initialize class instance.
 

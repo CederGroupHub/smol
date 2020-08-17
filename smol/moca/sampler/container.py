@@ -19,13 +19,13 @@ from smol.moca.ensemble.sublattice import Sublattice
 class SampleContainer(MSONable):
     """A SampleContainter class stores Monte Carlo simulation samples.
 
-    It also provides some minor functionality to get sample statistics.
+    It also provides some minor functionality to get sampler statistics.
     When getting any value from the provided attributes, the highly repeated
     args are:
         discard (int): optional
             Number of samples to discard to obtain the value requested.
         thin_by (int): optional
-            Use every thin by sample to obtain the value requested.
+            Use every thin by sampler to obtain the value requested.
         flat (bool): optional
             If more than 1 walkers are used flattening will flatten all
             chains into one. Defaults to True.
@@ -48,7 +48,7 @@ class SampleContainer(MSONable):
 
     def __init__(self, temperature, num_sites, sublattices, natural_parameters,
                  num_energy_coefs, ensemble_metadata=None, nwalkers=1):
-        """Initialize a sample container.
+        """Initialize a sampler container.
 
         Args:
             temperature (float):
@@ -261,7 +261,7 @@ class SampleContainer(MSONable):
 
     def save_sample(self, accepted, occupancies, enthalpy, feature_blob,
                     thinned_by):
-        """Save a sample from the generated chain.
+        """Save a sampler from the generated chain.
 
         Args:
             accepted (ndarray):

@@ -32,7 +32,7 @@ class BaseSemiGrandEnsemble(Ensemble):
     FuSemiGrandEnsemble below.
     """
 
-    valid_mcmc_ushers = ('Flipper',)
+    valid_mcmc_steps = ('flip',)
 
     def __init__(self, processor, temperature, sublattices=None):
         """Initialize BaseSemiGrandEnsemble.
