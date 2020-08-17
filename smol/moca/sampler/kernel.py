@@ -11,8 +11,9 @@ from math import log
 from random import random
 import numpy as np
 
-from smol.moca.sampler.mcusher import mcusher_factory
+from smol.constants import kB
 from smol.utils import derived_class_factory
+from smol.moca.sampler.mcusher import mcusher_factory
 
 
 class MCMCKernel(ABC):
@@ -44,7 +45,7 @@ class MCMCKernel(ABC):
         self.natural_params = ensemble.natural_parameters
         self.feature_fun = ensemble.compute_feature_vector
         self._feature_change = ensemble.compute_feature_vector_change
-        self._beta = ensemble.beta
+        self.temperature = ensemble.temperature
         try:
             self._usher = mcusher_factory(self.valid_mcushers[step_type],
                                           ensemble.sublattices,
@@ -52,6 +53,17 @@ class MCMCKernel(ABC):
         except KeyError:
             raise ValueError(f"Step type {step_type} is not valid for a "
                              f"{type(self)} MCMCKernel.")
+
+    @property
+    def temperature(self):
+        """Get the temperature of kernel."""
+        return self._temperature
+
+    @temperature.setter
+    def temperature(self, temperature):
+        """Set the temperature and beta accordingly."""
+        self._temperature = temperature
+        self.beta = 1.0 / (kB * temperature)
 
     @abstractmethod
     def single_step(self, occupancy):
