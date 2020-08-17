@@ -1,11 +1,9 @@
 import pytest
 import numpy as np
-import numpy.testing as npt
-
-from smol.cofe import ClusterSubspace, StructureWrangler, ClusterExpansion
 from smol.moca import (CanonicalEnsemble, FuSemiGrandEnsemble,
-                       MuSemiGrandEnsemble, CEProcessor, MetropolisSampler)
+                       MuSemiGrandEnsemble, CEProcessor, Sampler)
 from smol.moca.sampler.mcusher import Swapper, Flipper
+from smol.moca.sampler.kernel import Metropolis
 from tests.utils import gen_random_occupancy
 
 ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble]
@@ -26,32 +24,24 @@ def ensemble(cluster_subspace, request):
 
 @pytest.fixture(params=[1, 5])
 def sampler(ensemble, request):
-    return MetropolisSampler(ensemble, nwalkers=request.param)
+    sampler = Sampler.from_ensemble(ensemble, nwalkers=request.param)
+    # fix this additional attribute to sampler to access in gen occus for tests
+    sampler.num_sites = ensemble.num_sites
+    return sampler
 
 
-def test_constructor(sampler):
-    if isinstance(sampler.ensemble, CanonicalEnsemble):
-        assert isinstance(sampler._usher, Swapper)
+def test_from_ensemble(sampler):
+    if "Canonical" in sampler.samples.metadata["name"]:
+        assert isinstance(sampler.mcmckernel._usher, Swapper)
     else:
-        assert isinstance(sampler._usher, Flipper)
-
-
-def test_attempt_step(sampler):
-    occu_ = gen_random_occupancy(sampler.ensemble.sublattices,
-                                 sampler.ensemble.num_sites)
-    for _ in range(20):
-        init_occu = occu_.copy()
-        acc, occu, denth, dfeat = sampler.single_step(init_occu)
-        if acc:
-            assert not np.array_equal(occu, occu_)
-        else:
-            npt.assert_array_equal(occu, occu_)
+        assert isinstance(sampler.mcmckernel._usher, Flipper)
+    assert isinstance(sampler.mcmckernel, Metropolis)
 
 
 @pytest.mark.parametrize('thin', (1, 10))
 def test_sample(sampler, thin):
-    occu = np.vstack([gen_random_occupancy(sampler.ensemble.sublattices,
-                                           sampler.ensemble.num_sites)
+    occu = np.vstack([gen_random_occupancy(sampler.mcmckernel._usher.sublattices,
+                                           sampler.num_sites)
                       for _ in range(sampler.samples.shape[0])])
     steps = 1000
     samples = [state for state
@@ -65,8 +55,8 @@ def test_sample(sampler, thin):
 
 @pytest.mark.parametrize('thin', (1, 10))
 def test_run(sampler, thin):
-    occu = np.vstack([gen_random_occupancy(sampler.ensemble.sublattices,
-                                           sampler.ensemble.num_sites)
+    occu = np.vstack([gen_random_occupancy(sampler.mcmckernel._usher.sublattices,
+                                           sampler.num_sites)
                       for _ in range(sampler.samples.shape[0])])
     steps = 1000
     sampler.run(steps, occu, thin_by=thin)
@@ -106,8 +96,8 @@ for sp in expected.keys():
 
 
 def test_reshape_occu(ensemble):
-    sampler = MetropolisSampler(ensemble)
-    occu = gen_random_occupancy(sampler.ensemble.sublattices,
-                                sampler.ensemble.num_sites)
+    sampler = Sampler.from_ensemble(ensemble)
+    occu = gen_random_occupancy(ensemble.sublattices,
+                                ensemble.num_sites)
     assert sampler._reshape_occu(occu).shape == (1, len(occu))
 

@@ -51,8 +51,38 @@ class Sampler:
     @classmethod
     def from_ensemble(cls, ensemble, step_type=None, kernel_type=None,
                       seed=None, nwalkers=1, *args, **kwargs):
+        """
+        Create a sampler based on an Ensemble instances. This is the easier
+        way to spin up a Sampler.
+
+        Args:
+            ensemble (Ensemble):
+                An Ensemble class to obtain sample probabilities from.
+            step_type (str): optional
+                type of step to run MCMC with. If not given the default is the
+                first entry in the Ensemble.valid_mcmc_steps.
+            kernel_type (str): optional
+                string specifying the specific MCMC transition kernel. This
+                represents the underlying MC algorithm. Currently only
+                Metropolis is supported.
+            seed (int): optional
+                Seed for the PRNG.
+            nwalkers (int): optional
+                Number of walkers/chains to sampler. Default is 1. More than 1
+                is still experimental...
+            *args:
+                Positional arguments to pass to the MCMCKernel constructor
+            **kwargs:
+                Keyword arguments to pass to the MCMCKernel constructor
+
+        Returns:
+            Sampler
+        """
         if step_type is None:
             step_type = ensemble.valid_mcmc_steps[0]
+        elif step_type not in ensemble.valid_mcmc_steps:
+            raise ValueError(f"Step type {step_type} can not be used for "
+                             f"sampling a {type(ensemble)}!")
         if kernel_type is None:
             kernel_type = "Metropolis"
 
@@ -134,8 +164,8 @@ class Sampler:
         enthalpy = np.dot(self._kernel.natural_params, feature_blob.T)
 
         # Initialise progress bar
-        nwalkers, nsites = self.samples.shape
-        desc = (f'Sampling with {nwalkers} walkers at '
+        chains, nsites = self.samples.shape
+        desc = (f'Sampling {chains} chain(s) at '
                 f'{self.samples.temperature} K from a cell with '
                 f'{nsites} sites.')
         with progress_bar(progress, total=nsteps, description=desc) as bar:
@@ -155,7 +185,7 @@ class Sampler:
                 accepted[:] = 0  # reset acceptance array
 
     def run(self, nsteps, initial_occupancies=None, thin_by=1, progress=False):
-        """Run an MCMC sampling simulations.
+        """Run an MCMC sampling simulation.
 
         This will run and save the samples every thin_by into a
         SampleContainer.
