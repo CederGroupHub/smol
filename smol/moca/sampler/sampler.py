@@ -17,9 +17,9 @@ from smol.moca.sampler.container import SampleContainer
 
 class Sampler:
     """
-    A sampler is used to run MCMC sampling with a specific MCMC algorithm
-    from the underlying MCMCKernel.
+    A sampler is used to run MCMC sampling simulations.
 
+    The specific MCMC algorithm is defined by the given MCMCKernel.
     The default will use a a simple Metropolis random walk kernel.
     """
 
@@ -52,8 +52,10 @@ class Sampler:
     def from_ensemble(cls, ensemble, step_type=None, kernel_type=None,
                       seed=None, nwalkers=1, *args, **kwargs):
         """
-        Create a sampler based on an Ensemble instances. This is the easier
-        way to spin up a Sampler.
+        Create a sampler based on an Ensemble instances.
+
+        This is the easier way to spin up a Sampler. Since it will
+        automatically populate and create a SampleContainer.
 
         Args:
             ensemble (Ensemble):
