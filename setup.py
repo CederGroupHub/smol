@@ -72,7 +72,7 @@ if USE_CYTHON:
 setup(
     name="smol",
     packages=find_packages(),
-    version="2019.10.4",
+    version="v1.0.0",
     cmdclass={"build_ext": build_ext},
     setup_requires=['numpy>=1.18.1', 'setuptools>=18.0'],
     python_requires='>=3.7',

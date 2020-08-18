@@ -26,8 +26,7 @@ def container(request):
     sites2 = np.setdiff1d(range(NUM_SITES), sites)
     sublatt2 = Sublattice(site_space, np.array(sites2))
     sublattices = [sublatt1, sublatt2]
-    sampler_container = SampleContainer(temperature=10,
-                                        num_sites=NUM_SITES,
+    sampler_container = SampleContainer(num_sites=NUM_SITES,
                                         sublattices=sublattices,
                                         natural_parameters=natural_parameters,
                                         num_energy_coefs=num_energy_coefs,
@@ -41,6 +40,7 @@ def fake_states(container):
     nwalkers = container.shape[0]
     occus = np.empty((NSAMPLES, nwalkers, NUM_SITES))
     enths = -5 * np.ones((NSAMPLES, nwalkers))
+    temps = -300.56 * np.ones((NSAMPLES, nwalkers))
     featblob = np.zeros((NSAMPLES, nwalkers,
                          len(container.natural_parameters)))
     accepted = np.random.randint(2, size=(NSAMPLES, nwalkers))
@@ -63,14 +63,14 @@ def fake_states(container):
             # first and last feature real fake
             featblob[i, j, [0, -1]] = 2.5
 
-    return accepted, occus, enths, featblob
+    return accepted, temps, occus, enths, featblob
 
 
 def add_samples(sample_container, fake_states, thinned_by=1):
-    accepted, occus, enths, featblob = fake_states
+    accepted, temps, occus, enths, featblob = fake_states
     sample_container.allocate(len(accepted))
     for i in range(len(accepted)):
-        sample_container.save_sample(accepted[i], occus[i],
+        sample_container.save_sample(accepted[i], temps[i], occus[i],
                                      enths[i], featblob[i],
                                      thinned_by=thinned_by)
 
@@ -104,7 +104,7 @@ def test_allocate_and_save(container, fake_states):
 @pytest.mark.parametrize('discard, thin', product((0, 100), (1, 10)))
 def test_get_sampled_values(container, fake_states, discard, thin):
     add_samples(container, fake_states)
-    accepted, occus, enths, featblob = fake_states
+    accepted, temps, occus, enths, featblob = fake_states
     nat_params = container.natural_parameters
     sublattices = container.sublattices
     nw = container.shape[0]
@@ -116,6 +116,7 @@ def test_get_sampled_values(container, fake_states, discard, thin):
     assert container.get_feature_vectors(discard=discard, thin_by=thin).shape == (nsamples * nw, len(nat_params))
     assert container.get_enthalpies(discard=discard, thin_by=thin).shape == (nsamples * nw,)
     assert container.get_energies(discard=discard, thin_by=thin).shape == (nsamples * nw,)
+    assert container.get_temperatures(discard=discard, thin_by=thin).shape == (nsamples * nw,)
     for sublattice, comp in zip(sublattices, SUBLATTICE_COMPOSITIONS):
         c = container.get_sublattice_compositions(sublattice, discard=discard, thin_by=thin)
         assert c.shape == (nsamples * nw, len(sublattice.species))
@@ -129,6 +130,7 @@ def test_get_sampled_values(container, fake_states, discard, thin):
     nsamples, nw, len(nat_params))
     assert container.get_enthalpies(discard=discard, thin_by=thin, flat=False).shape == (nsamples, nw,)
     assert container.get_energies(discard=discard, thin_by=thin, flat=False).shape == (nsamples, nw,)
+    assert container.get_temperatures(discard=discard, thin_by=thin, flat=False).shape == (nsamples, nw,)
 
     for sublattice, comp in zip(sublattices, SUBLATTICE_COMPOSITIONS):
         c = container.get_sublattice_compositions(sublattice, discard=discard, thin_by=thin, flat=False)

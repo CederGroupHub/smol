@@ -196,7 +196,7 @@ def test_compute_feature_vector(fugrand_ensemble):
         dfu = np.log(fugrand_ensemble._fu_table[site][spec]/fugrand_ensemble._fu_table[site][occu[site]])
         assert (np.dot(fugrand_ensemble.natural_parameters,
                        fugrand_ensemble.compute_feature_vector_change(occu, flip))
-                == proc.compute_property_change(occu, flip) - dfu)
+                == pytest.approx(proc.compute_property_change(occu, flip) - dfu, abs=1E-14))
         npt.assert_array_equal(fugrand_ensemble.compute_feature_vector_change(occu, flip),
                                np.append(proc.compute_feature_vector_change(occu, flip), dfu))
 
