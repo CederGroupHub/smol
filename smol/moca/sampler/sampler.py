@@ -133,7 +133,7 @@ class Sampler:
         """Generate MC samples.
 
         Yield a sampler state every thin_by iterations. A state is give by
-        a tuple of (occupancies, feature_blob, enthalpy)
+        a tuple of (occupancies, features, enthalpy)
 
         Args:
             nsteps (int):
@@ -161,9 +161,9 @@ class Sampler:
         occupancies = np.ascontiguousarray(occupancies, dtype=int)
         accepted = np.zeros(occupancies.shape[0], dtype=int)
         temperature = np.zeros(occupancies.shape[0])
-        feature_blob = list(map(self._kernel.feature_fun, occupancies))
-        feature_blob = np.ascontiguousarray(feature_blob)
-        enthalpy = np.dot(self._kernel.natural_params, feature_blob.T)
+        features = list(map(self._kernel.feature_fun, occupancies))
+        features = np.ascontiguousarray(features)
+        enthalpy = np.dot(self._kernel.natural_params, features.T)
 
         # Initialise progress bar
         chains, nsites = self.samples.shape
@@ -179,11 +179,11 @@ class Sampler:
                         occupancies[i] = occupancy
                         if accept:
                             enthalpy[i] = enthalpy[i] + delta_enthalpy
-                            feature_blob[i] = feature_blob[i] + delta_features
+                            features[i] = features[i] + delta_features
                     bar.update()
                 # yield copies
                 yield (accepted, temperature, occupancies.copy(),
-                       enthalpy.copy(), feature_blob.copy(), thin_by)
+                       enthalpy.copy(), features.copy(), thin_by)
                 accepted[:] = 0  # reset acceptance array
 
     def run(self, nsteps, initial_occupancies=None, thin_by=1, progress=False):

@@ -41,7 +41,7 @@ def fake_states(container):
     occus = np.empty((NSAMPLES, nwalkers, NUM_SITES))
     enths = -5 * np.ones((NSAMPLES, nwalkers))
     temps = -300.56 * np.ones((NSAMPLES, nwalkers))
-    featblob = np.zeros((NSAMPLES, nwalkers,
+    feats = np.zeros((NSAMPLES, nwalkers,
                          len(container.natural_parameters)))
     accepted = np.random.randint(2, size=(NSAMPLES, nwalkers))
     sites1 = container.sublattices[0].sites
@@ -61,17 +61,17 @@ def fake_states(container):
             occus[i, j, s] = 0
             occus[i, j, np.setdiff1d(sites2, s)] = 1
             # first and last feature real fake
-            featblob[i, j, [0, -1]] = 2.5
+            feats[i, j, [0, -1]] = 2.5
 
-    return accepted, temps, occus, enths, featblob
+    return accepted, temps, occus, enths, feats
 
 
 def add_samples(sample_container, fake_states, thinned_by=1):
-    accepted, temps, occus, enths, featblob = fake_states
+    accepted, temps, occus, enths, feats = fake_states
     sample_container.allocate(len(accepted))
     for i in range(len(accepted)):
         sample_container.save_sample(accepted[i], temps[i], occus[i],
-                                     enths[i], featblob[i],
+                                     enths[i], feats[i],
                                      thinned_by=thinned_by)
 
 
@@ -104,7 +104,7 @@ def test_allocate_and_save(container, fake_states):
 @pytest.mark.parametrize('discard, thin', product((0, 100), (1, 10)))
 def test_get_sampled_values(container, fake_states, discard, thin):
     add_samples(container, fake_states)
-    accepted, temps, occus, enths, featblob = fake_states
+    accepted, temps, occus, enths, feats = fake_states
     nat_params = container.natural_parameters
     sublattices = container.sublattices
     nw = container.shape[0]
@@ -189,7 +189,7 @@ def test_get_mins(container, fake_states):
     i = np.random.choice(range(NSAMPLES))
     nwalkers = container.shape[0]
     container._enthalpy[i, :] = -10
-    container._feature_blob[i, :, :] = 5.0
+    container._features[i, :, :] = 5.0
     assert container.get_minimum_enthalpy() == -10.0
     assert container.get_minimum_energy() == -5.0
     npt.assert_array_equal(container.get_minimum_enthalpy(flat=False),

@@ -23,8 +23,8 @@ class CompositeProcessor(Processor):
     individual processor. This can be used to mix models in any way that your
     heart desires.
 
-    The most common use case of them all is a CompositeProcessor of a CEProcessor
-    and an EwaldProcessor for use in ionic materials.
+    The most common use case of them all is a CompositeProcessor of a
+    CEProcessor and an EwaldProcessor for use in ionic materials.
 
     You can add anyone of the other processor class implemented to build a
     composite processor.
