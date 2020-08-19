@@ -36,7 +36,8 @@ class Orbit(MSONable):
     ClusterSubspace to create orbits and clusters necessary for a CE.
 
     Attributes:
-        bits (list): list describing occupancy in each cluster.
+        bits (list of list): list of lists describing the posible non-constant
+              site function indices at each site of a cluster in the orbit.
         site_bases (list of SiteBasis): list of the SiteBasis for each site.
         structure_symops (list of Symmops):
             list of underlying structure symmetry operations.
@@ -53,8 +54,8 @@ class Orbit(MSONable):
                 list of frac coords for the sites
             lattice (pymatgen.Lattice):
                 A lattice object for the given sites
-            bits (list):
-                list describing the possible site function orderings for
+            bits (list of list):
+                list describing the possible site function indices for
                 each site in cluster. Should be the number of possible
                 occupancies minus one. i.e. for a 3 site cluster, each of which
                 having one of Li, TM, or Vac, bits are [[0, 1], [0, 1], [0, 1]]
@@ -192,7 +193,7 @@ class Orbit(MSONable):
         3D array with all basis arrays. Since each basis array can be of
         different dimension the 3D array is the size of the largest array.
         Smaller arrays are padded with ones. Doing this allows using numpy
-        fancy indexing which can be faster than for loops?
+        fancy indexing which can be faster than for loops.
         """
         if self._bases_arr is None or self._basis_arrs is None:
             max_dim = max(len(fa) for fa in self.basis_arrays)
@@ -270,7 +271,7 @@ class Orbit(MSONable):
         Args:
             basis_name (str):
                 name of new basis for all site bases
-            orthormal (bool):
+            orthonormal (bool):
                 option to orthonormalize all new site bases
         """
         new_bases = []

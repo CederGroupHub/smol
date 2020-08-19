@@ -22,10 +22,8 @@ from smol.moca.processor.base import Processor
 class EwaldProcessor(Processor):
     """Processor for CE's including an EwaldTerm.
 
-    A subclass of the CEProcessor class that handles changes for the
-    electrostatic interaction energy in an additional Ewald Summation term.
-    Make sure that the ClusterExpansion object used has an EwaldTerm,
-    otherwise this will not work.
+    A Processor class that handles changes for the electrostatic interaction
+    energy using an Ewald Summation term.
     """
 
     def __init__(self, cluster_subspace, supercell_matrix, ewald_term,

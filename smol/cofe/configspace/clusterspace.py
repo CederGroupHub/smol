@@ -5,6 +5,10 @@ expansion. A cluster subspace is a finite set of clusters, more precisely
 orbits that contain symmetrically equivalent clusters, that are used to define
 orbit/cluster basis functions which span a subspace of the total function space
 over the configurational space of a given lattice system.
+
+The ClusterSubspace also has methods to determine site mappings for supercells
+of different sizes in order to compute correlation vectors (i.e. evaluate the
+orbit functions for a given structure).
 """
 
 __author__ = "Luis Barroso-Luque, William Davidson Richard"

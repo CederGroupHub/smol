@@ -1,12 +1,9 @@
-"""Definitions for site functions spaces.
+"""Definitions for basis functions over a site function space.
 
 The product of single site functions make up a cluster/orbit function used to
 obtain correlation vectors. The domain of a site function is a site space,
 which is defined by the allowed species at the site and their measures, which
 is concentration of the species in the random structure)
-Site function spaces include the basis functions and measure used to define the
-inner product for a single site. Most commonly a uniform measure is used, but
-this can be changed to use "concentration" biased bases.
 """
 
 __author__ = "Luis Barroso-Luque"
@@ -286,7 +283,7 @@ class LegendreIterator(NumpyPolyIterator):
 # These functions should simply define a univariate injective function for
 # a finite set of species. If the function requires an encoding for the species
 # simply use the encode_domain decorator.
-# Definitions must be down outside of classes to prevent pickling problems.
+# Definitions must be done outside of classes to prevent pickling problems.
 
 
 def indicator(s, sp):

@@ -1,13 +1,5 @@
 """Implementation of Composite processor class for a fixed size super cell.
 
-A Composite processor is merely a container for several different processor
-that acts as an interface such that it can be used in the same way as the
-individual processor. This can be used to mix models in any way that your
-heart desires.
-
-The most common use case of them all is a CompositeProcessor of a CEProcessor
-and an EwaldProcessor for use in ionic materials.
-
 If you have created a ClusterExpansion with additional terms, and don't want
 the headache of manually and correctly spinning up the corresponding
 CompositeProcessor, simply consider using the convenience class constructor
@@ -25,6 +17,14 @@ from smol.moca.processor.base import Processor
 
 class CompositeProcessor(Processor):
     """CompositeProcessor class used for mixed models.
+
+    A Composite processor is merely a container for several different processor
+    that acts as an interface such that it can be used in the same way as the
+    individual processor. This can be used to mix models in any way that your
+    heart desires.
+
+    The most common use case of them all is a CompositeProcessor of a CEProcessor
+    and an EwaldProcessor for use in ionic materials.
 
     You can add anyone of the other processor class implemented to build a
     composite processor.
