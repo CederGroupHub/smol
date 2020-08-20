@@ -168,7 +168,7 @@ class Sampler:
         # Initialise progress bar
         chains, nsites = self.samples.shape
         desc = (f"Sampling {chains} chain(s) at {self._kernel.temperature:.2f}"
-                f" K from a cell with {nsites} sites.")
+                f" K from a cell with {nsites} sites")
         with progress_bar(progress, total=nsteps, description=desc) as bar:
             for _ in range(nsteps // thin_by):
                 for _ in range(thin_by):

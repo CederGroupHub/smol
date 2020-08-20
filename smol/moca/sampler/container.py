@@ -216,11 +216,9 @@ class SampleContainer(MSONable):
             occus = self.get_occupancies(discard, thin_by, flat)[inds, np.arange(self.shape[0])]  # noqa
         return occus
 
-    # TODO there is a bug here when using discard > 0 that also trickles into
-    #  other methods that use this.
     def get_species_counts(self, discard=0, thin_by=1, flat=True):
         """Get the species counts for each occupancy in the chain."""
-        samples = self.num_samples // thin_by
+        samples = (self.num_samples - discard) // thin_by
         shape = self.shape[0]*samples if flat else (self.shape[0], samples)
         counts = defaultdict(lambda: np.zeros(shape=shape))
         for sublattice in self.sublattices:
