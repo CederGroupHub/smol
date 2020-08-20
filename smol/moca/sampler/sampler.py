@@ -189,7 +189,7 @@ class Sampler:
                 accepted[:] = 0  # reset acceptance array
 
     def run(self, nsteps, initial_occupancies=None, thin_by=1, progress=False,
-            stream_chunk=0, stream_file=None):
+            stream_chunk=0, stream_file=None, swmr_mode=False):
         """Run an MCMC sampling simulation.
 
         This will run and save the samples every thin_by into a
@@ -213,6 +213,9 @@ class Sampler:
             stream_file (str): optional
                 file name to use as backend. If file already exists will try
                 to append to datasets. If not given will create a new file.
+            swmr_mode (bool): optional
+                If true allows to read file from other processes. Single Writer
+                Multiple Readers.
         """
         if initial_occupancies is None:
             try:
@@ -234,7 +237,8 @@ class Sampler:
                 now = datetime.now()
                 file_name = 'moca-samples-' + now.strftime('%Y-%m-%d-%H%M%S%f')
                 stream_file = os.path.join(os.getcwd(), file_name + '.h5')
-            backend = self.samples.get_backend(stream_file, nsteps // thin_by)
+            backend = self.samples.get_backend(stream_file, nsteps // thin_by,
+                                               swmr_mode=swmr_mode)
             self.samples.allocate(stream_chunk)
         else:
             backend = None

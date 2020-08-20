@@ -335,7 +335,7 @@ class SampleContainer(MSONable):
         self.total_mc_steps = 0
         self._nsamples = 0
 
-    def get_backend(self, file_path, alloc_nsamples=0):
+    def get_backend(self, file_path, alloc_nsamples=0, swmr_mode=False):
         """Get a backend file object.
 
         Currently only hdf5 files supported
@@ -347,6 +347,9 @@ class SampleContainer(MSONable):
                 number of new samples to allocate. Will only extend datasets
                 if number given is larger than space left to write samples
                 into.
+            swmr_mode (bool): optional
+                If true allows to read file from other processes. Single Writer
+                Multiple Readers.
 
         Returns:
             h5.File object
@@ -362,13 +365,16 @@ class SampleContainer(MSONable):
             if available < alloc_nsamples:
                 self._grow_backend(backend, alloc_nsamples - available)
         else:
-            backend = h5py.File(file_path, "w")
+            backend = h5py.File(file_path, "w", libver='latest')
             self._init_backed(backend, alloc_nsamples)
+
+        if swmr_mode:
+            backend.swmr_mode = swmr_mode
         return backend
 
     def _check_backend(self, file_path):
         """Check if existing backend file is populated correctly."""
-        backend = h5py.File(file_path, mode="r+")
+        backend = h5py.File(file_path, mode="r+", libver='latest')
         if self.shape != backend["chain"].shape[1:]:
             shape = backend['chain'].shape[1:]
             backend.close()
@@ -464,12 +470,15 @@ class SampleContainer(MSONable):
         return container
 
     @classmethod
-    def from_hdf5(cls, file_path):
+    def from_hdf5(cls, file_path, swmr_mode=False):
         """Instantiate a SampleContainer from an hdf5 file.
 
         Args:
             file_path (str):
                 path to file
+            swmr_mode (bool): optional
+                If true allows to read file from other processes. Single Writer
+                Multiple Readers.
 
         Returns:
             SampleContainer
@@ -477,28 +486,28 @@ class SampleContainer(MSONable):
         if h5py is None:
             raise h5err
 
-        with h5py.File(file_path, "r") as f:
+        with h5py.File(file_path, "r", swmr=swmr_mode) as f:
             # Check if written states matches the size of datasets
-            # TODO check if works with/without SWMR option
-            if len(f["chain"]) > f["chain"].attrs["nsamples"]:
+            nsamples = f["chain"].attrs["nsamples"]
+            if len(f["chain"]) > nsamples:
                 warnings.warn("The hdf5 file provided appears to be from an "
-                              "unifinished MC run.\n Only"
-                              f"{f['chain'].attrs['nsamples']} of ",
+                              f"unifinished MC run.\n Only {nsamples} of "
                               f"{len(f['chain'])} samples have been written.",
-                              RuntimeWarning)
+                              UserWarning)
 
-            sublattices = json.loads(f["sublattices"][()])
+            sublattices = [Sublattice.from_dict(s) for s in
+                           json.loads(f["sublattices"][()])]
             container = cls(f["sublattices"].attrs["num_sites"],
                             sublattices=sublattices,
                             natural_parameters=f["natural_parameters"][()],
                             num_energy_coefs=f["natural_parameters"].attrs["num_energy_coefs"],  # noqa
                             ensemble_metadata=json.loads(f["ensemble_metadata"][()]),  # noqa
                             nwalkers=f["chain"].shape[1])
-            container._chain = f["chain"][()]
-            container._accepted = f["accepted"][()]
-            container._temperature = f["temperature"][()]
-            container._enthalpy = f["enthalpy"][()]
-            container._features = f["features"][()]
-            container._nsamples = len(container._chain)
+            container._chain = f["chain"][:nsamples]
+            container._accepted = f["accepted"][:nsamples]
+            container._temperature = f["temperature"][:nsamples]
+            container._enthalpy = f["enthalpy"][:nsamples]
+            container._features = f["features"][:nsamples]
+            container._nsamples = nsamples
             container.total_mc_steps = f["chain"].attrs["total_mc_steps"]
         return container
