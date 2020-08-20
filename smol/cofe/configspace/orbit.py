@@ -113,28 +113,28 @@ class Orbit(MSONable):
     def bit_combos(self):
         """Get list of site bit orderings.
 
-        List of lists, each inner list is of symmetrically equivalent bit
-        orderings.
+        tuple of ndarrays, each array is a set of symmetrically equivalent bit
+        orderings represented by row. Bit combos represent non-constant site
+        function different site function orderings
         """
         if self._bit_combos is not None:
             return self._bit_combos
         # get all the bit symmetry operations
-        bit_ops = []
-        for _, bitop in self.cluster_symops:
-            if bitop not in bit_ops:
-                bit_ops.append(bitop)
+        bit_ops = tuple(set(bit_op for _, bit_op in self.cluster_symops))
         all_combos = []
         for bit_combo in itertools.product(*self.bits):
             if bit_combo not in itertools.chain(*all_combos):
                 bit_combo = np.array(bit_combo)
-                new_bits = []
-                for b_o in bit_ops:
-                    new_bit = tuple(bit_combo[np.array(b_o)])
-                    if new_bit not in new_bits:
-                        new_bits.append(new_bit)
+                new_bits = list(set(tuple(bit_combo[np.array(bit_op)])
+                                    for bit_op in bit_ops))
                 all_combos.append(new_bits)
         self._bit_combos = tuple(np.array(c, dtype=np.int) for c in all_combos)
         return self._bit_combos
+
+    @property
+    def bit_combo_multiplicities(self):
+        """Get the multiplicites of the symmetrically distinct bit ordering."""
+        return [bcombo.shape[0] for bcombo in self.bit_combos]
 
     @property
     def clusters(self):
