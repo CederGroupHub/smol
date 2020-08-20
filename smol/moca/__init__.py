@@ -11,7 +11,7 @@ from .processor.composite import CompositeProcessor
 from .ensemble.canonical import CanonicalEnsemble
 from .ensemble.semigrand import MuSemiGrandEnsemble, FuSemiGrandEnsemble
 from .sampler.sampler import Sampler
-from .sampler.container import SampleContainer
+from smol.moca.sampler.container import SampleContainer
 
 __all__ = ['CEProcessor', 'EwaldProcessor', 'CompositeProcessor',
            'CanonicalEnsemble', 'MuSemiGrandEnsemble', 'FuSemiGrandEnsemble',

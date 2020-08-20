@@ -8,6 +8,8 @@ __author__ = "Luis Barroso-Luque"
 
 import random
 from warnings import warn
+from datetime import datetime
+import os
 import numpy as np
 
 from smol.utils import progress_bar
@@ -186,7 +188,8 @@ class Sampler:
                        enthalpy.copy(), features.copy(), thin_by)
                 accepted[:] = 0  # reset acceptance array
 
-    def run(self, nsteps, initial_occupancies=None, thin_by=1, progress=False):
+    def run(self, nsteps, initial_occupancies=None, thin_by=1, progress=False,
+            stream_chunk=0, stream_file=None):
         """Run an MCMC sampling simulation.
 
         This will run and save the samples every thin_by into a
@@ -202,8 +205,14 @@ class Sampler:
                 a fresh run.
             thin_by (int): optional
                 the amount to thin by for saving samples.
-            progress (bool):
+            progress (bool): optional
                 If true will show a progress bar.
+            stream_chunk (int): optional
+                Chunk of samples to stream into a file. If > 0 samples will
+                be flushed to backend file in stream_chucks
+            stream_file (str): optional
+                file name to use as backend. If file already exists will try
+                to append to datasets. If not given will create a new file.
         """
         if initial_occupancies is None:
             try:
@@ -220,10 +229,26 @@ class Sampler:
             if initial_occupancies.shape != self.samples.shape:
                 initial_occupancies = self._reshape_occu(initial_occupancies)
 
-        self.samples.allocate(nsteps // thin_by)
-        for state in self.sample(nsteps, initial_occupancies,
-                                 thin_by=thin_by, progress=progress):
+        if stream_chunk > 0:
+            if stream_file is None:
+                now = datetime.now()
+                file_name = 'moca-samples-' + now.strftime('%Y-%m-%d-%H%M%S%f')
+                stream_file = os.path.join(os.getcwd(), file_name + '.h5')
+            backend = self.samples.get_backend(stream_file, nsteps // thin_by)
+            self.samples.allocate(stream_chunk)
+        else:
+            backend = None
+            self.samples.allocate(nsteps // thin_by)
+
+        for i, state in enumerate(self.sample(nsteps, initial_occupancies,
+                                  thin_by=thin_by, progress=progress)):
             self.samples.save_sample(*state)
+            if backend is not None and (i + 1) % stream_chunk == 0:
+                self.samples.flush_to_backend(backend)
+
+        if backend is not None:
+            self.clear_samples()
+            backend.close()
 
     def anneal(self, temperatures, mcmc_steps, initial_occupancies=None,
                thin_by=1, progress=False):
