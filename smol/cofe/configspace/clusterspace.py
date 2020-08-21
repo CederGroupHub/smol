@@ -252,11 +252,19 @@ class ClusterSubspace(MSONable):
 
     @property
     def orbit_nbit_orderings(self):
-        """Get the number of number of bit orderings for each orbit."""
+        """Get the number of symmetrically distinct bit orderings for orbits."""
         if self._orb_nbit_ords is None:
             self._orb_nbit_ords = [orb.n_bit_orderings
                                    for orb in self.iterorbits()]
         return self._orb_nbit_ords
+
+    @property
+    def bit_combo_multiplicities(self):
+        """Get list of multiplicity of each distinct bit ordering."""
+        bcombo_mults = []
+        for orbit in self.orbits:
+            bcombo_mults += orbit.bit_combo_multiplicities
+        return bcombo_mults
 
     @property
     def basis_orthogonal(self):
@@ -565,7 +573,9 @@ class ClusterSubspace(MSONable):
                                   if orbit.id not in orbit_ids]
 
         self._assign_orbit_ids()  # Re-assign ids
-        self._func_orb_ids = None  # reset func ids
+        self._func_orb_ids = None  # reset orbit info stuff, it may be worth
+        self._orb_mults = None  # considering always computing this in the
+        self._orb_nbit_ords = None  # @property, and not worry about reseting.
         # Clear the cached supercell orbit mappings
         self._supercell_orb_inds = {}
 
@@ -777,6 +787,10 @@ class ClusterSubspace(MSONable):
                    zip(other.external_terms, self.external_terms)):
             return False
         return all(o1 == o2 for o1, o2 in zip(other.orbits, self.orbits))
+
+    def __len__(self):
+        """Get number of n_bit_orderings"""
+        return self.n_bit_orderings
 
     def __str__(self):
         """Convert class into pretty string for printing."""

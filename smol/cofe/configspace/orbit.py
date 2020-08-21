@@ -115,7 +115,7 @@ class Orbit(MSONable):
 
         tuple of ndarrays, each array is a set of symmetrically equivalent bit
         orderings represented by row. Bit combos represent non-constant site
-        function different site function orderings
+        function orderings.
         """
         if self._bit_combos is not None:
             return self._bit_combos
