@@ -765,6 +765,19 @@ class ClusterSubspace(MSONable):
 
         return orbit_indices
 
+    def __eq__(self, other):
+        """Check equality between cluster subspaces."""
+        if not isinstance(other, ClusterSubspace):
+            return False
+        if other.n_bit_orderings != self.n_bit_orderings:
+            return False
+        if len(self.external_terms) != len(other.external_terms):
+            return False
+        if not all(isinstance(t1, type(t2)) for t1, t2 in
+                   zip(other.external_terms, self.external_terms)):
+            return False
+        return all(o1 == o2 for o1, o2 in zip(other.orbits, self.orbits))
+
     def __str__(self):
         """Convert class into pretty string for printing."""
         s = f'ClusterBasis: [Prim Composition] {self.structure.composition}\n'
