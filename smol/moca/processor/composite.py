@@ -49,21 +49,25 @@ class CompositeProcessor(Processor):
         """Return the list of processor in composite."""
         return self._processors
 
-    def add_processor(self, processor_class, *args, **kwargs):
+    def add_processor(self, processor):
         """Add a processor to composite.
 
         Args:
-            processor_class (Processor):
-                A derived class of BaseProcessor. The class, not an instance.
-            *args:
-                positional arguments necessary to create instance of processor
-                class (excluding the subspace and supercell_matrix)
-            **kwargs:
-                keyword arguments necessary to create instance of processor
-                class (excluding the subspace and supercell_matrix)
+            processor (Processor):
+                Processor to add. Must have the same cluster subspace and
+                supercell matrix.
         """
-        processor = processor_class(self._subspace, self._scmatrix,
-                                    *args, **kwargs)
+        if isinstance(processor, CompositeProcessor):
+            raise AttributeError("A CompositeProcessor can not be added into "
+                                 "another CompositeProcessor")
+        elif self.cluster_subspace != processor.cluster_subspace:
+            raise ValueError("The cluster subspace of the processor to be"
+                             " added does not match the one of this "
+                             "CompositeProcessor.")
+        elif not np.array_equal(self._scmatrix, processor.supercell_matrix):
+            raise ValueError("The supercell matrix of the processor to be"
+                             " added does not match the one of this "
+                             "CompositeProcessor.")
         self._processors.append(processor)
         self.coefs = np.append(self.coefs, processor.coefs)
 
