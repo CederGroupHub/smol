@@ -458,6 +458,7 @@ class StructureWrangler(MSONable):
                 If true will raise the thrown error when adding a structure
                 fails. This can be helpful to keep a list of structures that
                 fail for further checking.
+
         Returns:
             dict: data item dict for structure
         """

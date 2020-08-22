@@ -50,10 +50,6 @@ class ClusterSubspace(MSONable):
     orbit/cluster terms for your cluster expansion.
 
     Attributes:
-        structure (Structure):
-            prim structure represeting configurational space.
-        exp_structure (Structure):
-            structure with only the sites with partial occupancy in the prim
         symops (list of SymmOp):
             symmetry operations of structure.
     """
