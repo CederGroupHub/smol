@@ -81,8 +81,9 @@ class ClusterExpansion(MSONable):
                                   self._subspace.orbit_nbit_orderings):
                 mults += ords*[mult, ]
             n = len(self._subspace.external_terms)  # check for extra terms
+            bit_combo_mults = [1] + self._subspace.bit_combo_multiplicities
             coefs = self.coefs[:-n] if n else self.coefs
-            self._eci = coefs/np.array(mults)
+            self._eci = coefs/(np.array(mults) * np.array(bit_combo_mults))
         return self._eci
 
     @property
@@ -127,7 +128,7 @@ class ClusterExpansion(MSONable):
         """
         corrs = self.cluster_subspace.corr_from_structure(structure,
                                                           normalized=normalize)
-        return np.dot(np.array(corrs), self.coefs)
+        return np.dot(corrs, self.coefs)
 
     def prune(self, threshold=0, with_multiplicity=False):
         """Remove fit coefficients or ECI's with small values.
