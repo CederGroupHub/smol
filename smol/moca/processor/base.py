@@ -230,6 +230,10 @@ class Processor(MSONable, metaclass=ABCMeta):
                             for dp, o, f in trajectory) / iterations
         return forward_drift, reverse_drift
 
+    def __len__(self):
+        """Get number of sites processor supercell."""
+        return self.num_sites
+
     def as_dict(self) -> dict:
         """
         Json-serialization dict representation.

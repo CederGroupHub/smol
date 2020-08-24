@@ -785,7 +785,7 @@ class ClusterSubspace(MSONable):
         return all(o1 == o2 for o1, o2 in zip(other.orbits, self.orbits))
 
     def __len__(self):
-        """Get number of n_bit_orderings"""
+        """Get number of n_bit_orderings."""
         return self.n_bit_orderings
 
     def __str__(self):
