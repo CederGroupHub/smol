@@ -37,9 +37,10 @@ def composite_processor(cluster_subspace):
     ewald_term = EwaldTerm()
     cluster_subspace.add_external_term(ewald_term)
     proc = CompositeProcessor(cluster_subspace, supercell_matrix=scmatrix)
-    proc.add_processor(CEProcessor, coefficients=coefs[:-1])
-    proc.add_processor(EwaldProcessor, coefficient=coefs[-1],
-                       ewald_term=ewald_term)
+    proc.add_processor(CEProcessor(cluster_subspace, scmatrix,
+                                   coefficients=coefs[:-1]))
+    proc.add_processor(EwaldProcessor(cluster_subspace, scmatrix, ewald_term,
+                                      coefficient=coefs[-1]))
     return proc
 
 
@@ -171,6 +172,26 @@ def test_bad_coef_length(cluster_subspace):
     with pytest.raises(ValueError):
         CEProcessor(cluster_subspace, 5*np.eye(3), coefficients=coefs)
 
+
+def test_bad_composite(cluster_subspace):
+    coefs = 2 * np.random.random(cluster_subspace.n_bit_orderings)
+    scmatrix = 3 * np.eye(3)
+    proc = CompositeProcessor(cluster_subspace, supercell_matrix=scmatrix)
+    with pytest.raises(AttributeError):
+        proc.add_processor(CompositeProcessor(cluster_subspace,
+                                              supercell_matrix=scmatrix))
+    with pytest.raises(ValueError):
+        proc.add_processor(CEProcessor(cluster_subspace, 2 * scmatrix,
+                                   coefficients=coefs))
+    with pytest.raises(ValueError):
+        new_cs = cluster_subspace.copy()
+        new_cs.change_site_bases("chebyshev")
+        proc.add_processor(CEProcessor(new_cs, scmatrix, coefficients=coefs))
+    with pytest.raises(ValueError):
+        new_cs = cluster_subspace.copy()
+        ids = range(1, new_cs.n_bit_orderings)
+        new_cs.remove_orbit_bit_combos(np.random.choice(ids, size=10))
+        proc.add_processor(CEProcessor(new_cs, scmatrix, coefficients=coefs))
 
 # Ewald only tests, these are basically copy and paste from above
 # read comment on parametrizing :(

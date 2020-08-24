@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>smol.moca.sampler.mcusher module &#8212; smol v1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          smol</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="https://github.com/CederGroupHub/smol">GitHub</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <div class="section" id="module-smol.moca.sampler.mcusher">
+<span id="smol-moca-sampler-mcusher-module"></span><h1>smol.moca.sampler.mcusher module<a class="headerlink" href="#module-smol.moca.sampler.mcusher" title="Permalink to this headline">¶</a></h1>
+<p>Implementations of MCMC Usher classes.</p>
+<p>An usher is used to generate step proposals for MC Monte Carlo sampling.
+For example a Flipper simply proposes a change of the identity of a species
+at a site, for use in a SemiGrand ensemble. A Swapper will propose a swap
+between species at two sites for use in Canonical ensemble simulations.</p>
+<p>More complex steps can be defined simply by deriving from the MCUsher</p>
+<dl class="py class">
+<dt id="smol.moca.sampler.mcusher.Flipper">
+<em class="property">class </em><code class="sig-prename descclassname">smol.moca.sampler.mcusher.</code><code class="sig-name descname">Flipper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">sublattice_probabilities</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Flipper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.mcusher.MCMCUsher" title="smol.moca.sampler.mcusher.MCMCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.mcusher.MCMCUsher</span></code></a></p>
+<p>Implementation of a simple flip step at a random site.</p>
+<dl class="py method">
+<dt id="smol.moca.sampler.mcusher.Flipper.propose_step">
+<code class="sig-name descname">propose_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Flipper.propose_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Propose a single random flip step.</p>
+<p>A step is given as a sequence of tuples, where each tuple is of the
+form (site index, species code to set)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of tuples each with (index, code)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list(tuple)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="smol.moca.sampler.mcusher.MCMCUsher">
+<em class="property">class </em><code class="sig-prename descclassname">smol.moca.sampler.mcusher.</code><code class="sig-name descname">MCMCUsher</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">sublattice_probabilities</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCMCUsher" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract base class for MCMC usher classes.</p>
+<dl class="py method">
+<dt id="smol.moca.sampler.mcusher.MCMCUsher.get_random_sublattice">
+<code class="sig-name descname">get_random_sublattice</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCMCUsher.get_random_sublattice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a random sublattice based on given probabilities.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.moca.sampler.mcusher.MCMCUsher.propose_step">
+<em class="property">abstract </em><code class="sig-name descname">propose_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCMCUsher.propose_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Propose an MCMC step.</p>
+<p>A step is given as a sequence of tuples, where each tuple is of the
+form (site index, species code to set)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple of tuples each with (idex, code)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list(tuple)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.moca.sampler.mcusher.MCMCUsher.sublattice_probabilities">
+<em class="property">property </em><code class="sig-name descname">sublattice_probabilities</code><a class="headerlink" href="#smol.moca.sampler.mcusher.MCMCUsher.sublattice_probabilities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the sublattice probabilities.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="smol.moca.sampler.mcusher.Swapper">
+<em class="property">class </em><code class="sig-prename descclassname">smol.moca.sampler.mcusher.</code><code class="sig-name descname">Swapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">sublattice_probabilities</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Swapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.mcusher.MCMCUsher" title="smol.moca.sampler.mcusher.MCMCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.mcusher.MCMCUsher</span></code></a></p>
+<p>Implementation of a simple swap step for two random sites.</p>
+<dl class="py method">
+<dt id="smol.moca.sampler.mcusher.Swapper.propose_step">
+<code class="sig-name descname">propose_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Swapper.propose_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Propose a single random swap step.</p>
+<p>A step is given as a sequence of tuples, where each tuple is of the
+form (site index, species code to set)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of tuples each with (idex, code)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list(tuple)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="smol.moca.sampler.mcusher.mcusher_factory">
+<code class="sig-prename descclassname">smol.moca.sampler.mcusher.</code><code class="sig-name descname">mcusher_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">usher_type</span></em>, <em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.mcusher_factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a MCMC Usher from string name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>usher_type</strong> (<em>str</em>) – string specifying step to instantiate.</p></li>
+<li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – list of Sublattices to propose steps for.</p></li>
+<li><p><strong>*args</strong> – positional arguments passed to class constructor</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments passed to class constructor</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>instance of derived class.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#smol.moca.sampler.mcusher.MCMCUsher" title="smol.moca.sampler.mcusher.MCMCUsher">MCMCUsher</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2020, Ceder Group.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

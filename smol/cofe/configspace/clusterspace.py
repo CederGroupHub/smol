@@ -5,6 +5,10 @@ expansion. A cluster subspace is a finite set of clusters, more precisely
 orbits that contain symmetrically equivalent clusters, that are used to define
 orbit/cluster basis functions which span a subspace of the total function space
 over the configurational space of a given lattice system.
+
+The ClusterSubspace also has methods to determine site mappings for supercells
+of different sizes in order to compute correlation vectors (i.e. evaluate the
+orbit functions for a given structure).
 """
 
 __author__ = "Luis Barroso-Luque, William Davidson Richard"
@@ -46,10 +50,6 @@ class ClusterSubspace(MSONable):
     orbit/cluster terms for your cluster expansion.
 
     Attributes:
-        structure (Structure):
-            prim structure represeting configurational space.
-        exp_structure (Structure):
-            structure with only the sites with partial occupancy in the prim
         symops (list of SymmOp):
             symmetry operations of structure.
     """
@@ -248,11 +248,19 @@ class ClusterSubspace(MSONable):
 
     @property
     def orbit_nbit_orderings(self):
-        """Get the number of number of bit orderings for each orbit."""
+        """Get the number of symmetrically distinct bit orderings for orbits."""
         if self._orb_nbit_ords is None:
             self._orb_nbit_ords = [orb.n_bit_orderings
                                    for orb in self.iterorbits()]
         return self._orb_nbit_ords
+
+    @property
+    def bit_combo_multiplicities(self):
+        """Get list of multiplicity of each distinct bit ordering."""
+        bcombo_mults = []
+        for orbit in self.orbits:
+            bcombo_mults += orbit.bit_combo_multiplicities
+        return bcombo_mults
 
     @property
     def basis_orthogonal(self):
@@ -561,7 +569,9 @@ class ClusterSubspace(MSONable):
                                   if orbit.id not in orbit_ids]
 
         self._assign_orbit_ids()  # Re-assign ids
-        self._func_orb_ids = None  # reset func ids
+        self._func_orb_ids = None  # reset orbit info stuff, it may be worth
+        self._orb_mults = None  # considering always computing this in the
+        self._orb_nbit_ords = None  # @property, and not worry about reseting.
         # Clear the cached supercell orbit mappings
         self._supercell_orb_inds = {}
 
@@ -760,6 +770,23 @@ class ClusterSubspace(MSONable):
             orbit_indices.append((orbit, inds))
 
         return orbit_indices
+
+    def __eq__(self, other):
+        """Check equality between cluster subspaces."""
+        if not isinstance(other, ClusterSubspace):
+            return False
+        if other.n_bit_orderings != self.n_bit_orderings:
+            return False
+        if len(self.external_terms) != len(other.external_terms):
+            return False
+        if not all(isinstance(t1, type(t2)) for t1, t2 in
+                   zip(other.external_terms, self.external_terms)):
+            return False
+        return all(o1 == o2 for o1, o2 in zip(other.orbits, self.orbits))
+
+    def __len__(self):
+        """Get number of n_bit_orderings"""
+        return self.n_bit_orderings
 
     def __str__(self):
         """Convert class into pretty string for printing."""

@@ -58,9 +58,11 @@ def test_from_cluster_expansion(cluster_subspace, ensemble_cls):
     coefs = np.random.random(cluster_subspace.n_bit_orderings + 1)
     scmatrix = 3 * np.eye(3)
     proc = CompositeProcessor(cluster_subspace, scmatrix)
-    proc.add_processor(CEProcessor, coefficients=coefs[:-1])
-    proc.add_processor(EwaldProcessor, coefficient=coefs[-1],
-                       ewald_term=cluster_subspace.external_terms[0])
+    proc.add_processor(CEProcessor(cluster_subspace, scmatrix,
+                                   coefficients=coefs[:-1]))
+    proc.add_processor(EwaldProcessor(cluster_subspace, scmatrix,
+                       cluster_subspace.external_terms[0],
+                                      coefficient=coefs[-1]))
     fake_feature_matrix = np.random.random((5, len(coefs)))
     expansion = ClusterExpansion(cluster_subspace, coefs, fake_feature_matrix)
     if ensemble_cls is MuSemiGrandEnsemble:
@@ -185,7 +187,8 @@ def test_compute_feature_vector(fugrand_ensemble):
                                 fugrand_ensemble.num_sites)
     assert (np.dot(fugrand_ensemble.natural_parameters,
                    fugrand_ensemble.compute_feature_vector(occu))
-            == proc.compute_property(occu) - fugrand_ensemble.compute_chemical_work(occu))
+            == pytest.approx(proc.compute_property(occu) - fugrand_ensemble.compute_chemical_work(occu),
+                             abs=1E-12))
     npt.assert_array_equal(fugrand_ensemble.compute_feature_vector(occu)[:-1],
                            fugrand_ensemble.processor.compute_feature_vector(occu))
     for _ in range(50):  # test a few flips
