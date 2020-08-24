@@ -248,7 +248,7 @@ class ClusterSubspace(MSONable):
 
     @property
     def orbit_nbit_orderings(self):
-        """Get the number of symmetrically distinct bit orderings for orbits."""
+        """Get the number of symmetrically distinct bit orderings in orbits."""
         if self._orb_nbit_ords is None:
             self._orb_nbit_ords = [orb.n_bit_orderings
                                    for orb in self.iterorbits()]
