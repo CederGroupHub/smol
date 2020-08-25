@@ -170,7 +170,8 @@ class BaseEnsemble(ABC):
         self._active_sublatts = deepcopy(self._sublattices)
         self.restricted_sites = []
 
-    def run(self, iterations, sublattices=None, table_swap=False, table=None):
+    def run(self, iterations, sublattices=None, table_swap=False, table=None,
+            table_swap_with_Mn_disprop=False, Mn_swap_probability=0.5):
         """Run the ensembles for the given number of iterations.
 
         Samples are taken at the set intervals specified in constructur.
@@ -186,14 +187,32 @@ class BaseEnsemble(ABC):
             table (dict):
                 dictionary with keys identifying the possible swap types,
                 including the species and sublattice of the two members of
-                the swap type, i.e. (('Li+', 'Li+/Mn2+/Vacancy'), ('Li+',
-                'Li+/Mn2+/Mn3+/Mn4+/Vacancy')). Instead of a sublattice, the
-                keyword 'shared' can be specified for both members to indicate
-                that the sites can be picked from any sublattice shared between
-                the first and second species in the two flips. The values
-                should be the probability at which the swap type is picked.
+                the swap type, i.e.
+                (('Li+', 'Li+/Mn2+/Vacancy'),
+                ('Li+','Li+/Mn2+/Mn3+/Mn4+/Vacancy')).
+                Instead of a sublattice, the
+                keyword 'shared' can be specified for both members
+                to indicate that the sites can be picked from any
+                sublattice shared between the first and second species
+                in the two flips. The values should be the probability
+                at which the swap type is picked.
                 The values must sum to 1.
 
+                * For flips onto different sublattices, e.g. (tet-oct),
+                it is recommended for now to provide both the
+                forward and reverse flips:
+                for example: {((Li, tet_sublattice),
+                                (Vac, oct_sublattice)): prob/2,
+                              ((Vac, tet_sublattice),
+                                (Li, oct_sublattice)): prob/2, ...}
+                              otherwise, all Li will be flipped
+                              onto the octahedral sublattice
+            table_swap_with_Mn_disprop (bool): optional
+                If True, pick from global Mn_flip_table
+                at a given Mn_swap_probability
+            Mn_swap_probability (float): optional
+                Probability to pick a Mn swap or
+                disproportionation action
         """
         write_loops = iterations//self.sample_interval
         if iterations % self.sample_interval > 0:
@@ -208,7 +227,9 @@ class BaseEnsemble(ABC):
             for _ in range(no_interrupt):
                 success = self._attempt_step(sublattices,
                                              table_swap=table_swap,
-                                             table=table)
+                                             table=table,
+                                             table_swap_with_Mn_disprop=table_swap_with_Mn_disprop,
+                                             Mn_swap_probability=Mn_swap_probability)
                 self._ssteps += success
 
             self._step += no_interrupt
@@ -235,7 +256,9 @@ class BaseEnsemble(ABC):
         self._data = []
 
     @abstractmethod
-    def _attempt_step(self, sublattices=None):
+    def _attempt_step(self, sublattices=None, table_swap=False, table=None,
+                      table_swap_with_Mn_disprop=False,
+                      Mn_swap_probability=0.5):
         """Attempt a MC step and return if the step was accepted or not."""
         return
 
