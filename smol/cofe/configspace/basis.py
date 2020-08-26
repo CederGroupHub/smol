@@ -23,11 +23,12 @@ from smol.utils import derived_class_factory
 
 
 class SiteBasis:
-    """Class to represent the basis for a site function space.
+    """Class that represents the basis for a site function space.
 
-    Note that all SiteBasis in theory have the first basis function = 1, but
-    this should not be defined since it is handled implicitly when computing
-    bit_combos using total no. species - 1 in the Orbit class.
+    Note that all SiteBasis in theory have the first basis function
+    :math:`\phi_0 = 1`, but this should not be defined since it is handled
+    implicitly when computing bit_combos using total no. species - 1 in the
+    Orbit class.
 
     The particular basis set is set by giving an iterable of basis functions.
     See BasisIterator classes for details.
@@ -158,7 +159,13 @@ class SiteBasis:
 class BasisIterator(Iterator):
     """Abstract basis iterator class.
 
-    A basis iterator iterates through non-constant basis functions only.
+    A basis iterator iterates through all non-constant site basis functions.
+    i.e. for basis :math:`\phi_0 = 1, \phi_1, ..., \phi_{n-1}`,
+    the iterator will just iterate through :math:`\phi_1, ..., \phi_{n-1}`
+
+    Attributes:
+        flavor (str):
+            Name specifying the type of basis that is generated.
     """
 
     flavor = 'abstract'

@@ -4,14 +4,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.io module &#8212; smol v1.0.0 documentation</title>
+    <title>smol.io module &#8212; smol 1.0.0 documentation</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -42,6 +44,8 @@
         <div class="collapse navbar-collapse nav-collapse">
           <ul class="nav navbar-nav">
             
+                <li><a href="examples.html">Examples</a></li>
+                <li><a href="api.html">API</a></li>
                 <li><a href="https://github.com/CederGroupHub/smol">GitHub</a></li>
             
             
@@ -56,12 +60,24 @@
       aria-labelledby="dLabelGlobalToc"></ul>
 </li>
               
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">smol.io module</a></li>
+</ul>
+</ul>
+</li>
+              
             
             
             
             
-            
-              <li class="hidden-sm"></li>
             
           </ul>
 
@@ -92,7 +108,7 @@ way.</p>
 it easier to translate work.</p>
 <dl class="py function">
 <dt id="smol.io.load_work">
-<code class="sig-prename descclassname">smol.io.</code><code class="sig-name descname">load_work</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.io.load_work" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_work</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.io.load_work" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load a dictionary and instantiate the MSONable objects.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -107,7 +123,7 @@ it easier to translate work.</p>
 
 <dl class="py function">
 <dt id="smol.io.save_work">
-<code class="sig-prename descclassname">smol.io.</code><code class="sig-name descname">save_work</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">msonables</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.io.save_work" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">save_work</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">msonables</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.io.save_work" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save msonable classes used in a CE and/or MC workflow.</p>
 <p>Save a set of unique MSONable objects used in a workflow for a cluster
 expansion and/or monte carlo run as a json dictionary.</p>
@@ -133,6 +149,9 @@ expansion and/or monte carlo run as a json dictionary.</p>
   <div class="container">
     <p class="pull-right">
       <a href="#">Back to top</a>
+      
+        <br/>
+        
       
     </p>
     <p>

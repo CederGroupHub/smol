@@ -4,14 +4,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.moca.ensemble.sublattice module &#8212; smol v1.0.0 documentation</title>
+    <title>smol.moca.ensemble.sublattice module &#8212; smol 1.0.0 documentation</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -42,6 +44,8 @@
         <div class="collapse navbar-collapse nav-collapse">
           <ul class="nav navbar-nav">
             
+                <li><a href="examples.html">Examples</a></li>
+                <li><a href="api.html">API</a></li>
                 <li><a href="https://github.com/CederGroupHub/smol">GitHub</a></li>
             
             
@@ -56,12 +60,24 @@
       aria-labelledby="dLabelGlobalToc"></ul>
 </li>
               
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">smol.moca.ensemble.sublattice module</a></li>
+</ul>
+</ul>
+</li>
+              
             
             
             
             
-            
-              <li class="hidden-sm"></li>
             
           </ul>
 
@@ -91,7 +107,7 @@ the same site space. It more rigourously represents a substructure of the
 random structure supercell being sampled in a Monte Carlo simulation.</p>
 <dl class="py class">
 <dt id="smol.moca.ensemble.sublattice.Sublattice">
-<em class="property">class </em><code class="sig-prename descclassname">smol.moca.ensemble.sublattice.</code><code class="sig-name descname">Sublattice</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">site_space</span></em>, <em class="sig-param"><span class="n">sites</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.sublattice.Sublattice" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Sublattice</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">site_space</span></em>, <em class="sig-param"><span class="n">sites</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.sublattice.Sublattice" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Sublattice class.</p>
 <p>A Sublattice is used to represent a subset of supercell sites that have
@@ -142,6 +158,16 @@ restricted sites are excluded from flip proposals.</p>
 </dl>
 </dd></dl>
 
+<p>Initialize Sublattice.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>site_space</strong> (<em>OrderedDict</em>) – An ordered dict with the allowed species and their random
+state composition. See definitions in cofe.cofigspace.basis</p></li>
+<li><p><strong>sites</strong> (<em>ndarray</em>) – array with the site indices</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.moca.ensemble.sublattice.Sublattice.as_dict">
 <code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.sublattice.Sublattice.as_dict" title="Permalink to this definition">¶</a></dt>
@@ -200,7 +226,7 @@ restricted sites are excluded from flip proposals.</p>
 
 <dl class="py function">
 <dt id="smol.moca.ensemble.sublattice.get_sublattices">
-<code class="sig-prename descclassname">smol.moca.ensemble.sublattice.</code><code class="sig-name descname">get_sublattices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.sublattice.get_sublattices" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_sublattices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.sublattice.get_sublattices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of sublattices from a processor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -223,6 +249,9 @@ restricted sites are excluded from flip proposals.</p>
   <div class="container">
     <p class="pull-right">
       <a href="#">Back to top</a>
+      
+        <br/>
+        
       
     </p>
     <p>

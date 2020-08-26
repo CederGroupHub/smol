@@ -4,14 +4,18 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; smol v1.0.0 documentation</title>
+    <title>Index &#8212; smol 1.0.0 documentation</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -42,6 +46,8 @@
         <div class="collapse navbar-collapse nav-collapse">
           <ul class="nav navbar-nav">
             
+                <li><a href="examples.html">Examples</a></li>
+                <li><a href="api.html">API</a></li>
                 <li><a href="https://github.com/CederGroupHub/smol">GitHub</a></li>
             
             
@@ -53,27 +59,24 @@
      href="index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><ul>
-<li class="toctree-l1"><a class="reference internal" href="smol.cofe.html">smol.cofe package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="smol.cofe.html#subpackages">Subpackages</a></li>
-<li class="toctree-l2"><a class="reference internal" href="smol.cofe.html#submodules">Submodules</a></li>
-</ul>
+      aria-labelledby="dLabelGlobalToc"></ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="smol.moca.html">smol.moca package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="smol.moca.html#subpackages">Subpackages</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="smol.io.html">smol.io module</a></li>
-</ul>
-</ul>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
 </li>
               
             
             
             
             
-            
-              <li class="hidden-sm"></li>
             
           </ul>
 
@@ -123,471 +126,269 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.moca.ensemble.sublattice.html#smol.moca.ensemble.sublattice.Sublattice.active_sites">active_sites (smol.moca.ensemble.sublattice.Sublattice attribute)</a>
+      <li><a href="smol.moca.ensemble.html#smol.moca.ensemble.sublattice.Sublattice.active_sites">active_sites (Sublattice attribute)</a>
 </li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.add_data">add_data() (smol.cofe.StructureWrangler method)</a>
+      <li><a href="api.html#smol.cofe.StructureWrangler.add_data">add_data() (StructureWrangler method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.add_data">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.add_data">[2]</a>
+</li>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.add_external_term">add_external_term() (ClusterSubspace method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.add_external_term">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.add_external_term">[2]</a>
+</li>
+      <li><a href="api.html#smol.moca.CompositeProcessor.add_processor">add_processor() (CompositeProcessor method)</a>, <a href="smol.moca.html#smol.moca.CompositeProcessor.add_processor">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.CompositeProcessor.add_processor">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.composite.CompositeProcessor.add_processor">[3]</a>
+</li>
+      <li><a href="api.html#smol.cofe.StructureWrangler.add_properties">add_properties() (StructureWrangler method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.add_properties">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.add_properties">[2]</a>
+</li>
+      <li><a href="api.html#smol.cofe.StructureWrangler.add_weights">add_weights() (StructureWrangler method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.add_weights">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.add_weights">[2]</a>
+</li>
+      <li><a href="api.html#smol.moca.SampleContainer.allocate">allocate() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.allocate">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.allocate">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.allocate">[3]</a>
+</li>
+      <li><a href="api.html#smol.moca.processor.base.Processor.allowed_species">allowed_species (Processor attribute)</a>, <a href="smol.moca.processor.html#smol.moca.processor.base.Processor.allowed_species">[1]</a>
+</li>
+      <li><a href="api.html#smol.moca.Sampler.anneal">anneal() (Sampler method)</a>, <a href="smol.moca.html#smol.moca.Sampler.anneal">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.sampler.Sampler.anneal">[2]</a>
+</li>
+      <li><a href="api.html#smol.cofe.StructureWrangler.append_data_items">append_data_items() (StructureWrangler method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.append_data_items">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.append_data_items">[2]</a>
+</li>
+      <li><a href="api.html#smol.moca.CEProcessor.as_dict">as_dict() (CEProcessor method)</a>, <a href="smol.moca.html#smol.moca.CEProcessor.as_dict">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.CEProcessor.as_dict">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.expansion.CEProcessor.as_dict">[3]</a>
 
       <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.add_data">(smol.cofe.wrangler.StructureWrangler method)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Cluster.as_dict">(Cluster method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.cluster.Cluster.as_dict">[1]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.add_external_term">add_external_term() (smol.cofe.ClusterSubspace method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.add_external_term">(smol.cofe.configspace.clusterspace.ClusterSubspace method)</a>
+        <li><a href="api.html#smol.cofe.ClusterExpansion.as_dict">(ClusterExpansion method)</a>, <a href="smol.cofe.html#smol.cofe.ClusterExpansion.as_dict">[1]</a>, <a href="smol.cofe.html#smol.cofe.expansion.ClusterExpansion.as_dict">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.CompositeProcessor.add_processor">add_processor() (smol.moca.CompositeProcessor method)</a>
-
-      <ul>
-        <li><a href="smol.moca.processor.composite.html#smol.moca.processor.composite.CompositeProcessor.add_processor">(smol.moca.processor.composite.CompositeProcessor method)</a>
+        <li><a href="api.html#smol.cofe.ClusterSubspace.as_dict">(ClusterSubspace method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.as_dict">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.as_dict">[2]</a>
 </li>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.CompositeProcessor.add_processor">(smol.moca.processor.CompositeProcessor method)</a>
+        <li><a href="api.html#smol.moca.CompositeProcessor.as_dict">(CompositeProcessor method)</a>, <a href="smol.moca.html#smol.moca.CompositeProcessor.as_dict">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.CompositeProcessor.as_dict">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.composite.CompositeProcessor.as_dict">[3]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.add_properties">add_properties() (smol.cofe.StructureWrangler method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.add_properties">(smol.cofe.wrangler.StructureWrangler method)</a>
+        <li><a href="api.html#smol.moca.ensemble.base.Ensemble.as_dict">(Ensemble method)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.as_dict">[1]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.add_weights">add_weights() (smol.cofe.StructureWrangler method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.add_weights">(smol.cofe.wrangler.StructureWrangler method)</a>
+        <li><a href="api.html#smol.moca.EwaldProcessor.as_dict">(EwaldProcessor method)</a>, <a href="smol.moca.html#smol.moca.EwaldProcessor.as_dict">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.EwaldProcessor.as_dict">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.ewald.EwaldProcessor.as_dict">[3]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.allocate">allocate() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.allocate">(smol.moca.sampler.container.SampleContainer method)</a>
+        <li><a href="smol.cofe.extern.html#smol.cofe.extern.EwaldTerm.as_dict">(EwaldTerm method)</a>, <a href="smol.cofe.extern.html#smol.cofe.extern.ewald.EwaldTerm.as_dict">[1]</a>
 </li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.allocate">(smol.moca.sampler.SampleContainer method)</a>
+        <li><a href="api.html#smol.moca.FuSemiGrandEnsemble.as_dict">(FuSemiGrandEnsemble method)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.FuSemiGrandEnsemble.as_dict">[1]</a>, <a href="smol.moca.html#smol.moca.FuSemiGrandEnsemble.as_dict">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.Sampler.anneal">anneal() (smol.moca.Sampler method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.sampler.html#smol.moca.sampler.sampler.Sampler.anneal">(smol.moca.sampler.sampler.Sampler method)</a>
+        <li><a href="api.html#smol.moca.MuSemiGrandEnsemble.as_dict">(MuSemiGrandEnsemble method)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.MuSemiGrandEnsemble.as_dict">[1]</a>, <a href="smol.moca.html#smol.moca.MuSemiGrandEnsemble.as_dict">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.append_data_items">append_data_items() (smol.cofe.StructureWrangler method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.append_data_items">(smol.cofe.wrangler.StructureWrangler method)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.as_dict">(Orbit method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.as_dict">[1]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterExpansion.as_dict">as_dict() (smol.cofe.ClusterExpansion method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.as_dict">(smol.cofe.ClusterSubspace method)</a>
+        <li><a href="api.html#smol.moca.processor.base.Processor.as_dict">(Processor method)</a>, <a href="smol.moca.processor.html#smol.moca.processor.base.Processor.as_dict">[1]</a>
 </li>
-        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Cluster.as_dict">(smol.cofe.configspace.Cluster method)</a>
+        <li><a href="api.html#smol.moca.SampleContainer.as_dict">(SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.as_dict">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.as_dict">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.as_dict">[3]</a>
 </li>
-        <li><a href="smol.cofe.configspace.cluster.html#smol.cofe.configspace.cluster.Cluster.as_dict">(smol.cofe.configspace.cluster.Cluster method)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.domain.SiteSpace.as_dict">(SiteSpace method)</a>
 </li>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.as_dict">(smol.cofe.configspace.clusterspace.ClusterSubspace method)</a>
+        <li><a href="api.html#smol.cofe.StructureWrangler.as_dict">(StructureWrangler method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.as_dict">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.as_dict">[2]</a>
 </li>
-        <li><a href="smol.cofe.configspace.domain.html#smol.cofe.configspace.domain.SiteSpace.as_dict">(smol.cofe.configspace.domain.SiteSpace method)</a>
-</li>
-        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.as_dict">(smol.cofe.configspace.Orbit method)</a>
-</li>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.as_dict">(smol.cofe.configspace.orbit.Orbit method)</a>
-</li>
-        <li><a href="smol.cofe.expansion.html#smol.cofe.expansion.ClusterExpansion.as_dict">(smol.cofe.expansion.ClusterExpansion method)</a>
-</li>
-        <li><a href="smol.cofe.extern.ewald.html#smol.cofe.extern.ewald.EwaldTerm.as_dict">(smol.cofe.extern.ewald.EwaldTerm method)</a>
-</li>
-        <li><a href="smol.cofe.extern.html#smol.cofe.extern.EwaldTerm.as_dict">(smol.cofe.extern.EwaldTerm method)</a>
-</li>
-        <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.as_dict">(smol.cofe.StructureWrangler method)</a>
-</li>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.as_dict">(smol.cofe.wrangler.StructureWrangler method)</a>
-</li>
-        <li><a href="smol.moca.html#smol.moca.CEProcessor.as_dict">(smol.moca.CEProcessor method)</a>
-</li>
-        <li><a href="smol.moca.html#smol.moca.CompositeProcessor.as_dict">(smol.moca.CompositeProcessor method)</a>
-</li>
-        <li><a href="smol.moca.ensemble.semigrand.html#smol.moca.ensemble.semigrand.FuSemiGrandEnsemble.as_dict">(smol.moca.ensemble.semigrand.FuSemiGrandEnsemble method)</a>
-</li>
-        <li><a href="smol.moca.ensemble.semigrand.html#smol.moca.ensemble.semigrand.MuSemiGrandEnsemble.as_dict">(smol.moca.ensemble.semigrand.MuSemiGrandEnsemble method)</a>
-</li>
-        <li><a href="smol.moca.ensemble.sublattice.html#smol.moca.ensemble.sublattice.Sublattice.as_dict">(smol.moca.ensemble.sublattice.Sublattice method)</a>
-</li>
-        <li><a href="smol.moca.html#smol.moca.EwaldProcessor.as_dict">(smol.moca.EwaldProcessor method)</a>
-</li>
-        <li><a href="smol.moca.html#smol.moca.FuSemiGrandEnsemble.as_dict">(smol.moca.FuSemiGrandEnsemble method)</a>
-</li>
-        <li><a href="smol.moca.html#smol.moca.MuSemiGrandEnsemble.as_dict">(smol.moca.MuSemiGrandEnsemble method)</a>
-</li>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.CEProcessor.as_dict">(smol.moca.processor.CEProcessor method)</a>
-</li>
-        <li><a href="smol.moca.processor.composite.html#smol.moca.processor.composite.CompositeProcessor.as_dict">(smol.moca.processor.composite.CompositeProcessor method)</a>
-</li>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.CompositeProcessor.as_dict">(smol.moca.processor.CompositeProcessor method)</a>
-</li>
-        <li><a href="smol.moca.processor.ewald.html#smol.moca.processor.ewald.EwaldProcessor.as_dict">(smol.moca.processor.ewald.EwaldProcessor method)</a>
-</li>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.EwaldProcessor.as_dict">(smol.moca.processor.EwaldProcessor method)</a>
-</li>
-        <li><a href="smol.moca.processor.expansion.html#smol.moca.processor.expansion.CEProcessor.as_dict">(smol.moca.processor.expansion.CEProcessor method)</a>
-</li>
-        <li><a href="smol.moca.html#smol.moca.SampleContainer.as_dict">(smol.moca.SampleContainer method)</a>
-</li>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.as_dict">(smol.moca.sampler.container.SampleContainer method)</a>
-</li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.as_dict">(smol.moca.sampler.SampleContainer method)</a>
+        <li><a href="smol.moca.ensemble.html#smol.moca.ensemble.sublattice.Sublattice.as_dict">(Sublattice method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Cluster.assign_ids">assign_ids() (smol.cofe.configspace.Cluster method)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Cluster.assign_ids">assign_ids() (Cluster method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.cluster.Cluster.assign_ids">[1]</a>
 
       <ul>
-        <li><a href="smol.cofe.configspace.cluster.html#smol.cofe.configspace.cluster.Cluster.assign_ids">(smol.cofe.configspace.cluster.Cluster method)</a>
-</li>
-        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.assign_ids">(smol.cofe.configspace.Orbit method)</a>
-</li>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.assign_ids">(smol.cofe.configspace.orbit.Orbit method)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.assign_ids">(Orbit method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.assign_ids">[1]</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.available_properties">available_properties() (smol.cofe.StructureWrangler property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.available_properties">(smol.cofe.wrangler.StructureWrangler property)</a>
+      <li><a href="api.html#smol.cofe.StructureWrangler.available_properties">available_properties() (StructureWrangler property)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.available_properties">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.available_properties">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.available_weights">available_weights() (smol.cofe.StructureWrangler property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.available_weights">(smol.cofe.wrangler.StructureWrangler property)</a>
+      <li><a href="api.html#smol.cofe.StructureWrangler.available_weights">available_weights() (StructureWrangler property)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.available_weights">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.available_weights">[2]</a>
 </li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.bases_array">bases_array() (smol.cofe.configspace.Orbit property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.bases_array">(smol.cofe.configspace.orbit.Orbit property)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.bases_array">bases_array() (Orbit property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.bases_array">[1]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.ensemble.semigrand.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble">BaseSemiGrandEnsemble (class in smol.moca.ensemble.semigrand)</a>
+      <li><a href="api.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble">BaseSemiGrandEnsemble (class in smol.moca.ensemble.semigrand)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble">[1]</a>
 </li>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.basis_arrays">basis_arrays() (smol.cofe.configspace.Orbit property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.basis_arrays">(smol.cofe.configspace.orbit.Orbit property)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.basis_arrays">basis_arrays() (Orbit property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.basis_arrays">[1]</a>
 </li>
-      </ul></li>
       <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis_factory">basis_factory() (in module smol.cofe.configspace)</a>
 
       <ul>
-        <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.basis_factory">(in module smol.cofe.configspace.basis)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.basis_factory">(in module smol.cofe.configspace.basis)</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.basis_orthogonal">basis_orthogonal() (smol.cofe.ClusterSubspace property)</a>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.basis_orthogonal">basis_orthogonal() (ClusterSubspace property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.basis_orthogonal">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.basis_orthogonal">[2]</a>
 
       <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.basis_orthogonal">(smol.cofe.configspace.clusterspace.ClusterSubspace property)</a>
-</li>
-        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.basis_orthogonal">(smol.cofe.configspace.Orbit property)</a>
-</li>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.basis_orthogonal">(smol.cofe.configspace.orbit.Orbit property)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.basis_orthonormal">basis_orthonormal() (smol.cofe.ClusterSubspace property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.basis_orthonormal">(smol.cofe.configspace.clusterspace.ClusterSubspace property)</a>
-</li>
-        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.basis_orthonormal">(smol.cofe.configspace.Orbit property)</a>
-</li>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.basis_orthonormal">(smol.cofe.configspace.orbit.Orbit property)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.basis_orthogonal">(Orbit property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.basis_orthogonal">[1]</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.BasisIterator">BasisIterator (class in smol.cofe.configspace.basis)</a>
-</li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.bit_combo_multiplicities">bit_combo_multiplicities() (smol.cofe.ClusterSubspace property)</a>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.basis_orthonormal">basis_orthonormal() (ClusterSubspace property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.basis_orthonormal">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.basis_orthonormal">[2]</a>
 
       <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.bit_combo_multiplicities">(smol.cofe.configspace.clusterspace.ClusterSubspace property)</a>
-</li>
-        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.bit_combo_multiplicities">(smol.cofe.configspace.Orbit property)</a>
-</li>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.bit_combo_multiplicities">(smol.cofe.configspace.orbit.Orbit property)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.basis_orthonormal">(Orbit property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.basis_orthonormal">[1]</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.bit_combos">bit_combos() (smol.cofe.configspace.Orbit property)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.BasisIterator">BasisIterator (class in smol.cofe.configspace.basis)</a>
+</li>
+      <li><a href="api.html#smol.moca.ensemble.base.Ensemble.beta">beta() (Ensemble property)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.beta">[1]</a>
+</li>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.bit_combo_multiplicities">bit_combo_multiplicities() (ClusterSubspace property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.bit_combo_multiplicities">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.bit_combo_multiplicities">[2]</a>
 
       <ul>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.bit_combos">(smol.cofe.configspace.orbit.Orbit property)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.bit_combo_multiplicities">(Orbit property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.bit_combo_multiplicities">[1]</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.bits">bits (smol.cofe.configspace.Orbit attribute)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.bits">(smol.cofe.configspace.orbit.Orbit attribute)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.bit_combos">bit_combos() (Orbit property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.bit_combos">[1]</a>
 </li>
-      </ul></li>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.bits">bits (Orbit attribute)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.bits">[1]</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.moca.html#smol.moca.CanonicalEnsemble">CanonicalEnsemble (class in smol.moca)</a>
+      <li><a href="api.html#smol.moca.CanonicalEnsemble">CanonicalEnsemble (class in smol.moca)</a>, <a href="smol.moca.html#smol.moca.CanonicalEnsemble">[1]</a>
 
       <ul>
-        <li><a href="smol.moca.ensemble.canonical.html#smol.moca.ensemble.canonical.CanonicalEnsemble">(class in smol.moca.ensemble.canonical)</a>
+        <li><a href="smol.moca.ensemble.html#smol.moca.ensemble.canonical.CanonicalEnsemble">(class in smol.moca.ensemble.canonical)</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Cluster.centroid">centroid (smol.cofe.configspace.Cluster attribute)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.cluster.html#smol.cofe.configspace.cluster.Cluster.centroid">(smol.cofe.configspace.cluster.Cluster attribute)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Cluster.centroid">centroid (Cluster attribute)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.cluster.Cluster.centroid">[1]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.CEProcessor">CEProcessor (class in smol.moca)</a>
+      <li><a href="api.html#smol.moca.CEProcessor">CEProcessor (class in smol.moca)</a>, <a href="smol.moca.html#smol.moca.CEProcessor">[1]</a>
 
       <ul>
         <li><a href="smol.moca.processor.html#smol.moca.processor.CEProcessor">(class in smol.moca.processor)</a>
 </li>
-        <li><a href="smol.moca.processor.expansion.html#smol.moca.processor.expansion.CEProcessor">(class in smol.moca.processor.expansion)</a>
+        <li><a href="smol.moca.processor.html#smol.moca.processor.expansion.CEProcessor">(class in smol.moca.processor.expansion)</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.change_site_bases">change_site_bases() (smol.cofe.ClusterSubspace method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.change_site_bases">(smol.cofe.configspace.clusterspace.ClusterSubspace method)</a>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.change_site_bases">change_site_bases() (ClusterSubspace method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.change_site_bases">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.change_site_bases">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.change_subspace">change_subspace() (smol.cofe.StructureWrangler method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.change_subspace">(smol.cofe.wrangler.StructureWrangler method)</a>
+      <li><a href="api.html#smol.cofe.StructureWrangler.change_subspace">change_subspace() (StructureWrangler method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.change_subspace">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.change_subspace">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.ChebyshevIterator">ChebyshevIterator (class in smol.cofe.configspace.basis)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.ChebyshevIterator">ChebyshevIterator (class in smol.cofe.configspace.basis)</a>
 </li>
-      <li><a href="smol.moca.ensemble.semigrand.html#smol.moca.ensemble.semigrand.MuSemiGrandEnsemble.chemical_potentials">chemical_potentials() (smol.moca.ensemble.semigrand.MuSemiGrandEnsemble property)</a>
-
-      <ul>
-        <li><a href="smol.moca.html#smol.moca.MuSemiGrandEnsemble.chemical_potentials">(smol.moca.MuSemiGrandEnsemble property)</a>
+      <li><a href="api.html#smol.moca.MuSemiGrandEnsemble.chemical_potentials">chemical_potentials() (MuSemiGrandEnsemble property)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.MuSemiGrandEnsemble.chemical_potentials">[1]</a>, <a href="smol.moca.html#smol.moca.MuSemiGrandEnsemble.chemical_potentials">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.clear">clear() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.clear">(smol.moca.sampler.container.SampleContainer method)</a>
+      <li><a href="api.html#smol.moca.SampleContainer.clear">clear() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.clear">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.clear">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.clear">[3]</a>
 </li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.clear">(smol.moca.sampler.SampleContainer method)</a>
+      <li><a href="api.html#smol.moca.Sampler.clear_samples">clear_samples() (Sampler method)</a>, <a href="smol.moca.html#smol.moca.Sampler.clear_samples">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.sampler.Sampler.clear_samples">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.Sampler.clear_samples">clear_samples() (smol.moca.Sampler method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.sampler.html#smol.moca.sampler.sampler.Sampler.clear_samples">(smol.moca.sampler.sampler.Sampler method)</a>
-</li>
-      </ul></li>
       <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Cluster">Cluster (class in smol.cofe.configspace)</a>
 
       <ul>
-        <li><a href="smol.cofe.configspace.cluster.html#smol.cofe.configspace.cluster.Cluster">(class in smol.cofe.configspace.cluster)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.cluster.Cluster">(class in smol.cofe.configspace.cluster)</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterExpansion.cluster_subspace">cluster_subspace() (smol.cofe.ClusterExpansion property)</a>
+      <li><a href="api.html#smol.cofe.ClusterExpansion.cluster_subspace">cluster_subspace() (ClusterExpansion property)</a>, <a href="smol.cofe.html#smol.cofe.ClusterExpansion.cluster_subspace">[1]</a>, <a href="smol.cofe.html#smol.cofe.expansion.ClusterExpansion.cluster_subspace">[2]</a>
 
       <ul>
-        <li><a href="smol.cofe.expansion.html#smol.cofe.expansion.ClusterExpansion.cluster_subspace">(smol.cofe.expansion.ClusterExpansion property)</a>
+        <li><a href="api.html#smol.moca.processor.base.Processor.cluster_subspace">(Processor property)</a>, <a href="smol.moca.processor.html#smol.moca.processor.base.Processor.cluster_subspace">[1]</a>
 </li>
-        <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.cluster_subspace">(smol.cofe.StructureWrangler property)</a>
-</li>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.cluster_subspace">(smol.cofe.wrangler.StructureWrangler property)</a>
+        <li><a href="api.html#smol.cofe.StructureWrangler.cluster_subspace">(StructureWrangler property)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.cluster_subspace">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.cluster_subspace">[2]</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.cluster_symops">cluster_symops() (smol.cofe.configspace.Orbit property)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.cluster_symops">cluster_symops() (Orbit property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.cluster_symops">[1]</a>
+</li>
+      <li><a href="api.html#smol.cofe.ClusterExpansion">ClusterExpansion (class in smol.cofe)</a>, <a href="smol.cofe.html#smol.cofe.ClusterExpansion">[1]</a>
 
       <ul>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.cluster_symops">(smol.cofe.configspace.orbit.Orbit property)</a>
+        <li><a href="smol.cofe.html#smol.cofe.expansion.ClusterExpansion">(class in smol.cofe.expansion)</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterExpansion">ClusterExpansion (class in smol.cofe)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.clusters">clusters() (Orbit property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.clusters">[1]</a>
+</li>
+      <li><a href="api.html#smol.cofe.ClusterSubspace">ClusterSubspace (class in smol.cofe)</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace">[1]</a>
 
       <ul>
-        <li><a href="smol.cofe.expansion.html#smol.cofe.expansion.ClusterExpansion">(class in smol.cofe.expansion)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace">(class in smol.cofe.configspace.clusterspace)</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.clusters">clusters() (smol.cofe.configspace.Orbit property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.clusters">(smol.cofe.configspace.orbit.Orbit property)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.domain.SiteSpace.codes">codes() (SiteSpace property)</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace">ClusterSubspace (class in smol.cofe)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace">(class in smol.cofe.configspace.clusterspace)</a>
+      <li><a href="api.html#smol.cofe.ClusterExpansion.coefficients">coefficients (ClusterExpansion attribute)</a>, <a href="smol.cofe.html#smol.cofe.ClusterExpansion.coefficients">[1]</a>, <a href="smol.cofe.html#smol.cofe.expansion.ClusterExpansion.coefficients">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.domain.html#smol.cofe.configspace.domain.SiteSpace.codes">codes() (smol.cofe.configspace.domain.SiteSpace property)</a>
+      <li><a href="api.html#smol.moca.CEProcessor.coefs">coefs (CEProcessor attribute)</a>, <a href="smol.moca.html#smol.moca.CEProcessor.coefs">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.CEProcessor.coefs">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.expansion.CEProcessor.coefs">[3]</a>
 </li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterExpansion.coefficients">coefficients (smol.cofe.ClusterExpansion attribute)</a>
-
-      <ul>
-        <li><a href="smol.cofe.expansion.html#smol.cofe.expansion.ClusterExpansion.coefficients">(smol.cofe.expansion.ClusterExpansion attribute)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.CEProcessor.coefs">coefs (smol.moca.CEProcessor attribute)</a>
-
-      <ul>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.CEProcessor.coefs">(smol.moca.processor.CEProcessor attribute)</a>
-</li>
-        <li><a href="smol.moca.processor.expansion.html#smol.moca.processor.expansion.CEProcessor.coefs">(smol.moca.processor.expansion.CEProcessor attribute)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.CompositeProcessor">CompositeProcessor (class in smol.moca)</a>
+      <li><a href="api.html#smol.moca.CompositeProcessor">CompositeProcessor (class in smol.moca)</a>, <a href="smol.moca.html#smol.moca.CompositeProcessor">[1]</a>
 
       <ul>
         <li><a href="smol.moca.processor.html#smol.moca.processor.CompositeProcessor">(class in smol.moca.processor)</a>
 </li>
-        <li><a href="smol.moca.processor.composite.html#smol.moca.processor.composite.CompositeProcessor">(class in smol.moca.processor.composite)</a>
+        <li><a href="smol.moca.processor.html#smol.moca.processor.composite.CompositeProcessor">(class in smol.moca.processor.composite)</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.configspace.domain.html#smol.cofe.configspace.domain.SiteSpace.composition">composition() (smol.cofe.configspace.domain.SiteSpace property)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.domain.SiteSpace.composition">composition() (SiteSpace property)</a>
 </li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.composition_variance">composition_variance() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.composition_variance">(smol.moca.sampler.container.SampleContainer method)</a>
-</li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.composition_variance">(smol.moca.sampler.SampleContainer method)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.moca.ensemble.semigrand.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.compute_chemical_work">compute_chemical_work() (smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble method)</a>
-
-      <ul>
-        <li><a href="smol.moca.ensemble.semigrand.html#smol.moca.ensemble.semigrand.FuSemiGrandEnsemble.compute_chemical_work">(smol.moca.ensemble.semigrand.FuSemiGrandEnsemble method)</a>
-</li>
-        <li><a href="smol.moca.ensemble.semigrand.html#smol.moca.ensemble.semigrand.MuSemiGrandEnsemble.compute_chemical_work">(smol.moca.ensemble.semigrand.MuSemiGrandEnsemble method)</a>
-</li>
-        <li><a href="smol.moca.html#smol.moca.FuSemiGrandEnsemble.compute_chemical_work">(smol.moca.FuSemiGrandEnsemble method)</a>
-</li>
-        <li><a href="smol.moca.html#smol.moca.MuSemiGrandEnsemble.compute_chemical_work">(smol.moca.MuSemiGrandEnsemble method)</a>
-</li>
-      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.moca.html#smol.moca.CanonicalEnsemble.compute_feature_vector">compute_feature_vector() (smol.moca.CanonicalEnsemble method)</a>
+      <li><a href="api.html#smol.moca.SampleContainer.composition_variance">composition_variance() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.composition_variance">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.composition_variance">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.composition_variance">[3]</a>
+</li>
+      <li><a href="api.html#smol.moca.processor.base.Processor.compute_average_drift">compute_average_drift() (Processor method)</a>, <a href="smol.moca.processor.html#smol.moca.processor.base.Processor.compute_average_drift">[1]</a>
+</li>
+      <li><a href="api.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.compute_chemical_work">compute_chemical_work() (BaseSemiGrandEnsemble method)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.compute_chemical_work">[1]</a>
 
       <ul>
-        <li><a href="smol.moca.html#smol.moca.CEProcessor.compute_feature_vector">(smol.moca.CEProcessor method)</a>
+        <li><a href="api.html#smol.moca.FuSemiGrandEnsemble.compute_chemical_work">(FuSemiGrandEnsemble method)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.FuSemiGrandEnsemble.compute_chemical_work">[1]</a>, <a href="smol.moca.html#smol.moca.FuSemiGrandEnsemble.compute_chemical_work">[2]</a>
 </li>
-        <li><a href="smol.moca.html#smol.moca.CompositeProcessor.compute_feature_vector">(smol.moca.CompositeProcessor method)</a>
-</li>
-        <li><a href="smol.moca.ensemble.canonical.html#smol.moca.ensemble.canonical.CanonicalEnsemble.compute_feature_vector">(smol.moca.ensemble.canonical.CanonicalEnsemble method)</a>
-</li>
-        <li><a href="smol.moca.ensemble.semigrand.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.compute_feature_vector">(smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble method)</a>
-</li>
-        <li><a href="smol.moca.html#smol.moca.EwaldProcessor.compute_feature_vector">(smol.moca.EwaldProcessor method)</a>
-</li>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.CEProcessor.compute_feature_vector">(smol.moca.processor.CEProcessor method)</a>
-</li>
-        <li><a href="smol.moca.processor.composite.html#smol.moca.processor.composite.CompositeProcessor.compute_feature_vector">(smol.moca.processor.composite.CompositeProcessor method)</a>
-</li>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.CompositeProcessor.compute_feature_vector">(smol.moca.processor.CompositeProcessor method)</a>
-</li>
-        <li><a href="smol.moca.processor.ewald.html#smol.moca.processor.ewald.EwaldProcessor.compute_feature_vector">(smol.moca.processor.ewald.EwaldProcessor method)</a>
-</li>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.EwaldProcessor.compute_feature_vector">(smol.moca.processor.EwaldProcessor method)</a>
-</li>
-        <li><a href="smol.moca.processor.expansion.html#smol.moca.processor.expansion.CEProcessor.compute_feature_vector">(smol.moca.processor.expansion.CEProcessor method)</a>
+        <li><a href="api.html#smol.moca.MuSemiGrandEnsemble.compute_chemical_work">(MuSemiGrandEnsemble method)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.MuSemiGrandEnsemble.compute_chemical_work">[1]</a>, <a href="smol.moca.html#smol.moca.MuSemiGrandEnsemble.compute_chemical_work">[2]</a>
 </li>
       </ul></li>
-      <li><a href="smol.moca.html#smol.moca.CanonicalEnsemble.compute_feature_vector_change">compute_feature_vector_change() (smol.moca.CanonicalEnsemble method)</a>
+      <li><a href="api.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.compute_feature_vector">compute_feature_vector() (BaseSemiGrandEnsemble method)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.compute_feature_vector">[1]</a>
 
       <ul>
-        <li><a href="smol.moca.html#smol.moca.CEProcessor.compute_feature_vector_change">(smol.moca.CEProcessor method)</a>
+        <li><a href="api.html#smol.moca.CanonicalEnsemble.compute_feature_vector">(CanonicalEnsemble method)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.canonical.CanonicalEnsemble.compute_feature_vector">[1]</a>, <a href="smol.moca.html#smol.moca.CanonicalEnsemble.compute_feature_vector">[2]</a>
 </li>
-        <li><a href="smol.moca.html#smol.moca.CompositeProcessor.compute_feature_vector_change">(smol.moca.CompositeProcessor method)</a>
+        <li><a href="api.html#smol.moca.CEProcessor.compute_feature_vector">(CEProcessor method)</a>, <a href="smol.moca.html#smol.moca.CEProcessor.compute_feature_vector">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.CEProcessor.compute_feature_vector">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.expansion.CEProcessor.compute_feature_vector">[3]</a>
 </li>
-        <li><a href="smol.moca.ensemble.canonical.html#smol.moca.ensemble.canonical.CanonicalEnsemble.compute_feature_vector_change">(smol.moca.ensemble.canonical.CanonicalEnsemble method)</a>
+        <li><a href="api.html#smol.moca.CompositeProcessor.compute_feature_vector">(CompositeProcessor method)</a>, <a href="smol.moca.html#smol.moca.CompositeProcessor.compute_feature_vector">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.CompositeProcessor.compute_feature_vector">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.composite.CompositeProcessor.compute_feature_vector">[3]</a>
 </li>
-        <li><a href="smol.moca.ensemble.semigrand.html#smol.moca.ensemble.semigrand.FuSemiGrandEnsemble.compute_feature_vector_change">(smol.moca.ensemble.semigrand.FuSemiGrandEnsemble method)</a>
+        <li><a href="api.html#smol.moca.ensemble.base.Ensemble.compute_feature_vector">(Ensemble method)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.compute_feature_vector">[1]</a>
 </li>
-        <li><a href="smol.moca.ensemble.semigrand.html#smol.moca.ensemble.semigrand.MuSemiGrandEnsemble.compute_feature_vector_change">(smol.moca.ensemble.semigrand.MuSemiGrandEnsemble method)</a>
+        <li><a href="api.html#smol.moca.EwaldProcessor.compute_feature_vector">(EwaldProcessor method)</a>, <a href="smol.moca.html#smol.moca.EwaldProcessor.compute_feature_vector">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.EwaldProcessor.compute_feature_vector">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.ewald.EwaldProcessor.compute_feature_vector">[3]</a>
 </li>
-        <li><a href="smol.moca.html#smol.moca.EwaldProcessor.compute_feature_vector_change">(smol.moca.EwaldProcessor method)</a>
-</li>
-        <li><a href="smol.moca.html#smol.moca.FuSemiGrandEnsemble.compute_feature_vector_change">(smol.moca.FuSemiGrandEnsemble method)</a>
-</li>
-        <li><a href="smol.moca.html#smol.moca.MuSemiGrandEnsemble.compute_feature_vector_change">(smol.moca.MuSemiGrandEnsemble method)</a>
-</li>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.CEProcessor.compute_feature_vector_change">(smol.moca.processor.CEProcessor method)</a>
-</li>
-        <li><a href="smol.moca.processor.composite.html#smol.moca.processor.composite.CompositeProcessor.compute_feature_vector_change">(smol.moca.processor.composite.CompositeProcessor method)</a>
-</li>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.CompositeProcessor.compute_feature_vector_change">(smol.moca.processor.CompositeProcessor method)</a>
-</li>
-        <li><a href="smol.moca.processor.ewald.html#smol.moca.processor.ewald.EwaldProcessor.compute_feature_vector_change">(smol.moca.processor.ewald.EwaldProcessor method)</a>
-</li>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.EwaldProcessor.compute_feature_vector_change">(smol.moca.processor.EwaldProcessor method)</a>
-</li>
-        <li><a href="smol.moca.processor.expansion.html#smol.moca.processor.expansion.CEProcessor.compute_feature_vector_change">(smol.moca.processor.expansion.CEProcessor method)</a>
+        <li><a href="api.html#smol.moca.processor.base.Processor.compute_feature_vector">(Processor method)</a>, <a href="smol.moca.processor.html#smol.moca.processor.base.Processor.compute_feature_vector">[1]</a>
 </li>
       </ul></li>
-      <li><a href="smol.moca.html#smol.moca.CompositeProcessor.compute_property">compute_property() (smol.moca.CompositeProcessor method)</a>
+      <li><a href="api.html#smol.moca.CanonicalEnsemble.compute_feature_vector_change">compute_feature_vector_change() (CanonicalEnsemble method)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.canonical.CanonicalEnsemble.compute_feature_vector_change">[1]</a>, <a href="smol.moca.html#smol.moca.CanonicalEnsemble.compute_feature_vector_change">[2]</a>
 
       <ul>
-        <li><a href="smol.moca.html#smol.moca.EwaldProcessor.compute_property">(smol.moca.EwaldProcessor method)</a>
+        <li><a href="api.html#smol.moca.CEProcessor.compute_feature_vector_change">(CEProcessor method)</a>, <a href="smol.moca.html#smol.moca.CEProcessor.compute_feature_vector_change">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.CEProcessor.compute_feature_vector_change">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.expansion.CEProcessor.compute_feature_vector_change">[3]</a>
 </li>
-        <li><a href="smol.moca.processor.composite.html#smol.moca.processor.composite.CompositeProcessor.compute_property">(smol.moca.processor.composite.CompositeProcessor method)</a>
+        <li><a href="api.html#smol.moca.CompositeProcessor.compute_feature_vector_change">(CompositeProcessor method)</a>, <a href="smol.moca.html#smol.moca.CompositeProcessor.compute_feature_vector_change">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.CompositeProcessor.compute_feature_vector_change">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.composite.CompositeProcessor.compute_feature_vector_change">[3]</a>
 </li>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.CompositeProcessor.compute_property">(smol.moca.processor.CompositeProcessor method)</a>
+        <li><a href="api.html#smol.moca.ensemble.base.Ensemble.compute_feature_vector_change">(Ensemble method)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.compute_feature_vector_change">[1]</a>
 </li>
-        <li><a href="smol.moca.processor.ewald.html#smol.moca.processor.ewald.EwaldProcessor.compute_property">(smol.moca.processor.ewald.EwaldProcessor method)</a>
+        <li><a href="api.html#smol.moca.EwaldProcessor.compute_feature_vector_change">(EwaldProcessor method)</a>, <a href="smol.moca.html#smol.moca.EwaldProcessor.compute_feature_vector_change">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.EwaldProcessor.compute_feature_vector_change">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.ewald.EwaldProcessor.compute_feature_vector_change">[3]</a>
 </li>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.EwaldProcessor.compute_property">(smol.moca.processor.EwaldProcessor method)</a>
+        <li><a href="api.html#smol.moca.FuSemiGrandEnsemble.compute_feature_vector_change">(FuSemiGrandEnsemble method)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.FuSemiGrandEnsemble.compute_feature_vector_change">[1]</a>, <a href="smol.moca.html#smol.moca.FuSemiGrandEnsemble.compute_feature_vector_change">[2]</a>
+</li>
+        <li><a href="api.html#smol.moca.MuSemiGrandEnsemble.compute_feature_vector_change">(MuSemiGrandEnsemble method)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.MuSemiGrandEnsemble.compute_feature_vector_change">[1]</a>, <a href="smol.moca.html#smol.moca.MuSemiGrandEnsemble.compute_feature_vector_change">[2]</a>
+</li>
+        <li><a href="api.html#smol.moca.processor.base.Processor.compute_feature_vector_change">(Processor method)</a>, <a href="smol.moca.processor.html#smol.moca.processor.base.Processor.compute_feature_vector_change">[1]</a>
 </li>
       </ul></li>
-      <li><a href="smol.moca.html#smol.moca.CompositeProcessor.compute_property_change">compute_property_change() (smol.moca.CompositeProcessor method)</a>
+      <li><a href="api.html#smol.moca.CompositeProcessor.compute_property">compute_property() (CompositeProcessor method)</a>, <a href="smol.moca.html#smol.moca.CompositeProcessor.compute_property">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.CompositeProcessor.compute_property">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.composite.CompositeProcessor.compute_property">[3]</a>
 
       <ul>
-        <li><a href="smol.moca.html#smol.moca.EwaldProcessor.compute_property_change">(smol.moca.EwaldProcessor method)</a>
+        <li><a href="api.html#smol.moca.EwaldProcessor.compute_property">(EwaldProcessor method)</a>, <a href="smol.moca.html#smol.moca.EwaldProcessor.compute_property">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.EwaldProcessor.compute_property">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.ewald.EwaldProcessor.compute_property">[3]</a>
 </li>
-        <li><a href="smol.moca.processor.composite.html#smol.moca.processor.composite.CompositeProcessor.compute_property_change">(smol.moca.processor.composite.CompositeProcessor method)</a>
-</li>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.CompositeProcessor.compute_property_change">(smol.moca.processor.CompositeProcessor method)</a>
-</li>
-        <li><a href="smol.moca.processor.ewald.html#smol.moca.processor.ewald.EwaldProcessor.compute_property_change">(smol.moca.processor.ewald.EwaldProcessor method)</a>
-</li>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.EwaldProcessor.compute_property_change">(smol.moca.processor.EwaldProcessor method)</a>
+        <li><a href="api.html#smol.moca.processor.base.Processor.compute_property">(Processor method)</a>, <a href="smol.moca.processor.html#smol.moca.processor.base.Processor.compute_property">[1]</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterExpansion.convert_eci">convert_eci() (smol.cofe.ClusterExpansion method)</a>
+      <li><a href="api.html#smol.moca.CompositeProcessor.compute_property_change">compute_property_change() (CompositeProcessor method)</a>, <a href="smol.moca.html#smol.moca.CompositeProcessor.compute_property_change">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.CompositeProcessor.compute_property_change">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.composite.CompositeProcessor.compute_property_change">[3]</a>
 
       <ul>
-        <li><a href="smol.cofe.expansion.html#smol.cofe.expansion.ClusterExpansion.convert_eci">(smol.cofe.expansion.ClusterExpansion method)</a>
+        <li><a href="api.html#smol.moca.EwaldProcessor.compute_property_change">(EwaldProcessor method)</a>, <a href="smol.moca.html#smol.moca.EwaldProcessor.compute_property_change">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.EwaldProcessor.compute_property_change">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.ewald.EwaldProcessor.compute_property_change">[3]</a>
+</li>
+        <li><a href="api.html#smol.moca.processor.base.Processor.compute_property_change">(Processor method)</a>, <a href="smol.moca.processor.html#smol.moca.processor.base.Processor.compute_property_change">[1]</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.copy">copy() (smol.cofe.ClusterSubspace method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.copy">(smol.cofe.configspace.clusterspace.ClusterSubspace method)</a>
+      <li><a href="api.html#smol.cofe.ClusterExpansion.convert_eci">convert_eci() (ClusterExpansion method)</a>, <a href="smol.cofe.html#smol.cofe.ClusterExpansion.convert_eci">[1]</a>, <a href="smol.cofe.html#smol.cofe.expansion.ClusterExpansion.convert_eci">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.corr_from_structure">corr_from_structure() (smol.cofe.ClusterSubspace method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.corr_from_structure">(smol.cofe.configspace.clusterspace.ClusterSubspace method)</a>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.copy">copy() (ClusterSubspace method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.copy">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.copy">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.cos_f">cos_f() (in module smol.cofe.configspace.basis)</a>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.corr_from_structure">corr_from_structure() (ClusterSubspace method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.corr_from_structure">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.corr_from_structure">[2]</a>
+</li>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.cos_f">cos_f() (in module smol.cofe.configspace.basis)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -595,256 +396,146 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.data_items">data_items() (smol.cofe.StructureWrangler property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.data_items">(smol.cofe.wrangler.StructureWrangler property)</a>
+      <li><a href="api.html#smol.cofe.StructureWrangler.data_items">data_items() (StructureWrangler property)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.data_items">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.data_items">[2]</a>
 </li>
-      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#smol.moca.processor.base.Processor.decode_occupancy">decode_occupancy() (Processor method)</a>, <a href="smol.moca.processor.html#smol.moca.processor.base.Processor.decode_occupancy">[1]</a>
+</li>
+      <li><a href="smol.html#smol.utils.derived_class_factory">derived_class_factory() (in module smol.utils)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterExpansion.eci">eci() (smol.cofe.ClusterExpansion property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.expansion.html#smol.cofe.expansion.ClusterExpansion.eci">(smol.cofe.expansion.ClusterExpansion property)</a>
+      <li><a href="api.html#smol.cofe.ClusterExpansion.eci">eci() (ClusterExpansion property)</a>, <a href="smol.cofe.html#smol.cofe.ClusterExpansion.eci">[1]</a>, <a href="smol.cofe.html#smol.cofe.expansion.ClusterExpansion.eci">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterExpansion.eci_orbit_ids">eci_orbit_ids() (smol.cofe.ClusterExpansion property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.expansion.html#smol.cofe.expansion.ClusterExpansion.eci_orbit_ids">(smol.cofe.expansion.ClusterExpansion property)</a>
+      <li><a href="api.html#smol.cofe.ClusterExpansion.eci_orbit_ids">eci_orbit_ids() (ClusterExpansion property)</a>, <a href="smol.cofe.html#smol.cofe.ClusterExpansion.eci_orbit_ids">[1]</a>, <a href="smol.cofe.html#smol.cofe.expansion.ClusterExpansion.eci_orbit_ids">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.Sampler.efficiency">efficiency() (smol.moca.Sampler method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.sampler.html#smol.moca.sampler.sampler.Sampler.efficiency">(smol.moca.sampler.sampler.Sampler method)</a>
+      <li><a href="api.html#smol.moca.Sampler.efficiency">efficiency() (Sampler method)</a>, <a href="smol.moca.html#smol.moca.Sampler.efficiency">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.sampler.Sampler.efficiency">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.encode_domain">encode_domain() (in module smol.cofe.configspace.basis)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.encode_domain">encode_domain() (in module smol.cofe.configspace.basis)</a>
 </li>
-      <li><a href="smol.moca.ensemble.sublattice.html#smol.moca.ensemble.sublattice.Sublattice.encoding">encoding() (smol.moca.ensemble.sublattice.Sublattice property)</a>
+      <li><a href="api.html#smol.moca.processor.base.Processor.encode_occupancy">encode_occupancy() (Processor method)</a>, <a href="smol.moca.processor.html#smol.moca.processor.base.Processor.encode_occupancy">[1]</a>
 </li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.energy_variance">energy_variance() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.energy_variance">(smol.moca.sampler.container.SampleContainer method)</a>
+      <li><a href="smol.moca.ensemble.html#smol.moca.ensemble.sublattice.Sublattice.encoding">encoding() (Sublattice property)</a>
 </li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.energy_variance">(smol.moca.sampler.SampleContainer method)</a>
+      <li><a href="api.html#smol.moca.SampleContainer.energy_variance">energy_variance() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.energy_variance">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.energy_variance">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.energy_variance">[3]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.enthalpy_variance">enthalpy_variance() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.enthalpy_variance">(smol.moca.sampler.container.SampleContainer method)</a>
+      <li><a href="api.html#smol.moca.ensemble.base.Ensemble">Ensemble (class in smol.moca.ensemble.base)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble">[1]</a>
 </li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.enthalpy_variance">(smol.moca.sampler.SampleContainer method)</a>
+      <li><a href="api.html#smol.moca.SampleContainer.enthalpy_variance">enthalpy_variance() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.enthalpy_variance">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.enthalpy_variance">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.enthalpy_variance">[3]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.eval">eval() (smol.cofe.configspace.Orbit method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.eval">(smol.cofe.configspace.orbit.Orbit method)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.eval">eval() (Orbit method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.eval">[1]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.EwaldProcessor.ewald_matrix">ewald_matrix() (smol.moca.EwaldProcessor property)</a>
-
-      <ul>
-        <li><a href="smol.moca.processor.ewald.html#smol.moca.processor.ewald.EwaldProcessor.ewald_matrix">(smol.moca.processor.ewald.EwaldProcessor property)</a>
-</li>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.EwaldProcessor.ewald_matrix">(smol.moca.processor.EwaldProcessor property)</a>
-</li>
-      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.moca.html#smol.moca.EwaldProcessor.ewald_summation">ewald_summation() (smol.moca.EwaldProcessor property)</a>
-
-      <ul>
-        <li><a href="smol.moca.processor.ewald.html#smol.moca.processor.ewald.EwaldProcessor.ewald_summation">(smol.moca.processor.ewald.EwaldProcessor property)</a>
+      <li><a href="api.html#smol.moca.EwaldProcessor.ewald_matrix">ewald_matrix() (EwaldProcessor property)</a>, <a href="smol.moca.html#smol.moca.EwaldProcessor.ewald_matrix">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.EwaldProcessor.ewald_matrix">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.ewald.EwaldProcessor.ewald_matrix">[3]</a>
 </li>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.EwaldProcessor.ewald_summation">(smol.moca.processor.EwaldProcessor property)</a>
+      <li><a href="api.html#smol.moca.EwaldProcessor.ewald_summation">ewald_summation() (EwaldProcessor property)</a>, <a href="smol.moca.html#smol.moca.EwaldProcessor.ewald_summation">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.EwaldProcessor.ewald_summation">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.ewald.EwaldProcessor.ewald_summation">[3]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.extern.ewald.html#smol.cofe.extern.ewald.EwaldTerm.ewald_term_options">ewald_term_options (smol.cofe.extern.ewald.EwaldTerm attribute)</a>
-
-      <ul>
-        <li><a href="smol.cofe.extern.html#smol.cofe.extern.EwaldTerm.ewald_term_options">(smol.cofe.extern.EwaldTerm attribute)</a>
+      <li><a href="smol.cofe.extern.html#smol.cofe.extern.EwaldTerm.ewald_term_options">ewald_term_options (EwaldTerm attribute)</a>, <a href="smol.cofe.extern.html#smol.cofe.extern.ewald.EwaldTerm.ewald_term_options">[1]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.EwaldProcessor">EwaldProcessor (class in smol.moca)</a>
+      <li><a href="api.html#smol.moca.EwaldProcessor">EwaldProcessor (class in smol.moca)</a>, <a href="smol.moca.html#smol.moca.EwaldProcessor">[1]</a>
 
       <ul>
         <li><a href="smol.moca.processor.html#smol.moca.processor.EwaldProcessor">(class in smol.moca.processor)</a>
 </li>
-        <li><a href="smol.moca.processor.ewald.html#smol.moca.processor.ewald.EwaldProcessor">(class in smol.moca.processor.ewald)</a>
+        <li><a href="smol.moca.processor.html#smol.moca.processor.ewald.EwaldProcessor">(class in smol.moca.processor.ewald)</a>
 </li>
       </ul></li>
       <li><a href="smol.cofe.extern.html#smol.cofe.extern.EwaldTerm">EwaldTerm (class in smol.cofe.extern)</a>
 
       <ul>
-        <li><a href="smol.cofe.extern.ewald.html#smol.cofe.extern.ewald.EwaldTerm">(class in smol.cofe.extern.ewald)</a>
+        <li><a href="smol.cofe.extern.html#smol.cofe.extern.ewald.EwaldTerm">(class in smol.cofe.extern.ewald)</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterExpansion.expansion_structure">expansion_structure() (smol.cofe.ClusterExpansion property)</a>
+      <li><a href="api.html#smol.cofe.ClusterExpansion.expansion_structure">expansion_structure() (ClusterExpansion property)</a>, <a href="smol.cofe.html#smol.cofe.ClusterExpansion.expansion_structure">[1]</a>, <a href="smol.cofe.html#smol.cofe.expansion.ClusterExpansion.expansion_structure">[2]</a>
 
       <ul>
-        <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.expansion_structure">(smol.cofe.ClusterSubspace property)</a>
-</li>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.expansion_structure">(smol.cofe.configspace.clusterspace.ClusterSubspace property)</a>
-</li>
-        <li><a href="smol.cofe.expansion.html#smol.cofe.expansion.ClusterExpansion.expansion_structure">(smol.cofe.expansion.ClusterExpansion property)</a>
+        <li><a href="api.html#smol.cofe.ClusterSubspace.expansion_structure">(ClusterSubspace property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.expansion_structure">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.expansion_structure">[2]</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.external_terms">external_terms() (smol.cofe.ClusterSubspace property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.external_terms">(smol.cofe.configspace.clusterspace.ClusterSubspace property)</a>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.external_terms">external_terms() (ClusterSubspace property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.external_terms">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.external_terms">[2]</a>
 </li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.feature_matrix">feature_matrix() (smol.cofe.StructureWrangler property)</a>
+      <li><a href="api.html#smol.cofe.StructureWrangler.feature_matrix">feature_matrix() (StructureWrangler property)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.feature_matrix">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.feature_matrix">[2]</a>
+</li>
+      <li><a href="api.html#smol.moca.SampleContainer.feature_vector_variance">feature_vector_variance() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.feature_vector_variance">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.feature_vector_variance">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.feature_vector_variance">[3]</a>
+</li>
+      <li><a href="api.html#smol.cofe.StructureWrangler.filter_by_ewald">filter_by_ewald() (StructureWrangler method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.filter_by_ewald">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.filter_by_ewald">[2]</a>
+</li>
+      <li><a href="smol.cofe.configspace.html#id0">flavor (BasisIterator attribute)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.BasisIterator.flavor">[1]</a>
 
       <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.feature_matrix">(smol.cofe.wrangler.StructureWrangler property)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.IndicatorIterator.flavor">(IndicatorIterator attribute)</a>
+</li>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.SinusoidIterator.flavor">(SinusoidIterator attribute)</a>
 </li>
       </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.feature_vector_variance">feature_vector_variance() (smol.moca.SampleContainer method)</a>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.Flipper">Flipper (class in smol.moca.sampler.mcusher)</a>
+</li>
+      <li><a href="api.html#smol.moca.ensemble.base.Ensemble.from_cluster_expansion">from_cluster_expansion() (Ensemble class method)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.from_cluster_expansion">[1]</a>
+</li>
+      <li><a href="api.html#smol.moca.CanonicalEnsemble.from_dict">from_dict() (CanonicalEnsemble class method)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.canonical.CanonicalEnsemble.from_dict">[1]</a>, <a href="smol.moca.html#smol.moca.CanonicalEnsemble.from_dict">[2]</a>
 
       <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.feature_vector_variance">(smol.moca.sampler.container.SampleContainer method)</a>
+        <li><a href="api.html#smol.moca.CEProcessor.from_dict">(CEProcessor class method)</a>, <a href="smol.moca.html#smol.moca.CEProcessor.from_dict">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.CEProcessor.from_dict">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.expansion.CEProcessor.from_dict">[3]</a>
 </li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.feature_vector_variance">(smol.moca.sampler.SampleContainer method)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Cluster.from_dict">(Cluster class method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.cluster.Cluster.from_dict">[1]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.filter_by_ewald">filter_by_ewald() (smol.cofe.StructureWrangler method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.filter_by_ewald">(smol.cofe.wrangler.StructureWrangler method)</a>
+        <li><a href="api.html#smol.cofe.ClusterExpansion.from_dict">(ClusterExpansion class method)</a>, <a href="smol.cofe.html#smol.cofe.ClusterExpansion.from_dict">[1]</a>, <a href="smol.cofe.html#smol.cofe.expansion.ClusterExpansion.from_dict">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.BasisIterator.flavor">flavor (smol.cofe.configspace.basis.BasisIterator attribute)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.IndicatorIterator.flavor">(smol.cofe.configspace.basis.IndicatorIterator attribute)</a>
+        <li><a href="api.html#smol.cofe.ClusterSubspace.from_dict">(ClusterSubspace class method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.from_dict">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.from_dict">[2]</a>
 </li>
-        <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.SinusoidIterator.flavor">(smol.cofe.configspace.basis.SinusoidIterator attribute)</a>
+        <li><a href="api.html#smol.moca.CompositeProcessor.from_dict">(CompositeProcessor class method)</a>, <a href="smol.moca.html#smol.moca.CompositeProcessor.from_dict">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.CompositeProcessor.from_dict">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.composite.CompositeProcessor.from_dict">[3]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.sampler.mcusher.html#smol.moca.sampler.mcusher.Flipper">Flipper (class in smol.moca.sampler.mcusher)</a>
+        <li><a href="api.html#smol.moca.EwaldProcessor.from_dict">(EwaldProcessor class method)</a>, <a href="smol.moca.html#smol.moca.EwaldProcessor.from_dict">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.EwaldProcessor.from_dict">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.ewald.EwaldProcessor.from_dict">[3]</a>
 </li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterExpansion.from_dict">from_dict() (smol.cofe.ClusterExpansion class method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.from_dict">(smol.cofe.ClusterSubspace class method)</a>
+        <li><a href="smol.cofe.extern.html#smol.cofe.extern.EwaldTerm.from_dict">(EwaldTerm class method)</a>, <a href="smol.cofe.extern.html#smol.cofe.extern.ewald.EwaldTerm.from_dict">[1]</a>
 </li>
-        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Cluster.from_dict">(smol.cofe.configspace.Cluster class method)</a>
+        <li><a href="api.html#smol.moca.FuSemiGrandEnsemble.from_dict">(FuSemiGrandEnsemble class method)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.FuSemiGrandEnsemble.from_dict">[1]</a>, <a href="smol.moca.html#smol.moca.FuSemiGrandEnsemble.from_dict">[2]</a>
 </li>
-        <li><a href="smol.cofe.configspace.cluster.html#smol.cofe.configspace.cluster.Cluster.from_dict">(smol.cofe.configspace.cluster.Cluster class method)</a>
+        <li><a href="api.html#smol.moca.MuSemiGrandEnsemble.from_dict">(MuSemiGrandEnsemble class method)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.MuSemiGrandEnsemble.from_dict">[1]</a>, <a href="smol.moca.html#smol.moca.MuSemiGrandEnsemble.from_dict">[2]</a>
 </li>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.from_dict">(smol.cofe.configspace.clusterspace.ClusterSubspace class method)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.from_dict">(Orbit class method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.from_dict">[1]</a>
 </li>
-        <li><a href="smol.cofe.configspace.domain.html#smol.cofe.configspace.domain.SiteSpace.from_dict">(smol.cofe.configspace.domain.SiteSpace class method)</a>
+        <li><a href="api.html#smol.moca.processor.base.Processor.from_dict">(Processor class method)</a>, <a href="smol.moca.processor.html#smol.moca.processor.base.Processor.from_dict">[1]</a>
 </li>
-        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.from_dict">(smol.cofe.configspace.Orbit class method)</a>
+        <li><a href="api.html#smol.moca.SampleContainer.from_dict">(SampleContainer class method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.from_dict">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.from_dict">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.from_dict">[3]</a>
 </li>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.from_dict">(smol.cofe.configspace.orbit.Orbit class method)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.domain.SiteSpace.from_dict">(SiteSpace class method)</a>
 </li>
-        <li><a href="smol.cofe.expansion.html#smol.cofe.expansion.ClusterExpansion.from_dict">(smol.cofe.expansion.ClusterExpansion class method)</a>
+        <li><a href="api.html#smol.cofe.StructureWrangler.from_dict">(StructureWrangler class method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.from_dict">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.from_dict">[2]</a>
 </li>
-        <li><a href="smol.cofe.extern.ewald.html#smol.cofe.extern.ewald.EwaldTerm.from_dict">(smol.cofe.extern.ewald.EwaldTerm class method)</a>
-</li>
-        <li><a href="smol.cofe.extern.html#smol.cofe.extern.EwaldTerm.from_dict">(smol.cofe.extern.EwaldTerm class method)</a>
-</li>
-        <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.from_dict">(smol.cofe.StructureWrangler class method)</a>
-</li>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.from_dict">(smol.cofe.wrangler.StructureWrangler class method)</a>
-</li>
-        <li><a href="smol.moca.html#smol.moca.CanonicalEnsemble.from_dict">(smol.moca.CanonicalEnsemble class method)</a>
-</li>
-        <li><a href="smol.moca.html#smol.moca.CEProcessor.from_dict">(smol.moca.CEProcessor class method)</a>
-</li>
-        <li><a href="smol.moca.html#smol.moca.CompositeProcessor.from_dict">(smol.moca.CompositeProcessor class method)</a>
-</li>
-        <li><a href="smol.moca.ensemble.canonical.html#smol.moca.ensemble.canonical.CanonicalEnsemble.from_dict">(smol.moca.ensemble.canonical.CanonicalEnsemble class method)</a>
-</li>
-        <li><a href="smol.moca.ensemble.semigrand.html#smol.moca.ensemble.semigrand.FuSemiGrandEnsemble.from_dict">(smol.moca.ensemble.semigrand.FuSemiGrandEnsemble class method)</a>
-</li>
-        <li><a href="smol.moca.ensemble.semigrand.html#smol.moca.ensemble.semigrand.MuSemiGrandEnsemble.from_dict">(smol.moca.ensemble.semigrand.MuSemiGrandEnsemble class method)</a>
-</li>
-        <li><a href="smol.moca.ensemble.sublattice.html#smol.moca.ensemble.sublattice.Sublattice.from_dict">(smol.moca.ensemble.sublattice.Sublattice class method)</a>
-</li>
-        <li><a href="smol.moca.html#smol.moca.EwaldProcessor.from_dict">(smol.moca.EwaldProcessor class method)</a>
-</li>
-        <li><a href="smol.moca.html#smol.moca.FuSemiGrandEnsemble.from_dict">(smol.moca.FuSemiGrandEnsemble class method)</a>
-</li>
-        <li><a href="smol.moca.html#smol.moca.MuSemiGrandEnsemble.from_dict">(smol.moca.MuSemiGrandEnsemble class method)</a>
-</li>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.CEProcessor.from_dict">(smol.moca.processor.CEProcessor class method)</a>
-</li>
-        <li><a href="smol.moca.processor.composite.html#smol.moca.processor.composite.CompositeProcessor.from_dict">(smol.moca.processor.composite.CompositeProcessor class method)</a>
-</li>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.CompositeProcessor.from_dict">(smol.moca.processor.CompositeProcessor class method)</a>
-</li>
-        <li><a href="smol.moca.processor.ewald.html#smol.moca.processor.ewald.EwaldProcessor.from_dict">(smol.moca.processor.ewald.EwaldProcessor class method)</a>
-</li>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.EwaldProcessor.from_dict">(smol.moca.processor.EwaldProcessor class method)</a>
-</li>
-        <li><a href="smol.moca.processor.expansion.html#smol.moca.processor.expansion.CEProcessor.from_dict">(smol.moca.processor.expansion.CEProcessor class method)</a>
-</li>
-        <li><a href="smol.moca.html#smol.moca.SampleContainer.from_dict">(smol.moca.SampleContainer class method)</a>
-</li>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.from_dict">(smol.moca.sampler.container.SampleContainer class method)</a>
-</li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.from_dict">(smol.moca.sampler.SampleContainer class method)</a>
+        <li><a href="smol.moca.ensemble.html#smol.moca.ensemble.sublattice.Sublattice.from_dict">(Sublattice class method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.moca.html#smol.moca.Sampler.from_ensemble">from_ensemble() (smol.moca.Sampler class method)</a>
+      <li><a href="api.html#smol.moca.Sampler.from_ensemble">from_ensemble() (Sampler class method)</a>, <a href="smol.moca.html#smol.moca.Sampler.from_ensemble">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.sampler.Sampler.from_ensemble">[2]</a>
+</li>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.from_radii">from_radii() (ClusterSubspace class method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.from_radii">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.from_radii">[2]</a>
+</li>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Cluster.from_sites">from_sites() (Cluster class method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.cluster.Cluster.from_sites">[1]</a>
+</li>
+      <li><a href="api.html#smol.moca.FuSemiGrandEnsemble.fugacity_fractions">fugacity_fractions() (FuSemiGrandEnsemble property)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.FuSemiGrandEnsemble.fugacity_fractions">[1]</a>, <a href="smol.moca.html#smol.moca.FuSemiGrandEnsemble.fugacity_fractions">[2]</a>
+</li>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.SiteBasis.function_array">function_array() (SiteBasis property)</a>
+</li>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.function_orbit_ids">function_orbit_ids() (ClusterSubspace property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.function_orbit_ids">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.function_orbit_ids">[2]</a>
+</li>
+      <li><a href="api.html#smol.moca.FuSemiGrandEnsemble">FuSemiGrandEnsemble (class in smol.moca)</a>, <a href="smol.moca.html#smol.moca.FuSemiGrandEnsemble">[1]</a>
 
       <ul>
-        <li><a href="smol.moca.sampler.sampler.html#smol.moca.sampler.sampler.Sampler.from_ensemble">(smol.moca.sampler.sampler.Sampler class method)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.from_radii">from_radii() (smol.cofe.ClusterSubspace class method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.from_radii">(smol.cofe.configspace.clusterspace.ClusterSubspace class method)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Cluster.from_sites">from_sites() (smol.cofe.configspace.Cluster class method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.cluster.html#smol.cofe.configspace.cluster.Cluster.from_sites">(smol.cofe.configspace.cluster.Cluster class method)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.moca.ensemble.semigrand.html#smol.moca.ensemble.semigrand.FuSemiGrandEnsemble.fugacity_fractions">fugacity_fractions() (smol.moca.ensemble.semigrand.FuSemiGrandEnsemble property)</a>
-
-      <ul>
-        <li><a href="smol.moca.html#smol.moca.FuSemiGrandEnsemble.fugacity_fractions">(smol.moca.FuSemiGrandEnsemble property)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.SiteBasis.function_array">function_array() (smol.cofe.configspace.basis.SiteBasis property)</a>
-</li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.function_orbit_ids">function_orbit_ids() (smol.cofe.ClusterSubspace property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.function_orbit_ids">(smol.cofe.configspace.clusterspace.ClusterSubspace property)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.FuSemiGrandEnsemble">FuSemiGrandEnsemble (class in smol.moca)</a>
-
-      <ul>
-        <li><a href="smol.moca.ensemble.semigrand.html#smol.moca.ensemble.semigrand.FuSemiGrandEnsemble">(class in smol.moca.ensemble.semigrand)</a>
+        <li><a href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.FuSemiGrandEnsemble">(class in smol.moca.ensemble.semigrand)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -856,222 +547,106 @@
       <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.get_allowed_species">get_allowed_species() (in module smol.cofe.configspace)</a>
 
       <ul>
-        <li><a href="smol.cofe.configspace.domain.html#smol.cofe.configspace.domain.get_allowed_species">(in module smol.cofe.configspace.domain)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.domain.get_allowed_species">(in module smol.cofe.configspace.domain)</a>
 </li>
       </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.get_compositions">get_compositions() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.get_compositions">(smol.moca.sampler.container.SampleContainer method)</a>
+      <li><a href="api.html#smol.moca.SampleContainer.get_compositions">get_compositions() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.get_compositions">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_compositions">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.get_compositions">[3]</a>
 </li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_compositions">(smol.moca.sampler.SampleContainer method)</a>
+      <li><a href="api.html#smol.cofe.StructureWrangler.get_condition_number">get_condition_number() (StructureWrangler method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.get_condition_number">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.get_condition_number">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.get_condition_number">get_condition_number() (smol.cofe.StructureWrangler method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.get_condition_number">(smol.cofe.wrangler.StructureWrangler method)</a>
+      <li><a href="api.html#smol.moca.SampleContainer.get_energies">get_energies() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.get_energies">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_energies">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.get_energies">[3]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.get_energies">get_energies() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.get_energies">(smol.moca.sampler.container.SampleContainer method)</a>
+      <li><a href="api.html#smol.moca.SampleContainer.get_enthalpies">get_enthalpies() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.get_enthalpies">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_enthalpies">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.get_enthalpies">[3]</a>
 </li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_energies">(smol.moca.sampler.SampleContainer method)</a>
+      <li><a href="smol.cofe.extern.html#smol.cofe.extern.EwaldTerm.get_ewald_matrix">get_ewald_matrix() (EwaldTerm method)</a>, <a href="smol.cofe.extern.html#smol.cofe.extern.ewald.EwaldTerm.get_ewald_matrix">[1]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.get_enthalpies">get_enthalpies() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.get_enthalpies">(smol.moca.sampler.container.SampleContainer method)</a>
+      <li><a href="smol.cofe.extern.html#smol.cofe.extern.EwaldTerm.get_ewald_occu">get_ewald_occu() (EwaldTerm static method)</a>, <a href="smol.cofe.extern.html#smol.cofe.extern.ewald.EwaldTerm.get_ewald_occu">[1]</a>
 </li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_enthalpies">(smol.moca.sampler.SampleContainer method)</a>
+      <li><a href="smol.cofe.extern.html#smol.cofe.extern.EwaldTerm.get_ewald_structure">get_ewald_structure() (EwaldTerm static method)</a>, <a href="smol.cofe.extern.html#smol.cofe.extern.ewald.EwaldTerm.get_ewald_structure">[1]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.extern.ewald.html#smol.cofe.extern.ewald.EwaldTerm.get_ewald_matrix">get_ewald_matrix() (smol.cofe.extern.ewald.EwaldTerm method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.extern.html#smol.cofe.extern.EwaldTerm.get_ewald_matrix">(smol.cofe.extern.EwaldTerm method)</a>
+      <li><a href="api.html#smol.moca.SampleContainer.get_feature_vectors">get_feature_vectors() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.get_feature_vectors">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_feature_vectors">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.get_feature_vectors">[3]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.extern.ewald.html#smol.cofe.extern.ewald.EwaldTerm.get_ewald_occu">get_ewald_occu() (smol.cofe.extern.ewald.EwaldTerm static method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.extern.html#smol.cofe.extern.EwaldTerm.get_ewald_occu">(smol.cofe.extern.EwaldTerm static method)</a>
+      <li><a href="api.html#smol.cofe.StructureWrangler.get_matrix_rank">get_matrix_rank() (StructureWrangler method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.get_matrix_rank">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.get_matrix_rank">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.extern.ewald.html#smol.cofe.extern.ewald.EwaldTerm.get_ewald_structure">get_ewald_structure() (smol.cofe.extern.ewald.EwaldTerm static method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.extern.html#smol.cofe.extern.EwaldTerm.get_ewald_structure">(smol.cofe.extern.EwaldTerm static method)</a>
+      <li><a href="api.html#smol.moca.SampleContainer.get_minimum_energy">get_minimum_energy() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.get_minimum_energy">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_minimum_energy">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.get_minimum_energy">[3]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.get_feature_vectors">get_feature_vectors() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.get_feature_vectors">(smol.moca.sampler.container.SampleContainer method)</a>
+      <li><a href="api.html#smol.moca.SampleContainer.get_minimum_energy_occupancy">get_minimum_energy_occupancy() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.get_minimum_energy_occupancy">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_minimum_energy_occupancy">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.get_minimum_energy_occupancy">[3]</a>
 </li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_feature_vectors">(smol.moca.sampler.SampleContainer method)</a>
+      <li><a href="api.html#smol.moca.SampleContainer.get_minimum_enthalpy">get_minimum_enthalpy() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.get_minimum_enthalpy">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_minimum_enthalpy">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.get_minimum_enthalpy">[3]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.get_matrix_rank">get_matrix_rank() (smol.cofe.StructureWrangler method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.get_matrix_rank">(smol.cofe.wrangler.StructureWrangler method)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.get_minimum_energy">get_minimum_energy() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.get_minimum_energy">(smol.moca.sampler.container.SampleContainer method)</a>
-</li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_minimum_energy">(smol.moca.sampler.SampleContainer method)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.get_minimum_energy_occupancy">get_minimum_energy_occupancy() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.get_minimum_energy_occupancy">(smol.moca.sampler.container.SampleContainer method)</a>
-</li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_minimum_energy_occupancy">(smol.moca.sampler.SampleContainer method)</a>
-</li>
-      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.get_minimum_enthalpy">get_minimum_enthalpy() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.get_minimum_enthalpy">(smol.moca.sampler.container.SampleContainer method)</a>
+      <li><a href="api.html#smol.moca.SampleContainer.get_minimum_enthalpy_occupancy">get_minimum_enthalpy_occupancy() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.get_minimum_enthalpy_occupancy">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_minimum_enthalpy_occupancy">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.get_minimum_enthalpy_occupancy">[3]</a>
 </li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_minimum_enthalpy">(smol.moca.sampler.SampleContainer method)</a>
+      <li><a href="api.html#smol.moca.SampleContainer.get_occupancies">get_occupancies() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.get_occupancies">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_occupancies">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.get_occupancies">[3]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.get_minimum_enthalpy_occupancy">get_minimum_enthalpy_occupancy() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.get_minimum_enthalpy_occupancy">(smol.moca.sampler.container.SampleContainer method)</a>
+      <li><a href="api.html#smol.cofe.StructureWrangler.get_property_vector">get_property_vector() (StructureWrangler method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.get_property_vector">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.get_property_vector">[2]</a>
 </li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_minimum_enthalpy_occupancy">(smol.moca.sampler.SampleContainer method)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.get_occupancies">get_occupancies() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.get_occupancies">(smol.moca.sampler.container.SampleContainer method)</a>
-</li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_occupancies">(smol.moca.sampler.SampleContainer method)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.get_property_vector">get_property_vector() (smol.cofe.StructureWrangler method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.get_property_vector">(smol.cofe.wrangler.StructureWrangler method)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.moca.sampler.mcusher.html#smol.moca.sampler.mcusher.MCMCUsher.get_random_sublattice">get_random_sublattice() (smol.moca.sampler.mcusher.MCMCUsher method)</a>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.MCMCUsher.get_random_sublattice">get_random_sublattice() (MCMCUsher method)</a>
 </li>
       <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.get_site_spaces">get_site_spaces() (in module smol.cofe.configspace)</a>
 
       <ul>
-        <li><a href="smol.cofe.configspace.domain.html#smol.cofe.configspace.domain.get_site_spaces">(in module smol.cofe.configspace.domain)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.domain.get_site_spaces">(in module smol.cofe.configspace.domain)</a>
 </li>
       </ul></li>
       <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.get_specie">get_specie() (in module smol.cofe.configspace)</a>
 
       <ul>
-        <li><a href="smol.cofe.configspace.domain.html#smol.cofe.configspace.domain.get_specie">(in module smol.cofe.configspace.domain)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.domain.get_specie">(in module smol.cofe.configspace.domain)</a>
 </li>
       </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.get_species_counts">get_species_counts() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.get_species_counts">(smol.moca.sampler.container.SampleContainer method)</a>
+      <li><a href="api.html#smol.moca.SampleContainer.get_species_counts">get_species_counts() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.get_species_counts">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_species_counts">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.get_species_counts">[3]</a>
 </li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_species_counts">(smol.moca.sampler.SampleContainer method)</a>
+      <li><a href="smol.html#smol.utils.get_subclasses">get_subclasses() (in module smol.utils)</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.get_sublattice_compositions">get_sublattice_compositions() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.get_sublattice_compositions">(smol.moca.sampler.container.SampleContainer method)</a>
+      <li><a href="api.html#smol.moca.SampleContainer.get_sublattice_compositions">get_sublattice_compositions() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.get_sublattice_compositions">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_sublattice_compositions">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.get_sublattice_compositions">[3]</a>
 </li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_sublattice_compositions">(smol.moca.sampler.SampleContainer method)</a>
+      <li><a href="api.html#smol.moca.SampleContainer.get_sublattice_species_counts">get_sublattice_species_counts() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.get_sublattice_species_counts">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_sublattice_species_counts">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.get_sublattice_species_counts">[3]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.get_sublattice_species_counts">get_sublattice_species_counts() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.get_sublattice_species_counts">(smol.moca.sampler.container.SampleContainer method)</a>
+      <li><a href="smol.moca.ensemble.html#smol.moca.ensemble.sublattice.get_sublattices">get_sublattices() (in module smol.moca.ensemble.sublattice)</a>
 </li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_sublattice_species_counts">(smol.moca.sampler.SampleContainer method)</a>
+      <li><a href="api.html#smol.moca.SampleContainer.get_temperatures">get_temperatures() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.get_temperatures">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_temperatures">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.get_temperatures">[3]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.ensemble.sublattice.html#smol.moca.ensemble.sublattice.get_sublattices">get_sublattices() (in module smol.moca.ensemble.sublattice)</a>
+      <li><a href="api.html#smol.cofe.StructureWrangler.get_weights">get_weights() (StructureWrangler method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.get_weights">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.get_weights">[2]</a>
 </li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.get_temperatures">get_temperatures() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.get_temperatures">(smol.moca.sampler.container.SampleContainer method)</a>
-</li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_temperatures">(smol.moca.sampler.SampleContainer method)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.get_weights">get_weights() (smol.cofe.StructureWrangler method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.get_weights">(smol.cofe.wrangler.StructureWrangler method)</a>
-</li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Cluster.id">id (smol.cofe.configspace.Cluster attribute)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.cluster.html#smol.cofe.configspace.cluster.Cluster.id">(smol.cofe.configspace.cluster.Cluster attribute)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Cluster.id">id (Cluster attribute)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.cluster.Cluster.id">[1]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.indicator">indicator() (in module smol.cofe.configspace.basis)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.indicator">indicator() (in module smol.cofe.configspace.basis)</a>
 </li>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.IndicatorIterator">IndicatorIterator (class in smol.cofe.configspace.basis)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.IndicatorIterator">IndicatorIterator (class in smol.cofe.configspace.basis)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.SiteBasis.is_orthogonal">is_orthogonal() (smol.cofe.configspace.basis.SiteBasis property)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.SiteBasis.is_orthogonal">is_orthogonal() (SiteBasis property)</a>
 </li>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.SiteBasis.is_orthonormal">is_orthonormal() (smol.cofe.configspace.basis.SiteBasis property)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.SiteBasis.is_orthonormal">is_orthonormal() (SiteBasis property)</a>
 </li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.iterorbits">iterorbits() (smol.cofe.ClusterSubspace method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.iterorbits">(smol.cofe.configspace.clusterspace.ClusterSubspace method)</a>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.iterorbits">iterorbits() (ClusterSubspace method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.iterorbits">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.iterorbits">[2]</a>
 </li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Cluster.lattice">lattice (smol.cofe.configspace.Cluster attribute)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Cluster.lattice">lattice (Cluster attribute)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.cluster.Cluster.lattice">[1]</a>
 
       <ul>
-        <li><a href="smol.cofe.configspace.cluster.html#smol.cofe.configspace.cluster.Cluster.lattice">(smol.cofe.configspace.cluster.Cluster attribute)</a>
-</li>
-        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.lattice">(smol.cofe.configspace.Orbit attribute)</a>
-</li>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.lattice">(smol.cofe.configspace.orbit.Orbit attribute)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.lattice">(Orbit attribute)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.lattice">[1]</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.LegendreIterator">LegendreIterator (class in smol.cofe.configspace.basis)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.LegendreIterator">LegendreIterator (class in smol.cofe.configspace.basis)</a>
 </li>
-      <li><a href="smol.io.html#smol.io.load_work">load_work() (in module smol.io)</a>
+      <li><a href="smol.html#smol.io.load_work">load_work() (in module smol.io)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1079,86 +654,40 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.moca.sampler.kernel.html#smol.moca.sampler.kernel.MCMCKernel">MCMCKernel (class in smol.moca.sampler.kernel)</a>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCMCKernel">MCMCKernel (class in smol.moca.sampler.kernel)</a>
 </li>
-      <li><a href="smol.moca.html#smol.moca.Sampler.mcmckernel">mcmckernel() (smol.moca.Sampler property)</a>
+      <li><a href="api.html#smol.moca.Sampler.mcmckernel">mcmckernel() (Sampler property)</a>, <a href="smol.moca.html#smol.moca.Sampler.mcmckernel">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.sampler.Sampler.mcmckernel">[2]</a>
+</li>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.mcmckernel_factory">mcmckernel_factory() (in module smol.moca.sampler.kernel)</a>
+</li>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.MCMCUsher">MCMCUsher (class in smol.moca.sampler.mcusher)</a>
+</li>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.mcusher_factory">mcusher_factory() (in module smol.moca.sampler.mcusher)</a>
+</li>
+      <li><a href="api.html#smol.moca.SampleContainer.mean_composition">mean_composition() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.mean_composition">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.mean_composition">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.mean_composition">[3]</a>
+</li>
+      <li><a href="api.html#smol.moca.SampleContainer.mean_energy">mean_energy() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.mean_energy">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.mean_energy">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.mean_energy">[3]</a>
+</li>
+      <li><a href="api.html#smol.moca.SampleContainer.mean_enthalpy">mean_enthalpy() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.mean_enthalpy">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.mean_enthalpy">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.mean_enthalpy">[3]</a>
+</li>
+      <li><a href="api.html#smol.moca.SampleContainer.mean_feature_vector">mean_feature_vector() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.mean_feature_vector">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.mean_feature_vector">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.mean_feature_vector">[3]</a>
+</li>
+      <li><a href="api.html#smol.moca.SampleContainer.mean_sublattice_composition">mean_sublattice_composition() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.mean_sublattice_composition">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.mean_sublattice_composition">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.mean_sublattice_composition">[3]</a>
+</li>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.SiteBasis.measure_array">measure_array() (SiteBasis property)</a>
+</li>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.SiteBasis.measure_vector">measure_vector() (SiteBasis property)</a>
+</li>
+      <li><a href="api.html#smol.cofe.ClusterExpansion.metadata">metadata (ClusterExpansion attribute)</a>, <a href="smol.cofe.html#smol.cofe.ClusterExpansion.metadata">[1]</a>, <a href="smol.cofe.html#smol.cofe.expansion.ClusterExpansion.metadata">[2]</a>
 
       <ul>
-        <li><a href="smol.moca.sampler.sampler.html#smol.moca.sampler.sampler.Sampler.mcmckernel">(smol.moca.sampler.sampler.Sampler property)</a>
+        <li><a href="api.html#smol.moca.SampleContainer.metadata">(SampleContainer attribute)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.metadata">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.metadata">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.metadata">[3]</a>
 </li>
       </ul></li>
-      <li><a href="smol.moca.sampler.kernel.html#smol.moca.sampler.kernel.mcmckernel_factory">mcmckernel_factory() (in module smol.moca.sampler.kernel)</a>
+      <li><a href="api.html#smol.cofe.StructureWrangler.metadata">metadata() (StructureWrangler property)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.metadata">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.metadata">[2]</a>
 </li>
-      <li><a href="smol.moca.sampler.mcusher.html#smol.moca.sampler.mcusher.MCMCUsher">MCMCUsher (class in smol.moca.sampler.mcusher)</a>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.Metropolis">Metropolis (class in smol.moca.sampler.kernel)</a>
 </li>
-      <li><a href="smol.moca.sampler.mcusher.html#smol.moca.sampler.mcusher.mcusher_factory">mcusher_factory() (in module smol.moca.sampler.mcusher)</a>
-</li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.mean_composition">mean_composition() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.mean_composition">(smol.moca.sampler.container.SampleContainer method)</a>
-</li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.mean_composition">(smol.moca.sampler.SampleContainer method)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.mean_energy">mean_energy() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.mean_energy">(smol.moca.sampler.container.SampleContainer method)</a>
-</li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.mean_energy">(smol.moca.sampler.SampleContainer method)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.mean_enthalpy">mean_enthalpy() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.mean_enthalpy">(smol.moca.sampler.container.SampleContainer method)</a>
-</li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.mean_enthalpy">(smol.moca.sampler.SampleContainer method)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.mean_feature_vector">mean_feature_vector() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.mean_feature_vector">(smol.moca.sampler.container.SampleContainer method)</a>
-</li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.mean_feature_vector">(smol.moca.sampler.SampleContainer method)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.mean_sublattice_composition">mean_sublattice_composition() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.mean_sublattice_composition">(smol.moca.sampler.container.SampleContainer method)</a>
-</li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.mean_sublattice_composition">(smol.moca.sampler.SampleContainer method)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.SiteBasis.measure_array">measure_array() (smol.cofe.configspace.basis.SiteBasis property)</a>
-</li>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.SiteBasis.measure_vector">measure_vector() (smol.cofe.configspace.basis.SiteBasis property)</a>
-</li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterExpansion.metadata">metadata (smol.cofe.ClusterExpansion attribute)</a>
-
-      <ul>
-        <li><a href="smol.cofe.expansion.html#smol.cofe.expansion.ClusterExpansion.metadata">(smol.cofe.expansion.ClusterExpansion attribute)</a>
-</li>
-        <li><a href="smol.moca.html#smol.moca.SampleContainer.metadata">(smol.moca.SampleContainer attribute)</a>
-</li>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.metadata">(smol.moca.sampler.container.SampleContainer attribute)</a>
-</li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.metadata">(smol.moca.sampler.SampleContainer attribute)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.metadata">metadata() (smol.cofe.StructureWrangler property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.metadata">(smol.cofe.wrangler.StructureWrangler property)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.moca.sampler.kernel.html#smol.moca.sampler.kernel.Metropolis">Metropolis (class in smol.moca.sampler.kernel)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     module
 
@@ -1169,65 +698,75 @@
 </li>
         <li><a href="smol.cofe.configspace.html#module-smol.cofe.configspace">smol.cofe.configspace</a>
 </li>
-        <li><a href="smol.cofe.configspace.basis.html#module-smol.cofe.configspace.basis">smol.cofe.configspace.basis</a>
+        <li><a href="smol.cofe.configspace.html#module-smol.cofe.configspace.basis">smol.cofe.configspace.basis</a>
 </li>
-        <li><a href="smol.cofe.configspace.cluster.html#module-smol.cofe.configspace.cluster">smol.cofe.configspace.cluster</a>
+        <li><a href="smol.cofe.configspace.html#module-smol.cofe.configspace.cluster">smol.cofe.configspace.cluster</a>
 </li>
-        <li><a href="smol.cofe.configspace.clusterspace.html#module-smol.cofe.configspace.clusterspace">smol.cofe.configspace.clusterspace</a>
+        <li><a href="smol.cofe.configspace.html#module-smol.cofe.configspace.clusterspace">smol.cofe.configspace.clusterspace</a>
 </li>
-        <li><a href="smol.cofe.configspace.domain.html#module-smol.cofe.configspace.domain">smol.cofe.configspace.domain</a>
+        <li><a href="smol.cofe.configspace.html#module-smol.cofe.configspace.constants">smol.cofe.configspace.constants</a>
 </li>
-        <li><a href="smol.cofe.configspace.orbit.html#module-smol.cofe.configspace.orbit">smol.cofe.configspace.orbit</a>
+        <li><a href="smol.cofe.configspace.html#module-smol.cofe.configspace.domain">smol.cofe.configspace.domain</a>
 </li>
-        <li><a href="smol.cofe.expansion.html#module-smol.cofe.expansion">smol.cofe.expansion</a>
+        <li><a href="smol.cofe.configspace.html#module-smol.cofe.configspace.orbit">smol.cofe.configspace.orbit</a>
+</li>
+        <li><a href="smol.cofe.html#module-smol.cofe.expansion">smol.cofe.expansion</a>
 </li>
         <li><a href="smol.cofe.extern.html#module-smol.cofe.extern">smol.cofe.extern</a>
 </li>
-        <li><a href="smol.cofe.extern.ewald.html#module-smol.cofe.extern.ewald">smol.cofe.extern.ewald</a>
+        <li><a href="smol.cofe.extern.html#module-smol.cofe.extern.ewald">smol.cofe.extern.ewald</a>
 </li>
-        <li><a href="smol.cofe.wrangler.html#module-smol.cofe.wrangler">smol.cofe.wrangler</a>
+        <li><a href="smol.cofe.html#module-smol.cofe.wrangler">smol.cofe.wrangler</a>
 </li>
-        <li><a href="smol.io.html#module-smol.io">smol.io</a>
+        <li><a href="smol.html#module-smol.constants">smol.constants</a>
+</li>
+        <li><a href="smol.html#module-smol.exceptions">smol.exceptions</a>
+</li>
+        <li><a href="smol.html#module-smol.io">smol.io</a>
 </li>
         <li><a href="smol.moca.html#module-smol.moca">smol.moca</a>
 </li>
         <li><a href="smol.moca.ensemble.html#module-smol.moca.ensemble">smol.moca.ensemble</a>
 </li>
-        <li><a href="smol.moca.ensemble.canonical.html#module-smol.moca.ensemble.canonical">smol.moca.ensemble.canonical</a>
+        <li><a href="smol.moca.ensemble.html#module-smol.moca.ensemble.base">smol.moca.ensemble.base</a>
 </li>
-        <li><a href="smol.moca.ensemble.semigrand.html#module-smol.moca.ensemble.semigrand">smol.moca.ensemble.semigrand</a>
+        <li><a href="smol.moca.ensemble.html#module-smol.moca.ensemble.canonical">smol.moca.ensemble.canonical</a>
 </li>
-        <li><a href="smol.moca.ensemble.sublattice.html#module-smol.moca.ensemble.sublattice">smol.moca.ensemble.sublattice</a>
+        <li><a href="smol.moca.ensemble.html#module-smol.moca.ensemble.semigrand">smol.moca.ensemble.semigrand</a>
+</li>
+        <li><a href="smol.moca.ensemble.html#module-smol.moca.ensemble.sublattice">smol.moca.ensemble.sublattice</a>
 </li>
         <li><a href="smol.moca.processor.html#module-smol.moca.processor">smol.moca.processor</a>
 </li>
-        <li><a href="smol.moca.processor.composite.html#module-smol.moca.processor.composite">smol.moca.processor.composite</a>
+        <li><a href="smol.moca.processor.html#module-smol.moca.processor.base">smol.moca.processor.base</a>
 </li>
-        <li><a href="smol.moca.processor.ewald.html#module-smol.moca.processor.ewald">smol.moca.processor.ewald</a>
+        <li><a href="smol.moca.processor.html#module-smol.moca.processor.composite">smol.moca.processor.composite</a>
 </li>
-        <li><a href="smol.moca.processor.expansion.html#module-smol.moca.processor.expansion">smol.moca.processor.expansion</a>
+        <li><a href="smol.moca.processor.html#module-smol.moca.processor.ewald">smol.moca.processor.ewald</a>
+</li>
+        <li><a href="smol.moca.processor.html#module-smol.moca.processor.expansion">smol.moca.processor.expansion</a>
 </li>
         <li><a href="smol.moca.sampler.html#module-smol.moca.sampler">smol.moca.sampler</a>
 </li>
-        <li><a href="smol.moca.sampler.container.html#module-smol.moca.sampler.container">smol.moca.sampler.container</a>
+        <li><a href="smol.moca.sampler.html#module-smol.moca.sampler.container">smol.moca.sampler.container</a>
 </li>
-        <li><a href="smol.moca.sampler.kernel.html#module-smol.moca.sampler.kernel">smol.moca.sampler.kernel</a>
+        <li><a href="smol.moca.sampler.html#module-smol.moca.sampler.kernel">smol.moca.sampler.kernel</a>
 </li>
-        <li><a href="smol.moca.sampler.mcusher.html#module-smol.moca.sampler.mcusher">smol.moca.sampler.mcusher</a>
+        <li><a href="smol.moca.sampler.html#module-smol.moca.sampler.mcusher">smol.moca.sampler.mcusher</a>
 </li>
-        <li><a href="smol.moca.sampler.sampler.html#module-smol.moca.sampler.sampler">smol.moca.sampler.sampler</a>
+        <li><a href="smol.moca.sampler.html#module-smol.moca.sampler.sampler">smol.moca.sampler.sampler</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.multiplicity">multiplicity() (smol.cofe.configspace.Orbit property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.multiplicity">(smol.cofe.configspace.orbit.Orbit property)</a>
+        <li><a href="smol.html#module-smol.utils">smol.utils</a>
 </li>
       </ul></li>
-      <li><a href="smol.moca.html#smol.moca.MuSemiGrandEnsemble">MuSemiGrandEnsemble (class in smol.moca)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.multiplicity">multiplicity() (Orbit property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.multiplicity">[1]</a>
+</li>
+      <li><a href="api.html#smol.moca.MuSemiGrandEnsemble">MuSemiGrandEnsemble (class in smol.moca)</a>, <a href="smol.moca.html#smol.moca.MuSemiGrandEnsemble">[1]</a>
 
       <ul>
-        <li><a href="smol.moca.ensemble.semigrand.html#smol.moca.ensemble.semigrand.MuSemiGrandEnsemble">(class in smol.moca.ensemble.semigrand)</a>
+        <li><a href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.MuSemiGrandEnsemble">(class in smol.moca.ensemble.semigrand)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -1236,73 +775,43 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.n_bit_orderings">n_bit_orderings() (smol.cofe.configspace.Orbit property)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.n_bit_orderings">n_bit_orderings() (Orbit property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.n_bit_orderings">[1]</a>
+</li>
+      <li><a href="api.html#smol.moca.CEProcessor.n_orbit_functions">n_orbit_functions (CEProcessor attribute)</a>, <a href="smol.moca.html#smol.moca.CEProcessor.n_orbit_functions">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.CEProcessor.n_orbit_functions">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.expansion.CEProcessor.n_orbit_functions">[3]</a>
+</li>
+      <li><a href="api.html#smol.moca.SampleContainer.natural_parameters">natural_parameters (SampleContainer attribute)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.natural_parameters">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.natural_parameters">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.natural_parameters">[3]</a>
+</li>
+      <li><a href="api.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.natural_parameters">natural_parameters() (BaseSemiGrandEnsemble property)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.natural_parameters">[1]</a>
 
       <ul>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.n_bit_orderings">(smol.cofe.configspace.orbit.Orbit property)</a>
+        <li><a href="api.html#smol.moca.CanonicalEnsemble.natural_parameters">(CanonicalEnsemble property)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.canonical.CanonicalEnsemble.natural_parameters">[1]</a>, <a href="smol.moca.html#smol.moca.CanonicalEnsemble.natural_parameters">[2]</a>
+</li>
+        <li><a href="api.html#smol.moca.ensemble.base.Ensemble.natural_parameters">(Ensemble property)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.natural_parameters">[1]</a>
 </li>
       </ul></li>
-      <li><a href="smol.moca.html#smol.moca.CEProcessor.n_orbit_functions">n_orbit_functions (smol.moca.CEProcessor attribute)</a>
-
-      <ul>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.CEProcessor.n_orbit_functions">(smol.moca.processor.CEProcessor attribute)</a>
+      <li><a href="smol.html#smol.exceptions.NotFittedError">NotFittedError</a>
 </li>
-        <li><a href="smol.moca.processor.expansion.html#smol.moca.processor.expansion.CEProcessor.n_orbit_functions">(smol.moca.processor.expansion.CEProcessor attribute)</a>
+      <li><a href="api.html#smol.moca.ensemble.base.Ensemble.num_energy_coefs">num_energy_coefs (Ensemble attribute)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.num_energy_coefs">[1]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.natural_parameters">natural_parameters (smol.moca.SampleContainer attribute)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.natural_parameters">(smol.moca.sampler.container.SampleContainer attribute)</a>
-</li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.natural_parameters">(smol.moca.sampler.SampleContainer attribute)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.CanonicalEnsemble.natural_parameters">natural_parameters() (smol.moca.CanonicalEnsemble property)</a>
-
-      <ul>
-        <li><a href="smol.moca.ensemble.canonical.html#smol.moca.ensemble.canonical.CanonicalEnsemble.natural_parameters">(smol.moca.ensemble.canonical.CanonicalEnsemble property)</a>
-</li>
-        <li><a href="smol.moca.ensemble.semigrand.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.natural_parameters">(smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble property)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.num_features">num_features() (smol.cofe.StructureWrangler property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.num_features">(smol.cofe.wrangler.StructureWrangler property)</a>
-</li>
-      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.num_prims_from_matrix">num_prims_from_matrix() (smol.cofe.ClusterSubspace static method)</a>
+      <li><a href="api.html#smol.cofe.StructureWrangler.num_features">num_features() (StructureWrangler property)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.num_features">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.num_features">[2]</a>
+</li>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.num_prims_from_matrix">num_prims_from_matrix() (ClusterSubspace static method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.num_prims_from_matrix">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.num_prims_from_matrix">[2]</a>
+</li>
+      <li><a href="api.html#smol.moca.SampleContainer.num_samples">num_samples() (SampleContainer property)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.num_samples">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.num_samples">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.num_samples">[3]</a>
+</li>
+      <li><a href="api.html#smol.moca.SampleContainer.num_sites">num_sites (SampleContainer attribute)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.num_sites">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.num_sites">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.num_sites">[3]</a>
+</li>
+      <li><a href="api.html#smol.moca.ensemble.base.Ensemble.num_sites">num_sites() (Ensemble property)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.num_sites">[1]</a>
 
       <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.num_prims_from_matrix">(smol.cofe.configspace.clusterspace.ClusterSubspace static method)</a>
+        <li><a href="api.html#smol.moca.processor.base.Processor.num_sites">(Processor property)</a>, <a href="smol.moca.processor.html#smol.moca.processor.base.Processor.num_sites">[1]</a>
 </li>
       </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.num_samples">num_samples() (smol.moca.SampleContainer property)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.num_samples">(smol.moca.sampler.container.SampleContainer property)</a>
+      <li><a href="api.html#smol.cofe.StructureWrangler.num_structures">num_structures() (StructureWrangler property)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.num_structures">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.num_structures">[2]</a>
 </li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.num_samples">(smol.moca.sampler.SampleContainer property)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.num_sites">num_sites (smol.moca.SampleContainer attribute)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.num_sites">(smol.moca.sampler.container.SampleContainer attribute)</a>
-</li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.num_sites">(smol.moca.sampler.SampleContainer attribute)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.num_structures">num_structures() (smol.cofe.StructureWrangler property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.num_structures">(smol.cofe.wrangler.StructureWrangler property)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.NumpyPolyIterator">NumpyPolyIterator (class in smol.cofe.configspace.basis)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.NumpyPolyIterator">NumpyPolyIterator (class in smol.cofe.configspace.basis)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1310,61 +819,35 @@
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.occupancy_from_structure">occupancy_from_structure() (smol.cofe.ClusterSubspace method)</a>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.occupancy_from_structure">occupancy_from_structure() (ClusterSubspace method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.occupancy_from_structure">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.occupancy_from_structure">[2]</a>
 
       <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.occupancy_from_structure">(smol.cofe.configspace.clusterspace.ClusterSubspace method)</a>
+        <li><a href="api.html#smol.moca.processor.base.Processor.occupancy_from_structure">(Processor method)</a>, <a href="smol.moca.processor.html#smol.moca.processor.base.Processor.occupancy_from_structure">[1]</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.occupancy_strings">occupancy_strings() (smol.cofe.StructureWrangler property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.occupancy_strings">(smol.cofe.wrangler.StructureWrangler property)</a>
+      <li><a href="api.html#smol.cofe.StructureWrangler.occupancy_strings">occupancy_strings() (StructureWrangler property)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.occupancy_strings">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.occupancy_strings">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.CEProcessor.optimize_indicator">optimize_indicator (smol.moca.CEProcessor attribute)</a>
-
-      <ul>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.CEProcessor.optimize_indicator">(smol.moca.processor.CEProcessor attribute)</a>
+      <li><a href="api.html#smol.moca.CEProcessor.optimize_indicator">optimize_indicator (CEProcessor attribute)</a>, <a href="smol.moca.html#smol.moca.CEProcessor.optimize_indicator">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.CEProcessor.optimize_indicator">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.expansion.CEProcessor.optimize_indicator">[3]</a>
 </li>
-        <li><a href="smol.moca.processor.expansion.html#smol.moca.processor.expansion.CEProcessor.optimize_indicator">(smol.moca.processor.expansion.CEProcessor attribute)</a>
-</li>
-      </ul></li>
       <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit">Orbit (class in smol.cofe.configspace)</a>
 
       <ul>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit">(class in smol.cofe.configspace.orbit)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit">(class in smol.cofe.configspace.orbit)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.orbit_multiplicities">orbit_multiplicities() (smol.cofe.ClusterSubspace property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.orbit_multiplicities">(smol.cofe.configspace.clusterspace.ClusterSubspace property)</a>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.orbit_multiplicities">orbit_multiplicities() (ClusterSubspace property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.orbit_multiplicities">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.orbit_multiplicities">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.orbit_nbit_orderings">orbit_nbit_orderings() (smol.cofe.ClusterSubspace property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.orbit_nbit_orderings">(smol.cofe.configspace.clusterspace.ClusterSubspace property)</a>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.orbit_nbit_orderings">orbit_nbit_orderings() (ClusterSubspace property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.orbit_nbit_orderings">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.orbit_nbit_orderings">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.orbits">orbits() (smol.cofe.ClusterSubspace property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.orbits">(smol.cofe.configspace.clusterspace.ClusterSubspace property)</a>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.orbits">orbits() (ClusterSubspace property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.orbits">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.orbits">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.orbits_by_size">orbits_by_size() (smol.cofe.ClusterSubspace property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.orbits_by_size">(smol.cofe.configspace.clusterspace.ClusterSubspace property)</a>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.orbits_by_size">orbits_by_size() (ClusterSubspace property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.orbits_by_size">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.orbits_by_size">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.SiteBasis.orthonormalization_array">orthonormalization_array() (smol.cofe.configspace.basis.SiteBasis property)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.SiteBasis.orthonormalization_array">orthonormalization_array() (SiteBasis property)</a>
 </li>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.SiteBasis.orthonormalize">orthonormalize() (smol.cofe.configspace.basis.SiteBasis method)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.SiteBasis.orthonormalize">orthonormalize() (SiteBasis method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1372,270 +855,168 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.PolynomialIterator">PolynomialIterator (class in smol.cofe.configspace.basis)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.PolynomialIterator">PolynomialIterator (class in smol.cofe.configspace.basis)</a>
 </li>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.ChebyshevIterator.polyval">polyval() (smol.cofe.configspace.basis.ChebyshevIterator property)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.ChebyshevIterator.polyval">polyval() (ChebyshevIterator property)</a>
 
       <ul>
-        <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.LegendreIterator.polyval">(smol.cofe.configspace.basis.LegendreIterator property)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.LegendreIterator.polyval">(LegendreIterator property)</a>
 </li>
-        <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.NumpyPolyIterator.polyval">(smol.cofe.configspace.basis.NumpyPolyIterator property)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.NumpyPolyIterator.polyval">(NumpyPolyIterator property)</a>
 </li>
-        <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.PolynomialIterator.polyval">(smol.cofe.configspace.basis.PolynomialIterator property)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterExpansion.predict">predict() (smol.cofe.ClusterExpansion method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.expansion.html#smol.cofe.expansion.ClusterExpansion.predict">(smol.cofe.expansion.ClusterExpansion method)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.PolynomialIterator.polyval">(PolynomialIterator property)</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterExpansion.prim_structure">prim_structure() (smol.cofe.ClusterExpansion property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.expansion.html#smol.cofe.expansion.ClusterExpansion.prim_structure">(smol.cofe.expansion.ClusterExpansion property)</a>
+      <li><a href="api.html#smol.cofe.ClusterExpansion.predict">predict() (ClusterExpansion method)</a>, <a href="smol.cofe.html#smol.cofe.ClusterExpansion.predict">[1]</a>, <a href="smol.cofe.html#smol.cofe.expansion.ClusterExpansion.predict">[2]</a>
 </li>
-      </ul></li>
+      <li><a href="api.html#smol.cofe.ClusterExpansion.prim_structure">prim_structure() (ClusterExpansion property)</a>, <a href="smol.cofe.html#smol.cofe.ClusterExpansion.prim_structure">[1]</a>, <a href="smol.cofe.html#smol.cofe.expansion.ClusterExpansion.prim_structure">[2]</a>
+</li>
+      <li><a href="api.html#smol.cofe.StructureWrangler.process_structure">process_structure() (StructureWrangler method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.process_structure">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.process_structure">[2]</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.process_structure">process_structure() (smol.cofe.StructureWrangler method)</a>
+      <li><a href="api.html#smol.moca.processor.base.Processor">Processor (class in smol.moca.processor.base)</a>, <a href="smol.moca.processor.html#smol.moca.processor.base.Processor">[1]</a>
+</li>
+      <li><a href="api.html#smol.moca.ensemble.base.Ensemble.processor">processor() (Ensemble property)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.processor">[1]</a>
+</li>
+      <li><a href="api.html#smol.moca.CompositeProcessor.processors">processors() (CompositeProcessor property)</a>, <a href="smol.moca.html#smol.moca.CompositeProcessor.processors">[1]</a>, <a href="smol.moca.processor.html#smol.moca.processor.CompositeProcessor.processors">[2]</a>, <a href="smol.moca.processor.html#smol.moca.processor.composite.CompositeProcessor.processors">[3]</a>
+</li>
+      <li><a href="smol.html#smol.utils.progress_bar">progress_bar() (in module smol.utils)</a>
+</li>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.Flipper.propose_step">propose_step() (Flipper method)</a>
 
       <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.process_structure">(smol.cofe.wrangler.StructureWrangler method)</a>
+        <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.MCMCUsher.propose_step">(MCMCUsher method)</a>
+</li>
+        <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.Swapper.propose_step">(Swapper method)</a>
 </li>
       </ul></li>
-      <li><a href="smol.moca.html#smol.moca.CompositeProcessor.processors">processors() (smol.moca.CompositeProcessor property)</a>
-
-      <ul>
-        <li><a href="smol.moca.processor.composite.html#smol.moca.processor.composite.CompositeProcessor.processors">(smol.moca.processor.composite.CompositeProcessor property)</a>
+      <li><a href="api.html#smol.cofe.ClusterExpansion.prune">prune() (ClusterExpansion method)</a>, <a href="smol.cofe.html#smol.cofe.ClusterExpansion.prune">[1]</a>, <a href="smol.cofe.html#smol.cofe.expansion.ClusterExpansion.prune">[2]</a>
 </li>
-        <li><a href="smol.moca.processor.html#smol.moca.processor.CompositeProcessor.processors">(smol.moca.processor.CompositeProcessor property)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.moca.sampler.mcusher.html#smol.moca.sampler.mcusher.Flipper.propose_step">propose_step() (smol.moca.sampler.mcusher.Flipper method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.mcusher.html#smol.moca.sampler.mcusher.MCMCUsher.propose_step">(smol.moca.sampler.mcusher.MCMCUsher method)</a>
-</li>
-        <li><a href="smol.moca.sampler.mcusher.html#smol.moca.sampler.mcusher.Swapper.propose_step">(smol.moca.sampler.mcusher.Swapper method)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterExpansion.prune">prune() (smol.cofe.ClusterExpansion method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.expansion.html#smol.cofe.expansion.ClusterExpansion.prune">(smol.cofe.expansion.ClusterExpansion method)</a>
-</li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.radius">radius (smol.cofe.configspace.Orbit attribute)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.radius">(smol.cofe.configspace.orbit.Orbit attribute)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.radius">radius (Orbit attribute)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.radius">[1]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Cluster.radius">radius() (smol.cofe.configspace.Cluster property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.cluster.html#smol.cofe.configspace.cluster.Cluster.radius">(smol.cofe.configspace.cluster.Cluster property)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Cluster.radius">radius() (Cluster property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.cluster.Cluster.radius">[1]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.sampler.kernel.html#smol.moca.sampler.kernel.random">random() (in module smol.moca.sampler.kernel)</a>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.random">random() (in module smol.moca.sampler.kernel)</a>
 </li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.refine_structure">refine_structure() (smol.cofe.ClusterSubspace method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.refine_structure">(smol.cofe.configspace.clusterspace.ClusterSubspace method)</a>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.refine_structure">refine_structure() (ClusterSubspace method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.refine_structure">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.refine_structure">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.refined_structures">refined_structures() (smol.cofe.StructureWrangler property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.refined_structures">(smol.cofe.wrangler.StructureWrangler property)</a>
+      <li><a href="api.html#smol.cofe.StructureWrangler.refined_structures">refined_structures() (StructureWrangler property)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.refined_structures">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.refined_structures">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.remove_all_data">remove_all_data() (smol.cofe.StructureWrangler method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.remove_all_data">(smol.cofe.wrangler.StructureWrangler method)</a>
+      <li><a href="api.html#smol.cofe.StructureWrangler.remove_all_data">remove_all_data() (StructureWrangler method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.remove_all_data">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.remove_all_data">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.remove_bit_combo">remove_bit_combo() (smol.cofe.configspace.Orbit method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.remove_bit_combo">(smol.cofe.configspace.orbit.Orbit method)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.remove_bit_combo">remove_bit_combo() (Orbit method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.remove_bit_combo">[1]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.remove_bit_combos_by_inds">remove_bit_combos_by_inds() (smol.cofe.configspace.Orbit method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.remove_bit_combos_by_inds">(smol.cofe.configspace.orbit.Orbit method)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.remove_bit_combos_by_inds">remove_bit_combos_by_inds() (Orbit method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.remove_bit_combos_by_inds">[1]</a>
 </li>
-      </ul></li>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.remove_orbit_bit_combos">remove_orbit_bit_combos() (ClusterSubspace method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.remove_orbit_bit_combos">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.remove_orbit_bit_combos">[2]</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.remove_orbit_bit_combos">remove_orbit_bit_combos() (smol.cofe.ClusterSubspace method)</a>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.remove_orbits">remove_orbits() (ClusterSubspace method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.remove_orbits">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.remove_orbits">[2]</a>
+</li>
+      <li><a href="api.html#smol.cofe.StructureWrangler.remove_properties">remove_properties() (StructureWrangler method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.remove_properties">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.remove_properties">[2]</a>
+</li>
+      <li><a href="api.html#smol.cofe.StructureWrangler.remove_structure">remove_structure() (StructureWrangler method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.remove_structure">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.remove_structure">[2]</a>
+</li>
+      <li><a href="api.html#smol.moca.ensemble.base.Ensemble.reset_restricted_sites">reset_restricted_sites() (Ensemble method)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.reset_restricted_sites">[1]</a>
 
       <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.remove_orbit_bit_combos">(smol.cofe.configspace.clusterspace.ClusterSubspace method)</a>
+        <li><a href="smol.moca.ensemble.html#smol.moca.ensemble.sublattice.Sublattice.reset_restricted_sites">(Sublattice method)</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.remove_orbits">remove_orbits() (smol.cofe.ClusterSubspace method)</a>
+      <li><a href="api.html#smol.moca.ensemble.base.Ensemble.restrict_sites">restrict_sites() (Ensemble method)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.restrict_sites">[1]</a>
 
       <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.remove_orbits">(smol.cofe.configspace.clusterspace.ClusterSubspace method)</a>
+        <li><a href="smol.moca.ensemble.html#smol.moca.ensemble.sublattice.Sublattice.restrict_sites">(Sublattice method)</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.remove_properties">remove_properties() (smol.cofe.StructureWrangler method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.remove_properties">(smol.cofe.wrangler.StructureWrangler method)</a>
+      <li><a href="smol.moca.ensemble.html#smol.moca.ensemble.sublattice.Sublattice.restricted_sites">restricted_sites (Sublattice attribute)</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.remove_structure">remove_structure() (smol.cofe.StructureWrangler method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.remove_structure">(smol.cofe.wrangler.StructureWrangler method)</a>
+      <li><a href="api.html#smol.moca.ensemble.base.Ensemble.restricted_sites">restricted_sites() (Ensemble property)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.restricted_sites">[1]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.ensemble.sublattice.html#smol.moca.ensemble.sublattice.Sublattice.reset_restricted_sites">reset_restricted_sites() (smol.moca.ensemble.sublattice.Sublattice method)</a>
+      <li><a href="api.html#smol.moca.Sampler.run">run() (Sampler method)</a>, <a href="smol.moca.html#smol.moca.Sampler.run">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.sampler.Sampler.run">[2]</a>
 </li>
-      <li><a href="smol.moca.ensemble.sublattice.html#smol.moca.ensemble.sublattice.Sublattice.restrict_sites">restrict_sites() (smol.moca.ensemble.sublattice.Sublattice method)</a>
-</li>
-      <li><a href="smol.moca.ensemble.sublattice.html#smol.moca.ensemble.sublattice.Sublattice.restricted_sites">restricted_sites (smol.moca.ensemble.sublattice.Sublattice attribute)</a>
-</li>
-      <li><a href="smol.moca.html#smol.moca.Sampler.run">run() (smol.moca.Sampler method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.sampler.html#smol.moca.sampler.sampler.Sampler.run">(smol.moca.sampler.sampler.Sampler method)</a>
-</li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.moca.html#smol.moca.Sampler.sample">sample() (smol.moca.Sampler method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.sampler.html#smol.moca.sampler.sampler.Sampler.sample">(smol.moca.sampler.sampler.Sampler method)</a>
+      <li><a href="api.html#smol.moca.Sampler.sample">sample() (Sampler method)</a>, <a href="smol.moca.html#smol.moca.Sampler.sample">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.sampler.Sampler.sample">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer">SampleContainer (class in smol.moca)</a>
+      <li><a href="api.html#smol.moca.SampleContainer">SampleContainer (class in smol.moca)</a>, <a href="smol.moca.html#smol.moca.SampleContainer">[1]</a>
 
       <ul>
         <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer">(class in smol.moca.sampler)</a>
 </li>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer">(class in smol.moca.sampler.container)</a>
+        <li><a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer">(class in smol.moca.sampler.container)</a>
 </li>
       </ul></li>
-      <li><a href="smol.moca.html#smol.moca.Sampler">Sampler (class in smol.moca)</a>
+      <li><a href="api.html#smol.moca.Sampler">Sampler (class in smol.moca)</a>, <a href="smol.moca.html#smol.moca.Sampler">[1]</a>
 
       <ul>
-        <li><a href="smol.moca.sampler.sampler.html#smol.moca.sampler.sampler.Sampler">(class in smol.moca.sampler.sampler)</a>
+        <li><a href="smol.moca.sampler.html#smol.moca.sampler.sampler.Sampler">(class in smol.moca.sampler.sampler)</a>
 </li>
       </ul></li>
-      <li><a href="smol.moca.html#smol.moca.Sampler.samples">samples() (smol.moca.Sampler property)</a>
+      <li><a href="api.html#smol.moca.Sampler.samples">samples() (Sampler property)</a>, <a href="smol.moca.html#smol.moca.Sampler.samples">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.sampler.Sampler.samples">[2]</a>
+</li>
+      <li><a href="api.html#smol.moca.SampleContainer.sampling_efficiency">sampling_efficiency() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.sampling_efficiency">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.sampling_efficiency">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.sampling_efficiency">[3]</a>
+</li>
+      <li><a href="api.html#smol.moca.SampleContainer.save_sample">save_sample() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.save_sample">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.save_sample">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.save_sample">[3]</a>
+</li>
+      <li><a href="smol.html#smol.io.save_work">save_work() (in module smol.io)</a>
+</li>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.scmatrix_from_structure">scmatrix_from_structure() (ClusterSubspace method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.scmatrix_from_structure">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.scmatrix_from_structure">[2]</a>
+</li>
+      <li><a href="api.html#smol.moca.Sampler.seed">seed() (Sampler property)</a>, <a href="smol.moca.html#smol.moca.Sampler.seed">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.sampler.Sampler.seed">[2]</a>
+</li>
+      <li><a href="api.html#smol.moca.SampleContainer.shape">shape() (SampleContainer property)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.shape">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.shape">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.shape">[3]</a>
+</li>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.sin_f">sin_f() (in module smol.cofe.configspace.basis)</a>
+</li>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCMCKernel.single_step">single_step() (MCMCKernel method)</a>
 
       <ul>
-        <li><a href="smol.moca.sampler.sampler.html#smol.moca.sampler.sampler.Sampler.samples">(smol.moca.sampler.sampler.Sampler property)</a>
+        <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.Metropolis.single_step">(Metropolis method)</a>
 </li>
       </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.sampling_efficiency">sampling_efficiency() (smol.moca.SampleContainer method)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.sinusoid_factory">sinusoid_factory() (in module smol.cofe.configspace.basis)</a>
+</li>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.SinusoidIterator">SinusoidIterator (class in smol.cofe.configspace.basis)</a>
+</li>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.site_bases">site_bases (Orbit attribute)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.site_bases">[1]</a>
+</li>
+      <li><a href="smol.moca.ensemble.html#smol.moca.ensemble.sublattice.Sublattice.site_space">site_space (Sublattice attribute)</a>
+</li>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.SiteBasis.site_space">site_space() (SiteBasis property)</a>
+</li>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.SiteBasis">SiteBasis (class in smol.cofe.configspace.basis)</a>
+</li>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Cluster.sites">sites (Cluster attribute)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.cluster.Cluster.sites">[1]</a>
 
       <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.sampling_efficiency">(smol.moca.sampler.container.SampleContainer method)</a>
-</li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.sampling_efficiency">(smol.moca.sampler.SampleContainer method)</a>
+        <li><a href="smol.moca.ensemble.html#smol.moca.ensemble.sublattice.Sublattice.sites">(Sublattice attribute)</a>
 </li>
       </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.save_sample">save_sample() (smol.moca.SampleContainer method)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.domain.SiteSpace">SiteSpace (class in smol.cofe.configspace.domain)</a>
+</li>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.size">size (Orbit attribute)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.size">[1]</a>
 
       <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.save_sample">(smol.moca.sampler.container.SampleContainer method)</a>
-</li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.save_sample">(smol.moca.sampler.SampleContainer method)</a>
+        <li><a href="api.html#smol.moca.processor.base.Processor.size">(Processor attribute)</a>, <a href="smol.moca.processor.html#smol.moca.processor.base.Processor.size">[1]</a>
 </li>
       </ul></li>
-      <li><a href="smol.io.html#smol.io.save_work">save_work() (in module smol.io)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Cluster.size">size() (Cluster property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.cluster.Cluster.size">[1]</a>
 </li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.scmatrix_from_structure">scmatrix_from_structure() (smol.cofe.ClusterSubspace method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.scmatrix_from_structure">(smol.cofe.configspace.clusterspace.ClusterSubspace method)</a>
+      <li><a href="api.html#smol.cofe.StructureWrangler.sizes">sizes() (StructureWrangler property)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.sizes">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.sizes">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.Sampler.seed">seed() (smol.moca.Sampler property)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.sampler.html#smol.moca.sampler.sampler.Sampler.seed">(smol.moca.sampler.sampler.Sampler property)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.shape">shape() (smol.moca.SampleContainer property)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.shape">(smol.moca.sampler.container.SampleContainer property)</a>
-</li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.shape">(smol.moca.sampler.SampleContainer property)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.sin_f">sin_f() (in module smol.cofe.configspace.basis)</a>
-</li>
-      <li><a href="smol.moca.sampler.kernel.html#smol.moca.sampler.kernel.MCMCKernel.single_step">single_step() (smol.moca.sampler.kernel.MCMCKernel method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.kernel.html#smol.moca.sampler.kernel.Metropolis.single_step">(smol.moca.sampler.kernel.Metropolis method)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.sinusoid_factory">sinusoid_factory() (in module smol.cofe.configspace.basis)</a>
-</li>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.SinusoidIterator">SinusoidIterator (class in smol.cofe.configspace.basis)</a>
-</li>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.site_bases">site_bases (smol.cofe.configspace.Orbit attribute)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.site_bases">(smol.cofe.configspace.orbit.Orbit attribute)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.moca.ensemble.sublattice.html#smol.moca.ensemble.sublattice.Sublattice.site_space">site_space (smol.moca.ensemble.sublattice.Sublattice attribute)</a>
-</li>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.SiteBasis.site_space">site_space() (smol.cofe.configspace.basis.SiteBasis property)</a>
-</li>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.SiteBasis">SiteBasis (class in smol.cofe.configspace.basis)</a>
-</li>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Cluster.sites">sites (smol.cofe.configspace.Cluster attribute)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.cluster.html#smol.cofe.configspace.cluster.Cluster.sites">(smol.cofe.configspace.cluster.Cluster attribute)</a>
-</li>
-        <li><a href="smol.moca.ensemble.sublattice.html#smol.moca.ensemble.sublattice.Sublattice.sites">(smol.moca.ensemble.sublattice.Sublattice attribute)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.domain.html#smol.cofe.configspace.domain.SiteSpace">SiteSpace (class in smol.cofe.configspace.domain)</a>
-</li>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.size">size (smol.cofe.configspace.Orbit attribute)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.size">(smol.cofe.configspace.orbit.Orbit attribute)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Cluster.size">size() (smol.cofe.configspace.Cluster property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.cluster.html#smol.cofe.configspace.cluster.Cluster.size">(smol.cofe.configspace.cluster.Cluster property)</a>
-</li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.sizes">sizes() (smol.cofe.StructureWrangler property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.sizes">(smol.cofe.wrangler.StructureWrangler property)</a>
-</li>
-      </ul></li>
       <li>
     smol
 
@@ -1661,42 +1042,49 @@
     smol.cofe.configspace.basis
 
       <ul>
-        <li><a href="smol.cofe.configspace.basis.html#module-smol.cofe.configspace.basis">module</a>
+        <li><a href="smol.cofe.configspace.html#module-smol.cofe.configspace.basis">module</a>
 </li>
       </ul></li>
       <li>
     smol.cofe.configspace.cluster
 
       <ul>
-        <li><a href="smol.cofe.configspace.cluster.html#module-smol.cofe.configspace.cluster">module</a>
+        <li><a href="smol.cofe.configspace.html#module-smol.cofe.configspace.cluster">module</a>
 </li>
       </ul></li>
       <li>
     smol.cofe.configspace.clusterspace
 
       <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#module-smol.cofe.configspace.clusterspace">module</a>
+        <li><a href="smol.cofe.configspace.html#module-smol.cofe.configspace.clusterspace">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.cofe.configspace.constants
+
+      <ul>
+        <li><a href="smol.cofe.configspace.html#module-smol.cofe.configspace.constants">module</a>
 </li>
       </ul></li>
       <li>
     smol.cofe.configspace.domain
 
       <ul>
-        <li><a href="smol.cofe.configspace.domain.html#module-smol.cofe.configspace.domain">module</a>
+        <li><a href="smol.cofe.configspace.html#module-smol.cofe.configspace.domain">module</a>
 </li>
       </ul></li>
       <li>
     smol.cofe.configspace.orbit
 
       <ul>
-        <li><a href="smol.cofe.configspace.orbit.html#module-smol.cofe.configspace.orbit">module</a>
+        <li><a href="smol.cofe.configspace.html#module-smol.cofe.configspace.orbit">module</a>
 </li>
       </ul></li>
       <li>
     smol.cofe.expansion
 
       <ul>
-        <li><a href="smol.cofe.expansion.html#module-smol.cofe.expansion">module</a>
+        <li><a href="smol.cofe.html#module-smol.cofe.expansion">module</a>
 </li>
       </ul></li>
       <li>
@@ -1710,25 +1098,39 @@
     smol.cofe.extern.ewald
 
       <ul>
-        <li><a href="smol.cofe.extern.ewald.html#module-smol.cofe.extern.ewald">module</a>
+        <li><a href="smol.cofe.extern.html#module-smol.cofe.extern.ewald">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     smol.cofe.wrangler
 
       <ul>
-        <li><a href="smol.cofe.wrangler.html#module-smol.cofe.wrangler">module</a>
+        <li><a href="smol.cofe.html#module-smol.cofe.wrangler">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.constants
+
+      <ul>
+        <li><a href="smol.html#module-smol.constants">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.exceptions
+
+      <ul>
+        <li><a href="smol.html#module-smol.exceptions">module</a>
 </li>
       </ul></li>
       <li>
     smol.io
 
       <ul>
-        <li><a href="smol.io.html#module-smol.io">module</a>
+        <li><a href="smol.html#module-smol.io">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     smol.moca
 
@@ -1744,24 +1146,31 @@
 </li>
       </ul></li>
       <li>
+    smol.moca.ensemble.base
+
+      <ul>
+        <li><a href="smol.moca.ensemble.html#module-smol.moca.ensemble.base">module</a>
+</li>
+      </ul></li>
+      <li>
     smol.moca.ensemble.canonical
 
       <ul>
-        <li><a href="smol.moca.ensemble.canonical.html#module-smol.moca.ensemble.canonical">module</a>
+        <li><a href="smol.moca.ensemble.html#module-smol.moca.ensemble.canonical">module</a>
 </li>
       </ul></li>
       <li>
     smol.moca.ensemble.semigrand
 
       <ul>
-        <li><a href="smol.moca.ensemble.semigrand.html#module-smol.moca.ensemble.semigrand">module</a>
+        <li><a href="smol.moca.ensemble.html#module-smol.moca.ensemble.semigrand">module</a>
 </li>
       </ul></li>
       <li>
     smol.moca.ensemble.sublattice
 
       <ul>
-        <li><a href="smol.moca.ensemble.sublattice.html#module-smol.moca.ensemble.sublattice">module</a>
+        <li><a href="smol.moca.ensemble.html#module-smol.moca.ensemble.sublattice">module</a>
 </li>
       </ul></li>
       <li>
@@ -1772,24 +1181,31 @@
 </li>
       </ul></li>
       <li>
+    smol.moca.processor.base
+
+      <ul>
+        <li><a href="smol.moca.processor.html#module-smol.moca.processor.base">module</a>
+</li>
+      </ul></li>
+      <li>
     smol.moca.processor.composite
 
       <ul>
-        <li><a href="smol.moca.processor.composite.html#module-smol.moca.processor.composite">module</a>
+        <li><a href="smol.moca.processor.html#module-smol.moca.processor.composite">module</a>
 </li>
       </ul></li>
       <li>
     smol.moca.processor.ewald
 
       <ul>
-        <li><a href="smol.moca.processor.ewald.html#module-smol.moca.processor.ewald">module</a>
+        <li><a href="smol.moca.processor.html#module-smol.moca.processor.ewald">module</a>
 </li>
       </ul></li>
       <li>
     smol.moca.processor.expansion
 
       <ul>
-        <li><a href="smol.moca.processor.expansion.html#module-smol.moca.processor.expansion">module</a>
+        <li><a href="smol.moca.processor.html#module-smol.moca.processor.expansion">module</a>
 </li>
       </ul></li>
       <li>
@@ -1803,166 +1219,131 @@
     smol.moca.sampler.container
 
       <ul>
-        <li><a href="smol.moca.sampler.container.html#module-smol.moca.sampler.container">module</a>
+        <li><a href="smol.moca.sampler.html#module-smol.moca.sampler.container">module</a>
 </li>
       </ul></li>
       <li>
     smol.moca.sampler.kernel
 
       <ul>
-        <li><a href="smol.moca.sampler.kernel.html#module-smol.moca.sampler.kernel">module</a>
+        <li><a href="smol.moca.sampler.html#module-smol.moca.sampler.kernel">module</a>
 </li>
       </ul></li>
       <li>
     smol.moca.sampler.mcusher
 
       <ul>
-        <li><a href="smol.moca.sampler.mcusher.html#module-smol.moca.sampler.mcusher">module</a>
+        <li><a href="smol.moca.sampler.html#module-smol.moca.sampler.mcusher">module</a>
 </li>
       </ul></li>
       <li>
     smol.moca.sampler.sampler
 
       <ul>
-        <li><a href="smol.moca.sampler.sampler.html#module-smol.moca.sampler.sampler">module</a>
+        <li><a href="smol.moca.sampler.html#module-smol.moca.sampler.sampler">module</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.configspace.basis.html#smol.cofe.configspace.basis.SiteBasis.species">species() (smol.cofe.configspace.basis.SiteBasis property)</a>
+      <li>
+    smol.utils
 
       <ul>
-        <li><a href="smol.moca.ensemble.sublattice.html#smol.moca.ensemble.sublattice.Sublattice.species">(smol.moca.ensemble.sublattice.Sublattice property)</a>
+        <li><a href="smol.html#module-smol.utils">module</a>
 </li>
       </ul></li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.stream">stream() (smol.moca.SampleContainer method)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.SiteBasis.species">species() (SiteBasis property)</a>
 
       <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.stream">(smol.moca.sampler.container.SampleContainer method)</a>
-</li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.stream">(smol.moca.sampler.SampleContainer method)</a>
+        <li><a href="smol.moca.ensemble.html#smol.moca.ensemble.sublattice.Sublattice.species">(Sublattice property)</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.structure">structure() (smol.cofe.ClusterSubspace property)</a>
+      <li><a href="api.html#smol.moca.SampleContainer.stream">stream() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.stream">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.stream">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.stream">[3]</a>
+</li>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.structure">structure() (ClusterSubspace property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.structure">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.structure">[2]</a>
 
       <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.structure">(smol.cofe.configspace.clusterspace.ClusterSubspace property)</a>
+        <li><a href="api.html#smol.moca.processor.base.Processor.structure">(Processor property)</a>, <a href="smol.moca.processor.html#smol.moca.processor.base.Processor.structure">[1]</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.structure_site_mapping">structure_site_mapping() (smol.cofe.ClusterSubspace method)</a>
+      <li><a href="api.html#smol.moca.processor.base.Processor.structure_from_occupancy">structure_from_occupancy() (Processor method)</a>, <a href="smol.moca.processor.html#smol.moca.processor.base.Processor.structure_from_occupancy">[1]</a>
+</li>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.structure_site_mapping">structure_site_mapping() (ClusterSubspace method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.structure_site_mapping">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.structure_site_mapping">[2]</a>
+</li>
+      <li><a href="api.html#smol.cofe.StructureWrangler.structure_site_mappings">structure_site_mappings() (StructureWrangler property)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.structure_site_mappings">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.structure_site_mappings">[2]</a>
+</li>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.structure_symops">structure_symops (Orbit attribute)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.structure_symops">[1]</a>
+</li>
+      <li><a href="smol.html#smol.exceptions.StructureMatchError">StructureMatchError</a>
+</li>
+      <li><a href="api.html#smol.cofe.StructureWrangler.structures">structures() (StructureWrangler property)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.structures">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.structures">[2]</a>
+</li>
+      <li><a href="api.html#smol.cofe.StructureWrangler">StructureWrangler (class in smol.cofe)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler">[1]</a>
 
       <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.structure_site_mapping">(smol.cofe.configspace.clusterspace.ClusterSubspace method)</a>
+        <li><a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler">(class in smol.cofe.wrangler)</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.structure_site_mappings">structure_site_mappings() (smol.cofe.StructureWrangler property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.structure_site_mappings">(smol.cofe.wrangler.StructureWrangler property)</a>
+      <li><a href="smol.moca.ensemble.html#smol.moca.ensemble.sublattice.Sublattice">Sublattice (class in smol.moca.ensemble.sublattice)</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.structure_symops">structure_symops (smol.cofe.configspace.Orbit attribute)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.structure_symops">(smol.cofe.configspace.orbit.Orbit attribute)</a>
+      <li><a href="api.html#smol.moca.SampleContainer.sublattice_composition_variance">sublattice_composition_variance() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.sublattice_composition_variance">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.sublattice_composition_variance">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.sublattice_composition_variance">[3]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.structures">structures() (smol.cofe.StructureWrangler property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.structures">(smol.cofe.wrangler.StructureWrangler property)</a>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.MCMCUsher.sublattice_probabilities">sublattice_probabilities() (MCMCUsher property)</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler">StructureWrangler (class in smol.cofe)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler">(class in smol.cofe.wrangler)</a>
+      <li><a href="api.html#smol.moca.SampleContainer.sublattices">sublattices (SampleContainer attribute)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.sublattices">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.sublattices">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.sublattices">[3]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.ensemble.sublattice.html#smol.moca.ensemble.sublattice.Sublattice">Sublattice (class in smol.moca.ensemble.sublattice)</a>
+      <li><a href="api.html#smol.moca.ensemble.base.Ensemble.sublattices">sublattices() (Ensemble property)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.sublattices">[1]</a>
 </li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.sublattice_composition_variance">sublattice_composition_variance() (smol.moca.SampleContainer method)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.sublattice_composition_variance">(smol.moca.sampler.container.SampleContainer method)</a>
+      <li><a href="api.html#smol.cofe.StructureWrangler.supercell_matrices">supercell_matrices() (StructureWrangler property)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.supercell_matrices">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.supercell_matrices">[2]</a>
 </li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.sublattice_composition_variance">(smol.moca.sampler.SampleContainer method)</a>
+      <li><a href="api.html#smol.moca.processor.base.Processor.supercell_matrix">supercell_matrix() (Processor property)</a>, <a href="smol.moca.processor.html#smol.moca.processor.base.Processor.supercell_matrix">[1]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.sampler.mcusher.html#smol.moca.sampler.mcusher.MCMCUsher.sublattice_probabilities">sublattice_probabilities() (smol.moca.sampler.mcusher.MCMCUsher property)</a>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.supercell_orbit_mappings">supercell_orbit_mappings() (ClusterSubspace method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.supercell_orbit_mappings">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.supercell_orbit_mappings">[2]</a>
 </li>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.sublattices">sublattices (smol.moca.SampleContainer attribute)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.sublattices">(smol.moca.sampler.container.SampleContainer attribute)</a>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.Swapper">Swapper (class in smol.moca.sampler.mcusher)</a>
 </li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.sublattices">(smol.moca.sampler.SampleContainer attribute)</a>
+      <li><a href="smol.html#smol.exceptions.SymmetryError">SymmetryError</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.supercell_matrices">supercell_matrices() (smol.cofe.StructureWrangler property)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.supercell_matrices">(smol.cofe.wrangler.StructureWrangler property)</a>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.symops">symops (ClusterSubspace attribute)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.symops">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.symops">[2]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.supercell_orbit_mappings">supercell_orbit_mappings() (smol.cofe.ClusterSubspace method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.supercell_orbit_mappings">(smol.cofe.configspace.clusterspace.ClusterSubspace method)</a>
+      <li><a href="api.html#smol.moca.ensemble.base.Ensemble.system_size">system_size() (Ensemble property)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.system_size">[1]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.moca.sampler.mcusher.html#smol.moca.sampler.mcusher.Swapper">Swapper (class in smol.moca.sampler.mcusher)</a>
-</li>
-      <li><a href="smol.cofe.html#smol.cofe.ClusterSubspace.symops">symops (smol.cofe.ClusterSubspace attribute)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.clusterspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.symops">(smol.cofe.configspace.clusterspace.ClusterSubspace attribute)</a>
-</li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.moca.sampler.kernel.html#smol.moca.sampler.kernel.MCMCKernel.temperature">temperature() (smol.moca.sampler.kernel.MCMCKernel property)</a>
-</li>
-      <li><a href="smol.moca.ensemble.semigrand.html#smol.moca.ensemble.semigrand.FuSemiGrandEnsemble.thermo_boundaries">thermo_boundaries (smol.moca.ensemble.semigrand.FuSemiGrandEnsemble attribute)</a>
+      <li><a href="api.html#smol.moca.ensemble.base.Ensemble.temperature">temperature() (Ensemble property)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.temperature">[1]</a>
 
       <ul>
-        <li><a href="smol.moca.ensemble.semigrand.html#smol.moca.ensemble.semigrand.MuSemiGrandEnsemble.thermo_boundaries">(smol.moca.ensemble.semigrand.MuSemiGrandEnsemble attribute)</a>
+        <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCMCKernel.temperature">(MCMCKernel property)</a>
 </li>
-        <li><a href="smol.moca.html#smol.moca.FuSemiGrandEnsemble.thermo_boundaries">(smol.moca.FuSemiGrandEnsemble attribute)</a>
+      </ul></li>
+      <li><a href="api.html#smol.moca.ensemble.base.Ensemble.thermo_boundaries">thermo_boundaries (Ensemble attribute)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.thermo_boundaries">[1]</a>
+
+      <ul>
+        <li><a href="api.html#smol.moca.FuSemiGrandEnsemble.thermo_boundaries">(FuSemiGrandEnsemble attribute)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.FuSemiGrandEnsemble.thermo_boundaries">[1]</a>, <a href="smol.moca.html#smol.moca.FuSemiGrandEnsemble.thermo_boundaries">[2]</a>
 </li>
-        <li><a href="smol.moca.html#smol.moca.MuSemiGrandEnsemble.thermo_boundaries">(smol.moca.MuSemiGrandEnsemble attribute)</a>
+        <li><a href="api.html#smol.moca.MuSemiGrandEnsemble.thermo_boundaries">(MuSemiGrandEnsemble attribute)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.MuSemiGrandEnsemble.thermo_boundaries">[1]</a>, <a href="smol.moca.html#smol.moca.MuSemiGrandEnsemble.thermo_boundaries">[2]</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.moca.html#smol.moca.SampleContainer.total_mc_steps">total_mc_steps (smol.moca.SampleContainer attribute)</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.container.html#smol.moca.sampler.container.SampleContainer.total_mc_steps">(smol.moca.sampler.container.SampleContainer attribute)</a>
+      <li><a href="api.html#smol.moca.SampleContainer.total_mc_steps">total_mc_steps (SampleContainer attribute)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.total_mc_steps">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.total_mc_steps">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.total_mc_steps">[3]</a>
 </li>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.total_mc_steps">(smol.moca.sampler.SampleContainer attribute)</a>
+      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.transform_site_bases">transform_site_bases() (Orbit method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.transform_site_bases">[1]</a>
 </li>
-      </ul></li>
-      <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.transform_site_bases">transform_site_bases() (smol.cofe.configspace.Orbit method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.configspace.orbit.html#smol.cofe.configspace.orbit.Orbit.transform_site_bases">(smol.cofe.configspace.orbit.Orbit method)</a>
-</li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.cofe.html#smol.cofe.StructureWrangler.update_features">update_features() (smol.cofe.StructureWrangler method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.StructureWrangler.update_features">(smol.cofe.wrangler.StructureWrangler method)</a>
+      <li><a href="api.html#smol.moca.processor.base.Processor.unique_site_spaces">unique_site_spaces (Processor attribute)</a>, <a href="smol.moca.processor.html#smol.moca.processor.base.Processor.unique_site_spaces">[1]</a>
 </li>
-      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#smol.cofe.StructureWrangler.update_features">update_features() (StructureWrangler method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.update_features">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.update_features">[2]</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -1972,31 +1353,27 @@
       <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Vacancy">Vacancy (class in smol.cofe.configspace)</a>
 
       <ul>
-        <li><a href="smol.cofe.configspace.domain.html#smol.cofe.configspace.domain.Vacancy">(class in smol.cofe.configspace.domain)</a>
+        <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.domain.Vacancy">(class in smol.cofe.configspace.domain)</a>
 </li>
       </ul></li>
-      <li><a href="smol.moca.html#smol.moca.CanonicalEnsemble.valid_mcmc_steps">valid_mcmc_steps (smol.moca.CanonicalEnsemble attribute)</a>
+      <li><a href="api.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.valid_mcmc_steps">valid_mcmc_steps (BaseSemiGrandEnsemble attribute)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.valid_mcmc_steps">[1]</a>
 
       <ul>
-        <li><a href="smol.moca.ensemble.canonical.html#smol.moca.ensemble.canonical.CanonicalEnsemble.valid_mcmc_steps">(smol.moca.ensemble.canonical.CanonicalEnsemble attribute)</a>
+        <li><a href="api.html#smol.moca.CanonicalEnsemble.valid_mcmc_steps">(CanonicalEnsemble attribute)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.canonical.CanonicalEnsemble.valid_mcmc_steps">[1]</a>, <a href="smol.moca.html#smol.moca.CanonicalEnsemble.valid_mcmc_steps">[2]</a>
 </li>
-        <li><a href="smol.moca.ensemble.semigrand.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.valid_mcmc_steps">(smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble attribute)</a>
+        <li><a href="api.html#smol.moca.ensemble.base.Ensemble.valid_mcmc_steps">(Ensemble attribute)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.valid_mcmc_steps">[1]</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.moca.sampler.kernel.html#smol.moca.sampler.kernel.MCMCKernel.valid_mcushers">valid_mcushers (smol.moca.sampler.kernel.MCMCKernel attribute)</a>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCMCKernel.valid_mcushers">valid_mcushers (MCMCKernel attribute)</a>
 
       <ul>
-        <li><a href="smol.moca.sampler.kernel.html#smol.moca.sampler.kernel.Metropolis.valid_mcushers">(smol.moca.sampler.kernel.Metropolis attribute)</a>
+        <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.Metropolis.valid_mcushers">(Metropolis attribute)</a>
 </li>
       </ul></li>
-      <li><a href="smol.cofe.extern.ewald.html#smol.cofe.extern.ewald.EwaldTerm.value_from_occupancy">value_from_occupancy() (smol.cofe.extern.ewald.EwaldTerm method)</a>
-
-      <ul>
-        <li><a href="smol.cofe.extern.html#smol.cofe.extern.EwaldTerm.value_from_occupancy">(smol.cofe.extern.EwaldTerm method)</a>
+      <li><a href="smol.cofe.extern.html#smol.cofe.extern.EwaldTerm.value_from_occupancy">value_from_occupancy() (EwaldTerm method)</a>, <a href="smol.cofe.extern.html#smol.cofe.extern.ewald.EwaldTerm.value_from_occupancy">[1]</a>
 </li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -2006,7 +1383,7 @@
       <li><a href="smol.cofe.html#smol.cofe.weights_energy_above_composition">weights_energy_above_composition() (in module smol.cofe)</a>
 
       <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.weights_energy_above_composition">(in module smol.cofe.wrangler)</a>
+        <li><a href="smol.cofe.html#smol.cofe.wrangler.weights_energy_above_composition">(in module smol.cofe.wrangler)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -2014,7 +1391,7 @@
       <li><a href="smol.cofe.html#smol.cofe.weights_energy_above_hull">weights_energy_above_hull() (in module smol.cofe)</a>
 
       <ul>
-        <li><a href="smol.cofe.wrangler.html#smol.cofe.wrangler.weights_energy_above_hull">(in module smol.cofe.wrangler)</a>
+        <li><a href="smol.cofe.html#smol.cofe.wrangler.weights_energy_above_hull">(in module smol.cofe.wrangler)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -2030,6 +1407,9 @@
   <div class="container">
     <p class="pull-right">
       <a href="#">Back to top</a>
+      
+        <br/>
+        
       
     </p>
     <p>

@@ -1,11 +1,6 @@
 smol.cofe package
 =================
 
-.. automodule:: smol.cofe
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Subpackages
 -----------
 
@@ -18,8 +13,26 @@ Subpackages
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+smol.cofe.expansion module
+--------------------------
 
-   smol.cofe.expansion
-   smol.cofe.wrangler
+.. automodule:: smol.cofe.expansion
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+smol.cofe.wrangler module
+-------------------------
+
+.. automodule:: smol.cofe.wrangler
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: smol.cofe
+   :members:
+   :undoc-members:
+   :show-inheritance:

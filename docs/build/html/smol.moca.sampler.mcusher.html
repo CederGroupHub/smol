@@ -4,14 +4,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.moca.sampler.mcusher module &#8212; smol v1.0.0 documentation</title>
+    <title>smol.moca.sampler.mcusher module &#8212; smol 1.0.0 documentation</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -42,6 +44,8 @@
         <div class="collapse navbar-collapse nav-collapse">
           <ul class="nav navbar-nav">
             
+                <li><a href="examples.html">Examples</a></li>
+                <li><a href="api.html">API</a></li>
                 <li><a href="https://github.com/CederGroupHub/smol">GitHub</a></li>
             
             
@@ -56,12 +60,24 @@
       aria-labelledby="dLabelGlobalToc"></ul>
 </li>
               
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">smol.moca.sampler.mcusher module</a></li>
+</ul>
+</ul>
+</li>
+              
             
             
             
             
-            
-              <li class="hidden-sm"></li>
             
           </ul>
 
@@ -93,9 +109,19 @@ between species at two sites for use in Canonical ensemble simulations.</p>
 <p>More complex steps can be defined simply by deriving from the MCUsher</p>
 <dl class="py class">
 <dt id="smol.moca.sampler.mcusher.Flipper">
-<em class="property">class </em><code class="sig-prename descclassname">smol.moca.sampler.mcusher.</code><code class="sig-name descname">Flipper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">sublattice_probabilities</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Flipper" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Flipper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">sublattice_probabilities</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Flipper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.mcusher.MCMCUsher" title="smol.moca.sampler.mcusher.MCMCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.mcusher.MCMCUsher</span></code></a></p>
 <p>Implementation of a simple flip step at a random site.</p>
+<p>Initialize MCMCStep.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – list of Sublattices to propose steps for.</p></li>
+<li><p><strong>sublattice_probabilities</strong> (<em>list of float</em>) – optional
+list of probability to pick a site from a specific sublattice.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.moca.sampler.mcusher.Flipper.propose_step">
 <code class="sig-name descname">propose_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Flipper.propose_step" title="Permalink to this definition">¶</a></dt>
@@ -119,9 +145,19 @@ form (site index, species code to set)</p>
 
 <dl class="py class">
 <dt id="smol.moca.sampler.mcusher.MCMCUsher">
-<em class="property">class </em><code class="sig-prename descclassname">smol.moca.sampler.mcusher.</code><code class="sig-name descname">MCMCUsher</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">sublattice_probabilities</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCMCUsher" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">MCMCUsher</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">sublattice_probabilities</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCMCUsher" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Abstract base class for MCMC usher classes.</p>
+<p>Initialize MCMCStep.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – list of Sublattices to propose steps for.</p></li>
+<li><p><strong>sublattice_probabilities</strong> (<em>list of float</em>) – optional
+list of probability to pick a site from a specific sublattice.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.moca.sampler.mcusher.MCMCUsher.get_random_sublattice">
 <code class="sig-name descname">get_random_sublattice</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCMCUsher.get_random_sublattice" title="Permalink to this definition">¶</a></dt>
@@ -157,9 +193,19 @@ form (site index, species code to set)</p>
 
 <dl class="py class">
 <dt id="smol.moca.sampler.mcusher.Swapper">
-<em class="property">class </em><code class="sig-prename descclassname">smol.moca.sampler.mcusher.</code><code class="sig-name descname">Swapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">sublattice_probabilities</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Swapper" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Swapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">sublattice_probabilities</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Swapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.mcusher.MCMCUsher" title="smol.moca.sampler.mcusher.MCMCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.mcusher.MCMCUsher</span></code></a></p>
 <p>Implementation of a simple swap step for two random sites.</p>
+<p>Initialize MCMCStep.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – list of Sublattices to propose steps for.</p></li>
+<li><p><strong>sublattice_probabilities</strong> (<em>list of float</em>) – optional
+list of probability to pick a site from a specific sublattice.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.moca.sampler.mcusher.Swapper.propose_step">
 <code class="sig-name descname">propose_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Swapper.propose_step" title="Permalink to this definition">¶</a></dt>
@@ -183,7 +229,7 @@ form (site index, species code to set)</p>
 
 <dl class="py function">
 <dt id="smol.moca.sampler.mcusher.mcusher_factory">
-<code class="sig-prename descclassname">smol.moca.sampler.mcusher.</code><code class="sig-name descname">mcusher_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">usher_type</span></em>, <em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.mcusher_factory" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mcusher_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">usher_type</span></em>, <em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.mcusher_factory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a MCMC Usher from string name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -214,6 +260,9 @@ form (site index, species code to set)</p>
   <div class="container">
     <p class="pull-right">
       <a href="#">Back to top</a>
+      
+        <br/>
+        
       
     </p>
     <p>

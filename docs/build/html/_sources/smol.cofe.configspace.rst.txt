@@ -1,19 +1,61 @@
 smol.cofe.configspace package
 =============================
 
-.. automodule:: smol.cofe.configspace
+Submodules
+----------
+
+smol.cofe.configspace.basis module
+----------------------------------
+
+.. automodule:: smol.cofe.configspace.basis
    :members:
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
+smol.cofe.configspace.cluster module
+------------------------------------
 
-.. toctree::
-   :maxdepth: 4
+.. automodule:: smol.cofe.configspace.cluster
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
-   smol.cofe.configspace.basis
-   smol.cofe.configspace.cluster
-   smol.cofe.configspace.clusterspace
-   smol.cofe.configspace.domain
-   smol.cofe.configspace.orbit
+smol.cofe.configspace.clusterspace module
+-----------------------------------------
+
+.. automodule:: smol.cofe.configspace.clusterspace
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+smol.cofe.configspace.constants module
+--------------------------------------
+
+.. automodule:: smol.cofe.configspace.constants
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+smol.cofe.configspace.domain module
+-----------------------------------
+
+.. automodule:: smol.cofe.configspace.domain
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+smol.cofe.configspace.orbit module
+----------------------------------
+
+.. automodule:: smol.cofe.configspace.orbit
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: smol.cofe.configspace
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -21,7 +21,7 @@ from smol.cofe.configspace import (get_allowed_species, get_site_spaces,
 
 
 class Processor(MSONable, metaclass=ABCMeta):
-    """Abstract base class for processor.
+    """Abstract base class for processors.
 
     A processor is used to provide a quick way to calculated energy differences
     (probability ratio's) between two adjacent configurational states for a
@@ -229,6 +229,10 @@ class Processor(MSONable, metaclass=ABCMeta):
         reverse_drift = sum(dp - self.compute_property_change(o, f)
                             for dp, o, f in trajectory) / iterations
         return forward_drift, reverse_drift
+
+    def __len__(self):
+        """Get number of sites processor supercell."""
+        return self.num_sites
 
     def as_dict(self) -> dict:
         """

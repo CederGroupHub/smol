@@ -1,0 +1,322 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Translating a Cluster Expansion created with `pyabinitio.cluster_expansion`"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "from monty.serialization import loadfn\n",
+    "from pyabinitio.cluster_expansion.eci_fit import EciGenerator\n",
+    "from smol.cofe import ClusterSubspace, StructureWrangler, ClusterExpansion\n",
+    "from smol.cofe.extern import EwaldTerm"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 1) Loading and extracting information from a pyabinitio `EciGenerator`\n",
+    "\n",
+    "Cluster expansions created with the `pyabinitio.cluster_expanstion` module,\n",
+    "can be very easily translated into `smol`.\n",
+    "\n",
+    "The only thing you will need is the `EciGenerator` object\n",
+    "you created."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "This is the prim \n",
+      "Full Formula (Li0.5 Ni1 O2)\n",
+      "Reduced Formula: Li0.5Ni1O2\n",
+      "abc   :   2.969848   2.969848   5.143928\n",
+      "angles:  73.221350  73.221347  60.000002\n",
+      "Sites (4)\n",
+      "  #  SP                         a     b     c\n",
+      "---  ----------------------  ----  ----  ----\n",
+      "  0  Li+:0.500               0     0     0\n",
+      "  1  Ni3+:0.500, Ni4+:0.500  0.5   0.5   0.5\n",
+      "  2  O2-                     0.75  0.75  0.75\n",
+      "  3  O2-                     0.25  0.25  0.25\n",
+      "\n",
+      "Cutoff radii obtained are {2: 4.199999454995874, 3: 5.939696563574085, 4: 2.9698482817870424}\n",
+      "\n",
+      "Cluster expansion used Ewald: True\n",
+      "Was the dieletric constrained: False\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "/home/lbluque/GoogleDrive/Develop/pyabinitio/pyabinitio/cluster_expansion/eci_fit.py:174: FutureWarning: `rcond` parameter will change to the default of machine precision times ``max(M, N)`` where M and N are the input matrix dimensions.\n",
+      "To use the future default and silence this warning we advise to pass `rcond=None`, to keep using the old, explicitly pass `rcond=-1`.\n",
+      "  x = np.linalg.lstsq(self.feature_matrix, self.normalized_energies)[0]\n"
+     ]
+    }
+   ],
+   "source": [
+    "# load a ecigenerator object you previously created\n",
+    "file_path = 'data/ecigenerator.mson'\n",
+    "ecigen = loadfn(file_path)\n",
+    "\n",
+    "# Get the prim structure\n",
+    "prim = ecigen.ce.structure\n",
+    "\n",
+    "print(f'This is the prim \\n{prim}\\n')\n",
+    "\n",
+    "# Get cutoff radii from previous CE object\n",
+    "radii = {}\n",
+    "for size, clusters in ecigen.ce.clusters.items():\n",
+    "    if size == 1: continue\n",
+    "    radii[size] = max([c.max_radius for c in clusters])\n",
+    "\n",
+    "print(f'Cutoff radii obtained are {radii}\\n')\n",
+    "\n",
+    "# determine if an ewald term is used\n",
+    "use_ewald = ecigen.ce.use_ewald\n",
+    "print(f'Cluster expansion used Ewald: {use_ewald}')\n",
+    "\n",
+    "# Check the fit did not constrain dielectric\n",
+    "# In case you plan to refit the same way.\n",
+    "print(f'Was the dieletric constrained: '\n",
+    "      f'{ecigen.max_dielectric is not None}')\n",
+    "\n",
+    "# obtain the structurematcher parameters used\n",
+    "# You should get these because the default values\n",
+    "# in smol are different then pyabinitio\n",
+    "# in smol the pymatgen defaults are used.\n",
+    "supercell_size = ecigen.ce.supercell_size\n",
+    "ltol = ecigen.ce.ltol\n",
+    "stol = ecigen.ce.stol\n",
+    "angle_tol = ecigen.ce.angle_tol"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 2) Now create the corresponding `ClusterSubspace`\n",
+    "\n",
+    "We can now create the corrseponding subspace using `smol`. Here you can choose to use a different basis if you want to refit to an orthogonal one. In this example we will keep the **indicator** basis to compare that our new features match the ones from before."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "basis='indicator'\n",
+    "subspace = ClusterSubspace.from_radii(prim,\n",
+    "                                       radii=radii,\n",
+    "                                       ltol=ltol,\n",
+    "                                       stol=stol,\n",
+    "                                       angle_tol=angle_tol,\n",
+    "                                       supercell_size=supercell_size,\n",
+    "                                       basis=basis)\n",
+    "\n",
+    "if use_ewald:\n",
+    "    subspace.add_external_term(EwaldTerm())\n",
+    "\n",
+    "\n",
+    "# Check that the number of orbits and orderings matches\n",
+    "assert subspace.n_orbits == ecigen.ce.n_sclusters\n",
+    "assert subspace.n_bit_orderings == ecigen.ce.n_bit_orderings"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 3) We can now create a `StructureWrangler` and add the structures used.\n",
+    "\n",
+    "If you don't plan to refit or compare that features are the same\n",
+    "(if still using indicator basis), then you can skip to 4)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# create the wrangler\n",
+    "wrangler = StructureWrangler(subspace)\n",
+    "\n",
+    "for item in ecigen.items:\n",
+    "    structure = item['structure']\n",
+    "    # giving it the matrix will make things\n",
+    "    # faster but it should work either way\n",
+    "    # unless you didnt use the same StuctureMatcher options\n",
+    "    scmatrix = item['supercell'].supercell_matrix\n",
+    "    energy = item['energy']\n",
+    "    weight = item['weight']\n",
+    "    wrangler.add_data(structure,\n",
+    "                      properties={'energy': energy},\n",
+    "                      weights={'whatever_you_used': weight},\n",
+    "                      supercell_matrix=scmatrix,\n",
+    "                      verbose=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# If using indicator basis, check that feature matrices match\n",
+    "if basis == 'indicator':\n",
+    "    assert np.allclose(wrangler.feature_matrix,\n",
+    "                       ecigen.feature_matrix)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 4) Creating new `ClusterExpansion` using previous fit\n",
+    "\n",
+    "If you want to keep the previous fit you can just use the \n",
+    "eci directly in the new cluster expansion\n",
+    "(the previous implementation in pyabinitio has the eci\n",
+    "as the eci * multiplicity so these are the coefficients)\n",
+    "Make sure you are using an indicator basis otherwise\n",
+    "it makes no sense to use the same eci"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "old_coefs = ecigen.ecis\n",
+    "expansion = ClusterExpansion(subspace,\n",
+    "                             coefficients=old_coefs,\n",
+    "                             feature_matrix=wrangler.feature_matrix)\n",
+    "\n",
+    "# Compare a few predictions to make sure everything matches\n",
+    "ids = np.random.choice((len(wrangler.structures)), size=10)\n",
+    "for i in ids:\n",
+    "    struct = wrangler.structures[i]\n",
+    "    assert np.isclose(ecigen.structure_energy(struct),\n",
+    "                      expansion.predict(struct))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 5) (Re)Fitting the `ClusterExpansion`\n",
+    "\n",
+    "You can also refit the cluster expansion (this is useful\n",
+    "if you want to switch over to using an orthogonal basis)\n",
+    "Here we will just redo it with the original indicator basis\n",
+    "to compare with the old fit."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(-194.5269866940073, -194.5300838260472)\n",
+      "(-212.9297023994862, -212.9297599412568)\n",
+      "(-218.86685195557408, -218.86867884358804)\n",
+      "(-218.86685195557408, -218.86867884358804)\n",
+      "(-207.29469222482078, -207.2964177894199)\n",
+      "(-205.67162763734075, -205.67160528614374)\n",
+      "(-213.12064363715785, -213.11905866670202)\n",
+      "(-206.9598414718743, -206.95907935717884)\n",
+      "(-205.67162763734075, -205.67160528614374)\n",
+      "(-218.95642680548934, -218.9540292755288)\n"
+     ]
+    }
+   ],
+   "source": [
+    "# the ecigenerators use the old l1regs by default\n",
+    "# so we will use the same for comparison\n",
+    "from smol.learn import WDRLasso\n",
+    "\n",
+    "estimator = WDRLasso()\n",
+    "\n",
+    "# in this case it was an unweighted fit so\n",
+    "# adding the weights makes no difference, but\n",
+    "# if you used by e above hull or composition\n",
+    "# you need to do this to get a similar fit\n",
+    "estimator.fit(wrangler.feature_matrix,\n",
+    "              wrangler.get_property_vector('energy', True),\n",
+    "              sample_weight=wrangler.get_weights('whatever_you_used'))\n",
+    "\n",
+    "new_coefs = estimator.coef_\n",
+    "\n",
+    "expansion = ClusterExpansion(subspace,\n",
+    "                             coefficients=new_coefs,\n",
+    "                             feature_matrix=wrangler.feature_matrix)\n",
+    "\n",
+    "# Lets check if our new fit is \n",
+    "ids = np.random.choice((len(wrangler.structures)), size=10)\n",
+    "for i in ids:\n",
+    "    struct = wrangler.structures[i]\n",
+    "    print((ecigen.structure_energy(struct),\n",
+    "                      expansion.predict(struct)))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Now you are ready to use your cluster expansion from before in `smol`!"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "matx_dev",
+   "language": "python",
+   "name": "matx_dev"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

@@ -4,14 +4,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.cofe.wrangler module &#8212; smol v1.0.0 documentation</title>
+    <title>smol.cofe.wrangler module &#8212; smol 1.0.0 documentation</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -42,6 +44,8 @@
         <div class="collapse navbar-collapse nav-collapse">
           <ul class="nav navbar-nav">
             
+                <li><a href="examples.html">Examples</a></li>
+                <li><a href="api.html">API</a></li>
                 <li><a href="https://github.com/CederGroupHub/smol">GitHub</a></li>
             
             
@@ -56,12 +60,24 @@
       aria-labelledby="dLabelGlobalToc"></ul>
 </li>
               
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">smol.cofe.wrangler module</a></li>
+</ul>
+</ul>
+</li>
+              
             
             
             
             
-            
-              <li class="hidden-sm"></li>
             
           </ul>
 
@@ -86,13 +102,18 @@
   <div class="section" id="module-smol.cofe.wrangler">
 <span id="smol-cofe-wrangler-module"></span><h1>smol.cofe.wrangler module<a class="headerlink" href="#module-smol.cofe.wrangler" title="Permalink to this headline">¶</a></h1>
 <p>Implementation of a StructureWrangler and functions to obtain fit weights.</p>
+<p>A StructureWrangler is used to generate and organize training data to fit a
+cluster expansion using the terms defined in a ClusterSubpace. It takes care
+of computing the training features (correlations) to construct a feature matrix
+to be used along with a target property vector to obtain the coefficients for
+a cluster expansion using some linear regression model.</p>
 <p>Includes functions used to preprocess and check (wrangle) fitting data of
 structures and properties.</p>
 <p>Also functions to obtain weights by energy above hull or energy above
 composition for a given set of structures.</p>
 <dl class="py class">
 <dt id="smol.cofe.wrangler.StructureWrangler">
-<em class="property">class </em><code class="sig-prename descclassname">smol.cofe.wrangler.</code><code class="sig-name descname">StructureWrangler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">StructureWrangler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Class to create fitting data to fit ECI for a cluster expansion.</p>
 <p>Class that handles (wrangles) input data structures and properties to fit
@@ -111,6 +132,13 @@ energy above composition.</p>
 dictionary is used to keep track of applied filters, but users can also use
 it to save any other pertinent information that will be saved with using
 as_dict for future reference.</p>
+<p>Initialize a StructureWrangler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A ClusterSubspace object that will be used to fit a
+ClusterExpansion with the provided data.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.cofe.wrangler.StructureWrangler.add_data">
 <code class="sig-name descname">add_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">properties</span></em>, <em class="sig-param"><span class="n">normalized</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">site_mapping</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">raise_failed</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.add_data" title="Permalink to this definition">¶</a></dt>
@@ -122,40 +150,36 @@ to True.</p>
 add the structure otherwise it ignores that structure. Usually failures
 are caused by the Structure Matcher in the given ClusterSubspace.
 If using verbose, the errors will be printed out.</p>
-<dl class="simple">
-<dt>Args</dt><dd><dl class="simple">
-<dt>structure (Structure):</dt><dd><p>A fit structure</p>
-</dd>
-<dt>properties (dict):</dt><dd><p>A dictionary with a key describing the property and the target
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>structure</strong> (<em>Structure</em>) – A fit structure</p></li>
+<li><p><strong>properties</strong> (<em>dict</em>) – A dictionary with a key describing the property and the target
 value for the corresponding structure. For example if only a
 single property {‘energy’: value} but can also add more than
 one i.e. {‘total_energy’: value1, ‘formation_energy’: value2}.
 You are free to make up the keys for each property but make
-sure you are consistent for all structures that you add.</p>
-</dd>
-<dt>normalized (bool):</dt><dd><p>Wether the given properties have already been normalized.</p>
-</dd>
-<dt>weights (dict):</dt><dd><p>The weight given to the structure when doing the fit. The key
-must match at least one of the given properties.</p>
-</dd>
-<dt>verbose (bool):</dt><dd><p>if True then print structures that fail in StructureMatcher.</p>
-</dd>
-<dt>supercell_matrix (ndarray): optional</dt><dd><p>If the corresponding structure has already been matched to the
+sure you are consistent for all structures that you add.</p></li>
+<li><p><strong>normalized</strong> (<em>bool</em>) – Wether the given properties have already been normalized.</p></li>
+<li><p><strong>weights</strong> (<em>dict</em>) – The weight given to the structure when doing the fit. The key
+must match at least one of the given properties.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – if True then print structures that fail in StructureMatcher.</p></li>
+<li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – optional
+If the corresponding structure has already been matched to the
 clustersubspace prim structure, passing the supercell_matrix
 will use that instead of trying to re-match. If using this
 the user is responsible to have the correct supercell_matrix,
-Here you are the cause of your own bugs.</p>
-</dd>
-<dt>site_mapping (list): optional</dt><dd><p>Site mapping as obtained by StructureMatcher.get_mapping
+Here you are the cause of your own bugs.</p></li>
+<li><p><strong>site_mapping</strong> (<em>list</em>) – optional
+Site mapping as obtained by StructureMatcher.get_mapping
 such that the elements of site_mapping represent the indices
 of the matching sites to the prim structure. I you pass this
-option you are fully responsible that the mappings are correct!</p>
-</dd>
-<dt>raise_failed (bool): optional</dt><dd><p>If true will raise the thrown error when adding a structure
+option you are fully responsible that the mappings are correct!</p></li>
+<li><p><strong>raise_failed</strong> (<em>bool</em>) – optional
+If true will raise the thrown error when adding a structure
 fails. This can be helpful to keep a list of structures that
-fail for further checking.</p>
-</dd>
-</dl>
+fail for further checking.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -505,7 +529,7 @@ the Wrangler. This will prevent having to match structures and such.</p>
 
 <dl class="py function">
 <dt id="smol.cofe.wrangler.weights_energy_above_composition">
-<code class="sig-prename descclassname">smol.cofe.wrangler.</code><code class="sig-name descname">weights_energy_above_composition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structures</span></em>, <em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">temperature</span><span class="o">=</span><span class="default_value">2000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.weights_energy_above_composition" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">weights_energy_above_composition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structures</span></em>, <em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">temperature</span><span class="o">=</span><span class="default_value">2000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.weights_energy_above_composition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute weights for energy above the minimum reduced composition energy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -524,7 +548,7 @@ the Wrangler. This will prevent having to match structures and such.</p>
 
 <dl class="py function">
 <dt id="smol.cofe.wrangler.weights_energy_above_hull">
-<code class="sig-prename descclassname">smol.cofe.wrangler.</code><code class="sig-name descname">weights_energy_above_hull</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structures</span></em>, <em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">cs_structure</span></em>, <em class="sig-param"><span class="n">temperature</span><span class="o">=</span><span class="default_value">2000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.weights_energy_above_hull" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">weights_energy_above_hull</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structures</span></em>, <em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">cs_structure</span></em>, <em class="sig-param"><span class="n">temperature</span><span class="o">=</span><span class="default_value">2000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.weights_energy_above_hull" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute weights for structure energy above the hull of given structures.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -553,6 +577,9 @@ the Wrangler. This will prevent having to match structures and such.</p>
   <div class="container">
     <p class="pull-right">
       <a href="#">Back to top</a>
+      
+        <br/>
+        
       
     </p>
     <p>
