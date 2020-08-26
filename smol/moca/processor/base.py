@@ -21,7 +21,7 @@ from smol.cofe.configspace import (get_allowed_species, get_site_spaces,
 
 
 class Processor(MSONable, metaclass=ABCMeta):
-    """Abstract base class for processor.
+    """Abstract base class for processors.
 
     A processor is used to provide a quick way to calculated energy differences
     (probability ratio's) between two adjacent configurational states for a

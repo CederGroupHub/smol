@@ -1,17 +1,45 @@
 smol.moca.processor package
 ===========================
 
-.. automodule:: smol.moca.processor
+Submodules
+----------
+
+smol.moca.processor.base module
+-------------------------------
+
+.. automodule:: smol.moca.processor.base
    :members:
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
+smol.moca.processor.composite module
+------------------------------------
 
-.. toctree::
-   :maxdepth: 4
+.. automodule:: smol.moca.processor.composite
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
-   smol.moca.processor.composite
-   smol.moca.processor.ewald
-   smol.moca.processor.expansion
+smol.moca.processor.ewald module
+--------------------------------
+
+.. automodule:: smol.moca.processor.ewald
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+smol.moca.processor.expansion module
+------------------------------------
+
+.. automodule:: smol.moca.processor.expansion
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: smol.moca.processor
+   :members:
+   :undoc-members:
+   :show-inheritance:

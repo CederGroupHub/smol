@@ -1,11 +1,6 @@
 smol.moca package
 =================
 
-.. automodule:: smol.moca
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Subpackages
 -----------
 
@@ -15,3 +10,11 @@ Subpackages
    smol.moca.ensemble
    smol.moca.processor
    smol.moca.sampler
+
+Module contents
+---------------
+
+.. automodule:: smol.moca
+   :members:
+   :undoc-members:
+   :show-inheritance:

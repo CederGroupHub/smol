@@ -13,7 +13,9 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -72,8 +74,8 @@
 <li><a class="reference internal" href="#">Statistical Mechanics on Lattices</a></li>
 <li><a class="reference internal" href="#installation">Installation</a></li>
 <li><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
-<li><a class="reference internal" href="#detailed-examples">Detailed Examples</a></li>
-<li><a class="reference internal" href="#api-documentation">API Documentation</a><ul>
+<li><a class="reference internal" href="#api-documentation">API Documentation</a></li>
+<li><a class="reference internal" href="#detailed-examples">Detailed Examples</a><ul>
 <li><a class="reference internal" href="#recent-changes">Recent Changes</a></li>
 <li><a class="reference internal" href="#help-issues-support">Help, Issues, Support</a></li>
 <li><a class="reference internal" href="#contributing">Contributing</a></li>
@@ -113,9 +115,9 @@
 </div>
 <div class="section" id="statistical-mechanics-on-lattices">
 <h1>Statistical Mechanics on Lattices<a class="headerlink" href="#statistical-mechanics-on-lattices" title="Permalink to this headline">¶</a></h1>
-<p><strong>Lighthweight but caffeinated Python implementations of computational methods
+<p>Lighthweight but caffeinated Python implementations of computational methods
 for statistical mechanical calculations of configurational states for
-crystalline material systems.</strong></p>
+crystalline material systems.</p>
 <img alt="https://img.shields.io/circleci/build/gh/CederGroupHub/smol/master?logo=circleci&amp;style=for-the-badge&amp;token=96d0d7a959e1e12044ff45daa43218ae7fa4303e" src="https://img.shields.io/circleci/build/gh/CederGroupHub/smol/master?logo=circleci&amp;style=for-the-badge&amp;token=96d0d7a959e1e12044ff45daa43218ae7fa4303e" />
 <img alt="https://img.shields.io/codacy/coverage/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge" src="https://img.shields.io/codacy/coverage/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge" />
 <img alt="https://img.shields.io/codacy/grade/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge" src="https://img.shields.io/codacy/grade/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge" />
@@ -177,15 +179,15 @@ a Cluster Expansion for a binary alloy and doing Monte Carlo sampling:</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="detailed-examples">
-<h1>Detailed Examples<a class="headerlink" href="#detailed-examples" title="Permalink to this headline">¶</a></h1>
-<p>You can find more in-depth and advanced usage examples in the
-<a class="reference internal" href="examples.html"><span class="doc">Example Notebooks</span></a> page.</p>
-</div>
 <div class="section" id="api-documentation">
 <h1>API Documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
 <p>See the <a class="reference internal" href="api.html"><span class="doc">API</span></a> documentation page for in depth reference to core classes
 and functions.</p>
+</div>
+<div class="section" id="detailed-examples">
+<h1>Detailed Examples<a class="headerlink" href="#detailed-examples" title="Permalink to this headline">¶</a></h1>
+<p>You can find more in-depth and advanced usage examples in the
+<a class="reference internal" href="examples.html"><span class="doc">Example Notebooks</span></a> page.</p>
 <div class="section" id="recent-changes">
 <h2>Recent Changes<a class="headerlink" href="#recent-changes" title="Permalink to this headline">¶</a></h2>
 <p>You can find the most recent chagnes in the <span class="xref std std-doc">changelog</span>.</p>

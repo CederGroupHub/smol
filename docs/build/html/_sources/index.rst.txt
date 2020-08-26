@@ -9,9 +9,9 @@
 Statistical Mechanics on Lattices
 =================================
 
-**Lighthweight but caffeinated Python implementations of computational methods
+Lighthweight but caffeinated Python implementations of computational methods
 for statistical mechanical calculations of configurational states for
-crystalline material systems.**
+crystalline material systems.
 
 .. image:: https://img.shields.io/circleci/build/gh/CederGroupHub/smol/master?logo=circleci&style=for-the-badge&token=96d0d7a959e1e12044ff45daa43218ae7fa4303e
 .. image:: https://img.shields.io/codacy/coverage/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge
@@ -69,15 +69,16 @@ a Cluster Expansion for a binary alloy and doing Monte Carlo sampling::
     save_work("CuAu_ce_mc.json", wrangler, expansion, ensemble,
               sampler.samples)
 
-Detailed Examples
-=================
-You can find more in-depth and advanced usage examples in the
-:doc:`examples` page.
 
 API Documentation
 =================
 See the :doc:`api` documentation page for in depth reference to core classes
 and functions.
+
+Detailed Examples
+=================
+You can find more in-depth and advanced usage examples in the
+:doc:`examples` page.
 
 ==============
 Recent Changes

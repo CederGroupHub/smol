@@ -12,9 +12,10 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../smol'))
-
 import sphinx_bootstrap_theme
+
+sys.path.insert(0, os.path.abspath('../../smol'))
+sys.path.insert(0, os.path.abspath('../../examples'))
 
 # -- Project information -----------------------------------------------------
 
@@ -34,6 +35,10 @@ release = '1.0.0'
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.mathjax",
+    "nbsphinx",
+    "IPython.sphinxext.ipython_console_highlighting",
 ]
 
 # Generate the API documentation when building
@@ -52,7 +57,7 @@ napoleon_use_ivar = False
 napoleon_custom_sections = None
 
 # Add any paths that contain templates here, relative to this directory.
-source_suffix = ".rst"
+source_suffix = [".rst", ".ipynb"]
 master_doc = "index"
 
 # intersphinx configuration
@@ -151,9 +156,10 @@ html_theme_options = {
     # Currently, the supported themes are:
     # - Bootstrap 2: https://bootswatch.com/2
     # - Bootstrap 3: https://bootswatch.com/3
-    'bootswatch_theme': "readable",
-    # 'bootswatch_theme': "flatly",
+    # 'bootswatch_theme': "readable",
+    'bootswatch_theme': "flatly",
     # 'bootswatch_theme': "simplex",
+    # 'bootswatch_theme': "lumen",
     # 'bootswatch_theme': "paper",
 
     # Choose Bootstrap version.

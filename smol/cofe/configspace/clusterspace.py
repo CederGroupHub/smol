@@ -58,8 +58,10 @@ class ClusterSubspace(MSONable):
                  supercell_matcher=None, site_matcher=None, **matcher_kwargs):
         """Initialize a ClusterSubspace.
 
-        You rarely (never?) will need to create a ClusterSubspace using this.
-        Look at the class method from_radii for the "better" way to do it.
+        You rarely (never?) will need to create a ClusterSubspace using the
+        main constructor.
+        Look at the class method :code:`from_radii` for the "better" way to do
+        it.
 
         Args:
             structure (Structure):
@@ -301,8 +303,6 @@ class ClusterSubspace(MSONable):
             term (ExternalTerm):
                 An instance of an external term. Currently only EwaldTerm is
                 implemented.
-        Returns:
-
         """
         for added_term in self.external_terms:
             if isinstance(term, type(added_term)):

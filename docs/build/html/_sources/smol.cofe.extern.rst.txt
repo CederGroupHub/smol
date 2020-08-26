@@ -1,15 +1,21 @@
 smol.cofe.extern package
 ========================
 
-.. automodule:: smol.cofe.extern
+Submodules
+----------
+
+smol.cofe.extern.ewald module
+-----------------------------
+
+.. automodule:: smol.cofe.extern.ewald
    :members:
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
+Module contents
+---------------
 
-.. toctree::
-   :maxdepth: 4
-
-   smol.cofe.extern.ewald
+.. automodule:: smol.cofe.extern
+   :members:
+   :undoc-members:
+   :show-inheritance:
