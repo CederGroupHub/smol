@@ -4,14 +4,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.cofe.extern package &#8212; smol v1.0.0 documentation</title>
+    <title>smol.cofe.extern package &#8212; smol 1.0.0 documentation</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -42,6 +44,8 @@
         <div class="collapse navbar-collapse nav-collapse">
           <ul class="nav navbar-nav">
             
+                <li><a href="examples.html">Examples</a></li>
+                <li><a href="api.html">API</a></li>
                 <li><a href="https://github.com/CederGroupHub/smol">GitHub</a></li>
             
             
@@ -56,12 +60,27 @@
       aria-labelledby="dLabelGlobalToc"></ul>
 </li>
               
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">smol.cofe.extern package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
             
             
             
             
-            
-              <li class="hidden-sm"></li>
             
           </ul>
 
@@ -92,7 +111,7 @@ representing additional features to be fitted in a cluster expansion.</p>
 be the only term ever needed, but alas abstraction?</p>
 <dl class="py class">
 <dt id="smol.cofe.extern.EwaldTerm">
-<em class="property">class </em><code class="sig-prename descclassname">smol.cofe.extern.</code><code class="sig-name descname">EwaldTerm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">eta</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">real_space_cut</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">recip_space_cut</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">use_term</span><span class="o">=</span><span class="default_value">'total'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.extern.EwaldTerm" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">EwaldTerm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">eta</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">real_space_cut</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">recip_space_cut</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">use_term</span><span class="o">=</span><span class="default_value">'total'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.extern.EwaldTerm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>EwaldTerm Class that can be added to a ClusterSubspace.</p>
 <p>This class can be used as an external term added to a ClusterSubspace
@@ -100,6 +119,24 @@ using the add_external_term method. Doing so allows to introduce Ewald
 electrostatic interaction energies as an additional feature to include
 when fitting a cluster expansion. This usually helps to increase accuracy
 and reduce complexity (number of orbits) required to fit ionic materials.</p>
+<p>Initialize EwaldTerm.</p>
+<p>Input parameters are standard input parameters to pymatgen
+EwaldSummation. See class documentation for more information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>eta</strong> (<em>float</em>) – Parameter to override the EwaldSummation default screening
+parameter eta. If not given it is determined automatically.</p></li>
+<li><p><strong>real_space_cut</strong> (<em>float</em>) – Real space cutoff radius. Determined automagically if not
+given.</p></li>
+<li><p><strong>recip_space_cut</strong> (<em>float</em>) – Reciprocal space cutoff radius. Determined automagically if not
+given.</p></li>
+<li><p><strong>use_term</strong> (<em>str</em>) – optional
+the Ewald expansion term to use as an additional term in the
+expansion. Options are total, real, reciprocal, point.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.cofe.extern.EwaldTerm.as_dict">
 <code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#smol.cofe.extern.EwaldTerm.as_dict" title="Permalink to this definition">¶</a></dt>
@@ -238,6 +275,9 @@ interactions,</p></li>
   <div class="container">
     <p class="pull-right">
       <a href="#">Back to top</a>
+      
+        <br/>
+        
       
     </p>
     <p>

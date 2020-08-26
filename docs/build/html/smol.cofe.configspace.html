@@ -4,14 +4,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.cofe.configspace package &#8212; smol v1.0.0 documentation</title>
+    <title>smol.cofe.configspace package &#8212; smol 1.0.0 documentation</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -42,6 +44,8 @@
         <div class="collapse navbar-collapse nav-collapse">
           <ul class="nav navbar-nav">
             
+                <li><a href="examples.html">Examples</a></li>
+                <li><a href="api.html">API</a></li>
                 <li><a href="https://github.com/CederGroupHub/smol">GitHub</a></li>
             
             
@@ -56,12 +60,27 @@
       aria-labelledby="dLabelGlobalToc"></ul>
 </li>
               
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">smol.cofe.configspace package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
             
             
             
             
-            
-              <li class="hidden-sm"></li>
             
           </ul>
 
@@ -90,7 +109,7 @@
 of a crystalline system and the space of functions over it.</p>
 <dl class="py class">
 <dt id="smol.cofe.configspace.Cluster">
-<em class="property">class </em><code class="sig-prename descclassname">smol.cofe.configspace.</code><code class="sig-name descname">Cluster</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sites</span></em>, <em class="sig-param"><span class="n">lattice</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.Cluster" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Cluster</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sites</span></em>, <em class="sig-param"><span class="n">lattice</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.Cluster" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>An undecorated (no occupancies) cluster.</p>
 <p>Represented simply by a list of sites, its centroid, and the underlying
@@ -142,6 +161,15 @@ Used to identify the cluster in a given ClusterSubspace.</p>
 </dl>
 </dd></dl>
 
+<p>Initialize Cluster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sites</strong> (<em>list</em>) – list of frac coords for the sites</p></li>
+<li><p><strong>lattice</strong> (<em>Lattice</em>) – pymatgen Lattice object</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.cofe.configspace.Cluster.as_dict">
 <code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.Cluster.as_dict" title="Permalink to this definition">¶</a></dt>
@@ -187,7 +215,7 @@ Used to identify the cluster in a given ClusterSubspace.</p>
 
 <dl class="py class">
 <dt id="smol.cofe.configspace.Orbit">
-<em class="property">class </em><code class="sig-prename descclassname">smol.cofe.configspace.</code><code class="sig-name descname">Orbit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sites</span></em>, <em class="sig-param"><span class="n">lattice</span></em>, <em class="sig-param"><span class="n">bits</span></em>, <em class="sig-param"><span class="n">site_bases</span></em>, <em class="sig-param"><span class="n">structure_symops</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.Orbit" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Orbit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sites</span></em>, <em class="sig-param"><span class="n">lattice</span></em>, <em class="sig-param"><span class="n">bits</span></em>, <em class="sig-param"><span class="n">site_bases</span></em>, <em class="sig-param"><span class="n">structure_symops</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.Orbit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Orbit set of symmetrically equivalent clusters.</p>
 <p>An Orbit represents a set of clusters that are symmetrically equivalent
@@ -266,6 +294,24 @@ site function indices at each site of a cluster in the orbit.</p>
 </dl>
 </dd></dl>
 
+<p>Initialize an Orbit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sites</strong> (<em>list</em><em> or </em><em>ndarray</em>) – list of frac coords for the sites</p></li>
+<li><p><strong>lattice</strong> (<em>pymatgen.Lattice</em>) – A lattice object for the given sites</p></li>
+<li><p><strong>bits</strong> (<em>list of list</em>) – list describing the possible site function indices for
+each site in cluster. Should be the number of possible
+occupancies minus one. i.e. for a 3 site cluster, each of which
+having one of Li, TM, or Vac, bits are [[0, 1], [0, 1], [0, 1]]
+This is ensures the expansion is not “over-complete” by
+implicitly enforcing that all sites have a site basis function
+phi_0 = 1.</p></li>
+<li><p><strong>site_bases</strong> (<em>list of SiteBasis</em>) – list of SiteBasis objects for each site in the given sites.</p></li>
+<li><p><strong>structure_symops</strong> (<em>list of SymmOp</em>) – list of symmetry operations for the base structure</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.cofe.configspace.Orbit.as_dict">
 <code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.Orbit.as_dict" title="Permalink to this definition">¶</a></dt>
@@ -431,14 +477,29 @@ orderings) needs to be passed.</p>
 
 <dl class="py class">
 <dt id="smol.cofe.configspace.Vacancy">
-<em class="property">class </em><code class="sig-prename descclassname">smol.cofe.configspace.</code><code class="sig-name descname">Vacancy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">symbol</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'A'</span></em>, <em class="sig-param"><span class="n">oxidation_state</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0</span></em>, <em class="sig-param"><span class="n">properties</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.Vacancy" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Vacancy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">symbol</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'A'</span></em>, <em class="sig-param"><span class="n">oxidation_state</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0</span></em>, <em class="sig-param"><span class="n">properties</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.Vacancy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymatgen.core.periodic_table.DummySpecie</span></code></p>
 <p>Wrapper class around DummySpecie to treat vacancies as their own.</p>
+<p>Initialize a Vacancy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>symbol</strong> (<em>str</em>) – An assigned symbol for the vacancy. Strict
+rules are applied to the choice of the symbol. The vacancy
+symbol cannot have any part of first two letters that will
+constitute an Element symbol. Otherwise, a composition may
+be parsed wrongly. E.g., “X” is fine, but “Vac” is not
+because Vac contains V, a valid Element.</p></li>
+<li><p><strong>oxidation_state</strong> (<em>float</em>) – Oxidation state for Vacancy. More like
+the charge of a point defect. Defaults to zero.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="smol.cofe.configspace.basis_factory">
-<code class="sig-prename descclassname">smol.cofe.configspace.</code><code class="sig-name descname">basis_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basis_name</span></em>, <em class="sig-param"><span class="n">site_space</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.basis_factory" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">basis_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basis_name</span></em>, <em class="sig-param"><span class="n">site_space</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.basis_factory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a site basis for the given basis name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -455,7 +516,7 @@ orderings) needs to be passed.</p>
 
 <dl class="py function">
 <dt id="smol.cofe.configspace.get_allowed_species">
-<code class="sig-prename descclassname">smol.cofe.configspace.</code><code class="sig-name descname">get_allowed_species</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.get_allowed_species" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_allowed_species</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.get_allowed_species" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the allowed species for each site in a disordered structure.</p>
 <p>This will get all the allowed species for each site in a pymatgen structure
 If the site composition does not add to 1, a Vacancy will be appended to
@@ -479,7 +540,7 @@ be disordered, otherwise there is no point in using this.</p>
 
 <dl class="py function">
 <dt id="smol.cofe.configspace.get_site_spaces">
-<code class="sig-prename descclassname">smol.cofe.configspace.</code><code class="sig-name descname">get_site_spaces</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">include_measure</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.get_site_spaces" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_site_spaces</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">include_measure</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.get_site_spaces" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get site spaces for each site in a disordered structure.</p>
 <p>Method to obtain the single site spaces for the sites in a structure.
 The single site spaces are represented by the allowed species for each site
@@ -509,7 +570,7 @@ otherwise a uniform measure is assumed.</p></li>
 
 <dl class="py function">
 <dt id="smol.cofe.configspace.get_specie">
-<code class="sig-prename descclassname">smol.cofe.configspace.</code><code class="sig-name descname">get_specie</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.get_specie" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_specie</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.get_specie" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get specie object.</p>
 <p>Wraps pymatgen.core.periodic_table.get_el_sp. to be able to catch and
 return Vacancies when needed.</p>
@@ -552,6 +613,9 @@ properties that can be determined.</p>
   <div class="container">
     <p class="pull-right">
       <a href="#">Back to top</a>
+      
+        <br/>
+        
       
     </p>
     <p>

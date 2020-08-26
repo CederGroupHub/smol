@@ -4,14 +4,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.moca.ensemble.canonical module &#8212; smol v1.0.0 documentation</title>
+    <title>smol.moca.ensemble.canonical module &#8212; smol 1.0.0 documentation</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -42,6 +44,8 @@
         <div class="collapse navbar-collapse nav-collapse">
           <ul class="nav navbar-nav">
             
+                <li><a href="examples.html">Examples</a></li>
+                <li><a href="api.html">API</a></li>
                 <li><a href="https://github.com/CederGroupHub/smol">GitHub</a></li>
             
             
@@ -56,12 +60,24 @@
       aria-labelledby="dLabelGlobalToc"></ul>
 </li>
               
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">smol.moca.ensemble.canonical module</a></li>
+</ul>
+</ul>
+</li>
+              
             
             
             
             
-            
-              <li class="hidden-sm"></li>
             
           </ul>
 
@@ -90,9 +106,22 @@
 concentration of species.</p>
 <dl class="py class">
 <dt id="smol.moca.ensemble.canonical.CanonicalEnsemble">
-<em class="property">class </em><code class="sig-prename descclassname">smol.moca.ensemble.canonical.</code><code class="sig-name descname">CanonicalEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.canonical.CanonicalEnsemble" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">CanonicalEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.canonical.CanonicalEnsemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.base.Ensemble</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Canonical Ensemble class to run Monte Carlo Simulations.</p>
+<p>Initialize CanonicalEnemble.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>processor</strong> (<em>Processor</em>) – A processor that can compute the change in a property given
+a set of flips.</p></li>
+<li><p><strong>temperature</strong> (<em>float</em>) – Temperature of ensemble</p></li>
+<li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – optional
+list of Lattice objects representing sites in the processor
+supercell with same site spaces.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.moca.ensemble.canonical.CanonicalEnsemble.compute_feature_vector">
 <code class="sig-name descname">compute_feature_vector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.canonical.CanonicalEnsemble.compute_feature_vector" title="Permalink to this definition">¶</a></dt>
@@ -169,6 +198,9 @@ concentration of species.</p>
   <div class="container">
     <p class="pull-right">
       <a href="#">Back to top</a>
+      
+        <br/>
+        
       
     </p>
     <p>

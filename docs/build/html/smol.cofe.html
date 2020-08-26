@@ -4,14 +4,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.cofe package &#8212; smol v1.0.0 documentation</title>
+    <title>smol.cofe package &#8212; smol 1.0.0 documentation</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -42,6 +44,8 @@
         <div class="collapse navbar-collapse nav-collapse">
           <ul class="nav navbar-nav">
             
+                <li><a href="examples.html">Examples</a></li>
+                <li><a href="api.html">API</a></li>
                 <li><a href="https://github.com/CederGroupHub/smol">GitHub</a></li>
             
             
@@ -56,12 +60,28 @@
       aria-labelledby="dLabelGlobalToc"></ul>
 </li>
               
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">smol.cofe package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
             
             
             
             
-            
-              <li class="hidden-sm"></li>
             
           </ul>
 
@@ -90,7 +110,7 @@
 functions to define and fit cluster expansions for crystalline materials.</p>
 <dl class="py class">
 <dt id="smol.cofe.ClusterExpansion">
-<em class="property">class </em><code class="sig-prename descclassname">smol.cofe.</code><code class="sig-name descname">ClusterExpansion</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em>, <em class="sig-param"><span class="n">coefficients</span></em>, <em class="sig-param"><span class="n">feature_matrix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterExpansion" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">ClusterExpansion</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em>, <em class="sig-param"><span class="n">coefficients</span></em>, <em class="sig-param"><span class="n">feature_matrix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterExpansion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Class for the ClusterExpansion proper.</p>
 <p>This needs a ClusterSubspace and a corresponding set of ECI from a fit.</p>
@@ -129,6 +149,20 @@ expansion. i.e. if it was pruned, any error metrics etc.</p>
 </dl>
 </dd></dl>
 
+<p>Initialize a ClusterExpansion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A clustersubspace representing the subspace over which the
+Cluster Expansion was fit. Must be the same used to create
+the feature matrix.</p></li>
+<li><p><strong>coefficients</strong> (<em>ndarray</em>) – coefficients for cluster expansion. Make sure the supplied
+coefficients to the correlation vector terms (length and order)
+These correspond to the ECI x the multiplicity of their orbit.</p></li>
+<li><p><strong>feature_matrix</strong> (<em>ndarray</em>) – the feature matrix used in fitting the given coefficients.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.cofe.ClusterExpansion.as_dict">
 <code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterExpansion.as_dict" title="Permalink to this definition">¶</a></dt>
@@ -249,17 +283,27 @@ the fit coefficients</p></li>
 
 <dl class="py class">
 <dt id="smol.cofe.ClusterSubspace">
-<em class="property">class </em><code class="sig-prename descclassname">smol.cofe.</code><code class="sig-name descname">ClusterSubspace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">expansion_structure</span></em>, <em class="sig-param"><span class="n">symops</span></em>, <em class="sig-param"><span class="n">orbits</span></em>, <em class="sig-param"><span class="n">supercell_matcher</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">site_matcher</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">matcher_kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">ClusterSubspace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">expansion_structure</span></em>, <em class="sig-param"><span class="n">symops</span></em>, <em class="sig-param"><span class="n">orbits</span></em>, <em class="sig-param"><span class="n">supercell_matcher</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">site_matcher</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">matcher_kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>ClusterSubspace represents a subspace of functions of configuration.</p>
+<p>A ClusterSubspace is the main work horse used in constructing a cluster
+expansion. It is necessary to define the terms to be included in a cluster
+expansion. A cluster subspace holds a finite set of orbits that contain
+symmetrically equivalent clusters. The orbits also contain the set of orbit
+basis functions (also known as correlation functions) that represent the
+terms in the cluster expansion. Taken together the set of all orbit
+functions for all orbits included span a subspace of the total function
+space over the configurational space of a given crystal structure system.</p>
+<p>The ClusterSubspace also has methods to match fitting structures and
+determine site mappings for supercells of different sizes in order to
+compute correlation vectors (i.e. evaluate the orbit functions for a given
+structure).</p>
 <p>Holds a structure, its expansion structure and a list of Orbits.
 This class defines the cluster subspace over which to fit a cluster
 expansion: This sets the orbits (groups of clusters) and the site basis
 functions that are to be considered in the fit.</p>
-<p>You probably want to generate from ClusterSubspace.from_radii, which will
-auto-generate the orbits from radius cutoffs.</p>
-<p>This is the class you’re looking for to start defining the structure and
-orbit/cluster terms for your cluster expansion.</p>
+<p>You probably want to generate from <code class="code docutils literal notranslate"><span class="pre">ClusterSubspace.from_radii</span></code>,
+which will auto-generate the orbits from radius cutoffs.</p>
 <dl class="py attribute">
 <dt id="smol.cofe.ClusterSubspace.symops">
 <code class="sig-name descname">symops</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.symops" title="Permalink to this definition">¶</a></dt>
@@ -271,6 +315,39 @@ orbit/cluster terms for your cluster expansion.</p>
 </dl>
 </dd></dl>
 
+<p>Initialize a ClusterSubspace.</p>
+<p>You rarely (never?) will need to create a ClusterSubspace using this.
+Look at the class method from_radii for the “better” way to do it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>structure</strong> (<em>Structure</em>) – Structure to define the cluster space. Typically the primitive
+cell. Includes all species regardless of partial occupation.</p></li>
+<li><p><strong>expansion_structure</strong> (<em>Structure</em>) – Structure including only sites that will be included in the
+Cluster space. (those with partial occupancy)</p></li>
+<li><p><strong>symops</strong> (<em>list of Symmop</em>) – list of Symmops for the given structure.</p></li>
+<li><p><strong>orbits</strong> (<em>dict</em>) – {size: list of Orbits}
+Dictionary with size (number of sites) as keys and list of
+Orbits as values.</p></li>
+<li><p><strong>supercell_matcher</strong> (<em>StructureMatcher</em>) – (optional)
+A StructureMatcher class to be used to find supercell matrices
+relating the prim structure to other structures. If you pass
+this directly you should know how to set the matcher up other
+wise matching your relaxed structures will fail, alot.</p></li>
+<li><p><strong>site_matcher</strong> (<em>StructureMatcher</em>) – (optional)
+A StructureMatcher class to be used to find site mappings
+relating the sites of a given structure to an appropriate
+supercell of the prim structure . If you pass this directly you
+should know how to set the matcher up other wise matching your
+relaxed structures will fail, alot.</p></li>
+<li><p><strong>matcher_kwargs</strong> – ltol, stol, angle_tol, supercell_size: parameters to pass
+through to the StructureMatchers. Structures that don’t match
+to the primitive cell under these tolerances won’t be included
+in the expansion. Easiest option for supercell_size is usually
+to use a species that has a constant amount per formula unit.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.cofe.ClusterSubspace.add_external_term">
 <code class="sig-name descname">add_external_term</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">term</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.add_external_term" title="Permalink to this definition">¶</a></dt>
@@ -278,6 +355,13 @@ orbit/cluster terms for your cluster expansion.</p>
 <p>Add an external term (e.g. an Ewald term) to the cluster expansion
 terms. External term classes must be MSONable and implement a method
 to obtain a “correlation” see smol.cofe.extern for examples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>term</strong> (<em>ExternalTerm</em>) – An instance of an external term. Currently only EwaldTerm is
+implemented.</p>
+</dd>
+</dl>
+<p>Returns:</p>
 </dd></dl>
 
 <dl class="py method">
@@ -334,8 +418,8 @@ to obtain a “correlation” see smol.cofe.extern for examples.</p>
 <code class="sig-name descname">corr_from_structure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">normalized</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">scmatrix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">site_mapping</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.corr_from_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get correlation vector for structure.</p>
 <p>Returns the correlation vector for a given structure. To do this the
-correct supercell matrix of the prim necessary needs to be found to
-then determine the mappings between sites to create the occupancy
+correct supercell matrix of the prim needs to be found to then
+determine the mappings between sites to create the occupancy
 string and also determine the orbit mappings to evaluate the
 corresponding cluster functions.</p>
 <dl class="field-list simple">
@@ -370,7 +454,7 @@ option you are fully responsible that the mappings are correct!</p></li>
 <dl class="py method">
 <dt id="smol.cofe.ClusterSubspace.expansion_structure">
 <em class="property">property </em><code class="sig-name descname">expansion_structure</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.expansion_structure" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the prim expansion structure.</p>
+<dd><p>Return the prim expansion structure (excludes inactive sites).</p>
 </dd></dl>
 
 <dl class="py method">
@@ -434,7 +518,7 @@ to use a species that has a constant amount per formula unit.</p></li>
 <dl class="py method">
 <dt id="smol.cofe.ClusterSubspace.function_orbit_ids">
 <em class="property">property </em><code class="sig-name descname">function_orbit_ids</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_orbit_ids" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get Orbit ids corresponding to each correlation function.</p>
+<dd><p>Get Orbit IDs corresponding to each correlation function.</p>
 <p>If the Cluster Subspace includes external terms these are not included
 in the list since they are not associated with any orbit.</p>
 </dd></dl>
@@ -506,7 +590,7 @@ species name.</p></li>
 <dl class="py method">
 <dt id="smol.cofe.ClusterSubspace.orbit_nbit_orderings">
 <em class="property">property </em><code class="sig-name descname">orbit_nbit_orderings</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbit_nbit_orderings" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the number of symmetrically distinct bit orderings for orbits.</p>
+<dd><p>Get the number of symmetrically distinct bit orderings in orbits.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -603,13 +687,13 @@ orbit will remove more than one element in the correlation vector</p>
 to a supercell equivalent to given structure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>structure</strong> (<em>Structure</em>) – </p>
+<dd class="field-odd"><p><strong>structure</strong> (<em>Structure</em>) – A pymatgen Structure.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>matrix relating passed structure and prim structure.</p>
+<dd class="field-even"><p>matrix relating given structure and prim structure.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>array</p>
+<dd class="field-odd"><p>ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -617,7 +701,7 @@ to a supercell equivalent to given structure.</p>
 <dl class="py method">
 <dt id="smol.cofe.ClusterSubspace.structure">
 <em class="property">property </em><code class="sig-name descname">structure</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.structure" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the prim structure.</p>
+<dd><p>Return the prim structure (includes all sites.).</p>
 </dd></dl>
 
 <dl class="py method">
@@ -629,8 +713,8 @@ supercell of the corresponding size.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>supercell</strong> (<em>Structure</em>) – supercell of prim with same size as other structure.</p></li>
-<li><p><strong>structure</strong> (<em>Structure</em>) – structure to obtain site mappings to supercell of prim</p></li>
+<li><p><strong>supercell</strong> (<em>Structure</em>) – Supercell of prim structure with same size as other structure.</p></li>
+<li><p><strong>structure</strong> (<em>Structure</em>) – Structure to obtain site mappings to supercell of prim</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -653,12 +737,9 @@ structure represented by the given matrix</p>
 <dd class="field-odd"><p><strong>scmatrix</strong> (<em>array</em>) – array relating a supercell with the primitive matrix</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>(orbit, indices) list of tuples with orbits and the</dt><dd><p>site indices for all equivalent orbits in a supercell obtained
+<dd class="field-even"><p>(orbit, indices) list of tuples with orbits and the
+site indices for all equivalent orbits in a supercell obtained
 from the given matrix.</p>
-</dd>
-</dl>
-</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list of tuples</p>
@@ -670,7 +751,7 @@ from the given matrix.</p>
 
 <dl class="py class">
 <dt id="smol.cofe.StructureWrangler">
-<em class="property">class </em><code class="sig-prename descclassname">smol.cofe.</code><code class="sig-name descname">StructureWrangler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">StructureWrangler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Class to create fitting data to fit ECI for a cluster expansion.</p>
 <p>Class that handles (wrangles) input data structures and properties to fit
@@ -689,6 +770,13 @@ energy above composition.</p>
 dictionary is used to keep track of applied filters, but users can also use
 it to save any other pertinent information that will be saved with using
 as_dict for future reference.</p>
+<p>Initialize a StructureWrangler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cluster_subspace</strong> (<a class="reference internal" href="#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A ClusterSubspace object that will be used to fit a
+ClusterExpansion with the provided data.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.cofe.StructureWrangler.add_data">
 <code class="sig-name descname">add_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">properties</span></em>, <em class="sig-param"><span class="n">normalized</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">site_mapping</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">raise_failed</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.add_data" title="Permalink to this definition">¶</a></dt>
@@ -700,40 +788,36 @@ to True.</p>
 add the structure otherwise it ignores that structure. Usually failures
 are caused by the Structure Matcher in the given ClusterSubspace.
 If using verbose, the errors will be printed out.</p>
-<dl class="simple">
-<dt>Args</dt><dd><dl class="simple">
-<dt>structure (Structure):</dt><dd><p>A fit structure</p>
-</dd>
-<dt>properties (dict):</dt><dd><p>A dictionary with a key describing the property and the target
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>structure</strong> (<em>Structure</em>) – A fit structure</p></li>
+<li><p><strong>properties</strong> (<em>dict</em>) – A dictionary with a key describing the property and the target
 value for the corresponding structure. For example if only a
 single property {‘energy’: value} but can also add more than
 one i.e. {‘total_energy’: value1, ‘formation_energy’: value2}.
 You are free to make up the keys for each property but make
-sure you are consistent for all structures that you add.</p>
-</dd>
-<dt>normalized (bool):</dt><dd><p>Wether the given properties have already been normalized.</p>
-</dd>
-<dt>weights (dict):</dt><dd><p>The weight given to the structure when doing the fit. The key
-must match at least one of the given properties.</p>
-</dd>
-<dt>verbose (bool):</dt><dd><p>if True then print structures that fail in StructureMatcher.</p>
-</dd>
-<dt>supercell_matrix (ndarray): optional</dt><dd><p>If the corresponding structure has already been matched to the
+sure you are consistent for all structures that you add.</p></li>
+<li><p><strong>normalized</strong> (<em>bool</em>) – Wether the given properties have already been normalized.</p></li>
+<li><p><strong>weights</strong> (<em>dict</em>) – The weight given to the structure when doing the fit. The key
+must match at least one of the given properties.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – if True then print structures that fail in StructureMatcher.</p></li>
+<li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – optional
+If the corresponding structure has already been matched to the
 clustersubspace prim structure, passing the supercell_matrix
 will use that instead of trying to re-match. If using this
 the user is responsible to have the correct supercell_matrix,
-Here you are the cause of your own bugs.</p>
-</dd>
-<dt>site_mapping (list): optional</dt><dd><p>Site mapping as obtained by StructureMatcher.get_mapping
+Here you are the cause of your own bugs.</p></li>
+<li><p><strong>site_mapping</strong> (<em>list</em>) – optional
+Site mapping as obtained by StructureMatcher.get_mapping
 such that the elements of site_mapping represent the indices
 of the matching sites to the prim structure. I you pass this
-option you are fully responsible that the mappings are correct!</p>
-</dd>
-<dt>raise_failed (bool): optional</dt><dd><p>If true will raise the thrown error when adding a structure
+option you are fully responsible that the mappings are correct!</p></li>
+<li><p><strong>raise_failed</strong> (<em>bool</em>) – optional
+If true will raise the thrown error when adding a structure
 fails. This can be helpful to keep a list of structures that
-fail for further checking.</p>
-</dd>
-</dl>
+fail for further checking.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -1083,7 +1167,7 @@ the Wrangler. This will prevent having to match structures and such.</p>
 
 <dl class="py function">
 <dt id="smol.cofe.weights_energy_above_composition">
-<code class="sig-prename descclassname">smol.cofe.</code><code class="sig-name descname">weights_energy_above_composition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structures</span></em>, <em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">temperature</span><span class="o">=</span><span class="default_value">2000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.weights_energy_above_composition" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">weights_energy_above_composition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structures</span></em>, <em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">temperature</span><span class="o">=</span><span class="default_value">2000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.weights_energy_above_composition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute weights for energy above the minimum reduced composition energy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1102,7 +1186,7 @@ the Wrangler. This will prevent having to match structures and such.</p>
 
 <dl class="py function">
 <dt id="smol.cofe.weights_energy_above_hull">
-<code class="sig-prename descclassname">smol.cofe.</code><code class="sig-name descname">weights_energy_above_hull</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structures</span></em>, <em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">cs_structure</span></em>, <em class="sig-param"><span class="n">temperature</span><span class="o">=</span><span class="default_value">2000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.weights_energy_above_hull" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">weights_energy_above_hull</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structures</span></em>, <em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">cs_structure</span></em>, <em class="sig-param"><span class="n">temperature</span><span class="o">=</span><span class="default_value">2000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.weights_energy_above_hull" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute weights for structure energy above the hull of given structures.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1165,6 +1249,9 @@ the Wrangler. This will prevent having to match structures and such.</p>
   <div class="container">
     <p class="pull-right">
       <a href="#">Back to top</a>
+      
+        <br/>
+        
       
     </p>
     <p>

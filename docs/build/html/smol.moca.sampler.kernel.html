@@ -4,14 +4,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.moca.sampler.kernel module &#8212; smol v1.0.0 documentation</title>
+    <title>smol.moca.sampler.kernel module &#8212; smol 1.0.0 documentation</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -42,6 +44,8 @@
         <div class="collapse navbar-collapse nav-collapse">
           <ul class="nav navbar-nav">
             
+                <li><a href="examples.html">Examples</a></li>
+                <li><a href="api.html">API</a></li>
                 <li><a href="https://github.com/CederGroupHub/smol">GitHub</a></li>
             
             
@@ -56,12 +60,24 @@
       aria-labelledby="dLabelGlobalToc"></ul>
 </li>
               
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">smol.moca.sampler.kernel module</a></li>
+</ul>
+</ul>
+</li>
+              
             
             
             
             
-            
-              <li class="hidden-sm"></li>
             
           </ul>
 
@@ -90,12 +106,27 @@
 to generate states for sampling an MCMC chain.</p>
 <dl class="py class">
 <dt id="smol.moca.sampler.kernel.MCMCKernel">
-<em class="property">class </em><code class="sig-prename descclassname">smol.moca.sampler.kernel.</code><code class="sig-name descname">MCMCKernel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ensemble</span></em>, <em class="sig-param"><span class="n">step_type</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.MCMCKernel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">MCMCKernel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ensemble</span></em>, <em class="sig-param"><span class="n">step_type</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.MCMCKernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Abtract base class for transition kernels.</p>
 <p>A kernel is used to implement a specific MCMC algorithm used to sampler
 the ensemble classes. For an illustrtive example of how to derive from this
 and write a specific sampler see the MetropolisSampler.</p>
+<p>Initialize MCMCKernel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ensemble</strong> (<em>Ensemble</em>) – an Ensemble instance to obtain the feautures and parameters
+used in computing log probabilities.</p></li>
+<li><p><strong>step_type</strong> (<em>str</em>) – optional
+String specifying the MCMC step type.</p></li>
+<li><p><strong>args</strong> – positional arguments to instantiate the mcusher for the
+corresponding step size.</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments to instantiate the mcusher for the
+corresponding step size.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.moca.sampler.kernel.MCMCKernel.single_step">
 <em class="property">abstract </em><code class="sig-name descname">single_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.MCMCKernel.single_step" title="Permalink to this definition">¶</a></dt>
@@ -130,10 +161,25 @@ successful.</p>
 
 <dl class="py class">
 <dt id="smol.moca.sampler.kernel.Metropolis">
-<em class="property">class </em><code class="sig-prename descclassname">smol.moca.sampler.kernel.</code><code class="sig-name descname">Metropolis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ensemble</span></em>, <em class="sig-param"><span class="n">step_type</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.Metropolis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Metropolis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ensemble</span></em>, <em class="sig-param"><span class="n">step_type</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.Metropolis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.kernel.MCMCKernel" title="smol.moca.sampler.kernel.MCMCKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.kernel.MCMCKernel</span></code></a></p>
 <p>A Metropolis-Hastings kernel.</p>
 <p>The classic and nothing but the classic.</p>
+<p>Initialize MCMCKernel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ensemble</strong> (<em>Ensemble</em>) – an Ensemble instance to obtain the feautures and parameters
+used in computing log probabilities.</p></li>
+<li><p><strong>step_type</strong> (<em>str</em>) – optional
+String specifying the MCMC step type.</p></li>
+<li><p><strong>args</strong> – positional arguments to instantiate the mcusher for the
+corresponding step size.</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments to instantiate the mcusher for the
+corresponding step size.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.moca.sampler.kernel.Metropolis.single_step">
 <code class="sig-name descname">single_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.Metropolis.single_step" title="Permalink to this definition">¶</a></dt>
@@ -162,7 +208,7 @@ successful.</p>
 
 <dl class="py function">
 <dt id="smol.moca.sampler.kernel.mcmckernel_factory">
-<code class="sig-prename descclassname">smol.moca.sampler.kernel.</code><code class="sig-name descname">mcmckernel_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kernel_type</span></em>, <em class="sig-param"><span class="n">ensemble</span></em>, <em class="sig-param"><span class="n">step_type</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.mcmckernel_factory" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mcmckernel_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kernel_type</span></em>, <em class="sig-param"><span class="n">ensemble</span></em>, <em class="sig-param"><span class="n">step_type</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.mcmckernel_factory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a MCMC Kernel from string name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -185,7 +231,7 @@ successful.</p>
 
 <dl class="py function">
 <dt id="smol.moca.sampler.kernel.random">
-<code class="sig-prename descclassname">smol.moca.sampler.kernel.</code><code class="sig-name descname">random</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; x in the interval [0, 1).<a class="headerlink" href="#smol.moca.sampler.kernel.random" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">random</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; x in the interval [0, 1).<a class="headerlink" href="#smol.moca.sampler.kernel.random" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -199,6 +245,9 @@ successful.</p>
   <div class="container">
     <p class="pull-right">
       <a href="#">Back to top</a>
+      
+        <br/>
+        
       
     </p>
     <p>

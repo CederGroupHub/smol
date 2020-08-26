@@ -4,14 +4,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.moca.processor package &#8212; smol v1.0.0 documentation</title>
+    <title>smol.moca.processor package &#8212; smol 1.0.0 documentation</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -42,6 +44,8 @@
         <div class="collapse navbar-collapse nav-collapse">
           <ul class="nav navbar-nav">
             
+                <li><a href="examples.html">Examples</a></li>
+                <li><a href="api.html">API</a></li>
                 <li><a href="https://github.com/CederGroupHub/smol">GitHub</a></li>
             
             
@@ -56,12 +60,27 @@
       aria-labelledby="dLabelGlobalToc"></ul>
 </li>
               
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">smol.moca.processor package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
             
             
             
             
-            
-              <li class="hidden-sm"></li>
             
           </ul>
 
@@ -92,7 +111,7 @@ they represent or changes in said property from site flips. Things necessary
 to run Monte Carlo sampling.</p>
 <dl class="py class">
 <dt id="smol.moca.processor.CEProcessor">
-<em class="property">class </em><code class="sig-prename descclassname">smol.moca.processor.</code><code class="sig-name descname">CEProcessor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span></em>, <em class="sig-param"><span class="n">coefficients</span></em>, <em class="sig-param"><span class="n">optimize_indicator</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.CEProcessor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">CEProcessor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span></em>, <em class="sig-param"><span class="n">coefficients</span></em>, <em class="sig-param"><span class="n">optimize_indicator</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.CEProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.processor.base.Processor</span></code></p>
 <p>CEProcessor class to use a ClusterExpansion in MC simulations.</p>
 <p>A CE processor is optimized to compute correlation vectors and local
@@ -136,6 +155,21 @@ labellings for all orbits. Same as n_bit_orderings.</p>
 </dl>
 </dd></dl>
 
+<p>Initialize a CEProcessor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
+Cluster Expansion prim structure.</p></li>
+<li><p><strong>coefficients</strong> (<em>ndarray</em>) – Fit coefficients for the represented cluster expansion.</p></li>
+<li><p><strong>optimize_indicator</strong> (<em>bool</em>) – When using an indicator basis, set the delta_corr function to
+the indicator optimize function. This can make MC steps faster.
+Make sure your cluster expansion was indeed fit with an
+indicator basis set, otherwise your MC results are no good.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.moca.processor.CEProcessor.as_dict">
 <code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#smol.moca.processor.CEProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
@@ -201,7 +235,7 @@ for the new species to place at that site.</p></li>
 
 <dl class="py class">
 <dt id="smol.moca.processor.CompositeProcessor">
-<em class="property">class </em><code class="sig-prename descclassname">smol.moca.processor.</code><code class="sig-name descname">CompositeProcessor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.CompositeProcessor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">CompositeProcessor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.CompositeProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.processor.base.Processor</span></code></p>
 <p>CompositeProcessor class used for mixed models.</p>
 <p>A Composite processor is merely a container for several different processor
@@ -212,6 +246,16 @@ heart desires.</p>
 CEProcessor and an EwaldProcessor for use in ionic materials.</p>
 <p>You can add anyone of the other processor class implemented to build a
 composite processor.</p>
+<p>Initialize a CompositeProcessor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
+Cluster Expansion prim structure.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.moca.processor.CompositeProcessor.add_processor">
 <code class="sig-name descname">add_processor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.CompositeProcessor.add_processor" title="Permalink to this definition">¶</a></dt>
@@ -330,11 +374,27 @@ for the new species to place at that site.</p></li>
 
 <dl class="py class">
 <dt id="smol.moca.processor.EwaldProcessor">
-<em class="property">class </em><code class="sig-prename descclassname">smol.moca.processor.</code><code class="sig-name descname">EwaldProcessor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span></em>, <em class="sig-param"><span class="n">ewald_term</span></em>, <em class="sig-param"><span class="n">coefficient</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">ewald_summation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.EwaldProcessor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">EwaldProcessor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span></em>, <em class="sig-param"><span class="n">ewald_term</span></em>, <em class="sig-param"><span class="n">coefficient</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">ewald_summation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.EwaldProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.processor.base.Processor</span></code></p>
 <p>Processor for CE’s including an EwaldTerm.</p>
 <p>A Processor class that handles changes for the electrostatic interaction
 energy using an Ewald Summation term.</p>
+<p>Initialize an EwaldCEProcessor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
+Cluster Expansion prim structure.</p></li>
+<li><p><strong>ewald_term</strong> (<a class="reference internal" href="smol.cofe.extern.html#smol.cofe.extern.EwaldTerm" title="smol.cofe.extern.EwaldTerm"><em>EwaldTerm</em></a>) – An instance of EwaldTerm to compute electrostatic energies.</p></li>
+<li><p><strong>coefficient</strong> (<em>float</em>) – Fitting coeficient to scale Ewald energy by.</p></li>
+<li><p><strong>ewald_summation</strong> (<em>EwaldSummation</em>) – optional
+pymatgen EwaldSummation instance, make sure this uses the exact
+same parameters as those used in the EwaldTerm in the cluster
+Expansion (i.e. same eta, real and recip cuts).</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.moca.processor.EwaldProcessor.as_dict">
 <code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#smol.moca.processor.EwaldProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
@@ -468,6 +528,9 @@ ClusterExpansion.</p>
   <div class="container">
     <p class="pull-right">
       <a href="#">Back to top</a>
+      
+        <br/>
+        
       
     </p>
     <p>

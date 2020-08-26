@@ -4,14 +4,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.moca.sampler.sampler module &#8212; smol v1.0.0 documentation</title>
+    <title>smol.moca.sampler.sampler module &#8212; smol 1.0.0 documentation</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -42,6 +44,8 @@
         <div class="collapse navbar-collapse nav-collapse">
           <ul class="nav navbar-nav">
             
+                <li><a href="examples.html">Examples</a></li>
+                <li><a href="api.html">API</a></li>
                 <li><a href="https://github.com/CederGroupHub/smol">GitHub</a></li>
             
             
@@ -56,12 +60,24 @@
       aria-labelledby="dLabelGlobalToc"></ul>
 </li>
               
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">smol.moca.sampler.sampler module</a></li>
+</ul>
+</ul>
+</li>
+              
             
             
             
             
-            
-              <li class="hidden-sm"></li>
             
           </ul>
 
@@ -90,11 +106,25 @@
 by the corresponding ensemble to generate Monte Carlo samples.</p>
 <dl class="py class">
 <dt id="smol.moca.sampler.sampler.Sampler">
-<em class="property">class </em><code class="sig-prename descclassname">smol.moca.sampler.sampler.</code><code class="sig-name descname">Sampler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kernel</span></em>, <em class="sig-param"><span class="n">container</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Sampler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kernel</span></em>, <em class="sig-param"><span class="n">container</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A sampler is used to run MCMC sampling simulations.</p>
 <p>The specific MCMC algorithm is defined by the given MCMCKernel.
 The default will use a a simple Metropolis random walk kernel.</p>
+<p>Initialize BaseSampler.</p>
+<p>It is recommended to initialize a sampler with the from_ensemble
+method, unless you need more control.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kernel</strong> (<a class="reference internal" href="smol.moca.sampler.kernel.html#smol.moca.sampler.kernel.MCMCKernel" title="smol.moca.sampler.kernel.MCMCKernel"><em>MCMCKernel</em></a>) – An MCMCKernel instance.</p></li>
+<li><p><strong>container</strong> (<a class="reference internal" href="smol.moca.html#smol.moca.SampleContainer" title="smol.moca.SampleContainer"><em>SampleContainer</em></a>) – A sampler containter to store samples. If given num_walkers is
+taken from the container.</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – optional
+seed for random number generator.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.moca.sampler.sampler.Sampler.anneal">
 <code class="sig-name descname">anneal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">temperatures</span></em>, <em class="sig-param"><span class="n">mcmc_steps</span></em>, <em class="sig-param"><span class="n">initial_occupancies</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">progress</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.anneal" title="Permalink to this definition">¶</a></dt>
@@ -237,6 +267,9 @@ Number to thin iterations by and provide samples.</p></li>
   <div class="container">
     <p class="pull-right">
       <a href="#">Back to top</a>
+      
+        <br/>
+        
       
     </p>
     <p>

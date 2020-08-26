@@ -4,14 +4,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.moca package &#8212; smol v1.0.0 documentation</title>
+    <title>smol.moca package &#8212; smol 1.0.0 documentation</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -42,6 +44,8 @@
         <div class="collapse navbar-collapse nav-collapse">
           <ul class="nav navbar-nav">
             
+                <li><a href="examples.html">Examples</a></li>
+                <li><a href="api.html">API</a></li>
                 <li><a href="https://github.com/CederGroupHub/smol">GitHub</a></li>
             
             
@@ -56,12 +60,27 @@
       aria-labelledby="dLabelGlobalToc"></ul>
 </li>
               
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">smol.moca package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
             
             
             
             
-            
-              <li class="hidden-sm"></li>
             
           </ul>
 
@@ -90,7 +109,7 @@
 Monte Carlo simulations using Cluster Expansion Hamiltonians.</p>
 <dl class="py class">
 <dt id="smol.moca.CEProcessor">
-<em class="property">class </em><code class="sig-prename descclassname">smol.moca.</code><code class="sig-name descname">CEProcessor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span></em>, <em class="sig-param"><span class="n">coefficients</span></em>, <em class="sig-param"><span class="n">optimize_indicator</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CEProcessor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">CEProcessor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span></em>, <em class="sig-param"><span class="n">coefficients</span></em>, <em class="sig-param"><span class="n">optimize_indicator</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CEProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.processor.base.Processor</span></code></p>
 <p>CEProcessor class to use a ClusterExpansion in MC simulations.</p>
 <p>A CE processor is optimized to compute correlation vectors and local
@@ -134,6 +153,21 @@ labellings for all orbits. Same as n_bit_orderings.</p>
 </dl>
 </dd></dl>
 
+<p>Initialize a CEProcessor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
+Cluster Expansion prim structure.</p></li>
+<li><p><strong>coefficients</strong> (<em>ndarray</em>) – Fit coefficients for the represented cluster expansion.</p></li>
+<li><p><strong>optimize_indicator</strong> (<em>bool</em>) – When using an indicator basis, set the delta_corr function to
+the indicator optimize function. This can make MC steps faster.
+Make sure your cluster expansion was indeed fit with an
+indicator basis set, otherwise your MC results are no good.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.moca.CEProcessor.as_dict">
 <code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#smol.moca.CEProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
@@ -199,9 +233,22 @@ for the new species to place at that site.</p></li>
 
 <dl class="py class">
 <dt id="smol.moca.CanonicalEnsemble">
-<em class="property">class </em><code class="sig-prename descclassname">smol.moca.</code><code class="sig-name descname">CanonicalEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CanonicalEnsemble" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">CanonicalEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CanonicalEnsemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.base.Ensemble</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Canonical Ensemble class to run Monte Carlo Simulations.</p>
+<p>Initialize CanonicalEnemble.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>processor</strong> (<em>Processor</em>) – A processor that can compute the change in a property given
+a set of flips.</p></li>
+<li><p><strong>temperature</strong> (<em>float</em>) – Temperature of ensemble</p></li>
+<li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – optional
+list of Lattice objects representing sites in the processor
+supercell with same site spaces.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.moca.CanonicalEnsemble.compute_feature_vector">
 <code class="sig-name descname">compute_feature_vector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CanonicalEnsemble.compute_feature_vector" title="Permalink to this definition">¶</a></dt>
@@ -269,7 +316,7 @@ for the new species to place at that site.</p></li>
 
 <dl class="py class">
 <dt id="smol.moca.CompositeProcessor">
-<em class="property">class </em><code class="sig-prename descclassname">smol.moca.</code><code class="sig-name descname">CompositeProcessor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CompositeProcessor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">CompositeProcessor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CompositeProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.processor.base.Processor</span></code></p>
 <p>CompositeProcessor class used for mixed models.</p>
 <p>A Composite processor is merely a container for several different processor
@@ -280,6 +327,16 @@ heart desires.</p>
 CEProcessor and an EwaldProcessor for use in ionic materials.</p>
 <p>You can add anyone of the other processor class implemented to build a
 composite processor.</p>
+<p>Initialize a CompositeProcessor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
+Cluster Expansion prim structure.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.moca.CompositeProcessor.add_processor">
 <code class="sig-name descname">add_processor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CompositeProcessor.add_processor" title="Permalink to this definition">¶</a></dt>
@@ -398,11 +455,27 @@ for the new species to place at that site.</p></li>
 
 <dl class="py class">
 <dt id="smol.moca.EwaldProcessor">
-<em class="property">class </em><code class="sig-prename descclassname">smol.moca.</code><code class="sig-name descname">EwaldProcessor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span></em>, <em class="sig-param"><span class="n">ewald_term</span></em>, <em class="sig-param"><span class="n">coefficient</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">ewald_summation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.EwaldProcessor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">EwaldProcessor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span></em>, <em class="sig-param"><span class="n">ewald_term</span></em>, <em class="sig-param"><span class="n">coefficient</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">ewald_summation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.EwaldProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.processor.base.Processor</span></code></p>
 <p>Processor for CE’s including an EwaldTerm.</p>
 <p>A Processor class that handles changes for the electrostatic interaction
 energy using an Ewald Summation term.</p>
+<p>Initialize an EwaldCEProcessor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
+Cluster Expansion prim structure.</p></li>
+<li><p><strong>ewald_term</strong> (<a class="reference internal" href="smol.cofe.extern.html#smol.cofe.extern.EwaldTerm" title="smol.cofe.extern.EwaldTerm"><em>EwaldTerm</em></a>) – An instance of EwaldTerm to compute electrostatic energies.</p></li>
+<li><p><strong>coefficient</strong> (<em>float</em>) – Fitting coeficient to scale Ewald energy by.</p></li>
+<li><p><strong>ewald_summation</strong> (<em>EwaldSummation</em>) – optional
+pymatgen EwaldSummation instance, make sure this uses the exact
+same parameters as those used in the EwaldTerm in the cluster
+Expansion (i.e. same eta, real and recip cuts).</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.moca.EwaldProcessor.as_dict">
 <code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#smol.moca.EwaldProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
@@ -517,7 +590,7 @@ ClusterExpansion.</p>
 
 <dl class="py class">
 <dt id="smol.moca.FuSemiGrandEnsemble">
-<em class="property">class </em><code class="sig-prename descclassname">smol.moca.</code><code class="sig-name descname">FuSemiGrandEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">fugacity_fractions</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.FuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">FuSemiGrandEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">fugacity_fractions</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.FuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="smol.moca.ensemble.semigrand.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Fugacity fraction SemiGrandEnsemble.</p>
 <p>A Semi-Grand Canonical Ensemble for Monte Carlo simulations where the
@@ -538,6 +611,25 @@ temperature the corresponding chemical potentials can then be calculated.</p>
 </dl>
 </dd></dl>
 
+<p>Initialize MuSemiGrandEnsemble.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>processor</strong> (<em>Processor</em>) – A processor that can compute the change in a property given
+a set of flips. See moca.processor</p></li>
+<li><p><strong>temperature</strong> (<em>float</em>) – Temperature of ensemble</p></li>
+<li><p><strong>fugacity_fractions</strong> (<em>sequence of dicts</em>) – optional
+dictionary of species name and fugacity fraction for each
+sublattice (ie think of it as the sublattice concentrations
+for random structure). If not given this will be taken from the
+prim structure used in the cluster subspace. Needs to be in
+the same order as the corresponding sublattice.</p></li>
+<li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – optional
+list of Lattice objects representing sites in the processor
+supercell with same site spaces.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.moca.FuSemiGrandEnsemble.as_dict">
 <code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.FuSemiGrandEnsemble.as_dict" title="Permalink to this definition">¶</a></dt>
@@ -599,7 +691,7 @@ temperature the corresponding chemical potentials can then be calculated.</p>
 
 <dl class="py class">
 <dt id="smol.moca.MuSemiGrandEnsemble">
-<em class="property">class </em><code class="sig-prename descclassname">smol.moca.</code><code class="sig-name descname">MuSemiGrandEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">chemical_potentials</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.MuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">MuSemiGrandEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">chemical_potentials</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.MuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="smol.moca.ensemble.semigrand.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Relative chemical potential based SemiGrand Ensemble.</p>
 <p>A Semi-Grand Canonical Ensemble for Monte Carlo Simulations where species
@@ -620,6 +712,20 @@ values.</p>
 </dl>
 </dd></dl>
 
+<p>Initialize MuSemiGrandEnsemble.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>processor</strong> (<em>Processor</em>) – A processor that can compute the change in a property given
+a set of flips. See moca.processor</p></li>
+<li><p><strong>temperature</strong> (<em>float</em>) – Temperature of ensemble</p></li>
+<li><p><strong>chemical_potentials</strong> (<em>dict</em>) – dictionary with species names and chemical potentials.</p></li>
+<li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – optional
+list of Lattice objects representing sites in the processor
+supercell with same site spaces.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.moca.MuSemiGrandEnsemble.as_dict">
 <code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.MuSemiGrandEnsemble.as_dict" title="Permalink to this definition">¶</a></dt>
@@ -681,7 +787,7 @@ values.</p>
 
 <dl class="py class">
 <dt id="smol.moca.SampleContainer">
-<em class="property">class </em><code class="sig-prename descclassname">smol.moca.</code><code class="sig-name descname">SampleContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_sites</span></em>, <em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">natural_parameters</span></em>, <em class="sig-param"><span class="n">num_energy_coefs</span></em>, <em class="sig-param"><span class="n">ensemble_metadata</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nwalkers</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.SampleContainer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">SampleContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_sites</span></em>, <em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">natural_parameters</span></em>, <em class="sig-param"><span class="n">num_energy_coefs</span></em>, <em class="sig-param"><span class="n">ensemble_metadata</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nwalkers</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.SampleContainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>A SampleContainter class stores Monte Carlo simulation samples.</p>
 <p>It also provides some minor functionality to get sample statistics.
@@ -754,6 +860,20 @@ can be anything representative i.e. number of sites)</p>
 </dl>
 </dd></dl>
 
+<p>Initialize a sample container.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_sites</strong> (<em>int</em>) – Total number of sites in supercell of the ensemble.</p></li>
+<li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – Sublattices of the ensemble sampled.</p></li>
+<li><p><strong>natural_parameters</strong> (<em>ndarray</em>) – array of natural parameters used in the ensemble.</p></li>
+<li><p><strong>num_energy_coefs</strong> (<em>int</em>) – the number of coeficients in the natural parameters that
+correspond to the energy only.</p></li>
+<li><p><strong>ensemble_metadata</strong> (<em>Ensemble</em>) – Metadata of the ensemble that was sampled.</p></li>
+<li><p><strong>nwalkers</strong> (<em>int</em>) – Number of walkers used to generate chain. Default is 1</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.moca.SampleContainer.allocate">
 <code class="sig-name descname">allocate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nsamples</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.SampleContainer.allocate" title="Permalink to this definition">¶</a></dt>
@@ -988,11 +1108,25 @@ the total mc iterations.</p></li>
 
 <dl class="py class">
 <dt id="smol.moca.Sampler">
-<em class="property">class </em><code class="sig-prename descclassname">smol.moca.</code><code class="sig-name descname">Sampler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kernel</span></em>, <em class="sig-param"><span class="n">container</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.Sampler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Sampler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kernel</span></em>, <em class="sig-param"><span class="n">container</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.Sampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A sampler is used to run MCMC sampling simulations.</p>
 <p>The specific MCMC algorithm is defined by the given MCMCKernel.
 The default will use a a simple Metropolis random walk kernel.</p>
+<p>Initialize BaseSampler.</p>
+<p>It is recommended to initialize a sampler with the from_ensemble
+method, unless you need more control.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kernel</strong> (<a class="reference internal" href="smol.moca.sampler.kernel.html#smol.moca.sampler.kernel.MCMCKernel" title="smol.moca.sampler.kernel.MCMCKernel"><em>MCMCKernel</em></a>) – An MCMCKernel instance.</p></li>
+<li><p><strong>container</strong> (<a class="reference internal" href="#smol.moca.SampleContainer" title="smol.moca.SampleContainer"><em>SampleContainer</em></a>) – A sampler containter to store samples. If given num_walkers is
+taken from the container.</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – optional
+seed for random number generator.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="smol.moca.Sampler.anneal">
 <code class="sig-name descname">anneal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">temperatures</span></em>, <em class="sig-param"><span class="n">mcmc_steps</span></em>, <em class="sig-param"><span class="n">initial_occupancies</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">progress</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.Sampler.anneal" title="Permalink to this definition">¶</a></dt>
@@ -1170,6 +1304,9 @@ Number to thin iterations by and provide samples.</p></li>
   <div class="container">
     <p class="pull-right">
       <a href="#">Back to top</a>
+      
+        <br/>
+        
       
     </p>
     <p>
