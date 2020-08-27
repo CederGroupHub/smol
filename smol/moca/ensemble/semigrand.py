@@ -30,11 +30,11 @@ class BaseSemiGrandEnsemble(Ensemble):
     Total number of species are fixed but composition of "active" (with partial
     occupancies) sublattices is allowed to change.
 
-    This class can not be instantiated. See MuSemiGrandEnsemble and
-    FuSemiGrandEnsemble below.
+    This class can not be instantiated. See :class:`MuSemiGrandEnsemble` and
+    :class:`FuSemiGrandEnsemble` below.
     """
 
-    valid_mcmc_ushers = ('Flipper',)
+    valid_mcmc_steps = ('flip',)
 
     def __init__(self, processor, temperature, sublattices=None):
         """Initialize BaseSemiGrandEnsemble.

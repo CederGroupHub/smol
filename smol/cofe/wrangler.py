@@ -1,5 +1,11 @@
 """Implementation of a StructureWrangler and functions to obtain fit weights.
 
+A StructureWrangler is used to generate and organize training data to fit a
+cluster expansion using the terms defined in a ClusterSubpace. It takes care
+of computing the training features (correlations) to construct a feature matrix
+to be used along with a target property vector to obtain the coefficients for
+a cluster expansion using some linear regression model.
+
 Includes functions used to preprocess and check (wrangle) fitting data of
 structures and properties.
 
@@ -229,7 +235,7 @@ class StructureWrangler(MSONable):
         are caused by the Structure Matcher in the given ClusterSubspace.
         If using verbose, the errors will be printed out.
 
-        Args
+        Args:
             structure (Structure):
                 A fit structure
             properties (dict):
@@ -458,6 +464,7 @@ class StructureWrangler(MSONable):
                 If true will raise the thrown error when adding a structure
                 fails. This can be helpful to keep a list of structures that
                 fail for further checking.
+
         Returns:
             dict: data item dict for structure
         """

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>smol.cofe.configspace.basis module &#8212; smol 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          smol</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="examples.html">Examples</a></li>
+                <li><a href="api.html">API</a></li>
+                <li><a href="https://github.com/CederGroupHub/smol">GitHub</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">smol.cofe.configspace.basis module</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <div class="section" id="module-smol.cofe.configspace.basis">
+<span id="smol-cofe-configspace-basis-module"></span><h1>smol.cofe.configspace.basis module<a class="headerlink" href="#module-smol.cofe.configspace.basis" title="Permalink to this headline">¶</a></h1>
+<p>Definitions for basis functions over a site function space.</p>
+<p>The product of single site functions make up a cluster/orbit function used to
+obtain correlation vectors. The domain of a site function is a site space,
+which is defined by the allowed species at the site and their measures, which
+is concentration of the species in the random structure)</p>
+<dl class="py class">
+<dt id="smol.cofe.configspace.basis.BasisIterator">
+<em class="property">class </em><code class="sig-name descname">BasisIterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">species</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.basis.BasisIterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Iterator</span></code></p>
+<p>Abstract basis iterator class.</p>
+<p>A basis iterator iterates through all non-constant site basis functions.
+i.e. for basis <span class="math notranslate nohighlight">\(\phi_0 = 1, \phi_1, ..., \phi_{n-1}\)</span>,
+the iterator will just iterate through <span class="math notranslate nohighlight">\(\phi_1, ..., \phi_{n-1}\)</span></p>
+<dl class="py attribute">
+<dt id="smol.cofe.configspace.basis.BasisIterator.flavor">
+<code class="sig-name descname">flavor</code><a class="headerlink" href="#smol.cofe.configspace.basis.BasisIterator.flavor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name specifying the type of basis that is generated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Initialize a BasisIterator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>species</strong> (<em>tuple</em>) – tuple of allowed species in site spaces</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="id0">
+<code class="sig-name descname">flavor</code><em class="property"> = 'abstract'</em><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="smol.cofe.configspace.basis.ChebyshevIterator">
+<em class="property">class </em><code class="sig-name descname">ChebyshevIterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">species</span></em>, <em class="sig-param"><span class="n">low</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">high</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.basis.ChebyshevIterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#smol.cofe.configspace.basis.NumpyPolyIterator" title="smol.cofe.configspace.basis.NumpyPolyIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.configspace.basis.NumpyPolyIterator</span></code></a></p>
+<p>Chebyshev polynomial basis set iterator.</p>
+<p>Initialize a NumpyPolyIterator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>species</strong> (<em>tuple</em>) – tuple of allowed species in site spaces</p></li>
+<li><p><strong>low</strong> (<em>float</em>) – optional
+lower limit of interval for encoding</p></li>
+<li><p><strong>high</strong> (<em>float</em>) – optional
+higher limit of interval for encoding</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="smol.cofe.configspace.basis.ChebyshevIterator.polyval">
+<em class="property">property </em><code class="sig-name descname">polyval</code><a class="headerlink" href="#smol.cofe.configspace.basis.ChebyshevIterator.polyval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return numpy Chebyshev polynomial eval.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="smol.cofe.configspace.basis.IndicatorIterator">
+<em class="property">class </em><code class="sig-name descname">IndicatorIterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">species</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.basis.IndicatorIterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#smol.cofe.configspace.basis.BasisIterator" title="smol.cofe.configspace.basis.BasisIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.configspace.basis.BasisIterator</span></code></a></p>
+<p>Iterator for cluster indicator site basis functions.</p>
+<p>The basis generated as defined is not orthogonal for any number of species.</p>
+<p>Initialize a BasisIterator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>species</strong> (<em>tuple</em>) – tuple of allowed species in site spaces</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="smol.cofe.configspace.basis.IndicatorIterator.flavor">
+<code class="sig-name descname">flavor</code><em class="property"> = 'indicator'</em><a class="headerlink" href="#smol.cofe.configspace.basis.IndicatorIterator.flavor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="smol.cofe.configspace.basis.LegendreIterator">
+<em class="property">class </em><code class="sig-name descname">LegendreIterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">species</span></em>, <em class="sig-param"><span class="n">low</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">high</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.basis.LegendreIterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#smol.cofe.configspace.basis.NumpyPolyIterator" title="smol.cofe.configspace.basis.NumpyPolyIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.configspace.basis.NumpyPolyIterator</span></code></a></p>
+<p>Legendre polynomial basis set iterator.</p>
+<p>Initialize a NumpyPolyIterator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>species</strong> (<em>tuple</em>) – tuple of allowed species in site spaces</p></li>
+<li><p><strong>low</strong> (<em>float</em>) – optional
+lower limit of interval for encoding</p></li>
+<li><p><strong>high</strong> (<em>float</em>) – optional
+higher limit of interval for encoding</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="smol.cofe.configspace.basis.LegendreIterator.polyval">
+<em class="property">property </em><code class="sig-name descname">polyval</code><a class="headerlink" href="#smol.cofe.configspace.basis.LegendreIterator.polyval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return numpy Legendre polynomial eval.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="smol.cofe.configspace.basis.NumpyPolyIterator">
+<em class="property">class </em><code class="sig-name descname">NumpyPolyIterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">species</span></em>, <em class="sig-param"><span class="n">low</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">high</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.basis.NumpyPolyIterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#smol.cofe.configspace.basis.BasisIterator" title="smol.cofe.configspace.basis.BasisIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.configspace.basis.BasisIterator</span></code></a></p>
+<p>Class to quickly implement polynomial basis sets included in numpy.</p>
+<p>Initialize a NumpyPolyIterator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>species</strong> (<em>tuple</em>) – tuple of allowed species in site spaces</p></li>
+<li><p><strong>low</strong> (<em>float</em>) – optional
+lower limit of interval for encoding</p></li>
+<li><p><strong>high</strong> (<em>float</em>) – optional
+higher limit of interval for encoding</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="smol.cofe.configspace.basis.NumpyPolyIterator.polyval">
+<em class="property">abstract property </em><code class="sig-name descname">polyval</code><a class="headerlink" href="#smol.cofe.configspace.basis.NumpyPolyIterator.polyval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a numpy polyval function.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="smol.cofe.configspace.basis.PolynomialIterator">
+<em class="property">class </em><code class="sig-name descname">PolynomialIterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">species</span></em>, <em class="sig-param"><span class="n">low</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">high</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.basis.PolynomialIterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#smol.cofe.configspace.basis.NumpyPolyIterator" title="smol.cofe.configspace.basis.NumpyPolyIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.configspace.basis.NumpyPolyIterator</span></code></a></p>
+<p>A standard polynomial basis set iterator.</p>
+<p>Initialize a NumpyPolyIterator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>species</strong> (<em>tuple</em>) – tuple of allowed species in site spaces</p></li>
+<li><p><strong>low</strong> (<em>float</em>) – optional
+lower limit of interval for encoding</p></li>
+<li><p><strong>high</strong> (<em>float</em>) – optional
+higher limit of interval for encoding</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="smol.cofe.configspace.basis.PolynomialIterator.polyval">
+<em class="property">property </em><code class="sig-name descname">polyval</code><a class="headerlink" href="#smol.cofe.configspace.basis.PolynomialIterator.polyval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return numpy Chebyshev polynomial eval.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="smol.cofe.configspace.basis.SinusoidIterator">
+<em class="property">class </em><code class="sig-name descname">SinusoidIterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">species</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.basis.SinusoidIterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#smol.cofe.configspace.basis.BasisIterator" title="smol.cofe.configspace.basis.BasisIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.configspace.basis.BasisIterator</span></code></a></p>
+<p>Iterator for sinusoid (trig basis) as proposed by A. van de Walle.</p>
+<ol class="upperalpha simple">
+<li><p>van de Walle, Calphad. 33, 266–278 (2009).</p></li>
+</ol>
+<p>This basis is properly orthogonal for any number of allowed species out of
+the box, but it is not orthonormal for allowed species &gt; 2.</p>
+<p>Initialize a SinusoidIterator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>species</strong> (<em>tuple</em>) – tuple of allowed species in site spaces</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="smol.cofe.configspace.basis.SinusoidIterator.flavor">
+<code class="sig-name descname">flavor</code><em class="property"> = 'sinusoid'</em><a class="headerlink" href="#smol.cofe.configspace.basis.SinusoidIterator.flavor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="smol.cofe.configspace.basis.SiteBasis">
+<em class="property">class </em><code class="sig-name descname">SiteBasis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">site_space</span></em>, <em class="sig-param"><span class="n">basis_functions</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.basis.SiteBasis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that represents the basis for a site function space.</p>
+<p>Note that all SiteBasis in theory have the first basis function
+<span class="math notranslate nohighlight">\(\phi_0 = 1\)</span>, but this should not be defined since it is handled
+implicitly when computing bit_combos using total no. species - 1 in the
+Orbit class.</p>
+<p>The particular basis set is set by giving an iterable of basis functions.
+See BasisIterator classes for details.</p>
+<p>Initialize a SiteBasis.</p>
+<p>Currently also accepts an OrderedDict but if you find yourself creating
+one like so for use in production and not debuging know that it will
+break MSONable methods in classes that use these, and at any point I
+could change this to not allow OrderedDicts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>site_space</strong> (<em>OrderedDict</em><em> or </em><a class="reference internal" href="smol.cofe.configspace.domain.html#smol.cofe.configspace.domain.SiteSpace" title="smol.cofe.configspace.domain.SiteSpace"><em>SiteSpace</em></a>) – Dict representing site space (Specie, measure) or a SiteSpace
+object.</p></li>
+<li><p><strong>basis_functions</strong> (<em>Sequence like</em>) – A Sequence of the nonconstant basis functions. Must take the
+valuves of species as input.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="smol.cofe.configspace.basis.SiteBasis.function_array">
+<em class="property">property </em><code class="sig-name descname">function_array</code><a class="headerlink" href="#smol.cofe.configspace.basis.SiteBasis.function_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get array with the non-constant site functions as rows.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.configspace.basis.SiteBasis.is_orthogonal">
+<em class="property">property </em><code class="sig-name descname">is_orthogonal</code><a class="headerlink" href="#smol.cofe.configspace.basis.SiteBasis.is_orthogonal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if the basis is orthogonal.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.configspace.basis.SiteBasis.is_orthonormal">
+<em class="property">property </em><code class="sig-name descname">is_orthonormal</code><a class="headerlink" href="#smol.cofe.configspace.basis.SiteBasis.is_orthonormal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if the basis is orthonormal.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.configspace.basis.SiteBasis.measure_array">
+<em class="property">property </em><code class="sig-name descname">measure_array</code><a class="headerlink" href="#smol.cofe.configspace.basis.SiteBasis.measure_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get diagonal array with site species measures.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.configspace.basis.SiteBasis.measure_vector">
+<em class="property">property </em><code class="sig-name descname">measure_vector</code><a class="headerlink" href="#smol.cofe.configspace.basis.SiteBasis.measure_vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get vector of site species measures.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.configspace.basis.SiteBasis.orthonormalization_array">
+<em class="property">property </em><code class="sig-name descname">orthonormalization_array</code><a class="headerlink" href="#smol.cofe.configspace.basis.SiteBasis.orthonormalization_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get R array from QR factorization.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.configspace.basis.SiteBasis.orthonormalize">
+<code class="sig-name descname">orthonormalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.basis.SiteBasis.orthonormalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Orthonormalizes basis function set based on initial basis set.</p>
+<p>Functions are orthonormal w.r.t the measure given.
+(basis functions are also orthogonal to phi_0 = 1).</p>
+<p>Modified GS-QR factorization of function array (here we are using
+row vectors as opposed to the correct way of doing QR using columns.
+Due to how the func_arr is saved (rows are vectors/functions) this
+allows us to not sprinkle so many transposes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.configspace.basis.SiteBasis.site_space">
+<em class="property">property </em><code class="sig-name descname">site_space</code><a class="headerlink" href="#smol.cofe.configspace.basis.SiteBasis.site_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get dict of the site probability space.</p>
+<p>The site space refers to the probability space represented by the
+allowed species and their respective probabilities (concentration)
+over which the site functions are defined.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.configspace.basis.SiteBasis.species">
+<em class="property">property </em><code class="sig-name descname">species</code><a class="headerlink" href="#smol.cofe.configspace.basis.SiteBasis.species" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of allowed site species.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="smol.cofe.configspace.basis.basis_factory">
+<code class="sig-name descname">basis_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basis_name</span></em>, <em class="sig-param"><span class="n">site_space</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.basis.basis_factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a site basis for the given basis name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basis_name</strong> (<em>str</em>) – Name of the basis.</p></li>
+<li><p><strong>site_space</strong> (<em>Sequence</em><em> or </em><em>OrderedDict</em>) – Site space over which the basis set is defined.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>SiteBasis</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="smol.cofe.configspace.basis.cos_f">
+<code class="sig-name descname">cos_f</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">m</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.basis.cos_f" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return basis function for odd indices.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="smol.cofe.configspace.basis.encode_domain">
+<code class="sig-name descname">encode_domain</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">encoding</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.basis.encode_domain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorate a function with an encoding for its domain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>encoding</strong> (<em>dict</em>) – dictionary for encoding.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="smol.cofe.configspace.basis.indicator">
+<code class="sig-name descname">indicator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">sp</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.basis.indicator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Singleton indicator function for elementary events.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="smol.cofe.configspace.basis.sin_f">
+<code class="sig-name descname">sin_f</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">m</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.basis.sin_f" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return basis function for even indices.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="smol.cofe.configspace.basis.sinusoid_factory">
+<code class="sig-name descname">sinusoid_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">m</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.basis.sinusoid_factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sine or cosine based on AVvW sinusoid site basis.</p>
+</dd></dl>
+
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2020, Ceder Group.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

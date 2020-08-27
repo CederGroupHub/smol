@@ -31,8 +31,6 @@ class SampleContainer(MSONable):
             chains into one. Defaults to True.
 
     Attributes:
-        temperature (float):
-            temperature of ensemble that was sampled.
         num_sites (int):
             Size of system (usually in number of prims in supercell, but
             can be anything representative i.e. number of sites)
@@ -46,13 +44,11 @@ class SampleContainer(MSONable):
             dictionary of metadata from the MC run that generated the samples.
     """
 
-    def __init__(self, temperature, num_sites, sublattices, natural_parameters,
+    def __init__(self, num_sites, sublattices, natural_parameters,
                  num_energy_coefs, ensemble_metadata=None, nwalkers=1):
         """Initialize a sample container.
 
         Args:
-            temperature (float):
-                Temperature of the ensemble.
             num_sites (int):
                 Total number of sites in supercell of the ensemble.
             sublattices (list of Sublattice):
@@ -67,7 +63,6 @@ class SampleContainer(MSONable):
             nwalkers (int):
                 Number of walkers used to generate chain. Default is 1
         """
-        self.temperature = temperature
         self.num_sites = num_sites
         self.sublattices = sublattices
         self.natural_parameters = natural_parameters
@@ -76,9 +71,9 @@ class SampleContainer(MSONable):
         self.total_mc_steps = 0
         self._nsamples = 0
         self._chain = np.empty((0, nwalkers, num_sites), dtype=int)
-        self._feature_blob = np.empty((0, nwalkers,
-                                       len(natural_parameters)))
+        self._features = np.empty((0, nwalkers, len(natural_parameters)))
         self._enthalpy = np.empty((0, nwalkers))
+        self._temperature = np.empty((0, nwalkers))
         self._accepted = np.zeros((0, nwalkers), dtype=int)
 
     @property
@@ -106,26 +101,33 @@ class SampleContainer(MSONable):
             chain = self._flatten(chain)
         return chain
 
+    def get_temperatures(self, discard=0, thin_by=1, flat=True):
+        """Get the generalized entalpy changes from samples in chain."""
+        temps = self._temperature[discard + thin_by - 1::thin_by]
+        if flat:
+            temps = self._flatten(temps)
+        return temps
+
     def get_enthalpies(self, discard=0, thin_by=1, flat=True):
         """Get the generalized entalpy changes from samples in chain."""
-        chain = self._enthalpy[discard + thin_by - 1::thin_by]
+        enthalpies = self._enthalpy[discard + thin_by - 1::thin_by]
         if flat:
-            chain = self._flatten(chain)
-        return chain
+            enthalpies = self._flatten(enthalpies)
+        return enthalpies
 
     def get_feature_vectors(self, discard=0, thin_by=1, flat=True):
         """Get the feature vector changes from samples in chain."""
-        chain = self._feature_blob[discard + thin_by - 1::thin_by]
+        feats = self._features[discard + thin_by - 1::thin_by]
         if flat:
-            chain = self._flatten(chain)
-        return chain
+            feats = self._flatten(feats)
+        return feats
 
     def get_energies(self, discard=0, thin_by=1, flat=True):
         """Get the energies from samples in chain."""
-        feature_blob = self.get_feature_vectors(discard, thin_by, flat=False)
+        features = self.get_feature_vectors(discard, thin_by, flat=False)
         energies = np.array([np.dot(self.natural_parameters[:self._num_energy_coefs],  # noqa
                              features[:, :self._num_energy_coefs].T)
-                             for features in feature_blob])
+                             for features in features])
         if flat:
             energies = self._flatten(energies)
         return energies
@@ -214,11 +216,9 @@ class SampleContainer(MSONable):
             occus = self.get_occupancies(discard, thin_by, flat)[inds, np.arange(self.shape[0])]  # noqa
         return occus
 
-    # TODO there is a bug here when using discard > 0 that also trickles into
-    #  other methods that use this.
     def get_species_counts(self, discard=0, thin_by=1, flat=True):
         """Get the species counts for each occupancy in the chain."""
-        samples = self.num_samples // thin_by
+        samples = (self.num_samples - discard) // thin_by
         shape = self.shape[0]*samples if flat else (self.shape[0], samples)
         counts = defaultdict(lambda: np.zeros(shape=shape))
         for sublattice in self.sublattices:
@@ -259,27 +259,30 @@ class SampleContainer(MSONable):
             counts = self._flatten(counts)
         return counts
 
-    def save_sample(self, accepted, occupancies, enthalpy, feature_blob,
-                    thinned_by):
+    def save_sample(self, accepted, temperature, occupancies, enthalpy,
+                    features, thinned_by):
         """Save a sample from the generated chain.
 
         Args:
             accepted (ndarray):
                 array of total acceptances.
+            temperature (ndarray)
+                array of temperatures at which samples were taken.
             occupancies (ndarray):
                 array of occupancies
             enthalpy (ndarray):
                 array of generalized enthalpy changes
-            feature_blob (ndarray):
+            features (ndarray):
                 array of feature vector changes
             thinned_by (int):
                 the amount that the sampling was thinned by. Used to update
                 the total mc iterations.
         """
+        self._accepted[self._nsamples, :] = accepted
+        self._temperature[self._nsamples, :] = temperature
         self._chain[self._nsamples, :, :] = occupancies
         self._enthalpy[self._nsamples, :] = enthalpy
-        self._feature_blob[self._nsamples, :, :] = feature_blob
-        self._accepted[self._nsamples, :] = accepted
+        self._features[self._nsamples, :, :] = features
         self._nsamples += 1
         self.total_mc_steps += thinned_by
 
@@ -289,19 +292,21 @@ class SampleContainer(MSONable):
         self.total_mc_steps = 0
         self._nsamples = 0
         self._chain = np.empty((0, nwalkers, num_sites), dtype=int)
-        self._feature_blob = np.empty((0, nwalkers,
-                                       len(self.natural_parameters)))
+        self._features = np.empty((0, nwalkers, len(self.natural_parameters)))
         self._enthalpy = np.empty((0, nwalkers))
+        self._temperature = np.empty((0, nwalkers))
         self._accepted = np.zeros((0, nwalkers), dtype=int)
 
     def allocate(self, nsamples):
         """Allocate more space in arrays for more samples."""
         arr = np.empty((nsamples, *self._chain.shape[1:]), dtype=int)
         self._chain = np.append(self._chain, arr, axis=0)
-        arr = np.empty((nsamples, *self._feature_blob.shape[1:]))
-        self._feature_blob = np.append(self._feature_blob, arr, axis=0)
+        arr = np.empty((nsamples, *self._features.shape[1:]))
+        self._features = np.append(self._features, arr, axis=0)
         arr = np.empty((nsamples, *self._enthalpy.shape[1:]))
         self._enthalpy = np.append(self._enthalpy, arr, axis=0)
+        arr = np.empty((nsamples, *self._temperature.shape[1:]))
+        self._temperature = np.append(self._temperature, arr, axis=0)
         arr = np.zeros((nsamples, *self._accepted.shape[1:]), dtype=int)
         self._accepted = np.append(self._accepted, arr, axis=0)
 
@@ -330,8 +335,7 @@ class SampleContainer(MSONable):
         Returns:
             MSONable dict
         """
-        d = {'temperature': self.temperature,
-             'num_sites': self.num_sites,
+        d = {'num_sites': self.num_sites,
              'sublattices': [s.as_dict() for s in self.sublattices],
              'natural_parameters': self.natural_parameters,
              'metadata': self.metadata,
@@ -339,7 +343,7 @@ class SampleContainer(MSONable):
              'total_mc_steps': self.total_mc_steps,
              'nsamples': self._nsamples,
              'chain': self._chain.tolist(),
-             'feature_blob': self._feature_blob.tolist(),
+             'features': self._features.tolist(),
              'enthalpy': self._enthalpy.tolist(),
              'accepted': self._accepted.tolist()}
         return d
@@ -355,12 +359,12 @@ class SampleContainer(MSONable):
             Sublattice
         """
         sublattices = [Sublattice.from_dict(s) for s in d['sublattices']]
-        container = cls(d['temperature'], d['num_sites'], sublattices,
+        container = cls(d['num_sites'], sublattices,
                         d['natural_parameters'], d['num_energy_coefs'],
                         d['metadata'])
         container._nsamples = np.array(d['nsamples'])
         container._chain = np.array(d['chain'], dtype=int)
-        container._feature_blob = np.array(d['feature_blob'])
+        container._features = np.array(d['features'])
         container._enthalpy = np.array(d['enthalpy'])
         container._accepted = np.array(d['accepted'], dtype=int)
         return container

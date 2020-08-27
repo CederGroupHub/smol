@@ -1,11 +1,4 @@
-"""Implements the ClusterSubspace class.
-
-A ClusterSubspace is necessary to define the terms to be included in a cluster
-expansion. A cluster subspace is a finite set of clusters, more precisely
-orbits that contain symmetrically equivalent clusters, that are used to define
-orbit/cluster basis functions which span a subspace of the total function space
-over the configurational space of a given lattice system.
-"""
+"""Implements the ClusterSubspace class."""
 
 __author__ = "Luis Barroso-Luque, William Davidson Richard"
 
@@ -34,22 +27,29 @@ from smol.exceptions import (SymmetryError, StructureMatchError,
 class ClusterSubspace(MSONable):
     """ClusterSubspace represents a subspace of functions of configuration.
 
+    A ClusterSubspace is the main work horse used in constructing a cluster
+    expansion. It is necessary to define the terms to be included in a cluster
+    expansion. A cluster subspace holds a finite set of orbits that contain
+    symmetrically equivalent clusters. The orbits also contain the set of orbit
+    basis functions (also known as correlation functions) that represent the
+    terms in the cluster expansion. Taken together the set of all orbit
+    functions for all orbits included span a subspace of the total function
+    space over the configurational space of a given crystal structure system.
+
+    The ClusterSubspace also has methods to match fitting structures and
+    determine site mappings for supercells of different sizes in order to
+    compute correlation vectors (i.e. evaluate the orbit functions for a given
+    structure).
+
     Holds a structure, its expansion structure and a list of Orbits.
     This class defines the cluster subspace over which to fit a cluster
     expansion: This sets the orbits (groups of clusters) and the site basis
     functions that are to be considered in the fit.
 
-    You probably want to generate from ClusterSubspace.from_radii, which will
-    auto-generate the orbits from radius cutoffs.
-
-    This is the class you're looking for to start defining the structure and
-    orbit/cluster terms for your cluster expansion.
+    You probably want to generate from :code:`ClusterSubspace.from_radii`,
+    which will auto-generate the orbits from radius cutoffs.
 
     Attributes:
-        structure (Structure):
-            prim structure represeting configurational space.
-        exp_structure (Structure):
-            structure with only the sites with partial occupancy in the prim
         symops (list of SymmOp):
             symmetry operations of structure.
     """
@@ -58,8 +58,10 @@ class ClusterSubspace(MSONable):
                  supercell_matcher=None, site_matcher=None, **matcher_kwargs):
         """Initialize a ClusterSubspace.
 
-        You rarely (never?) will need to create a ClusterSubspace using this.
-        Look at the class method from_radii for the "better" way to do it.
+        You rarely (never?) will need to create a ClusterSubspace using the
+        main constructor.
+        Look at the class method :code:`from_radii` for the "better" way to do
+        it.
 
         Args:
             structure (Structure):
@@ -214,12 +216,12 @@ class ClusterSubspace(MSONable):
 
     @property
     def structure(self):
-        """Return the prim structure."""
+        """Return the prim structure (includes all sites.)."""
         return self._structure
 
     @property
     def expansion_structure(self):
-        """Return the prim expansion structure."""
+        """Return the prim expansion structure (excludes inactive sites)."""
         return self._exp_structure
 
     @property
@@ -248,11 +250,19 @@ class ClusterSubspace(MSONable):
 
     @property
     def orbit_nbit_orderings(self):
-        """Get the number of number of bit orderings for each orbit."""
+        """Get the number of symmetrically distinct bit orderings in orbits."""
         if self._orb_nbit_ords is None:
             self._orb_nbit_ords = [orb.n_bit_orderings
                                    for orb in self.iterorbits()]
         return self._orb_nbit_ords
+
+    @property
+    def bit_combo_multiplicities(self):
+        """Get list of multiplicity of each distinct bit ordering."""
+        bcombo_mults = []
+        for orbit in self.orbits:
+            bcombo_mults += orbit.bit_combo_multiplicities
+        return bcombo_mults
 
     @property
     def basis_orthogonal(self):
@@ -271,7 +281,7 @@ class ClusterSubspace(MSONable):
 
     @property
     def function_orbit_ids(self):
-        """Get Orbit ids corresponding to each correlation function.
+        """Get Orbit IDs corresponding to each correlation function.
 
         If the Cluster Subspace includes external terms these are not included
         in the list since they are not associated with any orbit.
@@ -288,6 +298,11 @@ class ClusterSubspace(MSONable):
         Add an external term (e.g. an Ewald term) to the cluster expansion
         terms. External term classes must be MSONable and implement a method
         to obtain a "correlation" see smol.cofe.extern for examples.
+
+        Args:
+            term (ExternalTerm):
+                An instance of an external term. Currently only EwaldTerm is
+                implemented.
         """
         for added_term in self.external_terms:
             if isinstance(term, type(added_term)):
@@ -305,8 +320,8 @@ class ClusterSubspace(MSONable):
         """Get correlation vector for structure.
 
         Returns the correlation vector for a given structure. To do this the
-        correct supercell matrix of the prim necessary needs to be found to
-        then determine the mappings between sites to create the occupancy
+        correct supercell matrix of the prim needs to be found to then
+        determine the mappings between sites to create the occupancy
         string and also determine the orbit mappings to evaluate the
         corresponding cluster functions.
 
@@ -473,10 +488,11 @@ class ClusterSubspace(MSONable):
         to a supercell equivalent to given structure.
 
         Args:
-            structure (Structure)
+            structure (Structure):
+                A pymatgen Structure.
 
         Returns:
-            array: matrix relating passed structure and prim structure.
+            ndarray: matrix relating given structure and prim structure.
         """
         scmatrix = self._sc_matcher.get_supercell_matrix(structure,
                                                          self.structure)
@@ -498,7 +514,8 @@ class ClusterSubspace(MSONable):
                 array relating a supercell with the primitive matrix
 
         Returns:
-            list of tuples: (orbit, indices) list of tuples with orbits and the
+            list of tuples:
+                (orbit, indices) list of tuples with orbits and the
                 site indices for all equivalent orbits in a supercell obtained
                 from the given matrix.
         """
@@ -561,7 +578,9 @@ class ClusterSubspace(MSONable):
                                   if orbit.id not in orbit_ids]
 
         self._assign_orbit_ids()  # Re-assign ids
-        self._func_orb_ids = None  # reset func ids
+        self._func_orb_ids = None  # reset orbit info stuff, it may be worth
+        self._orb_mults = None  # considering always computing this in the
+        self._orb_nbit_ords = None  # @property, and not worry about reseting.
         # Clear the cached supercell orbit mappings
         self._supercell_orb_inds = {}
 
@@ -621,9 +640,9 @@ class ClusterSubspace(MSONable):
 
         Args:
             supercell (Structure):
-                supercell of prim with same size as other structure.
+                Supercell of prim structure with same size as other structure.
             structure (Structure):
-                structure to obtain site mappings to supercell of prim
+                Structure to obtain site mappings to supercell of prim
         Returns:
             list: site mappings of structure to supercell
         """
@@ -760,6 +779,23 @@ class ClusterSubspace(MSONable):
             orbit_indices.append((orbit, inds))
 
         return orbit_indices
+
+    def __eq__(self, other):
+        """Check equality between cluster subspaces."""
+        if not isinstance(other, ClusterSubspace):
+            return False
+        if other.n_bit_orderings != self.n_bit_orderings:
+            return False
+        if len(self.external_terms) != len(other.external_terms):
+            return False
+        if not all(isinstance(t1, type(t2)) for t1, t2 in
+                   zip(other.external_terms, self.external_terms)):
+            return False
+        return all(o1 == o2 for o1, o2 in zip(other.orbits, self.orbits))
+
+    def __len__(self):
+        """Get number of n_bit_orderings."""
+        return self.n_bit_orderings
 
     def __str__(self):
         """Convert class into pretty string for printing."""

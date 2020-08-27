@@ -1,12 +1,9 @@
-"""Definitions for site functions spaces.
+"""Definitions for basis functions over a site function space.
 
 The product of single site functions make up a cluster/orbit function used to
 obtain correlation vectors. The domain of a site function is a site space,
 which is defined by the allowed species at the site and their measures, which
 is concentration of the species in the random structure)
-Site function spaces include the basis functions and measure used to define the
-inner product for a single site. Most commonly a uniform measure is used, but
-this can be changed to use "concentration" biased bases.
 """
 
 __author__ = "Luis Barroso-Luque"
@@ -26,11 +23,12 @@ from smol.utils import derived_class_factory
 
 
 class SiteBasis:
-    """Class to represent the basis for a site function space.
+    """Class that represents the basis for a site function space.
 
-    Note that all SiteBasis in theory have the first basis function = 1, but
-    this should not be defined since it is handled implicitly when computing
-    bit_combos using total no. species - 1 in the Orbit class.
+    Note that all SiteBasis in theory have the first basis function
+    :math:`\phi_0 = 1`, but this should not be defined since it is handled
+    implicitly when computing bit_combos using total no. species - 1 in the
+    Orbit class.
 
     The particular basis set is set by giving an iterable of basis functions.
     See BasisIterator classes for details.
@@ -161,7 +159,13 @@ class SiteBasis:
 class BasisIterator(Iterator):
     """Abstract basis iterator class.
 
-    A basis iterator iterates through non-constant basis functions only.
+    A basis iterator iterates through all non-constant site basis functions.
+    i.e. for basis :math:`\phi_0 = 1, \phi_1, ..., \phi_{n-1}`,
+    the iterator will just iterate through :math:`\phi_1, ..., \phi_{n-1}`
+
+    Attributes:
+        flavor (str):
+            Name specifying the type of basis that is generated.
     """
 
     flavor = 'abstract'
@@ -286,7 +290,7 @@ class LegendreIterator(NumpyPolyIterator):
 # These functions should simply define a univariate injective function for
 # a finite set of species. If the function requires an encoding for the species
 # simply use the encode_domain decorator.
-# Definitions must be down outside of classes to prevent pickling problems.
+# Definitions must be done outside of classes to prevent pickling problems.
 
 
 def indicator(s, sp):

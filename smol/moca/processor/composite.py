@@ -1,13 +1,5 @@
 """Implementation of Composite processor class for a fixed size super cell.
 
-A Composite processor is merely a container for several different processor
-that acts as an interface such that it can be used in the same way as the
-individual processor. This can be used to mix models in any way that your
-heart desires.
-
-The most common use case of them all is a CompositeProcessor of a CEProcessor
-and an EwaldProcessor for use in ionic materials.
-
 If you have created a ClusterExpansion with additional terms, and don't want
 the headache of manually and correctly spinning up the corresponding
 CompositeProcessor, simply consider using the convenience class constructor
@@ -25,6 +17,14 @@ from smol.moca.processor.base import Processor
 
 class CompositeProcessor(Processor):
     """CompositeProcessor class used for mixed models.
+
+    A Composite processor is merely a container for several different processor
+    that acts as an interface such that it can be used in the same way as the
+    individual processor. This can be used to mix models in any way that your
+    heart desires.
+
+    The most common use case of them all is a CompositeProcessor of a
+    CEProcessor and an EwaldProcessor for use in ionic materials.
 
     You can add anyone of the other processor class implemented to build a
     composite processor.
@@ -49,21 +49,25 @@ class CompositeProcessor(Processor):
         """Return the list of processor in composite."""
         return self._processors
 
-    def add_processor(self, processor_class, *args, **kwargs):
+    def add_processor(self, processor):
         """Add a processor to composite.
 
         Args:
-            processor_class (Processor):
-                A derived class of BaseProcessor. The class, not an instance.
-            *args:
-                positional arguments necessary to create instance of processor
-                class (excluding the subspace and supercell_matrix)
-            **kwargs:
-                keyword arguments necessary to create instance of processor
-                class (excluding the subspace and supercell_matrix)
+            processor (Processor):
+                Processor to add. Must have the same cluster subspace and
+                supercell matrix.
         """
-        processor = processor_class(self._subspace, self._scmatrix,
-                                    *args, **kwargs)
+        if isinstance(processor, CompositeProcessor):
+            raise AttributeError("A CompositeProcessor can not be added into "
+                                 "another CompositeProcessor")
+        elif self.cluster_subspace != processor.cluster_subspace:
+            raise ValueError("The cluster subspace of the processor to be"
+                             " added does not match the one of this "
+                             "CompositeProcessor.")
+        elif not np.array_equal(self._scmatrix, processor.supercell_matrix):
+            raise ValueError("The supercell matrix of the processor to be"
+                             " added does not match the one of this "
+                             "CompositeProcessor.")
         self._processors.append(processor)
         self.coefs = np.append(self.coefs, processor.coefs)
 

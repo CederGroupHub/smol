@@ -1,4 +1,4 @@
-# <img src="docs/logo.png" width="350px" alt="smol">
+# <img src="docs/images/logo.png" width="350px" alt="smol">
 
 ### Statistical Mechanics on Lattices
 

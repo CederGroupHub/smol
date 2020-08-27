@@ -22,6 +22,8 @@ class Ensemble(ABC):
             descriptive purposes.
     """
 
+    valid_mcmc_steps = None  # add this in derived classes
+
     def __init__(self, processor, temperature, sublattices=None):
         """Initialize class instance.
 
@@ -71,13 +73,19 @@ class Ensemble(ABC):
         if len(cluster_expansion.cluster_subspace.external_terms) > 0:
             processor = CompositeProcessor(cluster_expansion.cluster_subspace,
                                            supercell_matrix)
-            processor.add_processor(CEProcessor, cluster_expansion.coefs[:-1],
-                                    optimize_indicator=optimize_indicator)
+            ceprocessor = CEProcessor(cluster_expansion.cluster_subspace,
+                                      supercell_matrix,
+                                      cluster_expansion.coefs[:-1],
+                                      optimize_indicator=optimize_indicator)
+            processor.add_processor(ceprocessor)
             # at some point determine term and spinup processor maybe with a
             # factory, if we ever implement more external terms.
             ewald_term = cluster_expansion.cluster_subspace.external_terms[0]
-            processor.add_processor(EwaldProcessor, ewald_term=ewald_term,
-                                    coefficient=cluster_expansion.coefs[-1])
+            ewprocessor = EwaldProcessor(cluster_expansion.cluster_subspace,
+                                         supercell_matrix,
+                                         ewald_term=ewald_term,
+                                         coefficient=cluster_expansion.coefs[-1])  # noqa
+            processor.add_processor(ewprocessor)
         else:
             processor = CEProcessor(cluster_expansion.cluster_subspace,
                                     supercell_matrix, cluster_expansion.coefs,
@@ -198,7 +206,9 @@ class Ensemble(ABC):
 
     def as_dict(self):
         """Get dictionary representation."""
-        d = {'temperature': self.temperature,
+        d = {'@module': self.__class__.__module__,
+             '@class': self.__class__.__name__,
+             'temperature': self.temperature,
              'thermo_boundaries': self.thermo_boundaries,
              'processor': self._processor.as_dict(),
              'sublattices': [s.as_dict() for s in self._sublattices]}

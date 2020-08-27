@@ -1,0 +1,51 @@
+import pytest
+import numpy as np
+import numpy.testing as npt
+from smol.moca import (CanonicalEnsemble, FuSemiGrandEnsemble,
+                       MuSemiGrandEnsemble, CEProcessor, Sampler)
+from smol.moca.sampler.mcusher import Swapper, Flipper
+from smol.moca.sampler.kernel import Metropolis
+from tests.utils import gen_random_occupancy
+
+ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble]
+
+
+# TODO this could be moved to a conftest.py file since same fixture also used
+#  in test_sampler
+@pytest.fixture(params=ensembles)
+def ensemble(cluster_subspace, request):
+    coefs = np.random.random(cluster_subspace.n_bit_orderings)
+    proc = CEProcessor(cluster_subspace, 4*np.eye(3), coefs)
+    if request.param is MuSemiGrandEnsemble:
+        kwargs = {'chemical_potentials':
+                  {sp: 0.3 for space in proc.unique_site_spaces
+                   for sp in space.keys()}}
+    else:
+        kwargs = {}
+    return request.param(proc, temperature=5000, **kwargs)
+
+
+@pytest.fixture(params=['swap', 'flip'])
+def metropolis_kernel(ensemble, request):
+    mkernel = Metropolis(ensemble, request.param)
+    # fix num_sites to gen random occu
+    mkernel.num_sites = ensemble.num_sites
+    return mkernel
+
+
+@pytest.mark.parametrize("step_type, mcusher",
+                         [("swap", Swapper), ("flip", Flipper)])
+def test_constructor(ensemble, step_type, mcusher):
+    assert isinstance(Metropolis(ensemble, step_type)._usher, mcusher)
+
+
+def test_single_step(metropolis_kernel):
+    occu_ = gen_random_occupancy(metropolis_kernel._usher.sublattices,
+                                 metropolis_kernel.num_sites)
+    for _ in range(20):
+        init_occu = occu_.copy()
+        acc, occu, denth, dfeat = metropolis_kernel.single_step(init_occu)
+        if acc:
+            assert not np.array_equal(occu, occu_)
+        else:
+            npt.assert_array_equal(occu, occu_)

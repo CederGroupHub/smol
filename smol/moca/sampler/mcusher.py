@@ -31,7 +31,7 @@ class MCMCUsher(ABC):
         """
         self.sublattices = sublattices
         if sublattice_probabilities is None:
-            self._sublatt_probs = len(self.sublattices)*[1/len(self.sublattices),]  # noqa
+            self._sublatt_probs = len(self.sublattices) * [1/len(self.sublattices), ]  # noqa
         elif len(sublattice_probabilities) != len(self.sublattices):
             raise AttributeError('Sublattice probabilites needs to be the '
                                  'same length as sublattices.')
@@ -330,7 +330,7 @@ class CNFlipper(MCMCUsher):
         #Choose a correlated flip
             return self.corr_flipper.propose_step(occupancy)
 
-def mcmc_usher_factory(usher_type, sublattices, *args, **kwargs):
+def mcusher_factory(usher_type, sublattices, *args, **kwargs):
     """Get a MCMC Usher from string name.
 
     Args:

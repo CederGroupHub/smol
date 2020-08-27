@@ -1,9 +1,5 @@
 """Implementation of CE processor class for a fixed size super cell.
 
-A CE processor is optimized to compute correlation vectors and local changes in
-correlation vectors. This class allows the use a cluster expansion hamiltonian
-to run Monte Carlo based simulations.
-
 If you are using a Hamiltonian with an Ewald summation electrostatic term, you
 should use the CompositeProcessor with a CEProcessor and an EwaldProcessor
 class to handle changes in the electrostatic interaction energy.
@@ -22,6 +18,10 @@ from smol.moca.processor.base import Processor
 
 class CEProcessor(Processor):
     """CEProcessor class to use a ClusterExpansion in MC simulations.
+
+    A CE processor is optimized to compute correlation vectors and local
+    changes in correlation vectors. This class allows the use a cluster
+    expansion hamiltonian to run Monte Carlo based simulations.
 
     A processor allows an ensemble class to generate a Markov chain
     for sampling thermodynamic properties from a cluster expansion

@@ -36,7 +36,8 @@ class Orbit(MSONable):
     ClusterSubspace to create orbits and clusters necessary for a CE.
 
     Attributes:
-        bits (list): list describing occupancy in each cluster.
+        bits (list of list): list of lists describing the posible non-constant
+              site function indices at each site of a cluster in the orbit.
         site_bases (list of SiteBasis): list of the SiteBasis for each site.
         structure_symops (list of Symmops):
             list of underlying structure symmetry operations.
@@ -53,8 +54,8 @@ class Orbit(MSONable):
                 list of frac coords for the sites
             lattice (pymatgen.Lattice):
                 A lattice object for the given sites
-            bits (list):
-                list describing the possible site function orderings for
+            bits (list of list):
+                list describing the possible site function indices for
                 each site in cluster. Should be the number of possible
                 occupancies minus one. i.e. for a 3 site cluster, each of which
                 having one of Li, TM, or Vac, bits are [[0, 1], [0, 1], [0, 1]]
@@ -112,28 +113,28 @@ class Orbit(MSONable):
     def bit_combos(self):
         """Get list of site bit orderings.
 
-        List of lists, each inner list is of symmetrically equivalent bit
-        orderings.
+        tuple of ndarrays, each array is a set of symmetrically equivalent bit
+        orderings represented by row. Bit combos represent non-constant site
+        function orderings.
         """
         if self._bit_combos is not None:
             return self._bit_combos
         # get all the bit symmetry operations
-        bit_ops = []
-        for _, bitop in self.cluster_symops:
-            if bitop not in bit_ops:
-                bit_ops.append(bitop)
+        bit_ops = tuple(set(bit_op for _, bit_op in self.cluster_symops))
         all_combos = []
         for bit_combo in itertools.product(*self.bits):
             if bit_combo not in itertools.chain(*all_combos):
                 bit_combo = np.array(bit_combo)
-                new_bits = []
-                for b_o in bit_ops:
-                    new_bit = tuple(bit_combo[np.array(b_o)])
-                    if new_bit not in new_bits:
-                        new_bits.append(new_bit)
+                new_bits = list(set(tuple(bit_combo[np.array(bit_op)])
+                                    for bit_op in bit_ops))
                 all_combos.append(new_bits)
         self._bit_combos = tuple(np.array(c, dtype=np.int) for c in all_combos)
         return self._bit_combos
+
+    @property
+    def bit_combo_multiplicities(self):
+        """Get the multiplicites of the symmetrically distinct bit ordering."""
+        return [bcombo.shape[0] for bcombo in self.bit_combos]
 
     @property
     def clusters(self):
@@ -192,7 +193,7 @@ class Orbit(MSONable):
         3D array with all basis arrays. Since each basis array can be of
         different dimension the 3D array is the size of the largest array.
         Smaller arrays are padded with ones. Doing this allows using numpy
-        fancy indexing which can be faster than for loops?
+        fancy indexing which can be faster than for loops.
         """
         if self._bases_arr is None or self._basis_arrs is None:
             max_dim = max(len(fa) for fa in self.basis_arrays)
@@ -270,7 +271,7 @@ class Orbit(MSONable):
         Args:
             basis_name (str):
                 name of new basis for all site bases
-            orthormal (bool):
+            orthonormal (bool):
                 option to orthonormalize all new site bases
         """
         new_bases = []
@@ -313,7 +314,8 @@ class Orbit(MSONable):
         """Check equality of orbits."""
         # when performing orbit in list, this ordering stops the
         # equivalent structures from generating
-        return self.base_cluster in other.clusters
+        return (self.base_cluster in other.clusters
+                and np.array_equal(self.bases_array, other.bases_array))
 
     def __neq__(self, other):
         """Check negation of orbit equality."""

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>smol.cofe.configspace.cluster module &#8212; smol 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          smol</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="examples.html">Examples</a></li>
+                <li><a href="api.html">API</a></li>
+                <li><a href="https://github.com/CederGroupHub/smol">GitHub</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">smol.cofe.configspace.cluster module</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <div class="section" id="module-smol.cofe.configspace.cluster">
+<span id="smol-cofe-configspace-cluster-module"></span><h1>smol.cofe.configspace.cluster module<a class="headerlink" href="#module-smol.cofe.configspace.cluster" title="Permalink to this headline">¶</a></h1>
+<p>Implementation of the Cluster class.</p>
+<p>Represents a group of sites of a given lattice. These are the building blocks
+for a cluster basis of functions over configurational space.</p>
+<dl class="py class">
+<dt id="smol.cofe.configspace.cluster.Cluster">
+<em class="property">class </em><code class="sig-name descname">Cluster</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sites</span></em>, <em class="sig-param"><span class="n">lattice</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.cluster.Cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
+<p>An undecorated (no occupancies) cluster.</p>
+<p>Represented simply by a list of sites, its centroid, and the underlying
+lattice.</p>
+<p>You probably never need to instantiate this class directly. Look at
+ClusterSubspace to create orbits and clusters necessary for a CE.</p>
+<dl class="py attribute">
+<dt id="smol.cofe.configspace.cluster.Cluster.sites">
+<code class="sig-name descname">sites</code><a class="headerlink" href="#smol.cofe.configspace.cluster.Cluster.sites" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of fractional coordinates of each site.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="smol.cofe.configspace.cluster.Cluster.lattice">
+<code class="sig-name descname">lattice</code><a class="headerlink" href="#smol.cofe.configspace.cluster.Cluster.lattice" title="Permalink to this definition">¶</a></dt>
+<dd><p>underlying lattice of cluster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Lattice</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="smol.cofe.configspace.cluster.Cluster.centroid">
+<code class="sig-name descname">centroid</code><a class="headerlink" href="#smol.cofe.configspace.cluster.Cluster.centroid" title="Permalink to this definition">¶</a></dt>
+<dd><p>goemetric centroid of included sites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="smol.cofe.configspace.cluster.Cluster.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#smol.cofe.configspace.cluster.Cluster.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>id of cluster.
+Used to identify the cluster in a given ClusterSubspace.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Initialize Cluster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sites</strong> (<em>list</em>) – list of frac coords for the sites</p></li>
+<li><p><strong>lattice</strong> (<em>Lattice</em>) – pymatgen Lattice object</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="smol.cofe.configspace.cluster.Cluster.as_dict">
+<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.cluster.Cluster.as_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get json-serialization dict representation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>MSONable dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.configspace.cluster.Cluster.assign_ids">
+<code class="sig-name descname">assign_ids</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.cluster.Cluster.assign_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively assign ids to clusters after initialization.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.configspace.cluster.Cluster.from_dict">
+<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.cluster.Cluster.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a cluster from serialized dict.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.configspace.cluster.Cluster.from_sites">
+<em class="property">classmethod </em><code class="sig-name descname">from_sites</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sites</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.cluster.Cluster.from_sites" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a cluster from a list of pymatgen Sites.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.configspace.cluster.Cluster.radius">
+<em class="property">property </em><code class="sig-name descname">radius</code><a class="headerlink" href="#smol.cofe.configspace.cluster.Cluster.radius" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get maximum distance between 2 sites in cluster.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.configspace.cluster.Cluster.size">
+<em class="property">property </em><code class="sig-name descname">size</code><a class="headerlink" href="#smol.cofe.configspace.cluster.Cluster.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get number of sites in the cluster.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2020, Ceder Group.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
