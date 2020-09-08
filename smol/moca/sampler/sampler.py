@@ -160,10 +160,10 @@ class Sampler:
         # allocate arrays for states
         occupancies = np.ascontiguousarray(occupancies, dtype=int)
         accepted = np.zeros(occupancies.shape[0], dtype=int)
-        temperature = np.zeros(occupancies.shape[0])
         features = list(map(self._kernel.feature_fun, occupancies))
         features = np.ascontiguousarray(features)
         enthalpy = np.dot(self._kernel.natural_params, features.T)
+        temperature = self._kernel.temperature * np.ones(occupancies.shape[0])
 
         # Initialise progress bar
         chains, nsites = self.samples.shape
@@ -175,7 +175,6 @@ class Sampler:
                     for i, (accept, occupancy, delta_enthalpy, delta_features)\
                       in enumerate(map(self._kernel.single_step, occupancies)):
                         accepted[i] += accept
-                        temperature[i] = self._kernel.temperature
                         occupancies[i] = occupancy
                         if accept:
                             enthalpy[i] = enthalpy[i] + delta_enthalpy
