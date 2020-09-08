@@ -8,7 +8,7 @@ from smol.moca.sampler.kernel import Metropolis
 from tests.utils import gen_random_occupancy
 
 ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble]
-
+TEMPERATURE = 5000
 
 @pytest.fixture(params=ensembles)
 def ensemble(cluster_subspace, request):
@@ -20,12 +20,13 @@ def ensemble(cluster_subspace, request):
                    for sp in space.keys()}}
     else:
         kwargs = {}
-    return request.param(proc, temperature=5000, **kwargs)
+    return request.param(proc, **kwargs)
 
 
 @pytest.fixture(params=[1, 5])
 def sampler(ensemble, request):
-    sampler = Sampler.from_ensemble(ensemble, nwalkers=request.param)
+    sampler = Sampler.from_ensemble(ensemble, temperature=TEMPERATURE,
+                                    nwalkers=request.param)
     # fix this additional attribute to sampler to access in gen occus for tests
     sampler.num_sites = ensemble.num_sites
     return sampler
@@ -114,7 +115,7 @@ for sp in expected.keys():
 
 
 def test_reshape_occu(ensemble):
-    sampler = Sampler.from_ensemble(ensemble)
+    sampler = Sampler.from_ensemble(ensemble, temperature=TEMPERATURE)
     occu = gen_random_occupancy(ensemble.sublattices,
                                 ensemble.num_sites)
     assert sampler._reshape_occu(occu).shape == (1, len(occu))

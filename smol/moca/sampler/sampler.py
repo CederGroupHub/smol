@@ -49,8 +49,9 @@ class Sampler:
         random.seed(seed)
 
     @classmethod
-    def from_ensemble(cls, ensemble, step_type=None, kernel_type=None,
-                      seed=None, nwalkers=1, *args, **kwargs):
+    def from_ensemble(cls, ensemble, temperature, step_type=None,
+                      kernel_type=None, seed=None, nwalkers=1,
+                      *args, **kwargs):
         """
         Create a sampler based on an Ensemble instances.
 
@@ -60,6 +61,8 @@ class Sampler:
         Args:
             ensemble (Ensemble):
                 An Ensemble class to obtain sample probabilities from.
+            temperature (float):
+                Temperature to run Monte Carlo at.
             step_type (str): optional
                 type of step to run MCMC with. If not given the default is the
                 first entry in the Ensemble.valid_mcmc_steps.
@@ -88,8 +91,8 @@ class Sampler:
         if kernel_type is None:
             kernel_type = "Metropolis"
 
-        mcmckernel = mcmckernel_factory(kernel_type, ensemble, step_type,
-                                        *args, **kwargs)
+        mcmckernel = mcmckernel_factory(kernel_type, ensemble, temperature,
+                                        step_type, *args, **kwargs)
 
         ensemble_metadata = {"name": type(ensemble).__name__}
         ensemble_metadata.update(ensemble.thermo_boundaries)

@@ -34,20 +34,18 @@ class BaseSemiGrandEnsemble(Ensemble):
 
     valid_mcmc_steps = ('flip',)
 
-    def __init__(self, processor, temperature, sublattices=None):
+    def __init__(self, processor, sublattices=None):
         """Initialize BaseSemiGrandEnsemble.
 
         Args:
             processor (Processor):
                 A processor that can compute the change in a property given
                 a set of flips. See moca.processor
-            temperature (float):
-                Temperature of ensemble
             sublattices (list of Sublattice): optional
                 list of Lattice objects representing sites in the processor
                 supercell with same site spaces.
         """
-        super().__init__(processor, temperature, sublattices=sublattices)
+        super().__init__(processor, sublattices=sublattices)
         self._params = np.append(self.processor.coefs, -1.0)
 
     @property
@@ -97,7 +95,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             dict of chemical potentials.
     """
 
-    def __init__(self, processor, temperature, chemical_potentials,
+    def __init__(self, processor, chemical_potentials,
                  sublattices=None):
         """Initialize MuSemiGrandEnsemble.
 
@@ -105,15 +103,13 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             processor (Processor):
                 A processor that can compute the change in a property given
                 a set of flips. See moca.processor
-            temperature (float):
-                Temperature of ensemble
             chemical_potentials (dict):
                 dictionary with species names and chemical potentials.
             sublattices (list of Sublattice): optional
                 list of Lattice objects representing sites in the processor
                 supercell with same site spaces.
         """
-        super().__init__(processor, temperature, sublattices)
+        super().__init__(processor, sublattices)
 
         # check that species are valid
         chemical_potentials = {get_specie(k): v for k, v
@@ -229,7 +225,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             else:
                 sp = Element(sp["element"])
             chemical_potentials[sp] = c
-        return cls(Processor.from_dict(d['processor']), d['temperature'],
+        return cls(Processor.from_dict(d['processor']),
                    chemical_potentials=chemical_potentials,
                    sublattices=[Sublattice.from_dict(s)
                                 for s in d['sublattices']])
@@ -251,7 +247,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             dictionary of fugacity fractions.
     """
 
-    def __init__(self, processor, temperature, fugacity_fractions=None,
+    def __init__(self, processor, fugacity_fractions=None,
                  sublattices=None):
         """Initialize MuSemiGrandEnsemble.
 
@@ -259,8 +255,6 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             processor (Processor):
                 A processor that can compute the change in a property given
                 a set of flips. See moca.processor
-            temperature (float):
-                Temperature of ensemble
             fugacity_fractions (sequence of dicts): optional
                 dictionary of species name and fugacity fraction for each
                 sublattice (ie think of it as the sublattice concentrations
@@ -271,7 +265,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
                 list of Lattice objects representing sites in the processor
                 supercell with same site spaces.
         """
-        super().__init__(processor, temperature, sublattices)
+        super().__init__(processor, sublattices)
 
         if fugacity_fractions is not None:
             # check that species are valid
@@ -397,7 +391,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
                     sp = Element(sp["element"])
                 fus[sp] = fu
             fugacity_fractions.append(fus)
-        return cls(Processor.from_dict(d['processor']), d['temperature'],
+        return cls(Processor.from_dict(d['processor']),
                    fugacity_fractions=fugacity_fractions,
                    sublattices=[Sublattice.from_dict(s)
                                 for s in d['sublattices']])

@@ -20,20 +20,18 @@ class CanonicalEnsemble(Ensemble, MSONable):
 
     valid_mcmc_steps = ('swap',)
 
-    def __init__(self, processor, temperature, sublattices=None):
+    def __init__(self, processor, sublattices=None):
         """Initialize CanonicalEnemble.
 
         Args:
             processor (Processor):
                 A processor that can compute the change in a property given
                 a set of flips.
-            temperature (float):
-                Temperature of ensemble
             sublattices (list of Sublattice): optional
                 list of Lattice objects representing sites in the processor
                 supercell with same site spaces.
         """
-        super().__init__(processor, temperature, sublattices=sublattices)
+        super().__init__(processor, sublattices=sublattices)
 
     @property
     def natural_parameters(self):
@@ -78,5 +76,5 @@ class CanonicalEnsemble(Ensemble, MSONable):
         Returns:
             CanonicalEnsemble
         """
-        return cls(Processor.from_dict(d['processor']), d['temperature'],
+        return cls(Processor.from_dict(d['processor']),
                    [Sublattice.from_dict(s) for s in d['sublattices']])

@@ -26,13 +26,15 @@ class MCMCKernel(ABC):
 
     valid_mcushers = None  # set this in derived kernels
 
-    def __init__(self, ensemble, step_type, *args, **kwargs):
+    def __init__(self, ensemble, temperature, step_type, *args, **kwargs):
         """Initialize MCMCKernel.
 
         Args:
             ensemble (Ensemble):
-                an Ensemble instance to obtain the feautures and parameters
+                An Ensemble instance to obtain the feautures and parameters
                 used in computing log probabilities.
+            temperature (float):
+                Temperature at which the MCMC sampling will be carried out.
             step_type (str): optional
                 String specifying the MCMC step type.
             args:
@@ -45,7 +47,7 @@ class MCMCKernel(ABC):
         self.natural_params = ensemble.natural_parameters
         self.feature_fun = ensemble.compute_feature_vector
         self._feature_change = ensemble.compute_feature_vector_change
-        self.temperature = ensemble.temperature
+        self.temperature = temperature
         try:
             self._usher = mcusher_factory(self.valid_mcushers[step_type],
                                           ensemble.sublattices,
@@ -115,18 +117,21 @@ class Metropolis(MCMCKernel):
         return accept, occupancy, delta_enthalpy, delta_features
 
 
-def mcmckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs):
+def mcmckernel_factory(kernel_type, ensemble, temperature, step_type,
+                       *args, **kwargs):
     """Get a MCMC Kernel from string name.
 
     Args:
         kernel_type (str):
-            string specifying step to instantiate.
+            String specifying step to instantiate.
         ensemble (Ensemble)
-            an Ensemble object to create the MCMC kernel from.
+            An Ensemble object to create the MCMC kernel from.
+        temperature (float)
+            Temperature at which the MCMC sampling will be carried out.
         step_type (str):
-            string specifying the step type (ie key to mcusher type)
+            String specifying the step type (ie key to mcusher type)
         *args:
-            positional arguments passed to class constructor
+            Positional arguments passed to class constructor
         **kwargs:
             Keyword arguments passed to class constructor
 
@@ -134,4 +139,5 @@ def mcmckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs):
         MCMCKernel: instance of derived class.
     """
     return derived_class_factory(kernel_type.capitalize(), MCMCKernel,
-                                 ensemble, step_type, *args, **kwargs)
+                                 ensemble, temperature, step_type,
+                                 *args, **kwargs)
