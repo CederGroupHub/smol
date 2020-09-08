@@ -113,6 +113,7 @@ class Metropolis(MCMCKernel):
         if accept:
             for f in step:
                 occupancy[f[0]] = f[1]
+            self._usher.update(step)
 
         return accept, occupancy, delta_enthalpy, delta_features
 
