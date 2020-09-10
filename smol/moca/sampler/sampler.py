@@ -94,13 +94,14 @@ class Sampler:
         mcmckernel = mcmckernel_factory(kernel_type, ensemble, temperature,
                                         step_type, *args, **kwargs)
 
-        ensemble_metadata = {"name": type(ensemble).__name__}
-        ensemble_metadata.update(ensemble.thermo_boundaries)
+        sampling_metadata = {"name": type(ensemble).__name__}
+        sampling_metadata.update(ensemble.thermo_boundaries)
+        sampling_metadata.update({"kernel": kernel_type, "step": step_type})
         container = SampleContainer(ensemble.num_sites,
                                     ensemble.sublattices,
                                     ensemble.natural_parameters,
                                     ensemble.num_energy_coefs,
-                                    ensemble_metadata, nwalkers)
+                                    sampling_metadata, nwalkers)
         return cls(mcmckernel, container, seed=seed)
 
     @property
@@ -210,6 +211,7 @@ class Sampler:
         if initial_occupancies is None:
             try:
                 initial_occupancies = self.samples.get_occupancies(flat=False)[-1]  # noqa
+                # auxiliary states from kernels should be set here
             except IndexError:
                 raise RuntimeError("There are no saved samples to obtain the "
                                    "initial occupancies. These must be "
@@ -226,6 +228,10 @@ class Sampler:
         for state in self.sample(nsteps, initial_occupancies,
                                  thin_by=thin_by, progress=progress):
             self.samples.save_sample(*state)
+
+        # A checkpoing of aux states should be saved to container here.
+        # Note that to save any general "state" we will need to make sure it is
+        # properly serializable to save as json and also to save in h5py
 
     def anneal(self, temperatures, mcmc_steps, initial_occupancies=None,
                thin_by=1, progress=False):

@@ -67,6 +67,10 @@ class MCMCKernel(ABC):
         self._temperature = temperature
         self.beta = 1.0 / (kB * temperature)
 
+    def set_aux_state(self, state, **kwargs):
+        """"Set the auxiliary state from a checkpoint values."""
+        pass
+
     @abstractmethod
     def single_step(self, occupancy):
         """Attempt an MCMC step.
@@ -113,7 +117,7 @@ class Metropolis(MCMCKernel):
         if accept:
             for f in step:
                 occupancy[f[0]] = f[1]
-            self._usher.update(step)
+            self._usher.update_aux_state(step)
 
         return accept, occupancy, delta_enthalpy, delta_features
 

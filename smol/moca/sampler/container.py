@@ -41,11 +41,14 @@ class SampleContainer(MSONable):
         total_mc_steps (int)
             Number of iterations used in sampling
         metadata (dict):
-            dictionary of metadata from the MC run that generated the samples.
+            Dictionary of metadata from the MC run that generated the samples.
+        aux_checkpoint (dict):
+            Checkpoint dictionary of auxiliary states and variables to continue
+            sampling from the last state of a previous MCMC run
     """
 
     def __init__(self, num_sites, sublattices, natural_parameters,
-                 num_energy_coefs, ensemble_metadata=None, nwalkers=1):
+                 num_energy_coefs, sampling_metadata=None, nwalkers=1):
         """Initialize a sample container.
 
         Args:
@@ -58,15 +61,15 @@ class SampleContainer(MSONable):
             num_energy_coefs (int):
                 the number of coeficients in the natural parameters that
                 correspond to the energy only.
-            ensemble_metadata (Ensemble):
-                Metadata of the ensemble that was sampled.
+            sampling_metadata (Ensemble):
+                Sampling metadata (i.e. ensemble name, mckernel type, etc)
             nwalkers (int):
                 Number of walkers used to generate chain. Default is 1
         """
         self.num_sites = num_sites
         self.sublattices = sublattices
         self.natural_parameters = natural_parameters
-        self.metadata = {} if ensemble_metadata is None else ensemble_metadata
+        self.metadata = {} if sampling_metadata is None else sampling_metadata
         self._num_energy_coefs = num_energy_coefs
         self.total_mc_steps = 0
         self._nsamples = 0
@@ -75,6 +78,7 @@ class SampleContainer(MSONable):
         self._enthalpy = np.empty((0, nwalkers))
         self._temperature = np.empty((0, nwalkers))
         self._accepted = np.zeros((0, nwalkers), dtype=int)
+        self.aux_checkpoint = None
 
     @property
     def num_samples(self):
@@ -335,7 +339,9 @@ class SampleContainer(MSONable):
         Returns:
             MSONable dict
         """
-        d = {'num_sites': self.num_sites,
+        d = {'@module': self.__class__.__module__,
+             '@class': self.__class__.__name__,
+             'num_sites': self.num_sites,
              'sublattices': [s.as_dict() for s in self.sublattices],
              'natural_parameters': self.natural_parameters,
              'metadata': self.metadata,
@@ -345,7 +351,9 @@ class SampleContainer(MSONable):
              'chain': self._chain.tolist(),
              'features': self._features.tolist(),
              'enthalpy': self._enthalpy.tolist(),
-             'accepted': self._accepted.tolist()}
+             'accepted': self._accepted.tolist(),
+             'aux_checkpoint': self.aux_checkpoint}
+        # TODO need to think how to genrally serialize the aux checkpoint
         return d
 
     @classmethod

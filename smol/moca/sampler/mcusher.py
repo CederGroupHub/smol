@@ -72,8 +72,12 @@ class MCMCUsher(ABC):
         """
         return []
 
-    def update(self, step):
-        """Update any internal information based on an accepted step."""
+    def update_aux_state(self, step):
+        """Update any auxiliary state information based on an accepted step."""
+        pass
+
+    def set_aux_state(self, state, **kwargs):
+        """Set the auxiliary state from a checkpoint values."""
         pass
 
     def get_random_sublattice(self):
