@@ -3,7 +3,7 @@ from collections import OrderedDict
 import numpy as np
 from numpy.polynomial.chebyshev import chebval
 from numpy.polynomial.legendre import legval
-from smol.cofe.configspace import basis
+from smol.cofe.space import basis
 
 
 # TODO add test for out-of-box basis not orthogonal with non-uniform measure

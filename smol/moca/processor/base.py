@@ -16,8 +16,8 @@ import numpy as np
 
 from pymatgen import Structure, PeriodicSite
 from monty.json import MSONable
-from smol.cofe.configspace import (get_allowed_species, get_site_spaces,
-                                   Vacancy)
+from smol.cofe.space import (get_allowed_species, get_site_spaces,
+                             Vacancy)
 
 
 class Processor(MSONable, metaclass=ABCMeta):

@@ -7,7 +7,7 @@ functions to define and fit cluster expansions for crystalline materials.
 
 from __future__ import division
 
-from .configspace.clusterspace import ClusterSubspace
+from .space.clusterspace import ClusterSubspace
 from .wrangler import (StructureWrangler, weights_energy_above_composition,
                        weights_energy_above_hull)
 from .expansion import ClusterExpansion

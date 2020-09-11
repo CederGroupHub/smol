@@ -5,9 +5,9 @@ import json
 import numpy as np
 from pymatgen import Lattice, Structure, Composition
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-from smol.cofe.configspace import Orbit, Cluster
-from smol.cofe.configspace.basis import basis_factory
-from smol.cofe.configspace.domain import SiteSpace
+from smol.cofe.space import Orbit, Cluster
+from smol.cofe.space.basis import basis_factory
+from smol.cofe.space.domain import SiteSpace
 
 
 class TestOrbit(unittest.TestCase):

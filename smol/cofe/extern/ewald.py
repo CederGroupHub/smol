@@ -13,7 +13,7 @@ import numpy as np
 from pymatgen import Structure, PeriodicSite
 from pymatgen.analysis.ewald import EwaldSummation
 from monty.json import MSONable
-from smol.cofe.configspace.domain import get_allowed_species, Vacancy
+from smol.cofe.space.domain import get_allowed_species, Vacancy
 
 
 class EwaldTerm(MSONable):

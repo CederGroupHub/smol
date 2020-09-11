@@ -8,8 +8,8 @@ from pymatgen.util.coord import is_coord_subset_pbc
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe import ClusterSubspace
 from smol.cofe.extern import EwaldTerm
-from smol.cofe.configspace.constants import SITE_TOL
-from smol.cofe.configspace.domain import get_allowed_species, Vacancy
+from smol.cofe.space.constants import SITE_TOL
+from smol.cofe.space.domain import get_allowed_species, Vacancy
 from smol.exceptions import StructureMatchError
 from src.mc_utils import corr_from_occupancy
 

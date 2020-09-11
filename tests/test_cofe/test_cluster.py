@@ -3,7 +3,7 @@ import json
 from itertools import combinations
 import numpy as np
 from pymatgen import Structure, Lattice
-from smol.cofe.configspace import Cluster
+from smol.cofe.space import Cluster
 
 
 class TestCluster(unittest.TestCase):

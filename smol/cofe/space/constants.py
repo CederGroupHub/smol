@@ -5,6 +5,6 @@
 # to determine mappings and subsets. The default in pymatgen is 1E-8.
 # If you want to tighten or loosen this tolerance, do it at runtime in your
 # script by adding these lines somewhere at the top.
-# import smol.cofe.configspace.constants
+# import smol.cofe.space.constants
 # constants.SITE_TOL = your_desired_value
 SITE_TOL = 1E-6

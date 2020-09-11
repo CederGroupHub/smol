@@ -16,7 +16,7 @@ import numpy as np
 
 from monty.json import MSONable
 from pymatgen import Specie, DummySpecie, Element
-from smol.cofe.configspace.domain import get_specie, Vacancy
+from smol.cofe.space.domain import get_specie, Vacancy
 from smol.moca.processor.base import Processor
 from .base import Ensemble
 from .sublattice import Sublattice

@@ -23,7 +23,7 @@ from monty.json import MSONable
 from pymatgen import Composition, Structure
 from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
 from smol.cofe.extern import EwaldTerm
-from smol.cofe.configspace.clusterspace import ClusterSubspace
+from smol.cofe.space.clusterspace import ClusterSubspace
 from smol.exceptions import StructureMatchError
 from smol.constants import kB
 

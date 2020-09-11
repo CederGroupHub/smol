@@ -11,7 +11,7 @@ from collections import OrderedDict
 import numpy as np
 from monty.json import MSONable
 from pymatgen import Specie, DummySpecie, Element
-from smol.cofe.configspace.domain import Vacancy
+from smol.cofe.space.domain import Vacancy
 
 
 def get_sublattices(processor):

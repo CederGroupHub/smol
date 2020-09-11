@@ -14,7 +14,7 @@ __author__ = "Luis Barroso-Luque"
 
 import numpy as np
 from monty.json import MSONable
-from smol.cofe.configspace.clusterspace import ClusterSubspace
+from smol.cofe.space.clusterspace import ClusterSubspace
 
 
 class ClusterExpansion(MSONable):
