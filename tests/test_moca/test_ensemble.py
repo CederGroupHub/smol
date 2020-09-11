@@ -15,7 +15,7 @@ ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble]
 
 @pytest.fixture
 def composite_processor(cluster_subspace):
-    coefs = 2 * np.random.random(cluster_subspace.n_bit_orderings)
+    coefs = 2 * np.random.random(cluster_subspace.num_corr_functions)
     scmatrix = 4 * np.eye(3)
     return CEProcessor(cluster_subspace, scmatrix, coefs)
 
@@ -53,7 +53,7 @@ def fugrand_ensemble(composite_processor):
 @pytest.mark.parametrize('ensemble_cls', ensembles)
 def test_from_cluster_expansion(cluster_subspace, ensemble_cls):
     cluster_subspace.add_external_term(EwaldTerm())
-    coefs = np.random.random(cluster_subspace.n_bit_orderings + 1)
+    coefs = np.random.random(cluster_subspace.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
     proc = CompositeProcessor(cluster_subspace, scmatrix)
     proc.add_processor(CEProcessor(cluster_subspace, scmatrix,

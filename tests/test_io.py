@@ -10,14 +10,14 @@ from tests.data import lno_prim, lno_data
 class TestSaveLoadWork(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.cs = ClusterSubspace.from_radii(lno_prim, {2: 5, 3: 4.1},
-                                            ltol=0.15, stol=0.2,
-                                            angle_tol=5, supercell_size='O2-')
+        cls.cs = ClusterSubspace.from_cutoffs(lno_prim, {2: 5, 3: 4.1},
+                                              ltol=0.15, stol=0.2,
+                                              angle_tol=5, supercell_size='O2-')
         cls.sw = StructureWrangler(cls.cs)
         for struct, energy in lno_data:
             cls.sw.add_data(struct, {'energy': energy})
 
-        coefs = np.ones(cls.cs.n_bit_orderings)
+        coefs = np.ones(cls.cs.num_corr_functions)
         cls.ce = ClusterExpansion(cls.cs, coefs, cls.sw.feature_matrix)
         cls.pr = CEProcessor(cls.cs, 2 * np.eye(3), coefs)
         cls.en = CanonicalEnsemble(cls.pr)

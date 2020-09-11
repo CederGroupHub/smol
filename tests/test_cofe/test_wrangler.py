@@ -11,9 +11,9 @@ from tests.data import lno_prim, lno_data
 class TestStructureWrangler(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.cs = ClusterSubspace.from_radii(lno_prim, radii={2: 5, 3: 4.1},
-                                            ltol=0.15, stol=0.2,
-                                            angle_tol=5, supercell_size='O2-')
+        cls.cs = ClusterSubspace.from_cutoffs(lno_prim, cutoffs={2: 5, 3: 4.1},
+                                              ltol=0.15, stol=0.2,
+                                              angle_tol=5, supercell_size='O2-')
         cls.sw = StructureWrangler(cls.cs)
 
     def setUp(self):
@@ -26,7 +26,7 @@ class TestStructureWrangler(unittest.TestCase):
 
     def test_properties(self):
         self.assertEqual(self.sw.feature_matrix.shape,
-                         (self.sw.num_structures, self.cs.n_bit_orderings))
+                         (self.sw.num_structures, self.cs.num_corr_functions))
         self.assertEqual(len(self.sw.occupancy_strings),
                          self.sw.num_structures)
         num_prim_sits = len(self.cs.structure)

@@ -20,6 +20,6 @@ def structure(request):
 
 @pytest.fixture(params=test_structures)
 def cluster_subspace(request):
-    return ClusterSubspace.from_radii(request.param,
-                                      radii={2: 6, 3: 5, 4: 4},
-                                      supercell_size='volume')
+    return ClusterSubspace.from_cutoffs(request.param,
+                                        cutoffs={2: 6, 3: 5, 4: 4},
+                                        supercell_size='volume')

@@ -15,7 +15,7 @@ ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble]
 #  in test_sampler
 @pytest.fixture(params=ensembles)
 def ensemble(cluster_subspace, request):
-    coefs = np.random.random(cluster_subspace.n_bit_orderings)
+    coefs = np.random.random(cluster_subspace.num_corr_functions)
     proc = CEProcessor(cluster_subspace, 4*np.eye(3), coefs)
     if request.param is MuSemiGrandEnsemble:
         kwargs = {'chemical_potentials':

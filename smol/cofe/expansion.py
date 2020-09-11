@@ -80,10 +80,10 @@ class ClusterExpansion(MSONable):
         if self._eci is None:
             mults = [1]  # empty orbit
             for mult, ords in zip(self._subspace.orbit_multiplicities,
-                                  self._subspace.orbit_nbit_orderings):
+                                  self._subspace.ncorr_functions_per_orbit):
                 mults += ords*[mult, ]
             n = len(self._subspace.external_terms)  # check for extra terms
-            bit_combo_mults = [1] + self._subspace.bit_combo_multiplicities
+            bit_combo_mults = [1] + self._subspace.corr_function_multiplicities
             coefs = self.coefs[:-n] if n else self.coefs
             self._eci = coefs/(np.array(mults) * np.array(bit_combo_mults))
         return self._eci
@@ -196,7 +196,7 @@ class ClusterExpansion(MSONable):
 
     def __str__(self):
         """Pretty string for printing."""
-        corr = np.zeros(self.cluster_subspace.n_bit_orderings)
+        corr = np.zeros(self.cluster_subspace.num_corr_functions)
         corr[0] = 1  # zero point cluster
         # This might need to be redefined to take "expectation" using measure
         feature_avg = np.average(self._feat_matrix, axis=0)
@@ -204,14 +204,15 @@ class ClusterExpansion(MSONable):
         s = 'ClusterExpansion:\n    Prim Composition: ' \
             f'{self.prim_structure.composition}\n Num fit structures: ' \
             f'{self._feat_matrix.shape[0]}\n' \
-            f'Num orbit functions: {self.cluster_subspace.n_bit_orderings}\n'
+            f'Num orbit functions: {self.cluster_subspace.num_corr_functions}\n'
         ecis = len(corr)*[0.0, ] if self.coefs is None else self.coefs
         s += f'    [Orbit]  id: {str(0):<3}\n'
         s += '        bit       eci\n'
         s += f'        {"[X]":<10}{ecis[0]:<4.3}\n'
         for orbit in self.cluster_subspace.iterorbits():
             s += f'    [Orbit]  id: {orbit.bit_id:<3} size: ' \
-                 f'{len(orbit.bits):<3} radius: {orbit.radius:<4.3}\n'
+                 f'{len(orbit.bits):<3} radius: ' \
+                 f'{orbit.base_cluster.diameter:<4.3}\n'
             s += '        id    bit       eci     feature avg  feature std  '\
                  'eci*std\n'
             for i, bits in enumerate(orbit.bit_combos):

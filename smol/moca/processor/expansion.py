@@ -37,8 +37,8 @@ class CEProcessor(Processor):
             Fitted coefficients from the cluster expansion.
         n_orbit_functions (int):
             Total number of orbit basis functions (correlation functions).
-            Includes all possible labellings for all orbits. Same as
-            :code:`ClusterSubspace.n_bit_orderings`.
+            This includes all possible labellings/orderings for all orbits.
+            Same as :code:`ClusterSubspace.n_bit_orderings`.
     """
 
     def __init__(self, cluster_subspace, supercell_matrix, coefficients,
@@ -62,7 +62,7 @@ class CEProcessor(Processor):
         """
         super().__init__(cluster_subspace, supercell_matrix, coefficients)
 
-        self.n_orbit_functions = self.cluster_subspace.n_bit_orderings
+        self.n_orbit_functions = self.cluster_subspace.num_corr_functions
         if len(coefficients) != self.n_orbit_functions:
             raise ValueError('The provided coeffiecients are not the right '
                              f'length. Got {len(coefficients)} coefficients, '
