@@ -14,8 +14,6 @@
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -220,7 +218,7 @@ sampling from the last state of a previous MCMC run.
 <li><p><strong>natural_parameters</strong> (<em>ndarray</em>) – array of natural parameters used in the ensemble.</p></li>
 <li><p><strong>num_energy_coefs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – the number of coeficients in the natural parameters that
 correspond to the energy only.</p></li>
-<li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="api.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – Sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
+<li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – Sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
 <li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Number of walkers used to generate chain. Default is 1</p></li>
 </ul>
 </dd>
@@ -475,7 +473,7 @@ and write a specific sampler see the MetropolisSampler.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ensemble</strong> (<a class="reference internal" href="api.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble instance to obtain the feautures and parameters
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble instance to obtain the feautures and parameters
 used in computing log probabilities.</p></li>
 <li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Temperature at which the MCMC sampling will be carried out.</p></li>
 <li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – optional
@@ -535,7 +533,7 @@ successful.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ensemble</strong> (<a class="reference internal" href="api.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble instance to obtain the feautures and parameters
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble instance to obtain the feautures and parameters
 used in computing log probabilities.</p></li>
 <li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Temperature at which the MCMC sampling will be carried out.</p></li>
 <li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – optional
@@ -581,7 +579,7 @@ successful.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>kernel_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – String specifying step to instantiate.</p></li>
-<li><p><strong>ensemble</strong> (<a class="reference internal" href="api.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble object to create the MCMC kernel from.</p></li>
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble object to create the MCMC kernel from.</p></li>
 <li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Temperature at which the MCMC sampling will be carried out.</p></li>
 <li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – String specifying the step type (ie key to mcusher type)</p></li>
 <li><p><strong>*args</strong> – Positional arguments passed to class constructor</p></li>
@@ -824,7 +822,7 @@ the amount to thin by for saving samples.</p></li>
 <dl class="py method">
 <dt id="smol.moca.sampler.sampler.Sampler.efficiency">
 <code class="sig-name descname">efficiency</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.efficiency" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the sampling efficiency (accepted/total).</p>
+<dd><p>Get the efficiency of MCMC sampling (accepted/total).</p>
 </dd></dl>
 
 <dl class="py method">
@@ -836,7 +834,7 @@ automatically populate and create an appropriate SampleContainer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ensemble</strong> (<a class="reference internal" href="api.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble class to obtain sample probabilities from.</p></li>
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble class to obtain sample probabilities from.</p></li>
 <li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Temperature to run Monte Carlo at.</p></li>
 <li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – optional
 type of step to run MCMC with. If not given the default is the
@@ -1032,7 +1030,7 @@ sampling from the last state of a previous MCMC run.
 <li><p><strong>natural_parameters</strong> (<em>ndarray</em>) – array of natural parameters used in the ensemble.</p></li>
 <li><p><strong>num_energy_coefs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – the number of coeficients in the natural parameters that
 correspond to the energy only.</p></li>
-<li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="api.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – Sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
+<li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – Sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
 <li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Number of walkers used to generate chain. Default is 1</p></li>
 </ul>
 </dd>

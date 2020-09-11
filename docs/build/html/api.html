@@ -14,8 +14,6 @@
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -167,8 +165,8 @@ structure).</p>
 This class defines the cluster subspace over which to fit a cluster
 expansion: This sets the orbits (groups of clusters) and the site basis
 functions that are to be considered in the fit.</p>
-<p>You probably want to generate from <code class="code docutils literal notranslate"><span class="pre">ClusterSubspace.from_radii</span></code>,
-which will auto-generate the orbits from radius cutoffs.</p>
+<p>You probably want to generate from <code class="code docutils literal notranslate"><span class="pre">ClusterSubspace.from_cutoffs</span></code>,
+which will auto-generate the orbits from diameter cutoffs.</p>
 <dl class="py attribute">
 <dt id="smol.cofe.ClusterSubspace.symops">
 <code class="sig-name descname">symops</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.symops" title="Permalink to this definition">¶</a></dt>
@@ -180,10 +178,46 @@ which will auto-generate the orbits from radius cutoffs.</p>
 </dl>
 </dd></dl>
 
+<dl class="py attribute">
+<dt id="smol.cofe.ClusterSubspace.num_corr_functions">
+<code class="sig-name descname">num_corr_functions</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.num_corr_functions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total number of correlation functions (orbit basis functions)
+included in the subspace.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="smol.cofe.ClusterSubspace.num_orbits">
+<code class="sig-name descname">num_orbits</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.num_orbits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total number of crystallographic orbits included in the subspace.
+This includes the empty orbit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="smol.cofe.ClusterSubspace.num_clusters">
+<code class="sig-name descname">num_clusters</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.num_clusters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total number of clusters in the primitive cell that are included
+in the subspace.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <p>Initialize a ClusterSubspace.</p>
 <p>You rarely will need to create a ClusterSubspace using the main
 constructor.
-Look at the class method <code class="code docutils literal notranslate"><span class="pre">from_radii</span></code> for the “better” way to do
+Look at the class method <code class="code docutils literal notranslate"><span class="pre">from_cutoffs</span></code> for the “better” way to do
 it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -256,12 +290,6 @@ implemented.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.ClusterSubspace.bit_combo_multiplicities">
-<em class="property">property </em><code class="sig-name descname">bit_combo_multiplicities</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.bit_combo_multiplicities" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get list of multiplicity of each distinct bit ordering.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt id="smol.cofe.ClusterSubspace.change_site_bases">
 <code class="sig-name descname">change_site_bases</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_basis</span></em>, <em class="sig-param"><span class="n">orthonormal</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.change_site_bases" title="Permalink to this definition">¶</a></dt>
 <dd><p>Change the type of site basis used in the site basis functions.</p>
@@ -321,9 +349,19 @@ option you are fully responsible that the mappings are correct!</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="smol.cofe.ClusterSubspace.corr_function_multiplicities">
+<em class="property">property </em><code class="sig-name descname">corr_function_multiplicities</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.corr_function_multiplicities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of multiplicity of each distinct correlation function.</p>
+<p>The length of the list returned is the total number of correlation
+functions in the subspace for all orbits. The multiplicity of a
+correlation function is the number of symmetrically equivalent bit
+orderings the result in the product of the same single site functions.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="smol.cofe.ClusterSubspace.expansion_structure">
 <em class="property">property </em><code class="sig-name descname">expansion_structure</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.expansion_structure" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the prim expansion structure (excludes inactive sites).</p>
+<dd><p>Get the primitive expansion structure (excludes inactive sites).</p>
 </dd></dl>
 
 <dl class="py method">
@@ -335,19 +373,15 @@ option you are fully responsible that the mappings are correct!</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.ClusterSubspace.from_dict">
-<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.from_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create ClusterSubspace from an MSONable dict.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.ClusterSubspace.from_radii">
-<em class="property">classmethod </em><code class="sig-name descname">from_radii</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">radii</span></em>, <em class="sig-param"><span class="n">basis</span><span class="o">=</span><span class="default_value">'indicator'</span></em>, <em class="sig-param"><span class="n">orthonormal</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_concentration</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">supercell_matcher</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">site_matcher</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">matcher_kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.from_radii" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a ClusterSubspace from radii cutoffs.</p>
+<dt id="smol.cofe.ClusterSubspace.from_cutoffs">
+<em class="property">classmethod </em><code class="sig-name descname">from_cutoffs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">cutoffs</span></em>, <em class="sig-param"><span class="n">basis</span><span class="o">=</span><span class="default_value">'indicator'</span></em>, <em class="sig-param"><span class="n">orthonormal</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_concentration</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">supercell_matcher</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">site_matcher</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">matcher_kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.from_cutoffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a ClusterSubspace from diameter cutoffs.</p>
 <p>Creates a <a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code></a> with orbits of the given size and
 diameter smaller than or equal to the given value. The diameter of an
 orbit is the maximum distance between any two sites of a cluster of
 that orbit.</p>
+<p>The diameter of a cluster is the maximum distance between any two
+sites in the cluster.</p>
 <p>This is the best (and the only easy) way to create a
 <a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code></a>.</p>
 <dl class="field-list simple">
@@ -355,9 +389,11 @@ that orbit.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>structure</strong> (<em>Structure</em>) – Disordered structure to build a cluster expansion for.
 Typically the primitive cell</p></li>
-<li><p><strong>radii</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – dict of {cluster_size: max_radius}. Radii should be strictly
-decreasing. Typically something like {2:5, 3:4}. To obtain a
-subspace with empty and singlet terms use an empty dict {}</p></li>
+<li><p><strong>cutoffs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – dict of {cluster_size: diameter cutoff}. Cutoffs should be
+strictly decreasing. Typically something like {2:5, 3:4}.
+Empty and singlet orbits are always included.
+To obtain a subspace with only an empty and singlet terms use
+an empty dict {}</p></li>
 <li><p><strong>basis</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – A string specifying the site basis functions</p></li>
 <li><p><strong>orthonormal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Whether to enforce an orthonormal basis. From the current
 available bases only the indicator basis is not orthogonal out
@@ -390,6 +426,12 @@ to use a species that has a constant amount per formula unit.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="smol.cofe.ClusterSubspace.from_dict">
+<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create ClusterSubspace from an MSONable dict.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="smol.cofe.ClusterSubspace.function_orbit_ids">
 <em class="property">property </em><code class="sig-name descname">function_orbit_ids</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_orbit_ids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get Orbit IDs corresponding to each correlation function.</p>
@@ -401,6 +443,14 @@ in the list since they are not associated with any orbit.</p>
 <dt id="smol.cofe.ClusterSubspace.iterorbits">
 <code class="sig-name descname">iterorbits</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.iterorbits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Yield orbits.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.ClusterSubspace.ncorr_functions_per_orbit">
+<em class="property">property </em><code class="sig-name descname">ncorr_functions_per_orbit</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.ncorr_functions_per_orbit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of correlation functions for each orbit.</p>
+<p>The list returned is of length total number of orbits, each entry is
+the total number of correlation functions assocaited with that orbit.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -456,12 +506,6 @@ species itself.</p></li>
 <dt id="smol.cofe.ClusterSubspace.orbit_multiplicities">
 <em class="property">property </em><code class="sig-name descname">orbit_multiplicities</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbit_multiplicities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the crystallographic multiplicities for each orbit.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.ClusterSubspace.orbit_nbit_orderings">
-<em class="property">property </em><code class="sig-name descname">orbit_nbit_orderings</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbit_nbit_orderings" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the number of symmetrically distinct bit orderings in orbits.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -573,7 +617,7 @@ to a supercell equivalent to given structure.</p>
 <dl class="py method">
 <dt id="smol.cofe.ClusterSubspace.structure">
 <em class="property">property </em><code class="sig-name descname">structure</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.structure" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the primitive structure (includes all sites).</p>
+<dd><p>Get the underlying primitive structure including inactive sites.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1459,7 +1503,7 @@ be no effect.</p>
 <dl class="py class">
 <dt id="smol.moca.CanonicalEnsemble">
 <em class="property">class </em><code class="sig-name descname">CanonicalEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CanonicalEnsemble" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.base.Ensemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.base.Ensemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Canonical Ensemble class to run Monte Carlo Simulations.</p>
 <p>Initialize CanonicalEnemble.</p>
 <dl class="field-list simple">
@@ -1542,7 +1586,7 @@ processor.</p>
 <dl class="py class">
 <dt id="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble">
 <em class="property">class </em><code class="sig-name descname">BaseSemiGrandEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.base.Ensemble</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.base.Ensemble</span></code></a></p>
 <p>Abstract Semi-Grand Canonical Base Ensemble.</p>
 <p>Total number of species are fixed but composition of “active” (with partial
 occupancies) sublattices is allowed to change.</p>
@@ -1602,7 +1646,7 @@ term.</p>
 <dl class="py class">
 <dt id="smol.moca.MuSemiGrandEnsemble">
 <em class="property">class </em><code class="sig-name descname">MuSemiGrandEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">chemical_potentials</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.MuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Relative chemical potential based SemiGrand Ensemble.</p>
 <p>A Semi-Grand Canonical Ensemble for Monte Carlo Simulations where species
 relative chemical potentials are predefined. Note that in the SGC Ensemble
@@ -1694,7 +1738,7 @@ supercell with same site spaces.</p></li>
 <dl class="py class">
 <dt id="smol.moca.FuSemiGrandEnsemble">
 <em class="property">class </em><code class="sig-name descname">FuSemiGrandEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">fugacity_fractions</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.FuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Fugacity fraction SemiGrandEnsemble.</p>
 <p>A Semi-Grand Canonical Ensemble for Monte Carlo simulations where the
 species fugacity ratios are set constant. This implicitly sets the chemical
@@ -2083,8 +2127,8 @@ normalization.</p>
 <dt id="smol.moca.CEProcessor.n_orbit_functions">
 <code class="sig-name descname">n_orbit_functions</code><a class="headerlink" href="#smol.moca.CEProcessor.n_orbit_functions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Total number of orbit basis functions (correlation functions).
-Includes all possible labellings for all orbits. Same as
-<code class="code docutils literal notranslate"><span class="pre">ClusterSubspace.n_bit_orderings</span></code>.</p>
+This includes all possible labellings/orderings for all orbits.
+Same as <code class="code docutils literal notranslate"><span class="pre">ClusterSubspace.n_bit_orderings</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></p>
@@ -2509,7 +2553,7 @@ the amount to thin by for saving samples.</p></li>
 <dl class="py method">
 <dt id="smol.moca.Sampler.efficiency">
 <code class="sig-name descname">efficiency</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.Sampler.efficiency" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the sampling efficiency (accepted/total).</p>
+<dd><p>Get the efficiency of MCMC sampling (accepted/total).</p>
 </dd></dl>
 
 <dl class="py method">
@@ -2521,7 +2565,7 @@ automatically populate and create an appropriate SampleContainer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ensemble</strong> (<a class="reference internal" href="#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble class to obtain sample probabilities from.</p></li>
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble class to obtain sample probabilities from.</p></li>
 <li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Temperature to run Monte Carlo at.</p></li>
 <li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – optional
 type of step to run MCMC with. If not given the default is the
@@ -2712,7 +2756,7 @@ sampling from the last state of a previous MCMC run.
 <li><p><strong>natural_parameters</strong> (<em>ndarray</em>) – array of natural parameters used in the ensemble.</p></li>
 <li><p><strong>num_energy_coefs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – the number of coeficients in the natural parameters that
 correspond to the energy only.</p></li>
-<li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – Sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
+<li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – Sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
 <li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Number of walkers used to generate chain. Default is 1</p></li>
 </ul>
 </dd>

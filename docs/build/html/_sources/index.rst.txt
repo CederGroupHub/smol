@@ -50,7 +50,7 @@ Monte Carlo sampling::
 
     # create a clustersubspace
     cutoffs = {2: 6, 3: 5, 4: 4}
-    subspace = ClusterSubspace.from_radii(prim, radii=cutoffs)
+    subspace = ClusterSubspace.from_cutoffs(prim, cutoffs=cutoffs)
 
     # prepare fit data
     wrangler = StructureWrangler(subspace)
@@ -75,7 +75,7 @@ Monte Carlo sampling::
     transformation = OrderDisorderedStructureTransformation()
     structure = expansion.cluster_subspace.structure.copy()
     structure.make_supercell(sc_matrix)
-    structure = transformation.apply_transformation(supercell)
+    structure = transformation.apply_transformation(structure)
 
     # Create initial occupancy and run MCMC
     init_occu = ensemble.processor.occupancy_from_structure(structure)
