@@ -98,14 +98,14 @@ class EwaldTerm(MSONable):
 
     @staticmethod
     def get_ewald_occu(occu, num_ewald_sites, ewald_inds):
-        """Get the ewald indices from a given encoded occupancy array.
+        """Get the ewald indices from a given encoded occupancy string.
 
         The ewald indices indicate matrix elements (ie species) corresponding
         to the given occupancy.
 
         Args:
             occu (ndarray):
-                encoded occupancy array
+                encoded encoded occupancy string
             num_ewald_sites (int):
                 number of total ewald sites. This is the size of the ewald
                 matrix, the sum of the size of all site spaces for all sites
@@ -173,10 +173,10 @@ class EwaldTerm(MSONable):
 
     def as_dict(self) -> dict:
         """
-        Make this a json serializable dict.
+        Get Json-serialization dict representation.
 
         Returns:
-            dict: msonable dict
+            dict: MNSONable dict
         """
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,

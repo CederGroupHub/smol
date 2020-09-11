@@ -19,7 +19,11 @@ from smol.moca.ensemble.sublattice import Sublattice
 class SampleContainer(MSONable):
     """A SampleContainter class stores Monte Carlo simulation samples.
 
-    It also provides some minor functionality to get sample statistics.
+    A SampleContainer holds samples and sampling information from an MCMC
+    sampling run. It is useful to obtain the raw data and minimal empirical
+    properties of the underlying distribution in order to carry out further
+    analysis of the MCMC sampling results.
+
     When getting any value from the provided attributes, the highly repeated
     args are:
         discard (int): optional
@@ -44,7 +48,8 @@ class SampleContainer(MSONable):
             Dictionary of metadata from the MC run that generated the samples.
         aux_checkpoint (dict):
             Checkpoint dictionary of auxiliary states and variables to continue
-            sampling from the last state of a previous MCMC run
+            sampling from the last state of a previous MCMC run.
+            (not implemented yet)
     """
 
     def __init__(self, num_sites, sublattices, natural_parameters,

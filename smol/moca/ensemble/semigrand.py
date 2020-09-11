@@ -62,9 +62,10 @@ class BaseSemiGrandEnsemble(Ensemble):
         return []
 
     def compute_feature_vector(self, occupancy):
-        """Compute the feature vector for a give occupancy.
+        """Compute the feature vector for a given occupancy.
 
-        In the canonical case it is just the feature vector from the processor.
+        In the semigrand case it is the feature vector and the chemical work
+        term.
 
         Args:
             occupancy (ndarray):
@@ -83,7 +84,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     """Relative chemical potential based SemiGrand Ensemble.
 
     A Semi-Grand Canonical Ensemble for Monte Carlo Simulations where species
-    chemical potentials are predefined. Note that in the SGC Ensemble
+    relative chemical potentials are predefined. Note that in the SGC Ensemble
     implemented here, only the differences in chemical potentials with
     respect to a reference species on each sublattice are fixed, and not the
     absolute values. To obtain the absolute values you must calculate the
@@ -102,11 +103,11 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         Args:
             processor (Processor):
                 A processor that can compute the change in a property given
-                a set of flips. See moca.processor
+                a set of flips.
             chemical_potentials (dict):
-                dictionary with species names and chemical potentials.
+                Dictionary with species and chemical potentials.
             sublattices (list of Sublattice): optional
-                list of Lattice objects representing sites in the processor
+                List of Sublattice objects representing sites in the processor
                 supercell with same site spaces.
         """
         super().__init__(processor, sublattices)
@@ -149,7 +150,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         self._mu_table = self._build_mu_table(value)
 
     def compute_feature_vector_change(self, occupancy, step):
-        """Return the change in the feature vector from a step.
+        """Return the change in the feature vector from a given step.
 
         Args:
             occupancy (ndarray):
@@ -206,9 +207,6 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     def from_dict(cls, d):
         """Instantiate a MuSemiGrandEnsemble from dict representation.
 
-        Args:
-            d (dict):
-                dictionary representation.
         Returns:
             CanonicalEnsemble
         """
@@ -256,13 +254,13 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
                 A processor that can compute the change in a property given
                 a set of flips. See moca.processor
             fugacity_fractions (sequence of dicts): optional
-                dictionary of species name and fugacity fraction for each
-                sublattice (ie think of it as the sublattice concentrations
+                Dictionary of species name and fugacity fraction for each
+                sublattice (.i.e think of it as the sublattice concentrations
                 for random structure). If not given this will be taken from the
                 prim structure used in the cluster subspace. Needs to be in
                 the same order as the corresponding sublattice.
             sublattices (list of Sublattice): optional
-                list of Lattice objects representing sites in the processor
+                list of Sublattice objects representing sites in the processor
                 supercell with same site spaces.
         """
         super().__init__(processor, sublattices)
@@ -309,7 +307,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         self._fu_table = self._build_fu_table(value)
 
     def compute_feature_vector_change(self, occupancy, step):
-        """Compute the change in the feature vector from a step.
+        """Compute the change in the feature vector from a given step.
 
         Args:
             occupancy (ndarray):
@@ -318,7 +316,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
                 A sequence of flips given my the MCMCUsher.propose_step
 
         Returns:
-            ndarray: difference in vector of sufficient statistics
+            ndarray: difference in feature vector
         """
         delta_feature = self.processor.compute_feature_vector_change(occupancy,
                                                                      step)
@@ -369,9 +367,6 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     def from_dict(cls, d):
         """Instantiate a FuSemiGrandEnsemble from dict representation.
 
-        Args:
-            d (dict):
-                dictionary representation.
         Returns:
             FuSemiGrandEnsemble
         """

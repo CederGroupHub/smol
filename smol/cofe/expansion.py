@@ -20,7 +20,8 @@ from smol.cofe.configspace.clusterspace import ClusterSubspace
 class ClusterExpansion(MSONable):
     """Class for the ClusterExpansion proper.
 
-    This needs a ClusterSubspace and a corresponding set of ECI from a fit.
+    This needs a :class:`ClusterSubspace` and a corresponding set of
+    coefficients from a fit.
 
     The main method to use this the predict method to predict the fitted
     property for new structures. This can be used to compare the accuracy
@@ -30,21 +31,21 @@ class ClusterExpansion(MSONable):
     it is also recommended you save some information about learn metrics
     such as CV score, test/train rmse, or anything to quantify the "goodness"
     in the metadata dictionary. See for example learn metrics in
-    sklearn.metrics for many useful methods to get this quantities.
+    :code:`sklearn.metrics` for many useful methods to get this quantities.
 
     This class is also used for Monte Carlo simulations to create a
-    CEProcessor that calculates the CE for a fixed supercell size. Before using
-    a ClusterExpansion for Monte Carlo you should consider pruning the orbit
-    functions with small eci.
+    :class:`CEProcessor` that calculates the CE for a fixed supercell size.
+    Before using a ClusterExpansion for Monte Carlo you should consider pruning
+    the correlation/orbit functions with small coefficients or eci.
 
     Attributes:
-        coefficients (ndarrya): ECIS of the cluster expansion
+        coefficients (ndarry): coefficients of the cluster expansion
         metadata (dict): dict to save optional values describing cluster
             expansion. i.e. if it was pruned, any error metrics etc.
     """
 
     def __init__(self, cluster_subspace, coefficients, feature_matrix):
-        """Initialize a ClusterExpansion.
+        r"""Initialize a ClusterExpansion.
 
         Args:
             cluster_subspace (ClusterSubspace):
@@ -54,7 +55,8 @@ class ClusterExpansion(MSONable):
             coefficients (ndarray):
                 coefficients for cluster expansion. Make sure the supplied
                 coefficients to the correlation vector terms (length and order)
-                These correspond to the ECI x the multiplicity of their orbit.
+                These correspond to the
+                ECI x the multiplicity of orbit x multiplicity of bit ordering
             feature_matrix (ndarray)
                 the feature matrix used in fitting the given coefficients.
         """
@@ -73,7 +75,7 @@ class ClusterExpansion(MSONable):
         """Get the eci for the cluster expansion.
 
         This just divides by the corresponding multiplicities. External terms
-        will be dropped.
+        will are dropped since their fitted coefficients do not represent ECI.
         """
         if self._eci is None:
             mults = [1]  # empty orbit
@@ -124,7 +126,7 @@ class ClusterExpansion(MSONable):
                 Whether to return the predicted property normalized by
                 the prim cell size.
         Returns:
-            array
+            float
         """
         corrs = self.cluster_subspace.corr_from_structure(structure,
                                                           normalized=normalize)
@@ -138,7 +140,7 @@ class ClusterExpansion(MSONable):
 
         This will change the fits error metrics (ie RMSE) a little, but it
         should not be much. If they change a lot then the threshold used is
-        probably to high and important ECI are being pruned.
+        probably too high and important functions are being pruned.
 
         This will not re-fit the ClusterExpansion. Note that if you re-fit
         after pruning the ECI will probably change and hence also the fit

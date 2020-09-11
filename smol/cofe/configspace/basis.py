@@ -23,7 +23,7 @@ from smol.utils import derived_class_factory
 
 
 class SiteBasis:
-    """Class that represents the basis for a site function space.
+    r"""Class that represents the basis for a site function space.
 
     Note that all SiteBasis in theory have the first basis function
     :math:`\phi_0 = 1`, but this should not be defined since it is handled
@@ -157,7 +157,7 @@ class SiteBasis:
 
 
 class BasisIterator(Iterator):
-    """Abstract basis iterator class.
+    r"""Abstract basis iterator class.
 
     A basis iterator iterates through all non-constant site basis functions.
     i.e. for basis :math:`\phi_0 = 1, \phi_1, ..., \phi_{n-1}`,

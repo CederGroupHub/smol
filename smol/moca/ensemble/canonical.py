@@ -39,9 +39,10 @@ class CanonicalEnsemble(Ensemble, MSONable):
         return self.processor.coefs
 
     def compute_feature_vector(self, occupancy):
-        """Compute the feature vector for a give occupancy.
+        """Compute the feature vector for a given occupancy.
 
-        In the canonical case it is just the feature vector.
+        In the canonical case it is just the feature vector from the underlying
+        processor.
 
         Args:
             occupancy (ndarray):
@@ -53,7 +54,7 @@ class CanonicalEnsemble(Ensemble, MSONable):
         return self.processor.compute_feature_vector(occupancy)
 
     def compute_feature_vector_change(self, occupancy, step):
-        """Compute the change in the feature vector from a step.
+        """Compute the change in the feature vector from a given step.
 
         Args:
             occupancy (ndarray):

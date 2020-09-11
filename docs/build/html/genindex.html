@@ -188,6 +188,8 @@
         <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.Orbit.assign_ids">(Orbit method)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.orbit.Orbit.assign_ids">[1]</a>
 </li>
       </ul></li>
+      <li><a href="api.html#smol.moca.SampleContainer.aux_checkpoint">aux_checkpoint (SampleContainer attribute)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.aux_checkpoint">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.aux_checkpoint">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.aux_checkpoint">[3]</a>
+</li>
       <li><a href="api.html#smol.cofe.StructureWrangler.available_properties">available_properties() (StructureWrangler property)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.available_properties">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.available_properties">[2]</a>
 </li>
       <li><a href="api.html#smol.cofe.StructureWrangler.available_weights">available_weights() (StructureWrangler property)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.available_weights">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.available_weights">[2]</a>
@@ -225,8 +227,6 @@
 </li>
       </ul></li>
       <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.BasisIterator">BasisIterator (class in smol.cofe.configspace.basis)</a>
-</li>
-      <li><a href="api.html#smol.moca.ensemble.base.Ensemble.beta">beta() (Ensemble property)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.beta">[1]</a>
 </li>
       <li><a href="api.html#smol.cofe.ClusterSubspace.bit_combo_multiplicities">bit_combo_multiplicities() (ClusterSubspace property)</a>, <a href="smol.cofe.configspace.html#smol.cofe.configspace.clusterspace.ClusterSubspace.bit_combo_multiplicities">[1]</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.bit_combo_multiplicities">[2]</a>
 
@@ -977,6 +977,12 @@
 </li>
       <li><a href="api.html#smol.moca.Sampler.seed">seed() (Sampler property)</a>, <a href="smol.moca.html#smol.moca.Sampler.seed">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.sampler.Sampler.seed">[2]</a>
 </li>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCMCKernel.set_aux_state">set_aux_state() (MCMCKernel method)</a>
+
+      <ul>
+        <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.MCMCUsher.set_aux_state">(MCMCUsher method)</a>
+</li>
+      </ul></li>
       <li><a href="api.html#smol.moca.SampleContainer.shape">shape() (SampleContainer property)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.shape">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.shape">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.shape">[3]</a>
 </li>
       <li><a href="smol.cofe.configspace.html#smol.cofe.configspace.basis.sin_f">sin_f() (in module smol.cofe.configspace.basis)</a>
@@ -1122,6 +1128,8 @@
         <li><a href="smol.html#module-smol.exceptions">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     smol.io
 
@@ -1129,8 +1137,6 @@
         <li><a href="smol.html#module-smol.io">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     smol.moca
 
@@ -1312,12 +1318,8 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#smol.moca.ensemble.base.Ensemble.temperature">temperature() (Ensemble property)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.temperature">[1]</a>
-
-      <ul>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCMCKernel.temperature">(MCMCKernel property)</a>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCMCKernel.temperature">temperature() (MCMCKernel property)</a>
 </li>
-      </ul></li>
       <li><a href="api.html#smol.moca.ensemble.base.Ensemble.thermo_boundaries">thermo_boundaries (Ensemble attribute)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.thermo_boundaries">[1]</a>
 
       <ul>
@@ -1342,6 +1344,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.MCMCUsher.update_aux_state">update_aux_state() (MCMCUsher method)</a>
+</li>
       <li><a href="api.html#smol.cofe.StructureWrangler.update_features">update_features() (StructureWrangler method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.update_features">[1]</a>, <a href="smol.cofe.html#smol.cofe.wrangler.StructureWrangler.update_features">[2]</a>
 </li>
   </ul></td>
@@ -1361,7 +1365,7 @@
       <ul>
         <li><a href="api.html#smol.moca.CanonicalEnsemble.valid_mcmc_steps">(CanonicalEnsemble attribute)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.canonical.CanonicalEnsemble.valid_mcmc_steps">[1]</a>, <a href="smol.moca.html#smol.moca.CanonicalEnsemble.valid_mcmc_steps">[2]</a>
 </li>
-        <li><a href="api.html#smol.moca.ensemble.base.Ensemble.valid_mcmc_steps">(Ensemble attribute)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.valid_mcmc_steps">[1]</a>
+        <li><a href="api.html#id0">(Ensemble attribute)</a>, <a href="api.html#smol.moca.ensemble.base.Ensemble.valid_mcmc_steps">[1]</a>, <a href="smol.moca.ensemble.html#id0">[2]</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.valid_mcmc_steps">[3]</a>
 </li>
       </ul></li>
   </ul></td>

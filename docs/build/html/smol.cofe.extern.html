@@ -150,10 +150,10 @@ expansion. Options are total, real, reciprocal, point.</p></li>
 <dl class="py method">
 <dt id="smol.cofe.extern.ewald.EwaldTerm.as_dict">
 <code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a><a class="headerlink" href="#smol.cofe.extern.ewald.EwaldTerm.as_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make this a json serializable dict.</p>
+<dd><p>Get Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>msonable dict</p>
+<dd class="field-odd"><p>MNSONable dict</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
@@ -193,13 +193,13 @@ expansion. Options are total, real, reciprocal, point.</p></li>
 <dl class="py method">
 <dt id="smol.cofe.extern.ewald.EwaldTerm.get_ewald_occu">
 <em class="property">static </em><code class="sig-name descname">get_ewald_occu</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occu</span></em>, <em class="sig-param"><span class="n">num_ewald_sites</span></em>, <em class="sig-param"><span class="n">ewald_inds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.extern.ewald.EwaldTerm.get_ewald_occu" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the ewald indices from a given encoded occupancy array.</p>
+<dd><p>Get the ewald indices from a given encoded occupancy string.</p>
 <p>The ewald indices indicate matrix elements (ie species) corresponding
 to the given occupancy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>occu</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
+<li><p><strong>occu</strong> (<em>ndarray</em>) – encoded encoded occupancy string</p></li>
 <li><p><strong>num_ewald_sites</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – number of total ewald sites. This is the size of the ewald
 matrix, the sum of the size of all site spaces for all sites
 in the cell.</p></li>
@@ -305,10 +305,10 @@ expansion. Options are total, real, reciprocal, point.</p></li>
 <dl class="py method">
 <dt id="smol.cofe.extern.EwaldTerm.as_dict">
 <code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a><a class="headerlink" href="#smol.cofe.extern.EwaldTerm.as_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make this a json serializable dict.</p>
+<dd><p>Get Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>msonable dict</p>
+<dd class="field-odd"><p>MNSONable dict</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
@@ -348,13 +348,13 @@ expansion. Options are total, real, reciprocal, point.</p></li>
 <dl class="py method">
 <dt id="smol.cofe.extern.EwaldTerm.get_ewald_occu">
 <em class="property">static </em><code class="sig-name descname">get_ewald_occu</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occu</span></em>, <em class="sig-param"><span class="n">num_ewald_sites</span></em>, <em class="sig-param"><span class="n">ewald_inds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.extern.EwaldTerm.get_ewald_occu" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the ewald indices from a given encoded occupancy array.</p>
+<dd><p>Get the ewald indices from a given encoded occupancy string.</p>
 <p>The ewald indices indicate matrix elements (ie species) corresponding
 to the given occupancy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>occu</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
+<li><p><strong>occu</strong> (<em>ndarray</em>) – encoded encoded occupancy string</p></li>
 <li><p><strong>num_ewald_sites</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – number of total ewald sites. This is the size of the ewald
 matrix, the sum of the size of all site spaces for all sites
 in the cell.</p></li>

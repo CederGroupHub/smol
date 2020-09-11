@@ -122,11 +122,14 @@ It has some minimimal methods and properties useful to start analyzing the
 samples.</p>
 <dl class="py class">
 <dt id="smol.moca.sampler.container.SampleContainer">
-<em class="property">class </em><code class="sig-name descname">SampleContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_sites</span></em>, <em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">natural_parameters</span></em>, <em class="sig-param"><span class="n">num_energy_coefs</span></em>, <em class="sig-param"><span class="n">ensemble_metadata</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nwalkers</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">SampleContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_sites</span></em>, <em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">natural_parameters</span></em>, <em class="sig-param"><span class="n">num_energy_coefs</span></em>, <em class="sig-param"><span class="n">sampling_metadata</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nwalkers</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>A SampleContainter class stores Monte Carlo simulation samples.</p>
-<p>It also provides some minor functionality to get sample statistics.
-When getting any value from the provided attributes, the highly repeated
+<p>A SampleContainer holds samples and sampling information from an MCMC
+sampling run. It is useful to obtain the raw data and minimal empirical
+properties of the underlying distribution in order to carry out further
+analysis of the MCMC sampling results.</p>
+<p>When getting any value from the provided attributes, the highly repeated
 args are:</p>
 <blockquote>
 <div><dl class="simple">
@@ -187,7 +190,20 @@ can be anything representative i.e. number of sites)</p>
 <dl class="py attribute">
 <dt id="smol.moca.sampler.container.SampleContainer.metadata">
 <code class="sig-name descname">metadata</code><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.metadata" title="Permalink to this definition">¶</a></dt>
-<dd><p>dictionary of metadata from the MC run that generated the samples.</p>
+<dd><p>Dictionary of metadata from the MC run that generated the samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="smol.moca.sampler.container.SampleContainer.aux_checkpoint">
+<code class="sig-name descname">aux_checkpoint</code><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.aux_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checkpoint dictionary of auxiliary states and variables to continue
+sampling from the last state of a previous MCMC run.
+(not implemented yet)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
@@ -204,7 +220,7 @@ can be anything representative i.e. number of sites)</p>
 <li><p><strong>natural_parameters</strong> (<em>ndarray</em>) – array of natural parameters used in the ensemble.</p></li>
 <li><p><strong>num_energy_coefs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – the number of coeficients in the natural parameters that
 correspond to the energy only.</p></li>
-<li><p><strong>ensemble_metadata</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – Metadata of the ensemble that was sampled.</p></li>
+<li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="api.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – Sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
 <li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Number of walkers used to generate chain. Default is 1</p></li>
 </ul>
 </dd>
@@ -449,7 +465,7 @@ the total mc iterations.</p></li>
 to generate states for sampling an MCMC chain.</p>
 <dl class="py class">
 <dt id="smol.moca.sampler.kernel.MCMCKernel">
-<em class="property">class </em><code class="sig-name descname">MCMCKernel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ensemble</span></em>, <em class="sig-param"><span class="n">step_type</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.MCMCKernel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">MCMCKernel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ensemble</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">step_type</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.MCMCKernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
 <p>Abtract base class for transition kernels.</p>
 <p>A kernel is used to implement a specific MCMC algorithm used to sampler
@@ -459,8 +475,9 @@ and write a specific sampler see the MetropolisSampler.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – an Ensemble instance to obtain the feautures and parameters
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="api.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble instance to obtain the feautures and parameters
 used in computing log probabilities.</p></li>
+<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Temperature at which the MCMC sampling will be carried out.</p></li>
 <li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – optional
 String specifying the MCMC step type.</p></li>
 <li><p><strong>args</strong> – positional arguments to instantiate the mcusher for the
@@ -470,6 +487,12 @@ corresponding step size.</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt id="smol.moca.sampler.kernel.MCMCKernel.set_aux_state">
+<code class="sig-name descname">set_aux_state</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.MCMCKernel.set_aux_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the auxiliary state from a checkpoint values.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt id="smol.moca.sampler.kernel.MCMCKernel.single_step">
 <em class="property">abstract </em><code class="sig-name descname">single_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.MCMCKernel.single_step" title="Permalink to this definition">¶</a></dt>
@@ -504,7 +527,7 @@ successful.</p>
 
 <dl class="py class">
 <dt id="smol.moca.sampler.kernel.Metropolis">
-<em class="property">class </em><code class="sig-name descname">Metropolis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ensemble</span></em>, <em class="sig-param"><span class="n">step_type</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.Metropolis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Metropolis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ensemble</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">step_type</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.Metropolis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.kernel.MCMCKernel" title="smol.moca.sampler.kernel.MCMCKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.kernel.MCMCKernel</span></code></a></p>
 <p>A Metropolis-Hastings kernel.</p>
 <p>The classic and nothing but the classic.</p>
@@ -512,8 +535,9 @@ successful.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – an Ensemble instance to obtain the feautures and parameters
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="api.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble instance to obtain the feautures and parameters
 used in computing log probabilities.</p></li>
+<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Temperature at which the MCMC sampling will be carried out.</p></li>
 <li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – optional
 String specifying the MCMC step type.</p></li>
 <li><p><strong>args</strong> – positional arguments to instantiate the mcusher for the
@@ -551,15 +575,16 @@ successful.</p>
 
 <dl class="py function">
 <dt id="smol.moca.sampler.kernel.mcmckernel_factory">
-<code class="sig-name descname">mcmckernel_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kernel_type</span></em>, <em class="sig-param"><span class="n">ensemble</span></em>, <em class="sig-param"><span class="n">step_type</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.mcmckernel_factory" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mcmckernel_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kernel_type</span></em>, <em class="sig-param"><span class="n">ensemble</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">step_type</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.mcmckernel_factory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a MCMC Kernel from string name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>kernel_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – string specifying step to instantiate.</p></li>
-<li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – an Ensemble object to create the MCMC kernel from.</p></li>
-<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – string specifying the step type (ie key to mcusher type)</p></li>
-<li><p><strong>*args</strong> – positional arguments passed to class constructor</p></li>
+<li><p><strong>kernel_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – String specifying step to instantiate.</p></li>
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="api.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble object to create the MCMC kernel from.</p></li>
+<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Temperature at which the MCMC sampling will be carried out.</p></li>
+<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – String specifying the step type (ie key to mcusher type)</p></li>
+<li><p><strong>*args</strong> – Positional arguments passed to class constructor</p></li>
 <li><p><strong>**kwargs</strong> – Keyword arguments passed to class constructor</p></li>
 </ul>
 </dd>
@@ -663,9 +688,21 @@ form (site index, species code to set)</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="smol.moca.sampler.mcusher.MCMCUsher.set_aux_state">
+<code class="sig-name descname">set_aux_state</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCMCUsher.set_aux_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the auxiliary state from a checkpoint values.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="smol.moca.sampler.mcusher.MCMCUsher.sublattice_probabilities">
 <em class="property">property </em><code class="sig-name descname">sublattice_probabilities</code><a class="headerlink" href="#smol.moca.sampler.mcusher.MCMCUsher.sublattice_probabilities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the sublattice probabilities.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.moca.sampler.mcusher.MCMCUsher.update_aux_state">
+<code class="sig-name descname">update_aux_state</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">step</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCMCUsher.update_aux_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update any auxiliary state information based on an accepted step.</p>
 </dd></dl>
 
 </dd></dl>
@@ -787,19 +824,20 @@ the amount to thin by for saving samples.</p></li>
 <dl class="py method">
 <dt id="smol.moca.sampler.sampler.Sampler.efficiency">
 <code class="sig-name descname">efficiency</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.efficiency" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the sampling efficiency for each walker.</p>
+<dd><p>Return the sampling efficiency (accepted/total).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="smol.moca.sampler.sampler.Sampler.from_ensemble">
-<em class="property">classmethod </em><code class="sig-name descname">from_ensemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ensemble</span></em>, <em class="sig-param"><span class="n">step_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">kernel_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nwalkers</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.from_ensemble" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">from_ensemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ensemble</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">step_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">kernel_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nwalkers</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.from_ensemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a sampler based on an Ensemble instances.</p>
-<p>This is the easier way to spin up a Sampler. Since it will
-automatically populate and create a SampleContainer.</p>
+<p>This is the easier way to spin up a Sampler. This will
+automatically populate and create an appropriate SampleContainer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble class to obtain sample probabilities from.</p></li>
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="api.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble class to obtain sample probabilities from.</p></li>
+<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Temperature to run Monte Carlo at.</p></li>
 <li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – optional
 type of step to run MCMC with. If not given the default is the
 first entry in the Ensemble.valid_mcmc_steps.</p></li>
@@ -853,8 +891,8 @@ the amount to thin by for saving samples.</p></li>
 <dl class="py method">
 <dt id="smol.moca.sampler.sampler.Sampler.sample">
 <code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nsteps</span></em>, <em class="sig-param"><span class="n">initial_occupancies</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">progress</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.sample" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate MC samples.</p>
-<p>Yield a sampler state every thin_by iterations. A state is give by
+<dd><p>Generate MCMC samples.</p>
+<p>Yield a sampler state every <cite>thin_by</cite> iterations. A state is give by
 a tuple of (occupancies, features, enthalpy)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -875,7 +913,7 @@ Number to thin iterations by and provide samples.</p></li>
 <dl class="py method">
 <dt id="smol.moca.sampler.sampler.Sampler.samples">
 <em class="property">property </em><code class="sig-name descname">samples</code><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.samples" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the samplecontainer.</p>
+<dd><p>Get the SampleContainer.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -896,11 +934,14 @@ simulations.</p>
 <p>Samples are saved in a Sample Container.</p>
 <dl class="py class">
 <dt id="smol.moca.sampler.SampleContainer">
-<em class="property">class </em><code class="sig-name descname">SampleContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_sites</span></em>, <em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">natural_parameters</span></em>, <em class="sig-param"><span class="n">num_energy_coefs</span></em>, <em class="sig-param"><span class="n">ensemble_metadata</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nwalkers</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">SampleContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_sites</span></em>, <em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">natural_parameters</span></em>, <em class="sig-param"><span class="n">num_energy_coefs</span></em>, <em class="sig-param"><span class="n">sampling_metadata</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nwalkers</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>A SampleContainter class stores Monte Carlo simulation samples.</p>
-<p>It also provides some minor functionality to get sample statistics.
-When getting any value from the provided attributes, the highly repeated
+<p>A SampleContainer holds samples and sampling information from an MCMC
+sampling run. It is useful to obtain the raw data and minimal empirical
+properties of the underlying distribution in order to carry out further
+analysis of the MCMC sampling results.</p>
+<p>When getting any value from the provided attributes, the highly repeated
 args are:</p>
 <blockquote>
 <div><dl class="simple">
@@ -961,7 +1002,20 @@ can be anything representative i.e. number of sites)</p>
 <dl class="py attribute">
 <dt id="smol.moca.sampler.SampleContainer.metadata">
 <code class="sig-name descname">metadata</code><a class="headerlink" href="#smol.moca.sampler.SampleContainer.metadata" title="Permalink to this definition">¶</a></dt>
-<dd><p>dictionary of metadata from the MC run that generated the samples.</p>
+<dd><p>Dictionary of metadata from the MC run that generated the samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="smol.moca.sampler.SampleContainer.aux_checkpoint">
+<code class="sig-name descname">aux_checkpoint</code><a class="headerlink" href="#smol.moca.sampler.SampleContainer.aux_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checkpoint dictionary of auxiliary states and variables to continue
+sampling from the last state of a previous MCMC run.
+(not implemented yet)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
@@ -978,7 +1032,7 @@ can be anything representative i.e. number of sites)</p>
 <li><p><strong>natural_parameters</strong> (<em>ndarray</em>) – array of natural parameters used in the ensemble.</p></li>
 <li><p><strong>num_energy_coefs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – the number of coeficients in the natural parameters that
 correspond to the energy only.</p></li>
-<li><p><strong>ensemble_metadata</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – Metadata of the ensemble that was sampled.</p></li>
+<li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="api.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – Sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
 <li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Number of walkers used to generate chain. Default is 1</p></li>
 </ul>
 </dd>

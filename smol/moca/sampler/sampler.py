@@ -55,8 +55,8 @@ class Sampler:
         """
         Create a sampler based on an Ensemble instances.
 
-        This is the easier way to spin up a Sampler. Since it will
-        automatically populate and create a SampleContainer.
+        This is the easier way to spin up a Sampler. This will
+        automatically populate and create an appropriate SampleContainer.
 
         Args:
             ensemble (Ensemble):
@@ -122,11 +122,11 @@ class Sampler:
 
     @property
     def samples(self):
-        """Get the samplecontainer."""
+        """Get the SampleContainer."""
         return self._container
 
     def efficiency(self, discard=0, flat=True):
-        """Return the sampling efficiency for each walker."""
+        """Get the efficiency of MCMC sampling (accepted/total)."""
         return self.samples.sampling_efficiency(discard=discard, flat=flat)
 
     def clear_samples(self):
@@ -134,9 +134,9 @@ class Sampler:
         self.samples.clear()
 
     def sample(self, nsteps, initial_occupancies, thin_by=1, progress=False):
-        """Generate MC samples.
+        """Generate MCMC samples.
 
-        Yield a sampler state every thin_by iterations. A state is give by
+        Yield a sampler state every `thin_by` iterations. A state is give by
         a tuple of (occupancies, features, enthalpy)
 
         Args:

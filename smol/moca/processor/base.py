@@ -24,8 +24,8 @@ class Processor(MSONable, metaclass=ABCMeta):
     """Abstract base class for processors.
 
     A processor is used to provide a quick way to calculated energy differences
-    (probability ratio's) between two adjacent configurational states for a
-    fixed system size/supercell.
+    (probability ratio's) between two configurational states for a fixed system
+    size/supercell.
 
     Attributes:
         unique_site_spaces (tuple):
@@ -44,7 +44,7 @@ class Processor(MSONable, metaclass=ABCMeta):
                 A cluster subspace
             supercell_matrix (ndarray):
                 An array representing the supercell matrix with respect to the
-                Cluster Expansion prim structure.
+                ClusterExpansion prim structure.
             coefficients:
                 single or array of fit coefficients.
         """
@@ -152,7 +152,7 @@ class Processor(MSONable, metaclass=ABCMeta):
             structure (Structure):
                 A pymatgen structure (related to the cluster-expansion prim
                 by the supercell matrix passed to the processor)
-        Returns: encoded occupancy array
+        Returns: encoded occupancy string
             list
         """
         occu = self._subspace.occupancy_from_structure(structure,
@@ -160,11 +160,11 @@ class Processor(MSONable, metaclass=ABCMeta):
         return self.encode_occupancy(occu)
 
     def structure_from_occupancy(self, occupancy):
-        """Get pymatgen Structure from an occupancy array.
+        """Get Structure from an occupancy string.
 
         Args:
             occupancy (ndarray):
-                encoded occupancy array
+                encoded occupancy string
 
         Returns:
             Structure
@@ -178,14 +178,14 @@ class Processor(MSONable, metaclass=ABCMeta):
         return Structure.from_sites(sites)
 
     def encode_occupancy(self, occupancy):
-        """Encode occupancy array of species str to ints."""
+        """Encode occupancy string of species str to ints."""
         # TODO check if setting to np.intc improves speed
         return np.array([species.index(sp) for species, sp
                          in zip(self.allowed_species, occupancy)],
                         dtype=int)
 
     def decode_occupancy(self, encoded_occupancy):
-        """Decode an encoded occupancy array of int to species str."""
+        """Decode an encoded occupancy string of int to species str."""
         return [species[i] for i, species in
                 zip(encoded_occupancy, self.allowed_species)]
 

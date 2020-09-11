@@ -36,14 +36,19 @@ class Orbit(MSONable):
     ClusterSubspace to create orbits and clusters necessary for a CE.
 
     Attributes:
-        bits (list of list): list of lists describing the posible non-constant
-              site function indices at each site of a cluster in the orbit.
-        site_bases (list of SiteBasis): list of the SiteBasis for each site.
+        bits (list of list):
+            list of lists describing the posible non-constant site function
+            indices at each site of a cluster in the orbit.
+        site_bases (list of SiteBasis):
+            list of the SiteBasis for each site.
         structure_symops (list of Symmops):
             list of underlying structure symmetry operations.
-        radius (float): max distance between two sites in a cluster.
-        size (int): number of sites in cluster.
-        lattice (Lattice): underlying structure lattice.
+        radius (float):
+            max distance between two sites in a cluster.
+        size (int):
+            number of sites in cluster.
+        lattice (Lattice):
+            underlying structure lattice.
     """
 
     def __init__(self, sites, lattice, bits, site_bases, structure_symops):

@@ -68,12 +68,12 @@ def weights_energy_above_hull(structures, energies, cs_structure,
 
 
 class StructureWrangler(MSONable):
-    """Class to create fitting data to fit ECI for a cluster expansion.
+    """Class to create fitting data to fit a cluster expansion.
 
-    Class that handles (wrangles) input data structures and properties to fit
-    in a cluster expansion. This class holds a ClusterSubspace used to compute
-    correlation vectors and produce feature/design matrices used to fit the
-    final ClusterExpansion.
+    A StructureWrangler handles (wrangles) input data structures and properties
+    to fit in a cluster expansion. This class holds a ClusterSubspace used to
+    compute correlation vectors and produce feature/design matrices used to fit
+    the final ClusterExpansion.
 
     This class is meant to take all input training data in the form of
     (structure, properties) where the properties represent the target
@@ -81,14 +81,14 @@ class StructureWrangler(MSONable):
     the cluster expansion.
 
     The class takes care of returning the fitting data as a cluster
-    correlation feature matrix. Weights for each structure can also be
-    provided see the above functions to weight by energy above hull or
-    energy above composition.
+    correlation feature matrix (orbit basis function values). Weights for each
+    structure can also be provided see the above functions to weight by energy
+    above hull or energy above composition.
 
     This class also has methods to check/prepare/filter the data. A metadata
     dictionary is used to keep track of applied filters, but users can also use
     it to save any other pertinent information that will be saved with using
-    as_dict for future reference.
+    :code:`StructureWrangler.as_dict` for future reference.
     """
 
     def __init__(self, cluster_subspace):
@@ -224,16 +224,18 @@ class StructureWrangler(MSONable):
     def add_data(self, structure, properties, normalized=False, weights=None,
                  verbose=False, supercell_matrix=None, site_mapping=None,
                  raise_failed=False):
-        """Add a structure and measured property to Structure Wrangler.
+        """Add a structure and measured property to the StructureWrangler.
 
-        The property are usually extensive (i.e. not normalized per atom
-        or unit cell, directly from DFT). If not extensive then set normalized
-        to True.
+        The properties are usually extensive (i.e. not normalized per atom
+        or unit cell, directly from DFT). If the properties have already been
+        normalized then set normalized to True. Users need to make sure their
+        normalization is consistent. (Default normalization is per the
+        primititive structure of the given cluster subspace)
 
-        Will attempt to computes correlation vector and if successful will
-        add the structure otherwise it ignores that structure. Usually failures
-        are caused by the Structure Matcher in the given ClusterSubspace.
-        If using verbose, the errors will be printed out.
+        An attempt to computes correlation vector is made and if successful the
+        structure is succesfully added otherwise it ignores that structure.
+        Usually failures are caused by the Structure Matcher in the given
+        ClusterSubspace failing to match structures to the primitive structure.
 
         Args:
             structure (Structure):
@@ -266,7 +268,7 @@ class StructureWrangler(MSONable):
             raise_failed (bool): optional
                 If true will raise the thrown error when adding a structure
                 fails. This can be helpful to keep a list of structures that
-                fail for further checking.
+                fail for further inspection.
         """
         item = self.process_structure(structure, properties, normalized,
                                       weights, verbose, supercell_matrix,
@@ -313,7 +315,7 @@ class StructureWrangler(MSONable):
             item['weights'][key] = weight
 
     def add_properties(self, key, property_vector, normalized=False):
-        """Add another property to structures already in the wrangler.
+        """Add another property vector to structures already in the wrangler.
 
         The length of the property vector must match the number of structures
         contained, and should be in the same order such that the property
@@ -324,7 +326,7 @@ class StructureWrangler(MSONable):
                 Name of property
             property_vector (ndarray):
                 Array with the property for each structure
-            normalized (bool):
+            normalized (bool): (optional)
                 Wether the given properties have already been normalized.
         """
         if self.num_structures != len(property_vector):
@@ -355,16 +357,17 @@ class StructureWrangler(MSONable):
     def get_property_vector(self, key, normalize=True):
         """Get the property target vector.
 
-        The targent vector that be used to fit the corresponding correlation
-        feature matrix in a cluster expansion. It should always be properly
-        normalized when used for a fit.
+        The property targent vector that be used to fit the corresponding
+        correlation feature matrix to obtain coefficients for a cluster
+        expansion. It should always be properly/consistently normalized when
+        used for a fit.
 
         Args:
             key (str):
                 Name of the property
             normalize (bool): optional
                 To normalize by prim size. If the property sought is not
-                already normalized, you need to normalize before fitting a CE
+                already normalized, you need to normalize before fitting a CE.
         """
         properties = np.array([i['properties'][key] for i in self._items])
         if normalize:
@@ -432,9 +435,9 @@ class StructureWrangler(MSONable):
         cluster subspace prim structure to obtain its supercell matrix,
         correlation, and refined structure.
 
-        Args
+        Args:
             structure (Structure):
-                A fit structure
+                A structure corresponding to the given properties
             properties (dict):
                 A dictionary with a key describing the property and the target
                 value for the corresponding structure. For example if only a
@@ -456,14 +459,15 @@ class StructureWrangler(MSONable):
                 the user is responsible to have the correct supercell_matrix,
                 Here you are the cause of your own bugs.
             site_mapping (list): optional
-                Site mapping as obtained by StructureMatcher.get_mapping
+                Site mapping as obtained by
+                :code:`StructureMatcher.get_mapping`
                 such that the elements of site_mapping represent the indices
-                of the matching sites to the prim structure. I you pass this
+                of the matching sites to the prim structure. If you pass this
                 option you are fully responsible that the mappings are correct!
             raise_failed (bool): optional
                 If true will raise the thrown error when adding a structure
                 fails. This can be helpful to keep a list of structures that
-                fail for further checking.
+                fail for further inspection.
 
         Returns:
             dict: data item dict for structure
@@ -561,7 +565,7 @@ class StructureWrangler(MSONable):
 
     @classmethod
     def from_dict(cls, d):
-        """Create Structure Wrangler from serialized MSONable dict."""
+        """Create Structure Wrangler from an MSONable dict."""
         sw = cls(cluster_subspace=ClusterSubspace.from_dict(d['_subspace']))
         items = []
         for item in d['_items']:

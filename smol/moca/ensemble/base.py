@@ -18,6 +18,9 @@ class Ensemble(ABC):
             dictionary with corresponding thermodynamic boundaries, i.e.
             chemical potentials or fugacity fractions. This is kept only for
             descriptive purposes.
+        valid_mcmc_steps (list of str):
+            list of the valid MCMC steps that can be used to sample the
+            ensemble in MCMC.
     """
 
     valid_mcmc_steps = None  # add this in derived classes
@@ -88,7 +91,7 @@ class Ensemble(ABC):
 
     @property
     def num_sites(self):
-        """Get the total number of atoms in supercell."""
+        """Get the total number of sites in the supercell."""
         return self.processor.num_sites
 
     @property
@@ -98,7 +101,7 @@ class Ensemble(ABC):
 
     @property
     def processor(self):
-        """Get the system processor."""
+        """Get the ensemble processor."""
         return self._processor
 
     # TODO make a setter for this that checks sublattices are correct and
@@ -139,6 +142,9 @@ class Ensemble(ABC):
         occupancy (i.e. a generalized enthalpy). The feature vector for
         ensembles represents the sufficient statistics.
 
+        For a cluster expansion the feature vector is the
+        correlation vector x system size
+
         Args:
             occupancy (ndarray):
                 encoded occupancy string
@@ -150,7 +156,7 @@ class Ensemble(ABC):
 
     @abstractmethod
     def compute_feature_vector_change(self, occupancy, step):
-        """Compute the change in the feature vector from a step.
+        """Compute the change in the feature vector from a given step.
 
         Args:
             occupancy (ndarray):
@@ -183,7 +189,11 @@ class Ensemble(ABC):
             sublattice.reset_restricted_sites()
 
     def as_dict(self):
-        """Get dictionary representation."""
+        """Get Json-serialization dict representation.
+
+        Returns:
+            MSONable dict
+        """
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
              'thermo_boundaries': self.thermo_boundaries,
