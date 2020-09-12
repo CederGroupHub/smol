@@ -204,7 +204,7 @@ class ClusterExpansion(MSONable):
         s = 'ClusterExpansion:\n    Prim Composition: ' \
             f'{self.prim_structure.composition}\n Num fit structures: ' \
             f'{self._feat_matrix.shape[0]}\n' \
-            f'Num orbit functions: {self.cluster_subspace.num_corr_functions}\n'
+            f'Num corr functions: {self.cluster_subspace.num_corr_functions}\n'
         ecis = len(corr)*[0.0, ] if self.coefs is None else self.coefs
         s += f'    [Orbit]  id: {str(0):<3}\n'
         s += '        bit       eci\n'

@@ -68,7 +68,7 @@ class Cluster(MSONable):
 
     @property
     def radius(self):
-        """Get half the maximum distance between 2 sites in cluster"""
+        """Get half the maximum distance between 2 sites in cluster."""
         return self.diameter / 2.0
 
     def assign_ids(self, cluster_id):

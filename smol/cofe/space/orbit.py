@@ -305,7 +305,8 @@ class Orbit(MSONable):
     def __len__(self):
         """Get total number of orbit basis functions.
 
-        The number of symmetrically distinct bit orderings."""
+        The number of symmetrically distinct bit orderings.
+        """
         return len(self.bit_combos)
 
     def __eq__(self, other):

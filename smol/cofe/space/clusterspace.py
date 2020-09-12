@@ -70,8 +70,8 @@ class ClusterSubspace(MSONable):
 
         You rarely will need to create a ClusterSubspace using the main
         constructor.
-        Look at the class method :code:`from_cutoffs` for the "better" way to do
-        it.
+        Look at the class method :code:`from_cutoffs` for the "better" way to
+        do instantiate a ClusterSubspace.
 
         Args:
             structure (Structure):
@@ -234,7 +234,8 @@ class ClusterSubspace(MSONable):
         expansion_structure = Structure.from_sites(sites_to_expand)
         # get orbits within given cutoffs
         orbits = cls._orbits_from_cutoffs(expansion_structure, cutoffs, symops,
-                                          basis, orthonormal, use_concentration)
+                                          basis, orthonormal,
+                                          use_concentration)
         return cls(structure=structure,
                    expansion_structure=expansion_structure, symops=symops,
                    orbits=orbits, supercell_matcher=supercell_matcher,
