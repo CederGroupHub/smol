@@ -11,7 +11,7 @@ from monty.json import MSONable
 from pymatgen.util.coord import is_coord_subset
 from pymatgen import Lattice
 
-from smol.cofe.configspace.constants import SITE_TOL
+from smol.cofe.space.constants import SITE_TOL
 from smol.utils import _repr
 
 
@@ -60,11 +60,16 @@ class Cluster(MSONable):
         return len(self.sites)
 
     @property
-    def radius(self):
+    def diameter(self):
         """Get maximum distance between 2 sites in cluster."""
         coords = self.lattice.get_cartesian_coords(self.sites)
         all_d2 = np.sum((coords[None, :, :] - coords[:, None, :])**2, axis=-1)
         return np.max(all_d2) ** 0.5
+
+    @property
+    def radius(self):
+        """Get half the maximum distance between 2 sites in cluster."""
+        return self.diameter / 2.0
 
     def assign_ids(self, cluster_id):
         """Recursively assign ids to clusters after initialization."""
@@ -96,7 +101,7 @@ class Cluster(MSONable):
 
     def __repr__(self):
         """Pretty representation."""
-        return _repr(self, c_id=self.id, radius=self.radius,
+        return _repr(self, c_id=self.id, diameter=self.diameter,
                      centroid=self.centroid, lattice=self.lattice)
 
     @classmethod

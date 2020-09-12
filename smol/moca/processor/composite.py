@@ -18,8 +18,8 @@ from smol.moca.processor.base import Processor
 class CompositeProcessor(Processor):
     """CompositeProcessor class used for mixed models.
 
-    A Composite processor is merely a container for several different processor
-    that acts as an interface such that it can be used in the same way as the
+    A Composite processor is merely a container for many different processors
+    that acts as an interface such that it can be used in the same way as an
     individual processor. This can be used to mix models in any way that your
     heart desires.
 
@@ -28,6 +28,11 @@ class CompositeProcessor(Processor):
 
     You can add anyone of the other processor class implemented to build a
     composite processor.
+
+    It is recommended to use the :code:`from_cluster_expansion` to create an
+    ensemble and the underlying processor automatically rather than directly
+    creating a processor. This will take care of creating the correct
+    :class:`CompositeProcessor` or :class:`CEProcessor` for you.
     """
 
     def __init__(self, cluster_subspace, supercell_matrix):

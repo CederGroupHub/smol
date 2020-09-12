@@ -4,7 +4,7 @@ An Ewald processor is optimized to compute electrostatic interaction energy
 and changes in electrostatic energy from a list of local flips for use in
 Monte Carlo sampling.
 
-If you are using a Hamiltonian with an Cluster expansion and an Ewald summation
+If you are using a Hamiltonian with a Cluster expansion and an Ewald summation
 electrostatic term, you should use the CompositeProcessor with a CEProcessor
 and an EwaldProcessor class.
 """
@@ -32,7 +32,7 @@ class EwaldProcessor(Processor):
 
         Args:
             cluster_subspace (ClusterSubspace):
-                A cluster subspace
+                A cluster subspace.
             supercell_matrix (ndarray):
                 An array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
@@ -127,11 +127,11 @@ class EwaldProcessor(Processor):
 
         Args:
             occupancy (ndarray):
-                encoded occupancy array
+                encoded occupancy string
             flips (list of tuple):
                 list of tuples with two elements. Each tuple represents a
                 single flip where the first element is the index of the site
-                in the occupancy array and the second element is the index
+                in the occupancy string and the second element is the index
                 for the new species to place at that site.
 
         Returns:

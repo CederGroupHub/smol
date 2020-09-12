@@ -1,7 +1,7 @@
 """Implementation of Sublattice class.
 
 A sublattice represents a set of sites in a supercell that have all have
-the same site space. It more rigourously represents a substructure of the
+the same site space. More rigourously it represents a substructure of the
 random structure supercell being sampled in a Monte Carlo simulation.
 """
 
@@ -11,7 +11,7 @@ from collections import OrderedDict
 import numpy as np
 from monty.json import MSONable
 from pymatgen import Specie, DummySpecie, Element
-from smol.cofe.configspace.domain import Vacancy
+from smol.cofe.space.domain import Vacancy
 
 
 def get_sublattices(processor):
@@ -35,12 +35,13 @@ class Sublattice(MSONable):
     """Sublattice class.
 
     A Sublattice is used to represent a subset of supercell sites that have
-    the same site space.
+    the same site space. Rigorously it represents a set of sites in a
+    "substructure" of the total structure.
 
     Attributes:
-     site_space (OrderedDict):
-        Ordered dict with the allowed species and their random
-        state composition. See definitions in cofe.cofigspace.basis
+     site_space (SiteSpace):
+        SiteSpace with the allowed species and their random
+        state composition.
      sites (ndarray):
         array of site indices for all sites in sublattice
      active_sites (ndarray):
@@ -122,9 +123,6 @@ class Sublattice(MSONable):
     def from_dict(cls, d):
         """Instantiate a sublattice from dict representation.
 
-        Args:
-            d (dict):
-                dictionary representation.
         Returns:
             Sublattice
         """

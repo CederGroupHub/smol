@@ -21,7 +21,7 @@ class CEProcessor(Processor):
 
     A CE processor is optimized to compute correlation vectors and local
     changes in correlation vectors. This class allows the use a cluster
-    expansion hamiltonian to run Monte Carlo based simulations.
+    expansion Hamiltonian to run Monte Carlo based simulations.
 
     A processor allows an ensemble class to generate a Markov chain
     for sampling thermodynamic properties from a cluster expansion
@@ -29,13 +29,16 @@ class CEProcessor(Processor):
 
     Attributes:
         optimize_indicator (bool):
-            If true the local corr update function specialized for indicator
-            bases is used.
+            If true the local correlation update function specialized for
+            indicator bases is used. This should only be used when the
+            expansion was fit with an indicator basis and no additional
+            normalization.
         coefs (ndarray):
-            Fit coefficients representing the cluster expansion.
+            Fitted coefficients from the cluster expansion.
         n_orbit_functions (int):
-            Total number of orbit basis functions. Includes all possible
-            labellings for all orbits. Same as n_bit_orderings.
+            Total number of orbit basis functions (correlation functions).
+            This includes all possible labellings/orderings for all orbits.
+            Same as :code:`ClusterSubspace.n_bit_orderings`.
     """
 
     def __init__(self, cluster_subspace, supercell_matrix, coefficients,
@@ -51,14 +54,15 @@ class CEProcessor(Processor):
             coefficients (ndarray):
                 Fit coefficients for the represented cluster expansion.
             optimize_indicator (bool):
-                When using an indicator basis, set the delta_corr function to
-                the indicator optimize function. This can make MC steps faster.
+                When using an indicator basis, sets the function to compute
+                correlation differences to the indicator optimized function.
+                This can make MC steps faster.
                 Make sure your cluster expansion was indeed fit with an
                 indicator basis set, otherwise your MC results are no good.
         """
         super().__init__(cluster_subspace, supercell_matrix, coefficients)
 
-        self.n_orbit_functions = self.cluster_subspace.n_bit_orderings
+        self.n_orbit_functions = self.cluster_subspace.num_corr_functions
         if len(coefficients) != self.n_orbit_functions:
             raise ValueError('The provided coeffiecients are not the right '
                              f'length. Got {len(coefficients)} coefficients, '
@@ -95,7 +99,7 @@ class CEProcessor(Processor):
                                                         inds[in_inds]))
 
     def compute_feature_vector(self, occupancy):
-        """Compute the correlation vector for a given occupancy array.
+        """Compute the correlation vector for a given occupancy string.
 
         The correlation vector in this case is normalized per supercell. In
         other works it is extensive corresponding to the size of the supercell.
@@ -119,11 +123,11 @@ class CEProcessor(Processor):
 
         Args:
             occupancy (ndarray):
-                encoded occupancy array
+                encoded occupancy string
             flips (list of tuple):
                 list of tuples with two elements. Each tuple represents a
                 single flip where the first element is the index of the site
-                in the occupancy array and the second element is the index
+                in the occupancy string and the second element is the index
                 for the new species to place at that site.
 
         Returns:

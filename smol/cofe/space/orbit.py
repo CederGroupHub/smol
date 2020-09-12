@@ -25,25 +25,28 @@ class Orbit(MSONable):
 
     An Orbit represents a set of clusters that are symmetrically equivalent
     in the random structure. The class also includes the possible orderings on
-    the clusters in the orbit.
+    the clusters in the orbit. The different orderings represent the single
+    site function indices to generate all possible orbit functions (correlation
+    functions) for the given orbit.
 
     An orbit usually includes translational and structure symmetry of the
     underlying lattice. But this is not a hard requirement any set of symmetry
-    operations can be passed to the constructor. (regardless an orbit should at
+    operations can be passed to the constructor (regardless an orbit should at
     a minimum have translational symmetry).
 
     You probably never need to instantiate this class directly. Look at
     ClusterSubspace to create orbits and clusters necessary for a CE.
 
     Attributes:
-        bits (list of list): list of lists describing the posible non-constant
-              site function indices at each site of a cluster in the orbit.
-        site_bases (list of SiteBasis): list of the SiteBasis for each site.
+        bits (list of list):
+            list of lists describing the posible non-constant site function
+            indices at each site of a cluster in the orbit.
+        site_bases (list of SiteBasis):
+            list of the SiteBasis for each site.
         structure_symops (list of Symmops):
             list of underlying structure symmetry operations.
-        radius (float): max distance between two sites in a cluster.
-        size (int): number of sites in cluster.
-        lattice (Lattice): underlying structure lattice.
+        lattice (Lattice):
+            underlying structure lattice.
     """
 
     def __init__(self, sites, lattice, bits, site_bases, structure_symops):
@@ -91,14 +94,7 @@ class Orbit(MSONable):
 
         # Create basecluster
         self.base_cluster = Cluster(sites, lattice)
-        self.radius = self.base_cluster.radius
-        self.size = self.base_cluster.size
         self.lattice = lattice
-
-    @property
-    def n_bit_orderings(self):
-        """Get number of symmetrically distinct bit orderings."""
-        return len(self.bit_combos)
 
     @property
     def multiplicity(self):
@@ -307,8 +303,11 @@ class Orbit(MSONable):
         return orbit_id + 1, orbit_bit_id + len(self.bit_combos), c_id
 
     def __len__(self):
-        """Get size of a the base cluster. The number of sites."""
-        return self.size
+        """Get total number of orbit basis functions.
+
+        The number of symmetrically distinct bit orderings.
+        """
+        return len(self.bit_combos)
 
     def __eq__(self, other):
         """Check equality of orbits."""
@@ -324,7 +323,7 @@ class Orbit(MSONable):
     def __str__(self):
         """Pretty strings for pretty things."""
         return f'[Orbit] id: {self.id:<3}' \
-               f'orderings: {self.n_bit_orderings:<4}' \
+               f'orderings: {len(self):<4}' \
                f'multiplicity: {self.multiplicity:<4}' \
                f' no. symops: {len(self.cluster_symops):<4}\n' \
                f'              {str(self.base_cluster)}'
@@ -333,7 +332,7 @@ class Orbit(MSONable):
         """Get Orbit representation."""
         return _repr(self, orb_id=self.id,
                      orb_b_id=self.bit_id,
-                     radius=self.radius,
+                     radius=self.base_cluster.radius,
                      lattice=self.lattice,
                      basecluster=self.base_cluster)
 

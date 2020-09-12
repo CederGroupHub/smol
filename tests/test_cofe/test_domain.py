@@ -2,8 +2,8 @@ import pytest
 from random import choice
 from tests.utils import assert_msonable
 from pymatgen import Composition, Element, Specie, DummySpecie
-from smol.cofe.configspace.domain import (get_specie, get_allowed_species,
-                                          get_site_spaces, Vacancy)
+from smol.cofe.space.domain import (get_specie, get_allowed_species,
+                                    get_site_spaces, Vacancy)
 
 
 @pytest.mark.parametrize('measure', [True, False])

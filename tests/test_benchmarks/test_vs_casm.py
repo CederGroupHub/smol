@@ -21,11 +21,11 @@ class TestvsCASM(unittest.TestCase):
         # Create the smol ClusterSubspace (takes a while...)
         cutoff_raddi = {int(s): r for s, r
                         in cls.fit_data['cutoff_radii'].items()}
-        cls.cs = ClusterSubspace.from_radii(cls.fit_data['prim'],
-                                      radii=cutoff_raddi,
-                                      basis='sinusoid',
-                                      supercell_size='volume',
-                                      ltol=0.1, stol=0.1, angle_tol=5)
+        cls.cs = ClusterSubspace.from_cutoffs(cls.fit_data['prim'],
+                                              cutoffs=cutoff_raddi,
+                                              basis='sinusoid',
+                                              supercell_size='volume',
+                                              ltol=0.1, stol=0.1, angle_tol=5)
 
         # create the StructureWrangler
         cls.sw = StructureWrangler(cls.cs)
@@ -34,7 +34,7 @@ class TestvsCASM(unittest.TestCase):
 
     def test_subspace(self):
         orbits_by_size = self.fit_data['orbits_by_size']
-        self.assertEqual(len(self.fit_data['ecis']), self.cs.n_bit_orderings)
+        self.assertEqual(len(self.fit_data['ecis']), self.cs.num_corr_functions)
         self.assertEqual(len(self.cs.orbits_by_size[1]), orbits_by_size['1'])
         self.assertEqual(len(self.cs.orbits_by_size[2]), orbits_by_size['2'])
         self.assertEqual(len(self.cs.orbits_by_size[3]), orbits_by_size['3'])
