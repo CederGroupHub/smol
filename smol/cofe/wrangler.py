@@ -275,6 +275,16 @@ class StructureWrangler(MSONable):
                                       site_mapping, raise_failed)
         if item is not None:
             self._items.append(item)
+        for duplicate_inds in self.get_duplicate_corr_inds():
+            if self.num_structures - 1 in duplicate_inds:
+                duplicates = [f"{self._items[i]['structure'].composition} "
+                              f"{self._items[i]['properties']}\n"
+                              for i in duplicate_inds]
+                warnings.warn("The following structures have duplicated " 
+                              f"correlation vectors:\n{duplicates}"
+                              "Consider adding more terms to the"
+                              "clustersubspace or filtering duplicates.",
+                              UserWarning)
 
     def append_data_items(self, data_items):
         """Append a list of data items.
@@ -570,13 +580,16 @@ class StructureWrangler(MSONable):
             list: list containing lists of indices of rows in feature_matrix
             where duplicates occur
         """
-        num_ext = len(self.cluster_subspace.external_terms)
-        end = self.feature_matrix.shape[1] - num_ext - 1
-        _, inverse = np.unique(self.feature_matrix[:, :end],
-                               return_inverse=True, axis=0)
-        duplicate_inds = [list(np.where(inverse == i)[0])
-                          for i in np.unique(inverse)
-                          if len(np.where(inverse == i)[0]) > 1]
+        if len(self.feature_matrix) == 0:
+            duplicate_inds = []
+        else:
+            num_ext = len(self.cluster_subspace.external_terms)
+            end = self.feature_matrix.shape[1] - num_ext - 1
+            _, inverse = np.unique(self.feature_matrix[:, :end],
+                                   return_inverse=True, axis=0)
+            duplicate_inds = [list(np.where(inverse == i)[0])
+                              for i in np.unique(inverse)
+                              if len(np.where(inverse == i)[0]) > 1]
         return duplicate_inds
 
     def filter_duplicate_corrs(self, key, filter_by='min'):

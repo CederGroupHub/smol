@@ -40,10 +40,11 @@ class TestStructureWrangler(unittest.TestCase):
 
     def test_matrix_properties(self):
         self.assertGreaterEqual(self.sw.get_condition_number(), 1)
-        rows = np.random.choice(range(self.sw.num_structures), 8)
+        rows = np.random.choice(range(self.sw.num_structures), 16)
         cols = np.random.choice(range(self.sw.num_features), 10)
         self.assertGreaterEqual(self.sw.get_condition_number(), 1)
         self.assertGreaterEqual(self.sw.get_condition_number(rows, cols), 1)
+        print(self.sw.feature_matrix.shape)
         self.assertGreaterEqual(self.sw.get_matrix_rank(rows, cols),
                                 self.sw.get_matrix_rank(cols=cols[:-4]))
 
@@ -198,7 +199,8 @@ class TestStructureWrangler(unittest.TestCase):
     def test_get_duplicate_corr_inds(self):
         ind = np.random.randint(self.sw.num_structures)
         dup_item = deepcopy(self.sw.data_items[ind])
-        self.sw.data_items.append(dup_item)
+        self.assertWarns(UserWarning, self.sw.add_data, dup_item["structure"],
+                         dup_item["properties"])
         self.assertEqual(self.sw.get_duplicate_corr_inds(),
                          [[ind, self.sw.num_structures - 1]])
 
