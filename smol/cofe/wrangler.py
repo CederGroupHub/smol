@@ -248,7 +248,7 @@ class StructureWrangler(MSONable):
                 You are free to make up the keys for each property but make
                 sure you are consistent for all structures that you add.
             normalized (bool):
-                Wether the given properties have already been normalized.
+                Whether the given properties have already been normalized.
             weights (dict):
                 The weight given to the structure when doing the fit. The key
                 must match at least one of the given properties.
@@ -518,8 +518,8 @@ class StructureWrangler(MSONable):
         """
         warnings.warn('the filter_by_ewald method is going to be deprecated.\n'
                       'The functionality will still be available but with '
-                      'a different interface', category=DeprecationWarning,
-                      stacklevel=2)
+                      'a different general filters interface.',
+                      category=DeprecationWarning, stacklevel=2)
         ewald_corr = None
         for term in self._subspace.external_terms:
             if isinstance(term, EwaldTerm):
@@ -562,6 +562,52 @@ class StructureWrangler(MSONable):
                               'nstructs_total': len(self._items)}}
         self._metadata['applied_filters'].append(metadata)
         self._items = items
+
+    def get_duplicate_corr_inds(self):
+        """Find indices of rows with duplicate corr vectors in feature matrix.
+
+        Returns:
+            list: list containing lists of indices of rows in feature_matrix
+            where duplicates occur
+        """
+        num_ext = len(self.cluster_subspace.external_terms)
+        end = self.feature_matrix.shape[1] - num_ext - 1
+        _, inverse = np.unique(self.feature_matrix[:, :end],
+                               return_inverse=True, axis=0)
+        duplicate_inds = [list(np.where(inverse == i)[0])
+                          for i in np.unique(inverse)
+                          if len(np.where(inverse == i)[0]) > 1]
+        return duplicate_inds
+
+    def filter_duplicate_corrs(self, key, filter_by='min'):
+        """Filter structures with duplicate correlation.
+
+        Keep structures with the min or max value of the given property.
+
+        Args:
+            key (str):
+                Name of property to consider when returning structure indices
+                for the feature matrix with duplicate corr vectors removed.
+            filter_by (str)
+                The criteria for the property value to keep. Options are min
+                or max
+        """
+        warnings.warn('filter_duplicate_corrs method is going to be '
+                      'deprecated.\n The functionality will still be available'
+                      'with a different general filters interface.',
+                      category=DeprecationWarning, stacklevel=2)
+        if filter_by not in ('max', 'min'):
+            raise ValueError(f'Filtering by {filter_by} is not an option.')
+
+        choose_val = np.argmin if filter_by == 'min' else np.argmax
+
+        property_vector = self.get_property_vector(key)
+        dupe_inds = self.get_duplicate_corr_inds()
+        to_keep = {inds[choose_val(property_vector[inds])]
+                   for inds in dupe_inds}
+        to_remove = set(i for inds in dupe_inds for i in inds) - to_keep
+        self._items = [item for i, item in enumerate(self._items)
+                       if i not in to_remove]
 
     @classmethod
     def from_dict(cls, d):
