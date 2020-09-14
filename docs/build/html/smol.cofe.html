@@ -14,6 +14,8 @@
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -112,17 +114,6 @@
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="smol.cofe.configspace.html">smol.cofe.configspace package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="smol.cofe.configspace.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="smol.cofe.configspace.html#smol-cofe-configspace-basis-module">smol.cofe.configspace.basis module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="smol.cofe.configspace.html#smol-cofe-configspace-cluster-module">smol.cofe.configspace.cluster module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="smol.cofe.configspace.html#smol-cofe-configspace-clusterspace-module">smol.cofe.configspace.clusterspace module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="smol.cofe.configspace.html#smol-cofe-configspace-constants-module">smol.cofe.configspace.constants module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="smol.cofe.configspace.html#smol-cofe-configspace-domain-module">smol.cofe.configspace.domain module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="smol.cofe.configspace.html#smol-cofe-configspace-orbit-module">smol.cofe.configspace.orbit module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="smol.cofe.configspace.html#module-contents">Module contents</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="smol.cofe.extern.html">smol.cofe.extern package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="smol.cofe.extern.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="smol.cofe.extern.html#module-smol.cofe.extern.ewald">smol.cofe.extern.ewald module</a></li>
@@ -1041,8 +1032,8 @@ in the subspace.</p>
 <p>Initialize a ClusterSubspace.</p>
 <p>You rarely will need to create a ClusterSubspace using the main
 constructor.
-Look at the class method <code class="code docutils literal notranslate"><span class="pre">from_cutoffs</span></code> for the “better” way to do
-it.</p>
+Look at the class method <code class="code docutils literal notranslate"><span class="pre">from_cutoffs</span></code> for the “better” way to
+do instantiate a ClusterSubspace.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
