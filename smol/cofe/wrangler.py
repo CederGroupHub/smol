@@ -275,16 +275,7 @@ class StructureWrangler(MSONable):
                                       site_mapping, raise_failed)
         if item is not None:
             self._items.append(item)
-        for duplicate_inds in self.get_duplicate_corr_inds():
-            if self.num_structures - 1 in duplicate_inds:
-                duplicates = [f"{self._items[i]['structure'].composition} "
-                              f"{self._items[i]['properties']}\n"
-                              for i in duplicate_inds]
-                warnings.warn("The following structures have duplicated " 
-                              f"correlation vectors:\n{duplicates}"
-                              "Consider adding more terms to the"
-                              "clustersubspace or filtering duplicates.",
-                              UserWarning)
+        self._corr_duplicate_warning(self.num_structures - 1)
 
     def append_data_items(self, data_items):
         """Append a list of data items.
@@ -304,6 +295,7 @@ class StructureWrangler(MSONable):
                                  'keys. Make sure they were obtained with '
                                  'the process_structure method.')
             self._items.append(item)
+            self._corr_duplicate_warning(self.num_structures - 1)
 
     def add_weights(self, key, weights):
         """Add weights to structures already in the wrangler.
@@ -621,6 +613,19 @@ class StructureWrangler(MSONable):
         to_remove = set(i for inds in dupe_inds for i in inds) - to_keep
         self._items = [item for i, item in enumerate(self._items)
                        if i not in to_remove]
+
+    def _corr_duplicate_warning(self, index):
+        """Warn if corr vector of item with given index is duplicated."""
+        for duplicate_inds in self.get_duplicate_corr_inds():
+            if index in duplicate_inds:
+                duplicates = [f"{self._items[i]['structure'].composition} "
+                              f"{self._items[i]['properties']}\n"
+                              for i in duplicate_inds]
+                warnings.warn("The following structures have duplicated " 
+                              f"correlation vectors:\n{duplicates}"
+                              "Consider adding more terms to the"
+                              "clustersubspace or filtering duplicates.",
+                              UserWarning)
 
     @classmethod
     def from_dict(cls, d):
