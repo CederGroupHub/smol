@@ -6,7 +6,7 @@ of computing the training features (correlations) to construct a feature matrix
 to be used along with a target property vector to obtain the coefficients for
 a cluster expansion using some linear regression model.
 
-Includes functions used to preprocess and check (wrangle) fitting data of
+Includes functions used to preprocess and check (wrangling) fitting data of
 structures and properties.
 
 Also functions to obtain weights by energy above hull or energy above
@@ -22,7 +22,6 @@ import numpy as np
 from monty.json import MSONable
 from pymatgen import Composition, Structure
 from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
-from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.clusterspace import ClusterSubspace
 from smol.exceptions import StructureMatchError
 from smol.constants import kB
@@ -115,7 +114,7 @@ class StructureWrangler(MSONable):
 
     @property
     def num_features(self):
-        """Get umber of features for each added structure."""
+        """Get number of features for each added structure."""
         return self.feature_matrix.shape[1]
 
     @property
@@ -504,67 +503,6 @@ class StructureWrangler(MSONable):
                 'scmatrix': supercell_matrix, 'mapping': site_mapping,
                 'features': fm_row, 'size': size}
 
-    def filter_by_ewald(self, max_ewald, verbose=False):
-        """Filter structures by electrostatic interaction energy.
-
-        Filter the input structures to only use those with low electrostatic
-        energies (no large charge separation in cell). This energy is
-        referenced to the lowest value at that composition. Note that this is
-        before the division by the relative dielectric constant and is per
-        primitive cell in the cluster expansion -- 1.5 eV/atom seems to be a
-        reasonable value for dielectric constants around 10.
-
-        Args:
-            max_ewald (float):
-                Ewald threshold. The maximum Ewald energy, normalized by prim
-        """
-        warnings.warn('the filter_by_ewald method is going to be deprecated.\n'
-                      'The functionality will still be available but with '
-                      'a different general filters interface.',
-                      category=DeprecationWarning, stacklevel=2)
-        ewald_corr = None
-        for term in self._subspace.external_terms:
-            if isinstance(term, EwaldTerm):
-                ewald_corr = [i['features'][-1] for i in self._items]
-        if ewald_corr is None:
-            ewald_corr = []
-            for item in self._items:
-                struct = item['structure']
-                matrix = item['scmatrix']
-                mapp = item['mapping']
-                occu = self._subspace.occupancy_from_structure(struct,
-                                                               encode=True,
-                                                               scmatrix=matrix,
-                                                               site_mapping=mapp)  # noqa
-                supercell = self._subspace.structure.copy()
-                supercell.make_supercell(matrix)
-                size = self._subspace.num_prims_from_matrix(matrix)
-                term = EwaldTerm().value_from_occupancy(occu, supercell)/size
-                ewald_corr.append(term)
-
-        min_e = defaultdict(lambda: np.inf)
-        for corr, item in zip(ewald_corr, self._items):
-            c = item['structure'].composition.reduced_composition
-            if corr < min_e[c]:
-                min_e[c] = corr
-
-        items = []
-        for corr, item in zip(ewald_corr, self._items):
-            mine = min_e[item['structure'].composition.reduced_composition]
-            r_e = corr - mine
-            if r_e > max_ewald:
-                if verbose:
-                    print(f'Skipping {item["structure"].composition} '
-                          f'Ewald interaction energy is {r_e}.')
-            else:
-                items.append(item)
-        removed = len(self._items) - len(items)
-        metadata = {'Ewald': {'max_ewald': max_ewald,
-                              'nstructs_removed': removed,
-                              'nstructs_total': len(self._items)}}
-        self._metadata['applied_filters'].append(metadata)
-        self._items = items
-
     def get_duplicate_corr_inds(self):
         """Find indices of rows with duplicate corr vectors in feature matrix.
 
@@ -583,36 +521,6 @@ class StructureWrangler(MSONable):
                               for i in np.unique(inverse)
                               if len(np.where(inverse == i)[0]) > 1]
         return duplicate_inds
-
-    def filter_duplicate_corrs(self, key, filter_by='min'):
-        """Filter structures with duplicate correlation.
-
-        Keep structures with the min or max value of the given property.
-
-        Args:
-            key (str):
-                Name of property to consider when returning structure indices
-                for the feature matrix with duplicate corr vectors removed.
-            filter_by (str)
-                The criteria for the property value to keep. Options are min
-                or max
-        """
-        warnings.warn('filter_duplicate_corrs method is going to be '
-                      'deprecated.\n The functionality will still be available'
-                      'with a different general filters interface.',
-                      category=DeprecationWarning, stacklevel=2)
-        if filter_by not in ('max', 'min'):
-            raise ValueError(f'Filtering by {filter_by} is not an option.')
-
-        choose_val = np.argmin if filter_by == 'min' else np.argmax
-
-        property_vector = self.get_property_vector(key)
-        dupe_inds = self.get_duplicate_corr_inds()
-        to_keep = {inds[choose_val(property_vector[inds])]
-                   for inds in dupe_inds}
-        to_remove = set(i for inds in dupe_inds for i in inds) - to_keep
-        self._items = [item for i, item in enumerate(self._items)
-                       if i not in to_remove]
 
     def _corr_duplicate_warning(self, index):
         """Warn if corr vector of item with given index is duplicated."""
