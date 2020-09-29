@@ -4516,7 +4516,7 @@ static PyObject *__pyx_pf_3src_8mc_utils_4indicator_delta_corr_single_flip(CYTHO
 
 /* Python wrapper */
 static PyObject *__pyx_pw_3src_8mc_utils_7delta_ewald_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3src_8mc_utils_6delta_ewald_single_flip[] = "Compute the change in electrostatic interaction energy from a flip.\n\n    Args:\n        occu_f (ndarray):\n            encoded occupancy vector with flip\n        occu_i (ndarray):\n            encoded occupancy vector without flip\n        site_ind (int):\n            site index for site being flipped\n        ewald_matrix (ndarray):\n            Ewald matrix for electrostatic interactions\n        ewald_inds (ndarray):\n            2D array of indices corresponding to a specific site occupation\n            in the ewald matrix\n\n    Returns:\n        float: electrostatic interaction energy difference\n    ";
+static char __pyx_doc_3src_8mc_utils_6delta_ewald_single_flip[] = "Compute the change in electrostatic interaction energy from a flip.\n\n    Args:\n        occu_f (ndarray):\n            encoded occupancy vector with flip\n        occu_i (ndarray):\n            encoded occupancy vector without flip\n        ewald_matrix (ndarray):\n            Ewald matrix for electrostatic interactions\n        ewald_inds (ndarray):\n            2D array of indices corresponding to a specific site occupation\n            in the ewald matrix\n        site_ind (int):\n            site index for site being flipped\n\n    Returns:\n        float: electrostatic interaction energy difference\n    ";
 static PyMethodDef __pyx_mdef_3src_8mc_utils_7delta_ewald_single_flip = {"delta_ewald_single_flip", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_3src_8mc_utils_7delta_ewald_single_flip, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_8mc_utils_6delta_ewald_single_flip};
 static PyObject *__pyx_pw_3src_8mc_utils_7delta_ewald_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_occu_f = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -4841,7 +4841,7 @@ static PyObject *__pyx_pf_3src_8mc_utils_6delta_ewald_single_flip(CYTHON_UNUSED 
  *             else:
  *                 out_k = out_k - ewald_matrix[j, sub]             # <<<<<<<<<<<<<<
  *         out += out_k
- * 
+ *     return out
  */
       /*else*/ {
         __pyx_t_2 = __pyx_v_j;
@@ -4863,19 +4863,18 @@ static PyObject *__pyx_pf_3src_8mc_utils_6delta_ewald_single_flip(CYTHON_UNUSED 
  *             else:
  *                 out_k = out_k - ewald_matrix[j, sub]
  *         out += out_k             # <<<<<<<<<<<<<<
- * 
  *     return out
  */
     __pyx_v_out = (__pyx_v_out + __pyx_v_out_k);
   }
 
-  /* "src/mc_utils.pyx":230
+  /* "src/mc_utils.pyx":229
+ *                 out_k = out_k - ewald_matrix[j, sub]
  *         out += out_k
- * 
  *     return out             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_9 = PyFloat_FromDouble(__pyx_v_out); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 230, __pyx_L1_error)
+  __pyx_t_9 = PyFloat_FromDouble(__pyx_v_out); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 229, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
   __pyx_r = __pyx_t_9;
   __pyx_t_9 = 0;
