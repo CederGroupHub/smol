@@ -10,7 +10,7 @@ __author__ = "Luis Barroso-Luque"
 from collections import OrderedDict
 import numpy as np
 from monty.json import MSONable
-from pymatgen import Specie, DummySpecie, Element
+from pymatgen import Species, DummySpecies, Element
 from smol.cofe.space.domain import Vacancy
 
 
@@ -130,12 +130,12 @@ class Sublattice(MSONable):
         for sp, m in d['site_space']:
             if ("oxidation_state" in sp
                     and Element.is_valid_symbol(sp["element"])):
-                sp = Specie.from_dict(sp)
+                sp = Species.from_dict(sp)
             elif "oxidation_state" in sp:
                 if sp['@class'] == 'Vacancy':
                     sp = Vacancy.from_dict(sp)
                 else:
-                    sp = DummySpecie.from_dict(sp)
+                    sp = DummySpecies.from_dict(sp)
             else:
                 sp = Element(sp["element"])
             site_space.append((sp, m))

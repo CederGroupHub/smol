@@ -2,7 +2,7 @@ import pytest
 from random import choice
 from tests.utils import assert_msonable
 from pymatgen import Composition, Element, Specie, DummySpecie
-from smol.cofe.space.domain import (get_specie, get_allowed_species,
+from smol.cofe.space.domain import (get_species, get_allowed_species,
                                     get_site_spaces, Vacancy)
 
 
@@ -34,14 +34,14 @@ def test_get_allowed_species(structure):
                          ['vacancy', 'Vacancy', 'Vac6', 'vacaret', Vacancy(),
                           Vacancy("X")])
 def test_get_specie_vacancy(vacancy):  # smol part
-    assert isinstance(get_specie(vacancy), Vacancy)
+    assert isinstance(get_species(vacancy), Vacancy)
 
 
 @pytest.mark.parametrize('specie',
                          ['Li', 'Li+', Element('Li'), Specie('Li', 1),
                           DummySpecie(), 'X'])
 def test_get_specie_others(specie):  # pymatgen part
-    sp = get_specie(specie)
+    sp = get_species(specie)
     assert isinstance(sp, Specie) or isinstance(sp, Element)
 
 

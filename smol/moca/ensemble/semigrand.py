@@ -16,7 +16,7 @@ import numpy as np
 
 from monty.json import MSONable
 from pymatgen import Specie, DummySpecie, Element
-from smol.cofe.space.domain import get_specie, Vacancy
+from smol.cofe.space.domain import get_species, Vacancy
 from smol.moca.processor.base import Processor
 from .base import Ensemble
 from .sublattice import Sublattice
@@ -113,7 +113,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         super().__init__(processor, sublattices)
 
         # check that species are valid
-        chemical_potentials = {get_specie(k): v for k, v
+        chemical_potentials = {get_species(k): v for k, v
                                in chemical_potentials.items()}
         species = set([sp for sps in processor.unique_site_spaces
                        for sp in sps])
@@ -141,7 +141,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     @chemical_potentials.setter
     def chemical_potentials(self, value):
         """Set the chemical potentials and update table."""
-        value = {get_specie(k): v for k, v in value.items()}
+        value = {get_species(k): v for k, v in value.items()}
         if set(value.keys()) != set(self._mus.keys()):
             raise ValueError('Chemical potentials given are missing species. '
                              'Values must be given for each of the following:'
@@ -267,7 +267,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
 
         if fugacity_fractions is not None:
             # check that species are valid
-            fugacity_fractions = [{get_specie(k): v for k, v in sub.items()}
+            fugacity_fractions = [{get_species(k): v for k, v in sub.items()}
                                   for sub in fugacity_fractions]
             for fus, sublatt in zip(fugacity_fractions, self.sublattices):
                 if sum([fu for fu in fus.values()]) != 1:
@@ -294,7 +294,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     @fugacity_fractions.setter
     def fugacity_fractions(self, value):
         """Set the fugacity fractions and update table."""
-        value = [{get_specie(k): v for k, v in sub.items()} for sub in value]
+        value = [{get_species(k): v for k, v in sub.items()} for sub in value]
         if not all(sum(fus.values()) == 1 for fus in value):
             raise ValueError('Fugacity ratios must add to one.')
         for (fus, vals) in zip(self._fus, value):
