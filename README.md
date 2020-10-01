@@ -16,8 +16,7 @@ crystalline material systems.
 1.  `Clone` the repository.
     -   The latest tag in the `master` branch is the stable version of the
     code. The `master` branch has the newest tested features, but may have more
-    lingering bugs. The `experimental` branch has more features but is not
-    fully tested.
+    lingering bugs.
 
 2.  Go to the top level directory of the cloned repo and type:
 
@@ -41,6 +40,7 @@ See the contributing
 further information.
 
 #### Credits
-Feel free to add yourself here for your contributions :)
+**smol** would not be possible without initial groundwork, inspiration,
+contributions, and suggestions from the following people/projects... 
 -   Will Richards - A good amount of the Cluster Expansion code is based on Will's cluster expansion module in the pyabinitio repository.
 -   Daniil Kitcheav - The pyabinitio benchark test data and the LNO example data was computed by Daniil.

@@ -1,5 +1,7 @@
 import unittest
 import json
+from copy import deepcopy
+
 import numpy as np
 from smol.cofe import (StructureWrangler, ClusterSubspace,
                        weights_energy_above_hull,
@@ -38,10 +40,11 @@ class TestStructureWrangler(unittest.TestCase):
 
     def test_matrix_properties(self):
         self.assertGreaterEqual(self.sw.get_condition_number(), 1)
-        rows = np.random.choice(range(self.sw.num_structures), 8)
+        rows = np.random.choice(range(self.sw.num_structures), 16)
         cols = np.random.choice(range(self.sw.num_features), 10)
         self.assertGreaterEqual(self.sw.get_condition_number(), 1)
         self.assertGreaterEqual(self.sw.get_condition_number(rows, cols), 1)
+        print(self.sw.feature_matrix.shape)
         self.assertGreaterEqual(self.sw.get_matrix_rank(rows, cols),
                                 self.sw.get_matrix_rank(cols=cols[:-4]))
 
@@ -181,17 +184,13 @@ class TestStructureWrangler(unittest.TestCase):
         self.assertRaises(AttributeError, self.sw.add_weights, 'test',
                           weights[:-2])
 
-    # TODO write a better test. One that actually checks the structures
-    #  expected to be removed are removed
-    def test_filter_by_ewald(self):
-        len_total = self.sw.num_structures
-        self.sw.filter_by_ewald(1)
-        len_filtered = self.sw.num_structures
-        self.assertNotEqual(len_total, len_filtered)
-        self.assertEqual(self.sw.metadata['applied_filters'][0]['Ewald']['nstructs_removed'],
-                         len_total - len_filtered)
-        self.assertEqual(self.sw.metadata['applied_filters'][0]['Ewald']['nstructs_total'],
-                         len_total)
+    def test_get_duplicate_corr_inds(self):
+        ind = np.random.randint(self.sw.num_structures)
+        dup_item = deepcopy(self.sw.data_items[ind])
+        self.assertWarns(UserWarning, self.sw.add_data, dup_item["structure"],
+                         dup_item["properties"])
+        self.assertEqual(self.sw.get_duplicate_corr_inds(),
+                         [[ind, self.sw.num_structures - 1]])
 
     def test_msonable(self):
         self.sw.metadata['key'] = 4
