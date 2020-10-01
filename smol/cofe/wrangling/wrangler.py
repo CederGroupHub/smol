@@ -27,6 +27,7 @@ from smol.exceptions import StructureMatchError
 from smol.constants import kB
 
 
+# TODO move these to a separate toolbox file
 def weights_energy_above_composition(structures, energies, temperature=2000):
     """Compute weights for energy above the minimum reduced composition energy.
 
@@ -529,9 +530,9 @@ class StructureWrangler(MSONable):
                 duplicates = [f"{self._items[i]['structure'].composition} "
                               f"{self._items[i]['properties']}\n"
                               for i in duplicate_inds]
-                warnings.warn("The following structures have duplicated " 
-                              f"correlation vectors:\n{duplicates}"
-                              "Consider adding more terms to the"
+                warnings.warn("The following structures have duplicated "
+                              f"correlation vectors:\n {duplicates} "
+                              "Consider adding more terms to the "
                               "clustersubspace or filtering duplicates.",
                               UserWarning)
 

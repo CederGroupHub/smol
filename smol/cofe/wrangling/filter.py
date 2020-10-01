@@ -9,7 +9,7 @@ __author__ = "Luis Barroso-Luque, William Davidson Richard"
 
 
 def register_filter_metadata(filter_fun):
-    """Decorator to register metadata associated with a filter.
+    """Register metadata associated with a filter function.
 
     Decorate filter functions with this to register the metadata associated
     with the filtering.
@@ -75,7 +75,7 @@ def filter_duplicate_corr_vectors(wrangler, property_key, filter_by='min',
 
 
 @register_filter_metadata
-def filter_data_by_ewald(wrangler, max_ewald, verbose=False):
+def filter_by_ewald_energy(wrangler, max_rel_energy, verbose=False):
     """Filter structures by electrostatic interaction energy.
 
     Filter the input structures to only use those with low electrostatic
@@ -88,8 +88,9 @@ def filter_data_by_ewald(wrangler, max_ewald, verbose=False):
     Args:
         wrangler (StructureWrangler):
             A StructureWrangler containing data to be filtered.
-        max_ewald (float):
-            Ewald threshold. The maximum Ewald energy, normalized by prim
+        max_rel_energy (float):
+            Ewald threshold. The maximum Ewald energy relative to minumum
+            energy at composition of structure (normalized by prim).
         verbose (bool): optional
             If True will print filtered structures.
     """
@@ -126,11 +127,12 @@ def filter_data_by_ewald(wrangler, max_ewald, verbose=False):
         min_energy = min_energy_by_comp[
             item['structure'].composition.reduced_composition]
         rel_energy = energy - min_energy
-        if rel_energy > max_ewald and verbose:
+        if rel_energy < max_rel_energy:
+            data_items.append(item)
+        elif verbose:
             print(f"Removing structure {item['structure'].composition} "
                   f"with properties {item['properties']}.\n"
                   f"Relative Ewald interaction energy is {rel_energy} eV.")
-        else:
-            data_items.append(item)
+
     wrangler.remove_all_data()
     wrangler.append_data_items(data_items)

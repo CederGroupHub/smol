@@ -184,18 +184,6 @@ class TestStructureWrangler(unittest.TestCase):
         self.assertRaises(AttributeError, self.sw.add_weights, 'test',
                           weights[:-2])
 
-    # TODO write a better test. One that actually checks the structures
-    #  expected to be removed are removed
-    def test_filter_by_ewald(self):
-        len_total = self.sw.num_structures
-        self.sw.filter_by_ewald(1)
-        len_filtered = self.sw.num_structures
-        self.assertNotEqual(len_total, len_filtered)
-        self.assertEqual(self.sw.metadata['applied_filters'][0]['Ewald']['nstructs_removed'],
-                         len_total - len_filtered)
-        self.assertEqual(self.sw.metadata['applied_filters'][0]['Ewald']['nstructs_total'],
-                         len_total)
-
     def test_get_duplicate_corr_inds(self):
         ind = np.random.randint(self.sw.num_structures)
         dup_item = deepcopy(self.sw.data_items[ind])
@@ -203,24 +191,6 @@ class TestStructureWrangler(unittest.TestCase):
                          dup_item["properties"])
         self.assertEqual(self.sw.get_duplicate_corr_inds(),
                          [[ind, self.sw.num_structures - 1]])
-
-    def test_filter_duplicate_corrs(self):
-        dup_items = []
-        for i in range(4):
-            ind = np.random.randint(self.sw.num_structures)
-            dup_item = deepcopy(self.sw.data_items[ind])
-            dup_item['properties']['energy'] = np.inf
-            dup_items.append(dup_item)
-
-        n_before = self.sw.num_structures
-        self.sw._items += dup_items
-
-        self.assertEqual(self.sw.num_structures, n_before + len(dup_items))
-        self.assertTrue(np.inf in self.sw.get_property_vector('energy'))
-        self.sw.filter_duplicate_corrs('energy')
-        print(self.sw.num_structures)
-        self.assertEqual(self.sw.num_structures, n_before)
-        self.assertTrue(np.inf not in self.sw.get_property_vector('energy'))
 
     def test_msonable(self):
         self.sw.metadata['key'] = 4
