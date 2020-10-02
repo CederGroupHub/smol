@@ -15,7 +15,7 @@ from math import log
 import numpy as np
 
 from monty.json import MSONable
-from pymatgen import Specie, DummySpecie, Element
+from pymatgen import Species, DummySpecies, Element
 from smol.cofe.space.domain import get_species, Vacancy
 from smol.moca.processor.base import Processor
 from .base import Ensemble
@@ -214,12 +214,12 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         for sp, c in d['chemical_potentials']:
             if ("oxidation_state" in sp
                     and Element.is_valid_symbol(sp["element"])):
-                sp = Specie.from_dict(sp)
+                sp = Species.from_dict(sp)
             elif "oxidation_state" in sp:
                 if sp['@class'] == 'Vacancy':
                     sp = Vacancy.from_dict(sp)
                 else:
-                    sp = DummySpecie.from_dict(sp)
+                    sp = DummySpecies.from_dict(sp)
             else:
                 sp = Element(sp["element"])
             chemical_potentials[sp] = c
@@ -376,12 +376,12 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             for sp, fu in sublatt:
                 if ("oxidation_state" in sp
                         and Element.is_valid_symbol(sp["element"])):
-                    sp = Specie.from_dict(sp)
+                    sp = Species.from_dict(sp)
                 elif "oxidation_state" in sp:
                     if sp['@class'] == 'Vacancy':
                         sp = Vacancy.from_dict(sp)
                     else:
-                        sp = DummySpecie.from_dict(sp)
+                        sp = DummySpecies.from_dict(sp)
                 else:
                     sp = Element(sp["element"])
                 fus[sp] = fu

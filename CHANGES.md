@@ -40,7 +40,7 @@ Use this section to keep track of changes in the works.
 * `Vacancy` class, inherits from `pymatgen.DummySpecie`.
 * `SiteSpace` class to encapsulate prior site space implementation using
 OrderedDicts.
-* `get_specie` function to mimick `get_el_sp` from pymatgen but correctly
+* `get_species` function to mimick `get_el_sp` from pymatgen but correctly
 handle `Vacancy`.
 * MCMC sample streaming functionality using hdf5 files.
 [\#84](https://github.com/CederGroupHub/smol/pull/84)
