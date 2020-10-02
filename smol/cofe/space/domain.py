@@ -77,7 +77,7 @@ def get_site_spaces(structure, include_measure=False):
     return all_site_spaces
 
 
-def get_specie(obj):
+def get_species(obj):
     """Get specie object.
 
     Wraps pymatgen.core.periodic_table.get_el_sp. to be able to catch and
@@ -99,7 +99,7 @@ def get_specie(obj):
         return obj
 
     if isinstance(obj, (list, tuple)):
-        return [get_specie(o) for o in obj]
+        return [get_species(o) for o in obj]
 
     if isinstance(obj, str) and 'vac' in obj.lower():
         return Vacancy()
@@ -156,7 +156,7 @@ class SiteSpace(Mapping, Hashable, MSONable):
     def __getitem__(self, item):
         """Get a specie in the sitespace."""
         try:
-            sp = get_specie(item)
+            sp = get_species(item)
             return self._data[sp]
         except ValueError as ex:
             raise TypeError(f"Invalid key {item}, {type(item)} for Composition"

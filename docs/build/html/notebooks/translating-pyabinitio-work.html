@@ -344,7 +344,7 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="section" id="Translating-a-Cluster-Expansion-created-with-pyabinitio.cluster_expansion">
 <h1>Translating a Cluster Expansion created with <code class="docutils literal notranslate"><span class="pre">pyabinitio.cluster_expansion</span></code><a class="headerlink" href="#Translating-a-Cluster-Expansion-created-with-pyabinitio.cluster_expansion" title="Permalink to this headline">¶</a></h1>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
@@ -357,12 +357,22 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/lbluque/Develop/pymatgen/pymatgen/ext/matproj.py:454: DeprecationWarning: __init__ is deprecated
+MaterialsProjectCompatibility will be updated with new correction classes as well as new values of corrections and uncertainties in 2020
+  def get_pourbaix_entries(self, chemsys, solid_compat=MaterialsProjectCompatibility()):
+</pre></div></div>
+</div>
 <div class="section" id="1)-Loading-and-extracting-information-from-a-pyabinitio-EciGenerator">
 <h2>1) Loading and extracting information from a pyabinitio <code class="docutils literal notranslate"><span class="pre">EciGenerator</span></code><a class="headerlink" href="#1)-Loading-and-extracting-information-from-a-pyabinitio-EciGenerator" title="Permalink to this headline">¶</a></h2>
 <p>Cluster expansions created with the <code class="docutils literal notranslate"><span class="pre">pyabinitio.cluster_expanstion</span></code> module, can be very easily translated into <code class="docutils literal notranslate"><span class="pre">smol</span></code>.</p>
 <p>The only thing you will need is the <code class="docutils literal notranslate"><span class="pre">EciGenerator</span></code> object you created.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -375,13 +385,13 @@ div.rendered_html tbody tr:hover {
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;This is the prim </span><span class="se">\n</span><span class="si">{prim}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-<span class="c1"># Get cutoff radii from previous CE object</span>
-<span class="n">radii</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="c1"># Get cluster diameter cutoffs from previous CE object</span>
+<span class="n">cutoffs</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="k">for</span> <span class="n">size</span><span class="p">,</span> <span class="n">clusters</span> <span class="ow">in</span> <span class="n">ecigen</span><span class="o">.</span><span class="n">ce</span><span class="o">.</span><span class="n">clusters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
     <span class="k">if</span> <span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="k">continue</span>
-    <span class="n">radii</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">c</span><span class="o">.</span><span class="n">max_radius</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">clusters</span><span class="p">])</span>
+    <span class="n">cutoffs</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">c</span><span class="o">.</span><span class="n">max_radius</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">clusters</span><span class="p">])</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cutoff radii obtained are </span><span class="si">{radii}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cutoff radii obtained are </span><span class="si">{cutoffs}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
 <span class="c1"># determine if an ewald term is used</span>
 <span class="n">use_ewald</span> <span class="o">=</span> <span class="n">ecigen</span><span class="o">.</span><span class="n">ce</span><span class="o">.</span><span class="n">use_ewald</span>
@@ -403,7 +413,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
+<div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
@@ -427,41 +437,31 @@ Cluster expansion used Ewald: True
 Was the dieletric constrained: False
 </pre></div></div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/lbluque/GoogleDrive/Develop/pyabinitio/pyabinitio/cluster_expansion/eci_fit.py:174: FutureWarning: `rcond` parameter will change to the default of machine precision times ``max(M, N)`` where M and N are the input matrix dimensions.
-To use the future default and silence this warning we advise to pass `rcond=None`, to keep using the old, explicitly pass `rcond=-1`.
-  x = np.linalg.lstsq(self.feature_matrix, self.normalized_energies)[0]
-</pre></div></div>
-</div>
 </div>
 <div class="section" id="2)-Now-create-the-corresponding-ClusterSubspace">
 <h2>2) Now create the corresponding <code class="docutils literal notranslate"><span class="pre">ClusterSubspace</span></code><a class="headerlink" href="#2)-Now-create-the-corresponding-ClusterSubspace" title="Permalink to this headline">¶</a></h2>
 <p>We can now create the corrseponding subspace using <code class="docutils literal notranslate"><span class="pre">smol</span></code>. Here you can choose to use a different basis if you want to refit to an orthogonal one. In this example we will keep the <strong>indicator</strong> basis to compare that our new features match the ones from before.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">basis</span><span class="o">=</span><span class="s1">&#39;indicator&#39;</span>
-<span class="n">subspace</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_radii</span><span class="p">(</span><span class="n">prim</span><span class="p">,</span>
-                                       <span class="n">radii</span><span class="o">=</span><span class="n">radii</span><span class="p">,</span>
-                                       <span class="n">ltol</span><span class="o">=</span><span class="n">ltol</span><span class="p">,</span>
-                                       <span class="n">stol</span><span class="o">=</span><span class="n">stol</span><span class="p">,</span>
-                                       <span class="n">angle_tol</span><span class="o">=</span><span class="n">angle_tol</span><span class="p">,</span>
-                                       <span class="n">supercell_size</span><span class="o">=</span><span class="n">supercell_size</span><span class="p">,</span>
-                                       <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">)</span>
+<span class="n">subspace</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_cutoffs</span><span class="p">(</span><span class="n">prim</span><span class="p">,</span>
+                                        <span class="n">cutoffs</span><span class="o">=</span><span class="n">cutoffs</span><span class="p">,</span>
+                                        <span class="n">ltol</span><span class="o">=</span><span class="n">ltol</span><span class="p">,</span>
+                                        <span class="n">stol</span><span class="o">=</span><span class="n">stol</span><span class="p">,</span>
+                                        <span class="n">angle_tol</span><span class="o">=</span><span class="n">angle_tol</span><span class="p">,</span>
+                                        <span class="n">supercell_size</span><span class="o">=</span><span class="n">supercell_size</span><span class="p">,</span>
+                                        <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">use_ewald</span><span class="p">:</span>
     <span class="n">subspace</span><span class="o">.</span><span class="n">add_external_term</span><span class="p">(</span><span class="n">EwaldTerm</span><span class="p">())</span>
 
 
 <span class="c1"># Check that the number of orbits and orderings matches</span>
-<span class="k">assert</span> <span class="n">subspace</span><span class="o">.</span><span class="n">n_orbits</span> <span class="o">==</span> <span class="n">ecigen</span><span class="o">.</span><span class="n">ce</span><span class="o">.</span><span class="n">n_sclusters</span>
-<span class="k">assert</span> <span class="n">subspace</span><span class="o">.</span><span class="n">n_bit_orderings</span> <span class="o">==</span> <span class="n">ecigen</span><span class="o">.</span><span class="n">ce</span><span class="o">.</span><span class="n">n_bit_orderings</span>
+<span class="k">assert</span> <span class="n">subspace</span><span class="o">.</span><span class="n">num_orbits</span> <span class="o">==</span> <span class="n">ecigen</span><span class="o">.</span><span class="n">ce</span><span class="o">.</span><span class="n">n_sclusters</span>
+<span class="k">assert</span> <span class="n">subspace</span><span class="o">.</span><span class="n">num_corr_functions</span> <span class="o">==</span> <span class="n">ecigen</span><span class="o">.</span><span class="n">ce</span><span class="o">.</span><span class="n">n_bit_orderings</span>
 </pre></div>
 </div>
 </div>
@@ -470,7 +470,7 @@ To use the future default and silence this warning we advise to pass `rcond=None
 <h2>3) We can now create a <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> and add the structures used.<a class="headerlink" href="#3)-We-can-now-create-a-StructureWrangler-and-add-the-structures-used." title="Permalink to this headline">¶</a></h2>
 <p>If you don’t plan to refit or compare that features are the same (if still using indicator basis), then you can skip to 4)</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -494,7 +494,7 @@ To use the future default and silence this warning we advise to pass `rcond=None
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -510,7 +510,7 @@ To use the future default and silence this warning we advise to pass `rcond=None
 <h2>4) Creating new <code class="docutils literal notranslate"><span class="pre">ClusterExpansion</span></code> using previous fit<a class="headerlink" href="#4)-Creating-new-ClusterExpansion-using-previous-fit" title="Permalink to this headline">¶</a></h2>
 <p>If you want to keep the previous fit you can just use the eci directly in the new cluster expansion (the previous implementation in pyabinitio has the eci as the eci * multiplicity so these are the coefficients) Make sure you are using an indicator basis otherwise it makes no sense to use the same eci</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -533,13 +533,13 @@ To use the future default and silence this warning we advise to pass `rcond=None
 <h2>5) (Re)Fitting the <code class="docutils literal notranslate"><span class="pre">ClusterExpansion</span></code><a class="headerlink" href="#5)-(Re)Fitting-the-ClusterExpansion" title="Permalink to this headline">¶</a></h2>
 <p>You can also refit the cluster expansion (this is useful if you want to switch over to using an orthogonal basis) Here we will just redo it with the original indicator basis to compare with the old fit.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># the ecigenerators use the old l1regs by default</span>
 <span class="c1"># so we will use the same for comparison</span>
-<span class="kn">from</span> <span class="nn">smol.learn</span> <span class="kn">import</span> <span class="n">WDRLasso</span>
+<span class="kn">from</span> <span class="nn">theorytoolkit.regression</span> <span class="kn">import</span> <span class="n">WDRLasso</span>
 
 <span class="n">estimator</span> <span class="o">=</span> <span class="n">WDRLasso</span><span class="p">()</span>
 
@@ -566,21 +566,31 @@ To use the future default and silence this warning we advise to pass `rcond=None
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+&lt;ipython-input-11-892db5b83e08&gt;:5: DeprecationWarning: This class will be deprecated soon, so do not get too attached to it.
+Consider using 3rd party estimators such as scikit learn.
+  estimator = WDRLasso()
+</pre></div></div>
+</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-(-194.5269866940073, -194.5300838260472)
-(-212.9297023994862, -212.9297599412568)
-(-218.86685195557408, -218.86867884358804)
-(-218.86685195557408, -218.86867884358804)
-(-207.29469222482078, -207.2964177894199)
-(-205.67162763734075, -205.67160528614374)
-(-213.12064363715785, -213.11905866670202)
-(-206.9598414718743, -206.95907935717884)
-(-205.67162763734075, -205.67160528614374)
-(-218.95642680548934, -218.9540292755288)
+(-212.92970249164134, -212.929702396418)
+(-212.14197927342383, -212.14197918191735)
+(-206.95984156567107, -206.9598414710193)
+(-212.75037649702597, -212.75037640515274)
+(-207.1096266240102, -207.1096265250885)
+(-212.75037649702597, -212.75037640515274)
+(-207.29469231924628, -207.2946922217547)
+(-200.62910151985614, -200.62910142172657)
+(-194.51464229296096, -194.51464218954325)
+(-218.95642689474653, -218.95642680173313)
 </pre></div></div>
 </div>
 </div>

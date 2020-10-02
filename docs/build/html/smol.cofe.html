@@ -75,7 +75,7 @@
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-smol.cofe.expansion">smol.cofe.expansion module</a></li>
-<li><a class="reference internal" href="#module-smol.cofe.wrangler">smol.cofe.wrangler module</a></li>
+<li><a class="reference internal" href="#smol-cofe-wrangler-module">smol.cofe.wrangler module</a></li>
 <li><a class="reference internal" href="#module-smol.cofe">Module contents</a></li>
 </ul>
 </li>
@@ -181,7 +181,7 @@ expansion. i.e. if it was pruned, any error metrics etc.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A clustersubspace representing the subspace over which the
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A clustersubspace representing the subspace over which the
 Cluster Expansion was fit. Must be the same used to create
 the feature matrix.</p></li>
 <li><p><strong>coefficients</strong> (<em>ndarray</em>) – coefficients for cluster expansion. Make sure the supplied
@@ -311,472 +311,8 @@ the fit coefficients</p></li>
 </dd></dl>
 
 </div>
-<div class="section" id="module-smol.cofe.wrangler">
-<span id="smol-cofe-wrangler-module"></span><h2>smol.cofe.wrangler module<a class="headerlink" href="#module-smol.cofe.wrangler" title="Permalink to this headline">¶</a></h2>
-<p>Implementation of a StructureWrangler and functions to obtain fit weights.</p>
-<p>A StructureWrangler is used to generate and organize training data to fit a
-cluster expansion using the terms defined in a ClusterSubpace. It takes care
-of computing the training features (correlations) to construct a feature matrix
-to be used along with a target property vector to obtain the coefficients for
-a cluster expansion using some linear regression model.</p>
-<p>Includes functions used to preprocess and check (wrangle) fitting data of
-structures and properties.</p>
-<p>Also functions to obtain weights by energy above hull or energy above
-composition for a given set of structures.</p>
-<dl class="py class">
-<dt id="smol.cofe.wrangler.StructureWrangler">
-<em class="property">class </em><code class="sig-name descname">StructureWrangler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
-<p>Class to create fitting data to fit a cluster expansion.</p>
-<p>A StructureWrangler handles (wrangles) input data structures and properties
-to fit in a cluster expansion. This class holds a ClusterSubspace used to
-compute correlation vectors and produce feature/design matrices used to fit
-the final ClusterExpansion.</p>
-<p>This class is meant to take all input training data in the form of
-(structure, properties) where the properties represent the target
-material property for the given structure that will be used to train
-the cluster expansion.</p>
-<p>The class takes care of returning the fitting data as a cluster
-correlation feature matrix (orbit basis function values). Weights for each
-structure can also be provided see the above functions to weight by energy
-above hull or energy above composition.</p>
-<p>This class also has methods to check/prepare/filter the data. A metadata
-dictionary is used to keep track of applied filters, but users can also use
-it to save any other pertinent information that will be saved with using
-<code class="code docutils literal notranslate"><span class="pre">StructureWrangler.as_dict</span></code> for future reference.</p>
-<p>Initialize a StructureWrangler.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>cluster_subspace</strong> (<a class="reference internal" href="#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A ClusterSubspace object that will be used to fit a
-ClusterExpansion with the provided data.</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.add_data">
-<code class="sig-name descname">add_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">properties</span></em>, <em class="sig-param"><span class="n">normalized</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">site_mapping</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">raise_failed</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.add_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a structure and measured property to the StructureWrangler.</p>
-<p>The properties are usually extensive (i.e. not normalized per atom
-or unit cell, directly from DFT). If the properties have already been
-normalized then set normalized to True. Users need to make sure their
-normalization is consistent. (Default normalization is per the
-primititive structure of the given cluster subspace)</p>
-<p>An attempt to computes correlation vector is made and if successful the
-structure is succesfully added otherwise it ignores that structure.
-Usually failures are caused by the Structure Matcher in the given
-ClusterSubspace failing to match structures to the primitive structure.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>structure</strong> (<em>Structure</em>) – A fit structure</p></li>
-<li><p><strong>properties</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – A dictionary with a key describing the property and the target
-value for the corresponding structure. For example if only a
-single property {‘energy’: value} but can also add more than
-one i.e. {‘total_energy’: value1, ‘formation_energy’: value2}.
-You are free to make up the keys for each property but make
-sure you are consistent for all structures that you add.</p></li>
-<li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Wether the given properties have already been normalized.</p></li>
-<li><p><strong>weights</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The weight given to the structure when doing the fit. The key
-must match at least one of the given properties.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if True then print structures that fail in StructureMatcher.</p></li>
-<li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – optional
-If the corresponding structure has already been matched to the
-clustersubspace prim structure, passing the supercell_matrix
-will use that instead of trying to re-match. If using this
-the user is responsible to have the correct supercell_matrix,
-Here you are the cause of your own bugs.</p></li>
-<li><p><strong>site_mapping</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – optional
-Site mapping as obtained by StructureMatcher.get_mapping
-such that the elements of site_mapping represent the indices
-of the matching sites to the prim structure. I you pass this
-option you are fully responsible that the mappings are correct!</p></li>
-<li><p><strong>raise_failed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – optional
-If true will raise the thrown error when adding a structure
-fails. This can be helpful to keep a list of structures that
-fail for further inspection.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.add_properties">
-<code class="sig-name descname">add_properties</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">property_vector</span></em>, <em class="sig-param"><span class="n">normalized</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.add_properties" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add another property vector to structures already in the wrangler.</p>
-<p>The length of the property vector must match the number of structures
-contained, and should be in the same order such that the property
-corresponds to the correct structure.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Name of property</p></li>
-<li><p><strong>property_vector</strong> (<em>ndarray</em>) – Array with the property for each structure</p></li>
-<li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – (optional)
-Wether the given properties have already been normalized.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.add_weights">
-<code class="sig-name descname">add_weights</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">weights</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.add_weights" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add weights to structures already in the wrangler.</p>
-<p>The length of the given weights must match the number of structures
-contained, and should be in the same order.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Name describing weights</p></li>
-<li><p><strong>weights</strong> (<em>ndarray</em>) – Array with the weight for each structure</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.append_data_items">
-<code class="sig-name descname">append_data_items</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_items</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.append_data_items" title="Permalink to this definition">¶</a></dt>
-<dd><p>Append a list of data items.</p>
-<p>Each data item must have all necessary fields. A data item can be
-obtained using the process_structure method.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data_items</strong> (<em>list of dict</em>) – list of data items with all necessary information</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.as_dict">
-<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.as_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get Json-serialization dict representation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>MSONable dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.available_properties">
-<em class="property">property </em><code class="sig-name descname">available_properties</code><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.available_properties" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get list of properties that have been added.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.available_weights">
-<em class="property">property </em><code class="sig-name descname">available_weights</code><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.available_weights" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get list of weights that have been added.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.change_subspace">
-<code class="sig-name descname">change_subspace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.change_subspace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Change the underlying cluster subspace.</p>
-<p>Will swap out the cluster subspace and update features accordingly.
-This is a faster operation than creating a new one. Can also be useful
-to create a copy and the change the subspace.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>cluster_subspace</strong> – New subspace to be used for determining features.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.cluster_subspace">
-<em class="property">property </em><code class="sig-name descname">cluster_subspace</code><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.cluster_subspace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the underlying ClusterSubspace used to compute features.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.data_items">
-<em class="property">property </em><code class="sig-name descname">data_items</code><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.data_items" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a list of the data item dictionaries.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.feature_matrix">
-<em class="property">property </em><code class="sig-name descname">feature_matrix</code><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.feature_matrix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get feature matrix.</p>
-<p>Rows are structures, Columns are correlations.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.filter_by_ewald">
-<code class="sig-name descname">filter_by_ewald</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">max_ewald</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.filter_by_ewald" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter structures by electrostatic interaction energy.</p>
-<p>Filter the input structures to only use those with low electrostatic
-energies (no large charge separation in cell). This energy is
-referenced to the lowest value at that composition. Note that this is
-before the division by the relative dielectric constant and is per
-primitive cell in the cluster expansion – 1.5 eV/atom seems to be a
-reasonable value for dielectric constants around 10.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>max_ewald</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Ewald threshold. The maximum Ewald energy, normalized by prim</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.from_dict">
-<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.from_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create Structure Wrangler from an MSONable dict.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.get_condition_number">
-<code class="sig-name descname">get_condition_number</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rows</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cols</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">p</span><span class="o">=</span><span class="default_value">2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.get_condition_number" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the condition number for the feature matrix or submatrix.</p>
-<p>The condition number is a measure of how sensitive the solution to
-the linear system is to perturbations in the sampled data. The larger
-the condition number the more ill-conditioned the linear problem is.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>rows</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – indices of structures to include in feature matrix.</p></li>
-<li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – indices of features (correlations) to include in feature matrix</p></li>
-<li><p><strong>p</strong> – (optional)
-the type of norm to use when computing condition number.
-see the numpy docs for np.linalg.cond for options.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>matrix condition number</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.get_matrix_rank">
-<code class="sig-name descname">get_matrix_rank</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rows</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cols</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.get_matrix_rank" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the rank of the feature matrix or a submatrix of it.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>rows</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – indices of structures to include in feature matrix.</p></li>
-<li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – indices of features (correlations) to include in feature matrix</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the rank of the matrix</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.get_property_vector">
-<code class="sig-name descname">get_property_vector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.get_property_vector" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the property target vector.</p>
-<p>The property targent vector that be used to fit the corresponding
-correlation feature matrix to obtain coefficients for a cluster
-expansion. It should always be properly/consistently normalized when
-used for a fit.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Name of the property</p></li>
-<li><p><strong>normalize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – optional
-To normalize by prim size. If the property sought is not
-already normalized, you need to normalize before fitting a CE.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.get_weights">
-<code class="sig-name descname">get_weights</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.get_weights" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the weights specified by the given key.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Name of corresponding weights</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.metadata">
-<em class="property">property </em><code class="sig-name descname">metadata</code><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.metadata" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get dictionary to save applied filters, etc.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.num_features">
-<em class="property">property </em><code class="sig-name descname">num_features</code><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.num_features" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get umber of features for each added structure.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.num_structures">
-<em class="property">property </em><code class="sig-name descname">num_structures</code><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.num_structures" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get number of structures added (correctly matched to prim).</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.occupancy_strings">
-<em class="property">property </em><code class="sig-name descname">occupancy_strings</code><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.occupancy_strings" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get occupancy strings for each of the structures in the wrangler.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.process_structure">
-<code class="sig-name descname">process_structure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">properties</span></em>, <em class="sig-param"><span class="n">normalized</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">site_mapping</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">raise_failed</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.process_structure" title="Permalink to this definition">¶</a></dt>
-<dd><p>Process a structure to be added to wrangler.</p>
-<p>Checks if the structure for this data item can be matched to the
-cluster subspace prim structure to obtain its supercell matrix,
-correlation, and refined structure.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>structure</strong> (<em>Structure</em>) – A structure corresponding to the given properties</p></li>
-<li><p><strong>properties</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – A dictionary with a key describing the property and the target
-value for the corresponding structure. For example if only a
-single property {‘energy’: value} but can also add more than
-one i.e. {‘total_energy’: value1, ‘formation_energy’: value2}.
-You are free to make up the keys for each property but make
-sure you are consistent for all structures that you add.</p></li>
-<li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Wether the given properties have already been normalized.</p></li>
-<li><p><strong>weights</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The weight given to the structure when doing the fit. The key
-must match at least one of the given properties.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if True then print structures that fail in StructureMatcher.</p></li>
-<li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – optional
-If the corresponding structure has already been matched to the
-clustersubspace prim structure, passing the supercell_matrix
-will use that instead of trying to re-match. If using this
-the user is responsible to have the correct supercell_matrix,
-Here you are the cause of your own bugs.</p></li>
-<li><p><strong>site_mapping</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – optional
-Site mapping as obtained by
-<code class="code docutils literal notranslate"><span class="pre">StructureMatcher.get_mapping</span></code>
-such that the elements of site_mapping represent the indices
-of the matching sites to the prim structure. If you pass this
-option you are fully responsible that the mappings are correct!</p></li>
-<li><p><strong>raise_failed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – optional
-If true will raise the thrown error when adding a structure
-fails. This can be helpful to keep a list of structures that
-fail for further inspection.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>data item dict for structure</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.refined_structures">
-<em class="property">property </em><code class="sig-name descname">refined_structures</code><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.refined_structures" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get list of refined structures.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.remove_all_data">
-<code class="sig-name descname">remove_all_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.remove_all_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove all data from Wrangler.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.remove_properties">
-<code class="sig-name descname">remove_properties</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">property_keys</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.remove_properties" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove properties from given keys.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>*property_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – names of properties to remove</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.remove_structure">
-<code class="sig-name descname">remove_structure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.remove_structure" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove a given structure and associated data.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.sizes">
-<em class="property">property </em><code class="sig-name descname">sizes</code><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.sizes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get sizes of each structure in terms of number of prims.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.structure_site_mappings">
-<em class="property">property </em><code class="sig-name descname">structure_site_mappings</code><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.structure_site_mappings" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get list of site mappings for each structure to prim.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.structures">
-<em class="property">property </em><code class="sig-name descname">structures</code><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.structures" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get list of included structures.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.supercell_matrices">
-<em class="property">property </em><code class="sig-name descname">supercell_matrices</code><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.supercell_matrices" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get list of supercell matrices relating each structure to prim.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.cofe.wrangler.StructureWrangler.update_features">
-<code class="sig-name descname">update_features</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.StructureWrangler.update_features" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the features/feature matrix for the data held.</p>
-<p>This is useful when something is changed in the cluster_subspace after
-creating the Wrangler, for example added an Ewald term after creating
-the Wrangler. This will prevent having to match structures and such.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt id="smol.cofe.wrangler.weights_energy_above_composition">
-<code class="sig-name descname">weights_energy_above_composition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structures</span></em>, <em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">temperature</span><span class="o">=</span><span class="default_value">2000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.weights_energy_above_composition" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute weights for energy above the minimum reduced composition energy.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>structures</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of pymatgen.Structures</p></li>
-<li><p><strong>energies</strong> (<em>ndarray</em>) – energies of corresponding structures.</p></li>
-<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – temperature to used in boltzmann weight</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="simple">
-<dt>Returns: weights for each structure.</dt><dd><p>array</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="smol.cofe.wrangler.weights_energy_above_hull">
-<code class="sig-name descname">weights_energy_above_hull</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structures</span></em>, <em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">cs_structure</span></em>, <em class="sig-param"><span class="n">temperature</span><span class="o">=</span><span class="default_value">2000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangler.weights_energy_above_hull" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute weights for structure energy above the hull of given structures.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>structures</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of pymatgen.Structures</p></li>
-<li><p><strong>energies</strong> (<em>ndarray</em>) – energies of corresponding structures.</p></li>
-<li><p><strong>cs_structure</strong> (<em>Structure</em>) – The pymatgen.Structure used to define the cluster subspace</p></li>
-<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – temperature to used in boltzmann weight.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="simple">
-<dt>Returns: weights for each structure.</dt><dd><p>array</p>
-</dd>
-</dl>
-</dd></dl>
-
+<div class="section" id="smol-cofe-wrangler-module">
+<h2>smol.cofe.wrangler module<a class="headerlink" href="#smol-cofe-wrangler-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-smol.cofe">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-smol.cofe" title="Permalink to this headline">¶</a></h2>
@@ -829,7 +365,7 @@ expansion. i.e. if it was pruned, any error metrics etc.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A clustersubspace representing the subspace over which the
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A clustersubspace representing the subspace over which the
 Cluster Expansion was fit. Must be the same used to create
 the feature matrix.</p></li>
 <li><p><strong>coefficients</strong> (<em>ndarray</em>) – coefficients for cluster expansion. Make sure the supplied
@@ -1504,7 +1040,7 @@ it to save any other pertinent information that will be saved with using
 <p>Initialize a StructureWrangler.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>cluster_subspace</strong> (<a class="reference internal" href="#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A ClusterSubspace object that will be used to fit a
+<dd class="field-odd"><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A ClusterSubspace object that will be used to fit a
 ClusterExpansion with the provided data.</p>
 </dd>
 </dl>
@@ -1531,7 +1067,7 @@ single property {‘energy’: value} but can also add more than
 one i.e. {‘total_energy’: value1, ‘formation_energy’: value2}.
 You are free to make up the keys for each property but make
 sure you are consistent for all structures that you add.</p></li>
-<li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Wether the given properties have already been normalized.</p></li>
+<li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Whether the given properties have already been normalized.</p></li>
 <li><p><strong>weights</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The weight given to the structure when doing the fit. The key
 must match at least one of the given properties.</p></li>
 <li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if True then print structures that fail in StructureMatcher.</p></li>
@@ -1660,23 +1196,6 @@ to create a copy and the change the subspace.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.StructureWrangler.filter_by_ewald">
-<code class="sig-name descname">filter_by_ewald</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">max_ewald</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.filter_by_ewald" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter structures by electrostatic interaction energy.</p>
-<p>Filter the input structures to only use those with low electrostatic
-energies (no large charge separation in cell). This energy is
-referenced to the lowest value at that composition. Note that this is
-before the division by the relative dielectric constant and is per
-primitive cell in the cluster expansion – 1.5 eV/atom seems to be a
-reasonable value for dielectric constants around 10.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>max_ewald</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Ewald threshold. The maximum Ewald energy, normalized by prim</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="smol.cofe.StructureWrangler.from_dict">
 <em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create Structure Wrangler from an MSONable dict.</p>
@@ -1704,6 +1223,21 @@ see the numpy docs for np.linalg.cond for options.</p></li>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.StructureWrangler.get_duplicate_corr_inds">
+<code class="sig-name descname">get_duplicate_corr_inds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.get_duplicate_corr_inds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find indices of rows with duplicate corr vectors in feature matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list containing lists of indices of rows in feature_matrix
+where duplicates occur</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1768,7 +1302,7 @@ already normalized, you need to normalize before fitting a CE.</p></li>
 <dl class="py method">
 <dt id="smol.cofe.StructureWrangler.num_features">
 <em class="property">property </em><code class="sig-name descname">num_features</code><a class="headerlink" href="#smol.cofe.StructureWrangler.num_features" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get umber of features for each added structure.</p>
+<dd><p>Get number of features for each added structure.</p>
 </dd></dl>
 
 <dl class="py method">

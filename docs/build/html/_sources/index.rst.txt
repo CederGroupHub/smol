@@ -9,13 +9,25 @@
 Statistical Mechanics on Lattices
 =================================
 
-Lighthweight but caffeinated Python implementations of computational methods
+*Lighthweight but caffeinated Python implementations of computational methods
 for statistical mechanical calculations of configurational states for
-crystalline material systems.
+crystalline material systems.*
 
 .. image:: https://img.shields.io/circleci/build/gh/CederGroupHub/smol/master?logo=circleci&style=for-the-badge&token=96d0d7a959e1e12044ff45daa43218ae7fa4303e
 .. image:: https://img.shields.io/codacy/coverage/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge
 .. image:: https://img.shields.io/codacy/grade/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge
+
+-------------------------------------------------------------------------------
+
+**smol** is a minimal implementation of computational methods to calculate
+statistical mechanical and thermodynamic properties of crystalline
+material systems based on the *cluster expansion* method from alloy theory and
+related methods. Although **smol** is intentionally lightweight---in terms of
+dependencies and built-in functionality---it has a modular design that closely
+follows underlying mathematical formalism and provides useful abstractions to
+easily extend existing methods or implement and test new ones. Finally,
+although conceived mainly for method development, **smol** can (and is being)
+used in production for materials science reasearch applications.
 
 Installation
 ============
@@ -26,9 +38,9 @@ Installation
 
 Basic Usage
 ===========
-**smol** is desgined to be simple to use. Here is the most basic example of
-creating a Cluster Expansion for a binary alloy and subsequently using it to do
-Monte Carlo sampling::
+**smol** is designed to be simple and intuitive to use. Here is the most
+basic example of creating a Cluster Expansion for a binary alloy and
+subsequently using it to run Monte Carlo sampling::
 
     from sklearn.linear_model import LinearRegression
     from monty.serialization import loadfn
@@ -98,7 +110,8 @@ You can find more in-depth and advanced usage examples in the
 ==============
 Recent Changes
 ==============
-You can find the most recent chagnes in the :doc:`changelog`.
+You can find updates and the most recent chagnes in the
+`changelog <https://github.com/CederGroupHub/smol/blob/master/CHANGES.md>`_.
 
 =====================
 Help, Issues, Support

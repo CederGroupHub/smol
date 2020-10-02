@@ -115,12 +115,22 @@
 </div>
 <div class="section" id="statistical-mechanics-on-lattices">
 <h1>Statistical Mechanics on Lattices<a class="headerlink" href="#statistical-mechanics-on-lattices" title="Permalink to this headline">¶</a></h1>
-<p>Lighthweight but caffeinated Python implementations of computational methods
+<p><em>Lighthweight but caffeinated Python implementations of computational methods
 for statistical mechanical calculations of configurational states for
-crystalline material systems.</p>
+crystalline material systems.</em></p>
 <img alt="https://img.shields.io/circleci/build/gh/CederGroupHub/smol/master?logo=circleci&amp;style=for-the-badge&amp;token=96d0d7a959e1e12044ff45daa43218ae7fa4303e" src="https://img.shields.io/circleci/build/gh/CederGroupHub/smol/master?logo=circleci&amp;style=for-the-badge&amp;token=96d0d7a959e1e12044ff45daa43218ae7fa4303e" />
 <img alt="https://img.shields.io/codacy/coverage/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge" src="https://img.shields.io/codacy/coverage/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge" />
 <img alt="https://img.shields.io/codacy/grade/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge" src="https://img.shields.io/codacy/grade/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge" />
+<hr class="docutils" />
+<p><strong>smol</strong> is a minimal implementation of computational methods to calculate
+statistical mechanical and thermodynamic properties of crystalline
+material systems based on the <em>cluster expansion</em> method from alloy theory and
+related methods. Although <strong>smol</strong> is intentionally lightweight—in terms of
+dependencies and built-in functionality—it has a modular design that closely
+follows underlying mathematical formalism and provides useful abstractions to
+easily extend existing methods or implement and test new ones. Finally,
+although conceived mainly for method development, <strong>smol</strong> can (and is being)
+used in production for materials science reasearch applications.</p>
 </div>
 <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
@@ -135,9 +145,9 @@ crystalline material systems.</p>
 </div>
 <div class="section" id="basic-usage">
 <h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h1>
-<p><strong>smol</strong> is desgined to be simple to use. Here is the most basic example of
-creating a Cluster Expansion for a binary alloy and subsequently using it to do
-Monte Carlo sampling:</p>
+<p><strong>smol</strong> is designed to be simple and intuitive to use. Here is the most
+basic example of creating a Cluster Expansion for a binary alloy and
+subsequently using it to run Monte Carlo sampling:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
 <span class="kn">from</span> <span class="nn">monty.serialization</span> <span class="kn">import</span> <span class="n">loadfn</span>
 <span class="kn">from</span> <span class="nn">pymatgen</span> <span class="kn">import</span> <span class="n">Structure</span>
@@ -205,7 +215,8 @@ and functions.</p>
 <a class="reference internal" href="examples.html"><span class="doc">Example Notebooks</span></a> page.</p>
 <div class="section" id="recent-changes">
 <h2>Recent Changes<a class="headerlink" href="#recent-changes" title="Permalink to this headline">¶</a></h2>
-<p>You can find the most recent chagnes in the <span class="xref std std-doc">changelog</span>.</p>
+<p>You can find updates and the most recent chagnes in the
+<a class="reference external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">changelog</a>.</p>
 </div>
 <div class="section" id="help-issues-support">
 <h2>Help, Issues, Support<a class="headerlink" href="#help-issues-support" title="Permalink to this headline">¶</a></h2>
