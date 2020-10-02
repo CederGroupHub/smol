@@ -721,7 +721,7 @@ single property {‘energy’: value} but can also add more than
 one i.e. {‘total_energy’: value1, ‘formation_energy’: value2}.
 You are free to make up the keys for each property but make
 sure you are consistent for all structures that you add.</p></li>
-<li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Wether the given properties have already been normalized.</p></li>
+<li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Whether the given properties have already been normalized.</p></li>
 <li><p><strong>weights</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The weight given to the structure when doing the fit. The key
 must match at least one of the given properties.</p></li>
 <li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if True then print structures that fail in StructureMatcher.</p></li>
@@ -850,23 +850,6 @@ to create a copy and the change the subspace.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.StructureWrangler.filter_by_ewald">
-<code class="sig-name descname">filter_by_ewald</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">max_ewald</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.filter_by_ewald" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter structures by electrostatic interaction energy.</p>
-<p>Filter the input structures to only use those with low electrostatic
-energies (no large charge separation in cell). This energy is
-referenced to the lowest value at that composition. Note that this is
-before the division by the relative dielectric constant and is per
-primitive cell in the cluster expansion – 1.5 eV/atom seems to be a
-reasonable value for dielectric constants around 10.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>max_ewald</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Ewald threshold. The maximum Ewald energy, normalized by prim</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="smol.cofe.StructureWrangler.from_dict">
 <em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create Structure Wrangler from an MSONable dict.</p>
@@ -894,6 +877,21 @@ see the numpy docs for np.linalg.cond for options.</p></li>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.StructureWrangler.get_duplicate_corr_inds">
+<code class="sig-name descname">get_duplicate_corr_inds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.get_duplicate_corr_inds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find indices of rows with duplicate corr vectors in feature matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list containing lists of indices of rows in feature_matrix
+where duplicates occur</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -958,7 +956,7 @@ already normalized, you need to normalize before fitting a CE.</p></li>
 <dl class="py method">
 <dt id="smol.cofe.StructureWrangler.num_features">
 <em class="property">property </em><code class="sig-name descname">num_features</code><a class="headerlink" href="#smol.cofe.StructureWrangler.num_features" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get umber of features for each added structure.</p>
+<dd><p>Get number of features for each added structure.</p>
 </dd></dl>
 
 <dl class="py method">
