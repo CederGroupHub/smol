@@ -3,6 +3,7 @@ import json
 from copy import deepcopy
 
 import numpy as np
+import numpy.testing as npt
 from smol.cofe import (StructureWrangler, ClusterSubspace,
                        weights_energy_above_hull,
                        weights_energy_above_composition)
@@ -37,6 +38,21 @@ class TestStructureWrangler(unittest.TestCase):
                                       self.sw.sizes):
             self.assertTrue(len(struct) <= len(occu))  # < with vacancies
             self.assertTrue(size*num_prim_sits, len(occu))
+
+    def test_get_gram_matrix(self):
+        G = self.sw.get_gram_matrix()
+        self.assertEqual(G.shape, 2*(self.sw.num_features, ))
+        npt.assert_array_equal(G, G.T)
+        npt.assert_array_almost_equal(np.ones(G.shape[0]), G.diagonal())
+
+        rows = np.random.choice(range(self.sw.num_structures),
+                                self.sw.num_structures - 2)
+        cols = np.random.choice(range(self.sw.num_features),
+                                self.sw.num_features - 4)
+        G = self.sw.get_gram_matrix(rows=rows, cols=cols, normalize=False)
+        self.assertEqual(G.shape, 2 * (self.sw.num_features - 4,))
+        npt.assert_array_equal(G, G.T)
+        self.assertFalse(np.allclose(np.ones(G.shape[0]), G.diagonal()))
 
     def test_matrix_properties(self):
         self.assertGreaterEqual(self.sw.get_condition_number(), 1)

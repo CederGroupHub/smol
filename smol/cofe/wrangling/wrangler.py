@@ -221,6 +221,32 @@ class StructureWrangler(MSONable):
         cols = cols if cols is not None else range(self.num_features)
         return np.linalg.cond(self.feature_matrix[rows][:, cols], p=p)
 
+    def get_gram_matrix(self, rows=None, cols=None, normalize=True):
+        r"""Compute the Gram matrix for the feature matrix or a submatrix.
+
+        The Gram matrix, :math:`G = X^TX`, or each entry
+        :math:`G_{ij} = X_i \cdot X_j`. By default, G will have each column
+        (feature vector) normalized. This makes it possible to compare Gram
+        matrices for different feature matrix size or using different basis
+        sets. This ensures every entry: :math:`-1 \le G_{ij} \le 1'.
+
+        Args:
+            rows (list):
+                indices of structures to include in feature matrix.
+            cols (list):
+                indices of features (correlations) to include in feature matrix
+            normalize:
+                If true (default) will normalize each feature vector in the
+                feature matrix.
+        Returns:
+        """
+        rows = rows if rows is not None else range(self.num_structures)
+        cols = cols if cols is not None else range(self.num_features)
+        X = self.feature_matrix[rows][:, cols]
+        if normalize:
+            X /= np.sqrt(X.T.dot(X).diagonal())
+        return X.T.dot(X)
+
     def add_data(self, structure, properties, normalized=False, weights=None,
                  verbose=False, supercell_matrix=None, site_mapping=None,
                  raise_failed=False):
