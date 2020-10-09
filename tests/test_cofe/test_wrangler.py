@@ -61,8 +61,8 @@ class TestStructureWrangler(unittest.TestCase):
         self.assertGreaterEqual(self.sw.get_condition_number(), 1)
         self.assertGreaterEqual(self.sw.get_condition_number(rows, cols), 1)
         print(self.sw.feature_matrix.shape)
-        self.assertGreaterEqual(self.sw.get_matrix_rank(rows, cols),
-                                self.sw.get_matrix_rank(cols=cols[:-4]))
+        self.assertGreaterEqual(self.sw.get_feature_matrix_rank(rows, cols),
+                                self.sw.get_feature_matrix_rank(cols=cols[:-4]))
 
     def test_add_data(self):
         # Check that a structure that does not match raises error.
@@ -207,6 +207,13 @@ class TestStructureWrangler(unittest.TestCase):
                          dup_item["properties"])
         self.assertEqual(self.sw.get_duplicate_corr_inds(),
                          [[ind, self.sw.num_structures - 1]])
+
+    def test_get_constant_features(self):
+        ind = np.random.randint(1, self.sw.num_features)
+        for item in self.sw.data_items:
+            item["features"][ind] = 3.0  # make constant
+        self.assertTrue(ind in self.sw.get_constant_features())
+        self.assertTrue(0 not in self.sw.get_constant_features())
 
     def test_msonable(self):
         self.sw.metadata['key'] = 4

@@ -182,7 +182,7 @@ class StructureWrangler(MSONable):
         """Get dictionary to save applied filters, etc."""
         return self._metadata
 
-    def get_matrix_rank(self, rows=None, cols=None):
+    def get_feature_matrix_rank(self, rows=None, cols=None):
         """Get the rank of the feature matrix or a submatrix of it.
 
         Args:
@@ -239,6 +239,7 @@ class StructureWrangler(MSONable):
                 If true (default) will normalize each feature vector in the
                 feature matrix.
         Returns:
+            ndarray: Gram matrix
         """
         rows = rows if rows is not None else range(self.num_structures)
         cols = cols if cols is not None else range(self.num_features)
@@ -246,6 +247,72 @@ class StructureWrangler(MSONable):
         if normalize:
             X /= np.sqrt(X.T.dot(X).diagonal())
         return X.T.dot(X)
+
+    def get_duplicate_corr_inds(self):
+        """Find indices of rows with duplicate corr vectors in feature matrix.
+
+        Returns:
+            list: list containing lists of indices of rows in feature_matrix
+            where duplicates occur
+        """
+        if len(self.feature_matrix) == 0:
+            duplicate_inds = []
+        else:
+            num_ext = len(self.cluster_subspace.external_terms)
+            end = self.feature_matrix.shape[1] - num_ext - 1
+            _, inverse = np.unique(self.feature_matrix[:, :end],
+                                   return_inverse=True, axis=0)
+            duplicate_inds = [list(np.where(inverse == i)[0])
+                              for i in np.unique(inverse)
+                              if len(np.where(inverse == i)[0]) > 1]
+        return duplicate_inds
+
+    def get_constant_features(self):
+        """Find indices of constant feature vectors (columns).
+
+        A constant feature vector means the corresponding correlation function
+        evaluates to the exact same value for all included structures, meaning
+        it does not really help much when fitting. Many constant feature
+        vectors may be a sign of insufficient sampling of configuration space.
+
+        Excludes the empty cluster, which is by definition constant.
+
+        Returns:
+            ndarray: array of column indices.
+        """
+        arr = self.feature_matrix
+        col_mask = np.all(arr == arr[0, :], axis=0)
+        return np.where(col_mask == 1)[0][1:]
+
+    def get_property_vector(self, key, normalize=True):
+        """Get the property target vector.
+
+        The property targent vector that be used to fit the corresponding
+        correlation feature matrix to obtain coefficients for a cluster
+        expansion. It should always be properly/consistently normalized when
+        used for a fit.
+
+        Args:
+            key (str):
+                Name of the property
+            normalize (bool): optional
+                To normalize by prim size. If the property sought is not
+                already normalized, you need to normalize before fitting a CE.
+        """
+        properties = np.array([i['properties'][key] for i in self._items])
+        if normalize:
+            properties /= self.sizes
+
+        return properties
+
+    def get_weights(self, key):
+        """Get the weights specified by the given key.
+
+        Args:
+            key (str):
+                Name of corresponding weights
+        """
+        return np.array([i['weights'][key] for i in self._items])
 
     def add_data(self, structure, properties, normalized=False, weights=None,
                  verbose=False, supercell_matrix=None, site_mapping=None,
@@ -382,36 +449,6 @@ class StructureWrangler(MSONable):
                 warnings.warn(f'Propertiy {key} does not exist.',
                               RuntimeWarning)
 
-    def get_property_vector(self, key, normalize=True):
-        """Get the property target vector.
-
-        The property targent vector that be used to fit the corresponding
-        correlation feature matrix to obtain coefficients for a cluster
-        expansion. It should always be properly/consistently normalized when
-        used for a fit.
-
-        Args:
-            key (str):
-                Name of the property
-            normalize (bool): optional
-                To normalize by prim size. If the property sought is not
-                already normalized, you need to normalize before fitting a CE.
-        """
-        properties = np.array([i['properties'][key] for i in self._items])
-        if normalize:
-            properties /= self.sizes
-
-        return properties
-
-    def get_weights(self, key):
-        """Get the weights specified by the given key.
-
-        Args:
-            key (str):
-                Name of corresponding weights
-        """
-        return np.array([i['weights'][key] for i in self._items])
-
     def remove_structure(self, structure):
         """Remove a given structure and associated data."""
         try:
@@ -529,25 +566,6 @@ class StructureWrangler(MSONable):
                 'properties': properties, 'weights': weights,
                 'scmatrix': supercell_matrix, 'mapping': site_mapping,
                 'features': fm_row, 'size': size}
-
-    def get_duplicate_corr_inds(self):
-        """Find indices of rows with duplicate corr vectors in feature matrix.
-
-        Returns:
-            list: list containing lists of indices of rows in feature_matrix
-            where duplicates occur
-        """
-        if len(self.feature_matrix) == 0:
-            duplicate_inds = []
-        else:
-            num_ext = len(self.cluster_subspace.external_terms)
-            end = self.feature_matrix.shape[1] - num_ext - 1
-            _, inverse = np.unique(self.feature_matrix[:, :end],
-                                   return_inverse=True, axis=0)
-            duplicate_inds = [list(np.where(inverse == i)[0])
-                              for i in np.unique(inverse)
-                              if len(np.where(inverse == i)[0]) > 1]
-        return duplicate_inds
 
     def _corr_duplicate_warning(self, index):
         """Warn if corr vector of item with given index is duplicated."""
