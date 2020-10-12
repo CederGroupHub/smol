@@ -398,7 +398,7 @@ class SampleContainer(MSONable):
         backend.create_dataset("natural_parameters",
                                data=self.natural_parameters)
         backend["natural_parameters"].attrs["num_energy_coefs"] = self._num_energy_coefs  # noqa
-        backend.create_dataset("ensemble_metadata",
+        backend.create_dataset("sampling_metadata",
                                data=json.dumps(self.metadata))
         backend.create_dataset("chain", (nsamples, *self.shape))
         backend["chain"].attrs["nsamples"] = 0
@@ -512,7 +512,7 @@ class SampleContainer(MSONable):
                             sublattices=sublattices,
                             natural_parameters=f["natural_parameters"][()],
                             num_energy_coefs=f["natural_parameters"].attrs["num_energy_coefs"],  # noqa
-                            ensemble_metadata=json.loads(f["ensemble_metadata"][()]),  # noqa
+                            sampling_metadata=json.loads(f["sampling_metadata"][()]),  # noqa
                             nwalkers=f["chain"].shape[1])
             container._chain = f["chain"][:nsamples]
             container._accepted = f["accepted"][:nsamples]
