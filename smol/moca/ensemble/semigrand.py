@@ -444,8 +444,8 @@ class CNSemiGrandEnsemble(MuSemiGrandEnsemble):
         super().__init__(processor, temperature, sublattices, chemical_potentials,
                          sublattices = sublattices)
 
-        bits = [sl.species for sl in sublattices]
-        sl_sizes = [len(sl.sites) for sl in sublattices]
+        bits = [sl.species for sl in self.sublattices]
+        sl_sizes = [len(sl.sites) for sl in self.sublattices]
 
         #Here we use the GCD of sublattice sizes as supercell size. It is not 
         #always the true supercell size, but always gives correct compositional
