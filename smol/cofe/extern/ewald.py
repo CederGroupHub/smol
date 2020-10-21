@@ -13,7 +13,7 @@ import numpy as np
 from pymatgen import Structure, PeriodicSite
 from pymatgen.analysis.ewald import EwaldSummation
 from monty.json import MSONable
-from smol.cofe.configspace.basis import get_allowed_species
+from smol.cofe.space.domain import get_allowed_species, Vacancy
 
 
 class EwaldTerm(MSONable):
@@ -85,7 +85,7 @@ class EwaldTerm(MSONable):
             # allocate array with all -1 for vacancies
             inds = np.zeros(max(nbits) + 1) - 1
             for i, b in enumerate(space):
-                if b == 'Vacancy':  # skip vacancies
+                if isinstance(b, Vacancy):  # skip vacancies
                     continue
                 inds[i] = len(ewald_sites)
                 ewald_sites.append(PeriodicSite(b, site.frac_coords,
@@ -98,14 +98,14 @@ class EwaldTerm(MSONable):
 
     @staticmethod
     def get_ewald_occu(occu, num_ewald_sites, ewald_inds):
-        """Get the ewald indices from a given encoded occupancy array.
+        """Get the ewald indices from a given encoded occupancy string.
 
         The ewald indices indicate matrix elements (ie species) corresponding
         to the given occupancy.
 
         Args:
             occu (ndarray):
-                encoded occupancy array
+                encoded encoded occupancy string
             num_ewald_sites (int):
                 number of total ewald sites. This is the size of the ewald
                 matrix, the sum of the size of all site spaces for all sites
@@ -173,10 +173,10 @@ class EwaldTerm(MSONable):
 
     def as_dict(self) -> dict:
         """
-        Make this a json serializable dict.
+        Get Json-serialization dict representation.
 
         Returns:
-            dict: msonable dict
+            dict: MNSONable dict
         """
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,

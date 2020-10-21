@@ -34,7 +34,7 @@ steps bellow to add it to the repository.
 2.  In order to have changes available without having to re-install the package,
 type in the top level directory:
 
-        python setup.py develop
+        pip install -e .
 
 3.  If at any point you need to re-cythonize (in case you changed a .pyx file
 while developing or the .c files have gone missing) use:
@@ -71,7 +71,7 @@ the following:
                 pytest tests
 
         -   New tests should be put in the `/tests/` directory, and follow
-        standard Python `unittest` naming.
+        standard `pytest` naming.
     -   You should also check your code conforms with standard python style by
         installing `flake8` (use pip). Then from the top level directory,
         
@@ -79,8 +79,10 @@ the following:
     -   Make sure you write proper docstrings following ***Google***
     style. You can just look at other docstrings to see what this looks like,
     but it is also helpful to set up your IDE to help you with this (PyCharm
-    is nice for this). Additionally you can also install `pycodestyle` and run
-    that to make sure everything looks real nice.
+    is nice for this). You should install `pydocstyle` and run it from the top
+    level directory to make sure everything looks real nice.
+    
+                pydocstyle smol
     -   Finally, you are also encouraged to start a pull request before you're
     fully done with your work when you want others to see what you are doing
     and possibly get feedback or comments. If you open a pull request that is a
@@ -89,26 +91,36 @@ the following:
 6. The `experimental` branch is used for new (exciting) features that are not
 fully tested. If you worked on developing something very particular to your own
 use case and you think someone at some point may benefit from it, but it is not
-worth adding to the main code and writing a bunch of tests for it. Admins take
-care of making sure the `experimental` branch is up to date with the underlying
-stable code from the `master` branch.
+worth adding to the main code and writing a bunch of tests for it this is a
+good place for it. Admins take care of making sure the `experimental` branch is
+up to date with the underlying stable code from the `master` branch.
     -   When opening a PR to the `experimental` branch, make sure that you
     very carefully describe your *experimental* features and considering adding
     a little example showing how to use it. This will be very helpful for
     other brave souls that may want to try out your experimental features!
 
-7. If you are working on a large feature then you should consider creating a
-new **feature** branch so that your work can be included in the main repo
-during development (once the feature is ready in can be merged into the
-`develop` branch). This will allow you to work on your own schedule, but also
-allow for suggestions and collaboration with others. To open up a new branch
-contact a repo admin.
+7. If you will working on a large feature you should consider discussing the
+idea with the team first. Then you should consider creating a new **feature**
+branch so that your work can be included in the main repo during development
+(once the feature is ready in can be merged into the `master` branch). This
+will allow you to work on your own schedule, but also allow for suggestions
+and collaboration with others. To open up a new branch contact a repo admin.
     -   You need to tell the admin creating the name for your feature branch.
     Make sure this is a descriptive name so it is obvious to others what the
     branch is for.
     -   You can (and should) open many PRs to the feature branch as you are
     developing the necessary code. These PRs do not need anything special you
     are free to organize them however you see fit.
+    - As you work on your feature make sure you follow updates on the
+    `master` branch as closely as possible by doing appropariate
+    fast-forward merges.
+    - If you are working on a feature which needs changes or updates of any
+    existing code please discuss this with the author before doing changes
+    and adding work on those changes. This makes mergine larger features
+    a whole lot easier.
+    - If your feature needs another package that is not currently a requirement
+    make sure to run it by @lbluque before putting in too much work. In most
+    cases additional dependencies will not be accepted.
     -   When you think the code for the the branch is ready and well tested
     with its corresponding unit tests, then it can be merged into the `master`
     branch to become part of the main code. This requires a PR from the feature
@@ -116,3 +128,23 @@ contact a repo admin.
     necessary.
     -   Once the feature branch has been merged to the `master` branch it will
     be deleted.
+ 
+ ### A note on style
+ Keeping the coding style consistently clean makes using the code and further
+ development a whole lot easier. When writing new code please look at existing
+ code and do your best to follow the current coding style.
+ [PEP8](https://www.python.org/dev/peps/pep-0008/) everywhere please.
+ Also look into the
+ [google style guide](https://google.github.io/styleguide/pyguide.html)
+ (although everything in there is not strictly done here, it is a good guiding
+ document).
+ Name your variables, functions and classes with a descriptive name; and use
+ abbreviations sparingly and make it *very obvious* what the abbrevation
+ means. All new public classes and functions must have detailed docstring
+ following
+ [google style docstrings](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html)
+ (private objects should still have a docstring but get a bit more slack).
+ Doing this allows to easily keep the autogenerated documentation clean and up
+ to date.
+ Making sure all of the above is done continuously during development keeps the
+ code in good shape for developers and users alike.
