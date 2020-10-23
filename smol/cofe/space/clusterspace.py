@@ -840,7 +840,10 @@ class ClusterSubspace(MSONable):
         if not all(isinstance(t1, type(t2)) for t1, t2 in
                    zip(other.external_terms, self.external_terms)):
             return False
-        return all(o1 == o2 for o1, o2 in zip(other.orbits, self.orbits))
+        # there may be a more robuse way to check the bases arrays are
+        # equivalent even if sites/functions are in different order
+        return all(o1 == o2 and np.array_equal(o1.bases_array, o2.bases_array)
+                   for o1, o2 in zip(other.orbits, self.orbits))
 
     def __len__(self):
         """Get number of correlation functions in the subspace."""
