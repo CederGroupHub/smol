@@ -1,22 +1,30 @@
 import unittest
 from collections import OrderedDict
 import numpy as np
+import numpy.testing as npt
 from numpy.polynomial.chebyshev import chebval
 from numpy.polynomial.legendre import legval
+from pymatgen import Composition
+from smol.cofe.space import domain
 from smol.cofe.space import basis
+from tests.utils import assert_msonable
 
 
 # TODO add test for out-of-box basis not orthogonal with non-uniform measure
 class TestBasis(unittest.TestCase):
     def setUp(self) -> None:
-        self.site_space = OrderedDict((('A', 0.25), ('B', 0.25),
-                                       ('C', 0.25), ('D', 0.25)))
+        comp = Composition((('A', 0.25), ('B', 0.25),
+                           ('C', 0.25), ('D', 0.25)))
+        self.site_space = domain.SiteSpace(comp)
 
-    def _test_basis_measure_warn(self, basis_iterator):
+    def _test_basis_measure_raise(self, basis_iterator):
         species = tuple(self.site_space.keys())
-        self.site_space['C'] = 0.8
-        with self.assertWarns(RuntimeWarning):
-            b = basis.SiteBasis(self.site_space, basis_iterator(species))
+        comp = Composition((('A', 0.25), ('B', 0.25),
+                            ('C', 0.8), ('D', 0.25)))
+
+        with self.assertRaises(ValueError):
+            site_space = domain.SiteSpace(comp)
+            b = basis.SiteBasis(site_space, basis_iterator(species))
 
     def _test_measure(self, basis_iterator):
         species = tuple(self.site_space.keys())
@@ -34,7 +42,7 @@ class TestBasis(unittest.TestCase):
         for i in range(n):
             self.assertEqual(b.function_array[i, i], 1)
 
-        self._test_basis_measure_warn(basis.IndicatorIterator)
+        self._test_basis_measure_raise(basis.IndicatorIterator)
         self._test_measure(basis.IndicatorIterator)
 
         b.orthonormalize()
@@ -53,10 +61,10 @@ class TestBasis(unittest.TestCase):
             for i, _ in enumerate(self.site_space):
                 self.assertEqual(b.function_array[n-1, i], f(i))
 
-        self._test_basis_measure_warn(basis.SinusoidIterator)
+        self._test_basis_measure_raise(basis.SinusoidIterator)
         self._test_measure(basis.SinusoidIterator)
         b = basis.SiteBasis(self.site_space, basis.SinusoidIterator(species))
-        self.assertFalse(b.is_orthogonal)
+        self.assertTrue(b.is_orthogonal)
         b.orthonormalize()
         self.assertTrue(b.is_orthonormal)
 
@@ -78,7 +86,7 @@ class TestBasis(unittest.TestCase):
                 self.assertEqual(b.function_array[n, sp],
                                  chebval(x, c=coeffs[::-1]))
 
-        self._test_basis_measure_warn(basis.ChebyshevIterator)
+        self._test_basis_measure_raise(basis.ChebyshevIterator)
         self._test_measure(basis.ChebyshevIterator)
         b = basis.SiteBasis(self.site_space, basis.ChebyshevIterator(species))
         self.assertFalse(b.is_orthogonal)
@@ -103,7 +111,7 @@ class TestBasis(unittest.TestCase):
                 self.assertEqual(b.function_array[n, sp],
                                  legval(x, c=coeffs[::-1]))
 
-        self._test_basis_measure_warn(basis.LegendreIterator)
+        self._test_basis_measure_raise(basis.LegendreIterator)
         self._test_measure(basis.LegendreIterator)
 
         b = basis.SiteBasis(self.site_space, basis.LegendreIterator(species))
@@ -123,3 +131,15 @@ class TestBasis(unittest.TestCase):
         species = {'A': .1, 'B': .1, 'C': .1}
         basis_iter = basis.SinusoidIterator(tuple(species.keys()))
         self.assertRaises(TypeError, basis.SiteBasis, species, basis_iter)
+
+    def test_msonable(self):
+        species = tuple(self.site_space.keys())
+        b = basis.SiteBasis(self.site_space, basis.SinusoidIterator(species))
+        self.assertTrue(b.is_orthogonal)
+        b.orthonormalize()
+        self.assertTrue(b.is_orthonormal)
+        assert_msonable(b)
+        b1 = basis.SiteBasis.from_dict(b.as_dict())
+        self.assertTrue(b1.is_orthonormal)
+        npt.assert_array_equal(b.function_array, b1.function_array)
+        npt.assert_array_equal(b.orthonormalization_array, b1.orthonormalization_array)
