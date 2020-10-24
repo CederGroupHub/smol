@@ -465,8 +465,8 @@ class TestClusterSubSpace(unittest.TestCase):
 
     def test_msonable(self):
         # get corr for a few supercells to cache their orbit indices
-        struct = Structure(self.lattice, ['Li+',]*2 + ['Ca+'] + ['Br-'],
-                              self.coords)
+        struct = Structure(self.lattice, ['Li+', ] * 2 + ['Ca+'] + ['Br-'],
+                           self.coords)
         struct1 = struct.copy()
         struct1.make_supercell(2)
         struct2 = struct1.copy()
@@ -476,6 +476,7 @@ class TestClusterSubSpace(unittest.TestCase):
         for s in (struct, struct1, struct2):  # run this to cache orb indices
             _ = self.cs.corr_from_structure(s)
         self.assertNotEqual(len(self.cs._supercell_orb_inds), 0)
+
         d = self.cs.as_dict()
         cs = ClusterSubspace.from_dict(d)
         self.assertEqual(cs.as_dict(), d)
@@ -494,6 +495,15 @@ class TestClusterSubSpace(unittest.TestCase):
                 self.assertTrue(np.array_equal(orb_inds1[1], orb_inds2[1]))
         self.assertTrue(np.array_equal(self.cs.corr_from_structure(struct2),
                                        cs.corr_from_structure(struct2)))
+        # Check orthonormalization is kept
+        self.cs.change_site_bases('indicator', orthonormal=True)
+        d = self.cs.as_dict()
+        cs = ClusterSubspace.from_dict(d)
+        self.assertEqual(cs.as_dict(), d)
+        self.assertTrue(cs.basis_orthonormal)
+        self.assertTrue(np.array_equal(self.cs.corr_from_structure(struct2),
+                                       cs.corr_from_structure(struct2)))
+
         # Check external terms are kept
         self.cs.add_external_term(EwaldTerm(eta=3))
         d = self.cs.as_dict()

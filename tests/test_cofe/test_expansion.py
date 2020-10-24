@@ -19,7 +19,7 @@ class TestClusterExpansionBinary(unittest.TestCase):
         self.sw = StructureWrangler(cs)
         data = synthetic_CE_binary['data']
         train_ids = np.random.choice(range(len(data)), size=len(data)//5,
-                                          replace=False)
+                                     replace=False)
         test_ids = np.array(list(set(range(len(data))) - set(train_ids)))
         self.test_structs = [data[i][0] for i in test_ids]
         self.test_energies = np.array([data[i][1] for i in test_ids])
@@ -27,8 +27,8 @@ class TestClusterExpansionBinary(unittest.TestCase):
             struct, energy = data[i]
             self.sw.add_data(struct, {'energy': energy})
         coefs = np.linalg.lstsq(self.sw.feature_matrix,
-                               self.sw.get_property_vector('energy', True),
-                               rcond=None)[0]
+                                self.sw.get_property_vector('energy', True),
+                                rcond=None)[0]
         self.ce = ClusterExpansion(cs, coefs, self.sw.feature_matrix)
 
     def test_predict_train(self):
