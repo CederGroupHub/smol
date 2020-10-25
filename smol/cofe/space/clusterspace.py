@@ -242,6 +242,11 @@ class ClusterSubspace(MSONable):
                    site_matcher=site_matcher, **matcher_kwargs)
 
     @property
+    def basis_type(self):
+        """Get the type of site basis set used."""
+        return self.orbits[0].basis_type
+
+    @property
     def structure(self):
         """Get the underlying primitive structure including inactive sites."""
         return self._structure

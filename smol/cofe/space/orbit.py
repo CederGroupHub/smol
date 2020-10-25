@@ -97,6 +97,11 @@ class Orbit(MSONable):
         self.lattice = lattice
 
     @property
+    def basis_type(self):
+        """Return the name of basis set used."""
+        return self.site_bases[0].flavor
+
+    @property
     def multiplicity(self):
         """Get number of clusters in orbit.
 
