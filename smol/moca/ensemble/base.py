@@ -108,10 +108,7 @@ class Ensemble(ABC):
     #  all sites are included.
     @property
     def sublattices(self):
-        """Get names of sublattices.
-
-        Useful if allowing flips only from certain sublattices is needed.
-        """
+        """Get list of sublattices included in ensemble."""
         return self._sublattices
 
     @property

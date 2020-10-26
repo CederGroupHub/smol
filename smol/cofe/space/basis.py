@@ -17,12 +17,13 @@ import numpy as np
 from numpy.polynomial.polynomial import polyval
 from numpy.polynomial.chebyshev import chebval
 from numpy.polynomial.legendre import legval
+from monty.json import MSONable
 
 from .domain import SiteSpace
 from smol.utils import derived_class_factory
 
 
-class SiteBasis:
+class SiteBasis(MSONable):
     r"""Class that represents the basis for a site function space.
 
     Note that all SiteBasis in theory have the first basis function
@@ -71,13 +72,13 @@ class SiteBasis:
         func_arr = np.array([[function(sp) for sp in self.species]
                              for function in basis_functions])
         # stack the constant basis function on there for proper normalization
-        self._func_arr = np.vstack((np.ones_like(func_arr[0]), func_arr))
+        self._f_array = np.vstack((np.ones_like(func_arr[0]), func_arr))
         self._r_array = None  # array from QR in basis orthonormalization
 
     @property
     def function_array(self):
         """Get array with the non-constant site functions as rows."""
-        return self._func_arr[1:]
+        return self._f_array[1:]
 
     @property
     def measure_array(self):
@@ -113,8 +114,8 @@ class SiteBasis:
     def is_orthogonal(self):
         """Test if the basis is orthogonal."""
         # add the implicit 0th function
-        prods = np.dot(np.dot(self.measure_array, self._func_arr.T).T,
-                       self._func_arr.T)
+        prods = np.dot(np.dot(self.measure_array, self._f_array.T).T,
+                       self._f_array.T)
         d_terms = all(not np.isclose(prods[i, i], 0)
                       for i in range(prods.shape[0]))
         x_terms = all(np.isclose(prods[i, j], 0)
@@ -126,8 +127,8 @@ class SiteBasis:
     @property
     def is_orthonormal(self):
         """Test if the basis is orthonormal."""
-        prods = np.dot(np.dot(self.measure_array, self._func_arr.T).T,
-                       self._func_arr.T)
+        prods = np.dot(np.dot(self.measure_array, self._f_array.T).T,
+                       self._f_array.T)
         identity = np.eye(*prods.shape)
         return np.allclose(identity, prods)
 
@@ -142,9 +143,9 @@ class SiteBasis:
         Due to how the func_arr is saved (rows are vectors/functions) this
         allows us to not sprinkle so many transposes.
         """
-        Q = np.zeros_like(self._func_arr)
-        R = np.zeros_like(self._func_arr)
-        V = self._func_arr.copy()
+        Q = np.zeros_like(self._f_array)
+        R = np.zeros_like(self._f_array)
+        V = self._f_array.copy()
         n = V.shape[0]
         for i, phi in enumerate(V):
             R[i, i] = np.sqrt(np.dot(self.measure_vector*phi, phi))
@@ -153,7 +154,39 @@ class SiteBasis:
             V[i+1:n] = V[i+1:n] - np.outer(R[i, i+1:n], Q[i])
 
         self._r_array = R
-        self._func_arr = Q
+        self._f_array = Q
+
+    def as_dict(self) -> dict:
+        """Get MSONable dict representation."""
+        d = {"@module": self.__class__.__module__,
+             "@class": self.__class__.__name__,
+             "site_space": self._domain.as_dict(),
+             "flavor": self.flavor,
+             "func_array": self._f_array.tolist(),
+             "orthonorm_array": None if self._r_array is None else self._r_array.tolist()  # noqa
+             }
+        return d
+
+    @classmethod
+    def from_dict(cls, d):
+        """Create a SiteSpace from dict representation.
+
+        Args:
+            d (dict):
+                MSONable dict representation
+        Returns:
+            SiteBasis
+        """
+        site_space = SiteSpace.from_dict(d['site_space'])
+        # Only using indicator iterator as a proxy to
+        # initialiaze class any other iterator would do. Perhaps a cleaner
+        # solution would be to allow initialization without an iterator...
+        site_basis = cls(site_space,
+                         IndicatorIterator(tuple(site_space.keys())))
+        site_basis.flavor = d['flavor']
+        site_basis._f_array = np.array(d['func_array'])
+        site_basis._r_array = np.array(d['orthonorm_array'])
+        return site_basis
 
 
 class BasisIterator(Iterator):

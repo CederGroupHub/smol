@@ -17,7 +17,7 @@ from smol.utils import _repr
 from smol.exceptions import SymmetryError, SYMMETRY_ERROR_MESSAGE
 from .constants import SITE_TOL
 from .cluster import Cluster
-from .basis import basis_factory, SiteSpace
+from .basis import basis_factory, SiteBasis
 
 
 class Orbit(MSONable):
@@ -95,6 +95,11 @@ class Orbit(MSONable):
         # Create basecluster
         self.base_cluster = Cluster(sites, lattice)
         self.lattice = lattice
+
+    @property
+    def basis_type(self):
+        """Return the name of basis set used."""
+        return self.site_bases[0].flavor
 
     @property
     def multiplicity(self):
@@ -340,9 +345,7 @@ class Orbit(MSONable):
         """Create Orbit from serialized MSONable dict."""
         structure_symops = [SymmOp.from_dict(so_d)
                             for so_d in d['structure_symops']]
-        site_bases = [(flav, SiteSpace.from_dict(space)) for flav, space in
-                      d['site_bases']]
-        site_bases = [basis_factory(*sb_d) for sb_d in site_bases]
+        site_bases = [SiteBasis.from_dict(sd) for sd in d['site_bases']]
         return cls(d['sites'], Lattice.from_dict(d['lattice']),
                    d['bits'], site_bases, structure_symops)
 
@@ -357,8 +360,7 @@ class Orbit(MSONable):
              "sites": self.base_cluster.sites.tolist(),
              "lattice": self.lattice.as_dict(),
              "bits": self.bits,
-             "site_bases": [(sb.flavor, sb.site_space.as_dict())
-                            for sb in self.site_bases],
+             "site_bases": [sb.as_dict() for sb in self.site_bases],
              "structure_symops": [so.as_dict() for so in self.structure_symops]
              }
         return d

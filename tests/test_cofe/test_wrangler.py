@@ -3,6 +3,7 @@ import json
 from copy import deepcopy
 
 import numpy as np
+import numpy.testing as npt
 from smol.cofe import (StructureWrangler, ClusterSubspace,
                        weights_energy_above_hull,
                        weights_energy_above_composition)
@@ -38,6 +39,21 @@ class TestStructureWrangler(unittest.TestCase):
             self.assertTrue(len(struct) <= len(occu))  # < with vacancies
             self.assertTrue(size*num_prim_sits, len(occu))
 
+    def test_get_gram_matrix(self):
+        G = self.sw.get_gram_matrix()
+        self.assertEqual(G.shape, 2*(self.sw.num_features, ))
+        npt.assert_array_equal(G, G.T)
+        npt.assert_array_almost_equal(np.ones(G.shape[0]), G.diagonal())
+
+        rows = np.random.choice(range(self.sw.num_structures),
+                                self.sw.num_structures - 2)
+        cols = np.random.choice(range(self.sw.num_features),
+                                self.sw.num_features - 4)
+        G = self.sw.get_gram_matrix(rows=rows, cols=cols, normalize=False)
+        self.assertEqual(G.shape, 2 * (self.sw.num_features - 4,))
+        npt.assert_array_equal(G, G.T)
+        self.assertFalse(np.allclose(np.ones(G.shape[0]), G.diagonal()))
+
     def test_matrix_properties(self):
         self.assertGreaterEqual(self.sw.get_condition_number(), 1)
         rows = np.random.choice(range(self.sw.num_structures), 16)
@@ -45,8 +61,8 @@ class TestStructureWrangler(unittest.TestCase):
         self.assertGreaterEqual(self.sw.get_condition_number(), 1)
         self.assertGreaterEqual(self.sw.get_condition_number(rows, cols), 1)
         print(self.sw.feature_matrix.shape)
-        self.assertGreaterEqual(self.sw.get_matrix_rank(rows, cols),
-                                self.sw.get_matrix_rank(cols=cols[:-4]))
+        self.assertGreaterEqual(self.sw.get_feature_matrix_rank(rows, cols),
+                                self.sw.get_feature_matrix_rank(cols=cols[:-4]))
 
     def test_add_data(self):
         # Check that a structure that does not match raises error.
@@ -191,6 +207,13 @@ class TestStructureWrangler(unittest.TestCase):
                          dup_item["properties"])
         self.assertEqual(self.sw.get_duplicate_corr_inds(),
                          [[ind, self.sw.num_structures - 1]])
+
+    def test_get_constant_features(self):
+        ind = np.random.randint(1, self.sw.num_features)
+        for item in self.sw.data_items:
+            item["features"][ind] = 3.0  # make constant
+        self.assertTrue(ind in self.sw.get_constant_features())
+        self.assertTrue(0 not in self.sw.get_constant_features())
 
     def test_msonable(self):
         self.sw.metadata['key'] = 4
