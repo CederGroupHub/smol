@@ -178,7 +178,9 @@ class SiteBasis(MSONable):
             SiteBasis
         """
         site_space = SiteSpace.from_dict(d['site_space'])
-        # Could be cleaner
+        # Only using indicator iterator as a proxy to
+        # initialiaze class any other iterator would do. Perhaps a cleaner
+        # solution would be to allow initialization without an iterator...
         site_basis = cls(site_space,
                          IndicatorIterator(tuple(site_space.keys())))
         site_basis.flavor = d['flavor']
