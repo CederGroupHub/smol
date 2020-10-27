@@ -182,7 +182,7 @@
 <dl class="py exception">
 <dt id="smol.exceptions.NotFittedError">
 <em class="property">exception </em><code class="sig-name descname">NotFittedError</code><a class="headerlink" href="#smol.exceptions.NotFittedError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeError</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeError</span></code></a></p>
 <p>Exception class to raise if learn is used before fitting.</p>
 <p>This class inherits from both ValueError and AttributeError to help with
 exception handling and backward compatibility.</p>
@@ -191,14 +191,14 @@ exception handling and backward compatibility.</p>
 <dl class="py exception">
 <dt id="smol.exceptions.StructureMatchError">
 <em class="property">exception </em><code class="sig-name descname">StructureMatchError</code><a class="headerlink" href="#smol.exceptions.StructureMatchError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></a></p>
 <p>Raised when a pymatgen StructureMatcher returns None.</p>
 </dd></dl>
 
 <dl class="py exception">
 <dt id="smol.exceptions.SymmetryError">
 <em class="property">exception </em><code class="sig-name descname">SymmetryError</code><a class="headerlink" href="#smol.exceptions.SymmetryError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a></p>
 <p>Exception for incompatibility between structure and given symops.</p>
 <p>Exception to raise when symmetry of a structure is not compatible with a
 set of given symops.</p>
@@ -218,7 +218,7 @@ it easier to translate work.</p>
 <dd><p>Load a dictionary and instantiate the MSONable objects.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – </p>
+<dd class="field-odd"><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – </p>
 </dd>
 </dl>
 <dl class="simple">
@@ -237,7 +237,7 @@ expansion and/or monte carlo run as a json dictionary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – file path</p></li>
+<li><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – file path</p></li>
 <li><p><strong>*msonables</strong> (<em>monty.MSONable</em>) – MSONable child classes.</p></li>
 </ul>
 </dd>
@@ -250,12 +250,12 @@ expansion and/or monte carlo run as a json dictionary.</p>
 <p>A few random utilities that have no place to go.</p>
 <dl class="py function">
 <dt id="smol.utils.derived_class_factory">
-<code class="sig-name descname">derived_class_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">class_name</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span></em>, <em class="sig-param"><span class="n">base_class</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)">object</a></span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)">object</a><a class="headerlink" href="#smol.utils.derived_class_factory" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">derived_class_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">class_name</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">base_class</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)">object</a></span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)">object</a><a class="headerlink" href="#smol.utils.derived_class_factory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an instance of derived class from a given basis class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>class_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – name of class</p></li>
+<li><p><strong>class_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – name of class</p></li>
 <li><p><strong>base_class</strong> (<em>obect</em>) – base class of derived class sought</p></li>
 <li><p><strong>*args</strong> – positional arguments for class constructor</p></li>
 <li><p><strong>**kwargs</strong> – keyword arguments for class constructor</p></li>
@@ -265,14 +265,14 @@ expansion and/or monte carlo run as a json dictionary.</p>
 <dd class="field-even"><p>instance of class with corresponding constructor args, kwargs</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)">object</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)">object</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="smol.utils.get_subclasses">
-<code class="sig-name descname">get_subclasses</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_class</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)">object</a></span></em><span class="sig-paren">)</span> &#x2192; Dict<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a><span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)">object</a><span class="p">]</span><a class="headerlink" href="#smol.utils.get_subclasses" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_subclasses</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_class</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)">object</a></span></em><span class="sig-paren">)</span> &#x2192; Dict<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)">object</a><span class="p">]</span><a class="headerlink" href="#smol.utils.get_subclasses" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all non-abstract subclasses of a class.</p>
 <p>Gets all non-abstract classes that inherit from the given base class in
 a module. This is used to obtain all the available basis functions.</p>
@@ -287,9 +287,9 @@ does nothing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>display</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If true a real progress bar will be returned.</p></li>
-<li><p><strong>total</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The total size of the progress bar.</p></li>
-<li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Description to print in progress bar.</p></li>
+<li><p><strong>display</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – If true a real progress bar will be returned.</p></li>
+<li><p><strong>total</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The total size of the progress bar.</p></li>
+<li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Description to print in progress bar.</p></li>
 </ul>
 </dd>
 </dl>

@@ -11,17 +11,7 @@
    "cell_type": "code",
    "execution_count": 1,
    "metadata": {},
-   "outputs": [
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "/home/lbluque/Develop/pymatgen/pymatgen/ext/matproj.py:454: DeprecationWarning: __init__ is deprecated\n",
-      "MaterialsProjectCompatibility will be updated with new correction classes as well as new values of corrections and uncertainties in 2020\n",
-      "  def get_pourbaix_entries(self, chemsys, solid_compat=MaterialsProjectCompatibility()):\n"
-     ]
-    }
-   ],
+   "outputs": [],
    "source": [
     "import numpy as np\n",
     "import json\n",
@@ -59,7 +49,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 9,
+   "execution_count": 3,
    "metadata": {},
    "outputs": [
     {
@@ -70,11 +60,11 @@
       "The ensemble has a total of 64 sites.\n",
       "The active sublattices are:\n",
       "Sublattice\n",
-      " Site space: {Specie Ni3+: 0.5, Specie Ni4+: 0.5}\n",
+      " Site space: {Species Ni3+: 0.5, Species Ni4+: 0.5}\n",
       " Number of sites: 16\n",
       "\n",
       "Sublattice\n",
-      " Site space: {Specie Li+: 0.5, Vacancy vacA0+: 0.5}\n",
+      " Site space: {Species Li+: 0.5, Vacancy vacA0+: 0.5}\n",
       " Number of sites: 16\n",
       "\n"
      ]
@@ -92,8 +82,7 @@
     "# this convenience method will take care of creating the appropriate\n",
     "# processor for the given cluster expansion.\n",
     "ensemble = CanonicalEnsemble.from_cluster_expansion(expansion,\n",
-    "                                                    sc_matrix,\n",
-    "                                                    temperature=500)\n",
+    "                                                    sc_matrix)\n",
     "\n",
     "# In a real scenario you may want a much larger processor.size\n",
     "# An MC step is O(1) with the processor.size, meaning it runs at\n",
@@ -116,14 +105,14 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 10,
+   "execution_count": 4,
    "metadata": {},
    "outputs": [
     {
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "Sampler information: {'name': 'CanonicalEnsemble', 'seed': 9966374208986999509}\n"
+      "Sampling information: {'name': 'CanonicalEnsemble', 'kernel': 'Metropolis', 'step': 'swap', 'seed': 1999690849404472642}\n"
      ]
     }
    ],
@@ -132,7 +121,8 @@
     "\n",
     "# This will take care of setting the defaults\n",
     "# for the supplied canonical ensemble\n",
-    "sampler = Sampler.from_ensemble(ensemble)\n",
+    "sampler = Sampler.from_ensemble(ensemble,\n",
+    "                                temperature=1500)\n",
     "\n",
     "print(f\"Sampling information: {sampler.samples.metadata}\")"
    ]
@@ -147,7 +137,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 11,
+   "execution_count": 5,
    "metadata": {},
    "outputs": [
     {
@@ -176,7 +166,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 14,
+   "execution_count": 6,
    "metadata": {},
    "outputs": [
     {
@@ -187,7 +177,7 @@
       "[0 1 1 0 0 0 1 0 0 1 0 1 1 1 1 0 0 0 1 1 1 1 0 1 0 0 1 0 0 0 1 1 0 0 0 0 0\n",
       " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n",
       "The initial occupancy is:\n",
-      " [Specie Li+, Vacancy vacA0+, Vacancy vacA0+, Specie Li+, Specie Li+, Specie Li+, Vacancy vacA0+, Specie Li+, Specie Li+, Vacancy vacA0+, Specie Li+, Vacancy vacA0+, Vacancy vacA0+, Vacancy vacA0+, Vacancy vacA0+, Specie Li+, Specie Ni3+, Specie Ni3+, Specie Ni4+, Specie Ni4+, Specie Ni4+, Specie Ni4+, Specie Ni3+, Specie Ni4+, Specie Ni3+, Specie Ni3+, Specie Ni4+, Specie Ni3+, Specie Ni3+, Specie Ni3+, Specie Ni4+, Specie Ni4+, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-]\n"
+      " [Species Li+, Vacancy vacA0+, Vacancy vacA0+, Species Li+, Species Li+, Species Li+, Vacancy vacA0+, Species Li+, Species Li+, Vacancy vacA0+, Species Li+, Vacancy vacA0+, Vacancy vacA0+, Vacancy vacA0+, Vacancy vacA0+, Species Li+, Species Ni3+, Species Ni3+, Species Ni4+, Species Ni4+, Species Ni4+, Species Ni4+, Species Ni3+, Species Ni4+, Species Ni3+, Species Ni3+, Species Ni4+, Species Ni3+, Species Ni3+, Species Ni3+, Species Ni4+, Species Ni4+, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-]\n"
      ]
     }
    ],
@@ -214,14 +204,14 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 25,
+   "execution_count": 7,
    "metadata": {},
    "outputs": [
     {
      "name": "stderr",
      "output_type": "stream",
      "text": [
-      "Sampling 1 chain(s) at 500.00 K from a cell with 64 sites.: 100%|██████████| 1000000/1000000 [01:55<00:00, 8692.58it/s]\n"
+      "Sampling 1 chain(s) at 1500.00 K from a cell with 64 sites: 100%|██████████| 1000000/1000000 [01:50<00:00, 9069.45it/s]\n"
      ]
     }
    ],
@@ -236,16 +226,16 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 26,
+   "execution_count": 8,
    "metadata": {},
    "outputs": [
     {
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "Fraction of succesfull steps (efficiency) 0.017744\n",
-      "The last step energy is -552.013699333985 eV\n",
-      "The minimum energy in trajectory is -552.6314360816023 eV\n"
+      "Fraction of succesfull steps (efficiency) 0.390277\n",
+      "The last step energy is -551.4509466160619 eV\n",
+      "The minimum energy in trajectory is -552.6314360816017 eV\n"
      ]
     }
    ],
@@ -274,7 +264,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 24,
+   "execution_count": 9,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -304,7 +294,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 27,
+   "execution_count": 10,
    "metadata": {},
    "outputs": [
     {
@@ -313,8 +303,8 @@
      "text": [
       "A total of 10000 samples taken.\n",
       "A total of 9000 samples used for production.\n",
-      "The average energy is -552.5540278012116 eV\n",
-      "The energy variance is 0.022199668685381396 eV^2\n"
+      "The average energy is -551.7860869325897 eV\n",
+      "The energy variance is 0.04600543434696906 eV^2\n"
      ]
     }
    ],
@@ -339,7 +329,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 28,
+   "execution_count": 11,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -373,7 +363,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.8.3"
+   "version": "3.8.5"
   }
  },
  "nbformat": 4,

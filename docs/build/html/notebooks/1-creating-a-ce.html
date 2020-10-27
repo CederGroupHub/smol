@@ -352,7 +352,7 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="section" id="Creating-a-basic-Cluster-Expansion">
 <h1>Creating a basic Cluster Expansion<a class="headerlink" href="#Creating-a-basic-Cluster-Expansion" title="Permalink to this headline">¶</a></h1>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
@@ -364,16 +364,6 @@ div.rendered_html tbody tr:hover {
 <span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">ClusterSubspace</span><span class="p">,</span> <span class="n">StructureWrangler</span><span class="p">,</span> <span class="n">ClusterExpansion</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/lbluque/Develop/pymatgen/pymatgen/ext/matproj.py:454: DeprecationWarning: __init__ is deprecated
-MaterialsProjectCompatibility will be updated with new correction classes as well as new values of corrections and uncertainties in 2020
-  def get_pourbaix_entries(self, chemsys, solid_compat=MaterialsProjectCompatibility()):
-</pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
@@ -634,7 +624,7 @@ MAX 0.022826186581731633 eV/prim
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-The predicted energy for a structure with composition Li+2 Ni4+4 Ni3+2 O2-12 is -33.47456260464431 eV/prim.
+The predicted energy for a structure with composition Li+3 Ni3+3 Ni4+3 O2-12 is -34.57411118658173 eV/prim.
 
 The fitted coefficients are:
 [-3.44424307e+01  1.52944807e+00  1.52944807e+00 -7.11937730e-02
@@ -649,7 +639,7 @@ The effective cluster interactions are:
 ClusterExpansion:
     Prim Composition: Li+0.5 Ni3+0.5 Ni4+0.5 O2-2
  Num fit structures: 27
-Num orbit functions: 11
+Num corr functions: 11
     [Orbit]  id: 0
         bit       eci
         [X]       -34.4
@@ -734,7 +724,7 @@ Num orbit functions: 11
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-StructureWrangler: &lt;class &#39;smol.cofe.wrangler.StructureWrangler&#39;&gt;
+StructureWrangler: &lt;class &#39;smol.cofe.wrangling.wrangler.StructureWrangler&#39;&gt;
 
 ClusterExpansion: &lt;class &#39;smol.cofe.expansion.ClusterExpansion&#39;&gt;
 
