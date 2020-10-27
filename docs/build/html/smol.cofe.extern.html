@@ -135,13 +135,13 @@ EwaldSummation. See class documentation for more information.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>eta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Parameter to override the EwaldSummation default screening
+<li><p><strong>eta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Parameter to override the EwaldSummation default screening
 parameter eta. If not given it is determined automatically.</p></li>
-<li><p><strong>real_space_cut</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Real space cutoff radius. Determined automagically if not
+<li><p><strong>real_space_cut</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Real space cutoff radius. Determined automagically if not
 given.</p></li>
-<li><p><strong>recip_space_cut</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Reciprocal space cutoff radius. Determined automagically if not
+<li><p><strong>recip_space_cut</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Reciprocal space cutoff radius. Determined automagically if not
 given.</p></li>
-<li><p><strong>use_term</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – optional
+<li><p><strong>use_term</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – optional
 the Ewald expansion term to use as an additional term in the
 expansion. Options are total, real, reciprocal, point.</p></li>
 </ul>
@@ -149,14 +149,14 @@ expansion. Options are total, real, reciprocal, point.</p></li>
 </dl>
 <dl class="py method">
 <dt id="smol.cofe.extern.ewald.EwaldTerm.as_dict">
-<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a><a class="headerlink" href="#smol.cofe.extern.ewald.EwaldTerm.as_dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a><a class="headerlink" href="#smol.cofe.extern.ewald.EwaldTerm.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>MNSONable dict</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -200,7 +200,7 @@ to the given occupancy.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>occu</strong> (<em>ndarray</em>) – encoded encoded occupancy string</p></li>
-<li><p><strong>num_ewald_sites</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – number of total ewald sites. This is the size of the ewald
+<li><p><strong>num_ewald_sites</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – number of total ewald sites. This is the size of the ewald
 matrix, the sum of the size of all site spaces for all sites
 in the cell.</p></li>
 <li><p><strong>ewald_inds</strong> (<em>ndarray</em>) – ewald indices for the corresponding species in the occupancy
@@ -235,7 +235,7 @@ original structure.</p>
 <dd class="field-even"><p>(Structure, array) structure and indices of sites</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)">tuple</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)">tuple</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -290,13 +290,13 @@ EwaldSummation. See class documentation for more information.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>eta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Parameter to override the EwaldSummation default screening
+<li><p><strong>eta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Parameter to override the EwaldSummation default screening
 parameter eta. If not given it is determined automatically.</p></li>
-<li><p><strong>real_space_cut</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Real space cutoff radius. Determined automagically if not
+<li><p><strong>real_space_cut</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Real space cutoff radius. Determined automagically if not
 given.</p></li>
-<li><p><strong>recip_space_cut</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Reciprocal space cutoff radius. Determined automagically if not
+<li><p><strong>recip_space_cut</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Reciprocal space cutoff radius. Determined automagically if not
 given.</p></li>
-<li><p><strong>use_term</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – optional
+<li><p><strong>use_term</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – optional
 the Ewald expansion term to use as an additional term in the
 expansion. Options are total, real, reciprocal, point.</p></li>
 </ul>
@@ -304,14 +304,14 @@ expansion. Options are total, real, reciprocal, point.</p></li>
 </dl>
 <dl class="py method">
 <dt id="smol.cofe.extern.EwaldTerm.as_dict">
-<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a><a class="headerlink" href="#smol.cofe.extern.EwaldTerm.as_dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a><a class="headerlink" href="#smol.cofe.extern.EwaldTerm.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>MNSONable dict</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -355,7 +355,7 @@ to the given occupancy.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>occu</strong> (<em>ndarray</em>) – encoded encoded occupancy string</p></li>
-<li><p><strong>num_ewald_sites</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – number of total ewald sites. This is the size of the ewald
+<li><p><strong>num_ewald_sites</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – number of total ewald sites. This is the size of the ewald
 matrix, the sum of the size of all site spaces for all sites
 in the cell.</p></li>
 <li><p><strong>ewald_inds</strong> (<em>ndarray</em>) – ewald indices for the corresponding species in the occupancy
@@ -390,7 +390,7 @@ original structure.</p>
 <dd class="field-even"><p>(Structure, array) structure and indices of sites</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)">tuple</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)">tuple</a></p>
 </dd>
 </dl>
 </dd></dl>

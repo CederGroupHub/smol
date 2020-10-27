@@ -11,29 +11,29 @@ Use this section to keep track of changes in the works.
 #### [Full Changelog]()
 ### Added
 * Completely new `smol.moca` module. Design based generally up as follows:
-  -  `Processor` classes used to compute features, properties and their local
+  *  `Processor` classes used to compute features, properties and their local
   changes from site flips for fixed supercell sizes.
-     - `CEProcessor` to handle cluster expansions.
-     - `EwaldProcessor` to handle Ewald electrostatic energy.
-     - `CompositeProcessor` to mix energy models. Currently only the ones above.
-  - `Ensemble` classes to represent the corresponding statistical ensemble
+     * `CEProcessor` to handle cluster expansions.
+     * `EwaldProcessor` to handle Ewald electrostatic energy.
+     * `CompositeProcessor` to mix energy models. Currently only the ones above.
+  * `Ensemble` classes to represent the corresponding statistical ensemble
   (probability space). These classes no longer run monte carlo, they only
   compute the corresponding relative Boltzman probabilities. 
-     - `CanonicalEnsemble` for fixed compositions.
-     - `MuSemigrandEnsemble` for fixed chemical potentials.
-     - `FuSemigrandEnsemble` for fixed fugacity fractions.
-  - `Sublattice` class to encapsulate previous implementation using
+     * `CanonicalEnsemble` for fixed compositions.
+     * `MuSemigrandEnsemble` for fixed chemical potentials.
+     * `FuSemigrandEnsemble` for fixed fugacity fractions.
+  * `Sublattice` class to encapsulate previous implementation using
   dictionaries.
-  - `Sampler` class to run MCMC trajectories based on the given kernel using
+  * `Sampler` class to run MCMC trajectories based on the given kernel using
   a specific ensemble. [\#80](https://github.com/CederGroupHub/smol/pull/80)
   ([lbluque](https://github.com/lbluque))
-  - `MCMCKernel` classes used to implement specific MCMC algorithms.
+  * `MCMCKernel` classes used to implement specific MCMC algorithms.
      `Metropolis` currently only kernel implemented to run single site
      Metropolis random walk.
-  - `MCMCUsher` classes to handle specific MCMC step proposals (i.e. single 
+  * `MCMCUsher` classes to handle specific MCMC step proposals (i.e. single 
   swaps, to preseve composition, single flips, single constrained flips,
   multisite flips, local flips, etc).
-  - `SampleContainer` class to hold MCMC samples and pertinent information for
+  * `SampleContainer` class to hold MCMC samples and pertinent information for
   post-processing and analysis (improvement on previous implementation using
   lists).
 * `smol.moca` unit-tests all now using `pytestst` instead of `unittest`.
@@ -81,6 +81,9 @@ function iterator for specific basis sets.
 crystallographic symmetry multiplicity and function decoration multiplicity.
 (credits to [qchempku2017](https://github.com/qchempku2017) for pointing this
 out.)
+* Fixed MSONable serialization of cluster subspaces with orthonormal basis sets
+by making `SiteBasis` MSONable and saving corresponding arrays.
+[\#90](https://github.com/CederGroupHub/smol/pull/90)
 
 
 ## [v0.0.0](https://github.com/CederGroupHub/smol/tree/v0.0.0) (2020-10-8)
