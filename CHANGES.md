@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 
-## [v1.0.0]() (2020-10-8)
+## [v1.0.0]() (2020-10-27)
 #### [Full Changelog](https://github.com/CederGroupHub/smol/compare/v0.0.0...v1.0.0)
 ### Added
 * Completely new `smol.moca` module. Design based generally up as follows:
