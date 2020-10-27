@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Use this section to keep track of changes in the works.
 
 ## [v1.0.0]() (2020-10-8)
-#### [Full Changelog]()
+#### [Full Changelog](https://github.com/CederGroupHub/smol/compare/v0.0.0...v1.0.0)
 ### Added
 * Completely new `smol.moca` module. Design based generally up as follows:
   *  `Processor` classes used to compute features, properties and their local
