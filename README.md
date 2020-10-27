@@ -10,7 +10,7 @@ Lighthweight but caffeinated Python implementations of computational methods
 for statistical mechanical calculations of configurational states for
 crystalline material systems.
 
-**Documentation (requires lbl vpn): http://amox.lbl.gov/smol**
+**Documentation (requires lbl vpn): <http://amox.lbl.gov/smol>**
 
 #### Installing & Running
 1.  `Clone` the repository.

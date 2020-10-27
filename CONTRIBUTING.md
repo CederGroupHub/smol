@@ -27,7 +27,7 @@ writing new code that you think will improve `smol` then please follow the
 steps bellow to add it to the repository. 
 
 1.  `Fork` the repository and then `clone` your fork to your local workspace.
-    1. You should always keep your `master` branch up to date with the main
+    You should always keep your `master` branch up to date with the main
     repository `master` branch. Be good about doing *fast forward* merges of
     the main `master` into your `master` branch while developing.
 
@@ -45,14 +45,14 @@ while developing or the .c files have gone missing) use:
 work to the main repository for others to see. All these require you to open a
 ***pull request*** to a specific branch in the main repo. If you are not sure
 were your work should go please ask one of the repo administrators.
-    1. For short and concise additions (such as single new methods, bug fixes
-    and small edits) open a PR to the `master` branch.
-    2. For more involved work in developing complex functionality, consider
-    opening a new *feature* branch for your work that will eventually be merged
-    into the `master` branch once all your work is ready.
-    3. For small, but very specific or niche features; such that they are very
-    "experimental" but are not general enough to or easy to add robust testing
-    for open a PR to the `experimental` branch.
+   1. For short and concise additions (such as single new methods, bug fixes
+   and small edits) open a PR to the `master` branch.
+   2. For more involved work in developing complex functionality, consider
+   opening a new *feature* branch for your work that will eventually be merged
+   into the `master` branch once all your work is ready.
+   3. For small, but very specific or niche features; such that they are very
+   "experimental" but are not general enough to or easy to add robust testing
+   for open a PR to the `experimental` branch.
 
 5. Since the `master` branch is reserved only for the most stable version of
 the code, any new features should come with new unit-tests. Every so often a
