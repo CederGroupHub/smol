@@ -7,6 +7,7 @@ __author__ = 'Fengyu Xie'
 import numpy as np
 from itertools import combinations
 from functools import reduce
+import math
 
 def GCD(a,b):
     """ The Euclidean Algorithm, giving positive GCD's """
@@ -120,15 +121,6 @@ def combinatorial_number(n,m):
     m,n: 
         integers.
     """
-    if n<0 or m<0:
-        raise ValueError('No negative integers allowed in combinatorics.')
-    numerator = 1
-    denominator = 1
-    for i in range(1,m+1):
-        numerator = numerator*(n-m+i)
-        denominator = denominator*i
-
-    return numerator//denominator
 
 def get_integer_grid(subspc_normv,right_side=0,limiters=None):
     """
