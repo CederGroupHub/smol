@@ -110,8 +110,8 @@ You can find more in-depth and advanced usage examples in the
 ==============
 Recent Changes
 ==============
-You can find updates and the most recent chagnes in the
-`changelog <https://github.com/CederGroupHub/smol/blob/master/CHANGES.md>`_.
+You can find updates and the most recent changes in the
+`Changelog <https://github.com/CederGroupHub/smol/blob/master/CHANGES.md>`_.
 
 =====================
 Help, Issues, Support
