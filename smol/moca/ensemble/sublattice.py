@@ -61,6 +61,7 @@ class Sublattice(MSONable):
         self.sites = sites
         self.site_space = site_space
         self.active_sites = sites.copy()
+        self.restricted_sites = []
 
     @property
     def species(self):
@@ -71,19 +72,29 @@ class Sublattice(MSONable):
     def encoding(self):
         """Get the encoding for the allowed species."""
         return list(range(len(self.site_space)))
-    
+
     @property
     def restricted_sites(self):
+        """Get restricted sites for species."""
+        return np.setdiff1d(self.sites, self.active_sites)
+
+    def restrict_sites(self, sites):
+        """Restricts (freezes) the given sites.
+
+        Args:
+            sites (Sequence):
+                indices of sites in the occupancy string to restrict.
         """
-        Get the sites which species cannot occupy, i.e.
-        set difference between sites and active sites.
-        """
-        return np.setdiff1d(self.sites, self.active_sites) 
+        self.active_sites = np.array([i for i in self.active_sites
+                                      if i not in sites])
+        self.restricted_sites += [i for i in sites
+                                  if i not in self.restricted_sites]
 
     def reset_restricted_sites(self):
         """Reset all restricted sites to active."""
         self.active_sites = self.sites.copy()
-        
+        self.restricted_sites = []
+
     def __str__(self):
         """Pretty print the sublattice species."""
         string = f'Sublattice\n Site space: {dict(self.site_space)}\n'
@@ -131,5 +142,4 @@ class Sublattice(MSONable):
         sublattice = cls(OrderedDict(site_space),
                          sites=np.array(d['sites']))
         sublattice.active_sites = np.array(d['active_sites'])
-        sublattice.restricted_sites = d['restricted_sites']
         return sublattice
