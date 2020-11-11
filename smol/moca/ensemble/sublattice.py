@@ -46,10 +46,6 @@ class Sublattice(MSONable):
         array of site indices for all sites in sublattice
      active_sites (ndarray):
         array of site indices for all unrestricted sites in the sublattice.
-     restricted_sites (ndarray):
-        list of site indices for all restricted sites in the sublattice.
-        restricted sites are excluded from flip proposals.
-
     """
 
     def __init__(self, site_space, sites):
@@ -65,7 +61,6 @@ class Sublattice(MSONable):
         self.sites = sites
         self.site_space = site_space
         self.active_sites = sites.copy()
-        self.restricted_sites = []
 
     @property
     def species(self):
@@ -76,24 +71,19 @@ class Sublattice(MSONable):
     def encoding(self):
         """Get the encoding for the allowed species."""
         return list(range(len(self.site_space)))
-
-    def restrict_sites(self, sites):
-        """Restricts (freezes) the given sites.
-
-        Args:
-            sites (Sequence):
-                indices of sites in the occupancy string to restrict.
+    
+    @property
+    def restricted_sites(self):
         """
-        self.active_sites = np.array([i for i in self.active_sites
-                                      if i not in sites])
-        self.restricted_sites += [i for i in sites
-                                  if i not in self.restricted_sites]
+        Get the sites which species cannot occupy, i.e.
+        set difference between sites and active sites.
+        """
+        return np.setdiff1d(self.sites, self.active_sites) 
 
     def reset_restricted_sites(self):
         """Reset all restricted sites to active."""
         self.active_sites = self.sites.copy()
-        self.restricted_sites = []
-
+        
     def __str__(self):
         """Pretty print the sublattice species."""
         string = f'Sublattice\n Site space: {dict(self.site_space)}\n'
@@ -115,8 +105,7 @@ class Sublattice(MSONable):
         d = {'site_space': tuple((s.as_dict(), m)
                                  for s, m in self.site_space.items()),
              'sites': self.sites.tolist(),
-             'active_sites': self.active_sites.tolist(),
-             'restricted_sites': self.restricted_sites}
+             'active_sites': self.active_sites.tolist()}
         return d
 
     @classmethod
