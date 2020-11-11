@@ -1,11 +1,13 @@
 import unittest
+from collections import OrderedDict
 from itertools import combinations_with_replacement
 import json
 import numpy as np
-from pymatgen import Lattice, Structure
+from pymatgen import Lattice, Structure, Composition
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-from smol.cofe.configspace import Orbit, Cluster
-from smol.cofe.configspace.basis import basis_factory
+from smol.cofe.space import Orbit, Cluster
+from smol.cofe.space.basis import basis_factory
+from smol.cofe.space.domain import SiteSpace
 
 
 class TestOrbit(unittest.TestCase):
@@ -13,13 +15,13 @@ class TestOrbit(unittest.TestCase):
         self.lattice = Lattice([[3, 3, 0], [0, 3, 3], [3, 0, 3]])
         species = [{'Li': 0.1, 'Ca': 0.1}] * 3 + ['Br']
         self.coords = ((0.25, 0.25, 0.25), (0.75, 0.75, 0.75),
-                  (0.5, 0.5, 0.5), (0, 0, 0))
+                       (0.5, 0.5, 0.5), (0, 0, 0))
         structure = Structure(self.lattice, species, self.coords)
         sf = SpacegroupAnalyzer(structure)
         self.symops = sf.get_symmetry_operations()
-        self.bits = [['Li', 'Ca', 'Vacancy'],
-                    ['Li', 'Ca', 'Vacancy']]
-        self.bases = [basis_factory('indicator', bit) for bit in self.bits]
+        self.spaces = [SiteSpace(Composition({'Li': 1.0 / 3.0, 'Ca': 1.0 / 3.0})),
+                       SiteSpace(Composition({'Li': 1.0 / 3.0, 'Ca': 1.0 / 3.0}))]
+        self.bases = [basis_factory('indicator', bit) for bit in self.spaces]
         self.basecluster = Cluster(self.coords[:2], self.lattice)
         self.orbit = Orbit(self.coords[:2], self.lattice, [[0, 1], [0, 1]],
                            self.bases, self.symops)
@@ -40,10 +42,6 @@ class TestOrbit(unittest.TestCase):
         for cluster in self.orbit.clusters[1:]:
             self.assertNotEqual(self.orbit.base_cluster, cluster)
 
-    def test_size(self):
-        self.assertEqual(self.orbit.size, self.basecluster.size)
-        self.assertEqual(len(self.orbit), len(self.basecluster))
-
     def test_multiplicity(self):
         self.assertEqual(self.orbit.multiplicity, 4)
 
@@ -60,11 +58,11 @@ class TestOrbit(unittest.TestCase):
 
     def test_bit_combos(self):
         # orbit with two symmetrically equivalent sites
-        self.assertEqual(self.orbit.n_bit_orderings, 3)
+        self.assertEqual(len(self.orbit), 3)
         orbit = Orbit(self.coords[1:3], self.lattice, [[0, 1], [0, 1]],
                       self.bases, self.symops)
         # orbit with two symmetrically distinct sites
-        self.assertEqual(orbit.n_bit_orderings, 4)
+        self.assertEqual(len(orbit), 4)
 
     def test_is_orthonormal(self):
         self.assertFalse(self.orbit.basis_orthogonal)
@@ -78,7 +76,7 @@ class TestOrbit(unittest.TestCase):
         self.assertTrue(orbit1.basis_orthonormal)
 
     def _test_eval(self, bases):
-        occu = list(range(len(self.bits[0])))
+        occu = list(range(len(self.spaces[0])))
         for s1, s2 in combinations_with_replacement(occu, 2):
             for i, j in combinations_with_replacement([0, 1], 2):
                 self.assertEqual(bases[0].function_array[i, s1]*bases[1].function_array[j, s2],
@@ -115,18 +113,19 @@ class TestOrbit(unittest.TestCase):
 
     def test_eval(self):
         # Test cluster function evaluation with indicator basis
-        bases = [basis_factory('indicator', bit) for bit in self.bits]
+        bases = [basis_factory('indicator', bit) for bit in self.spaces]
         self._test_eval(bases)
 
     def test_transform_basis(self):
         for basis in ('sinusoid', 'chebyshev', 'legendre'):
             self.orbit.transform_site_bases(basis)
-            bases = [basis_factory(basis, bit) for bit in self.bits]
+            bases = [basis_factory(basis, bit) for bit in self.spaces]
             self._test_eval(bases)
 
     def test_exceptions(self):
         self.assertRaises(AttributeError, Orbit, self.coords[:3],
-                          self.lattice, [[0, 1], [0, 1]], self.bases, self.symops)
+                          self.lattice, [[0, 1], [0, 1]], self.bases,
+                          self.symops)
         self.assertRaises(RuntimeError, self.orbit.remove_bit_combos_by_inds,
                           [4])
 
@@ -139,5 +138,6 @@ class TestOrbit(unittest.TestCase):
     def test_msonable(self):
         d = self.orbit.as_dict()
         self.assertEqual(self.orbit, Orbit.from_dict(d))
+        # test serialization
         j = json.dumps(d)
         json.loads(j)

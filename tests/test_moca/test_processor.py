@@ -1,319 +1,220 @@
-import unittest
-import json
+import pytest
 import numpy as np
-from pymatgen.transformations.standard_transformations import \
-    OrderDisorderedStructureTransformation
-from smol.moca import CEProcessor, EwaldCEProcessor
-from smol.cofe import ClusterExpansion, StructureWrangler, ClusterSubspace
+import numpy.testing as npt
+from tests.utils import assert_msonable, gen_random_occupancy
 from smol.cofe.extern import EwaldTerm
-from tests.data import lno_prim, lno_data
-
-
-# TODO test with all synthetic data binary/ternary/electrostatic
-# TODO check that delta_corr gives same values for random sympos shuffles of same structure
-# TODO check that delta_corr works for all bases and orthonormal combos
+from smol.moca import CEProcessor, EwaldProcessor, CompositeProcessor
+from smol.moca.processor.base import Processor
+from smol.moca.ensemble.sublattice import get_sublattices
 
 RTOL = 0.0  # relative tolerance to check property change functions
 # absolute tolerance to check property change functions (eps is approx 2E-16)
-ATOL = 4E2 * np.finfo(float).eps
-EWALD_ATOL = 9 * ATOL  # ewald term has higher drift
-DRIFT_TOL = np.finfo(float).eps  # tolerance of average drift
-
-# Note that for delta_corr_ewald the forward and back check is not strictly
-# equal but close to within the above tolerances. If energy drift is ever
-# suspected start by looking at the delta_corr_ewald
+ATOL = 2E4 * np.finfo(float).eps
+DRIFT_TOL = 10 * np.finfo(float).eps  # tolerance of average drift
 
 
-class TestCEProcessor(unittest.TestCase):
-    def setUp(self) -> None:
-        cs = ClusterSubspace.from_radii(lno_prim, {2: 5, 3: 4.1},
-                                         ltol=0.15, stol=0.2,
-                                         angle_tol=5,
-                                         supercell_size='O2-',
-                                         basis='sinusoid',
-                                         orthonormal=True,
-                                         use_concentration=True)
-        self.sw = StructureWrangler(cs)
-        for struct, energy in lno_data:
-            self.sw.add_data(struct, {'energy': energy})
-        ecis = np.linalg.lstsq(self.sw.feature_matrix,
-                               self.sw.get_property_vector('energy', True),
-                               rcond=None)[0]
-        self.ce = ClusterExpansion(cs, ecis, self.sw.feature_matrix)
-        scmatrix = np.array([[3, 0, 0],
-                             [0, 2, 0],
-                             [0, 0, 1]])
-        self.pr = CEProcessor(self.ce, scmatrix)
-
-        # create a test structure
-        test_struct = lno_prim.copy()
-        test_struct.replace_species({"Li+": {"Li+": 2},
-                                     "Ni3+": {"Ni3+": 2},
-                                     "Ni4+": {"Ni4+": 0}})
-        test_struct.make_supercell(scmatrix)
-        ro = {"Li+": {"Li+": 0.5},
-              "Ni3+": {"Ni3+": .35, "Ni4+": 1 - .35}}
-        test_struct.replace_species(ro)
-        order = OrderDisorderedStructureTransformation(algo=2)
-        test_struct = order.apply_transformation(test_struct)
-        self.test_struct = test_struct
-        self.test_occu = self.ce.cluster_subspace.occupancy_from_structure(test_struct,
-                                                                           scmatrix=scmatrix)
-        self.enc_occu = self.pr.occupancy_from_structure(test_struct)
-        self.sublattices = []
-        for space in self.pr.unique_site_spaces:
-            sites = np.array([i for i, b in enumerate(self.pr.allowed_species)
-                              if b == list(space.keys())])
-            self.sublattices.append({'spaces': list(range(len(space))),
-                                     'sites': sites})
-
-    def test_compute_property(self):
-        self.assertTrue(np.isclose(self.ce.predict(self.test_struct),
-                         self.pr.compute_property(self.enc_occu)))
-
-    def test_compute_correlation(self):
-        self.assertTrue(np.allclose(self.ce.cluster_subspace.corr_from_structure(self.test_struct),
-                                    self.pr.compute_correlation(self.enc_occu)))
-
-    def test_compute_property_change(self):
-        occu = self.enc_occu.copy()
-        for _ in range(50):
-            sublatt = np.random.choice(self.sublattices)
-            site = np.random.choice(sublatt['sites'])
-            new_sp = np.random.choice(sublatt['spaces'])
-            new_occu = occu.copy()
-            new_occu[site] = new_sp
-            prop_f = self.pr.compute_property(new_occu)
-            prop_i = self.pr.compute_property(occu)
-            dprop = self.pr.compute_property_change(occu, [(site, new_sp)])
-            # Check with some tight tolerances.
-            self.assertTrue(np.allclose(dprop, prop_f - prop_i,
-                                        rtol=RTOL, atol=ATOL))
-            # Test reverse matches forward
-            old_sp = occu[site]
-            rdprop = self.pr.compute_property_change(new_occu, [(site,
-                                                                 old_sp)])
-            self.assertEqual(dprop, -1*rdprop)
-
-    def test_encode_property(self):
-        enc_occu = self.pr.encode_occupancy(self.test_occu)
-        self.assertTrue(all(o1 == o2 for o1, o2 in zip(self.enc_occu,
-                                                       enc_occu)))
-
-    def test_decode_property(self):
-        occu = self.pr.decode_occupancy(self.enc_occu)
-        self.assertTrue(all(o1 == o2 for o1, o2 in zip(self.test_occu,
-                                                       occu)))
-
-    def test_delta_corr(self):
-        occu = self.enc_occu.copy()
-        for _ in range(50):
-            sublatt = np.random.choice(self.sublattices)
-            site = np.random.choice(sublatt['sites'])
-            new_sp = np.random.choice(sublatt['spaces'])
-            new_occu = occu.copy()
-            new_occu[site] = new_sp
-            # Test forward
-            dcorr = self.pr._delta_corr([(site, new_sp)], occu)
-            corr_f = self.pr.compute_correlation(new_occu)
-            corr_i = self.pr.compute_correlation(occu)
-
-            self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
-                                        rtol=RTOL, atol=ATOL))
-            # Test reverse matches forward
-            old_sp = occu[site]
-            rdcorr = self.pr._delta_corr([(site, old_sp)], new_occu)
-            self.assertTrue(np.array_equal(dcorr, -1*rdcorr))
-
-    def test_delta_corr_indicator(self):
-        cs = self.ce.cluster_subspace.copy()
-        cs.change_site_bases('indicator')
-        sw = StructureWrangler(cs)
-        for struct, energy, matrix in zip(self.sw.structures,
-                                  self.sw.get_property_vector('energy'),
-                                  self.sw.supercell_matrices):
-            sw.add_data(struct, {'energy': energy}, supercell_matrix=matrix)
-
-        ecis = np.linalg.lstsq(sw.feature_matrix,
-                               sw.get_property_vector('energy', True),
-                               rcond=None)[0]
-        ce = ClusterExpansion(cs, ecis, sw.feature_matrix)
-        pr = CEProcessor(ce, self.pr.supercell_matrix, optimize_indicator=True)
-        occu = self.enc_occu.copy()
-        for _ in range(50):
-            sublatt = np.random.choice(self.sublattices)
-            site = np.random.choice(sublatt['sites'])
-            new_sp = np.random.choice(sublatt['spaces'])
-            new_occu = occu.copy()
-            new_occu[site] = new_sp
-            # Test forward
-            dcorr = pr._delta_corr([(site, new_sp)], occu)
-            corr_f = pr.compute_correlation(new_occu)
-            corr_i = pr.compute_correlation(occu)
-            self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
-                                        rtol=RTOL, atol=ATOL))
-            # Test reverse matches forward
-            old_sp = occu[site]
-            rdcorr = pr._delta_corr([(site, old_sp)], new_occu)
-            self.assertTrue(np.allclose(dcorr, -1 * rdcorr,
-                                        rtol=RTOL, atol=ATOL))
-
-    def test_get_average_drift(self):
-        forward, reverse = self.pr.get_average_drift()
-        self.assertTrue(forward <= DRIFT_TOL and reverse <= DRIFT_TOL)
-
-    def test_structure_from_occupancy(self):
-        # The structures do pass as equal by direct == comparison, but as long
-        # as the correlation vectors and predicted energy are the same we
-        # should be all good.
-        test_struct = self.pr.structure_from_occupancy(self.enc_occu)
-        self.assertTrue(np.allclose(self.ce.cluster_subspace.corr_from_structure(test_struct),
-                                    self.ce.cluster_subspace.corr_from_structure(self.test_struct)))
-        self.assertEqual(self.ce.predict(test_struct, normalize=True),
-                         self.ce.predict(self.test_struct, normalize=True))
-
-    def test_msonable(self):
-        d = self.pr.as_dict()
-        pr = CEProcessor.from_dict(d)
-        self.assertEqual(pr.as_dict(), d)
-        self.assertEqual(self.pr.compute_property(self.enc_occu),
-                         pr.compute_property(self.enc_occu))
-        j = json.dumps(d)
-        _ = json.loads(j)
+@pytest.fixture
+def ce_processor(cluster_subspace):
+    coefs = 2 * np.random.random(cluster_subspace.num_corr_functions)
+    scmatrix = 3 * np.eye(3)
+    return CEProcessor(cluster_subspace, supercell_matrix=scmatrix,
+                       coefficients=coefs)
 
 
-class TestEwaldCEProcessor(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.cs = ClusterSubspace.from_radii(lno_prim, {2: 5, 3: 4.1},
-                                            basis='sinusoid',
-                                            orthonormal=True,
-                                            use_concentration=True,
-                                            ltol=0.15, stol=0.2,
-                                            angle_tol=5,
-                                            supercell_size='O2-')
-        cls.sw = StructureWrangler(cls.cs)
-        for struct, energy in lno_data:
-            cls.sw.add_data(struct, {'energy': energy})
-
-        # create a test structure
-        test_struct = lno_prim.copy()
-        test_struct.replace_species({"Li+": {"Li+": 2},
-                                     "Ni3+": {"Ni3+": 2},
-                                     "Ni4+": {"Ni4+": 0}})
-        cls.scmatrix = np.array([[3, 0, 0],
-                                 [0, 2, 0],
-                                 [0, 0, 1]])
-        test_struct.make_supercell(cls.scmatrix)
-        ro = {"Li+": {"Li+": 0.5},
-              "Ni3+": {"Ni3+": .35, "Ni4+": 1 - .35}}
-        test_struct.replace_species(ro)
-        order = OrderDisorderedStructureTransformation(algo=2)
-        cls.test_struct = order.apply_transformation(test_struct)
-        cls.test_occu = cls.cs.occupancy_from_structure(cls.test_struct,
-                                                        scmatrix=cls.scmatrix)
-
-        # create sublattices
-        cls.sublattices = []
-        pr = CEProcessor(ClusterExpansion(cls.cs, np.empty(1), np.empty((1, 1))),
-                         cls.scmatrix)
-        for doms in pr.unique_site_spaces:
-            sites = np.array([i for i, b in enumerate(pr.allowed_species)
-                              if b == list(doms.keys())])
-            cls.sublattices.append({'spaces': list(range(len(doms))),
-                                    'sites': sites})
-
-    def setUp(self):
-        self.setUpCE()
-
-    def tearDown(self) -> None:
-        self.cs._external_terms = []
-
-    def setUpCE(self, term='total') -> None:
-        self.cs.add_external_term(EwaldTerm(use_term=term))
-        self.sw.update_features()
-        ecis = np.linalg.lstsq(self.sw.feature_matrix,
-                               self.sw.get_property_vector('energy', True),
-                               rcond=None)[0]
-        self.ce = ClusterExpansion(self.cs, ecis, self.sw.feature_matrix)
-
-        self.pr = EwaldCEProcessor(self.ce, self.scmatrix)
-        self.enc_occu = self.pr.occupancy_from_structure(self.test_struct)
-
-    def test_compute_property_change(self):
-        occu = self.enc_occu.copy()
-        for _ in range(50):
-            sublatt = np.random.choice(self.sublattices)
-            site = np.random.choice(sublatt['sites'])
-            new_sp = np.random.choice(sublatt['spaces'])
-            new_occu = occu.copy()
-            new_occu[site] = new_sp
-            prop_f = self.pr.compute_property(new_occu)
-            prop_i = self.pr.compute_property(occu)
-            dprop = self.pr.compute_property_change(occu, [(site, new_sp)])
-            self.assertTrue(np.isclose(dprop, prop_f - prop_i,
-                                       rtol=RTOL, atol=EWALD_ATOL))
-            # Test reverse matches forward
-            old_sp = occu[site]
-            rdprop = self.pr.compute_property_change(new_occu, [(site,
-                                                                 old_sp)])
-            self.assertTrue(np.isclose(dprop, -1.0 * rdprop,
-                                       rtol=RTOL, atol=EWALD_ATOL))
-
-    def test_delta_corr(self):
-        occu = self.enc_occu.copy()
-        for _ in range(50):
-            sublatt = np.random.choice(self.sublattices)
-            site = np.random.choice(sublatt['sites'])
-            new_sp = np.random.choice(sublatt['spaces'])
-            new_occu = occu.copy()
-            new_occu[site] = new_sp
-            # Test forward
-            dcorr = self.pr._delta_corr([(site, new_sp)], occu)
-            corr_f = self.pr.compute_correlation(new_occu)
-            corr_i = self.pr.compute_correlation(occu)
-            self.assertTrue(np.allclose(dcorr, corr_f - corr_i,
-                                        rtol=RTOL, atol=ATOL))
-            # Test reverse matches forward
-            old_sp = occu[site]
-            rdcorr = self.pr._delta_corr([(site, old_sp)], new_occu)
-            self.assertTrue(np.allclose(dcorr, -1 * rdcorr,
-                                        rtol=RTOL, atol=ATOL))
-
-    def test_get_average_drift(self):
-        forward, reverse = self.pr.get_average_drift()
-        self.assertTrue(forward <= DRIFT_TOL and reverse <= DRIFT_TOL)
-
-    def test_msonable(self):
-        d = self.pr.as_dict()
-        pr = EwaldCEProcessor.from_dict(d)
-        self.assertEqual(self.pr.compute_property(self.enc_occu),
-                         pr.compute_property(self.enc_occu))
-        self.assertTrue(np.array_equal(self.pr.ewald_matrix,
-                                       pr.ewald_matrix))
-        j = json.dumps(d)
-        _ = json.loads(j)
+@pytest.fixture(params=['real', 'reciprocal', 'point'])
+def ewald_processor(cluster_subspace, request):
+    coef = np.random.random(1)
+    scmatrix = 3 * np.eye(3)
+    ewald_term = EwaldTerm(use_term=request.param)
+    return EwaldProcessor(cluster_subspace, supercell_matrix=scmatrix,
+                          coefficient=coef, ewald_term=ewald_term)
 
 
-class TestEwaldCEProcessorReal(TestEwaldCEProcessor):
-    def setUp(self):
-        self.setUpCE(term='real')
-
-    def tearDown(self) -> None:
-        self.cs._external_terms = []
-
-
-class TestEwaldCEProcessorRecip(TestEwaldCEProcessor):
-    def setUp(self):
-        self.setUpCE(term='reciprocal')
-
-    def tearDown(self) -> None:
-        self.cs._external_terms = []
+@pytest.fixture
+def composite_processor(cluster_subspace):
+    coefs = 2 * np.random.random(cluster_subspace.num_corr_functions + 1)
+    scmatrix = 3 * np.eye(3)
+    ewald_term = EwaldTerm()
+    cluster_subspace.add_external_term(ewald_term)
+    proc = CompositeProcessor(cluster_subspace, supercell_matrix=scmatrix)
+    proc.add_processor(CEProcessor(cluster_subspace, scmatrix,
+                                   coefficients=coefs[:-1]))
+    proc.add_processor(EwaldProcessor(cluster_subspace, scmatrix, ewald_term,
+                                      coefficient=coefs[-1]))
+    return proc
 
 
-class TestEwaldCEProcessorPoint(TestEwaldCEProcessor):
-    def setUp(self):
-        self.setUpCE(term='point')
+# General tests for all processors
+# Currently being done only on composites because I can not for the life of
+# me figure out a clean way to parametrize with parametrized fixtures or use a
+# fixture union from pytest_cases that works.
+def test_encode_decode_property(composite_processor):
+    occu = gen_random_occupancy(get_sublattices(composite_processor),
+                                composite_processor.num_sites)
+    decoccu = composite_processor.decode_occupancy(occu)
+    for species, space in zip(decoccu, composite_processor.allowed_species):
+        assert species in space
+    npt.assert_equal(occu, composite_processor.encode_occupancy(decoccu))
 
-    def tearDown(self) -> None:
-        self.cs._external_terms = []
+
+def test_get_average_drift(composite_processor):
+    forward, reverse = composite_processor.compute_average_drift()
+    assert forward <= DRIFT_TOL and reverse <= DRIFT_TOL
+
+
+def test_compute_property_change(composite_processor):
+    sublattices = get_sublattices(composite_processor)
+    occu = gen_random_occupancy(sublattices, composite_processor.num_sites)
+    for _ in range(100):
+        sublatt = np.random.choice(sublattices)
+        site = np.random.choice(sublatt.sites)
+        new_sp = np.random.choice(sublatt.encoding)
+        new_occu = occu.copy()
+        new_occu[site] = new_sp
+        prop_f = composite_processor.compute_property(new_occu)
+        prop_i = composite_processor.compute_property(occu)
+        dprop = composite_processor.compute_property_change(occu, [(site, new_sp)])
+        # Check with some tight tolerances.
+        npt.assert_allclose(dprop, prop_f - prop_i, rtol=RTOL, atol=ATOL)
+        # Test reverse matches forward
+        old_sp = occu[site]
+        rdprop = composite_processor.compute_property_change(new_occu, [(site, old_sp)])
+        assert dprop == -1 * rdprop
+
+
+# TODO implement these
+def test_structure_from_occupancy():
+    pass
+
+
+def test_occupancy_from_structure():
+    pass
+
+
+def test_compute_feature_change(composite_processor):
+    sublattices = get_sublattices(composite_processor)
+    occu = gen_random_occupancy(sublattices, composite_processor.num_sites)
+    composite_processor.cluster_subspace.change_site_bases('indicator')
+    for _ in range(100):
+        sublatt = np.random.choice(sublattices)
+        site = np.random.choice(sublatt.sites)
+        new_sp = np.random.choice(sublatt.encoding)
+        new_occu = occu.copy()
+        new_occu[site] = new_sp
+        prop_f = composite_processor.compute_property(new_occu)
+        prop_i = composite_processor.compute_property(occu)
+        dprop = composite_processor.compute_property_change(occu, [(site, new_sp)])
+        # Check with some tight tolerances.
+        npt.assert_allclose(dprop, prop_f - prop_i, rtol=RTOL, atol=ATOL)
+        # Test reverse matches forward
+        old_sp = occu[site]
+        rdprop = composite_processor.compute_property_change(new_occu, [(site, old_sp)])
+        assert dprop == -1 * rdprop
+
+
+def test_compute_property(composite_processor):
+    occu = gen_random_occupancy(get_sublattices(composite_processor),
+                                composite_processor.num_sites)
+    struct = composite_processor.structure_from_occupancy(occu)
+    pred = np.dot(composite_processor.coefs,
+                  composite_processor.cluster_subspace.corr_from_structure(struct, False))
+    assert composite_processor.compute_property(occu) == pytest.approx(pred, abs=ATOL)
+
+
+def test_msonable(composite_processor):
+    occu = gen_random_occupancy(get_sublattices(composite_processor),
+                                composite_processor.num_sites)
+    d = composite_processor.as_dict()
+    pr = Processor.from_dict(d)
+    assert composite_processor.compute_property(occu) == pr.compute_property(occu)
+    # send in pr bc composite_processor is scoped for function and new random
+    # coefficients will be created.
+    assert_msonable(pr)
+
+
+# CEProcessor only tests
+def test_compute_feature_vector(ce_processor):
+    occu = gen_random_occupancy(get_sublattices(ce_processor),
+                                ce_processor.num_sites)
+    struct = ce_processor.structure_from_occupancy(occu)
+    # same as normalize=False in corr_from_structure
+    npt.assert_allclose(ce_processor.compute_feature_vector(occu) / ce_processor.size,
+                        ce_processor.cluster_subspace.corr_from_structure(struct))
+
+
+def test_feature_change_indictator(cluster_subspace):
+    coefs = 2 * np.random.random(cluster_subspace.num_corr_functions)
+    scmatrix = 4 * np.eye(3)
+    cluster_subspace.change_site_bases('indicator')
+    proc = CEProcessor(cluster_subspace, supercell_matrix=scmatrix,
+                       coefficients=coefs)
+    sublattices = get_sublattices(proc)
+    occu = gen_random_occupancy(sublattices, proc.num_sites)
+    for _ in range(100):
+        sublatt = np.random.choice(sublattices)
+        site = np.random.choice(sublatt.sites)
+        new_sp = np.random.choice(sublatt.encoding)
+        new_occu = occu.copy()
+        new_occu[site] = new_sp
+        prop_f = proc.compute_property(new_occu)
+        prop_i = proc.compute_property(occu)
+        dprop = proc.compute_property_change(occu, [(site, new_sp)])
+        # Check with some tight tolerances.
+        npt.assert_allclose(dprop, prop_f - prop_i, rtol=RTOL, atol=ATOL)
+        # Test reverse matches forward
+        old_sp = occu[site]
+        rdprop = proc.compute_property_change(new_occu, [(site, old_sp)])
+        assert dprop == -1 * rdprop
+
+
+def test_bad_coef_length(cluster_subspace):
+    coefs = np.random.random(cluster_subspace.num_corr_functions - 1)
+    with pytest.raises(ValueError):
+        CEProcessor(cluster_subspace, 5*np.eye(3), coefficients=coefs)
+
+
+def test_bad_composite(cluster_subspace):
+    coefs = 2 * np.random.random(cluster_subspace.num_corr_functions)
+    scmatrix = 3 * np.eye(3)
+    proc = CompositeProcessor(cluster_subspace, supercell_matrix=scmatrix)
+    with pytest.raises(AttributeError):
+        proc.add_processor(CompositeProcessor(cluster_subspace,
+                                              supercell_matrix=scmatrix))
+    with pytest.raises(ValueError):
+        proc.add_processor(CEProcessor(cluster_subspace, 2 * scmatrix,
+                                   coefficients=coefs))
+    with pytest.raises(ValueError):
+        new_cs = cluster_subspace.copy()
+        new_cs.change_site_bases("chebyshev")
+        proc.add_processor(CEProcessor(new_cs, scmatrix, coefficients=coefs))
+    with pytest.raises(ValueError):
+        new_cs = cluster_subspace.copy()
+        ids = range(1, new_cs.num_corr_functions)
+        new_cs.remove_orbit_bit_combos(np.random.choice(ids, size=10))
+        proc.add_processor(CEProcessor(new_cs, scmatrix, coefficients=coefs))
+
+# Ewald only tests, these are basically copy and paste from above
+# read comment on parametrizing :(
+def test_get_average_drift(ewald_processor):
+    forward, reverse = ewald_processor.compute_average_drift()
+    assert forward <= DRIFT_TOL and reverse <= DRIFT_TOL
+
+
+def test_compute_property_change(ewald_processor):
+    sublattices = get_sublattices(ewald_processor)
+    occu = gen_random_occupancy(sublattices, ewald_processor.num_sites)
+    for _ in range(100):
+        sublatt = np.random.choice(sublattices)
+        site = np.random.choice(sublatt.sites)
+        new_sp = np.random.choice(sublatt.encoding)
+        new_occu = occu.copy()
+        new_occu[site] = new_sp
+        prop_f = ewald_processor.compute_property(new_occu)
+        prop_i = ewald_processor.compute_property(occu)
+        dprop = ewald_processor.compute_property_change(occu, [(site, new_sp)])
+        # Check with some tight tolerances.
+        npt.assert_allclose(dprop, prop_f - prop_i, rtol=RTOL, atol=ATOL)
+        # Test reverse matches forward
+        old_sp = occu[site]
+        rdprop = ewald_processor.compute_property_change(new_occu, [(site, old_sp)])
+        assert dprop == -1 * rdprop

@@ -3,6 +3,7 @@ import json
 from copy import deepcopy
 
 import numpy as np
+import numpy.testing as npt
 from smol.cofe import (StructureWrangler, ClusterSubspace,
                        weights_energy_above_hull,
                        weights_energy_above_composition)
@@ -13,9 +14,9 @@ from tests.data import lno_prim, lno_data
 class TestStructureWrangler(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.cs = ClusterSubspace.from_radii(lno_prim, radii={2: 5, 3: 4.1},
-                                            ltol=0.15, stol=0.2,
-                                            angle_tol=5, supercell_size='O2-')
+        cls.cs = ClusterSubspace.from_cutoffs(lno_prim, cutoffs={2: 5, 3: 4.1},
+                                              ltol=0.15, stol=0.2,
+                                              angle_tol=5, supercell_size='O2-')
         cls.sw = StructureWrangler(cls.cs)
 
     def setUp(self):
@@ -28,7 +29,7 @@ class TestStructureWrangler(unittest.TestCase):
 
     def test_properties(self):
         self.assertEqual(self.sw.feature_matrix.shape,
-                         (self.sw.num_structures, self.cs.n_bit_orderings))
+                         (self.sw.num_structures, self.cs.num_corr_functions))
         self.assertEqual(len(self.sw.occupancy_strings),
                          self.sw.num_structures)
         num_prim_sits = len(self.cs.structure)
@@ -38,15 +39,30 @@ class TestStructureWrangler(unittest.TestCase):
             self.assertTrue(len(struct) <= len(occu))  # < with vacancies
             self.assertTrue(size*num_prim_sits, len(occu))
 
+    def test_get_gram_matrix(self):
+        G = self.sw.get_gram_matrix()
+        self.assertEqual(G.shape, 2*(self.sw.num_features, ))
+        npt.assert_array_equal(G, G.T)
+        npt.assert_array_almost_equal(np.ones(G.shape[0]), G.diagonal())
+
+        rows = np.random.choice(range(self.sw.num_structures),
+                                self.sw.num_structures - 2)
+        cols = np.random.choice(range(self.sw.num_features),
+                                self.sw.num_features - 4)
+        G = self.sw.get_gram_matrix(rows=rows, cols=cols, normalize=False)
+        self.assertEqual(G.shape, 2 * (self.sw.num_features - 4,))
+        npt.assert_array_equal(G, G.T)
+        self.assertFalse(np.allclose(np.ones(G.shape[0]), G.diagonal()))
+
     def test_matrix_properties(self):
         self.assertGreaterEqual(self.sw.get_condition_number(), 1)
-        print(self.sw.feature_matrix.shape)
-        rows = np.random.choice(range(self.sw.num_structures), 8)
+        rows = np.random.choice(range(self.sw.num_structures), 16)
         cols = np.random.choice(range(self.sw.num_features), 10)
         self.assertGreaterEqual(self.sw.get_condition_number(), 1)
         self.assertGreaterEqual(self.sw.get_condition_number(rows, cols), 1)
-        self.assertGreaterEqual(self.sw.get_matrix_rank(rows, cols),
-                                self.sw.get_matrix_rank(cols=cols[:-4]))
+        print(self.sw.feature_matrix.shape)
+        self.assertGreaterEqual(self.sw.get_feature_matrix_rank(rows, cols),
+                                self.sw.get_feature_matrix_rank(cols=cols[:-4]))
 
     def test_add_data(self):
         # Check that a structure that does not match raises error.
@@ -184,42 +200,20 @@ class TestStructureWrangler(unittest.TestCase):
         self.assertRaises(AttributeError, self.sw.add_weights, 'test',
                           weights[:-2])
 
-    # TODO write a better test. One that actually checks the structures
-    #  expected to be removed are removed
-    def test_filter_by_ewald(self):
-        len_total = self.sw.num_structures
-        self.sw.filter_by_ewald(1)
-        len_filtered = self.sw.num_structures
-        self.assertNotEqual(len_total, len_filtered)
-        self.assertEqual(self.sw.metadata['applied_filters'][0]['Ewald']['nstructs_removed'],
-                         len_total - len_filtered)
-        self.assertEqual(self.sw.metadata['applied_filters'][0]['Ewald']['nstructs_total'],
-                         len_total)
-
     def test_get_duplicate_corr_inds(self):
         ind = np.random.randint(self.sw.num_structures)
         dup_item = deepcopy(self.sw.data_items[ind])
-        self.sw.data_items.append(dup_item)
+        self.assertWarns(UserWarning, self.sw.add_data, dup_item["structure"],
+                         dup_item["properties"])
         self.assertEqual(self.sw.get_duplicate_corr_inds(),
                          [[ind, self.sw.num_structures - 1]])
 
-    def test_filter_duplicate_corrs(self):
-        dup_items = []
-        for i in range(4):
-            ind = np.random.randint(self.sw.num_structures)
-            dup_item = deepcopy(self.sw.data_items[ind])
-            dup_item['properties']['energy'] = np.inf
-            dup_items.append(dup_item)
-
-        n_before = self.sw.num_structures
-        self.sw._items += dup_items
-
-        self.assertEqual(self.sw.num_structures, n_before + len(dup_items))
-        self.assertTrue(np.inf in self.sw.get_property_vector('energy'))
-        self.sw.filter_duplicate_corrs('energy')
-        print(self.sw.num_structures)
-        self.assertEqual(self.sw.num_structures, n_before)
-        self.assertTrue(np.inf not in self.sw.get_property_vector('energy'))
+    def test_get_constant_features(self):
+        ind = np.random.randint(1, self.sw.num_features)
+        for item in self.sw.data_items:
+            item["features"][ind] = 3.0  # make constant
+        self.assertTrue(ind in self.sw.get_constant_features())
+        self.assertTrue(0 not in self.sw.get_constant_features())
 
     def test_msonable(self):
         self.sw.metadata['key'] = 4

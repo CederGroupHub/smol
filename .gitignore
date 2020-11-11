@@ -50,4 +50,4 @@ Thumbs.db
 .coverage
 .ipynp_checkpoints
 /smol/cofe/debug/*
-*/.ipynb_checkpoints/
+*/.ipynb_checkpoints/*

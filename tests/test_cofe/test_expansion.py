@@ -19,7 +19,7 @@ class TestClusterExpansionBinary(unittest.TestCase):
         self.sw = StructureWrangler(cs)
         data = synthetic_CE_binary['data']
         train_ids = np.random.choice(range(len(data)), size=len(data)//5,
-                                          replace=False)
+                                     replace=False)
         test_ids = np.array(list(set(range(len(data))) - set(train_ids)))
         self.test_structs = [data[i][0] for i in test_ids]
         self.test_energies = np.array([data[i][1] for i in test_ids])
@@ -27,8 +27,8 @@ class TestClusterExpansionBinary(unittest.TestCase):
             struct, energy = data[i]
             self.sw.add_data(struct, {'energy': energy})
         coefs = np.linalg.lstsq(self.sw.feature_matrix,
-                               self.sw.get_property_vector('energy', True),
-                               rcond=None)[0]
+                                self.sw.get_property_vector('energy', True),
+                                rcond=None)[0]
         self.ce = ClusterExpansion(cs, coefs, self.sw.feature_matrix)
 
     def test_predict_train(self):
@@ -66,7 +66,7 @@ class TestClusterExpansionBinary(unittest.TestCase):
         self.assertEqual(len(ce.coefs), len(new_coefs))
         self.assertTrue(np.array_equal(new_coefs, ce.coefs))
         self.assertTrue(np.array_equal(new_eci, ce.eci))
-        self.assertEqual(ce.cluster_subspace.n_orbits, len(new_coefs))
+        self.assertEqual(ce.cluster_subspace.num_orbits, len(new_coefs))
         self.assertEqual(len(ce.eci_orbit_ids), len(new_coefs))
         # check new predictions
         preds = [ce.predict(s, normalize=True) for s in self.sw.structures]
@@ -112,9 +112,9 @@ class TestClusterExpansionEwaldBinary(unittest.TestCase):
 
     def test_ewald_only(self):
         data = self.dataset['ewald_data']
-        cs = ClusterSubspace.from_radii(self.cs.structure,
-                                        radii={2: 0},
-                                        basis='sinusoid')
+        cs = ClusterSubspace.from_cutoffs(self.cs.structure,
+                                          cutoffs={2: 0},
+                                          basis='sinusoid')
         self.assertEqual(len(cs.orbits), 1)
         cs.add_external_term(EwaldTerm())
         ecis = self._test_predictions(cs, data)
