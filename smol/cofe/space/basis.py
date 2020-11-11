@@ -6,10 +6,8 @@ which is defined by the allowed species at the site and their measures, which
 is concentration of the species in the random structure)
 """
 
-__author__ = "Luis Barroso-Luque"
-
 import warnings
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from collections import OrderedDict
 from collections.abc import Iterator
 from functools import partial, wraps
@@ -23,25 +21,23 @@ from .domain import SiteSpace
 from smol.utils import derived_class_factory
 
 
-class SiteBasis(MSONable):
-    r"""Class that represents the basis for a site function space.
+__author__ = "Luis Barroso-Luque"
 
-    Note that all SiteBasis in theory have the first basis function
-    :math:`\phi_0 = 1`, but this should not be defined since it is handled
-    implicitly when computing bit_combos using total no. species - 1 in the
-    Orbit class.
 
-    The particular basis set is set by giving an iterable of basis functions.
-    See BasisIterator classes for details.
+class DiscreteBasis(ABC):
+    """Abstract class to represent a basis set over a discrete finite domain.
+
+    In our case the domain is a site space which can take on values of the
+    allowed species.
     """
 
     def __init__(self, site_space, basis_functions):
         """Initialize a SiteBasis.
 
-        Currently also accepts an OrderedDict but if you find yourself creating
-        one like so for use in production and not debuging know that it will
-        break MSONable methods in classes that use these, and at any point I
-        could change this to not allow OrderedDicts.
+        Currently also accepts an OrderedDict but if you find yourself
+        creating one like so for use in production and not debuging know that
+        it will break MSONable methods in classes that use these, and at any
+        point I could change this to not allow OrderedDicts.
 
         Args:
             site_space (OrderedDict or SiteSpace):
@@ -63,39 +59,17 @@ class SiteBasis(MSONable):
         self.flavor = basis_functions.flavor
         self._domain = site_space
 
-        if not all(sp in site_space for sp in basis_functions.species):
+        if set(site_space) != set(basis_functions.species):
             raise ValueError("Basis function iterator provided does not "
                              f"contain all species {site_space} in the site "
                              "space provided.")
 
-        # exclude the last basis function since the constant phi_0 will
-        # take its place
-        nconst_functions = [function for function in basis_functions][:-1]
-        func_arr = np.array([[function(sp) for sp in self.species]
-                             for function in nconst_functions])
-        # stack the constant basis function on there for proper normalization
-        self._f_array = np.vstack((np.ones_like(func_arr[0]), func_arr))
-        self._r_array = None  # array from QR in basis orthonormalization
+        self._f_array = self._construct_function_array(basis_functions)
 
-    @property
-    def function_array(self):
-        """Get array with the non-constant site functions as rows."""
-        return self._f_array[1:]
-
-    @property
-    def measure_array(self):
-        """Get diagonal array with site species measures."""
-        return np.diag(list(self._domain.values()))
-
-    @property
-    def measure_vector(self):
-        """Get vector of site species measures."""
-        return np.array(list(self._domain.values()))
-
-    @property
-    def orthonormalization_array(self):
-        """Get R array from QR factorization."""
-        return self._r_array
+    @abstractmethod
+    def _construct_function_array(self, basis_functions):
+        """Construct function array with basis functions as rows."""
+        return
 
     @property
     def species(self):
@@ -111,6 +85,75 @@ class SiteBasis(MSONable):
         over which the site functions are defined.
         """
         return self._domain
+
+    @property
+    def function_array(self):
+        """Get function array with site functions as rows."""
+        return self._f_array
+
+    @property
+    def measure_array(self):
+        """Get diagonal array with site species measures."""
+        return np.diag(list(self._domain.values()))
+
+    @property
+    def measure_vector(self):
+        """Get vector of site species measures."""
+        return np.array(list(self._domain.values()))
+
+
+class SiteBasis(DiscreteBasis, MSONable):
+    r"""Class that represents the basis for a site function space.
+
+    Note that all SiteBasis in theory have the first basis function
+    :math:`\phi_0 = 1`, but this should not be defined since it is handled
+    implicitly when computing bit_combos using total no. species - 1 in the
+    Orbit class. As such a SiteBasis as implemented here represents a Standard
+    or Fourier site basis (with the exception of one using indicator functions
+    in which case it can be considered a "cluster site basis" only)
+
+    The particular basis set is set by giving an iterable of basis functions.
+    See BasisIterator classes for details.
+    """
+
+    def __init__(self, site_space, basis_functions):
+        """Initialize a SiteBasis.
+
+        Currently also accepts an OrderedDict but if you find yourself creating
+        one like so for use in production and not debuging know that it will
+        break MSONable methods in classes that use these, and at any point I
+        could change this to not allow OrderedDicts.
+
+        Args:
+            site_space (OrderedDict or SiteSpace):
+                Dict representing site space (Specie, measure) or a SiteSpace
+                object.
+            basis_functions (BasisIterator):
+                A BasisIterator for the nonconstant basis functions. Must take
+                the values of species in the site space as input.
+        """
+        super().__init__(site_space, basis_functions)
+        self._r_array = None  # array from QR in basis orthonormalization
+
+    def _construct_function_array(self, basis_functions):
+        """Construct function array with basis functions as rows."""
+        # exclude the last basis function since the constant phi_0 will
+        # take its place
+        nconst_functions = [function for function in basis_functions][:-1]
+        func_arr = np.array([[function(sp) for sp in self.species]
+                             for function in nconst_functions])
+        # stack the constant basis function on there for proper normalization
+        return np.vstack((np.ones_like(func_arr[0]), func_arr))
+
+    @property
+    def function_array(self):
+        """Get array with the non-constant site functions as rows."""
+        return self._f_array[1:]
+
+    @property
+    def orthonormalization_array(self):
+        """Get R array from QR factorization."""
+        return self._r_array
 
     @property
     def is_orthogonal(self):
@@ -189,6 +232,36 @@ class SiteBasis(MSONable):
         site_basis._f_array = np.array(d['func_array'])
         site_basis._r_array = np.array(d['orthonorm_array'])
         return site_basis
+
+
+class IndicatorBasis(DiscreteBasis):
+    """Class that represents a full indicator basis for a site space.
+
+    This class represents the "trivial" indicator basis, wich includes an
+    indicator function for every species in the site space, and does NOT
+    include a contant function.
+    NOT to be confuse with a cluster indicator basis used for a Cluster
+    Expansion (that is represented in smol by a SiteBasis with a
+    IndicatorIterator).
+
+    @lbluque takes full responsibility for the confusing terminilogy...
+    """
+
+    def __init__(self, site_space):
+        """Initialize an indicator basis for give site space.
+
+        Args:
+            site_space (OrderedDict or SiteSpace):
+                dict representing site space (Specie, measure) or a SiteSpace
+                object.
+        """
+        super().__init__(site_space,
+                         IndicatorIterator(tuple(site_space.keys())))
+
+    def _construct_function_array(self, basis_functions):
+        func_array = np.array([[function(sp) for sp in self.species]
+                               for function in basis_functions])
+        return func_array
 
 
 class BasisIterator(Iterator):
