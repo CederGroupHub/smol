@@ -10,6 +10,7 @@ from smol.cofe.space import basis
 from tests.utils import assert_msonable
 
 
+# TODO change all tests to use SiteSpaces only and not OrderedDicts
 # TODO add test for out-of-box basis not orthogonal with non-uniform measure
 class TestBasis(unittest.TestCase):
     def setUp(self) -> None:

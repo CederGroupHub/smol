@@ -47,9 +47,9 @@ class SiteBasis(MSONable):
             site_space (OrderedDict or SiteSpace):
                 Dict representing site space (Specie, measure) or a SiteSpace
                 object.
-            basis_functions (Sequence like):
-                A Sequence of the nonconstant basis functions. Must take the
-                valuves of species as input.
+            basis_functions (BasisIterator):
+                A BasisIterator for the nonconstant basis functions. Must take
+                the values of species in the site space as input.
         """
         if isinstance(site_space, OrderedDict):
             if not np.allclose(sum(site_space.values()), 1):
@@ -62,15 +62,17 @@ class SiteBasis(MSONable):
 
         self.flavor = basis_functions.flavor
         self._domain = site_space
-        # add non constant basis functions to array
-        if len(basis_functions) != len(self.species) - 1:
-            raise ValueError(f'Must provid {len(self.species) - 1 } total non-'
-                             'constant basis functions.'
-                             f' Got only {len(basis_functions)} basis '
-                             'functions.')
 
+        if not all(sp in site_space for sp in basis_functions.species):
+            raise ValueError("Basis function iterator provided does not "
+                             f"contain all species {site_space} in the site "
+                             "space provided.")
+
+        # exclude the last basis function since the constant phi_0 will
+        # take its place
+        nconst_functions = [function for function in basis_functions][:-1]
         func_arr = np.array([[function(sp) for sp in self.species]
-                             for function in basis_functions])
+                             for function in nconst_functions])
         # stack the constant basis function on there for proper normalization
         self._f_array = np.vstack((np.ones_like(func_arr[0]), func_arr))
         self._r_array = None  # array from QR in basis orthonormalization
@@ -210,12 +212,12 @@ class BasisIterator(Iterator):
             species (tuple):
                 tuple of allowed species in site spaces
         """
-        self.species_iter = iter(species[:-1])  # all but one species iterator
+        self.species_iter = iter(species)
         self.species = species
 
     def __len__(self):
         """Get length of sequence."""
-        return len(self.species) - 1
+        return len(self.species)
 
 
 class IndicatorIterator(BasisIterator):
