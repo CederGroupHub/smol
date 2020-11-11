@@ -116,7 +116,7 @@ class Sublattice(MSONable):
                                  for s, m in self.site_space.items()),
              'sites': self.sites.tolist(),
              'active_sites': self.active_sites.tolist(),
-             'restricted_sites': self.restricted_sites}
+             'restricted_sites': self.restricted_sites.tolist()}
         return d
 
     @classmethod
