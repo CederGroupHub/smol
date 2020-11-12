@@ -1,4 +1,11 @@
-"""Implements the ClusterSubspace class."""
+"""Implementation of ClusterSubspace and related PottsSubspace classes.
+
+The ClusterSubspace class is the workhorse for generating the objects and
+information necessary for a cluster expansion.
+
+The PottsSubspace class is an (experimental) class that is similar, but
+diverges from the CE mathematic formalism.
+"""
 
 from copy import deepcopy
 from importlib import import_module
@@ -17,6 +24,7 @@ from pymatgen.util.coord import \
 from src.mc_utils import corr_from_occupancy
 from smol.cofe.space import \
     Orbit, basis_factory, get_site_spaces, get_allowed_species, Vacancy
+from smol.cofe.space.basis import IndicatorBasis
 from smol.cofe.space.constants import SITE_TOL
 from smol.exceptions import \
     SymmetryError, StructureMatchError, SYMMETRY_ERROR_MESSAGE
@@ -223,7 +231,7 @@ class ClusterSubspace(MSONable):
                 to use a species that has a constant amount per formula unit.
 
         Returns:
-            ClusterSubSpace
+            ClusterSubspace
         """
         # get symmetry operations of prim structure.
         symops = SpacegroupAnalyzer(structure).get_symmetry_operations()
@@ -764,9 +772,10 @@ class ClusterSubspace(MSONable):
             if new_orbit not in new_orbits:
                 new_orbits.append(new_orbit)
 
-        orbits[1] = sorted(new_orbits,
-                           key=lambda x: (np.round(x.base_cluster.diameter, 6),
-                                          -x.multiplicity))
+        orbits[1] = sorted(
+            new_orbits,
+            key=lambda x: (np.round(x.base_cluster.diameter, 6),
+                           -x.multiplicity))
 
         if len(cutoffs) == 0:  # return singlets only if no cutoffs provided
             return orbits
@@ -784,8 +793,8 @@ class ClusterSubspace(MSONable):
                 if orbit.base_cluster.diameter > diameter:
                     continue
                 for fcoord, _, index, _ in all_neighbors:
-                    if is_coord_subset([fcoord], orbit.base_cluster.sites,
-                                       atol=SITE_TOL):
+                    if is_coord_subset(
+                            [fcoord], orbit.base_cluster.sites, atol=SITE_TOL):
                         continue
                     new_sites = np.concatenate(
                         [orbit.base_cluster.sites, [fcoord]])
@@ -804,8 +813,7 @@ class ClusterSubspace(MSONable):
             orbits[size] = sorted(
                 new_orbits,
                 key=lambda x: (np.round(x.base_cluster.diameter, 6),
-                               -x.multiplicity)
-            )
+                               -x.multiplicity))
         return orbits
 
     def _gen_orbit_indices(self, scmatrix):
@@ -941,3 +949,175 @@ class ClusterSubspace(MSONable):
              'external_terms': [et.as_dict() for et in self.external_terms],
              '_supercell_orb_inds': _supercell_orb_inds}
         return d
+
+
+class PottsSubspace(ClusterSubspace):
+    """PottsSubspace represents a subspace of functions using only indicators.
+
+    A PottsSubspace is a related model to a ClusterSubspace. The only
+    difference is that the single site functions for any orbit are only made
+    up of indicator functions (and there is no constant function). As such it
+    is more closely related to a generalized Ising model or better yet an
+    extension of the q-state Potts Model (hence the name).
+
+    The orbit functions in a PottsSubspace represent the concentrations of
+    decorations of clusters in the given orbit. Similar to a cluster subspace
+    with site indicator basis functions. But in contrast, the Potts subspace
+    includes the concentration of all possible decorations (minus 1).
+
+    Although quite similar to a ClusterSubspace, there is no mathematical
+    formalism guaranteeing that the orbit basis functions generated in a
+    PottsSubspace are a linear independent set spanning configuration space,
+    actually if all orbits up to any size (or infinite size) the corresponding
+    orbit function set is an overcomplete family.
+
+    A PottsSubspace can be created directly with a ClusterSubspace object
+    by directly using the constructor and providing the approprately
+    constructed orbits....
+    but that is a bit more painful that just using the class method here.
+    """
+
+    @classmethod
+    def from_cutoffs(cls, structure, cutoffs, supercell_matcher=None,
+                     site_matcher=None, **matcher_kwargs):
+        """Create a ClusterSubspace from diameter cutoffs.
+
+        Creates a :class:`ClusterSubspace` with orbits of the given size and
+        diameter smaller than or equal to the given value. The diameter of an
+        orbit is the maximum distance between any two sites of a cluster of
+        that orbit.
+
+        The diameter of a cluster is the maximum distance between any two
+        sites in the cluster.
+
+        This is the best (and the only easy) way to create a
+        :class:`ClusterSubspace`.
+
+        Args:
+           structure (Structure):
+               Disordered structure to build a cluster expansion for.
+               Typically the primitive cell
+           cutoffs (dict):
+               dict of {cluster_size: diameter cutoff}. Cutoffs should be
+               strictly decreasing. Typically something like {2:5, 3:4}.
+               Empty and singlet orbits are always included.
+               To obtain a subspace with only an empty and singlet terms use
+               an empty dict {}
+           supercell_matcher (StructureMatcher): (optional)
+               A StructureMatcher class to be used to find supercell matrices
+               relating the prim structure to other structures. If you pass
+               this directly you should know how to set the matcher up other
+               wise matching your relaxed structures will fail, alot.
+           site_matcher (StructureMatcher): (optional)
+               A StructureMatcher class to be used to find site mappings
+               relating the sites of a given structure to an appropriate
+               supercell of the prim structure . If you pass this directly you
+               should know how to set the matcher up other wise matching your
+               relaxed structures will fail, alot.
+           matcher_kwargs:
+               ltol, stol, angle_tol, supercell_size. Parameters to pass
+               through to the StructureMatchers. Structures that don't match
+               to the primitive cell under these tolerances won't be included
+               in the expansion. Easiest option for supercell_size is usually
+               to use a species that has a constant amount per formula unit.
+
+        Returns:
+           PottsSubSpace
+        """
+        # get symmetry operations of prim structure.
+        symops = SpacegroupAnalyzer(structure).get_symmetry_operations()
+        # get the active sites (partial occupancy) to expand over.
+        sites_to_expand = [site for site in structure
+                           if site.species.num_atoms < 0.99
+                           or len(site.species) > 1]
+        expansion_structure = Structure.from_sites(sites_to_expand)
+        # get orbits within given cutoffs
+        orbits = cls._orbits_from_cutoffs(expansion_structure, cutoffs, symops)
+        return cls(structure=structure,
+                   expansion_structure=expansion_structure, symops=symops,
+                   orbits=orbits, supercell_matcher=supercell_matcher,
+                   site_matcher=site_matcher, **matcher_kwargs)
+
+    @staticmethod
+    def _orbits_from_cutoffs(exp_struct, cutoffs, symops):
+        """Generate orbits from diameter cutoffs.
+
+        Generates dictionary of orbits in the same way that the cluster
+        subspace class does, except that the orbit functions (and corresponding
+        bit combos) include all symmetrically distinct decorations/labelings
+        of indicator functions for all allowed species (except 1 decoration
+        for each orbit since this value is just 1 - sum of concentration of all
+        other decorations
+
+        Args:
+            exp_struct (Structure):
+                Structure with all sites that have partial occupancy.
+            cutoffs (dict):
+                dict of cutoffs for cluster diameters {size: cutoff}
+            symops (list of SymmOps):
+                list of symmetry operations for structure
+
+        Returns:
+            dict: {size: list of Orbits within diameter cutoff}
+        """
+        site_spaces = get_site_spaces(exp_struct)
+        site_bases = tuple(IndicatorBasis(site_space)
+                           for site_space in site_spaces)
+        orbits = {}
+        new_orbits = []
+        nbits = np.array([len(b) for b in site_spaces])
+
+        # Generate singlet/point orbits
+        for nbit, site, sbasis in zip(nbits, exp_struct, site_bases):
+            new_orbit = Orbit([site.frac_coords], exp_struct.lattice,
+                              [list(range(nbit))], [sbasis], symops)
+            ncombos = len(new_orbit.bit_combos)
+            new_orbit.remove_bit_combos_by_inds([ncombos - 1])
+            if new_orbit not in new_orbits:
+                new_orbits.append(new_orbit)
+
+        orbits[1] = sorted(
+            new_orbits,
+            key=lambda x: (np.round(x.base_cluster.diameter, 6),
+                           -x.multiplicity))
+
+        if len(cutoffs) == 0:  # return singlets only if no cutoffs provided
+            return orbits
+
+        all_neighbors = exp_struct.lattice.get_points_in_sphere(
+            exp_struct.frac_coords,
+            [0.5, 0.5, 0.5],
+            max(cutoffs.values()) + sum(exp_struct.lattice.abc) / 2
+        )
+
+        # generate higher degree orbits
+        for size, diameter in sorted(cutoffs.items()):
+            new_orbits = []
+            for orbit in orbits[size-1]:
+                if orbit.base_cluster.diameter > diameter:
+                    continue
+                for fcoord, _, index, _ in all_neighbors:
+                    if is_coord_subset(
+                            [fcoord], orbit.base_cluster.sites, atol=SITE_TOL):
+                        continue
+                    new_sites = np.concatenate(
+                        [orbit.base_cluster.sites, [fcoord]])
+
+                    new_orbit = Orbit(
+                        new_sites, exp_struct.lattice,
+                        orbit.bits + [list(range(nbits[index]))],
+                        orbit.site_bases + [site_bases[index]],
+                        symops)
+
+                    ncombos = len(new_orbit.bit_combos)
+                    new_orbit.remove_bit_combos_by_inds([ncombos - 1])
+                    if new_orbit.base_cluster.diameter > diameter + 1e-8:
+                        continue
+                    elif new_orbit not in new_orbits:
+                        new_orbits.append(new_orbit)
+
+            orbits[size] = sorted(
+                new_orbits,
+                key=lambda x: (np.round(x.base_cluster.diameter, 6),
+                               -x.multiplicity))
+        return orbits

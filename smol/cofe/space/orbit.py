@@ -228,23 +228,26 @@ class Orbit(MSONable):
                 bit_combos.append(bit_combo)
 
         if not bit_combos:
-            raise RuntimeError('All bit_combos have been removed from orbit '
-                               f'with id {self.id}')
+            raise RuntimeError(
+                "All bit_combos have been removed from orbit with id "
+                f"{self.id}")
 
         self._bit_combos = tuple(bit_combos)
 
     def remove_bit_combos_by_inds(self, inds):
         """Remove bit combos by their indices in the bit_combo list."""
         if max(inds) > len(self.bit_combos) - 1:
-            raise RuntimeError(f'Some indices {inds} out of ranges for total '
-                               f'{len(self._bit_combos)} bit combos')
+            raise RuntimeError(
+                f"Some indices {inds} out of ranges for total "
+                f"{len(self._bit_combos)} bit combos")
 
         self._bit_combos = tuple(b_c for i, b_c in enumerate(self._bit_combos)
                                  if i not in inds)
 
         if not self.bit_combos:
-            raise RuntimeError('All bit_combos have been removed from orbit '
-                               f'with id {self.id}')
+            raise RuntimeError(
+                "All bit_combos have been removed from orbit with id "
+                f"{self.id}")
 
     def eval(self, bits, species_encoding):  # is this used anymore?
         """Evaluate a cluster function defined for this orbit.
