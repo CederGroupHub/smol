@@ -7,11 +7,9 @@ random structure supercell being sampled in a Monte Carlo simulation.
 
 __author__ = "Luis Barroso-Luque"
 
-from collections import OrderedDict
 import numpy as np
 from monty.json import MSONable
-from pymatgen import Species, DummySpecies, Element
-from smol.cofe.space.domain import Vacancy
+from smol.cofe.space.domain import SiteSpace
 
 
 def get_sublattices(processor):
@@ -52,16 +50,14 @@ class Sublattice(MSONable):
         """Initialize Sublattice.
 
         Args:
-            site_space (OrderedDict):
-                An ordered dict with the allowed species and their random
-                state composition. See definitions in cofe.cofigspace.basis
+            site_space (SiteSpace):
+                A site space object representing the sites in the sublattice
             sites (ndarray):
                 array with the site indices
         """
         self.sites = sites
         self.site_space = site_space
         self.active_sites = sites.copy()
-        self.restricted_sites = []
 
     @property
     def species(self):
@@ -87,13 +83,10 @@ class Sublattice(MSONable):
         """
         self.active_sites = np.array([i for i in self.active_sites
                                       if i not in sites])
-        self.restricted_sites += [i for i in sites
-                                  if i not in self.restricted_sites]
 
     def reset_restricted_sites(self):
         """Reset all restricted sites to active."""
         self.active_sites = self.sites.copy()
-        self.restricted_sites = []
 
     def __str__(self):
         """Pretty print the sublattice species."""
@@ -113,8 +106,7 @@ class Sublattice(MSONable):
         Returns:
             MSONable dict
         """
-        d = {'site_space': tuple((s.as_dict(), m)
-                                 for s, m in self.site_space.items()),
+        d = {'site_space': self.site_space.as_dict(),
              'sites': self.sites.tolist(),
              'active_sites': self.active_sites.tolist()}
         return d
@@ -126,20 +118,7 @@ class Sublattice(MSONable):
         Returns:
             Sublattice
         """
-        site_space = []
-        for sp, m in d['site_space']:
-            if ("oxidation_state" in sp
-                    and Element.is_valid_symbol(sp["element"])):
-                sp = Species.from_dict(sp)
-            elif "oxidation_state" in sp:
-                if sp['@class'] == 'Vacancy':
-                    sp = Vacancy.from_dict(sp)
-                else:
-                    sp = DummySpecies.from_dict(sp)
-            else:
-                sp = Element(sp["element"])
-            site_space.append((sp, m))
-        sublattice = cls(OrderedDict(site_space),
+        sublattice = cls(SiteSpace.from_dict(d['site_space']),
                          sites=np.array(d['sites']))
         sublattice.active_sites = np.array(d['active_sites'])
         return sublattice
