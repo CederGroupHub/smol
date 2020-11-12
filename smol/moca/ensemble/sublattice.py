@@ -58,7 +58,6 @@ class Sublattice(MSONable):
         self.sites = sites
         self.site_space = site_space
         self.active_sites = sites.copy()
-        self.restricted_sites = []
 
     @property
     def species(self):
@@ -84,13 +83,10 @@ class Sublattice(MSONable):
         """
         self.active_sites = np.array([i for i in self.active_sites
                                       if i not in sites])
-        self.restricted_sites += [i for i in sites
-                                  if i not in self.restricted_sites]
 
     def reset_restricted_sites(self):
         """Reset all restricted sites to active."""
         self.active_sites = self.sites.copy()
-        self.restricted_sites = []
 
     def __str__(self):
         """Pretty print the sublattice species."""
