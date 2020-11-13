@@ -53,9 +53,9 @@ class EwaldTerm(MSONable):
         self.real_space_cut = real_space_cut
         self.recip_space_cut = recip_space_cut
         if use_term not in self.ewald_term_options:
-            raise AttributeError(f'Provided use_term {use_term} is not a valid'
-                                 'option. Please use one of '
-                                 f'{self.ewald_term_options}.')
+            raise AttributeError(
+                f"Provided use_term {use_term} is not a valid option. "
+                f"Please use one of {self.ewald_term_options}.")
         self.use_term = use_term
 
     @staticmethod
@@ -88,8 +88,8 @@ class EwaldTerm(MSONable):
                 if isinstance(b, Vacancy):  # skip vacancies
                     continue
                 inds[i] = len(ewald_sites)
-                ewald_sites.append(PeriodicSite(b, site.frac_coords,
-                                                site.lattice))
+                ewald_sites.append(
+                    PeriodicSite(b, site.frac_coords, site.lattice))
             ewald_inds.append(inds)
         ewald_inds = np.array(ewald_inds, dtype=np.int)
         ewald_structure = Structure.from_sites(ewald_sites)
