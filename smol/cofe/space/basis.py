@@ -18,7 +18,7 @@ from numpy.polynomial.legendre import legval
 from monty.json import MSONable
 
 from .domain import SiteSpace
-from smol.utils import derived_class_factory
+from smol.utils import derived_class_factory, get_subclasses
 
 
 __author__ = "Luis Barroso-Luque"
@@ -32,7 +32,7 @@ class DiscreteBasis(MSONable, metaclass=ABCMeta):
     """
 
     def __init__(self, site_space, basis_functions):
-        """Initialize a SiteBasis.
+        """Initialize a StandardBasis.
 
         Currently also accepts an OrderedDict but if you find yourself
         creating one like so for use in production and not debuging know that
@@ -109,23 +109,47 @@ class DiscreteBasis(MSONable, metaclass=ABCMeta):
              "flavor": self.flavor}
         return d
 
+    @classmethod
+    def from_dict(cls, d):
+        """Create a DiscreteBasis from dict representation.
 
-class SiteBasis(DiscreteBasis):
+        Args:
+            d (dict):
+                MSONable dict representation
+        Returns:
+            DiscreteBasis: A subclass of DiscreteBasis
+        """
+        try:
+            subclass = get_subclasses(cls)[d['@class']]
+        except KeyError:
+            if d['@class'] == 'SiteBasis':
+                warnings.warn(
+                    "The object you have loaded was saved with an older "
+                    "version of smol.\n Please save this object again to "
+                    "prevent these warnings.", FutureWarning)
+                subclass = StandardBasis
+            else:
+                raise NameError(f"{d['@class']} is not implemented or is not "
+                                f"a subclass of {cls}.")
+        return subclass.from_dict(d)
+
+
+class StandardBasis(DiscreteBasis):
     r"""Class that represents the basis for a site function space.
 
-    Note that all SiteBasis in theory have the first basis function
+    Note that all StandardBasis in theory have the first basis function
     :math:`\phi_0 = 1`, but this should not be defined since it is handled
     implicitly when computing bit_combos using total no. species - 1 in the
-    Orbit class. As such a SiteBasis as implemented here represents a Standard
-    or Fourier site basis (with the exception of one using indicator functions
-    in which case it can be considered a "cluster site basis" only)
+    Orbit class. As such a StandardBasis as implemented here represents a
+    Standard and/or Fourier site basis (the standard basis using indicator
+    functions is not a Fourier basis but can be used as "cluster site basis")
 
     The particular basis set is set by giving an iterable of basis functions.
     See BasisIterator classes for details.
     """
 
     def __init__(self, site_space, basis_functions):
-        """Initialize a SiteBasis.
+        """Initialize a StandardBasis.
 
         Currently also accepts an OrderedDict but if you find yourself creating
         one like so for use in production and not debuging know that it will
@@ -219,13 +243,13 @@ class SiteBasis(DiscreteBasis):
 
     @classmethod
     def from_dict(cls, d):
-        """Create a SiteBasis from dict representation.
+        """Create a StandardBasis from dict representation.
 
         Args:
             d (dict):
                 MSONable dict representation
         Returns:
-            SiteBasis
+            StandardBasis
         """
         site_space = SiteSpace.from_dict(d['site_space'])
         site_basis = basis_factory(d['flavor'], site_space)
@@ -242,7 +266,7 @@ class IndicatorBasis(DiscreteBasis, MSONable):
     indicator function for every species in the site space, and does NOT
     include a contant function.
     NOT to be confuse with a cluster indicator basis used for a Cluster
-    Expansion (that is represented in smol by a SiteBasis with a
+    Expansion (that is represented in smol by a StandardBasis with a
     IndicatorIterator).
 
     @lbluque takes full responsibility for the confusing terminilogy...
@@ -272,7 +296,7 @@ class IndicatorBasis(DiscreteBasis, MSONable):
             d (dict):
                 MSONable dict representation
         Returns:
-            SiteBasis
+            StandardBasis
         """
         return cls(SiteSpace.from_dict(d['site_space']))
 
@@ -463,7 +487,7 @@ def basis_factory(basis_name, site_space):
             Site space over which the basis set is defined.
 
     Returns:
-        SiteBasis
+        StandardBasis
     """
     if isinstance(site_space, OrderedDict):
         species = tuple(site_space.keys())
@@ -471,4 +495,4 @@ def basis_factory(basis_name, site_space):
         species = tuple(site_space)
     iterator_name = basis_name.capitalize() + 'Iterator'
     basis_funcs = derived_class_factory(iterator_name, BasisIterator, species)
-    return SiteBasis(site_space, basis_funcs)
+    return StandardBasis(site_space, basis_funcs)

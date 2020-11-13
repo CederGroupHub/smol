@@ -15,7 +15,7 @@ from smol.utils import _repr
 from smol.exceptions import SymmetryError, SYMMETRY_ERROR_MESSAGE
 from .constants import SITE_TOL
 from .cluster import Cluster
-from .basis import basis_factory, SiteBasis
+from .basis import basis_factory, DiscreteBasis
 
 __author__ = "Luis Barroso-Luque, William Davidson Richard"
 
@@ -41,7 +41,7 @@ class Orbit(MSONable):
         bits (list of list):
             list of lists describing the posible non-constant site function
             indices at each site of a cluster in the orbit.
-        site_bases (list of SiteBasis):
+        site_bases (list of DiscreteBasis):
             list of the SiteBasis for each site.
         structure_symops (list of Symmops):
             list of underlying structure symmetry operations.
@@ -65,7 +65,7 @@ class Orbit(MSONable):
                 This is ensures the expansion is not "over-complete" by
                 implicitly enforcing that all sites have a site basis function
                 phi_0 = 1.
-            site_bases (list of SiteBasis):
+            site_bases (list of DiscreteBasis):
                 list of SiteBasis objects for each site in the given sites.
             structure_symops (list of SymmOp):
                 list of symmetry operations for the base structure
@@ -348,7 +348,7 @@ class Orbit(MSONable):
         """Create Orbit from serialized MSONable dict."""
         structure_symops = [SymmOp.from_dict(so_d)
                             for so_d in d['structure_symops']]
-        site_bases = [SiteBasis.from_dict(sd) for sd in d['site_bases']]
+        site_bases = [DiscreteBasis.from_dict(sd) for sd in d['site_bases']]
         return cls(d['sites'], Lattice.from_dict(d['lattice']),
                    d['bits'], site_bases, structure_symops)
 

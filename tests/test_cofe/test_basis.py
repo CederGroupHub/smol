@@ -25,17 +25,17 @@ class TestBasis(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             site_space = domain.SiteSpace(comp)
-            b = basis.SiteBasis(site_space, basis_iterator(species))
+            b = basis.StandardBasis(site_space, basis_iterator(species))
 
     def _test_measure(self, basis_iterator):
         species = tuple(self.site_space.keys())
-        b = basis.SiteBasis(self.site_space, basis_iterator(species))
+        b = basis.StandardBasis(self.site_space, basis_iterator(species))
         measure = list(b.measure_vector)
         self.assertEqual(measure, list(self.site_space.values()))
 
     def test_indicator_basis(self):
         species = tuple(self.site_space.keys())
-        b = basis.SiteBasis(self.site_space, basis.IndicatorIterator(species))
+        b = basis.StandardBasis(self.site_space, basis.IndicatorIterator(species))
         self.assertFalse(b.is_orthogonal)
 
         # test evaluation of basis functions
@@ -51,7 +51,7 @@ class TestBasis(unittest.TestCase):
 
     def test_sinusoid_basis(self):
         species = tuple(self.site_space.keys())
-        b = basis.SiteBasis(self.site_space, basis.SinusoidIterator(species))
+        b = basis.StandardBasis(self.site_space, basis.SinusoidIterator(species))
         self.assertTrue(b.is_orthogonal)
 
         # test evaluation of basis functions
@@ -64,7 +64,7 @@ class TestBasis(unittest.TestCase):
 
         self._test_basis_measure_raise(basis.SinusoidIterator)
         self._test_measure(basis.SinusoidIterator)
-        b = basis.SiteBasis(self.site_space, basis.SinusoidIterator(species))
+        b = basis.StandardBasis(self.site_space, basis.SinusoidIterator(species))
         self.assertTrue(b.is_orthogonal)
         b.orthonormalize()
         self.assertTrue(b.is_orthonormal)
@@ -72,10 +72,10 @@ class TestBasis(unittest.TestCase):
     def test_chebyshev_basis(self):
         species = tuple(self.site_space.keys())
         site_space = OrderedDict(tuple(self.site_space.items())[:2])
-        b = basis.SiteBasis(site_space, basis.ChebyshevIterator(species[:2]))
+        b = basis.StandardBasis(site_space, basis.ChebyshevIterator(species[:2]))
         self.assertTrue(b.is_orthogonal)  # orthogonal only for 2 species
-        b = basis.SiteBasis(self.site_space,
-                            basis.ChebyshevIterator(tuple(self.site_space.keys())))
+        b = basis.StandardBasis(self.site_space,
+                                basis.ChebyshevIterator(tuple(self.site_space.keys())))
         self.assertFalse(b.is_orthogonal)
 
         # test evaluation of basis functions
@@ -89,7 +89,7 @@ class TestBasis(unittest.TestCase):
 
         self._test_basis_measure_raise(basis.ChebyshevIterator)
         self._test_measure(basis.ChebyshevIterator)
-        b = basis.SiteBasis(self.site_space, basis.ChebyshevIterator(species))
+        b = basis.StandardBasis(self.site_space, basis.ChebyshevIterator(species))
         self.assertFalse(b.is_orthogonal)
         b.orthonormalize()
         self.assertTrue(b.is_orthonormal)
@@ -97,10 +97,10 @@ class TestBasis(unittest.TestCase):
     def test_legendre_basis(self):
         species = tuple(self.site_space.keys())
         site_space = OrderedDict(tuple(self.site_space.items())[:2])
-        b = basis.SiteBasis(site_space, basis.LegendreIterator(species[:2]))
+        b = basis.StandardBasis(site_space, basis.LegendreIterator(species[:2]))
         self.assertTrue(b.is_orthogonal)  # orthogonal only for 2 species
-        b = basis.SiteBasis(self.site_space,
-                            basis.LegendreIterator(species))
+        b = basis.StandardBasis(self.site_space,
+                                basis.LegendreIterator(species))
         self.assertFalse(b.is_orthogonal)
 
         # test evaluation of basis functions
@@ -115,7 +115,7 @@ class TestBasis(unittest.TestCase):
         self._test_basis_measure_raise(basis.LegendreIterator)
         self._test_measure(basis.LegendreIterator)
 
-        b = basis.SiteBasis(self.site_space, basis.LegendreIterator(species))
+        b = basis.StandardBasis(self.site_space, basis.LegendreIterator(species))
         self.assertFalse(b.is_orthogonal)
         b.orthonormalize()
         self.assertTrue(b.is_orthonormal)
@@ -123,24 +123,24 @@ class TestBasis(unittest.TestCase):
     def test_constructor(self):
         species = OrderedDict({'A': 1, 'B': 2, 'C': 1})
         basis_iter = basis.SinusoidIterator(tuple(species.keys()))
-        self.assertWarns(RuntimeWarning, basis.SiteBasis, species, basis_iter)
+        self.assertWarns(RuntimeWarning, basis.StandardBasis, species, basis_iter)
         species = OrderedDict({'A': .1, 'B': .1, 'C': .1})
         basis_iter = basis.SinusoidIterator(tuple(species.keys()))
-        self.assertWarns(RuntimeWarning, basis.SiteBasis, species, basis_iter)
+        self.assertWarns(RuntimeWarning, basis.StandardBasis, species, basis_iter)
         basis_iter = basis.SinusoidIterator(tuple(species.keys())[:-1])
-        self.assertRaises(ValueError, basis.SiteBasis, species, basis_iter)
+        self.assertRaises(ValueError, basis.StandardBasis, species, basis_iter)
         species = {'A': .1, 'B': .1, 'C': .1}
         basis_iter = basis.SinusoidIterator(tuple(species.keys()))
-        self.assertRaises(TypeError, basis.SiteBasis, species, basis_iter)
+        self.assertRaises(TypeError, basis.StandardBasis, species, basis_iter)
 
     def test_msonable(self):
         species = tuple(self.site_space.keys())
-        b = basis.SiteBasis(self.site_space, basis.SinusoidIterator(species))
+        b = basis.StandardBasis(self.site_space, basis.SinusoidIterator(species))
         self.assertTrue(b.is_orthogonal)
         b.orthonormalize()
         self.assertTrue(b.is_orthonormal)
         assert_msonable(b)
-        b1 = basis.SiteBasis.from_dict(b.as_dict())
+        b1 = basis.StandardBasis.from_dict(b.as_dict())
         self.assertTrue(b1.is_orthonormal)
         npt.assert_array_equal(b.function_array, b1.function_array)
         npt.assert_array_equal(b.orthonormalization_array, b1.orthonormalization_array)

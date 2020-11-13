@@ -282,16 +282,16 @@ the box, but it is not orthonormal for allowed species &gt; 2.</p>
 
 <dl class="py class">
 <dt id="smol.cofe.configspace.basis.SiteBasis">
-<em class="property">class </em><code class="sig-name descname">SiteBasis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">site_space</span></em>, <em class="sig-param"><span class="n">basis_functions</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.basis.SiteBasis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">StandardBasis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">site_space</span></em>, <em class="sig-param"><span class="n">basis_functions</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.configspace.basis.SiteBasis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class that represents the basis for a site function space.</p>
-<p>Note that all SiteBasis in theory have the first basis function
+<p>Note that all StandardBasis in theory have the first basis function
 <span class="math notranslate nohighlight">\(\phi_0 = 1\)</span>, but this should not be defined since it is handled
 implicitly when computing bit_combos using total no. species - 1 in the
 Orbit class.</p>
 <p>The particular basis set is set by giving an iterable of basis functions.
 See BasisIterator classes for details.</p>
-<p>Initialize a SiteBasis.</p>
+<p>Initialize a StandardBasis.</p>
 <p>Currently also accepts an OrderedDict but if you find yourself creating
 one like so for use in production and not debuging know that it will
 break MSONable methods in classes that use these, and at any point I
@@ -383,7 +383,7 @@ over which the site functions are defined.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>SiteBasis</p>
+<dd class="field-even"><p>StandardBasis</p>
 </dd>
 </dl>
 </dd></dl>

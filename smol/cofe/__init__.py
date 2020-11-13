@@ -12,5 +12,5 @@ from smol.cofe.wrangling.wrangler import (StructureWrangler,
                                           weights_energy_above_hull)
 
 __all__ = ['ClusterSubspace', 'PottsSubspace', 'StructureWrangler',
-           'ClusterExpansion','weights_energy_above_composition',
+           'ClusterExpansion', 'weights_energy_above_composition',
            'weights_energy_above_hull']

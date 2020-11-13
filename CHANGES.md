@@ -67,7 +67,7 @@ as functions in `cofe.wrangling.filter`.
 inherited classes instead of string names. (This is to allow keeping additional
 properties for species, such as oxidation state, magnetization, the sky is the
 limit.)
-* Single `SiteBasis` site basis class that is constructed using a basis
+* Single `StandardBasis` site basis class that is constructed using a basis
 function iterator for specific basis sets.
 * Example notebooks updated accordingly.
 
@@ -82,7 +82,7 @@ crystallographic symmetry multiplicity and function decoration multiplicity.
 (credits to [qchempku2017](https://github.com/qchempku2017) for pointing this
 out.)
 * Fixed MSONable serialization of cluster subspaces with orthonormal basis sets
-by making `SiteBasis` MSONable and saving corresponding arrays.
+by making `StandardBasis` MSONable and saving corresponding arrays.
 [\#90](https://github.com/CederGroupHub/smol/pull/90)
 
 

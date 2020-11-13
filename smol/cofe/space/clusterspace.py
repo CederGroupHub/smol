@@ -900,6 +900,7 @@ class ClusterSubspace(MSONable):
 
         # attempt to recreate external terms. This can be much improved if
         # a base class is used.
+        # TODO update this using instances of BasePairTerm when the time comes
         for term in d['external_terms']:
             try:
                 module = import_module(term['@module'])
@@ -1020,8 +1021,6 @@ class PottsSubspace(ClusterSubspace):
         """
         super().__init__(structure, expansion_structure, symops, orbits,
                          supercell_matcher, site_matcher, **matcher_kwargs)
-
-
 
     @classmethod
     def from_cutoffs(cls, structure, cutoffs, supercell_matcher=None,
