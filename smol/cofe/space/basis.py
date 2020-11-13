@@ -7,7 +7,7 @@ is concentration of the species in the random structure)
 """
 
 import warnings
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
 from collections import OrderedDict
 from collections.abc import Iterator
 from functools import partial, wraps
@@ -24,7 +24,7 @@ from smol.utils import derived_class_factory
 __author__ = "Luis Barroso-Luque"
 
 
-class DiscreteBasis(ABC):
+class DiscreteBasis(MSONable, metaclass=ABCMeta):
     """Abstract class to represent a basis set over a discrete finite domain.
 
     In our case the domain is a site space which can take on values of the
@@ -101,8 +101,16 @@ class DiscreteBasis(ABC):
         """Get vector of site species measures."""
         return np.array(list(self._domain.values()))
 
+    def as_dict(self) -> dict:
+        """Get MSONable dict representation of a DiscreteBasis."""
+        d = {"@module": self.__class__.__module__,
+             "@class": self.__class__.__name__,
+             "site_space": self._domain.as_dict(),
+             "flavor": self.flavor}
+        return d
 
-class SiteBasis(DiscreteBasis, MSONable):
+
+class SiteBasis(DiscreteBasis):
     r"""Class that represents the basis for a site function space.
 
     Note that all SiteBasis in theory have the first basis function
@@ -203,18 +211,15 @@ class SiteBasis(DiscreteBasis, MSONable):
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation."""
-        d = {"@module": self.__class__.__module__,
-             "@class": self.__class__.__name__,
-             "site_space": self._domain.as_dict(),
-             "flavor": self.flavor,
-             "func_array": self._f_array.tolist(),
-             "orthonorm_array": None if self._r_array is None else self._r_array.tolist()  # noqa
-             }
+        d = super().as_dict()
+        d["func_array"] = self._f_array.tolist()
+        d["orthonorm_array"] = None if self._r_array is None \
+            else self._r_array.tolist()
         return d
 
     @classmethod
     def from_dict(cls, d):
-        """Create a SiteSpace from dict representation.
+        """Create a SiteBasis from dict representation.
 
         Args:
             d (dict):
@@ -223,18 +228,14 @@ class SiteBasis(DiscreteBasis, MSONable):
             SiteBasis
         """
         site_space = SiteSpace.from_dict(d['site_space'])
-        # Only using indicator iterator as a proxy to
-        # initialiaze class any other iterator would do. Perhaps a cleaner
-        # solution would be to allow initialization without an iterator...
-        site_basis = cls(site_space,
-                         IndicatorIterator(tuple(site_space.keys())))
-        site_basis.flavor = d['flavor']
+        site_basis = basis_factory(d['flavor'], site_space)
+        # restore arrays
         site_basis._f_array = np.array(d['func_array'])
         site_basis._r_array = np.array(d['orthonorm_array'])
         return site_basis
 
 
-class IndicatorBasis(DiscreteBasis):
+class IndicatorBasis(DiscreteBasis, MSONable):
     """Class that represents a full indicator basis for a site space.
 
     This class represents the "trivial" indicator basis, wich includes an
@@ -262,6 +263,18 @@ class IndicatorBasis(DiscreteBasis):
         func_array = np.array([[function(sp) for sp in self.species]
                                for function in basis_functions])
         return func_array
+
+    @classmethod
+    def from_dict(cls, d):
+        """Create a SiteSpace from dict representation.
+
+        Args:
+            d (dict):
+                MSONable dict representation
+        Returns:
+            SiteBasis
+        """
+        return cls(SiteSpace.from_dict(d['site_space']))
 
 
 class BasisIterator(Iterator):

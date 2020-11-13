@@ -977,6 +977,52 @@ class PottsSubspace(ClusterSubspace):
     but that is a bit more painful that just using the class method here.
     """
 
+    def __init__(self, structure, expansion_structure, symops, orbits,
+                 supercell_matcher=None, site_matcher=None, **matcher_kwargs):
+        """Initialize a ClusterSubspace.
+
+        You rarely will need to create a ClusterSubspace using the main
+        constructor.
+        Look at the class method :code:`from_cutoffs` for the "better" way to
+        do instantiate a ClusterSubspace.
+
+        Args:
+            structure (Structure):
+                Structure to define the cluster space. Typically the primitive
+                cell. Includes all species regardless of partial occupation.
+            expansion_structure (Structure):
+                Structure including only sites that will be included in the
+                Cluster space. (only those with partial occupancy)
+            symops (list of Symmop):
+                list of Symmops for the given structure.
+            orbits (dict): {size: list of Orbits}
+                Dictionary with size (number of sites) as keys and list of
+                Orbits as values.
+            supercell_matcher (StructureMatcher): (optional)
+                A StructureMatcher class to be used to find supercell matrices
+                relating the prim structure to other structures. If you pass
+                this directly you should know how to set the matcher up, other
+                wise matching your relaxed structures can fail, alot.
+            site_matcher (StructureMatcher): (optional)
+                A StructureMatcher class to be used to find site mappings
+                relating the sites of a given structure to an appropriate
+                supercell of the prim structure . If you pass this directly you
+                should know how to set the matcher up other wise matching your
+                relaxed structures can fail, alot.
+            matcher_kwargs:
+                ltol, stol, angle_tol, supercell_size: parameters to pass
+                through to the StructureMatchers. Structures that don't match
+                to the primitive cell under these tolerances won't be included
+                in the expansion. Easiest option for supercell_size is usually
+                to use a species that has a constant amount per formula unit.
+                See pymatgen documentation of :class:`StructureMatcher` for
+                more details.
+        """
+        super().__init__(structure, expansion_structure, symops, orbits,
+                         supercell_matcher, site_matcher, **matcher_kwargs)
+
+
+
     @classmethod
     def from_cutoffs(cls, structure, cutoffs, supercell_matcher=None,
                      site_matcher=None, **matcher_kwargs):
@@ -1121,3 +1167,28 @@ class PottsSubspace(ClusterSubspace):
                 key=lambda x: (np.round(x.base_cluster.diameter, 6),
                                -x.multiplicity))
         return orbits
+
+    def get_orbit_function_decoration(self, index):
+        """Get the decoration/labeling of a specific orbit function.
+
+        Args:
+            index (int):
+                index of orbit function in correlation vector
+
+        Returns:
+            list of list: list of lists of symmetrically equivalent
+            Species/Elements.
+        """
+        pass
+
+    def get_orbit_decorations(self, orbit_id):
+        """Get all decorations/labellings of species in an orbit.
+
+        Args:
+            orbit_id (int):
+                if of orbit
+
+        Returns:
+            list: list of lists each list has equivalent decorations.
+        """
+        pass

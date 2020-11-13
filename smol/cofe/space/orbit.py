@@ -4,8 +4,6 @@ A set of symmetrically equivalent (with respect to the given random structure
 symmetry) clusters.
 """
 
-__author__ = "Luis Barroso-Luque, William Davidson Richard"
-
 import itertools
 import numpy as np
 
@@ -18,6 +16,8 @@ from smol.exceptions import SymmetryError, SYMMETRY_ERROR_MESSAGE
 from .constants import SITE_TOL
 from .cluster import Cluster
 from .basis import basis_factory, SiteBasis
+
+__author__ = "Luis Barroso-Luque, William Davidson Richard"
 
 
 class Orbit(MSONable):
