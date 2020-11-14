@@ -4,24 +4,20 @@ __author__ = "Charles Yang"
 
 
 import numpy as np
-from abc import ABC, abstractmethod
+from abc import ABC
 from pymatgen import Structure, PeriodicSite
 from smol.cofe.space.domain import get_allowed_species, Vacancy
 
 
-
-
 class PairwiseTerms(ABC):
     """Abstract Base Class for calculating pair-wise terms.
-    
-    Attributes:
-    
+
+    Attributes:    
     """
     
     def __init__():
-        
-    
-    
+        return
+
     @staticmethod
     def get_pairwise_structure(structure):
         """Get the structure and site indices contributing to pairwise summation.
@@ -55,6 +51,7 @@ class PairwiseTerms(ABC):
                 pairwise_sites.append(PeriodicSite(b, site.frac_coords,
                                                 site.lattice))
             pairwise_inds.append(inds)
+
         pairwise_inds = np.array(pairwise_inds, dtype=np.int)
         pairwise_structure = Structure.from_sites(pairwise_sites)
 

@@ -12,8 +12,7 @@ __author__ = "William Davidson Richard, Luis Barroso-Luque"
 import numpy as np
 from pymatgen.analysis.ewald import EwaldSummation
 from monty.json import MSONable
-from base import PairwiseTerms
-    
+from smol.cofe.extern.base import PairwiseTerms
     
 
 class EwaldTerm(PairwiseTerms, MSONable):
@@ -58,7 +57,6 @@ class EwaldTerm(PairwiseTerms, MSONable):
                                  'option. Please use one of '
                                  f'{self.ewald_term_options}.')
         self.use_term = use_term
-
 
     def value_from_occupancy(self, occu, structure):
         """Obtain the Ewald interaction energy.
