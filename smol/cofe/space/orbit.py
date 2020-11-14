@@ -71,11 +71,14 @@ class Orbit(MSONable):
                 list of symmetry operations for the base structure
         """
         if len(sites) != len(bits):
-            raise AttributeError(f'Number of sites {len(sites)} must be equal '
-                                 f'to number of bits {len(bits)}')
+            raise AttributeError(
+                f"Number of sites {len(sites)} must be equal to number of "
+                f"bits {len(bits)}")
         elif len(sites) != len(site_bases):
-            raise AttributeError(f'Number of sites {len(sites)} must be equal '
-                                 f'to number of site bases {len(site_bases)}')
+            raise AttributeError(
+                f"Number of sites {len(sites)} must be equal to number of "
+                f"site bases {len(site_bases)}")
+
         self.bits = bits
         self.site_bases = site_bases
         self.structure_symops = structure_symops
@@ -120,15 +123,17 @@ class Orbit(MSONable):
         """
         if self._bit_combos is not None:
             return self._bit_combos
+
         # get all the bit symmetry operations
         bit_ops = tuple(set(bit_op for _, bit_op in self.cluster_symops))
-        all_combos = []
+        all_combos = []  # get lists of symm equivalent bits
         for bit_combo in itertools.product(*self.bits):
             if bit_combo not in itertools.chain(*all_combos):
                 bit_combo = np.array(bit_combo)
-                new_bits = list(set(tuple(bit_combo[np.array(bit_op)])
-                                    for bit_op in bit_ops))
+                new_bits = list(set(
+                    tuple(bit_combo[np.array(bit_op)]) for bit_op in bit_ops))
                 all_combos.append(new_bits)
+
         self._bit_combos = tuple(np.array(c, dtype=np.int) for c in all_combos)
         return self._bit_combos
 
@@ -142,6 +147,7 @@ class Orbit(MSONable):
         """Get symmetrically equivalent clusters."""
         if self._equiv:
             return self._equiv
+
         equiv = [self.base_cluster]
         for symop in self.structure_symops:
             new_sites = symop.operate_multi(self.base_cluster.sites)
@@ -149,9 +155,11 @@ class Orbit(MSONable):
             if c not in equiv:
                 equiv.append(c)
         self._equiv = equiv
+
         if len(equiv) * len(self.cluster_symops) != len(self.structure_symops):
             self._equiv = None  # Unset this
             raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
+
         return equiv
 
     @property
@@ -165,6 +173,7 @@ class Orbit(MSONable):
         """
         if self._symops:
             return self._symops
+
         self._symops = []
         for symop in self.structure_symops:
             new_sites = symop.operate_multi(self.base_cluster.sites)
@@ -172,19 +181,22 @@ class Orbit(MSONable):
             if c == self.base_cluster:
                 recenter = np.round(self.base_cluster.centroid - c.centroid)
                 c_sites = c.sites + recenter
-                mapping = tuple(coord_list_mapping(self.base_cluster.sites,
-                                                   c_sites, atol=SITE_TOL))
+                mapping = tuple(
+                    coord_list_mapping(self.base_cluster.sites, c_sites,
+                                       atol=SITE_TOL))
                 self._symops.append((symop, mapping))
+
         if len(self._symops) * self.multiplicity != len(self.structure_symops):
             raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
+
         return self._symops
 
     @property
     def basis_arrays(self):
         """Get a tuple of all site function arrays for each site in orbit."""
         if self._basis_arrs is None:
-            self._basis_arrs = tuple(sb.function_array
-                                     for sb in self.site_bases)
+            self._basis_arrs = tuple(
+                sb.function_array for sb in self.site_bases)
         return self._basis_arrs
 
     @property
@@ -196,10 +208,10 @@ class Orbit(MSONable):
         Smaller arrays are padded with ones. Doing this allows using numpy
         fancy indexing which can be faster than for loops.
         """
-        if self._bases_arr is None or self._basis_arrs is None:
+        if self._bases_arr is None:
             max_dim = max(len(fa) for fa in self.basis_arrays)
-            self._bases_arr = np.ones((len(self.basis_arrays),
-                                       max_dim, max_dim + 1))
+            self._bases_arr = np.ones(
+                (len(self.basis_arrays), max_dim, max_dim + 1))
             for i, fa in enumerate(self.basis_arrays):
                 j, k = fa.shape
                 self._bases_arr[i, :j, :k] = fa
@@ -241,15 +253,16 @@ class Orbit(MSONable):
                 f"Some indices {inds} out of ranges for total "
                 f"{len(self._bit_combos)} bit combos")
 
-        self._bit_combos = tuple(b_c for i, b_c in enumerate(self._bit_combos)
-                                 if i not in inds)
+        self._bit_combos = tuple(
+            b_c for i, b_c in enumerate(self._bit_combos) if i not in inds)
 
         if not self.bit_combos:
             raise RuntimeError(
                 "All bit_combos have been removed from orbit with id "
                 f"{self.id}")
 
-    def eval(self, bits, species_encoding):  # is this used anymore?
+    # TODO remove this, its only called in test_orbit...
+    def eval(self, bits, species_encoding):
         """Evaluate a cluster function defined for this orbit.
 
         Args:
