@@ -3,11 +3,11 @@
 Contains classes for external terms to be added to a cluster subspace
 representing additional features to be fitted in a cluster expansion.
 
-Currently only an Ewald electrostatic interaction term exists. Maybe it will
-be the only term ever needed, but alas abstraction?
+Currently only a base class for calculating pairwise interactions and a child class for Ewald electrostatic interaction term exists. 
 """
 
 from __future__ import division
 from .ewald import EwaldTerm
+from .base import PairwiseTerms
 
-__all__ = ['EwaldTerm']
+__all__ = ['EwaldTerm','PairwiseTerms']

@@ -49,7 +49,7 @@ class EwaldProcessor(Processor):
 
         self._ewald_term = ewald_term
         # Set up ewald structure and indices
-        struct, inds = self._ewald_term.get_ewald_structure(self.structure)
+        struct, inds = self._ewald_term.get_pairwise_structure(self.structure)
         self._ewald_structure = struct
         self._ewald_inds = np.ascontiguousarray(inds)
         # Lazy set up Ewald Summation since it can be slow
@@ -116,7 +116,7 @@ class EwaldProcessor(Processor):
         Returns:
             array: correlation vector
         """
-        ew_occu = self._ewald_term.get_ewald_occu(occupancy,
+        ew_occu = self._ewald_term.get_pairwise_occu(occupancy,
                                                   self.ewald_matrix.shape[0],
                                                   self._ewald_inds)
         return np.sum(self.ewald_matrix[ew_occu, :][:, ew_occu])
