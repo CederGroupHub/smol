@@ -49,20 +49,17 @@ class DiscreteBasis(MSONable, metaclass=ABCMeta):
         """
         if isinstance(site_space, OrderedDict):
             if not np.allclose(sum(site_space.values()), 1):
-                warnings.warn('The measure given does not sum to 1.'
-                              'Are you sure this is what you want?',
-                              RuntimeWarning)
-        elif not isinstance(site_space, SiteSpace):
-            raise TypeError('site_space argument must be a SiteSpaces or an '
-                            'OrderedDict.')
+                warnings.warn(
+                    "The measure given does not sum to 1. Are you sure this "
+                    "is what you want?", RuntimeWarning)
 
         self.flavor = basis_functions.flavor
         self._domain = site_space
 
         if set(site_space) != set(basis_functions.species):
-            raise ValueError("Basis function iterator provided does not "
-                             f"contain all species {site_space} in the site "
-                             "space provided.")
+            raise ValueError(
+                "Basis function iterator provided does not contain all "
+                f"species {site_space} in the site space provided.")
 
         self._f_array = self._construct_function_array(basis_functions)
 
@@ -101,6 +98,26 @@ class DiscreteBasis(MSONable, metaclass=ABCMeta):
         """Get vector of site species measures."""
         return np.array(list(self._domain.values()))
 
+    @property
+    def is_orthogonal(self):
+        """Test if the basis is orthogonal."""
+        prods = np.dot(
+            np.dot(self._f_array, self.measure_array), self._f_array.T)
+        d_terms = all(
+            not np.isclose(prods[i, i], 0) for i in range(prods.shape[0]))
+        x_terms = all(
+            np.isclose(prods[i, j], 0) for i in range(prods.shape[0])
+            for j in range(prods.shape[1]) if i != j)
+        return x_terms and d_terms
+
+    @property
+    def is_orthonormal(self):
+        """Test if the basis is orthonormal."""
+        prods = np.dot(
+            np.dot(self._f_array, self.measure_array), self._f_array.T)
+        identity = np.eye(*prods.shape)
+        return np.allclose(identity, prods)
+
     def as_dict(self) -> dict:
         """Get MSONable dict representation of a DiscreteBasis."""
         d = {"@module": self.__class__.__module__,
@@ -129,8 +146,10 @@ class DiscreteBasis(MSONable, metaclass=ABCMeta):
                     "prevent these warnings.", FutureWarning)
                 subclass = StandardBasis
             else:
-                raise NameError(f"{d['@class']} is not implemented or is not "
-                                f"a subclass of {cls}.")
+                raise NameError(
+                    f"{d['@class']} is not implemented or is not a subclass "
+                    f"of {cls}.")
+
         return subclass.from_dict(d)
 
 
@@ -186,28 +205,6 @@ class StandardBasis(DiscreteBasis):
     def orthonormalization_array(self):
         """Get R array from QR factorization."""
         return self._r_array
-
-    @property
-    def is_orthogonal(self):
-        """Test if the basis is orthogonal."""
-        # add the implicit 0th function
-        prods = np.dot(np.dot(self.measure_array, self._f_array.T).T,
-                       self._f_array.T)
-        d_terms = all(not np.isclose(prods[i, i], 0)
-                      for i in range(prods.shape[0]))
-        x_terms = all(np.isclose(prods[i, j], 0)
-                      for i in range(prods.shape[0])
-                      for j in range(prods.shape[1])
-                      if i != j)
-        return x_terms and d_terms
-
-    @property
-    def is_orthonormal(self):
-        """Test if the basis is orthonormal."""
-        prods = np.dot(np.dot(self.measure_array, self._f_array.T).T,
-                       self._f_array.T)
-        identity = np.eye(*prods.shape)
-        return np.allclose(identity, prods)
 
     def orthonormalize(self):
         """Orthonormalizes basis function set based on initial basis set.
