@@ -48,7 +48,7 @@ class EwaldTerm(PairwiseTerms, MSONable):
                 the Ewald expansion term to use as an additional term in the
                 expansion. Options are total, real, reciprocal, point.
         """
-        super().__init__()
+        
         self.eta = eta
         self.real_space_cut = real_space_cut
         self.recip_space_cut = recip_space_cut
@@ -83,7 +83,7 @@ class EwaldTerm(PairwiseTerms, MSONable):
         ewald_matrix = self.get_ewald_matrix(ewald_summation)
         ew_occu = self.get_pairwise_occu(occu, ewald_matrix.shape[0], ewald_inds)
         return np.array([np.sum(ewald_matrix[ew_occu, :][:, ew_occu])])
-
+    
     def get_ewald_matrix(self, ewald_summation):
         """Get the corresponding Ewald matrix for the given term to use.
 
