@@ -10,13 +10,13 @@ W. D. Richards, et al., Energy Environ. Sci., 2016, 9, 3272–3278
 __author__ = "William Davidson Richard, Luis Barroso-Luque"
 
 import numpy as np
-from pymatgen import Structure, PeriodicSite
 from pymatgen.analysis.ewald import EwaldSummation
 from monty.json import MSONable
-from smol.cofe.space.domain import get_allowed_species, Vacancy
+from base import PairwiseTerms
+    
+    
 
-
-class EwaldTerm(MSONable):
+class EwaldTerm(PairwiseTerms, MSONable):
     """EwaldTerm Class that can be added to a ClusterSubspace.
 
     This class can be used as an external term added to a ClusterSubspace
@@ -49,6 +49,7 @@ class EwaldTerm(MSONable):
                 the Ewald expansion term to use as an additional term in the
                 expansion. Options are total, real, reciprocal, point.
         """
+        super().__init__()
         self.eta = eta
         self.real_space_cut = real_space_cut
         self.recip_space_cut = recip_space_cut
@@ -58,73 +59,6 @@ class EwaldTerm(MSONable):
                                  f'{self.ewald_term_options}.')
         self.use_term = use_term
 
-    @staticmethod
-    def get_ewald_structure(structure):
-        """Get the structure and site indices contributing to Ewald summation.
-
-        Creates a structure with overlapping sites for each species in the
-        corresponding site space. This is used to construct single Ewald
-        matrices for all possible configurations. The ewald_inds array is a
-        2D array where the firse element is the index of the site in a
-        supercell and the second is the encoded species occupancy
-
-        Removes vacancies and the corresponding indices to those sites from the
-        original structure.
-
-        Args:
-            structure:
-                Structure to compute Ewald interaction energy from
-
-        Returns:
-            tuple: (Structure, array) structure and indices of sites
-        """
-        site_spaces = get_allowed_species(structure)
-        nbits = np.array([len(b) - 1 for b in site_spaces])
-        ewald_inds, ewald_sites = [], []
-        for space, site in zip(site_spaces, structure):
-            # allocate array with all -1 for vacancies
-            inds = np.zeros(max(nbits) + 1) - 1
-            for i, b in enumerate(space):
-                if isinstance(b, Vacancy):  # skip vacancies
-                    continue
-                inds[i] = len(ewald_sites)
-                ewald_sites.append(PeriodicSite(b, site.frac_coords,
-                                                site.lattice))
-            ewald_inds.append(inds)
-        ewald_inds = np.array(ewald_inds, dtype=np.int)
-        ewald_structure = Structure.from_sites(ewald_sites)
-
-        return ewald_structure, ewald_inds
-
-    @staticmethod
-    def get_ewald_occu(occu, num_ewald_sites, ewald_inds):
-        """Get the ewald indices from a given encoded occupancy string.
-
-        The ewald indices indicate matrix elements (ie species) corresponding
-        to the given occupancy.
-
-        Args:
-            occu (ndarray):
-                encoded encoded occupancy string
-            num_ewald_sites (int):
-                number of total ewald sites. This is the size of the ewald
-                matrix, the sum of the size of all site spaces for all sites
-                in the cell.
-            ewald_inds (ndarray):
-                ewald indices for the corresponding species in the occupancy
-                array.
-
-        Returns:
-            ndarray: indices of species in ewald matrix
-        """
-        i_inds = ewald_inds[np.arange(len(occu)), occu]
-        # instead of this line:
-        #   i_inds = i_inds[i_inds != -1]
-        # just make b_inds one longer than it needs to be and don't return
-        # the last value
-        b_inds = np.zeros(num_ewald_sites + 1, dtype=np.bool)
-        b_inds[i_inds] = True
-        return b_inds[:-1]
 
     def value_from_occupancy(self, occu, structure):
         """Obtain the Ewald interaction energy.
@@ -145,11 +79,11 @@ class EwaldTerm(MSONable):
         Returns:
             float
         """
-        ewald_structure, ewald_inds = self.get_ewald_structure(structure)
+        ewald_structure, ewald_inds = self.get_pairwise_structure(structure)
         ewald_summation = EwaldSummation(ewald_structure, self.real_space_cut,
                                          self.recip_space_cut, eta=self.eta)
         ewald_matrix = self.get_ewald_matrix(ewald_summation)
-        ew_occu = self.get_ewald_occu(occu, ewald_matrix.shape[0], ewald_inds)
+        ew_occu = self.get_pairwise_occu(occu, ewald_matrix.shape[0], ewald_inds)
         return np.array([np.sum(ewald_matrix[ew_occu, :][:, ew_occu])])
 
     def get_ewald_matrix(self, ewald_summation):
