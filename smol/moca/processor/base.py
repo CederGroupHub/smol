@@ -16,6 +16,7 @@ import numpy as np
 
 from pymatgen import Structure, PeriodicSite
 from monty.json import MSONable
+from smol.utils import get_subclasses
 from smol.cofe.space import (get_allowed_species, get_site_spaces,
                              Vacancy)
 
@@ -248,14 +249,14 @@ class Processor(MSONable, metaclass=ABCMeta):
              'coefficients': np.array(self.coefs).tolist()}
         return d
 
-    # TODO get rid of this and inspect in polymorphic constructors?
     @classmethod
     def from_dict(cls, d):
         """Create a processor from serialized MSONable dict."""
         # is this good design?
         try:
-            for derived in cls.__subclasses__():
-                if derived.__name__ == d['@class']:
-                    return derived.from_dict(d)
+            subclass = get_subclasses(cls)[d['@class']]
         except KeyError:
-            raise NameError(f"Unable to instantiate {d['@class']}.")
+            raise NameError(
+                f"{d['@class']} is not implemented or is not a subclass of "
+                f"{cls}.")
+        return subclass.from_dict(d)

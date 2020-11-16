@@ -40,7 +40,25 @@ See the contributing
 further information.
 
 #### Credits
-**smol** would not be possible without initial groundwork, inspiration,
-contributions, and suggestions from the following people/projects... 
--   Will Richards - A good amount of the Cluster Expansion code is based on Will's cluster expansion module in the pyabinitio repository.
--   Daniil Kitcheav - The pyabinitio benchark test data and the LNO example data was computed by Daniil.
+**smol** would not be possible without initial groundwork, contributions, and
+inspiration, from the following people/projects:
+-   The Ceder Group Cluster Expansion team and all the contributors listed in
+    this repository have provided invaluable contributions, suggestions, ideas,
+    fixes and feedback that have continuosly improved **smol**.
+-   Will Richards & Daniil Kitcheav - Provided the initial code and inspiration
+    based their cluster expansion module in the pyabinitio repository.
+-   [pymatgen](https://pymatgen.org/) makes up the backbone of **smol**, by
+    providing the objects to represent compositions, structures, and symmetry
+    operations.
+-   A fair deal of the design of the **smol.cofe** module is inspired by
+    [icet](https://icet.materialsmodeling.org/) another amazing and highly
+    recommended CE python package, that has many great features that are not
+    supported here.
+-   A handful of ideas for the design of **smol.moca** were borrowed from many
+    great quality probabilistic programming packages such as
+    [mcpele](http://pele-python.github.io/mcpele/),
+    [TensorFlow Probability](https://www.tensorflow.org/probability),
+    [Pyro](https://pyro.ai/), [pyABC](https://pyabc.readthedocs.io/en/latest/),
+    and [emcee](https://emcee.readthedocs.io/en/stable/).
+    
+
