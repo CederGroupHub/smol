@@ -3,7 +3,7 @@ import numpy as np
 import numpy.testing as npt
 from smol.constants import kB
 from smol.moca import (CanonicalEnsemble, FuSemiGrandEnsemble,
-                       MuSemiGrandEnsemble, CEProcessor, Sampler)
+                       MuSemiGrandEnsemble, CEProcessor)
 from smol.moca.sampler.mcusher import Swapper, Flipper
 from smol.moca.sampler.kernel import Metropolis
 from tests.utils import gen_random_occupancy

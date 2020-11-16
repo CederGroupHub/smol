@@ -10,10 +10,11 @@ W. D. Richards, et al., Energy Environ. Sci., 2016, 9, 3272–3278
 __author__ = "William Davidson Richard, Luis Barroso-Luque"
 
 import numpy as np
+from pymatgen import Structure, PeriodicSite
 from pymatgen.analysis.ewald import EwaldSummation
 from monty.json import MSONable
 from smol.cofe.extern.base import PairwiseTerms
-    
+
 
 class EwaldTerm(PairwiseTerms, MSONable):
     """EwaldTerm Class that can be added to a ClusterSubspace.
@@ -53,9 +54,9 @@ class EwaldTerm(PairwiseTerms, MSONable):
         self.real_space_cut = real_space_cut
         self.recip_space_cut = recip_space_cut
         if use_term not in self.ewald_term_options:
-            raise AttributeError(f'Provided use_term {use_term} is not a valid'
-                                 'option. Please use one of '
-                                 f'{self.ewald_term_options}.')
+            raise AttributeError(
+                f"Provided use_term {use_term} is not a valid option. "
+                f"Please use one of {self.ewald_term_options}.")
         self.use_term = use_term
 
     def value_from_occupancy(self, occu, structure):

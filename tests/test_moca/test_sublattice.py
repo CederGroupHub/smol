@@ -1,5 +1,4 @@
 import pytest
-from collections import OrderedDict
 import numpy as np
 import numpy.testing as npt
 
