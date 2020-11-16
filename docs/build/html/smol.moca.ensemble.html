@@ -712,24 +712,11 @@ state composition.</p>
 </dl>
 </dd></dl>
 
-<dl class="py attribute">
-<dt id="smol.moca.ensemble.sublattice.Sublattice.restricted_sites">
-<code class="sig-name descname">restricted_sites</code><a class="headerlink" href="#smol.moca.ensemble.sublattice.Sublattice.restricted_sites" title="Permalink to this definition">¶</a></dt>
-<dd><p>list of site indices for all restricted sites in the sublattice.
-restricted sites are excluded from flip proposals.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>ndarray</p>
-</dd>
-</dl>
-</dd></dl>
-
 <p>Initialize Sublattice.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>site_space</strong> (<em>OrderedDict</em>) – An ordered dict with the allowed species and their random
-state composition. See definitions in cofe.cofigspace.basis</p></li>
+<li><p><strong>site_space</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.domain.SiteSpace" title="smol.cofe.space.domain.SiteSpace"><em>SiteSpace</em></a>) – A site space object representing the sites in the sublattice</p></li>
 <li><p><strong>sites</strong> (<em>ndarray</em>) – array with the site indices</p></li>
 </ul>
 </dd>
@@ -777,6 +764,12 @@ state composition. See definitions in cofe.cofigspace.basis</p></li>
 <dd class="field-odd"><p><strong>sites</strong> (<em>Sequence</em>) – indices of sites in the occupancy string to restrict.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.moca.ensemble.sublattice.Sublattice.restricted_sites">
+<em class="property">property </em><code class="sig-name descname">restricted_sites</code><a class="headerlink" href="#smol.moca.ensemble.sublattice.Sublattice.restricted_sites" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get restricted sites for species.</p>
 </dd></dl>
 
 <dl class="py method">
