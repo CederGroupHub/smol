@@ -24,7 +24,6 @@ from pymatgen.util.coord import \
 from src.mc_utils import corr_from_occupancy
 from smol.cofe.space import \
     Orbit, basis_factory, get_site_spaces, get_allowed_species, Vacancy
-from smol.cofe.space.basis import IndicatorBasis
 from smol.cofe.space.constants import SITE_TOL
 from smol.exceptions import \
     SymmetryError, StructureMatchError, SYMMETRY_ERROR_MESSAGE
@@ -677,8 +676,8 @@ class ClusterSubspace(MSONable):
                 except RuntimeError:
                     empty_orbit_ids.append(orbit.id)
                     warnings.warn(
-                        'All bit combos have been removed from orbit with id '
-                        f'{orbit.id}. This orbit will be fully removed.')
+                        "All bit combos have been removed from orbit with id "
+                        f"{orbit.id}. This orbit will be fully removed.")
 
         if empty_orbit_ids:
             self.remove_orbits(empty_orbit_ids)
@@ -707,7 +706,7 @@ class ClusterSubspace(MSONable):
         mapping = self._site_matcher.get_mapping(supercell, structure)
         if mapping is None:
             raise StructureMatchError(
-                'Mapping could not be found from structure.')
+                "Mapping could not be found from structure.")
         return mapping.tolist()
 
     def _assign_orbit_ids(self):
@@ -780,31 +779,25 @@ class ClusterSubspace(MSONable):
         if len(cutoffs) == 0:  # return singlets only if no cutoffs provided
             return orbits
 
-        all_neighbors = exp_struct.lattice.get_points_in_sphere(
-            exp_struct.frac_coords,
-            [0.5, 0.5, 0.5],
-            max(cutoffs.values()) + sum(exp_struct.lattice.abc) / 2
-        )
-
-        # generate higher degree orbits
+        max_lp = max(exp_struct.lattice.abc) / 2
         for size, diameter in sorted(cutoffs.items()):
             new_orbits = []
+            neighbors = exp_struct.get_sites_in_sphere([0.5, 0.5, 0.5],
+                                                       diameter + max_lp,
+                                                       include_index=True)
             for orbit in orbits[size-1]:
                 if orbit.base_cluster.diameter > diameter:
                     continue
-                for fcoord, _, index, _ in all_neighbors:
-                    if is_coord_subset(
-                            [fcoord], orbit.base_cluster.sites, atol=SITE_TOL):
+                for site, _, index in neighbors:
+                    p = site.frac_coords
+                    if is_coord_subset([p], orbit.base_cluster.sites,
+                                       atol=SITE_TOL):
                         continue
-                    new_sites = np.concatenate(
-                        [orbit.base_cluster.sites, [fcoord]])
-
-                    new_orbit = Orbit(
-                        new_sites, exp_struct.lattice,
-                        orbit.bits + [list(range(nbits[index]))],
-                        orbit.site_bases + [site_bases[index]],
-                        symops)
-
+                    new_sites = np.concatenate([orbit.base_cluster.sites, [p]])
+                    new_orbit = Orbit(new_sites, exp_struct.lattice,
+                                      orbit.bits + [list(range(nbits[index]))],
+                                      orbit.site_bases + [site_bases[index]],
+                                      symops)
                     if new_orbit.base_cluster.diameter > diameter + 1e-8:
                         continue
                     elif new_orbit not in new_orbits:

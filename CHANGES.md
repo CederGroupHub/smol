@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 
+### Changed
+* Cleanup of sites, active sites and restricted sites in `Sublattice`
+[\#95](https://github.com/CederGroupHub/smol/pull/95)
+  ([juliayang](https://github.com/juliayang))
+ 
+### Fixed
+* Fixed `Sublattice` serialization, saving/loading `SiteSpaces`.
+[\#96](https://github.com/CederGroupHub/smol/pull/96)
+  ([lbluque](https://github.com/lbluque))
+* Fix json serialization when saving `ClusterSubspaces` with orthonormal basis
+sets. [\#90](https://github.com/CederGroupHub/smol/pull/90)
+  ([lbluque](https://github.com/lbluque))
+
 ## [v1.0.0]() (2020-10-27)
 #### [Full Changelog](https://github.com/CederGroupHub/smol/compare/v0.0.0...v1.0.0)
 ### Added

@@ -127,8 +127,8 @@ class StructureWrangler(MSONable):
     @property
     def available_weights(self):
         """Get list of weights that have been added."""
-        return list(set(p for i in self._items
-                        for p in i['weights'].keys()))
+        return list(
+            set(p for i in self._items for p in i['weights'].keys()))
 
     @property
     def structures(self):
@@ -156,10 +156,10 @@ class StructureWrangler(MSONable):
     @property
     def occupancy_strings(self):
         """Get occupancy strings for each of the structures in the wrangler."""
-        occupancies = [self._subspace.occupancy_from_structure(i['structure'],
-                                                               i['scmatrix'],
-                                                               i['mapping'])
-                       for i in self._items]
+        occupancies = [
+            self._subspace.occupancy_from_structure(
+                i['structure'], i['scmatrix'], i['mapping'])
+            for i in self._items]
         return occupancies
 
     @property
@@ -384,9 +384,9 @@ class StructureWrangler(MSONable):
                 'scmatrix', 'mapping', 'features', 'size']
         for item in data_items:
             if not all(key in keys for key in item.keys()):
-                raise ValueError('A supplied data item is missing required '
-                                 'keys. Make sure they were obtained with '
-                                 'the process_structure method.')
+                raise ValueError(
+                    "A supplied data item is missing required keys. Make sure"
+                    " they were obtained with the process_structure method.")
             self._items.append(item)
             self._corr_duplicate_warning(self.num_structures - 1)
 
@@ -403,9 +403,9 @@ class StructureWrangler(MSONable):
                 Array with the weight for each structure
         """
         if self.num_structures != len(weights):
-            raise AttributeError('Length of weights must match number of '
-                                 f'structures {len(weights)} != '
-                                 f'{self.num_structures}.')
+            raise AttributeError(
+                "Length of weights must match number of structures "
+                f"{len(weights)} != {self.num_structures}.")
         for weight, item in zip(weights, self._items):
             item['weights'][key] = weight
 
@@ -425,9 +425,9 @@ class StructureWrangler(MSONable):
                 Wether the given properties have already been normalized.
         """
         if self.num_structures != len(property_vector):
-            raise AttributeError('Length of property_vector must match number'
-                                 f'of structures {len(property_vector)} != '
-                                 f'{self.num_structures}.')
+            raise AttributeError(
+                "Length of property_vector must match number of structures"
+                f" {len(property_vector)} != {self.num_structures}.")
         if normalized:
             property_vector *= self.sizes
 
@@ -455,8 +455,9 @@ class StructureWrangler(MSONable):
             index = self.structures.index(structure)
             del self._items[index]
         except ValueError:
-            raise ValueError(f'Structure {structure} was not found. '
-                             'Nothing has been removed.')
+            raise ValueError(
+                f"Structure {structure} was not found. Nothing has been "
+                "removed.")
 
     def change_subspace(self, cluster_subspace):
         """Change the underlying cluster subspace.
@@ -483,9 +484,8 @@ class StructureWrangler(MSONable):
             struct = item['structure']
             mat = item['scmatrix']
             mapp = item['mapping']
-            item['features'] = self._subspace.corr_from_structure(struct,
-                                                                  scmatrix=mat,
-                                                                  site_mapping=mapp)  # noqa
+            item['features'] = self._subspace.corr_from_structure(
+                struct, scmatrix=mat, site_mapping=mapp)
 
     def remove_all_data(self):
         """Remove all data from Wrangler."""
@@ -540,17 +540,19 @@ class StructureWrangler(MSONable):
         try:
             if supercell_matrix is None:
                 supercell_matrix = self._subspace.scmatrix_from_structure(structure)  # noqa
+
             size = self._subspace.num_prims_from_matrix(supercell_matrix)
             if site_mapping is None:
                 supercell = self._subspace.structure.copy()
                 supercell.make_supercell(supercell_matrix)
-                site_mapping = self._subspace.structure_site_mapping(supercell,
-                                                                     structure)
-            fm_row = self._subspace.corr_from_structure(structure,
-                                                        scmatrix=supercell_matrix,  # noqa
-                                                        site_mapping=site_mapping)  # noqa
-            refined_struct = self._subspace.refine_structure(structure,
-                                                             supercell_matrix)
+                site_mapping = self._subspace.structure_site_mapping(
+                    supercell, structure)
+
+            fm_row = self._subspace.corr_from_structure(
+                structure, scmatrix=supercell_matrix,
+                site_mapping=site_mapping)
+            refined_struct = self._subspace.refine_structure(
+                structure, supercell_matrix)
             if normalized:
                 properties = {key: val*size for key, val in properties.items()}
             weights = {} if weights is None else weights
@@ -574,11 +576,11 @@ class StructureWrangler(MSONable):
                 duplicates = [f"{self._items[i]['structure'].composition} "
                               f"{self._items[i]['properties']}\n"
                               for i in duplicate_inds]
-                warnings.warn("The following structures have duplicated "
-                              f"correlation vectors:\n {duplicates} "
-                              "Consider adding more terms to the "
-                              "clustersubspace or filtering duplicates.",
-                              UserWarning)
+                warnings.warn(
+                    "The following structures have duplicated correlation "
+                    f"vectors:\n {duplicates}\n Consider adding more terms to "
+                    "the clustersubspace or filtering duplicates.",
+                    UserWarning)
 
     @classmethod
     def from_dict(cls, d):

@@ -71,8 +71,9 @@ def get_site_spaces(structure, include_measure=False):
             num_species = len(site.species)
             if site.species.num_atoms < 0.99:
                 num_species += 1
-            site_space = SiteSpace(Composition({sp: 1.0 / num_species for sp
-                                                in site.species.keys()}))
+            site_space = SiteSpace(
+                Composition(
+                    {sp: 1.0 / num_species for sp in site.species.keys()}))
         all_site_spaces.append(site_space)
     return all_site_spaces
 
@@ -128,15 +129,19 @@ class SiteSpace(Mapping, Hashable, MSONable):
                 Composition object that specifies the site space.
         """
         if composition.num_atoms <= 0 or composition.num_atoms > 1:
-            raise ValueError("Number of atoms in Composition must be in (0, 1]"
-                             f" got {composition.num_atoms}!")
+            raise ValueError(
+                "Number of atoms in Composition must be in (0, 1]"
+                f" got {composition.num_atoms}!")
         elif any(isinstance(sp, Vacancy) for sp in composition):
             if composition.num_atoms != 1:
-                raise ValueError(f"Composition {composition} has a Vacancy but"
-                                 "  number of atoms is not 1.")
+                raise ValueError(
+                    f"Composition {composition} has a Vacancy but"
+                    " number of atoms is not 1.")
             elif sum(isinstance(sp, Vacancy) for sp in composition) > 1:
-                raise ValueError("There are multiple vacancies in this "
-                                 f"composition {composition}.")
+                raise ValueError(
+                    "There are multiple vacancies in this composition "
+                    f"{composition}.")
+
         self._composition = composition
         self._data = OrderedDict((spec, comp) for spec, comp
                                  in sorted(composition.items()))
@@ -159,8 +164,9 @@ class SiteSpace(Mapping, Hashable, MSONable):
             sp = get_species(item)
             return self._data[sp]
         except ValueError as ex:
-            raise TypeError(f"Invalid key {item}, {type(item)} for Composition"
-                            f".\nValueError exception:\n{ex}")
+            raise TypeError(
+                f"Invalid key {item}, {type(item)} for Composition"
+                f".\nValueError exception:\n{ex}")
 
     def __len__(self):
         """Get number os species."""

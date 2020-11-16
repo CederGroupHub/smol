@@ -1,11 +1,13 @@
 import pytest
-from collections import OrderedDict
 from itertools import product
 import numpy as np
 import numpy.testing as npt
 
+from pymatgen import Composition
+from smol.cofe.space.domain import SiteSpace
 from smol.moca.ensemble.sublattice import Sublattice
 from smol.moca.sampler import SampleContainer
+from tests.utils import assert_msonable
 
 NUM_SITES = 500
 NSAMPLES = 1000
@@ -20,9 +22,9 @@ def container(request):
     natural_parameters[[0, -1]] = -1  # make first and last 1
     num_energy_coefs = 9
     sites = np.random.choice(range(NUM_SITES), size=300, replace=False)
-    site_space = OrderedDict({'A': 0.2, 'B': 0.5, 'C': 0.3})
+    site_space = SiteSpace(Composition({'A': 0.2, 'B': 0.5, 'C': 0.3}))
     sublatt1 = Sublattice(site_space, sites)
-    site_space = OrderedDict({'A': 0.4, 'D': 0.6})
+    site_space = SiteSpace(Composition({'A': 0.4, 'D': 0.6}))
     sites2 = np.setdiff1d(range(NUM_SITES), sites)
     sublatt2 = Sublattice(site_space, np.array(sites2))
     sublattices = [sublatt1, sublatt2]
@@ -138,7 +140,8 @@ def test_get_sampled_values(container, fake_states, discard, thin):
         npt.assert_array_equal(c, comp * np.ones_like(c))
 
     with pytest.raises(ValueError):
-        sublattice = Sublattice(OrderedDict({'foo': 7}), np.zeros(10))
+        sublattice = Sublattice(SiteSpace(Composition({'foo': 7})),
+                                np.zeros(10))
         container.get_sublattice_compositions(sublattice)
 
 
@@ -156,8 +159,9 @@ def test_means_and_variances(container, fake_states, discard, thin):
     npt.assert_array_equal(container.feature_vector_variance(discard=discard, thin_by=thin),
                            10 * [0, ])
     for sublattice, comp in zip(sublattices, SUBLATTICE_COMPOSITIONS):
-        npt.assert_array_almost_equal(container.mean_sublattice_composition(sublattice, discard=discard, thin_by=thin),
-                                      len(sublattice.species) * [comp, ])
+        npt.assert_array_almost_equal(
+            container.mean_sublattice_composition(sublattice, discard=discard, thin_by=thin),
+            len(sublattice.species) * [comp, ])
         npt.assert_array_almost_equal(
             container.sublattice_composition_variance(sublattice, discard=discard, thin_by=thin),
             len(sublattice.species) * [0, ])
@@ -200,3 +204,12 @@ def test_get_mins(container, fake_states):
                            container._chain[i])
     npt.assert_array_equal(container.get_minimum_energy_occupancy(flat=False),
                            container._chain[i])
+
+
+def test_msonable(container, fake_states):
+    add_samples(container, fake_states)
+    d = container.as_dict()
+    cntr = container.from_dict(d)
+    npt.assert_array_equal(container.get_occupancies(),
+                           cntr.get_occupancies())
+    assert_msonable(cntr)

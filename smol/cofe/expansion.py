@@ -61,9 +61,9 @@ class ClusterExpansion(MSONable):
                 the feature matrix used in fitting the given coefficients.
         """
         if len(coefficients) != feature_matrix.shape[1]:
-            raise AttributeError(f'Feature matrix shape {feature_matrix.shape}'
-                                 'does not match length of coefficients '
-                                 f'{len(coefficients)}.')
+            raise AttributeError(
+                f"Feature matrix shape {feature_matrix.shape} does not match "
+                f"length of coefficients {len(coefficients)}.")
         self.coefs = coefficients
         self.metadata = {}
         self._subspace = cluster_subspace
@@ -128,8 +128,8 @@ class ClusterExpansion(MSONable):
         Returns:
             float
         """
-        corrs = self.cluster_subspace.corr_from_structure(structure,
-                                                          normalized=normalize)
+        corrs = self.cluster_subspace.corr_from_structure(
+            structure, normalized=normalize)
         return np.dot(corrs, self.coefs)
 
     def prune(self, threshold=0, with_multiplicity=False):
@@ -186,10 +186,10 @@ class ClusterExpansion(MSONable):
         """
         subspace = self.cluster_subspace.copy()
         subspace.change_site_bases(new_basis, orthonormal=orthonormal)
-        new_feature_matrix = np.array([subspace.corr_from_structure(s,
-                                                                    scmatrix=m)
-                                       for s, m in zip(fit_structures,
-                                                       supercell_matrices)])
+        new_feature_matrix = np.array(
+            [subspace.corr_from_structure(s, scmatrix=m)
+             for s, m in zip(fit_structures, supercell_matrices)])
+
         C = np.matmul(self._feat_matrix.T,
                       np.linalg.pinv(new_feature_matrix.T))
         return np.matmul(C.T, self.coefs)
