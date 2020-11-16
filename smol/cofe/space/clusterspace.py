@@ -771,23 +771,24 @@ class ClusterSubspace(MSONable):
         if len(cutoffs) == 0:  # return singlets only if no cutoffs provided
             return orbits
 
-        all_neighbors = exp_struct.lattice.get_points_in_sphere(exp_struct.frac_coords,  # noqa
-                                                                [0.5, 0.5, 0.5],  # noqa
-                                                                max(cutoffs.values()) + sum(exp_struct.lattice.abc) / 2)  # noqa
+        max_lp = max(exp_struct.lattice.abc) / 2
         for size, diameter in sorted(cutoffs.items()):
             new_orbits = []
+            neighbors = exp_struct.get_sites_in_sphere([0.5, 0.5, 0.5],
+                                                       diameter + max_lp,
+                                                       include_index=True)
             for orbit in orbits[size-1]:
                 if orbit.base_cluster.diameter > diameter:
                     continue
-                for n in all_neighbors:
-                    p = n[0]
+                for site, _, index in neighbors:
+                    p = site.frac_coords
                     if is_coord_subset([p], orbit.base_cluster.sites,
                                        atol=SITE_TOL):
                         continue
                     new_sites = np.concatenate([orbit.base_cluster.sites, [p]])
                     new_orbit = Orbit(new_sites, exp_struct.lattice,
-                                      orbit.bits + [list(range(nbits[n[2]]))],
-                                      orbit.site_bases + [site_bases[n[2]]],
+                                      orbit.bits + [list(range(nbits[index]))],
+                                      orbit.site_bases + [site_bases[index]],
                                       symops)
                     if new_orbit.base_cluster.diameter > diameter + 1e-8:
                         continue
