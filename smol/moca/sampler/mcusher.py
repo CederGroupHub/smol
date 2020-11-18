@@ -292,7 +292,8 @@ class Sublatticeswapper(MCMCUsher):
             for sublattice in self.sublattices:
                 if sp in list(sublattice.site_space):  # noqa
                     self._site_table[sp][sublattice.site_space] = \
-                        [i for i in sublattice.sites if list(sublattice.site_space)[self.occu[i]] == sp] # noqa
+                        [i for i in sublattice.sites if
+                         list(sublattice.site_space)[self.occu[i]] == sp]  # noqa
 
     def _initialize_swap_table(self, allow_crossover=False):
         """
@@ -311,7 +312,7 @@ class Sublatticeswapper(MCMCUsher):
         for sp in possible_sp:
             # within each sublattice, allow swaps between diff species
             for sublatt in self.sublattices:
-                ss_sp = sublatt.site_space.keys() # noqa
+                ss_sp = sublatt.site_space.keys()  # noqa
                 if sp in ss_sp and len(self._site_table[sp][sublatt.site_space]) > 0:  # noqa
                     sp_sublatt_pairs.append((sp, sublatt.site_space))
         allowed_swaps = [(pair1, pair2)
