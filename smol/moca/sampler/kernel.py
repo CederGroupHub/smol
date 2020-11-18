@@ -36,7 +36,7 @@ class MCMCKernel(ABC):
             temperature (float):
                 Temperature at which the MCMC sampling will be carried out.
             step_type (str): optional
-                String specifying the MCMC step type.
+                String specifying the MCMC step type, e.g. 'flip', 'swap'
             args:
                 positional arguments to instantiate the mcusher for the
                 corresponding step size.
@@ -94,7 +94,8 @@ class Metropolis(MCMCKernel):
     The classic and nothing but the classic.
     """
 
-    valid_mcushers = {'flip': 'Flipper', 'swap': 'Swapper'}
+    valid_mcushers = {'flip': 'Flipper', 'swap': 'Swapper',
+                      'table_swap': 'SublatticeSwapper'}
 
     def single_step(self, occupancy):
         """Attempt an MC step.
@@ -120,7 +121,6 @@ class Metropolis(MCMCKernel):
             self._usher.update_aux_state(step)
 
         return accept, occupancy, delta_enthalpy, delta_features
-
 
 def mcmckernel_factory(kernel_type, ensemble, temperature, step_type,
                        *args, **kwargs):
