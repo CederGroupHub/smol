@@ -19,6 +19,7 @@ import warnings
 from smol.utils import derived_class_factory
 from pymatgen.core.periodic_table import Specie
 
+
 class MCMCUsher(ABC):
     """Abstract base class for MCMC usher classes."""
 
@@ -109,6 +110,7 @@ class Flipper(MCMCUsher):
         choices = set(range(len(sublattice.site_space))) - {occupancy[site]}
         return [(site, random.choice(list(choices)))]
 
+
 class Swapper(MCMCUsher):
     """Implementation of a simple swap step for two random sites."""
 
@@ -137,6 +139,7 @@ class Swapper(MCMCUsher):
             # inefficient, maybe re-call method? infinite recursion problem
             swap = []
         return swap
+
 
 class Sublatticeswapper(MCMCUsher):
     """Implementation of a swap step for two random sites within the same
@@ -167,8 +170,8 @@ class Sublatticeswapper(MCMCUsher):
                            self.Mn3_specie,
                            self.Mn4_specie]
 
-    def _initialize_occupancies(self,occupancy):
-        self.occu = occupancy # need this to set the site_table
+    def _initialize_occupancies(self, occupancy):
+        self.occu = occupancy  # need this to set the site_table
         self._reset_site_table()
         self._sites_to_sublattice = dict()
         for sublatt in self.sublattices:
@@ -180,7 +183,8 @@ class Sublatticeswapper(MCMCUsher):
         for sublatt in self.sublattices:
             sublattNo += 1
             for _ in list(sublatt.site_space):
-                self.sublattice_probabilities_per_specie.append(self._sublatt_probs[sublattNo])
+                self.sublattice_probabilities_per_specie\
+                    .append(self._sublatt_probs[sublattNo])
 
     def _get_swaps_from_table(self):
         """Args:
@@ -215,10 +219,8 @@ class Sublatticeswapper(MCMCUsher):
         # only of swap types between different species in the same sublattice,
         # similar to what is given by the normal _get_flips method, all with
         # the same probability of being chosen
-        if self.swap_table is None: #! modified from TC's original code
-            self._initialize_swap_table() #! modified from TC's original code
-        #else:
-        #    self.swap_table = swap_table
+        if self.swap_table is None:  # modified from TC's original code
+            self._initialize_swap_table()  # modified from TC's original code
 
         # Choose random swap type weighted by given probabilities in table
         chosen_flip = random.choices(list(self.swap_table.keys()),
@@ -263,14 +265,14 @@ class Sublatticeswapper(MCMCUsher):
         flip_info = (sp2, self._sites_to_sublattice[site1],
                      sp1, self._sites_to_sublattice[site2],
                      'swap')
-        return ((site1, self.occu[site2]), (site2, self.occu[site1])), flip_info
+        return ((site1, self.occu[site2]),
+                (site2, self.occu[site1])), flip_info
 
     def propose_step(self, occupancy):
         # need to reset the site table
         self._initialize_occupancies(occupancy)
         if np.random.rand() <= self.Mn_swap_probability:
             flip, flip_info = self._get_Mn_swaps()
-            print (flip_info)
         else:
             flip, flip_info = self._get_swaps_from_table()
         self.current_flip_info = flip_info
@@ -404,9 +406,12 @@ class Sublatticeswapper(MCMCUsher):
         resulting in a change of species.
 
         Returns: tuple of (flip, flip_info)
-        flip: (site1, sp2 index for site1 sublattice), (site2, sp1 index for site2 sublattice)
-        flip_info: (sp2, site1 sublattice, sp1, site2 sublattice, flip_type)
-        flip_type: (str) which can be 'swap', None (inefficient but satisfies d.b.), dispropRXN.
+        flip: (site1, sp2 index for site1 sublattice),
+        (site2, sp1 index for site2 sublattice)
+        flip_info: (sp2, site1 sublattice, sp1, site2 sublattice,
+                    flip_type)
+        flip_type: (str) which can be 'swap', None
+                    (inefficient but satisfies d.b.), dispropRXN.
 
         """
 
@@ -415,7 +420,9 @@ class Sublatticeswapper(MCMCUsher):
             for sublatt in self._site_table[sp]:
                 site1_options += self._site_table[sp][sublatt]
         if len(site1_options) < 2:
-            raise ValueError("Only 1 Mn in the system. Cannot do Mn swaps.")
+            raise ValueError("Only 1 Mn in the system. \
+                            Cannot do Mn swaps.")
+
         site1 = random.choice(site1_options)
 
         # This implementation should still have p(s2) = 1/(N_Mn-1) for a
@@ -429,42 +436,52 @@ class Sublatticeswapper(MCMCUsher):
         sp1 = list(self._sites_to_sublattice[site1])[self.occu[site1]]
         sp2 = list(self._sites_to_sublattice[site2])[self.occu[site2]]
 
-        flip_type = random.choice(self.Mn_flip_table[(str(sp1), str(sp2))])
+        flip_type = random.choice(self.Mn_flip_table[(str(sp1),
+                                                      str(sp2))])
 
         flip_info = ((sp2, self._sites_to_sublattice[site1]),
-                     (sp1, self._sites_to_sublattice[site2]), flip_type)
+                     (sp1, self._sites_to_sublattice[site2]),
+                     flip_type)
 
         if flip_type == 'None':
             # Unproductive swap, faster just to not return any flips
             return tuple(), 'None'
         elif flip_type == 'swap':
             try:
-                return ((site1, list(self._sites_to_sublattice[site1]).index(sp2)),
-                        (site2, list(self._sites_to_sublattice[site2]).index(sp1))),\
+                return ((site1,
+                         list(self._sites_to_sublattice[site1]).index(sp2)),
+                        (site2,
+                         list(self._sites_to_sublattice[site2]).index(sp1))),\
                         flip_info
             except ValueError:  # Mn3+/4+ could go tetrahedral
                 return tuple(), flip_info
         elif flip_type == 'dispropA' or flip_type == 'dispropB':
             try:
                 return ((site1,
-                         list(self._sites_to_sublattice[site1]).index(self.Mn3_specie)),
+                         list(self._sites_to_sublattice[site1])
+                         .index(self.Mn3_specie)),
                         (site2,
-                         list(self._sites_to_sublattice[site2]).index(self.Mn3_specie))), \
+                         list(self._sites_to_sublattice[site2])
+                         .index(self.Mn3_specie))), \
                        flip_info
             except ValueError:
                 return tuple(), 'None'
         elif flip_type == 'dispropC':
 
             return ((site1,
-                     list(self._sites_to_sublattice[site1]).index(self.Mn2_specie)),
+                     list(self._sites_to_sublattice[site1])
+                     .index(self.Mn2_specie)),
                     (site2,
-                     list(self._sites_to_sublattice[site2]).index(self.Mn4_specie))), \
+                     list(self._sites_to_sublattice[site2])
+                     .index(self.Mn4_specie))), \
                    flip_info
         elif flip_type == 'dispropD':
             return ((site1,
-                     list(self._sites_to_sublattice[site1]).index(self.Mn4_specie)),
+                     list(self._sites_to_sublattice[site1]).
+                     index(self.Mn4_specie)),
                     (site2,
-                     list(self._sites_to_sublattice[site2]).index(self.Mn2_specie))), \
+                     list(self._sites_to_sublattice[site2])
+                     .index(self.Mn2_specie))), \
                    flip_info
         else:
             raise ValueError("No appropriate flip type in Mn flip table")
@@ -474,6 +491,7 @@ class Sublatticeswapper(MCMCUsher):
         sum_probs = np.sum([self.swap_table[flip] for flip in self.swap_table])
         for flip in self.swap_table:
             self.swap_table[flip] = self.swap_table[flip]/sum_probs
+
 
 def mcusher_factory(usher_type, sublattices, *args, **kwargs):
     """Get a MCMC Usher from string name.

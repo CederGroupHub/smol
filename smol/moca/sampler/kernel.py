@@ -122,6 +122,7 @@ class Metropolis(MCMCKernel):
 
         return accept, occupancy, delta_enthalpy, delta_features
 
+
 def mcmckernel_factory(kernel_type, ensemble, temperature, step_type,
                        *args, **kwargs):
     """Get a MCMC Kernel from string name.
