@@ -67,9 +67,9 @@ class MCMCKernel(ABC):
         self._temperature = temperature
         self.beta = 1.0 / (kB * temperature)
 
-    def set_aux_state(self, state, **kwargs):
-        """Set the auxiliary state from a checkpoint values."""
-        pass
+    def set_aux_state(self, state, *args, **kwargs):
+        """Set the auxiliary state from initial or checkpoint values."""
+        self._usher.set_aux_state(state, *args, **kwargs)
 
     @abstractmethod
     def single_step(self, occupancy):
