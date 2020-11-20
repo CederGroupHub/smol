@@ -573,12 +573,13 @@ class StructureWrangler(MSONable):
         """Warn if corr vector of item with given index is duplicated."""
         for duplicate_inds in self.get_duplicate_corr_inds():
             if index in duplicate_inds:
-                duplicates = [f"{self._items[i]['structure'].composition} "
-                              f"{self._items[i]['properties']}\n"
-                              for i in duplicate_inds]
+                duplicates = "".join(
+                    f"Index {i} - {self._items[i]['structure'].composition}"
+                    f"{self._items[i]['properties']}\n"
+                    for i in duplicate_inds)
                 warnings.warn(
                     "The following structures have duplicated correlation "
-                    f"vectors:\n {duplicates}\n Consider adding more terms to "
+                    f"vectors:\n {duplicates} Consider adding more terms to "
                     "the clustersubspace or filtering duplicates.",
                     UserWarning)
 

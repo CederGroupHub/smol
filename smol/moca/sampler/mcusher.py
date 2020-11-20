@@ -72,11 +72,11 @@ class MCMCUsher(ABC):
         """
         return []
 
-    def update_aux_state(self, step):
+    def update_aux_state(self, step, *args, **kwargs):
         """Update any auxiliary state information based on an accepted step."""
         pass
 
-    def set_aux_state(self, state, **kwargs):
+    def set_aux_state(self, state, *args, **kwargs):
         """Set the auxiliary state from a checkpoint values."""
         pass
 

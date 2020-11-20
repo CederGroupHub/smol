@@ -163,6 +163,9 @@ class Sampler:
                  category=RuntimeWarning)
         # TODO check that initial states are independent if num_walkers > 1
 
+        # set up any auxiliary states from inital occupancies
+        self._kernel.set_aux_state(occupancies)
+
         # allocate arrays for states
         occupancies = np.ascontiguousarray(occupancies, dtype=int)
         accepted = np.zeros(occupancies.shape[0], dtype=int)
