@@ -73,6 +73,14 @@ class MCMCUsher(ABC):
         """
         return []
 
+    def update_aux_state(self, step, *args, **kwargs):
+        """Update any auxiliary state information based on an accepted step."""
+        pass
+
+    def set_aux_state(self, state, *args, **kwargs):
+        """Set the auxiliary state from a checkpoint values."""
+        pass
+
     def get_random_sublattice(self):
         """Return a random sublattice based on given probabilities."""
         return random.choices(self.sublattices, weights=self._sublatt_probs)[0]

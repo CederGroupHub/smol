@@ -12,17 +12,7 @@
    "cell_type": "code",
    "execution_count": 1,
    "metadata": {},
-   "outputs": [
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "/home/lbluque/Develop/pymatgen/pymatgen/ext/matproj.py:454: DeprecationWarning: __init__ is deprecated\n",
-      "MaterialsProjectCompatibility will be updated with new correction classes as well as new values of corrections and uncertainties in 2020\n",
-      "  def get_pourbaix_entries(self, chemsys, solid_compat=MaterialsProjectCompatibility()):\n"
-     ]
-    }
-   ],
+   "outputs": [],
    "source": [
     "import numpy as np\n",
     "import json\n",
@@ -58,10 +48,10 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "subspace = ClusterSubspace.from_radii(lno_prim,\n",
-    "                                      radii={2: 5, 3: 4.1},\n",
-    "                                      basis='sinusoid',\n",
-    "                                      supercell_size='O2-')"
+    "subspace = ClusterSubspace.from_cutoffs(lno_prim,\n",
+    "                                        cutoffs={2: 5, 3: 4.1},\n",
+    "                                        basis='sinusoid',\n",
+    "                                        supercell_size='O2-')"
    ]
   },
   {
@@ -202,7 +192,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 9,
+   "execution_count": 8,
    "metadata": {},
    "outputs": [
     {
@@ -250,15 +240,15 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 16,
+   "execution_count": 9,
    "metadata": {},
    "outputs": [
     {
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "RMSE 0.007366465328123921 eV/prim\n",
-      "MAX 0.0160518633152833 eV/prim\n",
+      "RMSE 0.00736646532812443 eV/prim\n",
+      "MAX 0.016051863315240666 eV/prim\n",
       "Fitted dielectric constant 5.0\n"
      ]
     }
@@ -293,7 +283,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 14,
+   "execution_count": 10,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -329,7 +319,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.8.3"
+   "version": "3.8.5"
   }
  },
  "nbformat": 4,

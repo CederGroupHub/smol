@@ -3,8 +3,6 @@
 __author__ = "Luis Barroso-Luque"
 
 from abc import ABC, abstractmethod
-
-from smol.constants import kB
 from smol.moca import CompositeProcessor, CEProcessor, EwaldProcessor
 from .sublattice import get_sublattices
 
@@ -20,11 +18,14 @@ class Ensemble(ABC):
             dictionary with corresponding thermodynamic boundaries, i.e.
             chemical potentials or fugacity fractions. This is kept only for
             descriptive purposes.
+        valid_mcmc_steps (list of str):
+            list of the valid MCMC steps that can be used to sample the
+            ensemble in MCMC.
     """
 
     valid_mcmc_steps = None  # add this in derived classes
 
-    def __init__(self, processor, temperature, sublattices=None):
+    def __init__(self, processor, sublattices=None):
         """Initialize class instance.
 
         Args:
@@ -37,7 +38,6 @@ class Ensemble(ABC):
         """
         if sublattices is None:
             sublattices = get_sublattices(processor)
-        self.temperature = temperature
         self.num_energy_coefs = len(processor.coefs)
         self.thermo_boundaries = {}  # not pretty way to save general info
         self._processor = processor
@@ -45,8 +45,7 @@ class Ensemble(ABC):
 
     @classmethod
     def from_cluster_expansion(cls, cluster_expansion, supercell_matrix,
-                               temperature, optimize_indicator=False,
-                               **kwargs):
+                               optimize_indicator=False, **kwargs):
         """Initialize an ensemble from a cluster expansion.
 
         Convenience constructor to instantiate an ensemble. This will take
@@ -58,8 +57,6 @@ class Ensemble(ABC):
                 A cluster expansion object.
             supercell_matrix (ndarray):
                 Supercell matrix defining the system size.
-            temperature (float):
-                Ensemble temperature.
             optimize_indicator (bool): optional
                 Wether to optimize calculations for indicator basis.
             **kwargs:
@@ -90,27 +87,11 @@ class Ensemble(ABC):
             processor = CEProcessor(cluster_expansion.cluster_subspace,
                                     supercell_matrix, cluster_expansion.coefs,
                                     optimize_indicator=optimize_indicator)
-        return cls(processor, temperature, **kwargs)
-
-    @property
-    def temperature(self):
-        """Get the temperature of ensemble."""
-        return self._temperature
-
-    @temperature.setter
-    def temperature(self, temperature):
-        """Set the temperature and beta accordingly."""
-        self._temperature = temperature
-        self._beta = 1.0 / (kB * temperature)
-
-    @property
-    def beta(self):
-        """Get 1/kBT."""
-        return self._beta
+        return cls(processor, **kwargs)
 
     @property
     def num_sites(self):
-        """Get the total number of atoms in supercell."""
+        """Get the total number of sites in the supercell."""
         return self.processor.num_sites
 
     @property
@@ -120,17 +101,14 @@ class Ensemble(ABC):
 
     @property
     def processor(self):
-        """Get the system processor."""
+        """Get the ensemble processor."""
         return self._processor
 
     # TODO make a setter for this that checks sublattices are correct and
     #  all sites are included.
     @property
     def sublattices(self):
-        """Get names of sublattices.
-
-        Useful if allowing flips only from certain sublattices is needed.
-        """
+        """Get list of sublattices included in ensemble."""
         return self._sublattices
 
     @property
@@ -161,6 +139,9 @@ class Ensemble(ABC):
         occupancy (i.e. a generalized enthalpy). The feature vector for
         ensembles represents the sufficient statistics.
 
+        For a cluster expansion the feature vector is the
+        correlation vector x system size
+
         Args:
             occupancy (ndarray):
                 encoded occupancy string
@@ -172,7 +153,7 @@ class Ensemble(ABC):
 
     @abstractmethod
     def compute_feature_vector_change(self, occupancy, step):
-        """Compute the change in the feature vector from a step.
+        """Compute the change in the feature vector from a given step.
 
         Args:
             occupancy (ndarray):
@@ -205,10 +186,13 @@ class Ensemble(ABC):
             sublattice.reset_restricted_sites()
 
     def as_dict(self):
-        """Get dictionary representation."""
+        """Get Json-serialization dict representation.
+
+        Returns:
+            MSONable dict
+        """
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
-             'temperature': self.temperature,
              'thermo_boundaries': self.thermo_boundaries,
              'processor': self._processor.as_dict(),
              'sublattices': [s.as_dict() for s in self._sublattices]}

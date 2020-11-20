@@ -352,7 +352,7 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="section" id="Creating-a-basic-Cluster-Expansion">
 <h1>Creating a basic Cluster Expansion<a class="headerlink" href="#Creating-a-basic-Cluster-Expansion" title="Permalink to this headline">¶</a></h1>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
@@ -364,16 +364,6 @@ div.rendered_html tbody tr:hover {
 <span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">ClusterSubspace</span><span class="p">,</span> <span class="n">StructureWrangler</span><span class="p">,</span> <span class="n">ClusterExpansion</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/lbluque/Develop/pymatgen/pymatgen/ext/matproj.py:454: DeprecationWarning: __init__ is deprecated
-MaterialsProjectCompatibility will be updated with new correction classes as well as new values of corrections and uncertainties in 2020
-  def get_pourbaix_entries(self, chemsys, solid_compat=MaterialsProjectCompatibility()):
-</pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
@@ -431,21 +421,21 @@ Sites (4)
 <h2>1) The cluster subspace<a class="headerlink" href="#1)-The-cluster-subspace" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">ClusterSubspace</span></code> represents all the orbits (groups of equivalent clusters) that will be considered when fitting the cluster expansion. Its main purpose is to compute the <strong>correlations functions</strong> for each included orbit given a structure in the compositional space defined by the prim.</p>
 <p>In order to do be able to compute the correlation functions, the given structure must match the prim structure in a “crystallographic” sense but allowing for compositional degrees of freedom in the “active” sites.</p>
-<p>A cluster subspace most easily created by providing: 1. The prim structure representing the configurational space. 2. A set of cutoff radii for each size of orbit we want to consider. 3. A type of site basis function to use.</p>
+<p>A cluster subspace most easily created by providing: 1. The prim structure representing the configurational space. 2. A set of diameter cutoffs for each size of orbit we want to consider. 3. A type of site basis function to use.</p>
 <p>There are more options allowed by the code to fine grain and tune. See other notebooks for advanced use cases.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">subspace</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_radii</span><span class="p">(</span><span class="n">lno_prim</span><span class="p">,</span>
-                                      <span class="n">radii</span><span class="o">=</span><span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mf">4.1</span><span class="p">},</span> <span class="c1"># will include orbits of 2 and 3 sites.</span>
-                                      <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;sinusoid&#39;</span><span class="p">,</span> <span class="c1"># sets the site basis type, default is indicator</span>
-                                      <span class="n">supercell_size</span><span class="o">=</span><span class="s1">&#39;O2-&#39;</span><span class="p">)</span>
+<span></span><span class="n">subspace</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_cutoffs</span><span class="p">(</span><span class="n">lno_prim</span><span class="p">,</span>
+                                        <span class="n">cutoffs</span><span class="o">=</span><span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mf">4.1</span><span class="p">},</span> <span class="c1"># will include orbits of 2 and 3 sites.</span>
+                                        <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;sinusoid&#39;</span><span class="p">,</span> <span class="c1"># sets the site basis type, default is indicator</span>
+                                        <span class="n">supercell_size</span><span class="o">=</span><span class="s1">&#39;O2-&#39;</span><span class="p">)</span>
 
 <span class="c1"># supercell_size specifies the method to determine the supercell size</span>
 <span class="c1"># when trying to match a structure.</span>
-<span class="c1"># (See pymatgen.structure_mathcer.StructureMatcher for more info)</span>
+<span class="c1"># (See pymatgen.structure_matcher.StructureMatcher for more info)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">subspace</span><span class="p">)</span> <span class="c1"># single site and empty orbits are always included.</span>
 </pre></div>
@@ -466,22 +456,22 @@ ClusterBasis: [Prim Composition] Li+0.5 Ni3+0.5 Ni4+0.5 O2-2
               [Base Cluster] Radius: 0.0   Centroid: [0.5 0.5 0.5]      Points: [[0.5 0.5 0.5]]
     [Size] 2
       [Orbit] id: 3  orderings: 1   multiplicity: 6    no. symops: 2
-              [Base Cluster] Radius: 2.97  Centroid: [0.75 0.25 0.75]   Points: [[1.  0.  1. ]  [0.5 0.5 0.5]]
+              [Base Cluster] Radius: 1.48  Centroid: [0.75 0.25 0.75]   Points: [[1.  0.  1. ]  [0.5 0.5 0.5]]
       [Orbit] id: 4  orderings: 1   multiplicity: 3    no. symops: 4
-              [Base Cluster] Radius: 2.97  Centroid: [0.5 0.5 0. ]      Points: [[1. 0. 0.]  [0. 1. 0.]]
+              [Base Cluster] Radius: 1.48  Centroid: [0.5 0.5 0. ]      Points: [[1. 0. 0.]  [0. 1. 0.]]
       [Orbit] id: 5  orderings: 1   multiplicity: 3    no. symops: 4
-              [Base Cluster] Radius: 2.97  Centroid: [0.  0.5 0.5]      Points: [[-0.5  0.5  0.5]  [ 0.5  0.5  0.5]]
+              [Base Cluster] Radius: 1.48  Centroid: [0.  0.5 0.5]      Points: [[-0.5  0.5  0.5]  [ 0.5  0.5  0.5]]
       [Orbit] id: 6  orderings: 1   multiplicity: 6    no. symops: 2
-              [Base Cluster] Radius: 4.2   Centroid: [0.25 0.25 0.25]   Points: [[ 1.   0.   0. ]  [-0.5  0.5  0.5]]
+              [Base Cluster] Radius: 2.1   Centroid: [0.25 0.25 0.25]   Points: [[ 1.   0.   0. ]  [-0.5  0.5  0.5]]
     [Size] 3
       [Orbit] id: 7  orderings: 1   multiplicity: 6    no. symops: 2
-              [Base Cluster] Radius: 2.97  Centroid: [0.   0.33 0.67]   Points: [[ 0.   0.   1. ]  [-0.5  0.5  0.5]  [ 0.5  0.5  0.5]]
+              [Base Cluster] Radius: 1.48  Centroid: [0.   0.33 0.67]   Points: [[ 0.   0.   1. ]  [-0.5  0.5  0.5]  [ 0.5  0.5  0.5]]
       [Orbit] id: 8  orderings: 1   multiplicity: 6    no. symops: 2
-              [Base Cluster] Radius: 2.97  Centroid: [0.5  0.5  0.83]   Points: [[1.  0.  1. ]  [0.5 0.5 0.5]  [0.  1.  1. ]]
+              [Base Cluster] Radius: 1.48  Centroid: [0.5  0.5  0.83]   Points: [[1.  0.  1. ]  [0.5 0.5 0.5]  [0.  1.  1. ]]
       [Orbit] id: 9  orderings: 1   multiplicity: 2    no. symops: 6
-              [Base Cluster] Radius: 2.97  Centroid: [0.33 0.33 0.  ]   Points: [[1. 0. 0.]  [0. 1. 0.]  [0. 0. 0.]]
+              [Base Cluster] Radius: 1.48  Centroid: [0.33 0.33 0.  ]   Points: [[1. 0. 0.]  [0. 1. 0.]  [0. 0. 0.]]
       [Orbit] id: 10 orderings: 1   multiplicity: 2    no. symops: 6
-              [Base Cluster] Radius: 2.97  Centroid: [0.83 0.83 0.5 ]   Points: [[0.5 0.5 0.5]  [1.5 0.5 0.5]  [0.5 1.5 0.5]]
+              [Base Cluster] Radius: 1.48  Centroid: [0.83 0.83 0.5 ]   Points: [[0.5 0.5 0.5]  [1.5 0.5 0.5]  [0.5 1.5 0.5]]
 
 </pre></div></div>
 </div>
@@ -634,7 +624,7 @@ MAX 0.022826186581731633 eV/prim
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-The predicted energy for a structure with composition Li+4 Ni3+4 Ni4+2 O2-12 is -35.44704535541771 eV/prim.
+The predicted energy for a structure with composition Li+3 Ni3+3 Ni4+3 O2-12 is -34.57411118658173 eV/prim.
 
 The fitted coefficients are:
 [-3.44424307e+01  1.52944807e+00  1.52944807e+00 -7.11937730e-02
@@ -649,7 +639,7 @@ The effective cluster interactions are:
 ClusterExpansion:
     Prim Composition: Li+0.5 Ni3+0.5 Ni4+0.5 O2-2
  Num fit structures: 27
-Num orbit functions: 11
+Num corr functions: 11
     [Orbit]  id: 0
         bit       eci
         [X]       -34.4
@@ -734,7 +724,7 @@ Num orbit functions: 11
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-StructureWrangler: &lt;class &#39;smol.cofe.wrangler.StructureWrangler&#39;&gt;
+StructureWrangler: &lt;class &#39;smol.cofe.wrangling.wrangler.StructureWrangler&#39;&gt;
 
 ClusterExpansion: &lt;class &#39;smol.cofe.expansion.ClusterExpansion&#39;&gt;
 

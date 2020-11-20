@@ -8,6 +8,8 @@ __author__ = "Luis Barroso-Luque"
 
 import random
 from warnings import warn
+from datetime import datetime
+import os
 import numpy as np
 
 from smol.utils import progress_bar
@@ -49,17 +51,20 @@ class Sampler:
         random.seed(seed)
 
     @classmethod
-    def from_ensemble(cls, ensemble, step_type=None, kernel_type=None,
-                      seed=None, nwalkers=1, *args, **kwargs):
+    def from_ensemble(cls, ensemble, temperature, step_type=None,
+                      kernel_type=None, seed=None, nwalkers=1,
+                      *args, **kwargs):
         """
         Create a sampler based on an Ensemble instances.
 
-        This is the easier way to spin up a Sampler. Since it will
-        automatically populate and create a SampleContainer.
+        This is the easier way to spin up a Sampler. This will
+        automatically populate and create an appropriate SampleContainer.
 
         Args:
             ensemble (Ensemble):
                 An Ensemble class to obtain sample probabilities from.
+            temperature (float):
+                Temperature to run Monte Carlo at.
             step_type (str): optional
                 type of step to run MCMC with. If not given the default is the
                 first entry in the Ensemble.valid_mcmc_steps.
@@ -88,16 +93,17 @@ class Sampler:
         if kernel_type is None:
             kernel_type = "Metropolis"
 
-        mcmckernel = mcmckernel_factory(kernel_type, ensemble, step_type,
-                                        *args, **kwargs)
+        mcmckernel = mcmckernel_factory(kernel_type, ensemble, temperature,
+                                        step_type, *args, **kwargs)
 
-        ensemble_metadata = {"name": type(ensemble).__name__}
-        ensemble_metadata.update(ensemble.thermo_boundaries)
+        sampling_metadata = {"name": type(ensemble).__name__}
+        sampling_metadata.update(ensemble.thermo_boundaries)
+        sampling_metadata.update({"kernel": kernel_type, "step": step_type})
         container = SampleContainer(ensemble.num_sites,
                                     ensemble.sublattices,
                                     ensemble.natural_parameters,
                                     ensemble.num_energy_coefs,
-                                    ensemble_metadata, nwalkers)
+                                    sampling_metadata, nwalkers)
         return cls(mcmckernel, container, seed=seed)
 
     @property
@@ -118,11 +124,11 @@ class Sampler:
 
     @property
     def samples(self):
-        """Get the samplecontainer."""
+        """Get the SampleContainer."""
         return self._container
 
     def efficiency(self, discard=0, flat=True):
-        """Return the sampling efficiency for each walker."""
+        """Get the efficiency of MCMC sampling (accepted/total)."""
         return self.samples.sampling_efficiency(discard=discard, flat=flat)
 
     def clear_samples(self):
@@ -130,9 +136,9 @@ class Sampler:
         self.samples.clear()
 
     def sample(self, nsteps, initial_occupancies, thin_by=1, progress=False):
-        """Generate MC samples.
+        """Generate MCMC samples.
 
-        Yield a sampler state every thin_by iterations. A state is give by
+        Yield a sampler state every `thin_by` iterations. A state is give by
         a tuple of (occupancies, features, enthalpy)
 
         Args:
@@ -157,13 +163,16 @@ class Sampler:
                  category=RuntimeWarning)
         # TODO check that initial states are independent if num_walkers > 1
 
+        # set up any auxiliary states from inital occupancies
+        self._kernel.set_aux_state(occupancies)
+
         # allocate arrays for states
         occupancies = np.ascontiguousarray(occupancies, dtype=int)
         accepted = np.zeros(occupancies.shape[0], dtype=int)
-        temperature = np.zeros(occupancies.shape[0])
         features = list(map(self._kernel.feature_fun, occupancies))
         features = np.ascontiguousarray(features)
         enthalpy = np.dot(self._kernel.natural_params, features.T)
+        temperature = self._kernel.temperature * np.ones(occupancies.shape[0])
 
         # Initialise progress bar
         chains, nsites = self.samples.shape
@@ -175,7 +184,6 @@ class Sampler:
                     for i, (accept, occupancy, delta_enthalpy, delta_features)\
                       in enumerate(map(self._kernel.single_step, occupancies)):
                         accepted[i] += accept
-                        temperature[i] = self._kernel.temperature
                         occupancies[i] = occupancy
                         if accept:
                             enthalpy[i] = enthalpy[i] + delta_enthalpy
@@ -186,7 +194,8 @@ class Sampler:
                        enthalpy.copy(), features.copy(), thin_by)
                 accepted[:] = 0  # reset acceptance array
 
-    def run(self, nsteps, initial_occupancies=None, thin_by=1, progress=False):
+    def run(self, nsteps, initial_occupancies=None, thin_by=1, progress=False,
+            stream_chunk=0, stream_file=None, swmr_mode=False):
         """Run an MCMC sampling simulation.
 
         This will run and save the samples every thin_by into a
@@ -202,12 +211,22 @@ class Sampler:
                 a fresh run.
             thin_by (int): optional
                 the amount to thin by for saving samples.
-            progress (bool):
+            progress (bool): optional
                 If true will show a progress bar.
+            stream_chunk (int): optional
+                Chunk of samples to stream into a file. If > 0 samples will
+                be flushed to backend file in stream_chucks
+            stream_file (str): optional
+                file name to use as backend. If file already exists will try
+                to append to datasets. If not given will create a new file.
+            swmr_mode (bool): optional
+                If true allows to read file from other processes. Single Writer
+                Multiple Readers.
         """
         if initial_occupancies is None:
             try:
                 initial_occupancies = self.samples.get_occupancies(flat=False)[-1]  # noqa
+                # auxiliary states from kernels should be set here
             except IndexError:
                 raise RuntimeError("There are no saved samples to obtain the "
                                    "initial occupancies. These must be "
@@ -220,10 +239,31 @@ class Sampler:
             if initial_occupancies.shape != self.samples.shape:
                 initial_occupancies = self._reshape_occu(initial_occupancies)
 
-        self.samples.allocate(nsteps // thin_by)
-        for state in self.sample(nsteps, initial_occupancies,
-                                 thin_by=thin_by, progress=progress):
+        if stream_chunk > 0:
+            if stream_file is None:
+                now = datetime.now()
+                file_name = 'moca-samples-' + now.strftime('%Y-%m-%d-%H%M%S%f')
+                stream_file = os.path.join(os.getcwd(), file_name + '.h5')
+            backend = self.samples.get_backend(stream_file, nsteps // thin_by,
+                                               swmr_mode=swmr_mode)
+            self.samples.allocate(stream_chunk)
+        else:
+            backend = None
+            self.samples.allocate(nsteps // thin_by)
+
+        for i, state in enumerate(self.sample(nsteps, initial_occupancies,
+                                  thin_by=thin_by, progress=progress)):
             self.samples.save_sample(*state)
+            if backend is not None and (i + 1) % stream_chunk == 0:
+                self.samples.flush_to_backend(backend)
+
+        if backend is not None:
+            self.clear_samples()
+            backend.close()
+
+        # A checkpoing of aux states should be saved to container here.
+        # Note that to save any general "state" we will need to make sure it is
+        # properly serializable to save as json and also to save in h5py
 
     def anneal(self, temperatures, mcmc_steps, initial_occupancies=None,
                thin_by=1, progress=False):

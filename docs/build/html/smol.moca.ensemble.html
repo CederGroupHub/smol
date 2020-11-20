@@ -119,8 +119,8 @@
 <p>Abstract Base class for Monte Carlo Ensembles.</p>
 <dl class="py class">
 <dt id="smol.moca.ensemble.base.Ensemble">
-<em class="property">class </em><code class="sig-name descname">Ensemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<em class="property">class </em><code class="sig-name descname">Ensemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
 <p>Abstract Base Class for Monte Carlo Ensembles.</p>
 <dl class="py attribute">
 <dt id="smol.moca.ensemble.base.Ensemble.num_energy_coefs">
@@ -129,7 +129,7 @@
 correspond to energy only.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -142,7 +142,19 @@ chemical potentials or fugacity fractions. This is kept only for
 descriptive purposes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="smol.moca.ensemble.base.Ensemble.valid_mcmc_steps">
+<code class="sig-name descname">valid_mcmc_steps</code><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.valid_mcmc_steps" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of the valid MCMC steps that can be used to sample the
+ensemble in MCMC.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list of str</p>
 </dd>
 </dl>
 </dd></dl>
@@ -162,13 +174,12 @@ supercell with same site spaces.</p></li>
 <dl class="py method">
 <dt id="smol.moca.ensemble.base.Ensemble.as_dict">
 <code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.as_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get dictionary representation.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="smol.moca.ensemble.base.Ensemble.beta">
-<em class="property">property </em><code class="sig-name descname">beta</code><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.beta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get 1/kBT.</p>
+<dd><p>Get Json-serialization dict representation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>MSONable dict</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -179,6 +190,8 @@ supercell with same site spaces.</p></li>
 the exponent determining in the relative probability for the given
 occupancy (i.e. a generalized enthalpy). The feature vector for
 ensembles represents the sufficient statistics.</p>
+<p>For a cluster expansion the feature vector is the
+correlation vector x system size</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string</p>
@@ -195,7 +208,7 @@ ensembles represents the sufficient statistics.</p>
 <dl class="py method">
 <dt id="smol.moca.ensemble.base.Ensemble.compute_feature_vector_change">
 <em class="property">abstract </em><code class="sig-name descname">compute_feature_vector_change</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em>, <em class="sig-param"><span class="n">step</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.compute_feature_vector_change" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the change in the feature vector from a step.</p>
+<dd><p>Compute the change in the feature vector from a given step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -214,7 +227,7 @@ ensembles represents the sufficient statistics.</p>
 
 <dl class="py method">
 <dt id="smol.moca.ensemble.base.Ensemble.from_cluster_expansion">
-<em class="property">classmethod </em><code class="sig-name descname">from_cluster_expansion</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_expansion</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">optimize_indicator</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.from_cluster_expansion" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">from_cluster_expansion</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_expansion</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span></em>, <em class="sig-param"><span class="n">optimize_indicator</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.from_cluster_expansion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize an ensemble from a cluster expansion.</p>
 <p>Convenience constructor to instantiate an ensemble. This will take
 care of initializing the correct processor based on the
@@ -222,10 +235,9 @@ ClusterExpansion.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_expansion</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterExpansion" title="smol.cofe.ClusterExpansion"><em>ClusterExpansion</em></a>) – A cluster expansion object.</p></li>
+<li><p><strong>cluster_expansion</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.expansion.ClusterExpansion" title="smol.cofe.expansion.ClusterExpansion"><em>ClusterExpansion</em></a>) – A cluster expansion object.</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – Supercell matrix defining the system size.</p></li>
-<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Ensemble temperature.</p></li>
-<li><p><strong>optimize_indicator</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – optional
+<li><p><strong>optimize_indicator</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
 Wether to optimize calculations for indicator basis.</p></li>
 <li><p><strong>**kwargs</strong> – Keyword arguments to pass to ensemble constructor. Such as
 sublattices, sublattice_probabilities, chemical_potentials,
@@ -250,13 +262,13 @@ transformation corresponding to the ensemble.</p>
 <dl class="py method">
 <dt id="smol.moca.ensemble.base.Ensemble.num_sites">
 <em class="property">property </em><code class="sig-name descname">num_sites</code><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.num_sites" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the total number of atoms in supercell.</p>
+<dd><p>Get the total number of sites in the supercell.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="smol.moca.ensemble.base.Ensemble.processor">
 <em class="property">property </em><code class="sig-name descname">processor</code><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.processor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the system processor.</p>
+<dd><p>Get the ensemble processor.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -288,8 +300,7 @@ be no effect.</p>
 <dl class="py method">
 <dt id="smol.moca.ensemble.base.Ensemble.sublattices">
 <em class="property">property </em><code class="sig-name descname">sublattices</code><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.sublattices" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get names of sublattices.</p>
-<p>Useful if allowing flips only from certain sublattices is needed.</p>
+<dd><p>Get list of sublattices included in ensemble.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -298,15 +309,9 @@ be no effect.</p>
 <dd><p>Get size of supercell in number of prims.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.moca.ensemble.base.Ensemble.temperature">
-<em class="property">property </em><code class="sig-name descname">temperature</code><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.temperature" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the temperature of ensemble.</p>
-</dd></dl>
-
 <dl class="py attribute">
-<dt id="smol.moca.ensemble.base.Ensemble.valid_mcmc_steps">
-<code class="sig-name descname">valid_mcmc_steps</code><em class="property"> = None</em><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.valid_mcmc_steps" title="Permalink to this definition">¶</a></dt>
+<dt id="id0">
+<code class="sig-name descname">valid_mcmc_steps</code><em class="property"> = None</em><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -319,7 +324,7 @@ be no effect.</p>
 concentration of species.</p>
 <dl class="py class">
 <dt id="smol.moca.ensemble.canonical.CanonicalEnsemble">
-<em class="property">class </em><code class="sig-name descname">CanonicalEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.canonical.CanonicalEnsemble" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">CanonicalEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.canonical.CanonicalEnsemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.base.Ensemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Canonical Ensemble class to run Monte Carlo Simulations.</p>
 <p>Initialize CanonicalEnemble.</p>
@@ -328,7 +333,6 @@ concentration of species.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>processor</strong> (<a class="reference internal" href="smol.moca.processor.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><em>Processor</em></a>) – A processor that can compute the change in a property given
 a set of flips.</p></li>
-<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Temperature of ensemble</p></li>
 <li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – optional
 list of Lattice objects representing sites in the processor
 supercell with same site spaces.</p></li>
@@ -338,8 +342,9 @@ supercell with same site spaces.</p></li>
 <dl class="py method">
 <dt id="smol.moca.ensemble.canonical.CanonicalEnsemble.compute_feature_vector">
 <code class="sig-name descname">compute_feature_vector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.canonical.CanonicalEnsemble.compute_feature_vector" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the feature vector for a give occupancy.</p>
-<p>In the canonical case it is just the feature vector.</p>
+<dd><p>Compute the feature vector for a given occupancy.</p>
+<p>In the canonical case it is just the feature vector from the underlying
+processor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string</p>
@@ -356,7 +361,7 @@ supercell with same site spaces.</p></li>
 <dl class="py method">
 <dt id="smol.moca.ensemble.canonical.CanonicalEnsemble.compute_feature_vector_change">
 <code class="sig-name descname">compute_feature_vector_change</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em>, <em class="sig-param"><span class="n">step</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.canonical.CanonicalEnsemble.compute_feature_vector_change" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the change in the feature vector from a step.</p>
+<dd><p>Compute the change in the feature vector from a given step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -379,7 +384,7 @@ supercell with same site spaces.</p></li>
 <dd><p>Instantiate a CanonicalEnsemble from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – dictionary representation.</p>
+<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – dictionary representation.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>CanonicalEnsemble</p>
@@ -411,7 +416,7 @@ variable concentration of species.</p>
 * FuSemiGrandEnsemble - for which relative fugacity fractions are fixed.</p>
 <dl class="py class">
 <dt id="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble">
-<em class="property">class </em><code class="sig-name descname">BaseSemiGrandEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">BaseSemiGrandEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.base.Ensemble</span></code></a></p>
 <p>Abstract Semi-Grand Canonical Base Ensemble.</p>
 <p>Total number of species are fixed but composition of “active” (with partial
@@ -424,7 +429,6 @@ occupancies) sublattices is allowed to change.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>processor</strong> (<a class="reference internal" href="smol.moca.processor.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><em>Processor</em></a>) – A processor that can compute the change in a property given
 a set of flips. See moca.processor</p></li>
-<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Temperature of ensemble</p></li>
 <li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – optional
 list of Lattice objects representing sites in the processor
 supercell with same site spaces.</p></li>
@@ -440,8 +444,9 @@ supercell with same site spaces.</p></li>
 <dl class="py method">
 <dt id="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.compute_feature_vector">
 <code class="sig-name descname">compute_feature_vector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.compute_feature_vector" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the feature vector for a give occupancy.</p>
-<p>In the canonical case it is just the feature vector from the processor.</p>
+<dd><p>Compute the feature vector for a given occupancy.</p>
+<p>In the semigrand case it is the feature vector and the chemical work
+term.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string</p>
@@ -471,7 +476,7 @@ supercell with same site spaces.</p></li>
 
 <dl class="py class">
 <dt id="smol.moca.ensemble.semigrand.FuSemiGrandEnsemble">
-<em class="property">class </em><code class="sig-name descname">FuSemiGrandEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">fugacity_fractions</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.semigrand.FuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">FuSemiGrandEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">fugacity_fractions</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.semigrand.FuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Fugacity fraction SemiGrandEnsemble.</p>
 <p>A Semi-Grand Canonical Ensemble for Monte Carlo simulations where the
@@ -487,7 +492,7 @@ temperature the corresponding chemical potentials can then be calculated.</p>
 <dd><p>dictionary of fugacity fractions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -498,15 +503,14 @@ temperature the corresponding chemical potentials can then be calculated.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>processor</strong> (<a class="reference internal" href="smol.moca.processor.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><em>Processor</em></a>) – A processor that can compute the change in a property given
 a set of flips. See moca.processor</p></li>
-<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Temperature of ensemble</p></li>
 <li><p><strong>fugacity_fractions</strong> (<em>sequence of dicts</em>) – optional
-dictionary of species name and fugacity fraction for each
-sublattice (ie think of it as the sublattice concentrations
+Dictionary of species name and fugacity fraction for each
+sublattice (.i.e think of it as the sublattice concentrations
 for random structure). If not given this will be taken from the
 prim structure used in the cluster subspace. Needs to be in
 the same order as the corresponding sublattice.</p></li>
 <li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – optional
-list of Lattice objects representing sites in the processor
+list of Sublattice objects representing sites in the processor
 supercell with same site spaces.</p></li>
 </ul>
 </dd>
@@ -531,7 +535,7 @@ supercell with same site spaces.</p></li>
 <dl class="py method">
 <dt id="smol.moca.ensemble.semigrand.FuSemiGrandEnsemble.compute_feature_vector_change">
 <code class="sig-name descname">compute_feature_vector_change</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em>, <em class="sig-param"><span class="n">step</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.semigrand.FuSemiGrandEnsemble.compute_feature_vector_change" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the change in the feature vector from a step.</p>
+<dd><p>Compute the change in the feature vector from a given step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -540,7 +544,7 @@ supercell with same site spaces.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>difference in vector of sufficient statistics</p>
+<dd class="field-even"><p>difference in feature vector</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ndarray</p>
@@ -553,11 +557,8 @@ supercell with same site spaces.</p></li>
 <em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.semigrand.FuSemiGrandEnsemble.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiate a FuSemiGrandEnsemble from dict representation.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – dictionary representation.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>FuSemiGrandEnsemble</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>FuSemiGrandEnsemble</p>
 </dd>
 </dl>
 </dd></dl>
@@ -572,11 +573,11 @@ supercell with same site spaces.</p></li>
 
 <dl class="py class">
 <dt id="smol.moca.ensemble.semigrand.MuSemiGrandEnsemble">
-<em class="property">class </em><code class="sig-name descname">MuSemiGrandEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">chemical_potentials</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.semigrand.MuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">MuSemiGrandEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">chemical_potentials</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.semigrand.MuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Relative chemical potential based SemiGrand Ensemble.</p>
 <p>A Semi-Grand Canonical Ensemble for Monte Carlo Simulations where species
-chemical potentials are predefined. Note that in the SGC Ensemble
+relative chemical potentials are predefined. Note that in the SGC Ensemble
 implemented here, only the differences in chemical potentials with
 respect to a reference species on each sublattice are fixed, and not the
 absolute values. To obtain the absolute values you must calculate the
@@ -588,7 +589,7 @@ values.</p>
 <dd><p>dict of chemical potentials.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -598,11 +599,10 @@ values.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>processor</strong> (<a class="reference internal" href="smol.moca.processor.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><em>Processor</em></a>) – A processor that can compute the change in a property given
-a set of flips. See moca.processor</p></li>
-<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Temperature of ensemble</p></li>
-<li><p><strong>chemical_potentials</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – dictionary with species names and chemical potentials.</p></li>
+a set of flips.</p></li>
+<li><p><strong>chemical_potentials</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – Dictionary with species and chemical potentials.</p></li>
 <li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – optional
-list of Lattice objects representing sites in the processor
+List of Sublattice objects representing sites in the processor
 supercell with same site spaces.</p></li>
 </ul>
 </dd>
@@ -633,7 +633,7 @@ supercell with same site spaces.</p></li>
 <dl class="py method">
 <dt id="smol.moca.ensemble.semigrand.MuSemiGrandEnsemble.compute_feature_vector_change">
 <code class="sig-name descname">compute_feature_vector_change</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em>, <em class="sig-param"><span class="n">step</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.semigrand.MuSemiGrandEnsemble.compute_feature_vector_change" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the change in the feature vector from a step.</p>
+<dd><p>Return the change in the feature vector from a given step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -655,11 +655,8 @@ supercell with same site spaces.</p></li>
 <em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.semigrand.MuSemiGrandEnsemble.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiate a MuSemiGrandEnsemble from dict representation.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – dictionary representation.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>CanonicalEnsemble</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>CanonicalEnsemble</p>
 </dd>
 </dl>
 </dd></dl>
@@ -671,7 +668,7 @@ supercell with same site spaces.</p></li>
 <span id="smol-moca-ensemble-sublattice-module"></span><h2>smol.moca.ensemble.sublattice module<a class="headerlink" href="#module-smol.moca.ensemble.sublattice" title="Permalink to this headline">¶</a></h2>
 <p>Implementation of Sublattice class.</p>
 <p>A sublattice represents a set of sites in a supercell that have all have
-the same site space. It more rigourously represents a substructure of the
+the same site space. More rigourously it represents a substructure of the
 random structure supercell being sampled in a Monte Carlo simulation.</p>
 <dl class="py class">
 <dt id="smol.moca.ensemble.sublattice.Sublattice">
@@ -679,15 +676,16 @@ random structure supercell being sampled in a Monte Carlo simulation.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Sublattice class.</p>
 <p>A Sublattice is used to represent a subset of supercell sites that have
-the same site space.</p>
+the same site space. Rigorously it represents a set of sites in a
+“substructure” of the total structure.</p>
 <dl class="py attribute">
 <dt id="smol.moca.ensemble.sublattice.Sublattice.site_space">
 <code class="sig-name descname">site_space</code><a class="headerlink" href="#smol.moca.ensemble.sublattice.Sublattice.site_space" title="Permalink to this definition">¶</a></dt>
-<dd><p>Ordered dict with the allowed species and their random
-state composition. See definitions in cofe.cofigspace.basis</p>
+<dd><p>SiteSpace with the allowed species and their random
+state composition.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>OrderedDict</p>
+<dd class="field-odd"><p><a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.domain.SiteSpace" title="smol.cofe.space.domain.SiteSpace">SiteSpace</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -714,24 +712,11 @@ state composition. See definitions in cofe.cofigspace.basis</p>
 </dl>
 </dd></dl>
 
-<dl class="py attribute">
-<dt id="smol.moca.ensemble.sublattice.Sublattice.restricted_sites">
-<code class="sig-name descname">restricted_sites</code><a class="headerlink" href="#smol.moca.ensemble.sublattice.Sublattice.restricted_sites" title="Permalink to this definition">¶</a></dt>
-<dd><p>list of site indices for all restricted sites in the sublattice.
-restricted sites are excluded from flip proposals.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>ndarray</p>
-</dd>
-</dl>
-</dd></dl>
-
 <p>Initialize Sublattice.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>site_space</strong> (<em>OrderedDict</em>) – An ordered dict with the allowed species and their random
-state composition. See definitions in cofe.cofigspace.basis</p></li>
+<li><p><strong>site_space</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.domain.SiteSpace" title="smol.cofe.space.domain.SiteSpace"><em>SiteSpace</em></a>) – A site space object representing the sites in the sublattice</p></li>
 <li><p><strong>sites</strong> (<em>ndarray</em>) – array with the site indices</p></li>
 </ul>
 </dd>
@@ -758,11 +743,8 @@ state composition. See definitions in cofe.cofigspace.basis</p></li>
 <em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.sublattice.Sublattice.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiate a sublattice from dict representation.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – dictionary representation.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Sublattice</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Sublattice</p>
 </dd>
 </dl>
 </dd></dl>
@@ -782,6 +764,12 @@ state composition. See definitions in cofe.cofigspace.basis</p></li>
 <dd class="field-odd"><p><strong>sites</strong> (<em>Sequence</em>) – indices of sites in the occupancy string to restrict.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.moca.ensemble.sublattice.Sublattice.restricted_sites">
+<em class="property">property </em><code class="sig-name descname">restricted_sites</code><a class="headerlink" href="#smol.moca.ensemble.sublattice.Sublattice.restricted_sites" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get restricted sites for species.</p>
 </dd></dl>
 
 <dl class="py method">

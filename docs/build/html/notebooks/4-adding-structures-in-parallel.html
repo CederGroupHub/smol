@@ -371,12 +371,12 @@ div.rendered_html tbody tr:hover {
 <span class="n">lmof_data</span> <span class="o">=</span><span class="n">loadfn</span><span class="p">(</span><span class="s1">&#39;data/lmof_fitting_data.json&#39;</span><span class="p">)</span>
 
 <span class="c1"># create a cluster subspace</span>
-<span class="n">subspace</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_radii</span><span class="p">(</span><span class="n">lmof_prim</span><span class="p">,</span>
-                                      <span class="n">radii</span><span class="o">=</span><span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
-                                      <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;sinusoid&#39;</span><span class="p">,</span>
-                                      <span class="n">supercell_size</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;O2-&#39;</span><span class="p">,</span> <span class="s1">&#39;F-&#39;</span><span class="p">),</span>
-                                      <span class="n">ltol</span> <span class="o">=</span> <span class="mf">0.15</span><span class="p">,</span> <span class="n">stol</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
-                                      <span class="n">angle_tol</span> <span class="o">=</span> <span class="mi">15</span><span class="p">)</span>
+<span class="n">subspace</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_cutoffs</span><span class="p">(</span><span class="n">lmof_prim</span><span class="p">,</span>
+                                        <span class="n">cutoffs</span><span class="o">=</span><span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+                                        <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;sinusoid&#39;</span><span class="p">,</span>
+                                        <span class="n">supercell_size</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;O2-&#39;</span><span class="p">,</span> <span class="s1">&#39;F-&#39;</span><span class="p">),</span>
+                                        <span class="n">ltol</span> <span class="o">=</span> <span class="mf">0.15</span><span class="p">,</span> <span class="n">stol</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
+                                        <span class="n">angle_tol</span> <span class="o">=</span> <span class="mi">15</span><span class="p">)</span>
 
 <span class="c1"># create the structre wrangler</span>
 <span class="n">wrangler</span> <span class="o">=</span> <span class="n">StructureWrangler</span><span class="p">(</span><span class="n">subspace</span><span class="p">)</span>

@@ -15,8 +15,8 @@ from math import log
 import numpy as np
 
 from monty.json import MSONable
-from pymatgen import Specie, DummySpecie, Element
-from smol.cofe.configspace.domain import get_specie, Vacancy
+from pymatgen import Species, DummySpecies, Element
+from smol.cofe.space.domain import get_species, Vacancy
 from smol.moca.processor.base import Processor
 from .base import Ensemble
 from .sublattice import Sublattice
@@ -36,20 +36,18 @@ class BaseSemiGrandEnsemble(Ensemble):
 
     valid_mcmc_steps = ('flip',)
 
-    def __init__(self, processor, temperature, sublattices=None):
+    def __init__(self, processor, sublattices=None):
         """Initialize BaseSemiGrandEnsemble.
 
         Args:
             processor (Processor):
                 A processor that can compute the change in a property given
                 a set of flips. See moca.processor
-            temperature (float):
-                Temperature of ensemble
             sublattices (list of Sublattice): optional
                 list of Lattice objects representing sites in the processor
                 supercell with same site spaces.
         """
-        super().__init__(processor, temperature, sublattices=sublattices)
+        super().__init__(processor, sublattices=sublattices)
         self._params = np.append(self.processor.coefs, -1.0)
 
     @property
@@ -66,9 +64,10 @@ class BaseSemiGrandEnsemble(Ensemble):
         return []
 
     def compute_feature_vector(self, occupancy):
-        """Compute the feature vector for a give occupancy.
+        """Compute the feature vector for a given occupancy.
 
-        In the canonical case it is just the feature vector from the processor.
+        In the semigrand case it is the feature vector and the chemical work
+        term.
 
         Args:
             occupancy (ndarray):
@@ -87,7 +86,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     """Relative chemical potential based SemiGrand Ensemble.
 
     A Semi-Grand Canonical Ensemble for Monte Carlo Simulations where species
-    chemical potentials are predefined. Note that in the SGC Ensemble
+    relative chemical potentials are predefined. Note that in the SGC Ensemble
     implemented here, only the differences in chemical potentials with
     respect to a reference species on each sublattice are fixed, and not the
     absolute values. To obtain the absolute values you must calculate the
@@ -99,26 +98,24 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             dict of chemical potentials.
     """
 
-    def __init__(self, processor, temperature, chemical_potentials,
+    def __init__(self, processor, chemical_potentials,
                  sublattices=None):
         """Initialize MuSemiGrandEnsemble.
 
         Args:
             processor (Processor):
                 A processor that can compute the change in a property given
-                a set of flips. See moca.processor
-            temperature (float):
-                Temperature of ensemble
+                a set of flips.
             chemical_potentials (dict):
-                dictionary with species names and chemical potentials.
+                Dictionary with species and chemical potentials.
             sublattices (list of Sublattice): optional
-                list of Lattice objects representing sites in the processor
+                List of Sublattice objects representing sites in the processor
                 supercell with same site spaces.
         """
-        super().__init__(processor, temperature, sublattices)
+        super().__init__(processor, sublattices)
 
         # check that species are valid
-        chemical_potentials = {get_specie(k): v for k, v
+        chemical_potentials = {get_species(k): v for k, v
                                in chemical_potentials.items()}
         species = set([sp for sps in processor.unique_site_spaces
                        for sp in sps])
@@ -146,7 +143,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     @chemical_potentials.setter
     def chemical_potentials(self, value):
         """Set the chemical potentials and update table."""
-        value = {get_specie(k): v for k, v in value.items()}
+        value = {get_species(k): v for k, v in value.items()}
         if set(value.keys()) != set(self._mus.keys()):
             raise ValueError('Chemical potentials given are missing species. '
                              'Values must be given for each of the following:'
@@ -155,7 +152,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         self._mu_table = self._build_mu_table(value)
 
     def compute_feature_vector_change(self, occupancy, step):
-        """Return the change in the feature vector from a step.
+        """Return the change in the feature vector from a given step.
 
         Args:
             occupancy (ndarray):
@@ -212,9 +209,6 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     def from_dict(cls, d):
         """Instantiate a MuSemiGrandEnsemble from dict representation.
 
-        Args:
-            d (dict):
-                dictionary representation.
         Returns:
             CanonicalEnsemble
         """
@@ -222,16 +216,16 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         for sp, c in d['chemical_potentials']:
             if ("oxidation_state" in sp
                     and Element.is_valid_symbol(sp["element"])):
-                sp = Specie.from_dict(sp)
+                sp = Species.from_dict(sp)
             elif "oxidation_state" in sp:
                 if sp['@class'] == 'Vacancy':
                     sp = Vacancy.from_dict(sp)
                 else:
-                    sp = DummySpecie.from_dict(sp)
+                    sp = DummySpecies.from_dict(sp)
             else:
                 sp = Element(sp["element"])
             chemical_potentials[sp] = c
-        return cls(Processor.from_dict(d['processor']), d['temperature'],
+        return cls(Processor.from_dict(d['processor']),
                    chemical_potentials=chemical_potentials,
                    sublattices=[Sublattice.from_dict(s)
                                 for s in d['sublattices']])
@@ -253,7 +247,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             dictionary of fugacity fractions.
     """
 
-    def __init__(self, processor, temperature, fugacity_fractions=None,
+    def __init__(self, processor, fugacity_fractions=None,
                  sublattices=None):
         """Initialize MuSemiGrandEnsemble.
 
@@ -261,23 +255,21 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             processor (Processor):
                 A processor that can compute the change in a property given
                 a set of flips. See moca.processor
-            temperature (float):
-                Temperature of ensemble
             fugacity_fractions (sequence of dicts): optional
-                dictionary of species name and fugacity fraction for each
-                sublattice (ie think of it as the sublattice concentrations
+                Dictionary of species name and fugacity fraction for each
+                sublattice (.i.e think of it as the sublattice concentrations
                 for random structure). If not given this will be taken from the
                 prim structure used in the cluster subspace. Needs to be in
                 the same order as the corresponding sublattice.
             sublattices (list of Sublattice): optional
-                list of Lattice objects representing sites in the processor
+                list of Sublattice objects representing sites in the processor
                 supercell with same site spaces.
         """
-        super().__init__(processor, temperature, sublattices)
+        super().__init__(processor, sublattices)
 
         if fugacity_fractions is not None:
             # check that species are valid
-            fugacity_fractions = [{get_specie(k): v for k, v in sub.items()}
+            fugacity_fractions = [{get_species(k): v for k, v in sub.items()}
                                   for sub in fugacity_fractions]
             for fus, sublatt in zip(fugacity_fractions, self.sublattices):
                 if sum([fu for fu in fus.values()]) != 1:
@@ -304,7 +296,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     @fugacity_fractions.setter
     def fugacity_fractions(self, value):
         """Set the fugacity fractions and update table."""
-        value = [{get_specie(k): v for k, v in sub.items()} for sub in value]
+        value = [{get_species(k): v for k, v in sub.items()} for sub in value]
         if not all(sum(fus.values()) == 1 for fus in value):
             raise ValueError('Fugacity ratios must add to one.')
         for (fus, vals) in zip(self._fus, value):
@@ -317,7 +309,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         self._fu_table = self._build_fu_table(value)
 
     def compute_feature_vector_change(self, occupancy, step):
-        """Compute the change in the feature vector from a step.
+        """Compute the change in the feature vector from a given step.
 
         Args:
             occupancy (ndarray):
@@ -326,7 +318,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
                 A sequence of flips given my the MCMCUsher.propose_step
 
         Returns:
-            ndarray: difference in vector of sufficient statistics
+            ndarray: difference in feature vector
         """
         delta_feature = self.processor.compute_feature_vector_change(occupancy,
                                                                      step)
@@ -377,9 +369,6 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     def from_dict(cls, d):
         """Instantiate a FuSemiGrandEnsemble from dict representation.
 
-        Args:
-            d (dict):
-                dictionary representation.
         Returns:
             FuSemiGrandEnsemble
         """
@@ -389,17 +378,17 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             for sp, fu in sublatt:
                 if ("oxidation_state" in sp
                         and Element.is_valid_symbol(sp["element"])):
-                    sp = Specie.from_dict(sp)
+                    sp = Species.from_dict(sp)
                 elif "oxidation_state" in sp:
                     if sp['@class'] == 'Vacancy':
                         sp = Vacancy.from_dict(sp)
                     else:
-                        sp = DummySpecie.from_dict(sp)
+                        sp = DummySpecies.from_dict(sp)
                 else:
                     sp = Element(sp["element"])
                 fus[sp] = fu
             fugacity_fractions.append(fus)
-        return cls(Processor.from_dict(d['processor']), d['temperature'],
+        return cls(Processor.from_dict(d['processor']),
                    fugacity_fractions=fugacity_fractions,
                    sublattices=[Sublattice.from_dict(s)
                                 for s in d['sublattices']])

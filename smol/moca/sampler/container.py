@@ -8,18 +8,29 @@ samples.
 __author__ = "Luis Barroso-Luque"
 
 import os
-from datetime import datetime
+import warnings
 from collections import defaultdict
+import json
 import numpy as np
 
 from monty.json import MSONable
 from smol.moca.ensemble.sublattice import Sublattice
 
+try:
+    import h5py
+except ImportError:
+    h5py = None
+    h5err = ImportError("'h5py' not found. Please install it.")
+
 
 class SampleContainer(MSONable):
     """A SampleContainter class stores Monte Carlo simulation samples.
 
-    It also provides some minor functionality to get sample statistics.
+    A SampleContainer holds samples and sampling information from an MCMC
+    sampling run. It is useful to obtain the raw data and minimal empirical
+    properties of the underlying distribution in order to carry out further
+    analysis of the MCMC sampling results.
+
     When getting any value from the provided attributes, the highly repeated
     args are:
         discard (int): optional
@@ -41,11 +52,15 @@ class SampleContainer(MSONable):
         total_mc_steps (int)
             Number of iterations used in sampling
         metadata (dict):
-            dictionary of metadata from the MC run that generated the samples.
+            Dictionary of metadata from the MC run that generated the samples.
+        aux_checkpoint (dict):
+            Checkpoint dictionary of auxiliary states and variables to continue
+            sampling from the last state of a previous MCMC run.
+            (not implemented yet)
     """
 
     def __init__(self, num_sites, sublattices, natural_parameters,
-                 num_energy_coefs, ensemble_metadata=None, nwalkers=1):
+                 num_energy_coefs, sampling_metadata=None, nwalkers=1):
         """Initialize a sample container.
 
         Args:
@@ -58,15 +73,15 @@ class SampleContainer(MSONable):
             num_energy_coefs (int):
                 the number of coeficients in the natural parameters that
                 correspond to the energy only.
-            ensemble_metadata (Ensemble):
-                Metadata of the ensemble that was sampled.
+            sampling_metadata (Ensemble):
+                Sampling metadata (i.e. ensemble name, mckernel type, etc)
             nwalkers (int):
                 Number of walkers used to generate chain. Default is 1
         """
         self.num_sites = num_sites
         self.sublattices = sublattices
         self.natural_parameters = natural_parameters
-        self.metadata = {} if ensemble_metadata is None else ensemble_metadata
+        self.metadata = {} if sampling_metadata is None else sampling_metadata
         self._num_energy_coefs = num_energy_coefs
         self.total_mc_steps = 0
         self._nsamples = 0
@@ -75,6 +90,8 @@ class SampleContainer(MSONable):
         self._enthalpy = np.empty((0, nwalkers))
         self._temperature = np.empty((0, nwalkers))
         self._accepted = np.zeros((0, nwalkers), dtype=int)
+        self.aux_checkpoint = None
+        self._backend = None  # for streaming
 
     @property
     def num_samples(self):
@@ -310,13 +327,103 @@ class SampleContainer(MSONable):
         arr = np.zeros((nsamples, *self._accepted.shape[1:]), dtype=int)
         self._accepted = np.append(self._accepted, arr, axis=0)
 
-    # TODO write this up
-    def stream(self, file_path=None):
-        """Stream samples to disk to clear up memory."""
-        if file_path is None:
-            now = datetime.now()
-            file_name = 'moca-samples-' + now.strftime('%Y-%m-%d-%H%M%S%f')
-            file_path = os.path.join(os.getcwd(), file_name + '.json')
+    def flush_to_backend(self, backend):
+        """Flush current samples and trace to backend file."""
+        start = backend["chain"].attrs["nsamples"]
+        end = len(self._chain) + start
+        backend["accepted"][start:end, :] = self._accepted
+        backend["temperature"][start:end, :] = self._temperature
+        backend["chain"][start:end, :, :] = self._chain
+        backend["enthalpy"][start:end, :] = self._enthalpy
+        backend["features"][start:end, :, :] = self._features
+        backend["chain"].attrs["total_mc_steps"] += self.total_mc_steps
+        backend["chain"].attrs["nsamples"] += self._nsamples
+        backend.flush()
+        self.total_mc_steps = 0
+        self._nsamples = 0
+
+    def get_backend(self, file_path, alloc_nsamples=0, swmr_mode=False):
+        """Get a backend file object.
+
+        Currently only hdf5 files supported
+
+        Args:
+            file_path (str):
+                path to backend file.
+            alloc_nsamples (int): optional
+                number of new samples to allocate. Will only extend datasets
+                if number given is larger than space left to write samples
+                into.
+            swmr_mode (bool): optional
+                If true allows to read file from other processes. Single Writer
+                Multiple Readers.
+
+        Returns:
+            h5.File object
+        """
+        if h5py is None:
+            raise h5err
+
+        if os.path.isfile(file_path):
+            backend = self._check_backend(file_path)
+            chain = backend["chain"]
+            available = len(chain) - chain.attrs["nsamples"]
+            # this probably fails since maxshape is not set.
+            if available < alloc_nsamples:
+                self._grow_backend(backend, alloc_nsamples - available)
+        else:
+            backend = h5py.File(file_path, "w", libver='latest')
+            self._init_backed(backend, alloc_nsamples)
+
+        if swmr_mode:
+            backend.swmr_mode = swmr_mode
+        return backend
+
+    def _check_backend(self, file_path):
+        """Check if existing backend file is populated correctly."""
+        backend = h5py.File(file_path, mode="r+", libver='latest')
+        if self.shape != backend["chain"].shape[1:]:
+            shape = backend['chain'].shape[1:]
+            backend.close()
+            raise RuntimeError(f"Backend file {file_path} has incompatible "
+                               f"dimensions {self.shape}, "
+                               f"{shape}.")
+        return backend
+
+    def _init_backed(self, backend, nsamples):
+        """Initialize a backend file."""
+        sublattices = [sublatt.as_dict() for sublatt in self.sublattices]
+        backend.create_dataset("sublattices", data=json.dumps(sublattices))
+        backend["sublattices"].attrs["num_sites"] = self.num_sites
+        backend.create_dataset("natural_parameters",
+                               data=self.natural_parameters)
+        backend["natural_parameters"].attrs["num_energy_coefs"] = self._num_energy_coefs  # noqa
+        backend.create_dataset("sampling_metadata",
+                               data=json.dumps(self.metadata))
+        backend.create_dataset("chain", (nsamples, *self.shape))
+        backend["chain"].attrs["nsamples"] = 0
+        backend["chain"].attrs["total_mc_steps"] = 0
+        backend.create_dataset("accepted",
+                               (nsamples, *self._accepted.shape[1:]))
+        backend.create_dataset("temperature",
+                               (nsamples, *self._temperature.shape[1:]))
+        backend.create_dataset("enthalpy",
+                               (nsamples, *self._enthalpy.shape[1:]))
+        backend.create_dataset("features",
+                               (nsamples, *self._features.shape[1:]))
+
+    def _grow_backend(self, backend, nsamples):
+        """Extend space available in a backend file."""
+        backend["chain"].resize((backend["chain"].shape[0] + nsamples,
+                                 *backend["chain"].shape[1:]))
+        backend["accepted"].resize((backend["chain"].shape[0] + nsamples,
+                                    *self._accepted.shape[1:]))
+        backend["temperature"].resize((backend["chain"].shape[0] + nsamples,
+                                       *self._temperature.shape[1:]))
+        backend["enthalpy"].resize((backend["chain"].shape[0] + nsamples,
+                                    *self._enthalpy.shape[1:]))
+        backend["features"].resize((backend["chain"].shape[0] + nsamples,
+                                    *self._features.shape[1:]))
 
     @staticmethod
     def _flatten(chain):
@@ -335,7 +442,9 @@ class SampleContainer(MSONable):
         Returns:
             MSONable dict
         """
-        d = {'num_sites': self.num_sites,
+        d = {'@module': self.__class__.__module__,
+             '@class': self.__class__.__name__,
+             'num_sites': self.num_sites,
              'sublattices': [s.as_dict() for s in self.sublattices],
              'natural_parameters': self.natural_parameters,
              'metadata': self.metadata,
@@ -345,12 +454,14 @@ class SampleContainer(MSONable):
              'chain': self._chain.tolist(),
              'features': self._features.tolist(),
              'enthalpy': self._enthalpy.tolist(),
-             'accepted': self._accepted.tolist()}
+             'accepted': self._accepted.tolist(),
+             'aux_checkpoint': self.aux_checkpoint}
+        # TODO need to think how to genrally serialize the aux checkpoint
         return d
 
     @classmethod
     def from_dict(cls, d):
-        """Instantiate a sublattice from dict representation.
+        """Instantiate a SampleContainer from dict representation.
 
         Args:
             d (dict):
@@ -367,4 +478,47 @@ class SampleContainer(MSONable):
         container._features = np.array(d['features'])
         container._enthalpy = np.array(d['enthalpy'])
         container._accepted = np.array(d['accepted'], dtype=int)
+        return container
+
+    @classmethod
+    def from_hdf5(cls, file_path, swmr_mode=False):
+        """Instantiate a SampleContainer from an hdf5 file.
+
+        Args:
+            file_path (str):
+                path to file
+            swmr_mode (bool): optional
+                If true allows to read file from other processes. Single Writer
+                Multiple Readers.
+
+        Returns:
+            SampleContainer
+        """
+        if h5py is None:
+            raise h5err
+
+        with h5py.File(file_path, "r", swmr=swmr_mode) as f:
+            # Check if written states matches the size of datasets
+            nsamples = f["chain"].attrs["nsamples"]
+            if len(f["chain"]) > nsamples:
+                warnings.warn("The hdf5 file provided appears to be from an "
+                              f"unifinished MC run.\n Only {nsamples} of "
+                              f"{len(f['chain'])} samples have been written.",
+                              UserWarning)
+
+            sublattices = [Sublattice.from_dict(s) for s in
+                           json.loads(f["sublattices"][()])]
+            container = cls(f["sublattices"].attrs["num_sites"],
+                            sublattices=sublattices,
+                            natural_parameters=f["natural_parameters"][()],
+                            num_energy_coefs=f["natural_parameters"].attrs["num_energy_coefs"],  # noqa
+                            sampling_metadata=json.loads(f["sampling_metadata"][()]),  # noqa
+                            nwalkers=f["chain"].shape[1])
+            container._chain = f["chain"][:nsamples]
+            container._accepted = f["accepted"][:nsamples]
+            container._temperature = f["temperature"][:nsamples]
+            container._enthalpy = f["enthalpy"][:nsamples]
+            container._features = f["features"][:nsamples]
+            container._nsamples = nsamples
+            container.total_mc_steps = f["chain"].attrs["total_mc_steps"]
         return container

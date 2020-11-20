@@ -22,13 +22,13 @@ class TestvsPyabinitio(unittest.TestCase):
 
     def _test_dataset(self, dataset):
         radii = {int(k): v for k, v in dataset['cutoff_radii'].items()}
-        cs = ClusterSubspace.from_radii(dataset['prim'],
-                                        radii=radii,
-                                        basis='indicator',
-                                        **dataset['matcher_kwargs'])
+        cs = ClusterSubspace.from_cutoffs(dataset['prim'],
+                                          cutoffs=radii,
+                                          basis='indicator',
+                                          **dataset['matcher_kwargs'])
 
-        self.assertEqual(cs.n_orbits, dataset['n_orbits'])
-        self.assertEqual(cs.n_bit_orderings, dataset['n_bit_orderings'])
+        self.assertEqual(cs.num_orbits, dataset['n_orbits'])
+        self.assertEqual(cs.num_corr_functions, dataset['n_bit_orderings'])
 
         if dataset['ewald']:
             cs.add_external_term(EwaldTerm())
@@ -45,13 +45,13 @@ class TestvsPyabinitio(unittest.TestCase):
                                     dataset['feature_matrix']))
 
     def test_canonical_montecarlo(self):
-        cs = ClusterSubspace.from_radii(structure=lno_prim,
-                                        radii={2: 6, 3: 5.1},
-                                        basis='indicator',
-                                        orthonormal=False,
-                                        use_concentration=False,
-                                        ltol=0.15, stol=0.2, angle_tol=5,
-                                        supercell_size='O2-')
+        cs = ClusterSubspace.from_cutoffs(structure=lno_prim,
+                                          cutoffs={2: 6, 3: 5.1},
+                                          basis='indicator',
+                                          orthonormal=False,
+                                          use_concentration=False,
+                                          ltol=0.15, stol=0.2, angle_tol=5,
+                                          supercell_size='O2-')
         cs.add_external_term(EwaldTerm())
         sw = StructureWrangler(cs)
         for s, e in lno_data:

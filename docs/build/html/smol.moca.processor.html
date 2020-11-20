@@ -129,15 +129,15 @@ can be combined into composite processor for mixed models.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Abstract base class for processors.</p>
 <p>A processor is used to provide a quick way to calculated energy differences
-(probability ratio’s) between two adjacent configurational states for a
-fixed system size/supercell.</p>
+(probability ratio’s) between two configurational states for a fixed system
+size/supercell.</p>
 <dl class="py attribute">
 <dt id="smol.moca.processor.base.Processor.unique_site_spaces">
 <code class="sig-name descname">unique_site_spaces</code><a class="headerlink" href="#smol.moca.processor.base.Processor.unique_site_spaces" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tuple of all the distinct site spaces.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)">tuple</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)">tuple</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -148,7 +148,7 @@ fixed system size/supercell.</p>
 <dd><p>A list of tuples of the allowed species at each site.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -159,7 +159,7 @@ fixed system size/supercell.</p>
 <dd><p>Number of prims in the supercell structure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -168,16 +168,16 @@ fixed system size/supercell.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
-Cluster Expansion prim structure.</p></li>
+ClusterExpansion prim structure.</p></li>
 <li><p><strong>coefficients</strong> – single or array of fit coefficients.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt id="smol.moca.processor.base.Processor.as_dict">
-<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a><a class="headerlink" href="#smol.moca.processor.base.Processor.as_dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a><a class="headerlink" href="#smol.moca.processor.base.Processor.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -204,14 +204,14 @@ change in that property from explicitly calculating it fully for the
 initial state and the flipped state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>iterations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – optional
+<dd class="field-odd"><p><strong>iterations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
 number of iterations/flips to compute.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>(float, float) forward and reverse average property drift</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)">tuple</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)">tuple</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -270,7 +270,7 @@ for the new species to place at that site.</p></li>
 <dd class="field-even"><p>predicted property</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -283,14 +283,14 @@ for the new species to place at that site.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
-<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
+<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>property difference between inital and final states</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -298,13 +298,13 @@ for the new species to place at that site.</p></li>
 <dl class="py method">
 <dt id="smol.moca.processor.base.Processor.decode_occupancy">
 <code class="sig-name descname">decode_occupancy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">encoded_occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.base.Processor.decode_occupancy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Decode an encoded occupancy array of int to species str.</p>
+<dd><p>Decode an encoded occupancy string of int to species str.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="smol.moca.processor.base.Processor.encode_occupancy">
 <code class="sig-name descname">encode_occupancy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.base.Processor.encode_occupancy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Encode occupancy array of species str to ints.</p>
+<dd><p>Encode occupancy string of species str to ints.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -332,7 +332,7 @@ by the supercell matrix passed to the processor)</p>
 </dd>
 </dl>
 <dl class="simple">
-<dt>Returns: encoded occupancy array</dt><dd><p>list</p>
+<dt>Returns: encoded occupancy string</dt><dd><p>list</p>
 </dd>
 </dl>
 </dd></dl>
@@ -346,10 +346,10 @@ by the supercell matrix passed to the processor)</p>
 <dl class="py method">
 <dt id="smol.moca.processor.base.Processor.structure_from_occupancy">
 <code class="sig-name descname">structure_from_occupancy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.base.Processor.structure_from_occupancy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get pymatgen Structure from an occupancy array.</p>
+<dd><p>Get Structure from an occupancy string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p>
+<dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Structure</p>
@@ -379,19 +379,23 @@ care of all these hickups for you.</p>
 <em class="property">class </em><code class="sig-name descname">CompositeProcessor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.composite.CompositeProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.processor.base.Processor</span></code></a></p>
 <p>CompositeProcessor class used for mixed models.</p>
-<p>A Composite processor is merely a container for several different processor
-that acts as an interface such that it can be used in the same way as the
+<p>A Composite processor is merely a container for many different processors
+that acts as an interface such that it can be used in the same way as an
 individual processor. This can be used to mix models in any way that your
 heart desires.</p>
 <p>The most common use case of them all is a CompositeProcessor of a
 CEProcessor and an EwaldProcessor for use in ionic materials.</p>
 <p>You can add anyone of the other processor class implemented to build a
 composite processor.</p>
+<p>It is recommended to use the <code class="code docutils literal notranslate"><span class="pre">from_cluster_expansion</span></code> to create an
+ensemble and the underlying processor automatically rather than directly
+creating a processor. This will take care of creating the correct
+<a class="reference internal" href="#smol.moca.processor.composite.CompositeProcessor" title="smol.moca.processor.composite.CompositeProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CompositeProcessor</span></code></a> or <code class="xref py py-class docutils literal notranslate"><span class="pre">CEProcessor</span></code> for you.</p>
 <p>Initialize a CompositeProcessor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 </ul>
@@ -411,7 +415,7 @@ supercell matrix.</p>
 
 <dl class="py method">
 <dt id="smol.moca.processor.composite.CompositeProcessor.as_dict">
-<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a><a class="headerlink" href="#smol.moca.processor.composite.CompositeProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a><a class="headerlink" href="#smol.moca.processor.composite.CompositeProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -474,7 +478,7 @@ for the new species to place at that site.</p></li>
 <dd class="field-even"><p>predicted property</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -487,14 +491,14 @@ for the new species to place at that site.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
-<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
+<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>property difference between inital and final states</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -520,7 +524,7 @@ for the new species to place at that site.</p></li>
 <p>An Ewald processor is optimized to compute electrostatic interaction energy
 and changes in electrostatic energy from a list of local flips for use in
 Monte Carlo sampling.</p>
-<p>If you are using a Hamiltonian with an Cluster expansion and an Ewald summation
+<p>If you are using a Hamiltonian with a Cluster expansion and an Ewald summation
 electrostatic term, you should use the CompositeProcessor with a CEProcessor
 and an EwaldProcessor class.</p>
 <dl class="py class">
@@ -534,11 +538,11 @@ energy using an Ewald Summation term.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace.</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 <li><p><strong>ewald_term</strong> (<a class="reference internal" href="smol.cofe.extern.html#smol.cofe.extern.ewald.EwaldTerm" title="smol.cofe.extern.ewald.EwaldTerm"><em>EwaldTerm</em></a>) – An instance of EwaldTerm to compute electrostatic energies.</p></li>
-<li><p><strong>coefficient</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Fitting coeficient to scale Ewald energy by.</p></li>
+<li><p><strong>coefficient</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Fitting coeficient to scale Ewald energy by.</p></li>
 <li><p><strong>ewald_summation</strong> (<em>EwaldSummation</em>) – optional
 pymatgen EwaldSummation instance, make sure this uses the exact
 same parameters as those used in the EwaldTerm in the cluster
@@ -548,7 +552,7 @@ Expansion (i.e. same eta, real and recip cuts).</p></li>
 </dl>
 <dl class="py method">
 <dt id="smol.moca.processor.ewald.EwaldProcessor.as_dict">
-<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a><a class="headerlink" href="#smol.moca.processor.ewald.EwaldProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a><a class="headerlink" href="#smol.moca.processor.ewald.EwaldProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -583,10 +587,10 @@ symmetrically distinct bit ordering.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
+<li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string</p></li>
 <li><p><strong>flips</strong> (<em>list of tuple</em>) – list of tuples with two elements. Each tuple represents a
 single flip where the first element is the index of the site
-in the occupancy array and the second element is the index
+in the occupancy string and the second element is the index
 for the new species to place at that site.</p></li>
 </ul>
 </dd>
@@ -611,7 +615,7 @@ for the new species to place at that site.</p></li>
 <dd class="field-even"><p>Ewald electrostatic energy</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -624,14 +628,14 @@ for the new species to place at that site.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
-<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
+<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>electrostatic energy change</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -672,18 +676,20 @@ class to handle changes in the electrostatic interaction energy.</p>
 <p>CEProcessor class to use a ClusterExpansion in MC simulations.</p>
 <p>A CE processor is optimized to compute correlation vectors and local
 changes in correlation vectors. This class allows the use a cluster
-expansion hamiltonian to run Monte Carlo based simulations.</p>
+expansion Hamiltonian to run Monte Carlo based simulations.</p>
 <p>A processor allows an ensemble class to generate a Markov chain
 for sampling thermodynamic properties from a cluster expansion
 Hamiltonian.</p>
 <dl class="py attribute">
 <dt id="smol.moca.processor.expansion.CEProcessor.optimize_indicator">
 <code class="sig-name descname">optimize_indicator</code><a class="headerlink" href="#smol.moca.processor.expansion.CEProcessor.optimize_indicator" title="Permalink to this definition">¶</a></dt>
-<dd><p>If true the local corr update function specialized for indicator
-bases is used.</p>
+<dd><p>If true the local correlation update function specialized for
+indicator bases is used. This should only be used when the
+expansion was fit with an indicator basis and no additional
+normalization.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -691,7 +697,7 @@ bases is used.</p>
 <dl class="py attribute">
 <dt id="smol.moca.processor.expansion.CEProcessor.coefs">
 <code class="sig-name descname">coefs</code><a class="headerlink" href="#smol.moca.processor.expansion.CEProcessor.coefs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit coefficients representing the cluster expansion.</p>
+<dd><p>Fitted coefficients from the cluster expansion.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>ndarray</p>
@@ -702,11 +708,12 @@ bases is used.</p>
 <dl class="py attribute">
 <dt id="smol.moca.processor.expansion.CEProcessor.n_orbit_functions">
 <code class="sig-name descname">n_orbit_functions</code><a class="headerlink" href="#smol.moca.processor.expansion.CEProcessor.n_orbit_functions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Total number of orbit basis functions. Includes all possible
-labellings for all orbits. Same as n_bit_orderings.</p>
+<dd><p>Total number of orbit basis functions (correlation functions).
+This includes all possible labellings/orderings for all orbits.
+Same as <code class="code docutils literal notranslate"><span class="pre">ClusterSubspace.n_bit_orderings</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -715,12 +722,13 @@ labellings for all orbits. Same as n_bit_orderings.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 <li><p><strong>coefficients</strong> (<em>ndarray</em>) – Fit coefficients for the represented cluster expansion.</p></li>
-<li><p><strong>optimize_indicator</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – When using an indicator basis, set the delta_corr function to
-the indicator optimize function. This can make MC steps faster.
+<li><p><strong>optimize_indicator</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – When using an indicator basis, sets the function to compute
+correlation differences to the indicator optimized function.
+This can make MC steps faster.
 Make sure your cluster expansion was indeed fit with an
 indicator basis set, otherwise your MC results are no good.</p></li>
 </ul>
@@ -728,7 +736,7 @@ indicator basis set, otherwise your MC results are no good.</p></li>
 </dl>
 <dl class="py method">
 <dt id="smol.moca.processor.expansion.CEProcessor.as_dict">
-<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a><a class="headerlink" href="#smol.moca.processor.expansion.CEProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a><a class="headerlink" href="#smol.moca.processor.expansion.CEProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -740,7 +748,7 @@ indicator basis set, otherwise your MC results are no good.</p></li>
 <dl class="py method">
 <dt id="smol.moca.processor.expansion.CEProcessor.compute_feature_vector">
 <code class="sig-name descname">compute_feature_vector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.expansion.CEProcessor.compute_feature_vector" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the correlation vector for a given occupancy array.</p>
+<dd><p>Compute the correlation vector for a given occupancy string.</p>
 <p>The correlation vector in this case is normalized per supercell. In
 other works it is extensive corresponding to the size of the supercell.</p>
 <dl class="field-list simple">
@@ -765,10 +773,10 @@ other works it is extensive corresponding to the size of the supercell.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
+<li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string</p></li>
 <li><p><strong>flips</strong> (<em>list of tuple</em>) – list of tuples with two elements. Each tuple represents a
 single flip where the first element is the index of the site
-in the occupancy array and the second element is the index
+in the occupancy string and the second element is the index
 for the new species to place at that site.</p></li>
 </ul>
 </dd>
@@ -804,18 +812,20 @@ to run Monte Carlo sampling.</p>
 <p>CEProcessor class to use a ClusterExpansion in MC simulations.</p>
 <p>A CE processor is optimized to compute correlation vectors and local
 changes in correlation vectors. This class allows the use a cluster
-expansion hamiltonian to run Monte Carlo based simulations.</p>
+expansion Hamiltonian to run Monte Carlo based simulations.</p>
 <p>A processor allows an ensemble class to generate a Markov chain
 for sampling thermodynamic properties from a cluster expansion
 Hamiltonian.</p>
 <dl class="py attribute">
 <dt id="smol.moca.processor.CEProcessor.optimize_indicator">
 <code class="sig-name descname">optimize_indicator</code><a class="headerlink" href="#smol.moca.processor.CEProcessor.optimize_indicator" title="Permalink to this definition">¶</a></dt>
-<dd><p>If true the local corr update function specialized for indicator
-bases is used.</p>
+<dd><p>If true the local correlation update function specialized for
+indicator bases is used. This should only be used when the
+expansion was fit with an indicator basis and no additional
+normalization.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -823,7 +833,7 @@ bases is used.</p>
 <dl class="py attribute">
 <dt id="smol.moca.processor.CEProcessor.coefs">
 <code class="sig-name descname">coefs</code><a class="headerlink" href="#smol.moca.processor.CEProcessor.coefs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit coefficients representing the cluster expansion.</p>
+<dd><p>Fitted coefficients from the cluster expansion.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>ndarray</p>
@@ -834,11 +844,12 @@ bases is used.</p>
 <dl class="py attribute">
 <dt id="smol.moca.processor.CEProcessor.n_orbit_functions">
 <code class="sig-name descname">n_orbit_functions</code><a class="headerlink" href="#smol.moca.processor.CEProcessor.n_orbit_functions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Total number of orbit basis functions. Includes all possible
-labellings for all orbits. Same as n_bit_orderings.</p>
+<dd><p>Total number of orbit basis functions (correlation functions).
+This includes all possible labellings/orderings for all orbits.
+Same as <code class="code docutils literal notranslate"><span class="pre">ClusterSubspace.n_bit_orderings</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -847,12 +858,13 @@ labellings for all orbits. Same as n_bit_orderings.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 <li><p><strong>coefficients</strong> (<em>ndarray</em>) – Fit coefficients for the represented cluster expansion.</p></li>
-<li><p><strong>optimize_indicator</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – When using an indicator basis, set the delta_corr function to
-the indicator optimize function. This can make MC steps faster.
+<li><p><strong>optimize_indicator</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – When using an indicator basis, sets the function to compute
+correlation differences to the indicator optimized function.
+This can make MC steps faster.
 Make sure your cluster expansion was indeed fit with an
 indicator basis set, otherwise your MC results are no good.</p></li>
 </ul>
@@ -860,7 +872,7 @@ indicator basis set, otherwise your MC results are no good.</p></li>
 </dl>
 <dl class="py method">
 <dt id="smol.moca.processor.CEProcessor.as_dict">
-<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a><a class="headerlink" href="#smol.moca.processor.CEProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a><a class="headerlink" href="#smol.moca.processor.CEProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -872,7 +884,7 @@ indicator basis set, otherwise your MC results are no good.</p></li>
 <dl class="py method">
 <dt id="smol.moca.processor.CEProcessor.compute_feature_vector">
 <code class="sig-name descname">compute_feature_vector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.CEProcessor.compute_feature_vector" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the correlation vector for a given occupancy array.</p>
+<dd><p>Compute the correlation vector for a given occupancy string.</p>
 <p>The correlation vector in this case is normalized per supercell. In
 other works it is extensive corresponding to the size of the supercell.</p>
 <dl class="field-list simple">
@@ -897,10 +909,10 @@ other works it is extensive corresponding to the size of the supercell.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
+<li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string</p></li>
 <li><p><strong>flips</strong> (<em>list of tuple</em>) – list of tuples with two elements. Each tuple represents a
 single flip where the first element is the index of the site
-in the occupancy array and the second element is the index
+in the occupancy string and the second element is the index
 for the new species to place at that site.</p></li>
 </ul>
 </dd>
@@ -926,19 +938,23 @@ for the new species to place at that site.</p></li>
 <em class="property">class </em><code class="sig-name descname">CompositeProcessor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.CompositeProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.processor.base.Processor</span></code></a></p>
 <p>CompositeProcessor class used for mixed models.</p>
-<p>A Composite processor is merely a container for several different processor
-that acts as an interface such that it can be used in the same way as the
+<p>A Composite processor is merely a container for many different processors
+that acts as an interface such that it can be used in the same way as an
 individual processor. This can be used to mix models in any way that your
 heart desires.</p>
 <p>The most common use case of them all is a CompositeProcessor of a
 CEProcessor and an EwaldProcessor for use in ionic materials.</p>
 <p>You can add anyone of the other processor class implemented to build a
 composite processor.</p>
+<p>It is recommended to use the <code class="code docutils literal notranslate"><span class="pre">from_cluster_expansion</span></code> to create an
+ensemble and the underlying processor automatically rather than directly
+creating a processor. This will take care of creating the correct
+<a class="reference internal" href="#smol.moca.processor.CompositeProcessor" title="smol.moca.processor.CompositeProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CompositeProcessor</span></code></a> or <a class="reference internal" href="#smol.moca.processor.CEProcessor" title="smol.moca.processor.CEProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CEProcessor</span></code></a> for you.</p>
 <p>Initialize a CompositeProcessor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 </ul>
@@ -958,7 +974,7 @@ supercell matrix.</p>
 
 <dl class="py method">
 <dt id="smol.moca.processor.CompositeProcessor.as_dict">
-<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a><a class="headerlink" href="#smol.moca.processor.CompositeProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a><a class="headerlink" href="#smol.moca.processor.CompositeProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1021,7 +1037,7 @@ for the new species to place at that site.</p></li>
 <dd class="field-even"><p>predicted property</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1034,14 +1050,14 @@ for the new species to place at that site.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
-<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
+<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>property difference between inital and final states</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1071,11 +1087,11 @@ energy using an Ewald Summation term.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace.</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 <li><p><strong>ewald_term</strong> (<a class="reference internal" href="smol.cofe.extern.html#smol.cofe.extern.ewald.EwaldTerm" title="smol.cofe.extern.ewald.EwaldTerm"><em>EwaldTerm</em></a>) – An instance of EwaldTerm to compute electrostatic energies.</p></li>
-<li><p><strong>coefficient</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Fitting coeficient to scale Ewald energy by.</p></li>
+<li><p><strong>coefficient</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Fitting coeficient to scale Ewald energy by.</p></li>
 <li><p><strong>ewald_summation</strong> (<em>EwaldSummation</em>) – optional
 pymatgen EwaldSummation instance, make sure this uses the exact
 same parameters as those used in the EwaldTerm in the cluster
@@ -1085,7 +1101,7 @@ Expansion (i.e. same eta, real and recip cuts).</p></li>
 </dl>
 <dl class="py method">
 <dt id="smol.moca.processor.EwaldProcessor.as_dict">
-<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a><a class="headerlink" href="#smol.moca.processor.EwaldProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a><a class="headerlink" href="#smol.moca.processor.EwaldProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1120,10 +1136,10 @@ symmetrically distinct bit ordering.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
+<li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string</p></li>
 <li><p><strong>flips</strong> (<em>list of tuple</em>) – list of tuples with two elements. Each tuple represents a
 single flip where the first element is the index of the site
-in the occupancy array and the second element is the index
+in the occupancy string and the second element is the index
 for the new species to place at that site.</p></li>
 </ul>
 </dd>
@@ -1148,7 +1164,7 @@ for the new species to place at that site.</p></li>
 <dd class="field-even"><p>Ewald electrostatic energy</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1161,14 +1177,14 @@ for the new species to place at that site.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
-<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
+<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>electrostatic energy change</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
 </dd>
 </dl>
 </dd></dl>

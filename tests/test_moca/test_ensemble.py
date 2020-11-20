@@ -3,7 +3,6 @@ from copy import deepcopy
 import numpy.testing as npt
 import numpy as np
 
-from smol.constants import kB
 from smol.cofe import ClusterExpansion
 from smol.cofe.extern import EwaldTerm
 from smol.moca import (CanonicalEnsemble, MuSemiGrandEnsemble,
@@ -12,12 +11,11 @@ from smol.moca import (CanonicalEnsemble, MuSemiGrandEnsemble,
 from tests.utils import assert_msonable, gen_random_occupancy
 
 ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble]
-TEMPERATURE = 1000
 
 
 @pytest.fixture
 def composite_processor(cluster_subspace):
-    coefs = 2 * np.random.random(cluster_subspace.n_bit_orderings)
+    coefs = 2 * np.random.random(cluster_subspace.num_corr_functions)
     scmatrix = 4 * np.eye(3)
     return CEProcessor(cluster_subspace, scmatrix, coefs)
 
@@ -30,32 +28,32 @@ def ensemble(composite_processor, request):
                    for sp in space.keys()}}
     else:
         kwargs = {}
-    return request.param(composite_processor, temperature=TEMPERATURE, **kwargs)
+    return request.param(composite_processor, **kwargs)
 
 
 @pytest.fixture
 def canonical_ensemble(composite_processor):
-    return CanonicalEnsemble(composite_processor, temperature=TEMPERATURE)
+    return CanonicalEnsemble(composite_processor)
 
 
 @pytest.fixture
 def mugrand_ensemble(composite_processor):
     chemical_potentials= {sp: 0.3 for space in composite_processor.unique_site_spaces
                           for sp in space.keys()}
-    return MuSemiGrandEnsemble(composite_processor, temperature=TEMPERATURE,
+    return MuSemiGrandEnsemble(composite_processor,
                                chemical_potentials=chemical_potentials)
 
 
 @pytest.fixture
 def fugrand_ensemble(composite_processor):
-    return FuSemiGrandEnsemble(composite_processor, temperature=TEMPERATURE)
+    return FuSemiGrandEnsemble(composite_processor)
 
 
 # Test with composite processors to cover more ground
 @pytest.mark.parametrize('ensemble_cls', ensembles)
 def test_from_cluster_expansion(cluster_subspace, ensemble_cls):
     cluster_subspace.add_external_term(EwaldTerm())
-    coefs = np.random.random(cluster_subspace.n_bit_orderings + 1)
+    coefs = np.random.random(cluster_subspace.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
     proc = CompositeProcessor(cluster_subspace, scmatrix)
     proc.add_processor(CEProcessor(cluster_subspace, scmatrix,
@@ -73,7 +71,6 @@ def test_from_cluster_expansion(cluster_subspace, ensemble_cls):
         kwargs = {}
     ensemble = ensemble_cls.from_cluster_expansion(expansion,
                                                    supercell_matrix=scmatrix,
-                                                   temperature=500,
                                                    **kwargs)
     npt.assert_array_equal(ensemble.natural_parameters[:ensemble.num_energy_coefs],
                            coefs)
@@ -86,12 +83,6 @@ def test_from_cluster_expansion(cluster_subspace, ensemble_cls):
         assert proc.compute_property_change(occu, flip) == ensemble.processor.compute_property_change(occu, flip)
         assert proc.compute_property(occu) == ensemble.processor.compute_property(occu)
         occu[site] = spec
-
-
-def test_temperature_setter(ensemble):
-    assert ensemble.beta == 1/(kB*ensemble.temperature)
-    ensemble.temperature = 500
-    assert ensemble.beta == 1 / (kB * 500)
 
 
 def test_restrict_sites(ensemble):
@@ -163,11 +154,11 @@ def test_bad_chemical_potentials(mugrand_ensemble):
         mugrand_ensemble.chemical_potentials = {'A': 0.5, 'D': 0.6}
     with pytest.raises(ValueError):
         chem_pots['foo'] = 0.4
-        MuSemiGrandEnsemble(proc, 500, chemical_potentials=chem_pots)
+        MuSemiGrandEnsemble(proc, chemical_potentials=chem_pots)
     with pytest.raises(ValueError):
         del chem_pots['foo']
         chem_pots.pop(items[0][0])
-        MuSemiGrandEnsemble(proc, 500, chemical_potentials=chem_pots)
+        MuSemiGrandEnsemble(proc, chemical_potentials=chem_pots)
     
 
 def test_build_mu_table(mugrand_ensemble):
@@ -199,7 +190,7 @@ def test_compute_feature_vector(fugrand_ensemble):
         dfu = np.log(fugrand_ensemble._fu_table[site][spec]/fugrand_ensemble._fu_table[site][occu[site]])
         assert (np.dot(fugrand_ensemble.natural_parameters,
                        fugrand_ensemble.compute_feature_vector_change(occu, flip))
-                == pytest.approx(proc.compute_property_change(occu, flip) - dfu, abs=1E-14))
+                == pytest.approx(proc.compute_property_change(occu, flip) - dfu, abs=1E-13))
         npt.assert_array_equal(fugrand_ensemble.compute_feature_vector_change(occu, flip),
                                np.append(proc.compute_feature_vector_change(occu, flip), dfu))
 
@@ -218,10 +209,10 @@ def test_bad_fugacity_fractions(fugrand_ensemble):
         fugrand_ensemble.fugacity_fractions = fug_fracs
     with pytest.raises(ValueError):
         fug_fracs[0]['foo'] = 0.4
-        FuSemiGrandEnsemble(proc, 500, fugacity_fractions=fug_fracs)
+        FuSemiGrandEnsemble(proc, fugacity_fractions=fug_fracs)
     with pytest.raises(ValueError):
         del fug_fracs[0]['foo']
-        FuSemiGrandEnsemble(proc, 500, fugacity_fractions=fug_fracs)
+        FuSemiGrandEnsemble(proc, fugacity_fractions=fug_fracs)
 
 
 def test_build_fu_table(fugrand_ensemble):

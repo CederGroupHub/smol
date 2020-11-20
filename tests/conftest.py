@@ -10,7 +10,6 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 files = ['AuPd_prim.json', 'CrFeW_prim.json', 'LiCaBr_prim.json',
          'LiMOF_prim.json']
 test_structures = [loadfn(os.path.join(DATA_DIR, file)) for file in files]
-ionic_test_structures = test_structures[2:]
 
 
 @pytest.fixture(params=test_structures, scope='module')
@@ -20,6 +19,6 @@ def structure(request):
 
 @pytest.fixture(params=test_structures)
 def cluster_subspace(request):
-    return ClusterSubspace.from_radii(request.param,
-                                      radii={2: 6, 3: 5, 4: 4},
-                                      supercell_size='volume')
+    return ClusterSubspace.from_cutoffs(request.param,
+                                        cutoffs={2: 6, 3: 5, 4: 4},
+                                        supercell_size='volume')

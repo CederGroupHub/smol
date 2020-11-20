@@ -15,7 +15,7 @@ DRIFT_TOL = 10 * np.finfo(float).eps  # tolerance of average drift
 
 @pytest.fixture
 def ce_processor(cluster_subspace):
-    coefs = 2 * np.random.random(cluster_subspace.n_bit_orderings)
+    coefs = 2 * np.random.random(cluster_subspace.num_corr_functions)
     scmatrix = 3 * np.eye(3)
     return CEProcessor(cluster_subspace, supercell_matrix=scmatrix,
                        coefficients=coefs)
@@ -32,7 +32,7 @@ def ewald_processor(cluster_subspace, request):
 
 @pytest.fixture
 def composite_processor(cluster_subspace):
-    coefs = 2 * np.random.random(cluster_subspace.n_bit_orderings + 1)
+    coefs = 2 * np.random.random(cluster_subspace.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
     ewald_term = EwaldTerm()
     cluster_subspace.add_external_term(ewald_term)
@@ -143,7 +143,7 @@ def test_compute_feature_vector(ce_processor):
 
 
 def test_feature_change_indictator(cluster_subspace):
-    coefs = 2 * np.random.random(cluster_subspace.n_bit_orderings)
+    coefs = 2 * np.random.random(cluster_subspace.num_corr_functions)
     scmatrix = 4 * np.eye(3)
     cluster_subspace.change_site_bases('indicator')
     proc = CEProcessor(cluster_subspace, supercell_matrix=scmatrix,
@@ -168,13 +168,13 @@ def test_feature_change_indictator(cluster_subspace):
 
 
 def test_bad_coef_length(cluster_subspace):
-    coefs = np.random.random(cluster_subspace.n_bit_orderings - 1)
+    coefs = np.random.random(cluster_subspace.num_corr_functions - 1)
     with pytest.raises(ValueError):
         CEProcessor(cluster_subspace, 5*np.eye(3), coefficients=coefs)
 
 
 def test_bad_composite(cluster_subspace):
-    coefs = 2 * np.random.random(cluster_subspace.n_bit_orderings)
+    coefs = 2 * np.random.random(cluster_subspace.num_corr_functions)
     scmatrix = 3 * np.eye(3)
     proc = CompositeProcessor(cluster_subspace, supercell_matrix=scmatrix)
     with pytest.raises(AttributeError):
@@ -189,7 +189,7 @@ def test_bad_composite(cluster_subspace):
         proc.add_processor(CEProcessor(new_cs, scmatrix, coefficients=coefs))
     with pytest.raises(ValueError):
         new_cs = cluster_subspace.copy()
-        ids = range(1, new_cs.n_bit_orderings)
+        ids = range(1, new_cs.num_corr_functions)
         new_cs.remove_orbit_bit_combos(np.random.choice(ids, size=10))
         proc.add_processor(CEProcessor(new_cs, scmatrix, coefficients=coefs))
 

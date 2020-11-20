@@ -353,7 +353,7 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Creating-a-Cluster-Expansion-with-an-additional-Ewald-electrostatic-term">
 <h1>Creating a Cluster Expansion with an additional Ewald electrostatic term<a class="headerlink" href="#Creating-a-Cluster-Expansion-with-an-additional-Ewald-electrostatic-term" title="Permalink to this headline">¶</a></h1>
 <p>Fitting cluster expansions with an ewald term was proposed by former studet Will Richards. See chapter 4.6 of his <a class="reference external" href="https://ceder.berkeley.edu/theses/Will_Richards_2017.pdf">thesis</a> for details.</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
@@ -365,16 +365,6 @@ div.rendered_html tbody tr:hover {
 <span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">ClusterSubspace</span><span class="p">,</span> <span class="n">StructureWrangler</span><span class="p">,</span> <span class="n">ClusterExpansion</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/lbluque/Develop/pymatgen/pymatgen/ext/matproj.py:454: DeprecationWarning: __init__ is deprecated
-MaterialsProjectCompatibility will be updated with new correction classes as well as new values of corrections and uncertainties in 2020
-  def get_pourbaix_entries(self, chemsys, solid_compat=MaterialsProjectCompatibility()):
-</pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
@@ -397,10 +387,10 @@ MaterialsProjectCompatibility will be updated with new correction classes as wel
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">subspace</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_radii</span><span class="p">(</span><span class="n">lno_prim</span><span class="p">,</span>
-                                      <span class="n">radii</span><span class="o">=</span><span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mf">4.1</span><span class="p">},</span>
-                                      <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;sinusoid&#39;</span><span class="p">,</span>
-                                      <span class="n">supercell_size</span><span class="o">=</span><span class="s1">&#39;O2-&#39;</span><span class="p">)</span>
+<span></span><span class="n">subspace</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_cutoffs</span><span class="p">(</span><span class="n">lno_prim</span><span class="p">,</span>
+                                        <span class="n">cutoffs</span><span class="o">=</span><span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mf">4.1</span><span class="p">},</span>
+                                        <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;sinusoid&#39;</span><span class="p">,</span>
+                                        <span class="n">supercell_size</span><span class="o">=</span><span class="s1">&#39;O2-&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -518,7 +508,7 @@ Fitted dielectric constant 9.413114998055674
 <h2>4) Constraining the value of the “dielectric” constant<a class="headerlink" href="#4)-Constraining-the-value-of-the-"dielectric"-constant" title="Permalink to this headline">¶</a></h2>
 <p>Sometimes we want to constrain the obtained value of the dielectric constant, when it is too large or when it is negative (which would mean higher electrostatic interaction energy is more favorable?)</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -561,7 +551,7 @@ Fitted dielectric constant 5.0
 <div class="section" id="4.1)-If-you-want-to-play-with-decorators-you-can-also-do-the-above-in-a-cleaner-looking-way.">
 <h3>4.1) If you want to play with decorators you can also do the above in a cleaner looking way.<a class="headerlink" href="#4.1)-If-you-want-to-play-with-decorators-you-can-also-do-the-above-in-a-cleaner-looking-way." title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -591,8 +581,8 @@ Fitted dielectric constant 5.0
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-RMSE 0.007366465328123921 eV/prim
-MAX 0.0160518633152833 eV/prim
+RMSE 0.00736646532812443 eV/prim
+MAX 0.016051863315240666 eV/prim
 Fitted dielectric constant 5.0
 </pre></div></div>
 </div>
@@ -601,7 +591,7 @@ Fitted dielectric constant 5.0
 <div class="section" id="5)-Save-work">
 <h2>5) Save work<a class="headerlink" href="#5)-Save-work" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>

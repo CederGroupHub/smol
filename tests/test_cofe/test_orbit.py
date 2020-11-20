@@ -5,9 +5,9 @@ import json
 import numpy as np
 from pymatgen import Lattice, Structure, Composition
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-from smol.cofe.configspace import Orbit, Cluster
-from smol.cofe.configspace.basis import basis_factory
-from smol.cofe.configspace.domain import SiteSpace
+from smol.cofe.space import Orbit, Cluster
+from smol.cofe.space.basis import basis_factory
+from smol.cofe.space.domain import SiteSpace
 
 
 class TestOrbit(unittest.TestCase):
@@ -42,10 +42,6 @@ class TestOrbit(unittest.TestCase):
         for cluster in self.orbit.clusters[1:]:
             self.assertNotEqual(self.orbit.base_cluster, cluster)
 
-    def test_size(self):
-        self.assertEqual(self.orbit.size, self.basecluster.size)
-        self.assertEqual(len(self.orbit), len(self.basecluster))
-
     def test_multiplicity(self):
         self.assertEqual(self.orbit.multiplicity, 4)
 
@@ -62,11 +58,11 @@ class TestOrbit(unittest.TestCase):
 
     def test_bit_combos(self):
         # orbit with two symmetrically equivalent sites
-        self.assertEqual(self.orbit.n_bit_orderings, 3)
+        self.assertEqual(len(self.orbit), 3)
         orbit = Orbit(self.coords[1:3], self.lattice, [[0, 1], [0, 1]],
                       self.bases, self.symops)
         # orbit with two symmetrically distinct sites
-        self.assertEqual(orbit.n_bit_orderings, 4)
+        self.assertEqual(len(orbit), 4)
 
     def test_is_orthonormal(self):
         self.assertFalse(self.orbit.basis_orthogonal)

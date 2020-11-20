@@ -14,13 +14,14 @@ __author__ = "Luis Barroso-Luque"
 
 import numpy as np
 from monty.json import MSONable
-from smol.cofe.configspace.clusterspace import ClusterSubspace
+from smol.cofe.space.clusterspace import ClusterSubspace
 
 
 class ClusterExpansion(MSONable):
     """Class for the ClusterExpansion proper.
 
-    This needs a ClusterSubspace and a corresponding set of ECI from a fit.
+    This needs a :class:`ClusterSubspace` and a corresponding set of
+    coefficients from a fit.
 
     The main method to use this the predict method to predict the fitted
     property for new structures. This can be used to compare the accuracy
@@ -30,21 +31,21 @@ class ClusterExpansion(MSONable):
     it is also recommended you save some information about learn metrics
     such as CV score, test/train rmse, or anything to quantify the "goodness"
     in the metadata dictionary. See for example learn metrics in
-    sklearn.metrics for many useful methods to get this quantities.
+    :code:`sklearn.metrics` for many useful methods to get this quantities.
 
     This class is also used for Monte Carlo simulations to create a
-    CEProcessor that calculates the CE for a fixed supercell size. Before using
-    a ClusterExpansion for Monte Carlo you should consider pruning the orbit
-    functions with small eci.
+    :class:`CEProcessor` that calculates the CE for a fixed supercell size.
+    Before using a ClusterExpansion for Monte Carlo you should consider pruning
+    the correlation/orbit functions with small coefficients or eci.
 
     Attributes:
-        coefficients (ndarrya): ECIS of the cluster expansion
+        coefficients (ndarry): coefficients of the cluster expansion
         metadata (dict): dict to save optional values describing cluster
             expansion. i.e. if it was pruned, any error metrics etc.
     """
 
     def __init__(self, cluster_subspace, coefficients, feature_matrix):
-        """Initialize a ClusterExpansion.
+        r"""Initialize a ClusterExpansion.
 
         Args:
             cluster_subspace (ClusterSubspace):
@@ -54,14 +55,15 @@ class ClusterExpansion(MSONable):
             coefficients (ndarray):
                 coefficients for cluster expansion. Make sure the supplied
                 coefficients to the correlation vector terms (length and order)
-                These correspond to the ECI x the multiplicity of their orbit.
+                These correspond to the
+                ECI x the multiplicity of orbit x multiplicity of bit ordering
             feature_matrix (ndarray)
                 the feature matrix used in fitting the given coefficients.
         """
         if len(coefficients) != feature_matrix.shape[1]:
-            raise AttributeError(f'Feature matrix shape {feature_matrix.shape}'
-                                 'does not match length of coefficients '
-                                 f'{len(coefficients)}.')
+            raise AttributeError(
+                f"Feature matrix shape {feature_matrix.shape} does not match "
+                f"length of coefficients {len(coefficients)}.")
         self.coefs = coefficients
         self.metadata = {}
         self._subspace = cluster_subspace
@@ -73,15 +75,15 @@ class ClusterExpansion(MSONable):
         """Get the eci for the cluster expansion.
 
         This just divides by the corresponding multiplicities. External terms
-        will be dropped.
+        will are dropped since their fitted coefficients do not represent ECI.
         """
         if self._eci is None:
             mults = [1]  # empty orbit
             for mult, ords in zip(self._subspace.orbit_multiplicities,
-                                  self._subspace.orbit_nbit_orderings):
+                                  self._subspace.ncorr_functions_per_orbit):
                 mults += ords*[mult, ]
             n = len(self._subspace.external_terms)  # check for extra terms
-            bit_combo_mults = [1] + self._subspace.bit_combo_multiplicities
+            bit_combo_mults = [1] + self._subspace.corr_function_multiplicities
             coefs = self.coefs[:-n] if n else self.coefs
             self._eci = coefs/(np.array(mults) * np.array(bit_combo_mults))
         return self._eci
@@ -124,10 +126,10 @@ class ClusterExpansion(MSONable):
                 Whether to return the predicted property normalized by
                 the prim cell size.
         Returns:
-            array
+            float
         """
-        corrs = self.cluster_subspace.corr_from_structure(structure,
-                                                          normalized=normalize)
+        corrs = self.cluster_subspace.corr_from_structure(
+            structure, normalized=normalize)
         return np.dot(corrs, self.coefs)
 
     def prune(self, threshold=0, with_multiplicity=False):
@@ -138,7 +140,7 @@ class ClusterExpansion(MSONable):
 
         This will change the fits error metrics (ie RMSE) a little, but it
         should not be much. If they change a lot then the threshold used is
-        probably to high and important ECI are being pruned.
+        probably too high and important functions are being pruned.
 
         This will not re-fit the ClusterExpansion. Note that if you re-fit
         after pruning the ECI will probably change and hence also the fit
@@ -184,17 +186,17 @@ class ClusterExpansion(MSONable):
         """
         subspace = self.cluster_subspace.copy()
         subspace.change_site_bases(new_basis, orthonormal=orthonormal)
-        new_feature_matrix = np.array([subspace.corr_from_structure(s,
-                                                                    scmatrix=m)
-                                       for s, m in zip(fit_structures,
-                                                       supercell_matrices)])
+        new_feature_matrix = np.array(
+            [subspace.corr_from_structure(s, scmatrix=m)
+             for s, m in zip(fit_structures, supercell_matrices)])
+
         C = np.matmul(self._feat_matrix.T,
                       np.linalg.pinv(new_feature_matrix.T))
         return np.matmul(C.T, self.coefs)
 
     def __str__(self):
         """Pretty string for printing."""
-        corr = np.zeros(self.cluster_subspace.n_bit_orderings)
+        corr = np.zeros(self.cluster_subspace.num_corr_functions)
         corr[0] = 1  # zero point cluster
         # This might need to be redefined to take "expectation" using measure
         feature_avg = np.average(self._feat_matrix, axis=0)
@@ -202,14 +204,15 @@ class ClusterExpansion(MSONable):
         s = 'ClusterExpansion:\n    Prim Composition: ' \
             f'{self.prim_structure.composition}\n Num fit structures: ' \
             f'{self._feat_matrix.shape[0]}\n' \
-            f'Num orbit functions: {self.cluster_subspace.n_bit_orderings}\n'
+            f'Num corr functions: {self.cluster_subspace.num_corr_functions}\n'
         ecis = len(corr)*[0.0, ] if self.coefs is None else self.coefs
         s += f'    [Orbit]  id: {str(0):<3}\n'
         s += '        bit       eci\n'
         s += f'        {"[X]":<10}{ecis[0]:<4.3}\n'
         for orbit in self.cluster_subspace.iterorbits():
             s += f'    [Orbit]  id: {orbit.bit_id:<3} size: ' \
-                 f'{len(orbit.bits):<3} radius: {orbit.radius:<4.3}\n'
+                 f'{len(orbit.bits):<3} radius: ' \
+                 f'{orbit.base_cluster.diameter:<4.3}\n'
             s += '        id    bit       eci     feature avg  feature std  '\
                  'eci*std\n'
             for i, bits in enumerate(orbit.bit_combos):

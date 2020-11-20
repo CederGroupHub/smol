@@ -11,17 +11,7 @@
    "cell_type": "code",
    "execution_count": 1,
    "metadata": {},
-   "outputs": [
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "/home/lbluque/Develop/pymatgen/pymatgen/ext/matproj.py:454: DeprecationWarning: __init__ is deprecated\n",
-      "MaterialsProjectCompatibility will be updated with new correction classes as well as new values of corrections and uncertainties in 2020\n",
-      "  def get_pourbaix_entries(self, chemsys, solid_compat=MaterialsProjectCompatibility()):\n"
-     ]
-    }
-   ],
+   "outputs": [],
    "source": [
     "import numpy as np\n",
     "import json\n",
@@ -100,7 +90,7 @@
     "\n",
     "A cluster subspace most easily created by providing:\n",
     "1. The prim structure representing the configurational space.\n",
-    "2. A set of cutoff radii for each size of orbit we want to consider.\n",
+    "2. A set of diameter cutoffs for each size of orbit we want to consider.\n",
     "3. A type of site basis function to use.\n",
     "\n",
     "There are more options allowed by the code to fine grain and tune. See other notebooks for advanced use cases."
@@ -125,35 +115,35 @@
       "              [Base Cluster] Radius: 0.0   Centroid: [0.5 0.5 0.5]      Points: [[0.5 0.5 0.5]]      \n",
       "    [Size] 2\n",
       "      [Orbit] id: 3  orderings: 1   multiplicity: 6    no. symops: 2   \n",
-      "              [Base Cluster] Radius: 2.97  Centroid: [0.75 0.25 0.75]   Points: [[1.  0.  1. ]  [0.5 0.5 0.5]]            \n",
+      "              [Base Cluster] Radius: 1.48  Centroid: [0.75 0.25 0.75]   Points: [[1.  0.  1. ]  [0.5 0.5 0.5]]            \n",
       "      [Orbit] id: 4  orderings: 1   multiplicity: 3    no. symops: 4   \n",
-      "              [Base Cluster] Radius: 2.97  Centroid: [0.5 0.5 0. ]      Points: [[1. 0. 0.]  [0. 1. 0.]]                  \n",
+      "              [Base Cluster] Radius: 1.48  Centroid: [0.5 0.5 0. ]      Points: [[1. 0. 0.]  [0. 1. 0.]]                  \n",
       "      [Orbit] id: 5  orderings: 1   multiplicity: 3    no. symops: 4   \n",
-      "              [Base Cluster] Radius: 2.97  Centroid: [0.  0.5 0.5]      Points: [[-0.5  0.5  0.5]  [ 0.5  0.5  0.5]]      \n",
+      "              [Base Cluster] Radius: 1.48  Centroid: [0.  0.5 0.5]      Points: [[-0.5  0.5  0.5]  [ 0.5  0.5  0.5]]      \n",
       "      [Orbit] id: 6  orderings: 1   multiplicity: 6    no. symops: 2   \n",
-      "              [Base Cluster] Radius: 4.2   Centroid: [0.25 0.25 0.25]   Points: [[ 1.   0.   0. ]  [-0.5  0.5  0.5]]      \n",
+      "              [Base Cluster] Radius: 2.1   Centroid: [0.25 0.25 0.25]   Points: [[ 1.   0.   0. ]  [-0.5  0.5  0.5]]      \n",
       "    [Size] 3\n",
       "      [Orbit] id: 7  orderings: 1   multiplicity: 6    no. symops: 2   \n",
-      "              [Base Cluster] Radius: 2.97  Centroid: [0.   0.33 0.67]   Points: [[ 0.   0.   1. ]  [-0.5  0.5  0.5]  [ 0.5  0.5  0.5]]         \n",
+      "              [Base Cluster] Radius: 1.48  Centroid: [0.   0.33 0.67]   Points: [[ 0.   0.   1. ]  [-0.5  0.5  0.5]  [ 0.5  0.5  0.5]]         \n",
       "      [Orbit] id: 8  orderings: 1   multiplicity: 6    no. symops: 2   \n",
-      "              [Base Cluster] Radius: 2.97  Centroid: [0.5  0.5  0.83]   Points: [[1.  0.  1. ]  [0.5 0.5 0.5]  [0.  1.  1. ]]                  \n",
+      "              [Base Cluster] Radius: 1.48  Centroid: [0.5  0.5  0.83]   Points: [[1.  0.  1. ]  [0.5 0.5 0.5]  [0.  1.  1. ]]                  \n",
       "      [Orbit] id: 9  orderings: 1   multiplicity: 2    no. symops: 6   \n",
-      "              [Base Cluster] Radius: 2.97  Centroid: [0.33 0.33 0.  ]   Points: [[1. 0. 0.]  [0. 1. 0.]  [0. 0. 0.]]                           \n",
+      "              [Base Cluster] Radius: 1.48  Centroid: [0.33 0.33 0.  ]   Points: [[1. 0. 0.]  [0. 1. 0.]  [0. 0. 0.]]                           \n",
       "      [Orbit] id: 10 orderings: 1   multiplicity: 2    no. symops: 6   \n",
-      "              [Base Cluster] Radius: 2.97  Centroid: [0.83 0.83 0.5 ]   Points: [[0.5 0.5 0.5]  [1.5 0.5 0.5]  [0.5 1.5 0.5]]                  \n",
+      "              [Base Cluster] Radius: 1.48  Centroid: [0.83 0.83 0.5 ]   Points: [[0.5 0.5 0.5]  [1.5 0.5 0.5]  [0.5 1.5 0.5]]                  \n",
       "\n"
      ]
     }
    ],
    "source": [
-    "subspace = ClusterSubspace.from_radii(lno_prim,\n",
-    "                                      radii={2: 5, 3: 4.1}, # will include orbits of 2 and 3 sites.\n",
-    "                                      basis='sinusoid', # sets the site basis type, default is indicator\n",
-    "                                      supercell_size='O2-')\n",
+    "subspace = ClusterSubspace.from_cutoffs(lno_prim,\n",
+    "                                        cutoffs={2: 5, 3: 4.1}, # will include orbits of 2 and 3 sites.\n",
+    "                                        basis='sinusoid', # sets the site basis type, default is indicator\n",
+    "                                        supercell_size='O2-')\n",
     "\n",
     "# supercell_size specifies the method to determine the supercell size\n",
     "# when trying to match a structure.\n",
-    "# (See pymatgen.structure_mathcer.StructureMatcher for more info)\n",
+    "# (See pymatgen.structure_matcher.StructureMatcher for more info)\n",
     "\n",
     "print(subspace) # single site and empty orbits are always included."
    ]
@@ -320,7 +310,7 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "The predicted energy for a structure with composition Li+4 Ni3+4 Ni4+2 O2-12 is -35.44704535541771 eV/prim.\n",
+      "The predicted energy for a structure with composition Li+3 Ni3+3 Ni4+3 O2-12 is -34.57411118658173 eV/prim.\n",
       "\n",
       "The fitted coefficients are:\n",
       "[-3.44424307e+01  1.52944807e+00  1.52944807e+00 -7.11937730e-02\n",
@@ -335,7 +325,7 @@
       "ClusterExpansion:\n",
       "    Prim Composition: Li+0.5 Ni3+0.5 Ni4+0.5 O2-2\n",
       " Num fit structures: 27\n",
-      "Num orbit functions: 11\n",
+      "Num corr functions: 11\n",
       "    [Orbit]  id: 0  \n",
       "        bit       eci\n",
       "        [X]       -34.4\n",
@@ -436,7 +426,7 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "StructureWrangler: <class 'smol.cofe.wrangler.StructureWrangler'>\n",
+      "StructureWrangler: <class 'smol.cofe.wrangling.wrangler.StructureWrangler'>\n",
       "\n",
       "ClusterExpansion: <class 'smol.cofe.expansion.ClusterExpansion'>\n",
       "\n"
@@ -475,7 +465,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.8.3"
+   "version": "3.8.5"
   }
  },
  "nbformat": 4,

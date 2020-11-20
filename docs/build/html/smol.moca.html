@@ -153,18 +153,20 @@ Monte Carlo simulations using Cluster Expansion Hamiltonians.</p>
 <p>CEProcessor class to use a ClusterExpansion in MC simulations.</p>
 <p>A CE processor is optimized to compute correlation vectors and local
 changes in correlation vectors. This class allows the use a cluster
-expansion hamiltonian to run Monte Carlo based simulations.</p>
+expansion Hamiltonian to run Monte Carlo based simulations.</p>
 <p>A processor allows an ensemble class to generate a Markov chain
 for sampling thermodynamic properties from a cluster expansion
 Hamiltonian.</p>
 <dl class="py attribute">
 <dt id="smol.moca.CEProcessor.optimize_indicator">
 <code class="sig-name descname">optimize_indicator</code><a class="headerlink" href="#smol.moca.CEProcessor.optimize_indicator" title="Permalink to this definition">¶</a></dt>
-<dd><p>If true the local corr update function specialized for indicator
-bases is used.</p>
+<dd><p>If true the local correlation update function specialized for
+indicator bases is used. This should only be used when the
+expansion was fit with an indicator basis and no additional
+normalization.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -172,7 +174,7 @@ bases is used.</p>
 <dl class="py attribute">
 <dt id="smol.moca.CEProcessor.coefs">
 <code class="sig-name descname">coefs</code><a class="headerlink" href="#smol.moca.CEProcessor.coefs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit coefficients representing the cluster expansion.</p>
+<dd><p>Fitted coefficients from the cluster expansion.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>ndarray</p>
@@ -183,11 +185,12 @@ bases is used.</p>
 <dl class="py attribute">
 <dt id="smol.moca.CEProcessor.n_orbit_functions">
 <code class="sig-name descname">n_orbit_functions</code><a class="headerlink" href="#smol.moca.CEProcessor.n_orbit_functions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Total number of orbit basis functions. Includes all possible
-labellings for all orbits. Same as n_bit_orderings.</p>
+<dd><p>Total number of orbit basis functions (correlation functions).
+This includes all possible labellings/orderings for all orbits.
+Same as <code class="code docutils literal notranslate"><span class="pre">ClusterSubspace.n_bit_orderings</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -196,12 +199,13 @@ labellings for all orbits. Same as n_bit_orderings.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 <li><p><strong>coefficients</strong> (<em>ndarray</em>) – Fit coefficients for the represented cluster expansion.</p></li>
-<li><p><strong>optimize_indicator</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – When using an indicator basis, set the delta_corr function to
-the indicator optimize function. This can make MC steps faster.
+<li><p><strong>optimize_indicator</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – When using an indicator basis, sets the function to compute
+correlation differences to the indicator optimized function.
+This can make MC steps faster.
 Make sure your cluster expansion was indeed fit with an
 indicator basis set, otherwise your MC results are no good.</p></li>
 </ul>
@@ -209,7 +213,7 @@ indicator basis set, otherwise your MC results are no good.</p></li>
 </dl>
 <dl class="py method">
 <dt id="smol.moca.CEProcessor.as_dict">
-<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a><a class="headerlink" href="#smol.moca.CEProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a><a class="headerlink" href="#smol.moca.CEProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -221,7 +225,7 @@ indicator basis set, otherwise your MC results are no good.</p></li>
 <dl class="py method">
 <dt id="smol.moca.CEProcessor.compute_feature_vector">
 <code class="sig-name descname">compute_feature_vector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CEProcessor.compute_feature_vector" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the correlation vector for a given occupancy array.</p>
+<dd><p>Compute the correlation vector for a given occupancy string.</p>
 <p>The correlation vector in this case is normalized per supercell. In
 other works it is extensive corresponding to the size of the supercell.</p>
 <dl class="field-list simple">
@@ -246,10 +250,10 @@ other works it is extensive corresponding to the size of the supercell.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
+<li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string</p></li>
 <li><p><strong>flips</strong> (<em>list of tuple</em>) – list of tuples with two elements. Each tuple represents a
 single flip where the first element is the index of the site
-in the occupancy array and the second element is the index
+in the occupancy string and the second element is the index
 for the new species to place at that site.</p></li>
 </ul>
 </dd>
@@ -272,7 +276,7 @@ for the new species to place at that site.</p></li>
 
 <dl class="py class">
 <dt id="smol.moca.CanonicalEnsemble">
-<em class="property">class </em><code class="sig-name descname">CanonicalEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CanonicalEnsemble" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">CanonicalEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CanonicalEnsemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.base.Ensemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Canonical Ensemble class to run Monte Carlo Simulations.</p>
 <p>Initialize CanonicalEnemble.</p>
@@ -281,7 +285,6 @@ for the new species to place at that site.</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>processor</strong> (<a class="reference internal" href="smol.moca.processor.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><em>Processor</em></a>) – A processor that can compute the change in a property given
 a set of flips.</p></li>
-<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Temperature of ensemble</p></li>
 <li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – optional
 list of Lattice objects representing sites in the processor
 supercell with same site spaces.</p></li>
@@ -291,8 +294,9 @@ supercell with same site spaces.</p></li>
 <dl class="py method">
 <dt id="smol.moca.CanonicalEnsemble.compute_feature_vector">
 <code class="sig-name descname">compute_feature_vector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CanonicalEnsemble.compute_feature_vector" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the feature vector for a give occupancy.</p>
-<p>In the canonical case it is just the feature vector.</p>
+<dd><p>Compute the feature vector for a given occupancy.</p>
+<p>In the canonical case it is just the feature vector from the underlying
+processor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string</p>
@@ -309,7 +313,7 @@ supercell with same site spaces.</p></li>
 <dl class="py method">
 <dt id="smol.moca.CanonicalEnsemble.compute_feature_vector_change">
 <code class="sig-name descname">compute_feature_vector_change</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em>, <em class="sig-param"><span class="n">step</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CanonicalEnsemble.compute_feature_vector_change" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the change in the feature vector from a step.</p>
+<dd><p>Compute the change in the feature vector from a given step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -332,7 +336,7 @@ supercell with same site spaces.</p></li>
 <dd><p>Instantiate a CanonicalEnsemble from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – dictionary representation.</p>
+<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – dictionary representation.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>CanonicalEnsemble</p>
@@ -358,19 +362,23 @@ supercell with same site spaces.</p></li>
 <em class="property">class </em><code class="sig-name descname">CompositeProcessor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CompositeProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="smol.moca.processor.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.processor.base.Processor</span></code></a></p>
 <p>CompositeProcessor class used for mixed models.</p>
-<p>A Composite processor is merely a container for several different processor
-that acts as an interface such that it can be used in the same way as the
+<p>A Composite processor is merely a container for many different processors
+that acts as an interface such that it can be used in the same way as an
 individual processor. This can be used to mix models in any way that your
 heart desires.</p>
 <p>The most common use case of them all is a CompositeProcessor of a
 CEProcessor and an EwaldProcessor for use in ionic materials.</p>
 <p>You can add anyone of the other processor class implemented to build a
 composite processor.</p>
+<p>It is recommended to use the <code class="code docutils literal notranslate"><span class="pre">from_cluster_expansion</span></code> to create an
+ensemble and the underlying processor automatically rather than directly
+creating a processor. This will take care of creating the correct
+<a class="reference internal" href="#smol.moca.CompositeProcessor" title="smol.moca.CompositeProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CompositeProcessor</span></code></a> or <a class="reference internal" href="#smol.moca.CEProcessor" title="smol.moca.CEProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CEProcessor</span></code></a> for you.</p>
 <p>Initialize a CompositeProcessor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 </ul>
@@ -390,7 +398,7 @@ supercell matrix.</p>
 
 <dl class="py method">
 <dt id="smol.moca.CompositeProcessor.as_dict">
-<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a><a class="headerlink" href="#smol.moca.CompositeProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a><a class="headerlink" href="#smol.moca.CompositeProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -453,7 +461,7 @@ for the new species to place at that site.</p></li>
 <dd class="field-even"><p>predicted property</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -466,14 +474,14 @@ for the new species to place at that site.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
-<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
+<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>property difference between inital and final states</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -503,11 +511,11 @@ energy using an Ewald Summation term.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace.</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 <li><p><strong>ewald_term</strong> (<a class="reference internal" href="smol.cofe.extern.html#smol.cofe.extern.ewald.EwaldTerm" title="smol.cofe.extern.ewald.EwaldTerm"><em>EwaldTerm</em></a>) – An instance of EwaldTerm to compute electrostatic energies.</p></li>
-<li><p><strong>coefficient</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Fitting coeficient to scale Ewald energy by.</p></li>
+<li><p><strong>coefficient</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Fitting coeficient to scale Ewald energy by.</p></li>
 <li><p><strong>ewald_summation</strong> (<em>EwaldSummation</em>) – optional
 pymatgen EwaldSummation instance, make sure this uses the exact
 same parameters as those used in the EwaldTerm in the cluster
@@ -517,7 +525,7 @@ Expansion (i.e. same eta, real and recip cuts).</p></li>
 </dl>
 <dl class="py method">
 <dt id="smol.moca.EwaldProcessor.as_dict">
-<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a><a class="headerlink" href="#smol.moca.EwaldProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a><a class="headerlink" href="#smol.moca.EwaldProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -552,10 +560,10 @@ symmetrically distinct bit ordering.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
+<li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string</p></li>
 <li><p><strong>flips</strong> (<em>list of tuple</em>) – list of tuples with two elements. Each tuple represents a
 single flip where the first element is the index of the site
-in the occupancy array and the second element is the index
+in the occupancy string and the second element is the index
 for the new species to place at that site.</p></li>
 </ul>
 </dd>
@@ -580,7 +588,7 @@ for the new species to place at that site.</p></li>
 <dd class="field-even"><p>Ewald electrostatic energy</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -593,14 +601,14 @@ for the new species to place at that site.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
-<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
+<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>electrostatic energy change</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -629,7 +637,7 @@ ClusterExpansion.</p>
 
 <dl class="py class">
 <dt id="smol.moca.FuSemiGrandEnsemble">
-<em class="property">class </em><code class="sig-name descname">FuSemiGrandEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">fugacity_fractions</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.FuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">FuSemiGrandEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">fugacity_fractions</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.FuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Fugacity fraction SemiGrandEnsemble.</p>
 <p>A Semi-Grand Canonical Ensemble for Monte Carlo simulations where the
@@ -645,7 +653,7 @@ temperature the corresponding chemical potentials can then be calculated.</p>
 <dd><p>dictionary of fugacity fractions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -656,15 +664,14 @@ temperature the corresponding chemical potentials can then be calculated.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>processor</strong> (<a class="reference internal" href="smol.moca.processor.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><em>Processor</em></a>) – A processor that can compute the change in a property given
 a set of flips. See moca.processor</p></li>
-<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Temperature of ensemble</p></li>
 <li><p><strong>fugacity_fractions</strong> (<em>sequence of dicts</em>) – optional
-dictionary of species name and fugacity fraction for each
-sublattice (ie think of it as the sublattice concentrations
+Dictionary of species name and fugacity fraction for each
+sublattice (.i.e think of it as the sublattice concentrations
 for random structure). If not given this will be taken from the
 prim structure used in the cluster subspace. Needs to be in
 the same order as the corresponding sublattice.</p></li>
 <li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – optional
-list of Lattice objects representing sites in the processor
+list of Sublattice objects representing sites in the processor
 supercell with same site spaces.</p></li>
 </ul>
 </dd>
@@ -689,7 +696,7 @@ supercell with same site spaces.</p></li>
 <dl class="py method">
 <dt id="smol.moca.FuSemiGrandEnsemble.compute_feature_vector_change">
 <code class="sig-name descname">compute_feature_vector_change</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em>, <em class="sig-param"><span class="n">step</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.FuSemiGrandEnsemble.compute_feature_vector_change" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the change in the feature vector from a step.</p>
+<dd><p>Compute the change in the feature vector from a given step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -698,7 +705,7 @@ supercell with same site spaces.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>difference in vector of sufficient statistics</p>
+<dd class="field-even"><p>difference in feature vector</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ndarray</p>
@@ -711,11 +718,8 @@ supercell with same site spaces.</p></li>
 <em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.FuSemiGrandEnsemble.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiate a FuSemiGrandEnsemble from dict representation.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – dictionary representation.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>FuSemiGrandEnsemble</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>FuSemiGrandEnsemble</p>
 </dd>
 </dl>
 </dd></dl>
@@ -730,11 +734,11 @@ supercell with same site spaces.</p></li>
 
 <dl class="py class">
 <dt id="smol.moca.MuSemiGrandEnsemble">
-<em class="property">class </em><code class="sig-name descname">MuSemiGrandEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">chemical_potentials</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.MuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">MuSemiGrandEnsemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processor</span></em>, <em class="sig-param"><span class="n">chemical_potentials</span></em>, <em class="sig-param"><span class="n">sublattices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.MuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Relative chemical potential based SemiGrand Ensemble.</p>
 <p>A Semi-Grand Canonical Ensemble for Monte Carlo Simulations where species
-chemical potentials are predefined. Note that in the SGC Ensemble
+relative chemical potentials are predefined. Note that in the SGC Ensemble
 implemented here, only the differences in chemical potentials with
 respect to a reference species on each sublattice are fixed, and not the
 absolute values. To obtain the absolute values you must calculate the
@@ -746,7 +750,7 @@ values.</p>
 <dd><p>dict of chemical potentials.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -756,11 +760,10 @@ values.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>processor</strong> (<a class="reference internal" href="smol.moca.processor.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><em>Processor</em></a>) – A processor that can compute the change in a property given
-a set of flips. See moca.processor</p></li>
-<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Temperature of ensemble</p></li>
-<li><p><strong>chemical_potentials</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – dictionary with species names and chemical potentials.</p></li>
+a set of flips.</p></li>
+<li><p><strong>chemical_potentials</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – Dictionary with species and chemical potentials.</p></li>
 <li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – optional
-list of Lattice objects representing sites in the processor
+List of Sublattice objects representing sites in the processor
 supercell with same site spaces.</p></li>
 </ul>
 </dd>
@@ -791,7 +794,7 @@ supercell with same site spaces.</p></li>
 <dl class="py method">
 <dt id="smol.moca.MuSemiGrandEnsemble.compute_feature_vector_change">
 <code class="sig-name descname">compute_feature_vector_change</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em>, <em class="sig-param"><span class="n">step</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.MuSemiGrandEnsemble.compute_feature_vector_change" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the change in the feature vector from a step.</p>
+<dd><p>Return the change in the feature vector from a given step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -813,11 +816,8 @@ supercell with same site spaces.</p></li>
 <em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.MuSemiGrandEnsemble.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiate a MuSemiGrandEnsemble from dict representation.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – dictionary representation.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>CanonicalEnsemble</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>CanonicalEnsemble</p>
 </dd>
 </dl>
 </dd></dl>
@@ -826,11 +826,14 @@ supercell with same site spaces.</p></li>
 
 <dl class="py class">
 <dt id="smol.moca.SampleContainer">
-<em class="property">class </em><code class="sig-name descname">SampleContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_sites</span></em>, <em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">natural_parameters</span></em>, <em class="sig-param"><span class="n">num_energy_coefs</span></em>, <em class="sig-param"><span class="n">ensemble_metadata</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nwalkers</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.SampleContainer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">SampleContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_sites</span></em>, <em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">natural_parameters</span></em>, <em class="sig-param"><span class="n">num_energy_coefs</span></em>, <em class="sig-param"><span class="n">sampling_metadata</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nwalkers</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.SampleContainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>A SampleContainter class stores Monte Carlo simulation samples.</p>
-<p>It also provides some minor functionality to get sample statistics.
-When getting any value from the provided attributes, the highly repeated
+<p>A SampleContainer holds samples and sampling information from an MCMC
+sampling run. It is useful to obtain the raw data and minimal empirical
+properties of the underlying distribution in order to carry out further
+analysis of the MCMC sampling results.</p>
+<p>When getting any value from the provided attributes, the highly repeated
 args are:</p>
 <blockquote>
 <div><dl class="simple">
@@ -850,7 +853,7 @@ chains into one. Defaults to True.</p>
 can be anything representative i.e. number of sites)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -883,7 +886,7 @@ can be anything representative i.e. number of sites)</p>
 <dd><p>Number of iterations used in sampling</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -891,10 +894,23 @@ can be anything representative i.e. number of sites)</p>
 <dl class="py attribute">
 <dt id="smol.moca.SampleContainer.metadata">
 <code class="sig-name descname">metadata</code><a class="headerlink" href="#smol.moca.SampleContainer.metadata" title="Permalink to this definition">¶</a></dt>
-<dd><p>dictionary of metadata from the MC run that generated the samples.</p>
+<dd><p>Dictionary of metadata from the MC run that generated the samples.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="smol.moca.SampleContainer.aux_checkpoint">
+<code class="sig-name descname">aux_checkpoint</code><a class="headerlink" href="#smol.moca.SampleContainer.aux_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checkpoint dictionary of auxiliary states and variables to continue
+sampling from the last state of a previous MCMC run.
+(not implemented yet)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -903,13 +919,13 @@ can be anything representative i.e. number of sites)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>num_sites</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Total number of sites in supercell of the ensemble.</p></li>
+<li><p><strong>num_sites</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Total number of sites in supercell of the ensemble.</p></li>
 <li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – Sublattices of the ensemble sampled.</p></li>
 <li><p><strong>natural_parameters</strong> (<em>ndarray</em>) – array of natural parameters used in the ensemble.</p></li>
-<li><p><strong>num_energy_coefs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – the number of coeficients in the natural parameters that
+<li><p><strong>num_energy_coefs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the number of coeficients in the natural parameters that
 correspond to the energy only.</p></li>
-<li><p><strong>ensemble_metadata</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – Metadata of the ensemble that was sampled.</p></li>
-<li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Number of walkers used to generate chain. Default is 1</p></li>
+<li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – Sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
+<li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of walkers used to generate chain. Default is 1</p></li>
 </ul>
 </dd>
 </dl>
@@ -961,15 +977,64 @@ correspond to the energy only.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="smol.moca.SampleContainer.flush_to_backend">
+<code class="sig-name descname">flush_to_backend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">backend</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.SampleContainer.flush_to_backend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flush current samples and trace to backend file.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="smol.moca.SampleContainer.from_dict">
 <em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.SampleContainer.from_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Instantiate a sublattice from dict representation.</p>
+<dd><p>Instantiate a SampleContainer from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – dictionary representation.</p>
+<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – dictionary representation.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Sublattice</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.moca.SampleContainer.from_hdf5">
+<em class="property">classmethod </em><code class="sig-name descname">from_hdf5</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span></em>, <em class="sig-param"><span class="n">swmr_mode</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.SampleContainer.from_hdf5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiate a SampleContainer from an hdf5 file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to file</p></li>
+<li><p><strong>swmr_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+If true allows to read file from other processes. Single Writer
+Multiple Readers.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>SampleContainer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.moca.SampleContainer.get_backend">
+<code class="sig-name descname">get_backend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span></em>, <em class="sig-param"><span class="n">alloc_nsamples</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">swmr_mode</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.SampleContainer.get_backend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a backend file object.</p>
+<p>Currently only hdf5 files supported</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to backend file.</p></li>
+<li><p><strong>alloc_nsamples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+number of new samples to allocate. Will only extend datasets
+if number given is larger than space left to write samples
+into.</p></li>
+<li><p><strong>swmr_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+If true allows to read file from other processes. Single Writer
+Multiple Readers.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>h5.File object</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1118,7 +1183,7 @@ correspond to the energy only.</p></li>
 <li><p><strong>occupancies</strong> (<em>ndarray</em>) – array of occupancies</p></li>
 <li><p><strong>enthalpy</strong> (<em>ndarray</em>) – array of generalized enthalpy changes</p></li>
 <li><p><strong>features</strong> (<em>ndarray</em>) – array of feature vector changes</p></li>
-<li><p><strong>thinned_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – the amount that the sampling was thinned by. Used to update
+<li><p><strong>thinned_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the amount that the sampling was thinned by. Used to update
 the total mc iterations.</p></li>
 </ul>
 </dd>
@@ -1132,12 +1197,6 @@ the total mc iterations.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.moca.SampleContainer.stream">
-<code class="sig-name descname">stream</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.SampleContainer.stream" title="Permalink to this definition">¶</a></dt>
-<dd><p>Stream samples to disk to clear up memory.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt id="smol.moca.SampleContainer.sublattice_composition_variance">
 <code class="sig-name descname">sublattice_composition_variance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sublattice</span></em>, <em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.SampleContainer.sublattice_composition_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the varience in composition of a specific sublattice.</p>
@@ -1148,7 +1207,7 @@ the total mc iterations.</p></li>
 <dl class="py class">
 <dt id="smol.moca.Sampler">
 <em class="property">class </em><code class="sig-name descname">Sampler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kernel</span></em>, <em class="sig-param"><span class="n">container</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.Sampler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A sampler is used to run MCMC sampling simulations.</p>
 <p>The specific MCMC algorithm is defined by the given MCMCKernel.
 The default will use a a simple Metropolis random walk kernel.</p>
@@ -1161,7 +1220,7 @@ method, unless you need more control.</p>
 <li><p><strong>kernel</strong> (<a class="reference internal" href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCMCKernel" title="smol.moca.sampler.kernel.MCMCKernel"><em>MCMCKernel</em></a>) – An MCMCKernel instance.</p></li>
 <li><p><strong>container</strong> (<a class="reference internal" href="#smol.moca.SampleContainer" title="smol.moca.SampleContainer"><em>SampleContainer</em></a>) – A sampler containter to store samples. If given num_walkers is
 taken from the container.</p></li>
-<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – optional
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
 seed for random number generator.</p></li>
 </ul>
 </dd>
@@ -1178,12 +1237,12 @@ The start temperature is the temperature set for the ensemble.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>temperatures</strong> (<em>Sequence</em>) – Sequence of temperatures to anneal, should be strictly
 decreasing.</p></li>
-<li><p><strong>mcmc_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – number of Monte Carlo steps to run at each temperature.</p></li>
+<li><p><strong>mcmc_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – number of Monte Carlo steps to run at each temperature.</p></li>
 <li><p><strong>initial_occupancies</strong> (<em>ndarray</em>) – array of occupancies. If None, the last sample will be taken.
 You should only provide this the first time you call run.</p></li>
-<li><p><strong>thin_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – optional
+<li><p><strong>thin_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
 the amount to thin by for saving samples.</p></li>
-<li><p><strong>progress</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If true will show a progress bar.</p></li>
+<li><p><strong>progress</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – If true will show a progress bar.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1198,29 +1257,30 @@ the amount to thin by for saving samples.</p></li>
 <dl class="py method">
 <dt id="smol.moca.Sampler.efficiency">
 <code class="sig-name descname">efficiency</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.Sampler.efficiency" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the sampling efficiency for each walker.</p>
+<dd><p>Get the efficiency of MCMC sampling (accepted/total).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="smol.moca.Sampler.from_ensemble">
-<em class="property">classmethod </em><code class="sig-name descname">from_ensemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ensemble</span></em>, <em class="sig-param"><span class="n">step_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">kernel_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nwalkers</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.Sampler.from_ensemble" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">from_ensemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ensemble</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">step_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">kernel_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nwalkers</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.Sampler.from_ensemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a sampler based on an Ensemble instances.</p>
-<p>This is the easier way to spin up a Sampler. Since it will
-automatically populate and create a SampleContainer.</p>
+<p>This is the easier way to spin up a Sampler. This will
+automatically populate and create an appropriate SampleContainer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble class to obtain sample probabilities from.</p></li>
-<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – optional
+<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Temperature to run Monte Carlo at.</p></li>
+<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – optional
 type of step to run MCMC with. If not given the default is the
 first entry in the Ensemble.valid_mcmc_steps.</p></li>
-<li><p><strong>kernel_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – optional
+<li><p><strong>kernel_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – optional
 string specifying the specific MCMC transition kernel. This
 represents the underlying MC algorithm. Currently only
 Metropolis is supported.</p></li>
-<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – optional
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
 Seed for the PRNG.</p></li>
-<li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – optional
+<li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
 Number of walkers/chains to sampler. Default is 1. More than 1
 is still experimental…</p></li>
 <li><p><strong>*args</strong> – Positional arguments to pass to the MCMCKernel constructor</p></li>
@@ -1241,21 +1301,31 @@ is still experimental…</p></li>
 
 <dl class="py method">
 <dt id="smol.moca.Sampler.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nsteps</span></em>, <em class="sig-param"><span class="n">initial_occupancies</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">progress</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.Sampler.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nsteps</span></em>, <em class="sig-param"><span class="n">initial_occupancies</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">progress</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">stream_chunk</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">stream_file</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">swmr_mode</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.Sampler.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run an MCMC sampling simulation.</p>
 <p>This will run and save the samples every thin_by into a
 SampleContainer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>nsteps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – number of total MC steps.</p></li>
+<li><p><strong>nsteps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – number of total MC steps.</p></li>
 <li><p><strong>initial_occupancies</strong> (<em>ndarray</em>) – array of occupancies. If None, the last sampler will be taken.
 You should only provide this the first time you call run. If
 you want to reset then you should call reset before to start
 a fresh run.</p></li>
-<li><p><strong>thin_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – optional
+<li><p><strong>thin_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
 the amount to thin by for saving samples.</p></li>
-<li><p><strong>progress</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If true will show a progress bar.</p></li>
+<li><p><strong>progress</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+If true will show a progress bar.</p></li>
+<li><p><strong>stream_chunk</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+Chunk of samples to stream into a file. If &gt; 0 samples will
+be flushed to backend file in stream_chucks</p></li>
+<li><p><strong>stream_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – optional
+file name to use as backend. If file already exists will try
+to append to datasets. If not given will create a new file.</p></li>
+<li><p><strong>swmr_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+If true allows to read file from other processes. Single Writer
+Multiple Readers.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1264,17 +1334,17 @@ the amount to thin by for saving samples.</p></li>
 <dl class="py method">
 <dt id="smol.moca.Sampler.sample">
 <code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nsteps</span></em>, <em class="sig-param"><span class="n">initial_occupancies</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">progress</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.Sampler.sample" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate MC samples.</p>
-<p>Yield a sampler state every thin_by iterations. A state is give by
+<dd><p>Generate MCMC samples.</p>
+<p>Yield a sampler state every <cite>thin_by</cite> iterations. A state is give by
 a tuple of (occupancies, features, enthalpy)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>nsteps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Number of iterations to run.</p></li>
+<li><p><strong>nsteps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of iterations to run.</p></li>
 <li><p><strong>initial_occupancies</strong> (<em>ndarray</em>) – array of occupancies</p></li>
-<li><p><strong>thin_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – optional
+<li><p><strong>thin_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
 Number to thin iterations by and provide samples.</p></li>
-<li><p><strong>progress</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If true will show a progress bar.</p></li>
+<li><p><strong>progress</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – If true will show a progress bar.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Yields</dt>
@@ -1286,7 +1356,7 @@ Number to thin iterations by and provide samples.</p></li>
 <dl class="py method">
 <dt id="smol.moca.Sampler.samples">
 <em class="property">property </em><code class="sig-name descname">samples</code><a class="headerlink" href="#smol.moca.Sampler.samples" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the samplecontainer.</p>
+<dd><p>Get the SampleContainer.</p>
 </dd></dl>
 
 <dl class="py method">

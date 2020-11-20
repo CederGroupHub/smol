@@ -348,7 +348,7 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="section" id="Running-Canonical-Monte-Carlo-Sampling">
 <h1>Running Canonical Monte Carlo Sampling<a class="headerlink" href="#Running-Canonical-Monte-Carlo-Sampling" title="Permalink to this headline">¶</a></h1>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
@@ -359,16 +359,6 @@ div.rendered_html tbody tr:hover {
 <span class="kn">from</span> <span class="nn">smol.io</span> <span class="kn">import</span> <span class="n">load_work</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/lbluque/Develop/pymatgen/pymatgen/ext/matproj.py:454: DeprecationWarning: __init__ is deprecated
-MaterialsProjectCompatibility will be updated with new correction classes as well as new values of corrections and uncertainties in 2020
-  def get_pourbaix_entries(self, chemsys, solid_compat=MaterialsProjectCompatibility()):
-</pre></div></div>
 </div>
 <div class="section" id="0)-Load-the-previous-LNO-CE-with-electrostatics">
 <h2>0) Load the previous LNO CE with electrostatics<a class="headerlink" href="#0)-Load-the-previous-LNO-CE-with-electrostatics" title="Permalink to this headline">¶</a></h2>
@@ -388,7 +378,7 @@ MaterialsProjectCompatibility will be updated with new correction classes as wel
 <p>The <code class="docutils literal notranslate"><span class="pre">CanonicalEnsemble</span></code> class is used to run MC in a fixed composition ensemble. The ensemble classes will determine the <strong>active</strong> sublattices by grouping all sites that have the same possible partial occupancies.</p>
 <p>To run for fixed chemical potential see the notebook on semigrand ensemble MC.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -403,8 +393,7 @@ MaterialsProjectCompatibility will be updated with new correction classes as wel
 <span class="c1"># this convenience method will take care of creating the appropriate</span>
 <span class="c1"># processor for the given cluster expansion.</span>
 <span class="n">ensemble</span> <span class="o">=</span> <span class="n">CanonicalEnsemble</span><span class="o">.</span><span class="n">from_cluster_expansion</span><span class="p">(</span><span class="n">expansion</span><span class="p">,</span>
-                                                    <span class="n">sc_matrix</span><span class="p">,</span>
-                                                    <span class="n">temperature</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+                                                    <span class="n">sc_matrix</span><span class="p">)</span>
 
 <span class="c1"># In a real scenario you may want a much larger processor.size</span>
 <span class="c1"># An MC step is O(1) with the processor.size, meaning it runs at</span>
@@ -427,11 +416,11 @@ The supercell size for the processor is 16 prims.
 The ensemble has a total of 64 sites.
 The active sublattices are:
 Sublattice
- Site space: {Specie Ni3+: 0.5, Specie Ni4+: 0.5}
+ Site space: {Species Ni3+: 0.5, Species Ni4+: 0.5}
  Number of sites: 16
 
 Sublattice
- Site space: {Specie Li+: 0.5, Vacancy vacA0+: 0.5}
+ Site space: {Species Li+: 0.5, Vacancy vacA0+: 0.5}
  Number of sites: 16
 
 </pre></div></div>
@@ -441,7 +430,7 @@ Sublattice
 <h2>3) Create an MC sampler<a class="headerlink" href="#3)-Create-an-MC-sampler" title="Permalink to this headline">¶</a></h2>
 <p>A <code class="docutils literal notranslate"><span class="pre">Sampler</span></code> will take care of running MC sampling runs for a given ensemble. The sampler allows many different options for MC sampling most importantly setting the MCMC algorithm and the type of MC steps taken. However the defaults are usually enough for almost all use cases.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -449,7 +438,8 @@ Sublattice
 
 <span class="c1"># This will take care of setting the defaults</span>
 <span class="c1"># for the supplied canonical ensemble</span>
-<span class="n">sampler</span> <span class="o">=</span> <span class="n">Sampler</span><span class="o">.</span><span class="n">from_ensemble</span><span class="p">(</span><span class="n">ensemble</span><span class="p">)</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">Sampler</span><span class="o">.</span><span class="n">from_ensemble</span><span class="p">(</span><span class="n">ensemble</span><span class="p">,</span>
+                                <span class="n">temperature</span><span class="o">=</span><span class="mi">1500</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sampling information: </span><span class="si">{sampler.samples.metadata}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
@@ -460,7 +450,7 @@ Sublattice
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Sampler information: {&#39;name&#39;: &#39;CanonicalEnsemble&#39;, &#39;seed&#39;: 9966374208986999509}
+Sampling information: {&#39;name&#39;: &#39;CanonicalEnsemble&#39;, &#39;kernel&#39;: &#39;Metropolis&#39;, &#39;step&#39;: &#39;swap&#39;, &#39;seed&#39;: 1999690849404472642}
 </pre></div></div>
 </div>
 </div>
@@ -468,7 +458,7 @@ Sampler information: {&#39;name&#39;: &#39;CanonicalEnsemble&#39;, &#39;seed&#39
 <h2>3) Create an initial structure and get occupancies<a class="headerlink" href="#3)-Create-an-initial-structure-and-get-occupancies" title="Permalink to this headline">¶</a></h2>
 <p>You will need to create an initial test structure to obtain an initial occupancy to start an MC run. There are many ways to do this, you could simply rescale a training structure and use that. But since the composition is fixed in a canonical ensemble you need to make sure you input the right composition. It can also be helpful to run a simulated anneal step to get a good initial structure rather than starting with a low energy one.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -497,7 +487,7 @@ Li+8 Ni3+8 Ni4+8 O2-32
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -523,7 +513,7 @@ The encoded occupancy is:
 [0 1 1 0 0 0 1 0 0 1 0 1 1 1 1 0 0 0 1 1 1 1 0 1 0 0 1 0 0 0 1 1 0 0 0 0 0
  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
 The initial occupancy is:
- [Specie Li+, Vacancy vacA0+, Vacancy vacA0+, Specie Li+, Specie Li+, Specie Li+, Vacancy vacA0+, Specie Li+, Specie Li+, Vacancy vacA0+, Specie Li+, Vacancy vacA0+, Vacancy vacA0+, Vacancy vacA0+, Vacancy vacA0+, Specie Li+, Specie Ni3+, Specie Ni3+, Specie Ni4+, Specie Ni4+, Specie Ni4+, Specie Ni4+, Specie Ni3+, Specie Ni4+, Specie Ni3+, Specie Ni3+, Specie Ni4+, Specie Ni3+, Specie Ni3+, Specie Ni3+, Specie Ni4+, Specie Ni4+, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-, Specie O2-]
+ [Species Li+, Vacancy vacA0+, Vacancy vacA0+, Species Li+, Species Li+, Species Li+, Vacancy vacA0+, Species Li+, Species Li+, Vacancy vacA0+, Species Li+, Vacancy vacA0+, Vacancy vacA0+, Vacancy vacA0+, Vacancy vacA0+, Species Li+, Species Ni3+, Species Ni3+, Species Ni4+, Species Ni4+, Species Ni4+, Species Ni4+, Species Ni3+, Species Ni4+, Species Ni3+, Species Ni3+, Species Ni4+, Species Ni3+, Species Ni3+, Species Ni3+, Species Ni4+, Species Ni4+, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-]
 </pre></div></div>
 </div>
 </div>
@@ -531,7 +521,7 @@ The initial occupancy is:
 <h2>4) Run MC iterations<a class="headerlink" href="#4)-Run-MC-iterations" title="Permalink to this headline">¶</a></h2>
 <p>MC iterations are by default run by swapping sites from all active sublattices, but fine grained simulations can also be ran by only flipping on some of the active sublattices or even freezen specific sites in active sublattices. MC samples are saved in a <code class="docutils literal notranslate"><span class="pre">SampleContainer</span></code> created or given to the <code class="docutils literal notranslate"><span class="pre">Sampler</span></code> when created.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -549,11 +539,11 @@ The initial occupancy is:
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Sampling 1 chain(s) at 500.00 K from a cell with 64 sites.: 100%|██████████| 1000000/1000000 [01:55&lt;00:00, 8692.58it/s]
+Sampling 1 chain(s) at 1500.00 K from a cell with 64 sites: 100%|██████████| 1000000/1000000 [01:50&lt;00:00, 9069.45it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -576,16 +566,16 @@ Sampling 1 chain(s) at 500.00 K from a cell with 64 sites.: 100%|█████
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Fraction of succesfull steps (efficiency) 0.017744
-The last step energy is -552.013699333985 eV
-The minimum energy in trajectory is -552.6314360816023 eV
+Fraction of succesfull steps (efficiency) 0.390277
+The last step energy is -551.4509466160619 eV
+The minimum energy in trajectory is -552.6314360816017 eV
 </pre></div></div>
 </div>
 <div class="section" id="4.1)-Continuing-or-reseting-the-MC-trajectory">
 <h3>4.1) Continuing or reseting the MC trajectory<a class="headerlink" href="#4.1)-Continuing-or-reseting-the-MC-trajectory" title="Permalink to this headline">¶</a></h3>
 <p>You can always continue running more iterations from where the trajectory left off by calling <code class="docutils literal notranslate"><span class="pre">run</span></code> again. You can also reset to the initial state. (we will skip this step for now so we can show results from the run above.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -610,7 +600,7 @@ The minimum energy in trajectory is -552.6314360816023 eV
 <p>We can look at the sampled energies, the average and varience directly from the class properties.</p>
 <p>For further analysis samples are stored as a list of dictionaries for each sampled step in the <code class="docutils literal notranslate"><span class="pre">CanonicalEnsemble.data</span></code> attribute. In the <code class="docutils literal notranslate"><span class="pre">CanonicalEnsemble</span></code> class only the energy and occupancy string of each sample are saved.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -631,8 +621,8 @@ The minimum energy in trajectory is -552.6314360816023 eV
 <div class="highlight"><pre>
 A total of 10000 samples taken.
 A total of 9000 samples used for production.
-The average energy is -552.5540278012116 eV
-The energy variance is 0.022199668685381396 eV^2
+The average energy is -551.7860869325897 eV
+The energy variance is 0.04600543434696906 eV^2
 </pre></div></div>
 </div>
 </div>
@@ -640,7 +630,7 @@ The energy variance is 0.022199668685381396 eV^2
 <h2>Save your work<a class="headerlink" href="#Save-your-work" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">Sampler</span></code> class does and can not be saved since it does not really have any computed values. However the <code class="docutils literal notranslate"><span class="pre">SampleContainter</span></code> where the MC samples are recorded can be saved. You can use the same <code class="docutils literal notranslate"><span class="pre">save_work</span></code> convenience function to save your work.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>

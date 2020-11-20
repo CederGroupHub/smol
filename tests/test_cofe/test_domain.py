@@ -1,9 +1,9 @@
 import pytest
 from random import choice
 from tests.utils import assert_msonable
-from pymatgen import Composition, Element, Specie, DummySpecie
-from smol.cofe.configspace.domain import (get_specie, get_allowed_species,
-                                          get_site_spaces, Vacancy)
+from pymatgen import Composition, Element, Species, DummySpecies
+from smol.cofe.space.domain import (get_species, get_allowed_species,
+                                    get_site_spaces, Vacancy)
 
 
 @pytest.mark.parametrize('measure', [True, False])
@@ -34,26 +34,26 @@ def test_get_allowed_species(structure):
                          ['vacancy', 'Vacancy', 'Vac6', 'vacaret', Vacancy(),
                           Vacancy("X")])
 def test_get_specie_vacancy(vacancy):  # smol part
-    assert isinstance(get_specie(vacancy), Vacancy)
+    assert isinstance(get_species(vacancy), Vacancy)
 
 
 @pytest.mark.parametrize('specie',
-                         ['Li', 'Li+', Element('Li'), Specie('Li', 1),
-                          DummySpecie(), 'X'])
+                         ['Li', 'Li+', Element('Li'), Species('Li', 1),
+                          DummySpecies(), 'X'])
 def test_get_specie_others(specie):  # pymatgen part
-    sp = get_specie(specie)
-    assert isinstance(sp, Specie) or isinstance(sp, Element)
+    sp = get_species(specie)
+    assert isinstance(sp, Species) or isinstance(sp, Element)
 
 
 def test_vacancy():
-    dummy = DummySpecie("X")
+    dummy = DummySpecies("X")
     vacancy = Vacancy("X")
     assert hash(dummy) != hash(vacancy)
     assert dummy.symbol == vacancy.symbol
     assert vacancy == Vacancy("X")
     assert vacancy != Vacancy("A")
     assert vacancy != dummy
-    assert vacancy != Specie('Li')
+    assert vacancy != Species('Li')
     _ = str(vacancy)
     _ = repr(vacancy)
 
