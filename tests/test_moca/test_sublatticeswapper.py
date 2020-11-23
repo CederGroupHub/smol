@@ -3,6 +3,8 @@ import json
 import numpy as np
 from smol.moca.ensemble.sublattice import Sublattice
 from smol.moca.sampler.mcusher import Sublatticeswapper
+from smol.cofe.space.domain import SiteSpace
+from pymatgen.core.composition import Composition
 
 mcmcusher_classes = [Sublatticeswapper]
 num_sites = 100
@@ -17,8 +19,8 @@ def sublattices():
     sites = np.arange(num_sites)
     sites1 = np.random.choice(sites, size=40)
     sites2 = np.setdiff1d(sites, sites1)
-    site_space1 = hashabledict({'A': 0.1, 'B': 0.4, 'C': 0.3, 'D': 0.2})
-    site_space2 = hashabledict({'A': 0.1, 'B': 0.4, 'E': 0.5})
+    site_space1 = SiteSpace(Composition({'A': 0.1, 'B': 0.4, 'C': 0.3, 'D': 0.2}))
+    site_space2 = SiteSpace(Composition({'A': 0.1, 'B': 0.4, 'E': 0.5}))
     sublattices = [Sublattice(site_space1, sites1),
                    Sublattice(site_space2, sites2)]
     return sublattices
@@ -125,8 +127,8 @@ def generate_mcmcusher_w_Mn(sublattMn):
 def test_update_step(mcmcusher, sublattices):
     #check that the occupancy is being updated
     iterations = 50000
+    occu = generate_rand_occu(sublattices)
     for _ in range(iterations):
-        occu = generate_rand_occu(sublattices)
         flip = mcmcusher.propose_step(occu)
         if flip != tuple():
             mcmcusher.update_aux_state(flip)
@@ -146,10 +148,10 @@ def test_update_step(mcmcusher, sublattices):
 
 
 def test_Mn():
-    with open('/Users/jhyang/Box Sync/spinel/sublattices.json', 'r') as fin:
+    with open('sublattices.json', 'r') as fin:
         sublattMn = json.load(fin)
     sublattMn = [Sublattice.from_dict(i) for i in sublattMn]
-    occu = np.load('/Users/jhyang/Box Sync/spinel/occu.npy')
+    occu = np.load('occu.npy')
     mcmcusher = generate_mcmcusher_w_Mn(sublattMn)
     iterations = 50000
     for _ in range(iterations):
@@ -171,6 +173,6 @@ def test_Mn():
             assert site1 in mcmcusher._site_table[sp2][sublatt2]
             assert site2 not in mcmcusher._site_table[old_sp2][sublatt2]
             assert site2 in mcmcusher._site_table[sp1][sublatt1]
-            occu = mcmcusher.occu
+
 
 

@@ -17,7 +17,7 @@ import itertools
 import warnings
 
 from smol.utils import derived_class_factory
-from pymatgen.core.periodic_table import Specie
+from pymatgen.core.periodic_table import Species
 
 
 class MCMCUsher(ABC):
@@ -163,16 +163,20 @@ class Sublatticeswapper(MCMCUsher):
                               ('Mn3+', 'Mn4+'): ['swap'],
                               ('Mn4+', 'Mn3+'): ['swap'],
                               ('Mn4+', 'Mn4+'): ['None']}
-        self.Mn2_specie = Specie('Mn', 2)
-        self.Mn3_specie = Specie('Mn', 3)
-        self.Mn4_specie = Specie('Mn', 4)
+        self.Mn2_specie = Species('Mn', 2)
+        self.Mn3_specie = Species('Mn', 3)
+        self.Mn4_specie = Species('Mn', 4)
         self.Mn_species = [self.Mn2_specie,
                            self.Mn3_specie,
                            self.Mn4_specie]
+        self._sites_to_sublattice = None
+        self.sublattice_probabilities_per_specie = None
+        self.swap_table = None
+        self.current_flip_info = None
+        self._site_table = None
 
     def _initialize_occupancies(self, occupancy):
-        self.occu = occupancy  # need this to set the site_table
-        self._reset_site_table()
+        self._reset_site_table(occupancy)
         self._sites_to_sublattice = dict()
         for sublatt in self.sublattices:
             for site in sublatt.sites:
@@ -186,7 +190,7 @@ class Sublatticeswapper(MCMCUsher):
                 self.sublattice_probabilities_per_specie\
                     .append(self._sublatt_probs[sublattNo])
 
-    def _get_swaps_from_table(self):
+    def _get_swaps_from_table(self, occupancy):
         """Args:
 
             swap_table (dict): optional
@@ -200,28 +204,28 @@ class Sublatticeswapper(MCMCUsher):
             should be the probability at which the swap type is picked.
             The values must sum to 1.
 
+        TODO: helper function to aid in building swap table? care needs
+         to be taken by user that the given swap table satisfies detailed
+         balance. As a baseline, the following should definitely satisfy
+         detailed balance:
+         -Swaps between different species within a sublattice
+         -Swaps of different species over a set of shared sublattices
+         ('shared') or actually any subset of sublattices should work too
+         (although in this case, care needs to be taken that species do not
+         end up on the wrong sites) with a different species over all
+         sublattices,e.g. ('Li+', 'shared'), ('Mn2+', 'shared').
+         Given this, it may be a good idea to allow lists of sublattices,
+         although again this may increase the burden on the user
+         associated with creating this table
+
+         Create a swap_table if not given; the automatic swap table consists
+         only of swap types between different species in the same sublattice,
+         similar to what is given by the normal _get_flips method, all with
+         the same probability of being chosen
          """
-        # TODO: helper function to aid in building swap table? care needs
-        # to be taken by user that the given swap table satisfies detailed
-        # balance. As a baseline, the following should definitely satisfy
-        # detailed balance:
-        # -Swaps between different species within a sublattice
-        # -Swaps of different species over a set of shared sublattices
-        # ('shared') or actually any subset of sublattices should work too
-        # (although in this case, care needs to be taken that species do not
-        # end up on the wrong sites) with a different species over all
-        # sublattices,e.g. ('Li+', 'shared'), ('Mn2+', 'shared').
-        # Given this, it may be a good idea to allow lists of sublattices,
-        # although again this may increase the burden on the user
-        # associated with creating this table
 
-        # Create a swap_table if not given; the automatic swap table consists
-        # only of swap types between different species in the same sublattice,
-        # similar to what is given by the normal _get_flips method, all with
-        # the same probability of being chosen
-        if self.swap_table is None:  # modified from TC's original code
-            self._initialize_swap_table()  # modified from TC's original code
-
+        if self.swap_table is None:
+            self._initialize_swap_table()
         # Choose random swap type weighted by given probabilities in table
         chosen_flip = random.choices(list(self.swap_table.keys()),
                                      weights=list(self.swap_table.values()))[0]
@@ -265,20 +269,21 @@ class Sublatticeswapper(MCMCUsher):
         flip_info = (sp2, self._sites_to_sublattice[site1],
                      sp1, self._sites_to_sublattice[site2],
                      'swap')
-        return ((site1, self.occu[site2]),
-                (site2, self.occu[site1])), flip_info
+        return ((site1, occupancy[site2]),
+                (site2, occupancy[site1])), flip_info
 
     def propose_step(self, occupancy):
-        # need to reset the site table
-        self._initialize_occupancies(occupancy)
+        if self._site_table is None:
+            self._initialize_occupancies(occupancy)
+            # only need to set if we haven't made any flips yet
         if np.random.rand() <= self.Mn_swap_probability:
-            flip, flip_info = self._get_Mn_swaps()
+            flip, flip_info = self._get_Mn_swaps(occupancy)
         else:
-            flip, flip_info = self._get_swaps_from_table()
+            flip, flip_info = self._get_swaps_from_table(occupancy)
         self.current_flip_info = flip_info
         return flip
 
-    def _reset_site_table(self):
+    def _reset_site_table(self, occupancy):
         """Set site table based on current occupancy."""
         self._site_table = {}
         possible_sp = []
@@ -293,7 +298,7 @@ class Sublatticeswapper(MCMCUsher):
                 if sp in list(sublattice.site_space):  # noqa
                     self._site_table[sp][sublattice.site_space] = \
                         [i for i in sublattice.sites if
-                         list(sublattice.site_space)[self.occu[i]] == sp]  # noqa
+                         list(sublattice.site_space)[occupancy[i]] == sp]  # noqa
 
     def _initialize_swap_table(self, allow_crossover=False):
         """
@@ -397,7 +402,7 @@ class Sublatticeswapper(MCMCUsher):
             self._site_table[sp1][sublatt1].append(site2)
             self._site_table[sp2][sublatt2].append(site1)
 
-    def _get_Mn_swaps(self):
+    def _get_Mn_swaps(self, occupancy):
         """
         Get a possible swap between Mn species.
 
@@ -434,8 +439,8 @@ class Sublatticeswapper(MCMCUsher):
             if site2_proposal != site1:
                 site2 = site2_proposal
 
-        sp1 = list(self._sites_to_sublattice[site1])[self.occu[site1]]
-        sp2 = list(self._sites_to_sublattice[site2])[self.occu[site2]]
+        sp2 = list(self._sites_to_sublattice[site2])[occupancy[site2]]
+        sp1 = list(self._sites_to_sublattice[site1])[occupancy[site1]]
 
         flip_type = random.choice(self.Mn_flip_table[(str(sp1),
                                                       str(sp2))])
