@@ -18,7 +18,7 @@ from .sublattice import Sublattice
 class CanonicalEnsemble(Ensemble, MSONable):
     """Canonical Ensemble class to run Monte Carlo Simulations."""
 
-    valid_mcmc_steps = ('swap',)
+    valid_mcmc_steps = ('swap', 'table-swap')
 
     def __init__(self, processor, sublattices=None):
         """Initialize CanonicalEnemble.
