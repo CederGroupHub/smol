@@ -74,7 +74,7 @@ class SampleContainer(MSONable):
                 the number of coeficients in the natural parameters that
                 correspond to the energy only.
             sampling_metadata (Ensemble):
-                Sampling metadata (i.e. ensemble name, mckernel type, etc)
+                Sampling metadata (i.e. ensemble name, mckernel type, step-type, etc.)
             nwalkers (int):
                 Number of walkers used to generate chain. Default is 1
         """
