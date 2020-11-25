@@ -150,12 +150,6 @@ class ClusterSubspace(MSONable):
             self._site_matcher = site_matcher
 
         self._orbits = orbits
-
-        # lazy stuff from orbits
-        self._func_orb_ids = None
-        self._orb_mults = None
-        self._orb_nbit_ords = None
-
         self._external_terms = []  # List will hold external terms (i.e. Ewald)
 
         # Dict to cache orbit index mappings, this prevents doing another
@@ -273,13 +267,12 @@ class ClusterSubspace(MSONable):
         """Get dictionary of orbits with key being the orbit size."""
         return self._orbits
 
+    # TODO make cached property
     @property
     def orbit_multiplicities(self):
         """Get the crystallographic multiplicities for each orbit."""
-        if self._orb_mults is None:
-            mults = [1] + [orb.multiplicity for orb in self.iterorbits()]
-            self._orb_mults = np.array(mults)
-        return self._orb_mults
+        mults = [1] + [orb.multiplicity for orb in self.iterorbits()]
+        return np.array(mults)
 
     @property
     def ncorr_functions_per_orbit(self):
@@ -288,9 +281,7 @@ class ClusterSubspace(MSONable):
         The list returned is of length total number of orbits, each entry is
         the total number of correlation functions assocaited with that orbit.
         """
-        if self._orb_nbit_ords is None:
-            self._orb_nbit_ords = [len(orbit) for orbit in self.iterorbits()]
-        return self._orb_nbit_ords
+        return [len(orbit) for orbit in self.iterorbits()]
 
     @property
     def function_ordering_multiplicities(self):
@@ -338,6 +329,7 @@ class ClusterSubspace(MSONable):
         """
         return self._external_terms
 
+    # TODO make cached property
     @property
     def function_orbit_ids(self):
         """Get Orbit IDs corresponding to each correlation function.
@@ -345,11 +337,10 @@ class ClusterSubspace(MSONable):
         If the Cluster Subspace includes external terms these are not included
         in the list since they are not associated with any orbit.
         """
-        if self._func_orb_ids is None:
-            self._func_orb_ids = [0]
-            for orbit in self.iterorbits():
-                self._func_orb_ids += len(orbit) * [orbit.id, ]
-        return self._func_orb_ids
+        func_orb_ids = [0]
+        for orbit in self.iterorbits():
+            func_orb_ids += len(orbit) * [orbit.id, ]
+        return func_orb_ids
 
     def add_external_term(self, term):
         """Add an external term to subspace.
@@ -639,9 +630,6 @@ class ClusterSubspace(MSONable):
                                   if orbit.id not in orbit_ids]
 
         self._assign_orbit_ids()  # Re-assign ids
-        self._func_orb_ids = None  # reset orbit info stuff, it may be worth
-        self._orb_mults = None  # considering always computing this in the
-        self._orb_nbit_ords = None  # @property, and not worry about reseting.
         # Clear the cached supercell orbit mappings
         self._supercell_orb_inds = {}
 
@@ -687,7 +675,6 @@ class ClusterSubspace(MSONable):
             self.remove_orbits(empty_orbit_ids)
         else:
             self._assign_orbit_ids()  # Re-assign ids
-            self._func_orb_ids = None  # reset func ids
 
     def copy(self):
         """Deep copy of instance."""
