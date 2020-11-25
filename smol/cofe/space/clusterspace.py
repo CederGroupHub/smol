@@ -853,8 +853,8 @@ class ClusterSubspace(MSONable):
                    for o1, o2 in zip(other.orbits, self.orbits))
 
     def __len__(self):
-        """Get number of correlation functions in the subspace."""
-        return self.num_corr_functions
+        """Get number of correlation functions and ext terms in subspace."""
+        return self.num_corr_functions + len(self.external_terms)
 
     def __str__(self):
         """Convert class into pretty string for printing."""
