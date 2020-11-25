@@ -78,14 +78,10 @@ class ClusterExpansion(MSONable):
         will are dropped since their fitted coefficients do not represent ECI.
         """
         if self._eci is None:
-            mults = [1]  # empty orbit
-            for mult, ords in zip(self._subspace.orbit_multiplicities,
-                                  self._subspace.ncorr_functions_per_orbit):
-                mults += ords*[mult, ]
             n = len(self._subspace.external_terms)  # check for extra terms
-            bit_combo_mults = [1] + self._subspace.corr_function_multiplicities
-            coefs = self.coefs[:-n] if n else self.coefs
-            self._eci = coefs/(np.array(mults) * np.array(bit_combo_mults))
+            coefs = self.coefs[:-n] if n else self.coefs[:]
+            self._eci = coefs.copy()
+            self._eci /= self._subspace.function_total_multiplicities
         return self._eci
 
     @property

@@ -64,22 +64,22 @@ class TestClusterExpansionBinary(unittest.TestCase):
         new_coefs = self.ce.coefs[abs(self.ce.coefs) >= thresh]
         new_eci = self.ce.eci[ids]
         self.assertEqual(len(ce.coefs), len(new_coefs))
-        self.assertTrue(np.array_equal(new_coefs, ce.coefs))
         self.assertTrue(np.array_equal(new_eci, ce.eci))
+        self.assertTrue(np.array_equal(new_coefs, ce.coefs))
         self.assertEqual(ce.cluster_subspace.num_orbits, len(new_coefs))
         self.assertEqual(len(ce.eci_orbit_ids), len(new_coefs))
+        # check the updated feature matrix is correct
+        self.assertTrue(np.array_equal(ce._feat_matrix,
+                        self.sw.feature_matrix[:, ids]))
+        # check that recomputing features produces whats expected
+        new_feature_matrix = np.array([cs.corr_from_structure(s)
+                                       for s in self.sw.structures])
+        self.assertTrue(np.equal(ce._feat_matrix, new_feature_matrix).all())
         # check new predictions
         preds = [ce.predict(s, normalize=True) for s in self.sw.structures]
         self.assertTrue(np.allclose(preds,
                                     np.dot(self.sw.feature_matrix[:, ids],
                                            new_coefs)))
-        # check the updated feature matrix is correct
-        self.assertTrue(np.equal(ce._feat_matrix,
-                               self.sw.feature_matrix[:, ids]).all())
-        # check that recomputing features produces whats expected
-        new_feature_matrix = np.array([cs.corr_from_structure(s)
-                                       for s in self.sw.structures])
-        self.assertTrue(np.equal(ce._feat_matrix, new_feature_matrix).all())
 
     def test_print(self):
         _ = str(self.ce)

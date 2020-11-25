@@ -277,7 +277,8 @@ class ClusterSubspace(MSONable):
     def orbit_multiplicities(self):
         """Get the crystallographic multiplicities for each orbit."""
         if self._orb_mults is None:
-            self._orb_mults = [orb.multiplicity for orb in self.iterorbits()]
+            mults = [1] + [orb.multiplicity for orb in self.iterorbits()]
+            self._orb_mults = np.array(mults)
         return self._orb_mults
 
     @property
@@ -292,18 +293,31 @@ class ClusterSubspace(MSONable):
         return self._orb_nbit_ords
 
     @property
-    def corr_function_multiplicities(self):
-        """Get list of multiplicity of each distinct correlation function.
+    def function_ordering_multiplicities(self):
+        """Get array of ordering multiplicity of each correlation function.
 
-        The length of the list returned is the total number of correlation
-        functions in the subspace for all orbits. The multiplicity of a
-        correlation function is the number of symmetrically equivalent bit
+        The length of the array returned is the total number of correlation
+        functions in the subspace for all orbits. The ordering multiplicity of
+        a correlation function is the number of symmetrically equivalent bit
         orderings the result in the product of the same single site functions.
         """
-        corrfun_mults = []
-        for orbit in self.orbits:
-            corrfun_mults += orbit.bit_combo_multiplicities
-        return corrfun_mults
+        mults = [1] + [mult for orb in self.orbits
+                       for mult in orb.bit_combo_multiplicities]
+        return np.array(mults)
+
+    @property
+    def function_total_multiplicities(self):
+        """Get array of total multiplicity of each correlation function.
+
+        The length of the array returned is the total number of correlation
+        functions in the subspace for all orbits. The total multiplicity of a
+        correlation function is the number of symmetrically equivalent bit
+        orderings the result in the product of the same single site functions
+        times the (crystallographic) multiplicity of the orbit.
+        """
+
+        return self.orbit_multiplicities[self.function_orbit_ids] * \
+            self.function_ordering_multiplicities
 
     @property
     def basis_orthogonal(self):
