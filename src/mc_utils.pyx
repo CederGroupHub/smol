@@ -17,7 +17,7 @@ cimport numpy as np
 
 cpdef corr_from_occupancy(const long[::1] occu,
                           const int n_bit_orderings,
-                          orbit_list):
+                          list orbit_list):
     """Computes the correlation vector for a given encoded occupancy string.
 
     Args:
@@ -61,7 +61,7 @@ cpdef corr_from_occupancy(const long[::1] occu,
 cpdef general_delta_corr_single_flip(const long[::1] occu_f,
                                      const long[::1] occu_i,
                                      const int n_bit_orderings,
-                                     site_orbit_list):
+                                     list site_orbit_list):
     """Computes the correlation difference between two occupancy vectors.
 
     Args:
@@ -110,7 +110,7 @@ cpdef general_delta_corr_single_flip(const long[::1] occu_f,
 cpdef indicator_delta_corr_single_flip(const long[::1] occu_f,
                                        const long[::1] occu_i,
                                        const int n_bit_orderings,
-                                       site_orbit_list):
+                                       list site_orbit_list):
     """Local change in indicator basis correlation vector from single flip.
 
     Args:
