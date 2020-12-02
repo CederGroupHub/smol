@@ -14,9 +14,9 @@ cimport cython
 @cython.wraparound(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
-def corr_from_occupancy(const long[::1] occu,
-                        const int n_bit_orderings,
-                        orbit_list):
+cpdef corr_from_occupancy(const long[::1] occu,
+                          const int n_bit_orderings,
+                          orbit_list):
     """Computes the correlation vector for a given encoded occupancy string.
 
     Args:
@@ -31,7 +31,7 @@ def corr_from_occupancy(const long[::1] occu,
     Returns: array
         correlation vector difference
     """
-    cdef int i, j, k, I, J, K, o_id, n
+    cdef int i, j, k, I, J, K, n
     cdef double p, pi
     cdef const long[:, ::1] inds
     cdef const long[:, ::1] bits
@@ -40,10 +40,9 @@ def corr_from_occupancy(const long[::1] occu,
     cdef double[:] o_view = out
     o_view[0] = 1  # empty cluster
 
-    for o_id, combos, bases, inds in orbit_list:
+    for n, combos, bases, inds in orbit_list:
         I = inds.shape[0] # cluster index
         K = inds.shape[1] # index within cluster
-        n = o_id
         for bits in combos:
             J = bits.shape[0]
             p = 0
@@ -62,10 +61,10 @@ def corr_from_occupancy(const long[::1] occu,
 @cython.wraparound(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
-def general_delta_corr_single_flip(const long[::1] occu_f,
-                                   const long[::1] occu_i,
-                                   const int n_bit_orderings,
-                                   site_orbit_list):
+cpdef general_delta_corr_single_flip(const long[::1] occu_f,
+                                     const long[::1] occu_i,
+                                     const int n_bit_orderings,
+                                     site_orbit_list):
     """Computes the correlation difference between two occupancy vectors.
 
     Args:
@@ -84,7 +83,7 @@ def general_delta_corr_single_flip(const long[::1] occu_f,
     Returns:
         ndarray: correlation vector difference
     """
-    cdef int i, j, k, I, J, K, o_id, n
+    cdef int i, j, k, I, J, K, n
     cdef double p, pi, pf, r
     cdef const long[:, ::1] inds
     cdef const long[:, ::1] bits
@@ -92,10 +91,9 @@ def general_delta_corr_single_flip(const long[::1] occu_f,
     out = np.zeros(n_bit_orderings)
     cdef double[::1] o_view = out
 
-    for o_id, r, combos, bases, inds in site_orbit_list:
+    for n, r, combos, bases, inds in site_orbit_list:
         I = inds.shape[0] # cluster index
         K = inds.shape[1] # index within cluster
-        n = o_id
         for bits in combos:
             J = bits.shape[0]
             p = 0
@@ -116,10 +114,10 @@ def general_delta_corr_single_flip(const long[::1] occu_f,
 @cython.wraparound(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
-def indicator_delta_corr_single_flip(const long[::1] occu_f,
-                                     const long[::1] occu_i,
-                                     const int n_bit_orderings,
-                                     site_orbit_list):
+cpdef indicator_delta_corr_single_flip(const long[::1] occu_f,
+                                       const long[::1] occu_i,
+                                       const int n_bit_orderings,
+                                       site_orbit_list):
     """Local change in indicator basis correlation vector from single flip.
 
     Args:
@@ -137,15 +135,14 @@ def indicator_delta_corr_single_flip(const long[::1] occu_f,
     Returns:
         ndarray: correlation vector difference
     """
-    cdef int i, j, k, I, J, K, l
+    cdef int i, j, k, I, J, K, n
     cdef bint ok
     cdef const long[:, ::1] b, inds
     out = np.zeros(n_bit_orderings)
     cdef double[::1] o_view = out
     cdef double r, o
 
-    for o_id, r, combos, _, inds in site_orbit_list:
-        l = o_id
+    for n, r, combos, _, inds in site_orbit_list:
         I = inds.shape[0] # cluster index
         K = inds.shape[1] # index within cluster
         for b in combos:
@@ -169,8 +166,8 @@ def indicator_delta_corr_single_flip(const long[::1] occu_f,
                     if ok:
                         o -= 1
 
-            o_view[l] = o / r / (I * J)
-            l += 1
+            o_view[n] = o / r / (I * J)
+            n += 1
     return out
 
 
@@ -178,11 +175,11 @@ def indicator_delta_corr_single_flip(const long[::1] occu_f,
 @cython.wraparound(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
-def delta_ewald_single_flip(const long[::1] occu_f,
-                            const long[::1] occu_i,
-                            const double[:, ::1] ewald_matrix,
-                            const long[:, ::1] ewald_inds,
-                            const int site_ind):
+cpdef delta_ewald_single_flip(const long[::1] occu_f,
+                              const long[::1] occu_i,
+                              const double[:, ::1] ewald_matrix,
+                              const long[:, ::1] ewald_inds,
+                              const int site_ind):
     """Compute the change in electrostatic interaction energy from a flip.
 
     Args:
