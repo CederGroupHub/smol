@@ -284,8 +284,10 @@ class TestClusterSubSpace(unittest.TestCase):
                                           basis='indicator')
         bits = get_allowed_species(structure)
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-        orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
-                      for orb, inds in cs.supercell_orbit_mappings(m)]
+        orbit_list = [
+            (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
+             orb.bases_array, inds)
+            for orb, inds in cs.supercell_orbit_mappings(m)]
 
         # last two clusters are switched from CASM output (occupancy basis)
         # all_li (ignore casm point term)
@@ -340,8 +342,10 @@ class TestClusterSubSpace(unittest.TestCase):
         spaces = get_allowed_species(structure)
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 
-        orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
-                      for orb, inds in cs.supercell_orbit_mappings(m)]
+        orbit_list = [
+            (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
+             orb.bases_array, inds)
+            for orb, inds in cs.supercell_orbit_mappings(m)]
         # last two pair terms are switched from CASM output (occupancy basis)
         # all_vacancy (ignore casm point term)
         occu = self._encode_occu([Vacancy(),
@@ -390,8 +394,10 @@ class TestClusterSubSpace(unittest.TestCase):
                                           basis='indicator')
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 
-        orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
-                      for orb, inds in cs.supercell_orbit_mappings(m)]
+        orbit_list = [
+            (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
+             orb.bases_array, inds)
+            for orb, inds in cs.supercell_orbit_mappings(m)]
         # mixed
         occu = self._encode_occu([Vacancy(), Species('Li', 1),
                                   Species('Li', 1)], self.domains)

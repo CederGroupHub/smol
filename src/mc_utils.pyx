@@ -26,33 +26,33 @@ cpdef corr_from_occupancy(const long[::1] occu,
             total number of bit orderings in expansion.
         orbit_list:
             Information of all orbits that include the flip site.
-            (bit_combos, orbit id, site indices, bases array)
+            (orbit id, bit_combos, bit_combo_indices site indices, bases array)
 
     Returns: array
         correlation vector difference
     """
-    cdef int i, j, k, I, J, K, n
+    cdef int i, j, k, n, m, I, K, M
     cdef double p, pi
-    cdef const long[:, ::1] inds
-    cdef const long[:, ::1] bits
+    cdef const long[:, ::1] inds, bit_combos
+    cdef const long[::1] bit_inds
     cdef const double[:, :, ::1] bases
     out = np.zeros(n_bit_orderings)
     cdef double[:] o_view = out
     o_view[0] = 1  # empty cluster
 
-    for n, combos, bases, inds in orbit_list:
+    for n, bit_combos, bit_inds, bases, inds in orbit_list:
+        M = bit_inds.shape[0] # index of bit combos
         I = inds.shape[0] # cluster index
         K = inds.shape[1] # index within cluster
-        for bits in combos:
-            J = bits.shape[0]
+        for m in range(M - 1):
             p = 0
             for i in range(I):
-                for j in range(J):
+                for j in range(bit_inds[m], bit_inds[m + 1]):
                     pi = 1
                     for k in range(K):
-                        pi *= bases[k, bits[j, k], occu[inds[i, k]]]
+                        pi *= bases[k, bit_combos[j, k], occu[inds[i, k]]]
                     p += pi
-            o_view[n] = p / (I * J)
+            o_view[n] = p / (I * (bit_inds[m + 1] - bit_inds[m]))
             n += 1
     return out
 
@@ -77,35 +77,35 @@ cpdef general_delta_corr_single_flip(const long[::1] occu_f,
         site_orbit_list:
             Information of all orbits that include the flip site.
             List of tuples each with
-            (bit_combos, orbit id, site indices, ratio, bases array)
+            (orbit id, bit_combos, bit_combo_indices site indices, bases array)
 
 
     Returns:
         ndarray: correlation vector difference
     """
-    cdef int i, j, k, I, J, K, n
+    cdef int i, j, k, n, m, I, K, M
     cdef double p, pi, pf, r
-    cdef const long[:, ::1] inds
-    cdef const long[:, ::1] bits
+    cdef const long[:, ::1] inds, bit_combos
+    cdef const long[::1] bit_inds
     cdef const double[:, :, ::1] bases
     out = np.zeros(n_bit_orderings)
     cdef double[::1] o_view = out
 
-    for n, r, combos, bases, inds in site_orbit_list:
+    for n, r, bit_combos, bit_inds, bases, inds in site_orbit_list:
+        M = bit_inds.shape[0] # index of bit combos
         I = inds.shape[0] # cluster index
         K = inds.shape[1] # index within cluster
-        for bits in combos:
-            J = bits.shape[0]
+        for m in range(M - 1):
             p = 0
             for i in range(I):
-                for j in range(J):
+                for j in range(bit_inds[m], bit_inds[m + 1]):
                     pf = 1
                     pi = 1
                     for k in range(K):
-                        pf *= bases[k, bits[j, k], occu_f[inds[i, k]]]
-                        pi *= bases[k, bits[j, k], occu_i[inds[i, k]]]
+                        pf *= bases[k, bit_combos[j, k], occu_f[inds[i, k]]]
+                        pi *= bases[k, bit_combos[j, k], occu_i[inds[i, k]]]
                     p += (pf - pi)
-            o_view[n] = p / r / (I * J)
+            o_view[n] = p / r / (I * (bit_inds[m + 1] - bit_inds[m]))
             n += 1
     return out
 
@@ -130,29 +130,30 @@ cpdef indicator_delta_corr_single_flip(const long[::1] occu_f,
         site_orbit_list:
             Information of all orbits that include the flip site.
             List of tuples each with
-            (bit_combos, orbit id, site indices, ratio, bases array)
+            (orbit id, bit_combos, bit_combo_indices site indices, bases array)
 
     Returns:
         ndarray: correlation vector difference
     """
-    cdef int i, j, k, I, J, K, n
+    cdef int i, j, k, n, m, I, K, M
     cdef bint ok
-    cdef const long[:, ::1] b, inds
+    cdef const long[:, ::1] bit_combos, inds
+    cdef const long[::1] bit_inds
     out = np.zeros(n_bit_orderings)
     cdef double[::1] o_view = out
     cdef double r, o
 
-    for n, r, combos, _, inds in site_orbit_list:
+    for n, r, bit_combos, bit_inds, _, inds in site_orbit_list:
+        M = bit_inds.shape[0] # index of bit combos
         I = inds.shape[0] # cluster index
         K = inds.shape[1] # index within cluster
-        for b in combos:
-            J = b.shape[0] # index within bit array
+        for m in range(M - 1):
             o = 0
             for i in range(I):
-                for j in range(J):
+                for j in range(bit_inds[m], bit_inds[m + 1]):
                     ok = True
                     for k in range(K):
-                        if occu_f[inds[i, k]] != b[j, k]:
+                        if occu_f[inds[i, k]] != bit_combos[j, k]:
                             ok = False
                             break
                     if ok:
@@ -160,13 +161,13 @@ cpdef indicator_delta_corr_single_flip(const long[::1] occu_f,
 
                     ok = True
                     for k in range(K):
-                        if occu_i[inds[i, k]] != b[j, k]:
+                        if occu_i[inds[i, k]] != bit_combos[j, k]:
                             ok = False
                             break
                     if ok:
                         o -= 1
 
-            o_view[n] = o / r / (I * J)
+            o_view[n] = o / r / (I * (bit_inds[m + 1] - bit_inds[m]))
             n += 1
     return out
 

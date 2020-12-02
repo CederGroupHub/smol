@@ -409,8 +409,10 @@ class ClusterSubspace(MSONable):
 
         orb_inds = self.supercell_orbit_mappings(scmatrix)
         # Create a list of tuples with necessary information to compute corr
-        orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
-                      for orb, inds in orb_inds]
+        orbit_list = [
+            (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
+             orb.bases_array, inds) for orb, inds in orb_inds
+        ]
         corr = corr_from_occupancy(occu, self.num_corr_functions, orbit_list)
 
         size = self.num_prims_from_matrix(scmatrix)
