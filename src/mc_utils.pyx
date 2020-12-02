@@ -1,3 +1,9 @@
+#cython: boundscheck=False
+#cython: nonecheck=False
+#cython: wraparound=False
+#cython: initializedcheck=False
+#cython: cdivision=True
+
 """
 General cython utility functions to calculate correlation vectors and local
 changes in correlation vectors a tad bit faster than pure python.
@@ -7,13 +13,8 @@ __author__ = "Luis Barroso-Luque, William D. Richards"
 
 import numpy as np
 cimport numpy as np
-cimport cython
 
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.initializedcheck(False)
-@cython.cdivision(True)
 cpdef corr_from_occupancy(const long[::1] occu,
                           const int n_bit_orderings,
                           orbit_list):
@@ -57,10 +58,6 @@ cpdef corr_from_occupancy(const long[::1] occu,
     return out
 
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.initializedcheck(False)
-@cython.cdivision(True)
 cpdef general_delta_corr_single_flip(const long[::1] occu_f,
                                      const long[::1] occu_i,
                                      const int n_bit_orderings,
@@ -110,10 +107,6 @@ cpdef general_delta_corr_single_flip(const long[::1] occu_f,
     return out
 
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.initializedcheck(False)
-@cython.cdivision(True)
 cpdef indicator_delta_corr_single_flip(const long[::1] occu_f,
                                        const long[::1] occu_i,
                                        const int n_bit_orderings,
@@ -172,10 +165,6 @@ cpdef indicator_delta_corr_single_flip(const long[::1] occu_f,
     return out
 
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.initializedcheck(False)
-@cython.cdivision(True)
 cpdef delta_ewald_single_flip(const long[::1] occu_f,
                               const long[::1] occu_i,
                               const double[:, ::1] ewald_matrix,
