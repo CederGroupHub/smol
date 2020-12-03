@@ -141,16 +141,31 @@ class Swapper(MCMCUsher):
         return swap
 
 
-class Sublatticeswapper(MCMCUsher):
-    """Implementation of a swap step for two random sites within the same
-    randomly chosen sublattice.
-    Mn_swap_probability: (float, default = 0.0). Gives the probability
-    that a proposed swap is a Mn swap or a Mn disproportionation reaction
+class Tableswapper(MCMCUsher):
+    """
+    Initialize Tableswapping algorithm from MCMCUsher base class.
     """
 
     def __init__(self, sublattices, allow_crossover=True,
                  swap_table=None, Mn_swap_probability=0.0):
-        super(Sublatticeswapper, self).__init__(sublattices)
+        """
+        Implementation of a swap step for two random sites within
+        the same randomly chosen (shared or unshared) sublattice.
+           Args:
+            sublattices (list of Sublattice objects):
+                list of Sublattices to propose steps for.
+            allow_crossover: (bool, default = True). Allows swapping
+            between sublattices which contain the same subset of species.
+            For example, Li/Vac existing on tetrahedral and octahedral sites
+            are allowed to swap between tetrahedral and octahedral sites.
+            swap_table: (dict, default = None). Dictionary with keys being
+            { ((Specie1, Sublattice1 SiteSpace),
+               (Specie2, Sublattice2 SiteSpace)): probability (float),....}
+            Mn_swap_probability: (float, default = 0.0).
+            Gives the probability that a proposed swap is a Mn swap
+            or a Mn disproportionation reaction
+                """
+        super(Tableswapper, self).__init__(sublattices)
         self.swap_table = swap_table
         self.allow_crossover = allow_crossover
         self.Mn_swap_probability = Mn_swap_probability
@@ -183,12 +198,10 @@ class Sublatticeswapper(MCMCUsher):
                 self._sites_to_sublattice[site] = sublatt.site_space
         # now initialize sublattice specie probabilities
         self.sublattice_probabilities_per_specie = []
-        sublattNo = -1
-        for sublatt in self.sublattices:
-            sublattNo += 1
+        for i, sublatt in enumerate(self.sublattices):
             for _ in list(sublatt.site_space):
                 self.sublattice_probabilities_per_specie\
-                    .append(self._sublatt_probs[sublattNo])
+                    .append(self._sublatt_probs[i])
 
     def set_aux_state(self, state, **kwargs):
         self._initialize_occupancies(state)
