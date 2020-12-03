@@ -148,7 +148,7 @@ class Sublatticeswapper(MCMCUsher):
     that a proposed swap is a Mn swap or a Mn disproportionation reaction
     """
 
-    def __init__(self, sublattices, allow_crossover=False,
+    def __init__(self, sublattices, allow_crossover=True,
                  swap_table=None, Mn_swap_probability=0.0):
         super(Sublatticeswapper, self).__init__(sublattices)
         self.swap_table = swap_table
@@ -246,6 +246,18 @@ class Sublatticeswapper(MCMCUsher):
             try:
                 site1 = random.choice(swap_options_1)
                 site2 = random.choice(swap_options_2)
+
+                # Ensure correct bit if sublattice changes
+                site2newIndex = list(self._sites_to_sublattice[site2]).index(sp1)
+                site1newIndex = list(self._sites_to_sublattice[site1]).index(sp2)
+
+                flip_info = (sp2, self._sites_to_sublattice[site1],
+                             sp1, self._sites_to_sublattice[site2],
+                             'crossover')
+
+                return ((site1, site1newIndex),
+                        (site2, site2newIndex)), flip_info
+
             except IndexError:
                 warnings.warn("At least one species does not exist given "
                               "sublattice in list of possible flip types "
@@ -262,9 +274,6 @@ class Sublatticeswapper(MCMCUsher):
                 # one workaround is to update the site table...
                 # but that might break d.b. Return None for now
                 return tuple(), 'None'
-
-        # Use processor.allowed_species to ensure correct bit
-        # if sublattice changes
 
         flip_info = (sp2, self._sites_to_sublattice[site1],
                      sp1, self._sites_to_sublattice[site2],
@@ -300,7 +309,7 @@ class Sublatticeswapper(MCMCUsher):
                         [i for i in sublattice.sites if
                          list(sublattice.site_space)[occupancy[i]] == sp]  # noqa
 
-    def _initialize_swap_table(self, allow_crossover=False):
+    def _initialize_swap_table(self):
         """
 
         Args:
@@ -324,7 +333,7 @@ class Sublatticeswapper(MCMCUsher):
                          for pair1, pair2 in itertools.combinations(sp_sublatt_pairs, 2)  # noqa
                          if pair1[0] != pair2[0] and \
                          pair1[1] == pair2[1]]
-        if allow_crossover:
+        if self.allow_crossover:
             for sp1, sp2 in itertools.combinations(possible_sp, 2):
                 # allow swaps within a set of shared sublattices
                 sp1_sublatts = self._site_table[sp1].keys()
@@ -366,8 +375,8 @@ class Sublatticeswapper(MCMCUsher):
             sublatt1 = self._sites_to_sublattice[site1]
             sublatt2 = self._sites_to_sublattice[site2]
 
-            sp1 = list(sublatt1)[flip[1][1]]
-            sp2 = list(sublatt2)[flip[0][1]]
+            sp1 = None
+            sp2 = None
 
             # update self._site_table
             # identify correct old species if there's a disprop swap
@@ -383,9 +392,19 @@ class Sublatticeswapper(MCMCUsher):
             elif flip_type == 'dispropC' or flip_type == 'dispropD':
                 old_sp1 = self.Mn3_specie
                 old_sp2 = self.Mn3_specie
+            elif flip_type == 'crossover':
+                old_sp1 = list(sublatt2)[flip[1][1]]
+                old_sp2 = list(sublatt1)[flip[0][1]]
+                sp1 = old_sp1
+                sp2 = old_sp2
+                sublatt1, sublatt2 = sublatt2, sublatt1  # crucial step! was not here in v0.0
             else:
-                old_sp1 = sp1
-                old_sp2 = sp2
+                old_sp1 = list(sublatt1)[flip[1][1]]
+                old_sp2 = list(sublatt2)[flip[0][1]]
+
+            if sp1 is None:
+                sp1 = list(sublatt1)[flip[1][1]]
+                sp2 = list(sublatt2)[flip[0][1]]
 
             self.old_sp1 = old_sp1
             self.old_sp2 = old_sp2
@@ -438,13 +457,11 @@ class Sublatticeswapper(MCMCUsher):
             site2_proposal = random.choice(site1_options)
             if site2_proposal != site1:
                 site2 = site2_proposal
-
         sp2 = list(self._sites_to_sublattice[site2])[occupancy[site2]]
         sp1 = list(self._sites_to_sublattice[site1])[occupancy[site1]]
 
         flip_type = random.choice(self.Mn_flip_table[(str(sp1),
                                                       str(sp2))])
-
         flip_info = ((sp2, self._sites_to_sublattice[site1]),
                      (sp1, self._sites_to_sublattice[site2]),
                      flip_type)
