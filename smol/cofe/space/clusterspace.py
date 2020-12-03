@@ -150,12 +150,6 @@ class ClusterSubspace(MSONable):
             self._site_matcher = site_matcher
 
         self._orbits = orbits
-
-        # lazy stuff from orbits
-        self._func_orb_ids = None
-        self._orb_mults = None
-        self._orb_nbit_ords = None
-
         self._external_terms = []  # List will hold external terms (i.e. Ewald)
 
         # Dict to cache orbit index mappings, this prevents doing another
@@ -233,7 +227,8 @@ class ClusterSubspace(MSONable):
                            or len(site.species) > 1]
         expansion_structure = Structure.from_sites(sites_to_expand)
         # get orbits within given cutoffs
-        orbits = cls._orbits_from_cutoffs(expansion_structure, cutoffs, symops,
+        orbits = cls._orbits_from_cutoffs(expansion_structure,
+                                          cutoffs, symops,
                                           basis, orthonormal,
                                           use_concentration)
         return cls(structure=structure,
@@ -276,34 +271,61 @@ class ClusterSubspace(MSONable):
     @property
     def orbit_multiplicities(self):
         """Get the crystallographic multiplicities for each orbit."""
-        if self._orb_mults is None:
-            self._orb_mults = [orb.multiplicity for orb in self.iterorbits()]
-        return self._orb_mults
+        mults = [1] + [orb.multiplicity for orb in self.iterorbits()]
+        return np.array(mults)
 
     @property
-    def ncorr_functions_per_orbit(self):
+    def num_functions_per_orbit(self):
         """Get the number of correlation functions for each orbit.
 
         The list returned is of length total number of orbits, each entry is
         the total number of correlation functions assocaited with that orbit.
         """
-        if self._orb_nbit_ords is None:
-            self._orb_nbit_ords = [len(orbit) for orbit in self.iterorbits()]
-        return self._orb_nbit_ords
+        return [len(orbit) for orbit in self.iterorbits()]
 
     @property
-    def corr_function_multiplicities(self):
-        """Get list of multiplicity of each distinct correlation function.
+    def function_orbit_ids(self):
+        """Get Orbit IDs corresponding to each correlation function.
 
-        The length of the list returned is the total number of correlation
-        functions in the subspace for all orbits. The multiplicity of a
-        correlation function is the number of symmetrically equivalent bit
+        If the Cluster Subspace includes external terms these are not included
+        in the list since they are not associated with any orbit.
+        """
+        func_orb_ids = [0]
+        for orbit in self.iterorbits():
+            func_orb_ids += len(orbit) * [orbit.id, ]
+        return func_orb_ids
+
+    @property
+    def function_inds_by_size(self):
+        """Get correlation function indices by cluster sizes."""
+        return {s: list(range(os[0].bit_id, os[-1].bit_id + len(os[-1])))
+                for s, os in self._orbits.items()}
+
+    @property
+    def function_ordering_multiplicities(self):
+        """Get array of ordering multiplicity of each correlation function.
+
+        The length of the array returned is the total number of correlation
+        functions in the subspace for all orbits. The ordering multiplicity of
+        a correlation function is the number of symmetrically equivalent bit
         orderings the result in the product of the same single site functions.
         """
-        corrfun_mults = []
-        for orbit in self.orbits:
-            corrfun_mults += orbit.bit_combo_multiplicities
-        return corrfun_mults
+        mults = [1] + [mult for orb in self.orbits
+                       for mult in orb.bit_combo_multiplicities]
+        return np.array(mults)
+
+    @property
+    def function_total_multiplicities(self):
+        """Get array of total multiplicity of each correlation function.
+
+        The length of the array returned is the total number of correlation
+        functions in the subspace for all orbits. The total multiplicity of a
+        correlation function is the number of symmetrically equivalent bit
+        orderings the result in the product of the same single site functions
+        times the (crystallographic) multiplicity of the orbit.
+        """
+        return self.orbit_multiplicities[self.function_orbit_ids] * \
+            self.function_ordering_multiplicities
 
     @property
     def basis_orthogonal(self):
@@ -324,18 +346,38 @@ class ClusterSubspace(MSONable):
         """
         return self._external_terms
 
-    @property
-    def function_orbit_ids(self):
-        """Get Orbit IDs corresponding to each correlation function.
+    def orbits_by_cutoffs(self, upper, lower=0):
+        """Get orbits with clusters within given diameter cutoffs (inclusive).
 
-        If the Cluster Subspace includes external terms these are not included
-        in the list since they are not associated with any orbit.
+        Args:
+            upper (float):
+                upper diameter for clusters to include.
+            lower (float): optional
+                lower diameter for clusters to include.
+
+        Returns:
+            list of Orbits
         """
-        if self._func_orb_ids is None:
-            self._func_orb_ids = [0]
-            for orbit in self.iterorbits():
-                self._func_orb_ids += len(orbit) * [orbit.id, ]
-        return self._func_orb_ids
+        return [orbit for orbit in self.iterorbits()
+                if lower <= orbit.base_cluster.diameter <= upper]
+
+    def function_inds_by_cutoffs(self, upper, lower=0):
+        """Get indices of corr functions by cluster cutoffs.
+
+        Args:
+            upper (float):
+                upper diameter for clusters to include.
+            lower (float): optional
+                lower diameter for clusters to include.
+
+        Returns:
+            list: of corr function indices for clusters within cutoffs
+        """
+        orbits = self.orbits_by_cutoffs(upper, lower)
+        inds = []
+        for orbit in orbits:
+            inds += list(range(orbit.bit_id, orbit.bit_id + len(orbit)))
+        return inds
 
     def add_external_term(self, term):
         """Add an external term to subspace.
@@ -404,8 +446,10 @@ class ClusterSubspace(MSONable):
 
         orb_inds = self.supercell_orbit_mappings(scmatrix)
         # Create a list of tuples with necessary information to compute corr
-        orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
-                      for orb, inds in orb_inds]
+        orbit_list = [
+            (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
+             orb.bases_array, inds) for orb, inds in orb_inds
+        ]
         corr = corr_from_occupancy(occu, self.num_corr_functions, orbit_list)
 
         size = self.num_prims_from_matrix(scmatrix)
@@ -625,9 +669,6 @@ class ClusterSubspace(MSONable):
                                   if orbit.id not in orbit_ids]
 
         self._assign_orbit_ids()  # Re-assign ids
-        self._func_orb_ids = None  # reset orbit info stuff, it may be worth
-        self._orb_mults = None  # considering always computing this in the
-        self._orb_nbit_ords = None  # @property, and not worry about reseting.
         # Clear the cached supercell orbit mappings
         self._supercell_orb_inds = {}
 
@@ -673,7 +714,6 @@ class ClusterSubspace(MSONable):
             self.remove_orbits(empty_orbit_ids)
         else:
             self._assign_orbit_ids()  # Re-assign ids
-            self._func_orb_ids = None  # reset func ids
 
     def copy(self):
         """Deep copy of instance."""
@@ -852,8 +892,8 @@ class ClusterSubspace(MSONable):
                    for o1, o2 in zip(other.orbits, self.orbits))
 
     def __len__(self):
-        """Get number of correlation functions in the subspace."""
-        return self.num_corr_functions
+        """Get number of correlation functions and ext terms in subspace."""
+        return self.num_corr_functions + len(self.external_terms)
 
     def __str__(self):
         """Convert class into pretty string for printing."""
