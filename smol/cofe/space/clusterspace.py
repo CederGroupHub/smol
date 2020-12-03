@@ -276,7 +276,7 @@ class ClusterSubspace(MSONable):
         return np.array(mults)
 
     @property
-    def ncorr_functions_per_orbit(self):
+    def num_functions_per_orbit(self):
         """Get the number of correlation functions for each orbit.
 
         The list returned is of length total number of orbits, each entry is
@@ -341,6 +341,21 @@ class ClusterSubspace(MSONable):
         for orbit in self.iterorbits():
             func_orb_ids += len(orbit) * [orbit.id, ]
         return func_orb_ids
+
+    def orbits_by_cutoffs(self, upper, lower=0):
+        """Get orbits with clusters within given diameter cutoffs (inclusive).
+
+        Args:
+            upper (float):
+                upper diameter for clusters to include.
+            lower (float): optional
+                lower diameter for clusters to include.
+
+        Returns:
+            list of Orbits
+        """
+        return [orbit for orbit in self.iterorbits()
+                if lower <= orbit.base_cluster.diameter <= upper]
 
     def add_external_term(self, term):
         """Add an external term to subspace.

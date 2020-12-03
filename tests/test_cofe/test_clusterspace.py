@@ -41,8 +41,7 @@ class TestClusterSubSpace(unittest.TestCase):
 
     def test_func_orbit_ids(self):
         self.assertEqual(len(self.cs.function_orbit_ids), 124)
-        self.assertEqual(len(set(self.cs.function_orbit_ids)),
-                         27)
+        self.assertEqual(len(set(self.cs.function_orbit_ids)), 27)
 
     def test_orbits(self):
         self.assertEqual(len(self.cs.orbits) + 1, self.cs.num_orbits)  # +1 for empty cluster
@@ -53,6 +52,20 @@ class TestClusterSubSpace(unittest.TestCase):
         orbits = [o for o in self.cs.iterorbits()]
         for o1, o2 in zip(orbits, self.cs.orbits):
             self.assertEqual(o1, o2)
+
+    def test_orbits_by_cutoffs(self):
+        # Get all of them
+        self.assertTrue(
+            all(o1 == o2 for o1, o2 in
+                zip(self.cs.orbits, self.cs.orbits_by_cutoffs(6))))
+        for upper, lower in ((5, 0), (6, 3), (5, 2)):
+            orbs = self.cs.orbits_by_cutoffs(upper, lower)
+            self.assertTrue(len(orbs) < len(self.cs.orbits))
+            self.assertTrue(
+                all(lower <= o.base_cluster.diameter <= upper for o in orbs)
+            )
+        # bad cuttoffs
+        self.assertTrue(len(self.cs.orbits_by_cutoffs(2, 4)) == 0)
 
     def test_bases_ortho(self):
         # test orthogonality, orthonormality of bases with uniform and
