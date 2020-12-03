@@ -190,6 +190,9 @@ class Sublatticeswapper(MCMCUsher):
                 self.sublattice_probabilities_per_specie\
                     .append(self._sublatt_probs[sublattNo])
 
+    def set_aux_state(self, state, **kwargs):
+        self._initialize_occupancies(state)
+
     def _get_swaps_from_table(self, occupancy):
         """Args:
 
