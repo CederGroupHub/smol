@@ -172,7 +172,7 @@ class Sublatticeswapper(MCMCUsher):
         self._sites_to_sublattice = None
         self.sublattice_probabilities_per_specie = None
         self.swap_table = None
-        self.current_flip_info = None
+        self.current_flip_type = None
         self._site_table = None
 
     def _initialize_occupancies(self, occupancy):
@@ -253,12 +253,10 @@ class Sublatticeswapper(MCMCUsher):
                 site1newIndex = list(self._sites_to_sublattice[site1]
                                      ).index(sp2)
 
-                flip_info = (sp2, self._sites_to_sublattice[site1],
-                             sp1, self._sites_to_sublattice[site2],
-                             'crossover')
+                flip_type = 'crossover'
 
                 return ((site1, site1newIndex),
-                        (site2, site2newIndex)), flip_info
+                        (site2, site2newIndex)), flip_type
 
             except IndexError:
                 warnings.warn("At least one species does not exist given "
@@ -277,21 +275,18 @@ class Sublatticeswapper(MCMCUsher):
                 # but that might break d.b. Return None for now
                 return tuple(), 'None'
 
-        flip_info = (sp2, self._sites_to_sublattice[site1],
-                     sp1, self._sites_to_sublattice[site2],
-                     'swap')
         return ((site1, occupancy[site2]),
-                (site2, occupancy[site1])), flip_info
+                (site2, occupancy[site1])), 'swap'
 
     def propose_step(self, occupancy):
         if self._site_table is None:
             self._initialize_occupancies(occupancy)
             # only need to set if we haven't made any flips yet
         if np.random.rand() <= self.Mn_swap_probability:
-            flip, flip_info = self._get_Mn_swaps(occupancy)
+            flip, flip_type = self._get_Mn_swaps(occupancy)
         else:
-            flip, flip_info = self._get_swaps_from_table(occupancy)
-        self.current_flip_info = flip_info
+            flip, flip_type = self._get_swaps_from_table(occupancy)
+        self.current_flip_type = flip_type
         return flip
 
     def _reset_site_table(self, occupancy):
@@ -366,7 +361,7 @@ class Sublatticeswapper(MCMCUsher):
 
     def update_aux_state(self, flip):
         """Update site_table."""
-        flip_type = self.current_flip_info[-1]
+        flip_type = self.current_flip_type
         self._update_site_table(flip, flip_type)
 
     def _update_site_table(self, flip, flip_type):
@@ -433,14 +428,12 @@ class Sublatticeswapper(MCMCUsher):
         The Mn swap can be either a swap or a disproportionation flip,
         resulting in a change of species.
 
-        Returns: tuple of (flip, flip_info)
-        flip: (site1, sp2 index for site1 sublattice),
-        (site2, sp1 index for site2 sublattice)
-        flip_info: (sp2, site1 sublattice, sp1, site2 sublattice,
-                    flip_type)
-        flip_type: (str) which can be 'swap', None
-                    (inefficient but satisfies d.b.), dispropRXN.
-
+        Returns: tuple of (flip, flip_type)
+        flip: ((site1, sp2 index for site1 sublattice),
+               (site2, sp1 index for site2 sublattice))
+        flip_type: (str) which can be 'swap', 'crossover',
+                    None (inefficient but satisfies d.b.),
+                    dispropRXN.
         """
 
         site1_options = []
@@ -465,9 +458,6 @@ class Sublatticeswapper(MCMCUsher):
 
         flip_type = random.choice(self.Mn_flip_table[(str(sp1),
                                                       str(sp2))])
-        flip_info = ((sp2, self._sites_to_sublattice[site1]),
-                     (sp1, self._sites_to_sublattice[site2]),
-                     flip_type)
 
         if flip_type == 'None':
             # Unproductive swap, faster just to not return any flips
@@ -478,9 +468,9 @@ class Sublatticeswapper(MCMCUsher):
                          list(self._sites_to_sublattice[site1]).index(sp2)),
                         (site2,
                          list(self._sites_to_sublattice[site2]).index(sp1))),\
-                        flip_info
+                        flip_type
             except ValueError:  # Mn3+/4+ could go tetrahedral
-                return tuple(), flip_info
+                return tuple(), flip_type
         elif flip_type == 'dispropA' or flip_type == 'dispropB':
             try:
                 return ((site1,
@@ -489,7 +479,7 @@ class Sublatticeswapper(MCMCUsher):
                         (site2,
                          list(self._sites_to_sublattice[site2])
                          .index(self.Mn3_specie))), \
-                       flip_info
+                       flip_type
             except ValueError:
                 return tuple(), 'None'
         elif flip_type == 'dispropC':
@@ -500,7 +490,7 @@ class Sublatticeswapper(MCMCUsher):
                     (site2,
                      list(self._sites_to_sublattice[site2])
                      .index(self.Mn4_specie))), \
-                   flip_info
+                   flip_type
         elif flip_type == 'dispropD':
             return ((site1,
                      list(self._sites_to_sublattice[site1]).
@@ -508,7 +498,7 @@ class Sublatticeswapper(MCMCUsher):
                     (site2,
                      list(self._sites_to_sublattice[site2])
                      .index(self.Mn2_specie))), \
-                   flip_info
+                   flip_type
         else:
             raise ValueError("No appropriate flip type in Mn flip table")
 
