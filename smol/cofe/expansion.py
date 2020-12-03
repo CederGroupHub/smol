@@ -57,8 +57,10 @@ class ClusterExpansion(MSONable):
                 coefficients to the correlation vector terms (length and order)
                 These correspond to the
                 ECI x the multiplicity of orbit x multiplicity of bit ordering
-            feature_matrix (ndarray)
-                the feature matrix used in fitting the given coefficients.
+            feature_matrix (ndarray): optional
+                The feature matrix used in fitting the given coefficients.
+                Useful to report metrics when printing and numerically
+                converting eci to another basis.
         """
         if feature_matrix is not None and \
                 len(coefficients) != feature_matrix.shape[1]:
@@ -180,9 +182,9 @@ class ClusterExpansion(MSONable):
     # This needs further testing. For out-of-training structures
     # the predictions do not always match with those using the original eci
     # with which the fit was done.
-    def convert_eci(self, new_basis, fit_structures, supercell_matrices,
-                    feature_matrix=None, orthonormal=False):
-        """Numerically convert given eci to eci in a new basis.
+    def convert_coefs(self, new_basis, fit_structures, supercell_matrices,
+                      feature_matrix=None, orthonormal=False):
+        """Numerically convert expansion coeficients to a given new basis.
 
         Args:
             new_basis (str):
@@ -199,6 +201,9 @@ class ClusterExpansion(MSONable):
         Returns:
             array: coefficients converted into new_basis
         """
+        if feature_matrix is None and self._feat_matrix is None:
+            raise AttributeError("A feature matrix must be provided.")
+
         subspace = self.cluster_subspace.copy()
         subspace.change_site_bases(new_basis, orthonormal=orthonormal)
         new_feature_matrix = np.array(
@@ -218,8 +223,11 @@ class ClusterExpansion(MSONable):
         feature_avg = np.average(self.feature_matrix, axis=0)
         feature_std = np.std(self.feature_matrix, axis=0)
         s = 'ClusterExpansion:\n    Prim Composition: ' \
-            f'{self.prim_structure.composition}\n' \
-            f'Num corr functions: {self.cluster_subspace.num_corr_functions}\n'
+             f'{self.prim_structure.composition}\n' \
+             f'Num corr functions: {self.cluster_subspace.num_corr_functions}\n'
+        if self._feat_matrix is None:
+            s += '[Feature matrix used in fit was not provided. Feature ' \
+                 'statistics are meaningless.]\n'
         ecis = len(corr)*[0.0, ] if self.coefs is None else self.coefs
         s += f'    [Orbit]  id: {str(0):<3}\n'
         s += '        bit       eci\n'
