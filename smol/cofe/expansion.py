@@ -223,8 +223,8 @@ class ClusterExpansion(MSONable):
         feature_avg = np.average(self.feature_matrix, axis=0)
         feature_std = np.std(self.feature_matrix, axis=0)
         s = 'ClusterExpansion:\n    Prim Composition: ' \
-             f'{self.prim_structure.composition}\n' \
-             f'Num corr functions: {self.cluster_subspace.num_corr_functions}\n'
+            f'{self.prim_structure.composition}\n' \
+            f'Num corr functions: {self.cluster_subspace.num_corr_functions}\n'
         if self._feat_matrix is None:
             s += '[Feature matrix used in fit was not provided. Feature ' \
                  'statistics are meaningless.]\n'

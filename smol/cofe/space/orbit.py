@@ -143,7 +143,7 @@ class Orbit(MSONable):
 
     @property
     def bit_combo_inds(self):
-        """Indices to symmetrically equivalent bits in bit combo array."""
+        """Get indices to symmetrically equivalent bits in bit combo array."""
         if self._combo_inds is None or self._combo_arr is None:
             self._combo_inds = np.array(
                 [0] + list(accumulate([len(bc) for bc in self.bit_combos])))

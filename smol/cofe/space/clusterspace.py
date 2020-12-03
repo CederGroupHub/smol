@@ -227,7 +227,8 @@ class ClusterSubspace(MSONable):
                            or len(site.species) > 1]
         expansion_structure = Structure.from_sites(sites_to_expand)
         # get orbits within given cutoffs
-        orbits = cls._orbits_from_cutoffs(expansion_structure, cutoffs, symops,
+        orbits = cls._orbits_from_cutoffs(expansion_structure,
+                                          cutoffs, symops,
                                           basis, orthonormal,
                                           use_concentration)
         return cls(structure=structure,
@@ -306,7 +307,6 @@ class ClusterSubspace(MSONable):
         orderings the result in the product of the same single site functions
         times the (crystallographic) multiplicity of the orbit.
         """
-
         return self.orbit_multiplicities[self.function_orbit_ids] * \
             self.function_ordering_multiplicities
 
