@@ -248,8 +248,10 @@ class Sublatticeswapper(MCMCUsher):
                 site2 = random.choice(swap_options_2)
 
                 # Ensure correct bit if sublattice changes
-                site2newIndex = list(self._sites_to_sublattice[site2]).index(sp1)
-                site1newIndex = list(self._sites_to_sublattice[site1]).index(sp2)
+                site2newIndex = list(self._sites_to_sublattice[site2]
+                                     ).index(sp1)
+                site1newIndex = list(self._sites_to_sublattice[site1]
+                                     ).index(sp2)
 
                 flip_info = (sp2, self._sites_to_sublattice[site1],
                              sp1, self._sites_to_sublattice[site2],
@@ -397,7 +399,8 @@ class Sublatticeswapper(MCMCUsher):
                 old_sp2 = list(sublatt1)[flip[0][1]]
                 sp1 = old_sp1
                 sp2 = old_sp2
-                sublatt1, sublatt2 = sublatt2, sublatt1  # crucial step! was not here in v0.0
+                sublatt1, sublatt2 = sublatt2, sublatt1
+                # crucial step! was not here in v0.0
             else:
                 old_sp1 = list(sublatt1)[flip[1][1]]
                 old_sp2 = list(sublatt2)[flip[0][1]]
