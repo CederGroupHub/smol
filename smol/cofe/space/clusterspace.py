@@ -268,7 +268,6 @@ class ClusterSubspace(MSONable):
         """Get dictionary of orbits with key being the orbit size."""
         return self._orbits
 
-    # TODO make cached property
     @property
     def orbit_multiplicities(self):
         """Get the crystallographic multiplicities for each orbit."""
@@ -283,6 +282,24 @@ class ClusterSubspace(MSONable):
         the total number of correlation functions assocaited with that orbit.
         """
         return [len(orbit) for orbit in self.iterorbits()]
+
+    @property
+    def function_orbit_ids(self):
+        """Get Orbit IDs corresponding to each correlation function.
+
+        If the Cluster Subspace includes external terms these are not included
+        in the list since they are not associated with any orbit.
+        """
+        func_orb_ids = [0]
+        for orbit in self.iterorbits():
+            func_orb_ids += len(orbit) * [orbit.id, ]
+        return func_orb_ids
+
+    @property
+    def function_inds_by_size(self):
+        """Get correlation function indices by cluster sizes."""
+        return {s: list(range(os[0].bit_id, os[-1].bit_id + len(os[-1])))
+                for s, os in self._orbits.items()}
 
     @property
     def function_ordering_multiplicities(self):
@@ -329,19 +346,6 @@ class ClusterSubspace(MSONable):
         """
         return self._external_terms
 
-    # TODO make cached property
-    @property
-    def function_orbit_ids(self):
-        """Get Orbit IDs corresponding to each correlation function.
-
-        If the Cluster Subspace includes external terms these are not included
-        in the list since they are not associated with any orbit.
-        """
-        func_orb_ids = [0]
-        for orbit in self.iterorbits():
-            func_orb_ids += len(orbit) * [orbit.id, ]
-        return func_orb_ids
-
     def orbits_by_cutoffs(self, upper, lower=0):
         """Get orbits with clusters within given diameter cutoffs (inclusive).
 
@@ -356,6 +360,24 @@ class ClusterSubspace(MSONable):
         """
         return [orbit for orbit in self.iterorbits()
                 if lower <= orbit.base_cluster.diameter <= upper]
+
+    def function_inds_by_cutoffs(self, upper, lower=0):
+        """Get indices of corr functions by cluster cutoffs.
+
+        Args:
+            upper (float):
+                upper diameter for clusters to include.
+            lower (float): optional
+                lower diameter for clusters to include.
+
+        Returns:
+            list: of corr function indices for clusters within cutoffs
+        """
+        orbits = self.orbits_by_cutoffs(upper, lower)
+        inds = []
+        for orbit in orbits:
+            inds += list(range(orbit.bit_id, orbit.bit_id + len(orbit)))
+        return inds
 
     def add_external_term(self, term):
         """Add an external term to subspace.

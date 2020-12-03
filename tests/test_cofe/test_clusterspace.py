@@ -67,6 +67,31 @@ class TestClusterSubSpace(unittest.TestCase):
         # bad cuttoffs
         self.assertTrue(len(self.cs.orbits_by_cutoffs(2, 4)) == 0)
 
+    def test_functions_inds_by_size(self):
+        indices = self.cs.function_inds_by_size
+        # check that all orbit functions are in there...
+        self.assertTrue(
+            sum(len(i) for i in indices.values()) == len(self.cs) - 1)
+        fun_orb_ids = self.cs.function_orbit_ids
+        # Now check sizes are correct.
+        for s, inds in indices.items():
+            self.assertTrue(
+                all(s == len(self.cs.orbits[fun_orb_ids[i] - 1].base_cluster)
+                    for i in inds))
+
+    def test_functions_inds_by_cutoffs(self):
+        indices = self.cs.function_inds_by_cutoffs(6)
+        # check that all of them are in there.
+        self.assertTrue(len(indices) == len(self.cs) - 1)
+        fun_orb_ids = self.cs.function_orbit_ids
+        for upper, lower in ((4, 0), (5, 3), (3, 1)):
+            indices = self.cs.function_inds_by_cutoffs(upper, lower)
+            self.assertTrue(len(indices) < len(self.cs))
+            self.assertTrue(
+                all(lower <= self.cs.orbits[fun_orb_ids[i] - 1].base_cluster.diameter <= upper
+                    for i in indices)
+            )
+
     def test_bases_ortho(self):
         # test orthogonality, orthonormality of bases with uniform and
         # concentration measure
