@@ -137,7 +137,7 @@ terms and speed up Monte Carlo runs.</p>
 strongly tested.</p>
 <dl class="py class">
 <dt id="smol.cofe.expansion.ClusterExpansion">
-<em class="property">class </em><code class="sig-name descname">ClusterExpansion</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em>, <em class="sig-param"><span class="n">coefficients</span></em>, <em class="sig-param"><span class="n">feature_matrix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">ClusterExpansion</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em>, <em class="sig-param"><span class="n">coefficients</span></em>, <em class="sig-param"><span class="n">feature_matrix</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Class for the ClusterExpansion proper.</p>
 <p>This needs a <code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code> and a corresponding set of
@@ -188,7 +188,10 @@ the feature matrix.</p></li>
 coefficients to the correlation vector terms (length and order)
 These correspond to the
 ECI x the multiplicity of orbit x multiplicity of bit ordering</p></li>
-<li><p><strong>feature_matrix</strong> (<em>ndarray</em>) – the feature matrix used in fitting the given coefficients.</p></li>
+<li><p><strong>feature_matrix</strong> (<em>ndarray</em>) – optional
+The feature matrix used in fitting the given coefficients.
+Useful to report metrics when printing and numerically
+converting eci to another basis.</p></li>
 </ul>
 </dd>
 </dl>
@@ -210,15 +213,16 @@ ECI x the multiplicity of orbit x multiplicity of bit ordering</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.expansion.ClusterExpansion.convert_eci">
-<code class="sig-name descname">convert_eci</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_basis</span></em>, <em class="sig-param"><span class="n">fit_structures</span></em>, <em class="sig-param"><span class="n">supercell_matrices</span></em>, <em class="sig-param"><span class="n">orthonormal</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion.convert_eci" title="Permalink to this definition">¶</a></dt>
-<dd><p>Numerically convert given eci to eci in a new basis.</p>
+<dt id="smol.cofe.expansion.ClusterExpansion.convert_coefs">
+<code class="sig-name descname">convert_coefs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_basis</span></em>, <em class="sig-param"><span class="n">fit_structures</span></em>, <em class="sig-param"><span class="n">supercell_matrices</span></em>, <em class="sig-param"><span class="n">feature_matrix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">orthonormal</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion.convert_coefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Numerically convert expansion coeficients to a given new basis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>new_basis</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – name of basis to convert coefficients into.</p></li>
 <li><p><strong>fit_structures</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of pymatgen.Structure used to fit the eci</p></li>
 <li><p><strong>supercell_matrices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of supercell matrices for the corresponding fit structures</p></li>
+<li><p><strong>feature_matrix</strong> (<em>ndarray</em>) – feature matrix if not passed in the constructor.</p></li>
 <li><p><strong>orthonormal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – option to make new basis orthonormal</p></li>
 </ul>
 </dd>
@@ -253,6 +257,13 @@ in the list since they are not associated with any orbit.</p>
 <dd><p>Get expansion structure.</p>
 <p>Prim structure with only sites included in the expansion.
 (i.e. sites with partial occupancies)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.expansion.ClusterExpansion.feature_matrix">
+<em class="property">property </em><code class="sig-name descname">feature_matrix</code><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion.feature_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the feature matrix used in fit.</p>
+<p>If not given returns an identity matrix of len num_corrs</p>
 </dd></dl>
 
 <dl class="py method">
@@ -321,7 +332,7 @@ the fit coefficients</p></li>
 functions to define and fit cluster expansions for crystalline materials.</p>
 <dl class="py class">
 <dt id="smol.cofe.ClusterExpansion">
-<em class="property">class </em><code class="sig-name descname">ClusterExpansion</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em>, <em class="sig-param"><span class="n">coefficients</span></em>, <em class="sig-param"><span class="n">feature_matrix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterExpansion" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">ClusterExpansion</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_subspace</span></em>, <em class="sig-param"><span class="n">coefficients</span></em>, <em class="sig-param"><span class="n">feature_matrix</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterExpansion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Class for the ClusterExpansion proper.</p>
 <p>This needs a <a class="reference internal" href="#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code></a> and a corresponding set of
@@ -372,7 +383,10 @@ the feature matrix.</p></li>
 coefficients to the correlation vector terms (length and order)
 These correspond to the
 ECI x the multiplicity of orbit x multiplicity of bit ordering</p></li>
-<li><p><strong>feature_matrix</strong> (<em>ndarray</em>) – the feature matrix used in fitting the given coefficients.</p></li>
+<li><p><strong>feature_matrix</strong> (<em>ndarray</em>) – optional
+The feature matrix used in fitting the given coefficients.
+Useful to report metrics when printing and numerically
+converting eci to another basis.</p></li>
 </ul>
 </dd>
 </dl>
@@ -394,15 +408,16 @@ ECI x the multiplicity of orbit x multiplicity of bit ordering</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.ClusterExpansion.convert_eci">
-<code class="sig-name descname">convert_eci</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_basis</span></em>, <em class="sig-param"><span class="n">fit_structures</span></em>, <em class="sig-param"><span class="n">supercell_matrices</span></em>, <em class="sig-param"><span class="n">orthonormal</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterExpansion.convert_eci" title="Permalink to this definition">¶</a></dt>
-<dd><p>Numerically convert given eci to eci in a new basis.</p>
+<dt id="smol.cofe.ClusterExpansion.convert_coefs">
+<code class="sig-name descname">convert_coefs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_basis</span></em>, <em class="sig-param"><span class="n">fit_structures</span></em>, <em class="sig-param"><span class="n">supercell_matrices</span></em>, <em class="sig-param"><span class="n">feature_matrix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">orthonormal</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterExpansion.convert_coefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Numerically convert expansion coeficients to a given new basis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>new_basis</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – name of basis to convert coefficients into.</p></li>
 <li><p><strong>fit_structures</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of pymatgen.Structure used to fit the eci</p></li>
 <li><p><strong>supercell_matrices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of supercell matrices for the corresponding fit structures</p></li>
+<li><p><strong>feature_matrix</strong> (<em>ndarray</em>) – feature matrix if not passed in the constructor.</p></li>
 <li><p><strong>orthonormal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – option to make new basis orthonormal</p></li>
 </ul>
 </dd>
@@ -437,6 +452,13 @@ in the list since they are not associated with any orbit.</p>
 <dd><p>Get expansion structure.</p>
 <p>Prim structure with only sites included in the expansion.
 (i.e. sites with partial occupancies)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.ClusterExpansion.feature_matrix">
+<em class="property">property </em><code class="sig-name descname">feature_matrix</code><a class="headerlink" href="#smol.cofe.ClusterExpansion.feature_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the feature matrix used in fit.</p>
+<p>If not given returns an identity matrix of len num_corrs</p>
 </dd></dl>
 
 <dl class="py method">
@@ -706,16 +728,6 @@ option you are fully responsible that the mappings are correct!</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.ClusterSubspace.corr_function_multiplicities">
-<em class="property">property </em><code class="sig-name descname">corr_function_multiplicities</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.corr_function_multiplicities" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get list of multiplicity of each distinct correlation function.</p>
-<p>The length of the list returned is the total number of correlation
-functions in the subspace for all orbits. The multiplicity of a
-correlation function is the number of symmetrically equivalent bit
-orderings the result in the product of the same single site functions.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt id="smol.cofe.ClusterSubspace.expansion_structure">
 <em class="property">property </em><code class="sig-name descname">expansion_structure</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.expansion_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the primitive expansion structure (excludes inactive sites).</p>
@@ -789,11 +801,59 @@ to use a species that has a constant amount per formula unit.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="smol.cofe.ClusterSubspace.function_inds_by_cutoffs">
+<code class="sig-name descname">function_inds_by_cutoffs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">upper</span></em>, <em class="sig-param"><span class="n">lower</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_inds_by_cutoffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get indices of corr functions by cluster cutoffs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – upper diameter for clusters to include.</p></li>
+<li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – optional
+lower diameter for clusters to include.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>of corr function indices for clusters within cutoffs</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.ClusterSubspace.function_inds_by_size">
+<em class="property">property </em><code class="sig-name descname">function_inds_by_size</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_inds_by_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get correlation function indices by cluster sizes.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="smol.cofe.ClusterSubspace.function_orbit_ids">
 <em class="property">property </em><code class="sig-name descname">function_orbit_ids</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_orbit_ids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get Orbit IDs corresponding to each correlation function.</p>
 <p>If the Cluster Subspace includes external terms these are not included
 in the list since they are not associated with any orbit.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.ClusterSubspace.function_ordering_multiplicities">
+<em class="property">property </em><code class="sig-name descname">function_ordering_multiplicities</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_ordering_multiplicities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get array of ordering multiplicity of each correlation function.</p>
+<p>The length of the array returned is the total number of correlation
+functions in the subspace for all orbits. The ordering multiplicity of
+a correlation function is the number of symmetrically equivalent bit
+orderings the result in the product of the same single site functions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.ClusterSubspace.function_total_multiplicities">
+<em class="property">property </em><code class="sig-name descname">function_total_multiplicities</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_total_multiplicities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get array of total multiplicity of each correlation function.</p>
+<p>The length of the array returned is the total number of correlation
+functions in the subspace for all orbits. The total multiplicity of a
+correlation function is the number of symmetrically equivalent bit
+orderings the result in the product of the same single site functions
+times the (crystallographic) multiplicity of the orbit.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -803,8 +863,8 @@ in the list since they are not associated with any orbit.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.ClusterSubspace.ncorr_functions_per_orbit">
-<em class="property">property </em><code class="sig-name descname">ncorr_functions_per_orbit</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.ncorr_functions_per_orbit" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.cofe.ClusterSubspace.num_functions_per_orbit">
+<em class="property">property </em><code class="sig-name descname">num_functions_per_orbit</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.num_functions_per_orbit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the number of correlation functions for each orbit.</p>
 <p>The list returned is of length total number of orbits, each entry is
 the total number of correlation functions assocaited with that orbit.</p>
@@ -869,6 +929,24 @@ species itself.</p></li>
 <dt id="smol.cofe.ClusterSubspace.orbits">
 <em class="property">property </em><code class="sig-name descname">orbits</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a list of all orbits sorted by size.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.ClusterSubspace.orbits_by_cutoffs">
+<code class="sig-name descname">orbits_by_cutoffs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">upper</span></em>, <em class="sig-param"><span class="n">lower</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbits_by_cutoffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get orbits with clusters within given diameter cutoffs (inclusive).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – upper diameter for clusters to include.</p></li>
+<li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – optional
+lower diameter for clusters to include.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of Orbits</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
