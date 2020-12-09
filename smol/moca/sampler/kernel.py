@@ -95,7 +95,7 @@ class Metropolis(MCMCKernel):
     """
 
     valid_mcushers = {'flip': 'Flipper', 'swap': 'Swapper',
-                      'table-swap': 'SublatticeSwapper'}
+                      'table-swap': 'Tableswapper'}
 
     def single_step(self, occupancy):
         """Attempt an MC step.
