@@ -41,8 +41,7 @@ class TestClusterSubSpace(unittest.TestCase):
 
     def test_func_orbit_ids(self):
         self.assertEqual(len(self.cs.function_orbit_ids), 124)
-        self.assertEqual(len(set(self.cs.function_orbit_ids)),
-                         27)
+        self.assertEqual(len(set(self.cs.function_orbit_ids)), 27)
 
     def test_orbits(self):
         self.assertEqual(len(self.cs.orbits) + 1, self.cs.num_orbits)  # +1 for empty cluster
@@ -53,6 +52,45 @@ class TestClusterSubSpace(unittest.TestCase):
         orbits = [o for o in self.cs.iterorbits()]
         for o1, o2 in zip(orbits, self.cs.orbits):
             self.assertEqual(o1, o2)
+
+    def test_orbits_by_cutoffs(self):
+        # Get all of them
+        self.assertTrue(
+            all(o1 == o2 for o1, o2 in
+                zip(self.cs.orbits, self.cs.orbits_by_cutoffs(6))))
+        for upper, lower in ((5, 0), (6, 3), (5, 2)):
+            orbs = self.cs.orbits_by_cutoffs(upper, lower)
+            self.assertTrue(len(orbs) < len(self.cs.orbits))
+            self.assertTrue(
+                all(lower <= o.base_cluster.diameter <= upper for o in orbs)
+            )
+        # bad cuttoffs
+        self.assertTrue(len(self.cs.orbits_by_cutoffs(2, 4)) == 0)
+
+    def test_functions_inds_by_size(self):
+        indices = self.cs.function_inds_by_size
+        # check that all orbit functions are in there...
+        self.assertTrue(
+            sum(len(i) for i in indices.values()) == len(self.cs) - 1)
+        fun_orb_ids = self.cs.function_orbit_ids
+        # Now check sizes are correct.
+        for s, inds in indices.items():
+            self.assertTrue(
+                all(s == len(self.cs.orbits[fun_orb_ids[i] - 1].base_cluster)
+                    for i in inds))
+
+    def test_functions_inds_by_cutoffs(self):
+        indices = self.cs.function_inds_by_cutoffs(6)
+        # check that all of them are in there.
+        self.assertTrue(len(indices) == len(self.cs) - 1)
+        fun_orb_ids = self.cs.function_orbit_ids
+        for upper, lower in ((4, 0), (5, 3), (3, 1)):
+            indices = self.cs.function_inds_by_cutoffs(upper, lower)
+            self.assertTrue(len(indices) < len(self.cs))
+            self.assertTrue(
+                all(lower <= self.cs.orbits[fun_orb_ids[i] - 1].base_cluster.diameter <= upper
+                    for i in indices)
+            )
 
     def test_bases_ortho(self):
         # test orthogonality, orthonormality of bases with uniform and
@@ -284,8 +322,10 @@ class TestClusterSubSpace(unittest.TestCase):
                                           basis='indicator')
         bits = get_allowed_species(structure)
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-        orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
-                      for orb, inds in cs.supercell_orbit_mappings(m)]
+        orbit_list = [
+            (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
+             orb.bases_array, inds)
+            for orb, inds in cs.supercell_orbit_mappings(m)]
 
         # last two clusters are switched from CASM output (occupancy basis)
         # all_li (ignore casm point term)
@@ -340,8 +380,10 @@ class TestClusterSubSpace(unittest.TestCase):
         spaces = get_allowed_species(structure)
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 
-        orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
-                      for orb, inds in cs.supercell_orbit_mappings(m)]
+        orbit_list = [
+            (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
+             orb.bases_array, inds)
+            for orb, inds in cs.supercell_orbit_mappings(m)]
         # last two pair terms are switched from CASM output (occupancy basis)
         # all_vacancy (ignore casm point term)
         occu = self._encode_occu([Vacancy(),
@@ -390,8 +432,10 @@ class TestClusterSubSpace(unittest.TestCase):
                                           basis='indicator')
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 
-        orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
-                      for orb, inds in cs.supercell_orbit_mappings(m)]
+        orbit_list = [
+            (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
+             orb.bases_array, inds)
+            for orb, inds in cs.supercell_orbit_mappings(m)]
         # mixed
         occu = self._encode_occu([Vacancy(), Species('Li', 1),
                                   Species('Li', 1)], self.domains)

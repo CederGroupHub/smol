@@ -4,7 +4,7 @@ A set of symmetrically equivalent (with respect to the given random structure
 symmetry) clusters.
 """
 
-import itertools
+from itertools import chain, product, accumulate
 import numpy as np
 
 from monty.json import MSONable
@@ -94,6 +94,8 @@ class Orbit(MSONable):
         self._bit_combos = None
         self._basis_arrs = None
         self._bases_arr = None
+        self._combo_arr = None
+        self._combo_inds = None
 
         # Create basecluster
         self.base_cluster = Cluster(sites, lattice)
@@ -126,16 +128,30 @@ class Orbit(MSONable):
 
         # get all the bit symmetry operations
         bit_ops = tuple(set(bit_op for _, bit_op in self.cluster_symops))
-        all_combos = []  # get lists of symm equivalent bits
-        for bit_combo in itertools.product(*self.bits):
-            if bit_combo not in itertools.chain(*all_combos):
+        all_combos = []
+        for bit_combo in product(*self.bits):
+            if bit_combo not in chain(*all_combos):
                 bit_combo = np.array(bit_combo)
                 new_bits = list(set(
                     tuple(bit_combo[np.array(bit_op)]) for bit_op in bit_ops))
                 all_combos.append(new_bits)
-
         self._bit_combos = tuple(np.array(c, dtype=np.int) for c in all_combos)
         return self._bit_combos
+
+    @property
+    def bit_combo_array(self):
+        """Single array of all bit combos."""
+        if self._combo_arr is None:
+            self._combo_arr = np.vstack([combos for combos in self.bit_combos])
+        return self._combo_arr
+
+    @property
+    def bit_combo_inds(self):
+        """Get indices to symmetrically equivalent bits in bit combo array."""
+        if self._combo_inds is None or self._combo_arr is None:
+            self._combo_inds = np.array(
+                [0] + list(accumulate([len(bc) for bc in self.bit_combos])))
+        return self._combo_inds
 
     @property
     def bit_combo_multiplicities(self):
@@ -155,11 +171,9 @@ class Orbit(MSONable):
             if c not in equiv:
                 equiv.append(c)
         self._equiv = equiv
-
         if len(equiv) * len(self.cluster_symops) != len(self.structure_symops):
             self._equiv = None  # Unset this
             raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
-
         return equiv
 
     @property
@@ -192,7 +206,7 @@ class Orbit(MSONable):
         return self._symops
 
     @property
-    def basis_arrays(self):
+    def basis_arrays(self):  # TODO remove this?
         """Get a tuple of all site function arrays for each site in orbit."""
         if self._basis_arrs is None:
             self._basis_arrs = tuple(
@@ -208,7 +222,7 @@ class Orbit(MSONable):
         Smaller arrays are padded with ones. Doing this allows using numpy
         fancy indexing which can be faster than for loops.
         """
-        if self._bases_arr is None:
+        if self._bases_arr is None or self._basis_arrs is None:
             max_dim = max(len(fa) for fa in self.basis_arrays)
             self._bases_arr = np.ones(
                 (len(self.basis_arrays), max_dim, max_dim + 1))
@@ -245,6 +259,7 @@ class Orbit(MSONable):
                 f"{self.id}")
 
         self._bit_combos = tuple(bit_combos)
+        self._combo_arr = None  # reset
 
     def remove_bit_combos_by_inds(self, inds):
         """Remove bit combos by their indices in the bit_combo list."""
@@ -255,14 +270,14 @@ class Orbit(MSONable):
 
         self._bit_combos = tuple(
             b_c for i, b_c in enumerate(self._bit_combos) if i not in inds)
+        self._combo_arr = None  # reset
 
         if not self.bit_combos:
             raise RuntimeError(
                 "All bit_combos have been removed from orbit with id "
                 f"{self.id}")
 
-    # TODO remove this, its only called in test_orbit...
-    def eval(self, bits, species_encoding):
+    def eval(self, bits, species_encoding):   # TODO remove this?
         """Evaluate a cluster function defined for this orbit.
 
         Args:

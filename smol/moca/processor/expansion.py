@@ -88,15 +88,16 @@ class CEProcessor(Processor):
         # needed because the correlations are averages over the full inds
         # array.
         for orbit, inds in self._orbit_inds:
-            self._orbit_list.append((orbit.bit_id, orbit.bit_combos,
-                                     orbit.bases_array, inds))
+            self._orbit_list.append((
+                orbit.bit_id, orbit.bit_combo_array, orbit.bit_combo_inds,
+                orbit.bases_array, inds))
+
             for site_ind in np.unique(inds):
                 in_inds = np.any(inds == site_ind, axis=-1)
                 ratio = len(inds) / np.sum(in_inds)
-                self._orbits_by_sites[site_ind].append((orbit.bit_id, ratio,
-                                                        orbit.bit_combos,
-                                                        orbit.bases_array,
-                                                        inds[in_inds]))
+                self._orbits_by_sites[site_ind].append(
+                    (orbit.bit_id, ratio, orbit.bit_combo_array,
+                     orbit.bit_combo_inds, orbit.bases_array, inds[in_inds]))
 
     def compute_feature_vector(self, occupancy):
         """Compute the correlation vector for a given occupancy string.

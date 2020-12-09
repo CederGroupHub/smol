@@ -101,22 +101,16 @@ class DiscreteBasis(MSONable, metaclass=ABCMeta):
     @property
     def is_orthogonal(self):
         """Test if the basis is orthogonal."""
-        prods = np.dot(
-            np.dot(self._f_array, self.measure_array), self._f_array.T)
-        d_terms = all(
-            not np.isclose(prods[i, i], 0) for i in range(prods.shape[0]))
-        x_terms = all(
-            np.isclose(prods[i, j], 0) for i in range(prods.shape[0])
-            for j in range(prods.shape[1]) if i != j)
-        return x_terms and d_terms
+        # add the implicit 0th function
+        prods = (self.measure_vector * self._f_array) @ self._f_array.T
+        prods /= np.diag(prods)
+        return np.allclose(prods, np.eye(*prods.shape))
 
     @property
     def is_orthonormal(self):
         """Test if the basis is orthonormal."""
-        prods = np.dot(
-            np.dot(self._f_array, self.measure_array), self._f_array.T)
-        identity = np.eye(*prods.shape)
-        return np.allclose(identity, prods)
+        prods = (self.measure_vector * self._f_array) @ self._f_array.T
+        return np.allclose(prods, np.eye(*prods.shape))
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation of a DiscreteBasis."""
@@ -217,18 +211,12 @@ class StandardBasis(DiscreteBasis):
         Due to how the func_arr is saved (rows are vectors/functions) this
         allows us to not sprinkle so many transposes.
         """
-        Q = np.zeros_like(self._f_array)
-        R = np.zeros_like(self._f_array)
-        V = self._f_array.copy()
-        n = V.shape[0]
-        for i, phi in enumerate(V):
-            R[i, i] = np.sqrt(np.dot(self.measure_vector*phi, phi))
-            Q[i] = phi/R[i, i]
-            R[i, i+1:n] = np.dot(V[i+1:n], self.measure_vector*Q[i])
-            V[i+1:n] = V[i+1:n] - np.outer(R[i, i+1:n], Q[i])
-
-        self._r_array = R
-        self._f_array = Q
+        q, r = np.linalg.qr((np.sqrt(self.measure_vector) * self._f_array).T,
+                            mode='complete')
+        # r[abs(r) < 2 * np.finfo(np.float64).eps] = 0
+        # q[abs(q) < 2 * np.finfo(np.float64).eps] = 0
+        self._r_array = q[:, 0] / np.sqrt(self.measure_vector) * r.T
+        self._f_array = q.T/q[:, 0]  # make first row constant = 1
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation."""
