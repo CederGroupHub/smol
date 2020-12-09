@@ -133,9 +133,6 @@ class TestBasis(unittest.TestCase):
         self.assertWarns(RuntimeWarning, basis.StandardBasis, species, basis_iter)
         basis_iter = basis.SinusoidIterator(tuple(species.keys())[:-1])
         self.assertRaises(ValueError, basis.StandardBasis, species, basis_iter)
-        species = {'A': .1, 'B': .1, 'C': .1}
-        basis_iter = basis.SinusoidIterator(tuple(species.keys()))
-        self.assertRaises(TypeError, basis.StandardBasis, species, basis_iter)
 
     def test_msonable(self):
         species = tuple(self.site_space.keys())
