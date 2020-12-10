@@ -247,6 +247,7 @@ class Tableswapper(MCMCUsher):
                                      weights=list(self.swap_table.values()))[0]
         # Order shouldn't matter for independent distributions
         ((sp1, sublatt1), (sp2, sublatt2)) = chosen_flip
+        assert (sublatt1 == sublatt2)
 
         if sublatt1 == 'shared' and sublatt2 == 'shared':
             sp1_sublatts = self._site_table[sp1].keys()
@@ -283,6 +284,7 @@ class Tableswapper(MCMCUsher):
 
         else:
             try:
+
                 site1 = random.choice(self._site_table[sp1][sublatt1])
                 site2 = random.choice(self._site_table[sp2][sublatt2])
             except IndexError:
@@ -388,8 +390,8 @@ class Tableswapper(MCMCUsher):
             sublatt1 = self._sites_to_sublattice[site1]
             sublatt2 = self._sites_to_sublattice[site2]
 
-            sp1 = None
-            sp2 = None
+            sp2 = list(sublatt1)[flip[0][1]]
+            sp1 = list(sublatt2)[flip[1][1]]
 
             # update self._site_table
             # identify correct old species if there's a disprop swap
@@ -405,23 +407,14 @@ class Tableswapper(MCMCUsher):
             elif flip_type == 'dispropC' or flip_type == 'dispropD':
                 old_sp1 = self.Mn3_specie
                 old_sp2 = self.Mn3_specie
-            elif flip_type == 'crossover':
-                old_sp1 = list(sublatt2)[flip[1][1]]
-                old_sp2 = list(sublatt1)[flip[0][1]]
-                sp1 = old_sp1
-                sp2 = old_sp2
-                sublatt1, sublatt2 = sublatt2, sublatt1
-                # crucial step! was not here in v0.0
             else:
-                old_sp1 = list(sublatt1)[flip[1][1]]
-                old_sp2 = list(sublatt2)[flip[0][1]]
-
-            if sp1 is None:
-                sp1 = list(sublatt1)[flip[1][1]]
-                sp2 = list(sublatt2)[flip[0][1]]
-
-            self.old_sp1 = old_sp1
-            self.old_sp2 = old_sp2
+                old_sp1 = sp1
+                old_sp2 = sp2
+                #sublatt1, sublatt2 = sublatt2, sublatt1
+                # crucial step! was not here in v0.0
+            #else:
+            #    old_sp1 = list(sublatt1)[flip[1][1]]
+            #    old_sp2 = list(sublatt2)[flip[0][1]]
 
             # remove old species from table
             self._site_table[old_sp1][sublatt1][:] = \
@@ -432,8 +425,12 @@ class Tableswapper(MCMCUsher):
                  if x != site2]
 
             # add new species to table
-            self._site_table[sp1][sublatt1].append(site2)
-            self._site_table[sp2][sublatt2].append(site1)
+            if flip_type == 'crossover':
+                self._site_table[sp1][sublatt2].append(site2)
+                self._site_table[sp2][sublatt1].append(site1)
+            else:
+                self._site_table[sp1][sublatt1].append(site2)
+                self._site_table[sp2][sublatt2].append(site1)
 
     def _get_Mn_swaps(self, occupancy):
         """
@@ -481,9 +478,9 @@ class Tableswapper(MCMCUsher):
         elif flip_type == 'swap':
             try:
                 return ((site1,
-                         list(self._sites_to_sublattice[site1]).index(sp2)),
+                         list(self._sites_to_sublattice[site1])).index(sp2),
                         (site2,
-                         list(self._sites_to_sublattice[site2]).index(sp1))),\
+                         list(self._sites_to_sublattice[site2])).index(sp1)),\
                         flip_type
             except ValueError:  # Mn3+/4+ could go tetrahedral
                 return tuple(), flip_type
