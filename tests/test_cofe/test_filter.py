@@ -2,7 +2,7 @@ import pytest
 from copy import deepcopy
 import numpy as np
 from smol.cofe import StructureWrangler, ClusterSubspace
-from smol.cofe.wrangling import filter_by_ewald_energy, filter_duplicate_corr_vectors
+from smol.cofe.wrangling import filter_by_ewald_energy, unique_corr_vector_indices
 from tests.data import lno_prim, lno_data
 
 
@@ -21,7 +21,7 @@ def structure_wrangler():
 # TODO improve test by precalculating expected energies and filtered structs
 def test_filter_by_ewald(structure_wrangler):
     initial = structure_wrangler.num_structures
-    filter_by_ewald_energy(structure_wrangler, max_rel_energy=1.0)
+    filter_by_ewald_energy(structure_wrangler, max_relative_energy=1.0)
     final = structure_wrangler.num_structures
     assert initial != final
     assert (structure_wrangler.metadata['applied_filters'][0]['filter_by_ewald_energy']['initial_num_items']
@@ -44,7 +44,7 @@ def test_filter_duplicate_corr_vectors(structure_wrangler):
 
     assert structure_wrangler.num_structures == final + len(dup_items)
     assert np.inf in structure_wrangler.get_property_vector('energy')
-    filter_duplicate_corr_vectors(structure_wrangler, property_key='energy')
+    unique_corr_vector_indices(structure_wrangler, property_key='energy')
     assert structure_wrangler.num_structures == final
     assert np.inf not in structure_wrangler.get_property_vector('energy')
     assert (structure_wrangler.metadata['applied_filters'][-1]['filter_duplicate_corr_vectors']['initial_num_items']
