@@ -313,7 +313,7 @@ class StructureWrangler(MSONable):
         return properties
 
     def data_indices(self, key):
-        """Get a specific data index set"""
+        """Get a specific data index set."""
         return self._ind_sets[key]
 
     def add_data_indices(self, key, indices):
