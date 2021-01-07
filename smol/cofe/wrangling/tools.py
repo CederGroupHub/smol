@@ -3,9 +3,14 @@
 from collections import defaultdict
 from functools import wraps
 import numpy as np
+from pymatgen import Composition
+from pymatgen.analysis.phase_diagram import PDEntry, PhaseDiagram
+
 from smol.cofe.extern import EwaldTerm
 
 __author__ = "Luis Barroso-Luque, William Davidson Richard"
+
+from smol.constants import kB
 
 
 def register_filter_metadata(filter_fun):
@@ -136,3 +141,85 @@ def filter_by_ewald_energy(wrangler, max_rel_energy, verbose=False):
 
     wrangler.remove_all_data()
     wrangler.append_data_items(data_items)
+
+
+def weights_energy_above_composition(structures, energies, temperature=2000):
+    """Compute weights for energy above the minimum reduced composition energy.
+
+    Args:
+        structures (list):
+            list of pymatgen.Structures
+        energies (ndarray):
+            energies of corresponding structures.
+        temperature (float):
+            temperature to used in boltzmann weight
+
+    Returns: weights for each structure.
+        array
+    """
+    e_above_comp = _energies_above_composition(structures, energies)
+    return np.exp(-e_above_comp / (kB * temperature))
+
+
+def weights_energy_above_hull(structures, energies, cs_structure,
+                              temperature=2000):
+    """Compute weights for structure energy above the hull of given structures.
+
+    Args:
+        structures (list):
+            list of pymatgen.Structures
+        energies (ndarray):
+            energies of corresponding structures.
+        cs_structure (Structure):
+            The pymatgen.Structure used to define the cluster subspace
+        temperature (float):
+            temperature to used in boltzmann weight.
+
+    Returns: weights for each structure.
+        array
+    """
+    e_above_hull = _energies_above_hull(structures, energies, cs_structure)
+    return np.exp(-e_above_hull / (kB * temperature))
+
+
+def _energies_above_hull(structures, energies, ce_structure):
+    """Compute energies above hull.
+
+    Hull is constructed from phase diagram of the given structures.
+    """
+    pd = _pd(structures, energies, ce_structure)
+    e_above_hull = []
+    for s, e in zip(structures, energies):
+        entry = PDEntry(s.composition.element_composition, e)
+        e_above_hull.append(pd.get_e_above_hull(entry))
+    return np.array(e_above_hull)
+
+
+def _pd(structures, energies, cs_structure):
+    """Generate a phase diagram with the structures and energies."""
+    entries = []
+
+    for s, e in zip(structures, energies):
+        entries.append(PDEntry(s.composition.element_composition, e))
+
+    max_e = max(entries, key=lambda e: e.energy_per_atom).energy_per_atom
+    max_e += 1000
+    for el in cs_structure.composition.keys():
+        entry = PDEntry(Composition({el: 1}).element_composition, max_e)
+        entries.append(entry)
+
+    return PhaseDiagram(entries)
+
+
+def _energies_above_composition(structures, energies):
+    """Compute structure energies above reduced composition."""
+    min_e = defaultdict(lambda: np.inf)
+    for s, e in zip(structures, energies):
+        comp = s.composition.reduced_composition
+        if e / len(s) < min_e[comp]:
+            min_e[comp] = e / len(s)
+    e_above = []
+    for s, e in zip(structures, energies):
+        comp = s.composition.reduced_composition
+        e_above.append(e / len(s) - min_e[comp])
+    return np.array(e_above)
