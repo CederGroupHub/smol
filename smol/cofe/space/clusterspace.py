@@ -17,7 +17,7 @@ from pymatgen.util.coord import \
 
 from src.mc_utils import corr_from_occupancy
 from smol.cofe.space import (Orbit, basis_factory, get_site_spaces,
-                             get_allowed_species, Vacancy)
+                             get_allowed_species, Vacancy, Cluster)
 from smol.cofe.space.constants import SITE_TOL
 from smol.exceptions import (SymmetryError, StructureMatchError,
                              SYMMETRY_ERROR_MESSAGE)
@@ -74,11 +74,14 @@ def get_complete_mapping(mapping):
             for next_value in next_values_list:
                 if next_value not in all_level_mapping[key]:
                     all_level_mapping[key].append(next_value)
-            next_values_list = [nn_value for nn_value in mapping[next_value]\
-                                for next_value in next_values_list]
-
+            next_values_list_new = []
+            for next_value in next_values_list:
+                for nn_value in mapping[next_value]:
+                    if nn_value not in next_values_list_new:
+                        next_values_list_new.append(nn_value)
+            next_values_list = next_values_list_new
+               
     return all_level_mapping
-
 
 class ClusterSubspace(MSONable):
     """ClusterSubspace represents a subspace of functions of configuration.
@@ -469,7 +472,7 @@ class ClusterSubspace(MSONable):
               If you still want to see it, call function get_complete_mapping
               in this module.
         """
-        return invert_mapping_table(self.hierarchy_up_to_low(min_size=2))
+        return invert_mapping_table(self.hierarchy_up_to_low(min_size=min_size))
 
     @property
     def basis_orthogonal(self):
@@ -1071,7 +1074,7 @@ class ClusterSubspace(MSONable):
                     sub_equiv.append(c)
             
             for other_sub_id in possible_sub_ids:
-                other_sub_orbit, other_sub_bc = functions_info[sub_id]
+                other_sub_orbit, other_sub_bc = functions_info[other_sub_id]
 
                 cluster_match = other_sub_orbit.base_cluster in sub_equiv            
                 bit_match = np.any(np.all(other_sub_bc[0] == sub_bit_combos, axis=1))
@@ -1101,7 +1104,7 @@ class ClusterSubspace(MSONable):
             sub clusters is only 1! We only give one-level down hierarchy
             Because it would be enough to contrain hierarchy!
         """
-        up_low_hierarchy = [[] for in range(self.num_corr_functions)]
+        up_low_hierarchy = [[] for i in range(self.num_corr_functions)]
         
         for ii in np.flip(np.arange(self.num_corr_functions)):
             sub_indices = self._find_sub_cluster(ii,min_size = min_size)
