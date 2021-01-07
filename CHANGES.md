@@ -24,6 +24,9 @@ Use this section to keep track of changes in the works.
 
 
 ### Changed
+* filter functions in `smol.wrangling` replaced with functions returning
+  indices corresponding to structures to keep. This can be used saving indices
+  with `StructureWrangler.add_data_indices`.
 * Cleanup of sites, active sites and restricted sites in `Sublattice`
 [\#95](https://github.com/CederGroupHub/smol/pull/95)
   ([juliayang](https://github.com/juliayang))

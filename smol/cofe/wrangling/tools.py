@@ -13,38 +13,14 @@ __author__ = "Luis Barroso-Luque, William Davidson Richard"
 from smol.constants import kB
 
 
-def register_filter_metadata(filter_fun):
-    """Register metadata associated with a filter function.
-
-    Decorate filter functions with this to register the metadata associated
-    with the filtering.
-    Args:
-        filter_fun (Callable):
-            A filter function that takes a StructureWrangler as the first
-            argument (and any necessary additional keyword arguments) to
-            filter data items in the StructureWrangler.
-    Returns:
-        Callable: decorated filter function
-    """
-
-    @wraps(filter_fun)
-    def reg_filter(wrangler, **kwargs):
-        metadata = {"initial_num_items": len(wrangler.data_items)}
-        metadata.update(kwargs)
-        filter_fun(wrangler, **kwargs)
-        metadata["final_num_items"] = len(wrangler.data_items)
-        wrangler.metadata["applied_filters"].append(
-            {filter_fun.__name__: metadata})
-
-    return reg_filter
-
-
-@register_filter_metadata
-def filter_duplicate_corr_vectors(wrangler, property_key, filter_by='min',
-                                  verbose=False):
-    """Filter structures with duplicate correlation vectors.
+def unique_corr_vector_indices(wrangler, property_key, filter_by='min',
+                               return_compliment=False):
+    """Return index set of structures with unique correlation vectors.
 
     Keep structures with the min or max value of the given property.
+    Note correlation vectors exclude external terms such that even if the
+    external term is different for the structure but all correlations are
+    the same the structures will be considered duplicates.
 
     Args:
         wrangler (StructureWrangler):
@@ -55,8 +31,10 @@ def filter_duplicate_corr_vectors(wrangler, property_key, filter_by='min',
         filter_by (str)
             The criteria for the property value to keep. Options are min
             or max.
-        verbose (bool): optional
-            If True print the filtered structures.
+        return_compliment (bool): optional
+            If True will return the compliment of the unique indices
+    Returns:
+        indices, compliment
     """
     if filter_by not in ('max', 'min'):
         raise ValueError(f'Filtering by {filter_by} is not an option.')
@@ -65,23 +43,20 @@ def filter_duplicate_corr_vectors(wrangler, property_key, filter_by='min',
 
     property_vector = wrangler.get_property_vector(property_key)
     dupe_inds = wrangler.get_duplicate_corr_inds()
-    to_keep = {inds[choose_val(property_vector[inds])]
+    indices = {inds[choose_val(property_vector[inds])]
                for inds in dupe_inds}
-    to_remove = set(i for inds in dupe_inds for i in inds) - to_keep
-    if verbose:
-        for i in to_remove:
-            item = wrangler.data_items[i]
-            print(f"Removing structure {item['structure'].composition}."
-                  f"with properties {item['properties']}.")
-    data_items = [item for i, item in enumerate(wrangler.data_items)
-                  if i not in to_remove]
-    wrangler.remove_all_data()
-    wrangler.append_data_items(data_items)
+    duplicates = set(i for inds in dupe_inds for i in inds) - indices
+    indices = list(set(range(wrangler.num_structures)) - duplicates)
+
+    if return_compliment:
+        return indices, list(duplicates)
+    else:
+        return indices
 
 
-@register_filter_metadata
-def filter_by_ewald_energy(wrangler, max_rel_energy, verbose=False):
-    """Filter structures by electrostatic interaction energy.
+def max_ewald_energy_indices(wrangler, max_relative_energy,
+                             return_compliment=False):
+    """Return index set of structures by electrostatic interaction energy.
 
     Filter the input structures to only use those with low electrostatic
     energies (no large charge separation in cell). This energy is
@@ -93,11 +68,11 @@ def filter_by_ewald_energy(wrangler, max_rel_energy, verbose=False):
     Args:
         wrangler (StructureWrangler):
             A StructureWrangler containing data to be filtered.
-        max_rel_energy (float):
+        max_relative_energy (float):
             Ewald threshold. The maximum Ewald energy relative to minumum
             energy at composition of structure (normalized by prim).
-        verbose (bool): optional
-            If True will print filtered structures.
+        return_compliment (bool): optional
+            If True will return the compliment of the unique indices
     """
     ewald_energy = None
     for term in wrangler.cluster_subspace.external_terms:
@@ -127,20 +102,19 @@ def filter_by_ewald_energy(wrangler, max_rel_energy, verbose=False):
         if energy < min_energy_by_comp[c]:
             min_energy_by_comp[c] = energy
 
-    data_items = []
-    for energy, item in zip(ewald_energy, wrangler.data_items):
+    indices, compliment = [], []
+    for i, (energy, item) in enumerate(zip(ewald_energy, wrangler.data_items)):
         min_energy = min_energy_by_comp[
             item['structure'].composition.reduced_composition]
         rel_energy = energy - min_energy
-        if rel_energy < max_rel_energy:
-            data_items.append(item)
-        elif verbose:
-            print(f"Removing structure {item['structure'].composition} "
-                  f"with properties {item['properties']}.\n"
-                  f"Relative Ewald interaction energy is {rel_energy} eV.")
-
-    wrangler.remove_all_data()
-    wrangler.append_data_items(data_items)
+        if rel_energy < max_relative_energy:
+            indices.append(i)
+        else:
+            compliment.append(i)
+    if return_compliment:
+        return indices, compliment
+    else:
+        return indices
 
 
 def weights_energy_above_composition(structures, energies, temperature=2000):
