@@ -57,14 +57,14 @@ class TestClusterSubSpace(unittest.TestCase):
 
     def test_hierarchy(self):
         hierarchy_uplow = self.cs.hierarchy_up_to_low()
-        self.assertEqual(sorted(hierarchy_uplow[0]),[])
-        self.assertEqual(sorted(hierarchy_uplow[-1]),[17,21])
-        self.assertEqual(sorted(hierarchy_uplow[15]),[])
-        self.assertEqual(sorted(hierarchy_uplow[35]),[5,6,7,10])
-        self.assertEqual(sorted(hierarchy_uplow[55]),[6,7,8,13])
-        self.assertEqual(sorted(hierarchy_uplow[75]),[7,16,21])
-        self.assertEqual(sorted(hierarchy_uplow[95]),[9,19])
-        self.assertEqual(sorted(hierarchy_uplow[115]),[13,19,21])
+        self.assertEqual(sorted(hierarchy_uplow[0]), [])
+        self.assertEqual(sorted(hierarchy_uplow[-1]), [17,21])
+        self.assertEqual(sorted(hierarchy_uplow[15]), [])
+        self.assertEqual(sorted(hierarchy_uplow[35]), [5, 6, 7, 10])
+        self.assertEqual(sorted(hierarchy_uplow[55]), [6, 7, 8, 13])
+        self.assertEqual(sorted(hierarchy_uplow[75]), [7, 16, 21])
+        self.assertEqual(sorted(hierarchy_uplow[95]), [9, 19])
+        self.assertEqual(sorted(hierarchy_uplow[115]), [13, 19, 21])
 
     def test_numbers(self):
         # Test the total generated orbits, orderings and clusters are
