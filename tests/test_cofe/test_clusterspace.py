@@ -17,26 +17,26 @@ from src.mc_utils import corr_from_occupancy
 
 # TODO test correlations for ternary and for applications of symops to structure
 def test_invert_mapping_table():
-    foward = [[],[],[1],[1],[1],[2,4],[3,4],[2,3],[5,6,7]]
+    forward = [[],[],[1],[1],[1],[2,4],[3,4],[2,3],[5,6,7]]
     backward = [[],[2,3,4],[5,7],[6,7],[5,6],[8],[8],[8],[]]
 
-    foward_invert = [sorted(sub) for sub in invert_mapping_table(foward)]
+    forward_invert = [sorted(sub) for sub in invert_mapping_table(forward)]
     backward_invert = [sorted(sub) for sub in invert_mapping_table(backward)]
 
-    assert foward_invert == backward
+    assert forward_invert == backward
     assert backward_invert == forward
 
-def test_get_complete_mapping_table():
-    foward = [[],[],[1],[1],[1],[2,4],[3,4],[2,3],[5,6,7]]
+def test_get_complete_mapping():
+    forward = [[],[],[1],[1],[1],[2,4],[3,4],[2,3],[5,6,7]]
     backward = [[],[2,3,4],[5,7],[6,7],[5,6],[8],[8],[8],[]]
 
-    foward_full = [[],[],[1],[1],[1],[1,2,4],[1,3,4],[1,2,3],[1,2,3,4,5,6,7]]
+    forward_full = [[],[],[1],[1],[1],[1,2,4],[1,3,4],[1,2,3],[1,2,3,4,5,6,7]]
     backward_full = [[],[2,3,4,5,6,7,8],[5,7,8],[6,7,8],[5,6,8],[8],[8],[8],[]]
 
-    foward_comp = [sorted(sub) for sub in get_complete_mapping_table(foward)]
-    backward_comp = [sorted(sub) for sub in get_complete_mapping_table(backward)]
+    forward_comp = [sorted(sub) for sub in get_complete_mapping(forward)]
+    backward_comp = [sorted(sub) for sub in get_complete_mapping(backward)]
 
-    assert foward_comp == forward_full
+    assert forward_comp == forward_full
     assert backward_comp == backward_full
 
 class TestClusterSubSpace(unittest.TestCase):
