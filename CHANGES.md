@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Use this section to keep track of changes in the works.
 
 ### Added
+* `ClusterSubspace.cutoffs` property to obtain tight cutoffs of included
+   orbits.
 * Added properties to get orbit and ordering multiplicities of corr functions.
 [\#102](https://github.com/CederGroupHub/smol/pull/102)
 ([lbluque](https://github.com/lbluque))
