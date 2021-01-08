@@ -19,7 +19,7 @@ __credits__ = "William Davidson Richard"
 from typing import Sequence
 import warnings
 import numpy as np
-from monty.json import MSONable
+from monty.json import MSONable, jsanitize
 from pymatgen import Structure
 from smol.cofe.space.clusterspace import ClusterSubspace
 from smol.exceptions import StructureMatchError
@@ -605,8 +605,6 @@ class StructureWrangler(MSONable):
              '@class': self.__class__.__name__,
              '_subspace': self._subspace.as_dict(),
              '_items': s_items,
-             '_ind_sets': self._ind_sets,
+             '_ind_sets': jsanitize(self._ind_sets),  # jic for np.int's
              'metadata': self.metadata}
         return d
-
-
