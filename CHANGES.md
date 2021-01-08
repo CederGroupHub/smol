@@ -10,8 +10,12 @@ Use this section to keep track of changes in the works.
 ### Added
 * data indices in `StructureWrangler` to keep track of training/test splits,
   duplicate sets, etc.
+  [\#102](https://github.com/CederGroupHub/smol/pull/108)
+  ([lbluque](https://github.com/lbluque))
 * `ClusterSubspace.cutoffs` property to obtain tight cutoffs of included
    orbits.
+   [\#102](https://github.com/CederGroupHub/smol/pull/108)
+   ([lbluque](https://github.com/lbluque))
 * Added properties to get orbit and ordering multiplicities of corr functions.
 [\#102](https://github.com/CederGroupHub/smol/pull/102)
 ([lbluque](https://github.com/lbluque))
@@ -27,6 +31,8 @@ Use this section to keep track of changes in the works.
 * filter functions in `smol.wrangling` replaced with functions returning
   indices corresponding to structures to keep. This can be used saving indices
   with `StructureWrangler.add_data_indices`.
+[\#102](https://github.com/CederGroupHub/smol/pull/108)
+([lbluque](https://github.com/lbluque))
 * Cleanup of sites, active sites and restricted sites in `Sublattice`
 [\#95](https://github.com/CederGroupHub/smol/pull/95)
   ([juliayang](https://github.com/juliayang))
