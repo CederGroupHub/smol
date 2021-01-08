@@ -4,9 +4,9 @@ from copy import deepcopy
 
 import numpy as np
 import numpy.testing as npt
-from smol.cofe import (StructureWrangler, ClusterSubspace,
-                       weights_energy_above_hull,
-                       weights_energy_above_composition)
+from smol.cofe import StructureWrangler, ClusterSubspace
+from smol.cofe.wrangling import weights_energy_above_hull, \
+    weights_energy_above_composition
 from smol.cofe.extern import EwaldTerm
 from tests.data import lno_prim, lno_data
 
