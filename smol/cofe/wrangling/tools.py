@@ -1,7 +1,6 @@
 """Functions to filter data in a StructureWrangler."""
 
 from collections import defaultdict
-from functools import wraps
 import numpy as np
 from pymatgen import Composition
 from pymatgen.analysis.phase_diagram import PDEntry, PhaseDiagram

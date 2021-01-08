@@ -608,5 +608,3 @@ class StructureWrangler(MSONable):
              '_ind_sets': self._ind_sets,
              'metadata': self.metadata}
         return d
-
-
