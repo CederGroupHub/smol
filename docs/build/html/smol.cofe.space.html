@@ -362,12 +362,6 @@ valuves of species as input.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.basis.SiteBasis.measure_array">
-<em class="property">property </em><code class="sig-name descname">measure_array</code><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.measure_array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get diagonal array with site species measures.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt id="smol.cofe.space.basis.SiteBasis.measure_vector">
 <em class="property">property </em><code class="sig-name descname">measure_vector</code><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.measure_vector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get vector of site species measures.</p>
@@ -669,12 +663,12 @@ Cluster space. (only those with partial occupancy)</p></li>
 <li><p><strong>orbits</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – {size: list of Orbits}
 Dictionary with size (number of sites) as keys and list of
 Orbits as values.</p></li>
-<li><p><strong>supercell_matcher</strong> (<em>StructureMatcher</em>) – (optional)
+<li><p><strong>supercell_matcher</strong> (<em>StructureMatcher</em>) – optional
 A StructureMatcher class to be used to find supercell matrices
 relating the prim structure to other structures. If you pass
 this directly you should know how to set the matcher up, other
 wise matching your relaxed structures can fail, alot.</p></li>
-<li><p><strong>site_matcher</strong> (<em>StructureMatcher</em>) – (optional)
+<li><p><strong>site_matcher</strong> (<em>StructureMatcher</em>) – optional
 A StructureMatcher class to be used to find site mappings
 relating the sites of a given structure to an appropriate
 supercell of the prim structure . If you pass this directly you
@@ -706,6 +700,14 @@ implemented.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="smol.cofe.space.clusterspace.ClusterSubspace.all_bit_combos">
+<em class="property">property </em><code class="sig-name descname">all_bit_combos</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.all_bit_combos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return flattened all bit_combos for each correlation function.</p>
+<p>A list of all bit_combos of length self.num_corr_functions.
+This allows to obtain a bit combo by bit id (empty cluster has None)</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="smol.cofe.space.clusterspace.ClusterSubspace.as_dict">
 <code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
@@ -732,6 +734,44 @@ implemented.</p>
 <dt id="smol.cofe.space.clusterspace.ClusterSubspace.basis_type">
 <em class="property">property </em><code class="sig-name descname">basis_type</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.basis_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the type of site basis set used.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.space.clusterspace.ClusterSubspace.bit_combo_hierarchy">
+<code class="sig-name descname">bit_combo_hierarchy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">min_size</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">invert</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.bit_combo_hierarchy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get 1-level-down hierarchy of correlation functions.</p>
+<p>The size difference between the current corr function and its
+sub-clusters is only 1! We only give one-level down hierarchy. Because
+that is enough to contrain hierarchy!</p>
+<dl class="simple">
+<dt>Note: Since complete, all level hierarchy table is not practical</dt><dd><p>for CE fit, we will not include it as an attribute of this class.
+If you still want to see it, call function get_complete_mapping
+in this module.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+Minimum size required for the correlation function. If the size
+of the correlation function is smaller or equals to min_size,
+will not search for its sub-clusters. For hierarchy
+constraints, the recommended setting is 2.</p></li>
+<li><p><strong>invert</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+Default is invert=False which gives the high to low bit combo
+hierarchy. Invert= True will invert the hierarchy into low to
+high</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Each sublist is of of length self.num_corr_function
+and contains integer indices of correlation functions that are
+contained by the correlation function with the current index.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of lists</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -794,13 +834,11 @@ option you are fully responsible that the mappings are correct!</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.corr_function_multiplicities">
-<em class="property">property </em><code class="sig-name descname">corr_function_multiplicities</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.corr_function_multiplicities" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get list of multiplicity of each distinct correlation function.</p>
-<p>The length of the list returned is the total number of correlation
-functions in the subspace for all orbits. The multiplicity of a
-correlation function is the number of symmetrically equivalent bit
-orderings the result in the product of the same single site functions.</p>
+<dt id="smol.cofe.space.clusterspace.ClusterSubspace.cutoffs">
+<em class="property">property </em><code class="sig-name descname">cutoffs</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.cutoffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return dict of orbit cluster cutoffs.</p>
+<p>These are “tight” cutoffs, as in the maximum diameter for each cluster
+size, which is &lt;= the input to from_cutoffs.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -846,12 +884,12 @@ of the box</p></li>
 <li><p><strong>use_concentration</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – If true the concentrations in the prim structure sites will be
 used to orthormalize site bases. This gives gives a cluster
 subspace centered about the prim composition.</p></li>
-<li><p><strong>supercell_matcher</strong> (<em>StructureMatcher</em>) – (optional)
+<li><p><strong>supercell_matcher</strong> (<em>StructureMatcher</em>) – optional
 A StructureMatcher class to be used to find supercell matrices
 relating the prim structure to other structures. If you pass
 this directly you should know how to set the matcher up other
 wise matching your relaxed structures will fail, alot.</p></li>
-<li><p><strong>site_matcher</strong> (<em>StructureMatcher</em>) – (optional)
+<li><p><strong>site_matcher</strong> (<em>StructureMatcher</em>) – optional
 A StructureMatcher class to be used to find site mappings
 relating the sites of a given structure to an appropriate
 supercell of the prim structure . If you pass this directly you
@@ -877,11 +915,59 @@ to use a species that has a constant amount per formula unit.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_cutoffs">
+<code class="sig-name descname">function_inds_by_cutoffs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">upper</span></em>, <em class="sig-param"><span class="n">lower</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_cutoffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get indices of corr functions by cluster cutoffs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – upper diameter for clusters to include.</p></li>
+<li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – optional
+lower diameter for clusters to include.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>of corr function indices for clusters within cutoffs</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_size">
+<em class="property">property </em><code class="sig-name descname">function_inds_by_size</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get correlation function indices by cluster sizes.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="smol.cofe.space.clusterspace.ClusterSubspace.function_orbit_ids">
 <em class="property">property </em><code class="sig-name descname">function_orbit_ids</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_orbit_ids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get Orbit IDs corresponding to each correlation function.</p>
 <p>If the Cluster Subspace includes external terms these are not included
 in the list since they are not associated with any orbit.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.space.clusterspace.ClusterSubspace.function_ordering_multiplicities">
+<em class="property">property </em><code class="sig-name descname">function_ordering_multiplicities</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_ordering_multiplicities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get array of ordering multiplicity of each correlation function.</p>
+<p>The length of the array returned is the total number of correlation
+functions in the subspace for all orbits. The ordering multiplicity of
+a correlation function is the number of symmetrically equivalent bit
+orderings the result in the product of the same single site functions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.space.clusterspace.ClusterSubspace.function_total_multiplicities">
+<em class="property">property </em><code class="sig-name descname">function_total_multiplicities</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_total_multiplicities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get array of total multiplicity of each correlation function.</p>
+<p>The length of the array returned is the total number of correlation
+functions in the subspace for all orbits. The total multiplicity of a
+correlation function is the number of symmetrically equivalent bit
+orderings the result in the product of the same single site functions
+times the (crystallographic) multiplicity of the orbit.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -891,8 +977,8 @@ in the list since they are not associated with any orbit.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.ncorr_functions_per_orbit">
-<em class="property">property </em><code class="sig-name descname">ncorr_functions_per_orbit</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.ncorr_functions_per_orbit" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.cofe.space.clusterspace.ClusterSubspace.num_functions_per_orbit">
+<em class="property">property </em><code class="sig-name descname">num_functions_per_orbit</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_functions_per_orbit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the number of correlation functions for each orbit.</p>
 <p>The list returned is of length total number of orbits, each entry is
 the total number of correlation functions assocaited with that orbit.</p>
@@ -960,6 +1046,24 @@ species itself.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_cutoffs">
+<code class="sig-name descname">orbits_by_cutoffs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">upper</span></em>, <em class="sig-param"><span class="n">lower</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_cutoffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get orbits with clusters within given diameter cutoffs (inclusive).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – upper diameter for clusters to include.</p></li>
+<li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – optional
+lower diameter for clusters to include.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of Orbits</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_size">
 <em class="property">property </em><code class="sig-name descname">orbits_by_size</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get dictionary of orbits with key being the orbit size.</p>
@@ -997,7 +1101,7 @@ responsible.</p></li>
 
 <dl class="py method">
 <dt id="smol.cofe.space.clusterspace.ClusterSubspace.remove_orbit_bit_combos">
-<code class="sig-name descname">remove_orbit_bit_combos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">orbit_bit_ids</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.remove_orbit_bit_combos" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">remove_orbit_bit_combos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bit_ids</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.remove_orbit_bit_combos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove orbit bit combos by their ids.</p>
 <p>Removes a specific bit combo from an orbit. This allows more granular
 removal of terms involved in fitting/evaluating a cluster expansion.
@@ -1013,7 +1117,7 @@ if we allow “in group” orbit eci sparsity…which everyone in the field
 does anyway…</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>orbit_bit_ids</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of orbit bit ids to remove</p>
+<dd class="field-odd"><p><strong>bit_ids</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of orbit bit ids to remove</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1108,6 +1212,52 @@ from the given matrix.</p>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt id="smol.cofe.space.clusterspace.get_complete_mapping">
+<code class="sig-name descname">get_complete_mapping</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mapping</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.get_complete_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a complete mapping from a 1 level mapping.</p>
+<p>If we allow transferability between mapping linkages, there would be
+a full mapping containing all linkages at all connectivity level.
+Using this function, you can get a full mapping from an incomplete
+mapping.</p>
+<p>NOTE: Since complete hierarchy is not very useful for actual CE fit, we
+will not include it as an attribute of ClusterSubspace.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>mapping</strong> (<em>list of lists</em>) – List of sublists, each contains integer indices, indicating
+a foward mapping from the current sublist index to the indices
+in the sublist.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Full mapping table containing forward mapping, but with
+all connectivity levels. Same format as input</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of lists</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="smol.cofe.space.clusterspace.invert_mapping_table">
+<code class="sig-name descname">invert_mapping_table</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mapping</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.invert_mapping_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invert a mapping table from forward to backward, vice versa.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>mapping</strong> (<em>list of lists</em>) – List of sublists, each contains integer indices, indicating
+a foward mapping from the current sublist index to the indices
+in the sublist.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Inverted mapping table containing backward mapping.
+Same format as input.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>lists of lists</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -1416,6 +1566,18 @@ fancy indexing which can be faster than for loops.</p>
 <dt id="smol.cofe.space.orbit.Orbit.basis_type">
 <em class="property">property </em><code class="sig-name descname">basis_type</code><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.basis_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the name of basis set used.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.space.orbit.Orbit.bit_combo_array">
+<em class="property">property </em><code class="sig-name descname">bit_combo_array</code><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.bit_combo_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Single array of all bit combos.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.space.orbit.Orbit.bit_combo_inds">
+<em class="property">property </em><code class="sig-name descname">bit_combo_inds</code><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.bit_combo_inds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get indices to symmetrically equivalent bits in bit combo array.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1776,6 +1938,18 @@ fancy indexing which can be faster than for loops.</p>
 <dt id="smol.cofe.space.Orbit.basis_type">
 <em class="property">property </em><code class="sig-name descname">basis_type</code><a class="headerlink" href="#smol.cofe.space.Orbit.basis_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the name of basis set used.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.space.Orbit.bit_combo_array">
+<em class="property">property </em><code class="sig-name descname">bit_combo_array</code><a class="headerlink" href="#smol.cofe.space.Orbit.bit_combo_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Single array of all bit combos.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.space.Orbit.bit_combo_inds">
+<em class="property">property </em><code class="sig-name descname">bit_combo_inds</code><a class="headerlink" href="#smol.cofe.space.Orbit.bit_combo_inds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get indices to symmetrically equivalent bits in bit combo array.</p>
 </dd></dl>
 
 <dl class="py method">

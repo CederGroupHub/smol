@@ -4,9 +4,9 @@ from copy import deepcopy
 
 import numpy as np
 import numpy.testing as npt
-from smol.cofe import (StructureWrangler, ClusterSubspace,
-                       weights_energy_above_hull,
-                       weights_energy_above_composition)
+from smol.cofe import StructureWrangler, ClusterSubspace
+from smol.cofe.wrangling import weights_energy_above_hull, \
+    weights_energy_above_composition
 from smol.cofe.extern import EwaldTerm
 from tests.data import lno_prim, lno_data
 
@@ -26,6 +26,17 @@ class TestStructureWrangler(unittest.TestCase):
                             weights={'random': 2.0})
         struct, energy = lno_data[-1]
         self.sw.add_data(struct, {'energy': energy}, weights={'random': 3.0})
+
+    def test_data_indices(self):
+        test = np.random.choice(range(self.sw.num_structures), 5)
+        train = np.setdiff1d(range(self.sw.num_structures), test)
+        self.sw.add_data_indices('test', test)
+        self.sw.add_data_indices('train', train)
+        self.assertTrue(all(key in self.sw.available_indices
+                            for key in ['test', 'train']))
+        self.assertRaises(ValueError, self.sw.add_data_indices,
+                          'bla', [self.sw.num_structures, ])
+        self.assertRaises(TypeError, self.sw.add_data_indices, 'foo', 77)
 
     def test_properties(self):
         self.assertEqual(self.sw.feature_matrix.shape,
@@ -62,7 +73,7 @@ class TestStructureWrangler(unittest.TestCase):
         self.assertGreaterEqual(self.sw.get_condition_number(rows, cols), 1)
         print(self.sw.feature_matrix.shape)
         self.assertGreaterEqual(self.sw.get_feature_matrix_rank(rows, cols),
-                                self.sw.get_feature_matrix_rank(cols=cols[:-4]))
+                                self.sw.get_feature_matrix_rank(cols=cols[:-3]))
 
     def test_add_data(self):
         # Check that a structure that does not match raises error.

@@ -4,6 +4,7 @@ from copy import deepcopy
 from importlib import import_module
 import warnings
 import numpy as np
+from itertools import combinations
 
 from monty.json import MSONable
 from pymatgen import Structure, PeriodicSite
@@ -16,12 +17,13 @@ from pymatgen.util.coord import \
 
 from src.mc_utils import corr_from_occupancy
 from smol.cofe.space import (Orbit, basis_factory, get_site_spaces,
-                             get_allowed_species, Vacancy)
+                             get_allowed_species, Vacancy, Cluster)
 from smol.cofe.space.constants import SITE_TOL
 from smol.exceptions import (SymmetryError, StructureMatchError,
                              SYMMETRY_ERROR_MESSAGE)
 
-__author__ = "Luis Barroso-Luque, William Davidson Richard"
+__author__ = "Luis Barroso-Luque, William Davidson Richards, Fengyu Xie," \
+             "Peichen Zhong"
 
 
 class ClusterSubspace(MSONable):
@@ -85,12 +87,12 @@ class ClusterSubspace(MSONable):
             orbits (dict): {size: list of Orbits}
                 Dictionary with size (number of sites) as keys and list of
                 Orbits as values.
-            supercell_matcher (StructureMatcher): (optional)
+            supercell_matcher (StructureMatcher): optional
                 A StructureMatcher class to be used to find supercell matrices
                 relating the prim structure to other structures. If you pass
                 this directly you should know how to set the matcher up, other
                 wise matching your relaxed structures can fail, alot.
-            site_matcher (StructureMatcher): (optional)
+            site_matcher (StructureMatcher): optional
                 A StructureMatcher class to be used to find site mappings
                 relating the sites of a given structure to an appropriate
                 supercell of the prim structure . If you pass this directly you
@@ -150,18 +152,16 @@ class ClusterSubspace(MSONable):
             self._site_matcher = site_matcher
 
         self._orbits = orbits
-
-        # lazy stuff from orbits
-        self._func_orb_ids = None
-        self._orb_mults = None
-        self._orb_nbit_ords = None
-
         self._external_terms = []  # List will hold external terms (i.e. Ewald)
 
         # Dict to cache orbit index mappings, this prevents doing another
         # structure match with the _site_matcher for structures that have
         # already been matched
         self._supercell_orb_inds = {}
+
+        # 2D lists to store 1-level-down hierarchy info. (One level only!)
+        # Will be cleaned after any change of orbits!
+        self._bit_combo_hierarchy = None
 
         # assign the cluster ids
         self._assign_orbit_ids()
@@ -204,12 +204,12 @@ class ClusterSubspace(MSONable):
                 If true the concentrations in the prim structure sites will be
                 used to orthormalize site bases. This gives gives a cluster
                 subspace centered about the prim composition.
-            supercell_matcher (StructureMatcher): (optional)
+            supercell_matcher (StructureMatcher): optional
                 A StructureMatcher class to be used to find supercell matrices
                 relating the prim structure to other structures. If you pass
                 this directly you should know how to set the matcher up other
                 wise matching your relaxed structures will fail, alot.
-            site_matcher (StructureMatcher): (optional)
+            site_matcher (StructureMatcher): optional
                 A StructureMatcher class to be used to find site mappings
                 relating the sites of a given structure to an appropriate
                 supercell of the prim structure . If you pass this directly you
@@ -233,7 +233,8 @@ class ClusterSubspace(MSONable):
                            or len(site.species) > 1]
         expansion_structure = Structure.from_sites(sites_to_expand)
         # get orbits within given cutoffs
-        orbits = cls._orbits_from_cutoffs(expansion_structure, cutoffs, symops,
+        orbits = cls._orbits_from_cutoffs(expansion_structure,
+                                          cutoffs, symops,
                                           basis, orthonormal,
                                           use_concentration)
         return cls(structure=structure,
@@ -257,6 +258,16 @@ class ClusterSubspace(MSONable):
         return self._exp_structure
 
     @property
+    def cutoffs(self):
+        """Return dict of orbit cluster cutoffs.
+
+        These are "tight" cutoffs, as in the maximum diameter for each cluster
+        size, which is <= the input to from_cutoffs.
+        """
+        return {size: max(orbit.base_cluster.diameter for orbit in orbits)
+                for size, orbits in self._orbits.items() if size != 1}
+
+    @property
     def orbits(self):
         """Return a list of all orbits sorted by size."""
         return [orbit for _, orbits
@@ -276,34 +287,118 @@ class ClusterSubspace(MSONable):
     @property
     def orbit_multiplicities(self):
         """Get the crystallographic multiplicities for each orbit."""
-        if self._orb_mults is None:
-            self._orb_mults = [orb.multiplicity for orb in self.iterorbits()]
-        return self._orb_mults
+        mults = [1] + [orb.multiplicity for orb in self.iterorbits()]
+        return np.array(mults)
 
     @property
-    def ncorr_functions_per_orbit(self):
+    def all_bit_combos(self):
+        """Return flattened all bit_combos for each correlation function.
+
+        A list of all bit_combos of length self.num_corr_functions.
+        This allows to obtain a bit combo by bit id (empty cluster has None)
+        """
+        return [None] + [combos for orbit in self.orbits
+                         for combos in orbit.bit_combos]
+
+    @property
+    def num_functions_per_orbit(self):
         """Get the number of correlation functions for each orbit.
 
         The list returned is of length total number of orbits, each entry is
         the total number of correlation functions assocaited with that orbit.
         """
-        if self._orb_nbit_ords is None:
-            self._orb_nbit_ords = [len(orbit) for orbit in self.iterorbits()]
-        return self._orb_nbit_ords
+        return [len(orbit) for orbit in self.iterorbits()]
 
     @property
-    def corr_function_multiplicities(self):
-        """Get list of multiplicity of each distinct correlation function.
+    def function_orbit_ids(self):
+        """Get Orbit IDs corresponding to each correlation function.
 
-        The length of the list returned is the total number of correlation
-        functions in the subspace for all orbits. The multiplicity of a
-        correlation function is the number of symmetrically equivalent bit
+        If the Cluster Subspace includes external terms these are not included
+        in the list since they are not associated with any orbit.
+        """
+        func_orb_ids = [0]
+        for orbit in self.iterorbits():
+            func_orb_ids += len(orbit) * [orbit.id, ]
+        return func_orb_ids
+
+    @property
+    def function_inds_by_size(self):
+        """Get correlation function indices by cluster sizes."""
+        return {s: list(range(os[0].bit_id, os[-1].bit_id + len(os[-1])))
+                for s, os in self._orbits.items()}
+
+    @property
+    def function_ordering_multiplicities(self):
+        """Get array of ordering multiplicity of each correlation function.
+
+        The length of the array returned is the total number of correlation
+        functions in the subspace for all orbits. The ordering multiplicity of
+        a correlation function is the number of symmetrically equivalent bit
         orderings the result in the product of the same single site functions.
         """
-        corrfun_mults = []
-        for orbit in self.orbits:
-            corrfun_mults += orbit.bit_combo_multiplicities
-        return corrfun_mults
+        mults = [1] + [mult for orb in self.orbits
+                       for mult in orb.bit_combo_multiplicities]
+        return np.array(mults)
+
+    @property
+    def function_total_multiplicities(self):
+        """Get array of total multiplicity of each correlation function.
+
+        The length of the array returned is the total number of correlation
+        functions in the subspace for all orbits. The total multiplicity of a
+        correlation function is the number of symmetrically equivalent bit
+        orderings the result in the product of the same single site functions
+        times the (crystallographic) multiplicity of the orbit.
+        """
+        return self.orbit_multiplicities[self.function_orbit_ids] * \
+            self.function_ordering_multiplicities
+
+    def bit_combo_hierarchy(self, min_size=2, invert=False):
+        """Get 1-level-down hierarchy of correlation functions.
+
+        The size difference between the current corr function and its
+        sub-clusters is only 1! We only give one-level down hierarchy. Because
+        that is enough to contrain hierarchy!
+
+        Note: Since complete, all level hierarchy table is not practical
+              for CE fit, we will not include it as an attribute of this class.
+              If you still want to see it, call function get_complete_mapping
+              in this module.
+
+        Args:
+            min_size (int): optional
+                Minimum size required for the correlation function. If the size
+                of the correlation function is smaller or equals to min_size,
+                will not search for its sub-clusters. For hierarchy
+                constraints, the recommended setting is 2.
+            invert (bool): optional
+                Default is invert=False which gives the high to low bit combo
+                hierarchy. Invert= True will invert the hierarchy into low to
+                high
+
+        Returns:
+            list of lists: Each sublist is of of length self.num_corr_function
+            and contains integer indices of correlation functions that are
+            contained by the correlation function with the current index.
+        """
+        if self._bit_combo_hierarchy is None:
+            self._bit_combo_hierarchy = self._get_hierarchy_up_to_low()
+
+        # array of orbit sizes for each bit id.
+        all_sizes = np.array([0] + [self.orbits[i - 1].base_cluster.size
+                                    for i in self.function_orbit_ids[1:]])
+
+        # Stores a hierarchy from cluster size 1, then retrieves from min_size.
+        hierarchy = []
+        for vals, size in zip(self._bit_combo_hierarchy, all_sizes):
+            if size <= min_size:
+                hierarchy.append([])
+            else:
+                hierarchy.append(vals)
+        if invert:
+            return invert_mapping_table(hierarchy)
+        else:
+            return hierarchy
 
     @property
     def basis_orthogonal(self):
@@ -324,18 +419,38 @@ class ClusterSubspace(MSONable):
         """
         return self._external_terms
 
-    @property
-    def function_orbit_ids(self):
-        """Get Orbit IDs corresponding to each correlation function.
+    def orbits_by_cutoffs(self, upper, lower=0):
+        """Get orbits with clusters within given diameter cutoffs (inclusive).
 
-        If the Cluster Subspace includes external terms these are not included
-        in the list since they are not associated with any orbit.
+        Args:
+            upper (float):
+                upper diameter for clusters to include.
+            lower (float): optional
+                lower diameter for clusters to include.
+
+        Returns:
+            list of Orbits
         """
-        if self._func_orb_ids is None:
-            self._func_orb_ids = [0]
-            for orbit in self.iterorbits():
-                self._func_orb_ids += len(orbit) * [orbit.id, ]
-        return self._func_orb_ids
+        return [orbit for orbit in self.iterorbits()
+                if lower <= orbit.base_cluster.diameter <= upper]
+
+    def function_inds_by_cutoffs(self, upper, lower=0):
+        """Get indices of corr functions by cluster cutoffs.
+
+        Args:
+            upper (float):
+                upper diameter for clusters to include.
+            lower (float): optional
+                lower diameter for clusters to include.
+
+        Returns:
+            list: of corr function indices for clusters within cutoffs
+        """
+        orbits = self.orbits_by_cutoffs(upper, lower)
+        inds = []
+        for orbit in orbits:
+            inds += list(range(orbit.bit_id, orbit.bit_id + len(orbit)))
+        return inds
 
     def add_external_term(self, term):
         """Add an external term to subspace.
@@ -404,8 +519,10 @@ class ClusterSubspace(MSONable):
 
         orb_inds = self.supercell_orbit_mappings(scmatrix)
         # Create a list of tuples with necessary information to compute corr
-        orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
-                      for orb, inds in orb_inds]
+        orbit_list = [
+            (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
+             orb.bases_array, inds) for orb, inds in orb_inds
+        ]
         corr = corr_from_occupancy(occu, self.num_corr_functions, orbit_list)
 
         size = self.num_prims_from_matrix(scmatrix)
@@ -625,13 +742,11 @@ class ClusterSubspace(MSONable):
                                   if orbit.id not in orbit_ids]
 
         self._assign_orbit_ids()  # Re-assign ids
-        self._func_orb_ids = None  # reset orbit info stuff, it may be worth
-        self._orb_mults = None  # considering always computing this in the
-        self._orb_nbit_ords = None  # @property, and not worry about reseting.
-        # Clear the cached supercell orbit mappings
+        # Clear the cached supercell orbit mappings and hierarchy
         self._supercell_orb_inds = {}
+        self._bit_combo_hierarchy = None
 
-    def remove_orbit_bit_combos(self, orbit_bit_ids):
+    def remove_orbit_bit_combos(self, bit_ids):
         """Remove orbit bit combos by their ids.
 
         Removes a specific bit combo from an orbit. This allows more granular
@@ -649,11 +764,11 @@ class ClusterSubspace(MSONable):
         does anyway...
 
         Args:
-            orbit_bit_ids (list):
+            bit_ids (list):
                 list of orbit bit ids to remove
         """
         empty_orbit_ids = []
-        bit_ids = np.array(orbit_bit_ids, dtype=int)
+        bit_ids = np.array(bit_ids, dtype=int)
 
         for orbit in self.iterorbits():
             first_id = orbit.bit_id
@@ -673,7 +788,9 @@ class ClusterSubspace(MSONable):
             self.remove_orbits(empty_orbit_ids)
         else:
             self._assign_orbit_ids()  # Re-assign ids
-            self._func_orb_ids = None  # reset func ids
+
+        # clear hierarchy
+        self._bit_combo_hierarchy = None
 
     def copy(self):
         """Deep copy of instance."""
@@ -835,6 +952,92 @@ class ClusterSubspace(MSONable):
 
         return orbit_indices
 
+    def _find_sub_cluster(self, bit_id, min_size=1):
+        """Find 1-level-down subclusters of a given correlation function.
+
+        Args:
+            bit_id (int):
+                Index of the correlation function to find subclusters with.
+            min_size (int): optional
+                Minimum size required for the correlation function. If  the
+                size of the correlation function is smaller or equals to
+                min_size, will not search for its sub-clusters.
+
+        Returns:
+            list: A list of integer indices specifying which correlation
+            functions are 1-level-down subclusters of the given correlation
+            function.
+        """
+        if bit_id == 0:  # Constant term
+            return []
+
+        # Separate the zero term out.
+        all_sizes = np.array([0] + [self.orbits[i - 1].base_cluster.size
+                             for i in self.function_orbit_ids[1:]])
+
+        bit_combos = self.all_bit_combos[bit_id]
+        orbit = self.orbits[self.function_orbit_ids[bit_id] - 1]
+        sites = orbit.base_cluster.sites
+
+        size = all_sizes[bit_id]
+        if size <= min_size:
+            return []
+
+        possible_sub_ids = np.where(all_sizes == (size - 1))[0]
+        lattice = self._exp_structure.lattice
+        sub_indices = []
+        for comb in combinations(np.arange(size), size - 1):
+            sub_sites = np.array(sites[np.array(comb), :])
+            sub_bit_combos = np.array(bit_combos[:, np.array(comb)])
+            sub_cluster = Cluster(sub_sites, lattice)
+            sub_equiv = [sub_cluster]
+            for symop in self.symops:
+                new_sites = symop.operate_multi(sub_sites)
+                c = Cluster(new_sites, lattice)
+                if c not in sub_equiv:
+                    sub_equiv.append(c)
+
+            for sub_id in possible_sub_ids:
+                sub_bit_combo = self.all_bit_combos[sub_id]
+                sub_orbit = self.orbits[self.function_orbit_ids[sub_id] - 1]
+                cluster_match = sub_orbit.base_cluster in sub_equiv
+                bit_match = np.any(
+                    np.all(sub_bit_combo[0] == sub_bit_combos, axis=1))
+
+                if cluster_match and bit_match:
+                    if sub_id in sub_indices:
+                        continue
+                    else:
+                        sub_indices.append(sub_id)
+
+        return sub_indices
+
+    def _get_hierarchy_up_to_low(self, min_size=1):
+        """Generate high-to-low hierarchy.
+
+        The size difference between the current corr function and its
+        sub clusters is only 1! We only give one-level down hierarchy
+        Because it would be enough to contrain hierarchy!
+
+        Args:
+            min_size:
+                Minimum size required for the correlation function. If  the
+                size of the correlation function is smaller or equals to
+                min_size, will not search for its sub-clusters.
+
+        Returns:
+            list of lists: Each sublist of length self.num_corr_function
+            contains integer indices of correlation functions that are
+            contained by the correlation function with the current index.
+        """
+        up_low_hierarchy = [[] for i in range(self.num_corr_functions)]
+
+        for ii in np.flip(np.arange(self.num_corr_functions)):
+            sub_indices = self._find_sub_cluster(ii, min_size=min_size)
+            up_low_hierarchy[ii] = sub_indices
+
+        return up_low_hierarchy
+
     def __eq__(self, other):
         """Check equality between cluster subspaces."""
         if not isinstance(other, ClusterSubspace):
@@ -852,8 +1055,8 @@ class ClusterSubspace(MSONable):
                    for o1, o2 in zip(other.orbits, self.orbits))
 
     def __len__(self):
-        """Get number of correlation functions in the subspace."""
-        return self.num_corr_functions
+        """Get number of correlation functions and ext terms in subspace."""
+        return self.num_corr_functions + len(self.external_terms)
 
     def __str__(self):
         """Convert class into pretty string for printing."""
@@ -907,6 +1110,7 @@ class ClusterSubspace(MSONable):
                                         np.array(ind)) for o_id, ind
                                         in orb_inds]
         cs._supercell_orb_inds = _supercell_orb_inds
+        cs._bit_combo_hierarchy = d.get('_bc_hierarchy')
         return cs
 
     def as_dict(self):
@@ -930,5 +1134,70 @@ class ClusterSubspace(MSONable):
              'sc_matcher': self._sc_matcher.as_dict(),
              'site_matcher': self._site_matcher.as_dict(),
              'external_terms': [et.as_dict() for et in self.external_terms],
-             '_supercell_orb_inds': _supercell_orb_inds}
+             '_supercell_orb_inds': _supercell_orb_inds,
+             '_bc_hierarchy': self._bit_combo_hierarchy}
         return d
+
+
+def invert_mapping_table(mapping):
+    """Invert a mapping table from forward to backward, vice versa.
+
+    Args:
+        mapping (list of lists):
+            List of sublists, each contains integer indices, indicating
+            a foward mapping from the current sublist index to the indices
+            in the sublist.
+
+    Returns:
+        lists of lists: Inverted mapping table containing backward mapping.
+        Same format as input.
+    """
+    inv_mapping = [[] for _ in range(len(mapping))]
+
+    for i in range(len(mapping) - 1, -1, -1):
+        values_list = mapping[i]
+        for value in values_list:
+            if not (i in inv_mapping[value]):
+                inv_mapping[value].append(i)
+
+    return inv_mapping
+
+
+def get_complete_mapping(mapping):
+    """Get a complete mapping from a 1 level mapping.
+
+    If we allow transferability between mapping linkages, there would be
+    a full mapping containing all linkages at all connectivity level.
+    Using this function, you can get a full mapping from an incomplete
+    mapping.
+
+    NOTE: Since complete hierarchy is not very useful for actual CE fit, we
+    will not include it as an attribute of ClusterSubspace.
+
+    Args:
+        mapping (list of lists):
+             List of sublists, each contains integer indices, indicating
+            a foward mapping from the current sublist index to the indices
+            in the sublist.
+
+    Returns:
+        list of lists: Full mapping table containing forward mapping, but with
+        all connectivity levels. Same format as input
+    """
+    all_level_mapping = deepcopy(mapping)
+
+    for i in range(len(mapping) - 1, -1, -1):
+        next_values_list = mapping[i]
+
+        while len(next_values_list) > 0:
+            for next_value in next_values_list:
+                if next_value not in all_level_mapping[i]:
+                    all_level_mapping[i].append(next_value)
+            next_values_list_new = []
+            for next_value in next_values_list:
+                for nn_value in mapping[next_value]:
+                    if nn_value not in next_values_list_new:
+                        next_values_list_new.append(nn_value)
+            next_values_list = next_values_list_new
+
+    return all_level_mapping

@@ -7,6 +7,8 @@ from pymatgen import Lattice, Structure, Species
 from pymatgen.util.coord import is_coord_subset_pbc
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe import ClusterSubspace
+from smol.cofe.space.clusterspace import invert_mapping_table,\
+                                         get_complete_mapping
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.constants import SITE_TOL
 from smol.cofe.space.domain import get_allowed_species, Vacancy
@@ -14,7 +16,28 @@ from smol.exceptions import StructureMatchError
 from src.mc_utils import corr_from_occupancy
 
 # TODO test correlations for ternary and for applications of symops to structure
+def test_invert_mapping_table():
+    forward = [[],[],[1],[1],[1],[2,4],[3,4],[2,3],[5,6,7]]
+    backward = [[],[2,3,4],[5,7],[6,7],[5,6],[8],[8],[8],[]]
 
+    forward_invert = [sorted(sub) for sub in invert_mapping_table(forward)]
+    backward_invert = [sorted(sub) for sub in invert_mapping_table(backward)]
+
+    assert forward_invert == backward
+    assert backward_invert == forward
+
+def test_get_complete_mapping():
+    forward = [[],[],[1],[1],[1],[2,4],[3,4],[2,3],[5,6,7]]
+    backward = [[],[2,3,4],[5,7],[6,7],[5,6],[8],[8],[8],[]]
+
+    forward_full = [[],[],[1],[1],[1],[1,2,4],[1,3,4],[1,2,3],[1,2,3,4,5,6,7]]
+    backward_full = [[],[2,3,4,5,6,7,8],[5,7,8],[6,7,8],[5,6,8],[8],[8],[8],[]]
+
+    forward_comp = [sorted(sub) for sub in get_complete_mapping(forward)]
+    backward_comp = [sorted(sub) for sub in get_complete_mapping(backward)]
+
+    assert forward_comp == forward_full
+    assert backward_comp == backward_full
 
 class TestClusterSubSpace(unittest.TestCase):
     def setUp(self) -> None:
@@ -25,12 +48,24 @@ class TestClusterSubSpace(unittest.TestCase):
         self.structure = Structure(self.lattice, self.species, self.coords)
         sf = SpacegroupAnalyzer(self.structure)
         self.symops = sf.get_symmetry_operations()
+        self.cutoffs = {2: 6, 3: 5}
         self.cs = ClusterSubspace.from_cutoffs(self.structure,
-                                               cutoffs={2: 6, 3: 5},
+                                               cutoffs=self.cutoffs,
                                                basis='indicator',
                                                orthonormal=False,
                                                supercell_size='volume')
         self.domains = get_allowed_species(self.structure)
+
+    def test_hierarchy(self):
+        hierarchy_uplow = self.cs.bit_combo_hierarchy()
+        self.assertEqual(sorted(hierarchy_uplow[0]), [])
+        self.assertEqual(sorted(hierarchy_uplow[-1]), [17,21])
+        self.assertEqual(sorted(hierarchy_uplow[15]), [])
+        self.assertEqual(sorted(hierarchy_uplow[35]), [5, 6, 7, 10])
+        self.assertEqual(sorted(hierarchy_uplow[55]), [6, 7, 8, 13])
+        self.assertEqual(sorted(hierarchy_uplow[75]), [7, 16, 21])
+        self.assertEqual(sorted(hierarchy_uplow[95]), [9, 19])
+        self.assertEqual(sorted(hierarchy_uplow[115]), [13, 19, 21])
 
     def test_numbers(self):
         # Test the total generated orbits, orderings and clusters are
@@ -41,8 +76,7 @@ class TestClusterSubSpace(unittest.TestCase):
 
     def test_func_orbit_ids(self):
         self.assertEqual(len(self.cs.function_orbit_ids), 124)
-        self.assertEqual(len(set(self.cs.function_orbit_ids)),
-                         27)
+        self.assertEqual(len(set(self.cs.function_orbit_ids)), 27)
 
     def test_orbits(self):
         self.assertEqual(len(self.cs.orbits) + 1, self.cs.num_orbits)  # +1 for empty cluster
@@ -53,6 +87,49 @@ class TestClusterSubSpace(unittest.TestCase):
         orbits = [o for o in self.cs.iterorbits()]
         for o1, o2 in zip(orbits, self.cs.orbits):
             self.assertEqual(o1, o2)
+
+    def test_cutoffs(self):
+        for s, c in self.cs.cutoffs.items():
+            self.assertTrue(self.cutoffs[s] >= c)
+
+    def test_orbits_by_cutoffs(self):
+        # Get all of them
+        self.assertTrue(
+            all(o1 == o2 for o1, o2 in
+                zip(self.cs.orbits, self.cs.orbits_by_cutoffs(6))))
+        for upper, lower in ((5, 0), (6, 3), (5, 2)):
+            orbs = self.cs.orbits_by_cutoffs(upper, lower)
+            self.assertTrue(len(orbs) < len(self.cs.orbits))
+            self.assertTrue(
+                all(lower <= o.base_cluster.diameter <= upper for o in orbs)
+            )
+        # bad cuttoffs
+        self.assertTrue(len(self.cs.orbits_by_cutoffs(2, 4)) == 0)
+
+    def test_functions_inds_by_size(self):
+        indices = self.cs.function_inds_by_size
+        # check that all orbit functions are in there...
+        self.assertTrue(
+            sum(len(i) for i in indices.values()) == len(self.cs) - 1)
+        fun_orb_ids = self.cs.function_orbit_ids
+        # Now check sizes are correct.
+        for s, inds in indices.items():
+            self.assertTrue(
+                all(s == len(self.cs.orbits[fun_orb_ids[i] - 1].base_cluster)
+                    for i in inds))
+
+    def test_functions_inds_by_cutoffs(self):
+        indices = self.cs.function_inds_by_cutoffs(6)
+        # check that all of them are in there.
+        self.assertTrue(len(indices) == len(self.cs) - 1)
+        fun_orb_ids = self.cs.function_orbit_ids
+        for upper, lower in ((4, 0), (5, 3), (3, 1)):
+            indices = self.cs.function_inds_by_cutoffs(upper, lower)
+            self.assertTrue(len(indices) < len(self.cs))
+            self.assertTrue(
+                all(lower <= self.cs.orbits[fun_orb_ids[i] - 1].base_cluster.diameter <= upper
+                    for i in indices)
+            )
 
     def test_bases_ortho(self):
         # test orthogonality, orthonormality of bases with uniform and
@@ -284,8 +361,10 @@ class TestClusterSubSpace(unittest.TestCase):
                                           basis='indicator')
         bits = get_allowed_species(structure)
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-        orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
-                      for orb, inds in cs.supercell_orbit_mappings(m)]
+        orbit_list = [
+            (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
+             orb.bases_array, inds)
+            for orb, inds in cs.supercell_orbit_mappings(m)]
 
         # last two clusters are switched from CASM output (occupancy basis)
         # all_li (ignore casm point term)
@@ -340,8 +419,10 @@ class TestClusterSubSpace(unittest.TestCase):
         spaces = get_allowed_species(structure)
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 
-        orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
-                      for orb, inds in cs.supercell_orbit_mappings(m)]
+        orbit_list = [
+            (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
+             orb.bases_array, inds)
+            for orb, inds in cs.supercell_orbit_mappings(m)]
         # last two pair terms are switched from CASM output (occupancy basis)
         # all_vacancy (ignore casm point term)
         occu = self._encode_occu([Vacancy(),
@@ -390,8 +471,10 @@ class TestClusterSubSpace(unittest.TestCase):
                                           basis='indicator')
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 
-        orbit_list = [(orb.bit_id, orb.bit_combos, orb.bases_array, inds)
-                      for orb, inds in cs.supercell_orbit_mappings(m)]
+        orbit_list = [
+            (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
+             orb.bases_array, inds)
+            for orb, inds in cs.supercell_orbit_mappings(m)]
         # mixed
         occu = self._encode_occu([Vacancy(), Species('Li', 1),
                                   Species('Li', 1)], self.domains)

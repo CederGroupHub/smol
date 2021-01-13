@@ -71,6 +71,7 @@ class SiteBasis(MSONable):
 
         func_arr = np.array([[function(sp) for sp in self.species]
                              for function in basis_functions])
+        func_arr[abs(func_arr) < np.finfo(np.float64).eps] = 0
         # stack the constant basis function on there for proper normalization
         self._f_array = np.vstack((np.ones_like(func_arr[0]), func_arr))
         self._r_array = None  # array from QR in basis orthonormalization
@@ -79,11 +80,6 @@ class SiteBasis(MSONable):
     def function_array(self):
         """Get array with the non-constant site functions as rows."""
         return self._f_array[1:]
-
-    @property
-    def measure_array(self):
-        """Get diagonal array with site species measures."""
-        return np.diag(list(self._domain.values()))
 
     @property
     def measure_vector(self):
@@ -114,23 +110,15 @@ class SiteBasis(MSONable):
     def is_orthogonal(self):
         """Test if the basis is orthogonal."""
         # add the implicit 0th function
-        prods = np.dot(np.dot(self.measure_array, self._f_array.T).T,
-                       self._f_array.T)
-        d_terms = all(not np.isclose(prods[i, i], 0)
-                      for i in range(prods.shape[0]))
-        x_terms = all(np.isclose(prods[i, j], 0)
-                      for i in range(prods.shape[0])
-                      for j in range(prods.shape[1])
-                      if i != j)
-        return x_terms and d_terms
+        prods = (self.measure_vector * self._f_array) @ self._f_array.T
+        prods /= np.diag(prods)
+        return np.allclose(prods, np.eye(*prods.shape))
 
     @property
     def is_orthonormal(self):
         """Test if the basis is orthonormal."""
-        prods = np.dot(np.dot(self.measure_array, self._f_array.T).T,
-                       self._f_array.T)
-        identity = np.eye(*prods.shape)
-        return np.allclose(identity, prods)
+        prods = (self.measure_vector * self._f_array) @ self._f_array.T
+        return np.allclose(prods, np.eye(*prods.shape))
 
     def orthonormalize(self):
         """Orthonormalizes basis function set based on initial basis set.
@@ -143,18 +131,12 @@ class SiteBasis(MSONable):
         Due to how the func_arr is saved (rows are vectors/functions) this
         allows us to not sprinkle so many transposes.
         """
-        Q = np.zeros_like(self._f_array)
-        R = np.zeros_like(self._f_array)
-        V = self._f_array.copy()
-        n = V.shape[0]
-        for i, phi in enumerate(V):
-            R[i, i] = np.sqrt(np.dot(self.measure_vector*phi, phi))
-            Q[i] = phi/R[i, i]
-            R[i, i+1:n] = np.dot(V[i+1:n], self.measure_vector*Q[i])
-            V[i+1:n] = V[i+1:n] - np.outer(R[i, i+1:n], Q[i])
-
-        self._r_array = R
-        self._f_array = Q
+        q, r = np.linalg.qr((np.sqrt(self.measure_vector) * self._f_array).T,
+                            mode='complete')
+        # r[abs(r) < 2 * np.finfo(np.float64).eps] = 0
+        # q[abs(q) < 2 * np.finfo(np.float64).eps] = 0
+        self._r_array = q[:, 0] / np.sqrt(self.measure_vector) * r.T
+        self._f_array = q.T/q[:, 0]  # make first row constant = 1
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation."""
@@ -163,7 +145,8 @@ class SiteBasis(MSONable):
              "site_space": self._domain.as_dict(),
              "flavor": self.flavor,
              "func_array": self._f_array.tolist(),
-             "orthonorm_array": None if self._r_array is None else self._r_array.tolist()  # noqa
+             "orthonorm_array":
+                 None if self._r_array is None else self._r_array.tolist()
              }
         return d
 

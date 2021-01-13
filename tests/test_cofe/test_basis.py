@@ -45,8 +45,10 @@ class TestBasis(unittest.TestCase):
         self._test_basis_measure_raise(basis.IndicatorIterator)
         self._test_measure(basis.IndicatorIterator)
 
+        original = b._f_array.copy()
         b.orthonormalize()
         self.assertTrue(b.is_orthonormal)
+        self.assertTrue(np.allclose(b._r_array @ b._f_array, original))
 
     def test_sinusoid_basis(self):
         species = tuple(self.site_space.keys())
@@ -59,14 +61,16 @@ class TestBasis(unittest.TestCase):
             a = -(-n//2)
             f = lambda s: -np.sin(2*np.pi*a*s/m) if n % 2 == 0 else -np.cos(2*np.pi*a*s/m)
             for i, _ in enumerate(self.site_space):
-                self.assertEqual(b.function_array[n-1, i], f(i))
+                self.assertTrue(np.isclose(b.function_array[n-1, i], f(i)))
 
         self._test_basis_measure_raise(basis.SinusoidIterator)
         self._test_measure(basis.SinusoidIterator)
         b = basis.SiteBasis(self.site_space, basis.SinusoidIterator(species))
         self.assertTrue(b.is_orthogonal)
+        original = b._f_array.copy()
         b.orthonormalize()
         self.assertTrue(b.is_orthonormal)
+        self.assertTrue(np.allclose(b._r_array @ b._f_array, original))
 
     def test_chebyshev_basis(self):
         species = tuple(self.site_space.keys())
