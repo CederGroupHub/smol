@@ -7,6 +7,8 @@ from pymatgen import Lattice, Structure, Species
 from pymatgen.util.coord import is_coord_subset_pbc
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe import ClusterSubspace
+from smol.cofe.space.clusterspace import invert_mapping_table,\
+                                         get_complete_mapping
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.constants import SITE_TOL
 from smol.cofe.space.domain import get_allowed_species, Vacancy
@@ -14,7 +16,28 @@ from smol.exceptions import StructureMatchError
 from src.mc_utils import corr_from_occupancy
 
 # TODO test correlations for ternary and for applications of symops to structure
+def test_invert_mapping_table():
+    forward = [[],[],[1],[1],[1],[2,4],[3,4],[2,3],[5,6,7]]
+    backward = [[],[2,3,4],[5,7],[6,7],[5,6],[8],[8],[8],[]]
 
+    forward_invert = [sorted(sub) for sub in invert_mapping_table(forward)]
+    backward_invert = [sorted(sub) for sub in invert_mapping_table(backward)]
+
+    assert forward_invert == backward
+    assert backward_invert == forward
+
+def test_get_complete_mapping():
+    forward = [[],[],[1],[1],[1],[2,4],[3,4],[2,3],[5,6,7]]
+    backward = [[],[2,3,4],[5,7],[6,7],[5,6],[8],[8],[8],[]]
+
+    forward_full = [[],[],[1],[1],[1],[1,2,4],[1,3,4],[1,2,3],[1,2,3,4,5,6,7]]
+    backward_full = [[],[2,3,4,5,6,7,8],[5,7,8],[6,7,8],[5,6,8],[8],[8],[8],[]]
+
+    forward_comp = [sorted(sub) for sub in get_complete_mapping(forward)]
+    backward_comp = [sorted(sub) for sub in get_complete_mapping(backward)]
+
+    assert forward_comp == forward_full
+    assert backward_comp == backward_full
 
 class TestClusterSubSpace(unittest.TestCase):
     def setUp(self) -> None:
@@ -32,6 +55,17 @@ class TestClusterSubSpace(unittest.TestCase):
                                                orthonormal=False,
                                                supercell_size='volume')
         self.domains = get_allowed_species(self.structure)
+
+    def test_hierarchy(self):
+        hierarchy_uplow = self.cs.bit_combo_hierarchy()
+        self.assertEqual(sorted(hierarchy_uplow[0]), [])
+        self.assertEqual(sorted(hierarchy_uplow[-1]), [17,21])
+        self.assertEqual(sorted(hierarchy_uplow[15]), [])
+        self.assertEqual(sorted(hierarchy_uplow[35]), [5, 6, 7, 10])
+        self.assertEqual(sorted(hierarchy_uplow[55]), [6, 7, 8, 13])
+        self.assertEqual(sorted(hierarchy_uplow[75]), [7, 16, 21])
+        self.assertEqual(sorted(hierarchy_uplow[95]), [9, 19])
+        self.assertEqual(sorted(hierarchy_uplow[115]), [13, 19, 21])
 
     def test_numbers(self):
         # Test the total generated orbits, orderings and clusters are
