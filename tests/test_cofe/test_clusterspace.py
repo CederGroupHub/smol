@@ -48,8 +48,9 @@ class TestClusterSubSpace(unittest.TestCase):
         self.structure = Structure(self.lattice, self.species, self.coords)
         sf = SpacegroupAnalyzer(self.structure)
         self.symops = sf.get_symmetry_operations()
+        self.cutoffs = {2: 6, 3: 5}
         self.cs = ClusterSubspace.from_cutoffs(self.structure,
-                                               cutoffs={2: 6, 3: 5},
+                                               cutoffs=self.cutoffs,
                                                basis='indicator',
                                                orthonormal=False,
                                                supercell_size='volume')
@@ -86,6 +87,10 @@ class TestClusterSubSpace(unittest.TestCase):
         orbits = [o for o in self.cs.iterorbits()]
         for o1, o2 in zip(orbits, self.cs.orbits):
             self.assertEqual(o1, o2)
+
+    def test_cutoffs(self):
+        for s, c in self.cs.cutoffs.items():
+            self.assertTrue(self.cutoffs[s] >= c)
 
     def test_orbits_by_cutoffs(self):
         # Get all of them

@@ -258,6 +258,16 @@ class ClusterSubspace(MSONable):
         return self._exp_structure
 
     @property
+    def cutoffs(self):
+        """Return dict of orbit cluster cutoffs.
+
+        These are "tight" cutoffs, as in the maximum diameter for each cluster
+        size, which is <= the input to from_cutoffs.
+        """
+        return {size: max(orbit.base_cluster.diameter for orbit in orbits)
+                for size, orbits in self._orbits.items() if size != 1}
+
+    @property
     def orbits(self):
         """Return a list of all orbits sorted by size."""
         return [orbit for _, orbits
