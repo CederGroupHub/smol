@@ -62,7 +62,7 @@ class TestStructureWrangler(unittest.TestCase):
         self.assertGreaterEqual(self.sw.get_condition_number(rows, cols), 1)
         print(self.sw.feature_matrix.shape)
         self.assertGreaterEqual(self.sw.get_feature_matrix_rank(rows, cols),
-                                self.sw.get_feature_matrix_rank(cols=cols[:-4]))
+                                self.sw.get_feature_matrix_rank(cols=cols[:-3]))
 
     def test_add_data(self):
         # Check that a structure that does not match raises error.

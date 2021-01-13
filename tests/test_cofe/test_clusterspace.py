@@ -56,7 +56,7 @@ class TestClusterSubSpace(unittest.TestCase):
         self.domains = get_allowed_species(self.structure)
 
     def test_hierarchy(self):
-        hierarchy_uplow = self.cs.hierarchy_up_to_low()
+        hierarchy_uplow = self.cs.bit_combo_hierarchy()
         self.assertEqual(sorted(hierarchy_uplow[0]), [])
         self.assertEqual(sorted(hierarchy_uplow[-1]), [17,21])
         self.assertEqual(sorted(hierarchy_uplow[15]), [])

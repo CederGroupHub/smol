@@ -161,7 +161,7 @@ class ClusterSubspace(MSONable):
 
         # 2D lists to store 1-level-down hierarchy info. (One level only!)
         # Will be cleaned after any change of orbits!
-        self._hierarchy_up_to_low = None
+        self._bit_combo_hierarchy = None
 
         # assign the cluster ids
         self._assign_orbit_ids()
@@ -343,7 +343,7 @@ class ClusterSubspace(MSONable):
         return self.orbit_multiplicities[self.function_orbit_ids] * \
             self.function_ordering_multiplicities
 
-    def hierarchy_up_to_low(self, min_size=2):
+    def bit_combo_hierarchy(self, min_size=2, invert=False):
         """Get 1-level-down hierarchy of correlation functions.
 
         The size difference between the current corr function and its
@@ -361,14 +361,18 @@ class ClusterSubspace(MSONable):
                 of the correlation function is smaller or equals to min_size,
                 will not search for its sub-clusters. For hierarchy
                 constraints, the recommended setting is 2.
+            invert (bool): optional
+                Default is invert=False which gives the high to low bit combo
+                hierarchy. Invert= True will invert the hierarchy into low to
+                high
 
         Returns:
             list of lists: Each sublist is of of length self.num_corr_function
             and contains integer indices of correlation functions that are
             contained by the correlation function with the current index.
         """
-        if self._hierarchy_up_to_low is None:
-            self._hierarchy_up_to_low = self._get_hierarchy_up_to_low()
+        if self._bit_combo_hierarchy is None:
+            self._bit_combo_hierarchy = self._get_hierarchy_up_to_low()
 
         # array of orbit sizes for each bit id.
         all_sizes = np.array([0] + [self.orbits[i - 1].base_cluster.size
@@ -376,41 +380,15 @@ class ClusterSubspace(MSONable):
 
         # Stores a hierarchy from cluster size 1, then retrieves from min_size.
         hierarchy = []
-        for vals, size in zip(self._hierarchy_up_to_low, all_sizes):
+        for vals, size in zip(self._bit_combo_hierarchy, all_sizes):
             if size <= min_size:
                 hierarchy.append([])
             else:
                 hierarchy.append(vals)
-        return hierarchy
-
-    def hierarchy_low_to_up(self, min_size=2):
-        """Get 1-level-down hierarchy of correlation functions.
-
-        NOTE: 1-level low-to-up hierarchy is the standard format for
-        regression module.
-        Since complete, all level hierarchy table is not practical
-        for CE fit, we will not include it as an attribute of this class.
-        If you still want to see it, call function get_complete_mapping
-        in this module.
-
-        The size difference between the current corr function and its
-        sub clusters is only 1! We only give one-level down hierarchy
-        Because it would be enough to contrain hierarchy!
-
-        Args:
-            min_size (int): optional
-                Minimum size required for the correlation function. If the size
-                of the correlation function is SMALLER than min_size, will not
-                search for its super-clusters. Default value is 2, namely, only
-                searching super clusters for pairs and above.
-
-        Returns:
-            list of lists: Each sublist is of of length self.num_corr_function
-            and contains integer indices of correlation functions that are
-            contained by the correlation function with the current index.
-        """
-        return invert_mapping_table(
-            self.hierarchy_up_to_low(min_size=min_size))
+        if invert:
+            return invert_mapping_table(hierarchy)
+        else:
+            return hierarchy
 
     @property
     def basis_orthogonal(self):
@@ -756,7 +734,7 @@ class ClusterSubspace(MSONable):
         self._assign_orbit_ids()  # Re-assign ids
         # Clear the cached supercell orbit mappings and hierarchy
         self._supercell_orb_inds = {}
-        self._hierarchy_up_to_low = None
+        self._bit_combo_hierarchy = None
 
     def remove_orbit_bit_combos(self, bit_ids):
         """Remove orbit bit combos by their ids.
@@ -802,7 +780,7 @@ class ClusterSubspace(MSONable):
             self._assign_orbit_ids()  # Re-assign ids
 
         # clear hierarchy
-        self._hierarchy_up_to_low = None
+        self._bit_combo_hierarchy = None
 
     def copy(self):
         """Deep copy of instance."""
@@ -1122,10 +1100,7 @@ class ClusterSubspace(MSONable):
                                         np.array(ind)) for o_id, ind
                                         in orb_inds]
         cs._supercell_orb_inds = _supercell_orb_inds
-
-        if '_hierarchy' in d:
-            cs._hierarchy_up_to_low = d['_hierarchy']
-
+        cs._bit_combo_hierarchy = d.get('_bc_hierarchy')
         return cs
 
     def as_dict(self):
@@ -1150,7 +1125,7 @@ class ClusterSubspace(MSONable):
              'site_matcher': self._site_matcher.as_dict(),
              'external_terms': [et.as_dict() for et in self.external_terms],
              '_supercell_orb_inds': _supercell_orb_inds,
-             '_hierarchy': self._hierarchy_up_to_low}
+             '_bc_hierarchy': self._bit_combo_hierarchy}
         return d
 
 
