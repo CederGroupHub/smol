@@ -1232,3 +1232,13 @@ class PottsSubspace(ClusterSubspace):
             list: list of lists each list has equivalent decorations.
         """
         pass
+
+    @classmethod
+    def from_dict(cls, d):
+        """Create ClusterSubspace from an MSONable dict."""
+        subspace = super().from_dict(d)
+        # remove last bit combo in all orbits
+        for orbit in subspace.orbits:
+            orbit.remove_bit_combos_by_inds([len(orbit.bit_combos) - 1])
+        subspace._assign_orbit_ids()
+        return subspace
