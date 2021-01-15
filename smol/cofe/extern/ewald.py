@@ -48,7 +48,7 @@ class EwaldTerm(PairwiseTerms, MSONable):
                 the Ewald expansion term to use as an additional term in the
                 expansion. Options are total, real, reciprocal, point.
         """
-        
+        PairwiseTerms().__init__()
         self.eta = eta
         self.real_space_cut = real_space_cut
         self.recip_space_cut = recip_space_cut
