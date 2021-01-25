@@ -73,7 +73,7 @@
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">smol.cofe.wrangling package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-smol.cofe.wrangling.filter">smol.cofe.wrangling.filter module</a></li>
+<li><a class="reference internal" href="#smol-cofe-wrangling-filter-module">smol.cofe.wrangling.filter module</a></li>
 <li><a class="reference internal" href="#module-smol.cofe.wrangling.wrangler">smol.cofe.wrangling.wrangler module</a></li>
 <li><a class="reference internal" href="#module-smol.cofe.wrangling">Module contents</a></li>
 </ul>
@@ -112,73 +112,8 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-smol.cofe.wrangling.filter">
-<span id="smol-cofe-wrangling-filter-module"></span><h2>smol.cofe.wrangling.filter module<a class="headerlink" href="#module-smol.cofe.wrangling.filter" title="Permalink to this headline">¶</a></h2>
-<p>Functions to filter data in a StructureWrangler.</p>
-<dl class="py function">
-<dt id="smol.cofe.wrangling.filter.filter_by_ewald_energy">
-<code class="sig-name descname">filter_by_ewald_energy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wrangler</span></em>, <em class="sig-param"><span class="n">max_rel_energy</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.filter.filter_by_ewald_energy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter structures by electrostatic interaction energy.</p>
-<p>Filter the input structures to only use those with low electrostatic
-energies (no large charge separation in cell). This energy is
-referenced to the lowest value at that composition. Note that this is
-before the division by the relative dielectric constant and is per
-primitive cell in the cluster expansion – 1.5 eV/atom seems to be a
-reasonable value for dielectric constants around 10.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>wrangler</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.StructureWrangler" title="smol.cofe.StructureWrangler"><em>StructureWrangler</em></a>) – A StructureWrangler containing data to be filtered.</p></li>
-<li><p><strong>max_rel_energy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Ewald threshold. The maximum Ewald energy relative to minumum
-energy at composition of structure (normalized by prim).</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
-If True will print filtered structures.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="smol.cofe.wrangling.filter.filter_duplicate_corr_vectors">
-<code class="sig-name descname">filter_duplicate_corr_vectors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wrangler</span></em>, <em class="sig-param"><span class="n">property_key</span></em>, <em class="sig-param"><span class="n">filter_by</span><span class="o">=</span><span class="default_value">'min'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.filter.filter_duplicate_corr_vectors" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter structures with duplicate correlation vectors.</p>
-<p>Keep structures with the min or max value of the given property.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>wrangler</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.StructureWrangler" title="smol.cofe.StructureWrangler"><em>StructureWrangler</em></a>) – A StructureWrangler containing data to be filtered.</p></li>
-<li><p><strong>property_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name of property to consider when returning structure indices
-for the feature matrix with duplicate corr vectors removed.</p></li>
-<li><p><strong>filter_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The criteria for the property value to keep. Options are min
-or max.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
-If True print the filtered structures.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="smol.cofe.wrangling.filter.register_filter_metadata">
-<code class="sig-name descname">register_filter_metadata</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filter_fun</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.filter.register_filter_metadata" title="Permalink to this definition">¶</a></dt>
-<dd><p>Register metadata associated with a filter function.</p>
-<p>Decorate filter functions with this to register the metadata associated
-with the filtering.
-:param filter_fun: A filter function that takes a StructureWrangler as the first</p>
-<blockquote>
-<div><p>argument (and any necessary additional keyword arguments) to
-filter data items in the StructureWrangler.</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>decorated filter function</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Callable</p>
-</dd>
-</dl>
-</dd></dl>
-
+<div class="section" id="smol-cofe-wrangling-filter-module">
+<h2>smol.cofe.wrangling.filter module<a class="headerlink" href="#smol-cofe-wrangling-filter-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-smol.cofe.wrangling.wrangler">
 <span id="smol-cofe-wrangling-wrangler-module"></span><h2>smol.cofe.wrangling.wrangler module<a class="headerlink" href="#module-smol.cofe.wrangling.wrangler" title="Permalink to this headline">¶</a></h2>
@@ -268,6 +203,14 @@ fail for further inspection.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="smol.cofe.wrangling.wrangler.StructureWrangler.add_data_indices">
+<code class="sig-name descname">add_data_indices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">indices</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.add_data_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a set of data indices.</p>
+<p>Fore example use this for saving test/training splits or separating
+duplicates.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="smol.cofe.wrangling.wrangler.StructureWrangler.add_properties">
 <code class="sig-name descname">add_properties</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">property_vector</span></em>, <em class="sig-param"><span class="n">normalized</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.add_properties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add another property vector to structures already in the wrangler.</p>
@@ -327,6 +270,12 @@ obtained using the process_structure method.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="smol.cofe.wrangling.wrangler.StructureWrangler.available_indices">
+<em class="property">property </em><code class="sig-name descname">available_indices</code><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.available_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of available data index sets.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="smol.cofe.wrangling.wrangler.StructureWrangler.available_properties">
 <em class="property">property </em><code class="sig-name descname">available_properties</code><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.available_properties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of properties that have been added.</p>
@@ -356,6 +305,12 @@ to create a copy and the change the subspace.</p>
 <dt id="smol.cofe.wrangling.wrangler.StructureWrangler.cluster_subspace">
 <em class="property">property </em><code class="sig-name descname">cluster_subspace</code><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.cluster_subspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the underlying ClusterSubspace used to compute features.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.wrangling.wrangler.StructureWrangler.data_indices">
+<code class="sig-name descname">data_indices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.data_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a specific data index set.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -651,9 +606,63 @@ the Wrangler. This will prevent having to match structures and such.</p>
 
 </dd></dl>
 
+</div>
+<div class="section" id="module-smol.cofe.wrangling">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-smol.cofe.wrangling" title="Permalink to this headline">¶</a></h2>
+<p>Implementation of StructureWrangler.</p>
+<p>And additional wrangling functions to preprocess and filter fitting data.</p>
 <dl class="py function">
-<dt id="smol.cofe.wrangling.wrangler.weights_energy_above_composition">
-<code class="sig-name descname">weights_energy_above_composition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structures</span></em>, <em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">temperature</span><span class="o">=</span><span class="default_value">2000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.weights_energy_above_composition" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.cofe.wrangling.max_ewald_energy_indices">
+<code class="sig-name descname">max_ewald_energy_indices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wrangler</span></em>, <em class="sig-param"><span class="n">max_relative_energy</span></em>, <em class="sig-param"><span class="n">return_compliment</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.max_ewald_energy_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return index set of structures by electrostatic interaction energy.</p>
+<p>Filter the input structures to only use those with low electrostatic
+energies (no large charge separation in cell). This energy is
+referenced to the lowest value at that composition. Note that this is
+before the division by the relative dielectric constant and is per
+primitive cell in the cluster expansion – 1.5 eV/atom seems to be a
+reasonable value for dielectric constants around 10.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrangler</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.StructureWrangler" title="smol.cofe.StructureWrangler"><em>StructureWrangler</em></a>) – A StructureWrangler containing data to be filtered.</p></li>
+<li><p><strong>max_relative_energy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Ewald threshold. The maximum Ewald energy relative to minumum
+energy at composition of structure (normalized by prim).</p></li>
+<li><p><strong>return_compliment</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+If True will return the compliment of the unique indices</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="smol.cofe.wrangling.unique_corr_vector_indices">
+<code class="sig-name descname">unique_corr_vector_indices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wrangler</span></em>, <em class="sig-param"><span class="n">property_key</span></em>, <em class="sig-param"><span class="n">filter_by</span><span class="o">=</span><span class="default_value">'min'</span></em>, <em class="sig-param"><span class="n">return_compliment</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.unique_corr_vector_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return index set of structures with unique correlation vectors.</p>
+<p>Keep structures with the min or max value of the given property.
+Note correlation vectors exclude external terms such that even if the
+external term is different for the structure but all correlations are
+the same the structures will be considered duplicates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wrangler</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.StructureWrangler" title="smol.cofe.StructureWrangler"><em>StructureWrangler</em></a>) – A StructureWrangler containing data to be filtered.</p></li>
+<li><p><strong>property_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name of property to consider when returning structure indices
+for the feature matrix with duplicate corr vectors removed.</p></li>
+<li><p><strong>filter_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The criteria for the property value to keep. Options are min
+or max.</p></li>
+<li><p><strong>return_compliment</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+If True will return the compliment of the unique indices</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>indices, compliment</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="smol.cofe.wrangling.weights_energy_above_composition">
+<code class="sig-name descname">weights_energy_above_composition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structures</span></em>, <em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">temperature</span><span class="o">=</span><span class="default_value">2000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.weights_energy_above_composition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute weights for energy above the minimum reduced composition energy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -671,8 +680,8 @@ the Wrangler. This will prevent having to match structures and such.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="smol.cofe.wrangling.wrangler.weights_energy_above_hull">
-<code class="sig-name descname">weights_energy_above_hull</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structures</span></em>, <em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">cs_structure</span></em>, <em class="sig-param"><span class="n">temperature</span><span class="o">=</span><span class="default_value">2000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.weights_energy_above_hull" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.cofe.wrangling.weights_energy_above_hull">
+<code class="sig-name descname">weights_energy_above_hull</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structures</span></em>, <em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">cs_structure</span></em>, <em class="sig-param"><span class="n">temperature</span><span class="o">=</span><span class="default_value">2000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.weights_energy_above_hull" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute weights for structure energy above the hull of given structures.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -686,54 +695,6 @@ the Wrangler. This will prevent having to match structures and such.</p>
 </dl>
 <dl class="simple">
 <dt>Returns: weights for each structure.</dt><dd><p>array</p>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
-<div class="section" id="module-smol.cofe.wrangling">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-smol.cofe.wrangling" title="Permalink to this headline">¶</a></h2>
-<p>Implementation of StructureWrangler.</p>
-<p>And additional wrangling functions to preprocess and filter fitting data.</p>
-<dl class="py function">
-<dt id="smol.cofe.wrangling.filter_by_ewald_energy">
-<code class="sig-name descname">filter_by_ewald_energy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wrangler</span></em>, <em class="sig-param"><span class="n">max_rel_energy</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.filter_by_ewald_energy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter structures by electrostatic interaction energy.</p>
-<p>Filter the input structures to only use those with low electrostatic
-energies (no large charge separation in cell). This energy is
-referenced to the lowest value at that composition. Note that this is
-before the division by the relative dielectric constant and is per
-primitive cell in the cluster expansion – 1.5 eV/atom seems to be a
-reasonable value for dielectric constants around 10.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>wrangler</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.StructureWrangler" title="smol.cofe.StructureWrangler"><em>StructureWrangler</em></a>) – A StructureWrangler containing data to be filtered.</p></li>
-<li><p><strong>max_rel_energy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Ewald threshold. The maximum Ewald energy relative to minumum
-energy at composition of structure (normalized by prim).</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
-If True will print filtered structures.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="smol.cofe.wrangling.filter_duplicate_corr_vectors">
-<code class="sig-name descname">filter_duplicate_corr_vectors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wrangler</span></em>, <em class="sig-param"><span class="n">property_key</span></em>, <em class="sig-param"><span class="n">filter_by</span><span class="o">=</span><span class="default_value">'min'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.filter_duplicate_corr_vectors" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter structures with duplicate correlation vectors.</p>
-<p>Keep structures with the min or max value of the given property.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>wrangler</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.StructureWrangler" title="smol.cofe.StructureWrangler"><em>StructureWrangler</em></a>) – A StructureWrangler containing data to be filtered.</p></li>
-<li><p><strong>property_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name of property to consider when returning structure indices
-for the feature matrix with duplicate corr vectors removed.</p></li>
-<li><p><strong>filter_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The criteria for the property value to keep. Options are min
-or max.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
-If True print the filtered structures.</p></li>
-</ul>
 </dd>
 </dl>
 </dd></dl>

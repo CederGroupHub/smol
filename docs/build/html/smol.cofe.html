@@ -181,7 +181,7 @@ expansion. i.e. if it was pruned, any error metrics etc.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A clustersubspace representing the subspace over which the
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A clustersubspace representing the subspace over which the
 Cluster Expansion was fit. Must be the same used to create
 the feature matrix.</p></li>
 <li><p><strong>coefficients</strong> (<em>ndarray</em>) – coefficients for cluster expansion. Make sure the supplied
@@ -376,7 +376,7 @@ expansion. i.e. if it was pruned, any error metrics etc.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A clustersubspace representing the subspace over which the
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A clustersubspace representing the subspace over which the
 Cluster Expansion was fit. Must be the same used to create
 the feature matrix.</p></li>
 <li><p><strong>coefficients</strong> (<em>ndarray</em>) – coefficients for cluster expansion. Make sure the supplied
@@ -603,12 +603,12 @@ Cluster space. (only those with partial occupancy)</p></li>
 <li><p><strong>orbits</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – {size: list of Orbits}
 Dictionary with size (number of sites) as keys and list of
 Orbits as values.</p></li>
-<li><p><strong>supercell_matcher</strong> (<em>StructureMatcher</em>) – (optional)
+<li><p><strong>supercell_matcher</strong> (<em>StructureMatcher</em>) – optional
 A StructureMatcher class to be used to find supercell matrices
 relating the prim structure to other structures. If you pass
 this directly you should know how to set the matcher up, other
 wise matching your relaxed structures can fail, alot.</p></li>
-<li><p><strong>site_matcher</strong> (<em>StructureMatcher</em>) – (optional)
+<li><p><strong>site_matcher</strong> (<em>StructureMatcher</em>) – optional
 A StructureMatcher class to be used to find site mappings
 relating the sites of a given structure to an appropriate
 supercell of the prim structure . If you pass this directly you
@@ -640,6 +640,14 @@ implemented.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="smol.cofe.ClusterSubspace.all_bit_combos">
+<em class="property">property </em><code class="sig-name descname">all_bit_combos</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.all_bit_combos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return flattened all bit_combos for each correlation function.</p>
+<p>A list of all bit_combos of length self.num_corr_functions.
+This allows to obtain a bit combo by bit id (empty cluster has None)</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="smol.cofe.ClusterSubspace.as_dict">
 <code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
@@ -666,6 +674,44 @@ implemented.</p>
 <dt id="smol.cofe.ClusterSubspace.basis_type">
 <em class="property">property </em><code class="sig-name descname">basis_type</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.basis_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the type of site basis set used.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.ClusterSubspace.bit_combo_hierarchy">
+<code class="sig-name descname">bit_combo_hierarchy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">min_size</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">invert</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.bit_combo_hierarchy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get 1-level-down hierarchy of correlation functions.</p>
+<p>The size difference between the current corr function and its
+sub-clusters is only 1! We only give one-level down hierarchy. Because
+that is enough to contrain hierarchy!</p>
+<dl class="simple">
+<dt>Note: Since complete, all level hierarchy table is not practical</dt><dd><p>for CE fit, we will not include it as an attribute of this class.
+If you still want to see it, call function get_complete_mapping
+in this module.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+Minimum size required for the correlation function. If the size
+of the correlation function is smaller or equals to min_size,
+will not search for its sub-clusters. For hierarchy
+constraints, the recommended setting is 2.</p></li>
+<li><p><strong>invert</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+Default is invert=False which gives the high to low bit combo
+hierarchy. Invert= True will invert the hierarchy into low to
+high</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Each sublist is of of length self.num_corr_function
+and contains integer indices of correlation functions that are
+contained by the correlation function with the current index.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of lists</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -728,6 +774,14 @@ option you are fully responsible that the mappings are correct!</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="smol.cofe.ClusterSubspace.cutoffs">
+<em class="property">property </em><code class="sig-name descname">cutoffs</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.cutoffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return dict of orbit cluster cutoffs.</p>
+<p>These are “tight” cutoffs, as in the maximum diameter for each cluster
+size, which is &lt;= the input to from_cutoffs.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="smol.cofe.ClusterSubspace.expansion_structure">
 <em class="property">property </em><code class="sig-name descname">expansion_structure</code><a class="headerlink" href="#smol.cofe.ClusterSubspace.expansion_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the primitive expansion structure (excludes inactive sites).</p>
@@ -770,12 +824,12 @@ of the box</p></li>
 <li><p><strong>use_concentration</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – If true the concentrations in the prim structure sites will be
 used to orthormalize site bases. This gives gives a cluster
 subspace centered about the prim composition.</p></li>
-<li><p><strong>supercell_matcher</strong> (<em>StructureMatcher</em>) – (optional)
+<li><p><strong>supercell_matcher</strong> (<em>StructureMatcher</em>) – optional
 A StructureMatcher class to be used to find supercell matrices
 relating the prim structure to other structures. If you pass
 this directly you should know how to set the matcher up other
 wise matching your relaxed structures will fail, alot.</p></li>
-<li><p><strong>site_matcher</strong> (<em>StructureMatcher</em>) – (optional)
+<li><p><strong>site_matcher</strong> (<em>StructureMatcher</em>) – optional
 A StructureMatcher class to be used to find site mappings
 relating the sites of a given structure to an appropriate
 supercell of the prim structure . If you pass this directly you
@@ -987,7 +1041,7 @@ responsible.</p></li>
 
 <dl class="py method">
 <dt id="smol.cofe.ClusterSubspace.remove_orbit_bit_combos">
-<code class="sig-name descname">remove_orbit_bit_combos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">orbit_bit_ids</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.remove_orbit_bit_combos" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">remove_orbit_bit_combos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bit_ids</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.remove_orbit_bit_combos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove orbit bit combos by their ids.</p>
 <p>Removes a specific bit combo from an orbit. This allows more granular
 removal of terms involved in fitting/evaluating a cluster expansion.
@@ -1003,7 +1057,7 @@ if we allow “in group” orbit eci sparsity…which everyone in the field
 does anyway…</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>orbit_bit_ids</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of orbit bit ids to remove</p>
+<dd class="field-odd"><p><strong>bit_ids</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of orbit bit ids to remove</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1124,7 +1178,7 @@ it to save any other pertinent information that will be saved with using
 <p>Initialize a StructureWrangler.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A ClusterSubspace object that will be used to fit a
+<dd class="field-odd"><p><strong>cluster_subspace</strong> (<a class="reference internal" href="#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A ClusterSubspace object that will be used to fit a
 ClusterExpansion with the provided data.</p>
 </dd>
 </dl>
@@ -1173,6 +1227,14 @@ fail for further inspection.</p></li>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.StructureWrangler.add_data_indices">
+<code class="sig-name descname">add_data_indices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">indices</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.add_data_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a set of data indices.</p>
+<p>Fore example use this for saving test/training splits or separating
+duplicates.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1235,6 +1297,12 @@ obtained using the process_structure method.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="smol.cofe.StructureWrangler.available_indices">
+<em class="property">property </em><code class="sig-name descname">available_indices</code><a class="headerlink" href="#smol.cofe.StructureWrangler.available_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of available data index sets.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="smol.cofe.StructureWrangler.available_properties">
 <em class="property">property </em><code class="sig-name descname">available_properties</code><a class="headerlink" href="#smol.cofe.StructureWrangler.available_properties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of properties that have been added.</p>
@@ -1264,6 +1332,12 @@ to create a copy and the change the subspace.</p>
 <dt id="smol.cofe.StructureWrangler.cluster_subspace">
 <em class="property">property </em><code class="sig-name descname">cluster_subspace</code><a class="headerlink" href="#smol.cofe.StructureWrangler.cluster_subspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the underlying ClusterSubspace used to compute features.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.StructureWrangler.data_indices">
+<code class="sig-name descname">data_indices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.data_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a specific data index set.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1557,45 +1631,6 @@ creating the Wrangler, for example added an Ewald term after creating
 the Wrangler. This will prevent having to match structures and such.</p>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="py function">
-<dt id="smol.cofe.weights_energy_above_composition">
-<code class="sig-name descname">weights_energy_above_composition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structures</span></em>, <em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">temperature</span><span class="o">=</span><span class="default_value">2000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.weights_energy_above_composition" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute weights for energy above the minimum reduced composition energy.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>structures</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of pymatgen.Structures</p></li>
-<li><p><strong>energies</strong> (<em>ndarray</em>) – energies of corresponding structures.</p></li>
-<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – temperature to used in boltzmann weight</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="simple">
-<dt>Returns: weights for each structure.</dt><dd><p>array</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="smol.cofe.weights_energy_above_hull">
-<code class="sig-name descname">weights_energy_above_hull</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structures</span></em>, <em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">cs_structure</span></em>, <em class="sig-param"><span class="n">temperature</span><span class="o">=</span><span class="default_value">2000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.weights_energy_above_hull" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute weights for structure energy above the hull of given structures.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>structures</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of pymatgen.Structures</p></li>
-<li><p><strong>energies</strong> (<em>ndarray</em>) – energies of corresponding structures.</p></li>
-<li><p><strong>cs_structure</strong> (<em>Structure</em>) – The pymatgen.Structure used to define the cluster subspace</p></li>
-<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – temperature to used in boltzmann weight.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="simple">
-<dt>Returns: weights for each structure.</dt><dd><p>array</p>
-</dd>
-</dl>
 </dd></dl>
 
 </div>

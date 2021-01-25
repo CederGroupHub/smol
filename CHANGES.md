@@ -8,10 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Use this section to keep track of changes in the works.
 
 ### Added
+* bit combo hierarchy in `ClusterSubspace` for fitting hierarchy constraints.
+  [\#106](https://github.com/CederGroupHub/smol/pull/106)
+  ([qchempku2017](https://github.com/qchempku2017))
 * data indices in `StructureWrangler` to keep track of training/test splits,
   duplicate sets, etc.
+  [\#108](https://github.com/CederGroupHub/smol/pull/108)
+  ([lbluque](https://github.com/lbluque))
 * `ClusterSubspace.cutoffs` property to obtain tight cutoffs of included
    orbits.
+   [\#108](https://github.com/CederGroupHub/smol/pull/108)
+   ([lbluque](https://github.com/lbluque))
 * Added properties to get orbit and ordering multiplicities of corr functions.
 [\#102](https://github.com/CederGroupHub/smol/pull/102)
 ([lbluque](https://github.com/lbluque))
@@ -22,11 +29,12 @@ Use this section to keep track of changes in the works.
 ([lbluque](https://github.com/lbluque))
   - `orbits_by_cutoffs`, `function_inds_by_cutoffs`, `function_inds_by_size`.
 
-
 ### Changed
 * filter functions in `smol.wrangling` replaced with functions returning
   indices corresponding to structures to keep. This can be used saving indices
   with `StructureWrangler.add_data_indices`.
+[\#102](https://github.com/CederGroupHub/smol/pull/108)
+([lbluque](https://github.com/lbluque))
 * Cleanup of sites, active sites and restricted sites in `Sublattice`
 [\#95](https://github.com/CederGroupHub/smol/pull/95)
   ([juliayang](https://github.com/juliayang))
