@@ -24,7 +24,8 @@ from pymatgen.util.coord import \
 
 from src.mc_utils import corr_from_occupancy
 from smol.cofe.space import \
-    Orbit, basis_factory, get_site_spaces, get_allowed_species, Vacancy
+    Orbit, Cluster, Vacancy, basis_factory, \
+    get_site_spaces, get_allowed_species
 from smol.cofe.space.basis import IndicatorBasis
 from smol.cofe.space.constants import SITE_TOL
 from smol.exceptions import \
