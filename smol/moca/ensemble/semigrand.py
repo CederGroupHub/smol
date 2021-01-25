@@ -32,7 +32,7 @@ class BaseSemiGrandEnsemble(Ensemble):
     :class:`FuSemiGrandEnsemble` below.
     """
 
-    valid_mcmc_steps = ('flip',)
+    valid_mcmc_steps = ('flip', 'gc-table-swap')
 
     def __init__(self, processor, sublattices=None):
         """Initialize BaseSemiGrandEnsemble.
