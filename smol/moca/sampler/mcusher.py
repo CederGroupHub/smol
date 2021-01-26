@@ -527,8 +527,8 @@ class Grandcanonicaltableswapper(MCMCUsher):
     """
 
     def __init__(self, sublattices, allow_crossover=True,
-                 GC_swap_probability=0.0, swap_table = None,
-                 gc_swap_table = None):
+                 GC_step_probability=0.0, swap_table = None,
+                 gc_step_table = None):
         """
         Implementation of a swap step for two random sites within
         the same randomly chosen (shared or unshared) sublattice.
@@ -549,8 +549,8 @@ class Grandcanonicaltableswapper(MCMCUsher):
         super(Grandcanonicaltableswapper, self).__init__(sublattices)
         self.swap_table = swap_table
         self.allow_crossover = allow_crossover
-        self.gc_probability = GC_swap_probability  # rename default variables
-        self.gc_swap_table = gc_swap_table
+        self.gc_probability = GC_step_probability  # rename default variables
+        self.gc_step_table = gc_step_table
         self.Mn_flip_table = {('Mn2+', 'Mn2+'): ['None'],
                               ('Mn2+', 'Mn3+'): ['swap'],
                               ('Mn3+', 'Mn2+'): ['swap'],
@@ -943,7 +943,7 @@ class Grandcanonicaltableswapper(MCMCUsher):
         :return: None
         """
         self.flip_to_sublattice = dict()
-        for flip in self.gc_swap_table:
+        for flip in self.gc_step_table:
             # hard coded the Mn disproportionation case.
             # TODO: make the Mn_disproportionation feature more general
             if flip == 'Mn_disproportionation':
@@ -955,19 +955,19 @@ class Grandcanonicaltableswapper(MCMCUsher):
                     self.flip_to_sublattice[flip] = sublatt.site_space
                     break
         # assert that all gc flips have a sublattice
-        assert len(self.flip_to_sublattice) == len(self.gc_swap_table)
+        assert len(self.flip_to_sublattice) == len(self.gc_step_table)
 
     def _do_species_change_flip(self, occupancy):
         """
         Pick a random GC flip. Similar to the canonical-table-swap method
-        where a flip is picked based on the keys of the swap_table
+        where a flip is picked based on the keys of the Grtable
         :param occupancy:
         :return: (site1, newsp1), (site2, newsp2) in accordance with a
         semi-grand canonical, charge-balanced flip
         """
         # Choose random GC swap type weighted by given probabilities in table
-        chosen_gc_flip = random.choices(list(self.gc_swap_table.keys()),
-                                     weights=list(self.gc_swap_table.values()))[0]
+        chosen_gc_flip = random.choices(list(self.gc_step_table.keys()),
+                                     weights=list(self.gc_step_table.values()))[0]
 
 
         site1_options = self._get_sublattice_for_flip(chosen_gc_flip)
