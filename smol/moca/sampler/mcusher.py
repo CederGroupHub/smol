@@ -570,6 +570,8 @@ class Grandcanonicaltableswapper(MCMCUsher):
         self.sublattice_probabilities_per_specie = None
         self.current_flip_type = None
         self._site_table = None
+        self.oldsp1 = None
+        self.oldsp2 = None
         self._initialize_flips_to_sublattice()
 
     def _initialize_occupancies(self, occupancy):
@@ -789,6 +791,9 @@ class Grandcanonicaltableswapper(MCMCUsher):
             elif flip_type == 'dispropC' or flip_type == 'dispropD':
                 old_sp1 = self.Mn3_specie
                 old_sp2 = self.Mn3_specie
+            elif flip_type == 'semi-grand':
+                old_sp1 = self.oldsp1
+                old_sp2 = self.oldsp2
             else:
                 old_sp1 = sp1
                 old_sp2 = sp2
@@ -980,8 +985,7 @@ class Grandcanonicaltableswapper(MCMCUsher):
         if chosen_gc_flip == 'Mn_disproportionation':
             return self._do_Mn_flip(sp1, sp2, site1, site2)
         # charge-balanced sGC
-        return self._do_sg_flip(chosen_gc_flip,
-                               sp1, sp2, site1, site2)
+        return self._do_sg_flip(chosen_gc_flip, sp1, sp2, site1, site2)
 
     def _do_sg_flip(self, chosen_gc_flip, sp1, sp2, site1, site2):
         """
@@ -1003,6 +1007,8 @@ class Grandcanonicaltableswapper(MCMCUsher):
                 chosen.pop(i)
                 sp1index = flip.index(sp1)  # save the index of sp1
                 sp2index = flip.index(sp2)  # save the index of sp2
+                self.oldsp1 = chosen_gc_flip[i][sp1index]
+                self.oldsp2 = chosen_gc_flip[i][sp2index]
         if len(chosen) == 2:
             # selected species are not ones we can flip.
             # Best way now to ensure detailed balance is to return None
@@ -1010,6 +1016,8 @@ class Grandcanonicaltableswapper(MCMCUsher):
         assert len(chosen) == 1
         newsp1 = chosen_gc_flip[chosen[0]][sp1index]
         newsp2 = chosen_gc_flip[chosen[0]][sp2index]
+        #print ('old-sp1', self.oldsp1, 'new:', newsp1, site1)
+        #print('old-sp2', self.oldsp2, 'new:', newsp2, site2)
         return ((site1, list(self._sites_to_sublattice[site1]).index(newsp1)),
                 (site2, list(self._sites_to_sublattice[site2]).index(newsp2))),\
                 'semi-grand'
