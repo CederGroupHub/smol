@@ -360,6 +360,8 @@ class SinusoidIterator(BasisIterator):
 class NumpyPolyIterator(BasisIterator):
     """Class to quickly implement polynomial basis sets included in numpy."""
 
+    flavor = 'numpy-poly'
+
     def __init__(self, species, low=-1, high=1):
         """Initialize a NumpyPolyIterator.
 
@@ -392,14 +394,18 @@ class NumpyPolyIterator(BasisIterator):
 class PolynomialIterator(NumpyPolyIterator):
     """A standard polynomial basis set iterator."""
 
+    flavor = 'polynomial'
+
     @property
     def polyval(self):
-        """Return numpy Chebyshev polynomial eval."""
+        """Return numpy polynomial eval."""
         return polyval
 
 
 class ChebyshevIterator(NumpyPolyIterator):
     """Chebyshev polynomial basis set iterator."""
+
+    flavor = 'chebyshev'
 
     @property
     def polyval(self):
@@ -409,6 +415,8 @@ class ChebyshevIterator(NumpyPolyIterator):
 
 class LegendreIterator(NumpyPolyIterator):
     """Legendre polynomial basis set iterator."""
+
+    flavor = 'legendre'
 
     @property
     def polyval(self):
