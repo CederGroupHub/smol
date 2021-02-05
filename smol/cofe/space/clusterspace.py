@@ -1244,8 +1244,9 @@ class PottsSubspace(ClusterSubspace):
     """
 
     def __init__(self, structure, expansion_structure, symops, orbits,
-                 supercell_matcher=None, site_matcher=None, **matcher_kwargs):
-        """Initialize a ClusterSubspace.
+                 without_last_cluster, supercell_matcher=None,
+                 site_matcher=None, **matcher_kwargs):
+        """Initialize a PottsSubspace.
 
         You rarely will need to create a ClusterSubspace using the main
         constructor.
@@ -1264,6 +1265,8 @@ class PottsSubspace(ClusterSubspace):
             orbits (dict): {size: list of Orbits}
                 Dictionary with size (number of sites) as keys and list of
                 Orbits as values.
+            without_last_cluster (bool):
+                Wether last cluster labeling is removed from each orbit.
             supercell_matcher (StructureMatcher): (optional)
                 A StructureMatcher class to be used to find supercell matrices
                 relating the prim structure to other structures. If you pass
@@ -1284,24 +1287,22 @@ class PottsSubspace(ClusterSubspace):
                 See pymatgen documentation of :class:`StructureMatcher` for
                 more details.
         """
+        self._wo_last_cluster = without_last_cluster
         super().__init__(structure, expansion_structure, symops, orbits,
                          supercell_matcher, site_matcher, **matcher_kwargs)
 
     @classmethod
-    def from_cutoffs(cls, structure, cutoffs, supercell_matcher=None,
-                     site_matcher=None, **matcher_kwargs):
-        """Create a ClusterSubspace from diameter cutoffs.
+    def from_cutoffs(cls, structure, cutoffs, remove_last_cluster=True,
+                     supercell_matcher=None, site_matcher=None, **matcher_kwargs):
+        """Create a PottsSubspace from diameter cutoffs.
 
-        Creates a :class:`ClusterSubspace` with orbits of the given size and
+        Creates a :class:`PottsSubspace` with orbits of the given size and
         diameter smaller than or equal to the given value. The diameter of an
         orbit is the maximum distance between any two sites of a cluster of
         that orbit.
 
         The diameter of a cluster is the maximum distance between any two
         sites in the cluster.
-
-        This is the best (and the only easy) way to create a
-        :class:`ClusterSubspace`.
 
         Args:
            structure (Structure):
@@ -1313,6 +1314,10 @@ class PottsSubspace(ClusterSubspace):
                Empty and singlet orbits are always included.
                To obtain a subspace with only an empty and singlet terms use
                an empty dict {}
+           remove_last_cluster (bool): optional
+               If true will remove the last cluster labeling (decoration)
+               from each orbit. Since sum of corr for all labelings = 1,
+               removing the last is similar to working in concentration space.
            supercell_matcher (StructureMatcher): (optional)
                A StructureMatcher class to be used to find supercell matrices
                relating the prim structure to other structures. If you pass
@@ -1342,14 +1347,16 @@ class PottsSubspace(ClusterSubspace):
                            or len(site.species) > 1]
         expansion_structure = Structure.from_sites(sites_to_expand)
         # get orbits within given cutoffs
-        orbits = cls._orbits_from_cutoffs(expansion_structure, cutoffs, symops)
+        orbits = cls._orbits_from_cutoffs(expansion_structure, cutoffs, symops,
+                                          remove_last_cluster)
         return cls(structure=structure,
                    expansion_structure=expansion_structure, symops=symops,
-                   orbits=orbits, supercell_matcher=supercell_matcher,
+                   orbits=orbits, without_last_cluster=remove_last_cluster,
+                   supercell_matcher=supercell_matcher,
                    site_matcher=site_matcher, **matcher_kwargs)
 
     @staticmethod
-    def _orbits_from_cutoffs(exp_struct, cutoffs, symops):
+    def _orbits_from_cutoffs(exp_struct, cutoffs, symops, remove_last):
         """Generate orbits from diameter cutoffs.
 
         Generates dictionary of orbits in the same way that the cluster
@@ -1366,6 +1373,8 @@ class PottsSubspace(ClusterSubspace):
                 dict of cutoffs for cluster diameters {size: cutoff}
             symops (list of SymmOps):
                 list of symmetry operations for structure
+            remove_last (bool):
+                remove the last cluster labeling from each orbit.
 
         Returns:
             dict: {size: list of Orbits within diameter cutoff}
@@ -1381,8 +1390,9 @@ class PottsSubspace(ClusterSubspace):
         for nbit, site, sbasis in zip(nbits, exp_struct, site_bases):
             new_orbit = Orbit([site.frac_coords], exp_struct.lattice,
                               [list(range(nbit))], [sbasis], symops)
-            ncombos = len(new_orbit.bit_combos)
-            new_orbit.remove_bit_combos_by_inds([ncombos - 1])
+            if remove_last:
+                new_orbit.remove_bit_combos_by_inds(
+                    [len(new_orbit.bit_combos) - 1])
             if new_orbit not in new_orbits:
                 new_orbits.append(new_orbit)
 
@@ -1415,8 +1425,9 @@ class PottsSubspace(ClusterSubspace):
                         orbit.site_bases + [site_bases[index]],
                         symops)
 
-                    ncombos = len(new_orbit.bit_combos)
-                    new_orbit.remove_bit_combos_by_inds([ncombos - 1])
+                    if remove_last:
+                        new_orbit.remove_bit_combos_by_inds(
+                            [len(new_orbit.bit_combos) - 1])
                     if new_orbit.base_cluster.diameter > diameter + 1e-8:
                         continue
                     elif new_orbit not in new_orbits:
@@ -1453,12 +1464,24 @@ class PottsSubspace(ClusterSubspace):
         """
         pass
 
+    def as_dict(self):
+        """
+        Json-serialization dict representation.
+
+        Returns:
+            MSONable dict
+        """
+        d = super().as_dict()
+        d['_wo_last_cluster'] = self._wo_last_cluster
+        return d
+
     @classmethod
     def from_dict(cls, d):
         """Create ClusterSubspace from an MSONable dict."""
         subspace = super().from_dict(d)
         # remove last bit combo in all orbits
-        for orbit in subspace.orbits:
-            orbit.remove_bit_combos_by_inds([len(orbit.bit_combos) - 1])
+        if d['_wo_last_cluster']:
+            for orbit in subspace.orbits:
+                orbit.remove_bit_combos_by_inds([len(orbit.bit_combos) - 1])
         subspace._assign_orbit_ids()
         return subspace
