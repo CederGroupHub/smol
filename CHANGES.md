@@ -56,7 +56,7 @@ Use this section to keep track of changes in the works.
  
 ### Fixed
 * Disallow setting chemical potentials/fugacities with duplicate string/species
-  in dictionary. [\#114](https://github.com/CederGroupHub/smol/pull/112)
+  in dictionary. [\#114](https://github.com/CederGroupHub/smol/pull/114)
   ([lbluque](https://github.com/lbluque))
 * Fixed loading `ClusterSubspace` with polynomial basis from dict.
 [\#112](https://github.com/CederGroupHub/smol/pull/112)
