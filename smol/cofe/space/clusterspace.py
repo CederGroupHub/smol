@@ -1244,7 +1244,7 @@ class PottsSubspace(ClusterSubspace):
     """
 
     def __init__(self, structure, expansion_structure, symops, orbits,
-                 without_last_cluster, supercell_matcher=None,
+                 without_last_cluster=True, supercell_matcher=None,
                  site_matcher=None, **matcher_kwargs):
         """Initialize a PottsSubspace.
 
@@ -1265,7 +1265,7 @@ class PottsSubspace(ClusterSubspace):
             orbits (dict): {size: list of Orbits}
                 Dictionary with size (number of sites) as keys and list of
                 Orbits as values.
-            without_last_cluster (bool):
+            without_last_cluster (bool): optional
                 Wether last cluster labeling is removed from each orbit.
             supercell_matcher (StructureMatcher): (optional)
                 A StructureMatcher class to be used to find supercell matrices
@@ -1293,7 +1293,8 @@ class PottsSubspace(ClusterSubspace):
 
     @classmethod
     def from_cutoffs(cls, structure, cutoffs, remove_last_cluster=True,
-                     supercell_matcher=None, site_matcher=None, **matcher_kwargs):
+                     supercell_matcher=None, site_matcher=None,
+                     **matcher_kwargs):
         """Create a PottsSubspace from diameter cutoffs.
 
         Creates a :class:`PottsSubspace` with orbits of the given size and
@@ -1479,8 +1480,9 @@ class PottsSubspace(ClusterSubspace):
     def from_dict(cls, d):
         """Create ClusterSubspace from an MSONable dict."""
         subspace = super().from_dict(d)
+        subspace._wo_last_cluster = d.get('_wo_last_cluster', True)
         # remove last bit combo in all orbits
-        if d['_wo_last_cluster']:
+        if subspace._wo_last_cluster:
             for orbit in subspace.orbits:
                 orbit.remove_bit_combos_by_inds([len(orbit.bit_combos) - 1])
         subspace._assign_orbit_ids()
