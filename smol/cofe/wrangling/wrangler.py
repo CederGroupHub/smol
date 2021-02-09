@@ -362,11 +362,17 @@ class StructureWrangler(MSONable):
         """
         keys = ['structure', 'ref_structure', 'properties', 'weights',
                 'scmatrix', 'mapping', 'features', 'size']
-        for item in data_items:
+        for i, item in enumerate(data_items):
             if not all(key in keys for key in item.keys()):
                 raise ValueError(
-                    "A supplied data item is missing required keys. Make sure"
+                    f"Data item {i} is missing required keys. Make sure"
                     " they were obtained with the process_structure method.")
+            if len(self._items) > 0:
+                if not all(prop in self._items[0]['properties'].keys()
+                           for prop in item['properties'].keys()):
+                    raise ValueError(
+                        f"Data item {i} is missing one of the following "
+                        f"properties: {self.available_properties}")
             self._items.append(item)
             self._corr_duplicate_warning(self.num_structures - 1)
 
