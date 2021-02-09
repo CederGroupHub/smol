@@ -21,9 +21,6 @@ from smol.moca.processor.base import Processor
 from .base import Ensemble
 from .sublattice import Sublattice
 
-from smol.moca.comp_space import CompSpace
-from smol.moca.util import *
-
 class BaseSemiGrandEnsemble(Ensemble):
     """Abstract Semi-Grand Canonical Base Ensemble.
 
@@ -409,66 +406,7 @@ class CNSemiGrandEnsemble(MuSemiGrandEnsemble):
     should be conserved. Absolute chemical potentials for each specie doesn't 
     make much sense.
 
-    Attributes:
-        thermo_boundaries (dict):
-            dict of chemical potentials.
+    This ensemble does not discriminate species on each sublattice! And is the 
+    only physical representation of a grand canonical ensemble.
     """
-
-    def __init__(self, processor, temperature, chemical_potentials,
-                 sublattices=None):
-        """Initialize MuSemiGrandEnsemble.
-
-        Args:
-            processor (Processor):
-                A processor that can compute the change in a property given
-                a set of flips. See moca.processor
-            temperature (float):
-                Temperature of ensemble
-            chemical_potentials (dict):
-                dictionary with species names and chemical potentials.
-            sublattices (list of Sublattice): optional
-                list of Lattice objects representing sites in the processor
-                supercell with same site spaces.
-        """
-        super().__init__(processor, temperature, sublattices, chemical_potentials,
-                         sublattices = sublattices)
-
-        bits = [sl.species for sl in self.sublattices]
-        sl_sizes = [len(sl.sites) for sl in self.sublattices]
-
-        #Here we use the GCD of sublattice sizes as supercell size. It is not 
-        #always the true supercell size, but always gives correct compositional
-        #space
-        sc_size = GCD_list(sl_sizes)
-        sl_sizes = [s//sc_size for s in sl_sizes]
-
-        #self.comp_space and self.n_links contains complicated calculations. Saving them
-        #elsewhere is highly recommended!
-        compspace = CompSpace(bits,sl_sizes=sl_sizes)
-        
-        self.bits = bits
-        self.operations = compspace.min_flips
-        self.op_strings = compspace.min_flip_strings
-
-    @property
-    def chemical_work_of_operations(self):
-        """
-        Caculates and returns chemical work of all unitary, charge neutral opeations.
-        Type: list of floats
-        """
-        cws = []
-        for op in operations:
-            cw = 0
-            for sl_id in op['from']:
-                for sp_id in op['from'][sl_id]:
-                    n_sp = op['from'][sl_id][sp_id]
-                    sp = self.bits[sl_id][sp_id]
-                    cw -= n_sp*self._mus[sp]
-            for sl_id in op['to']:
-                for sp_id in op['to'][sl_id]:
-                    n_sp = op['to'][sl_id][sp_id]
-                    sp = self.bits[sl_id][sp_id]
-                    cw += n_sp*self._mus[sp]
-            cws.append(cw)
-
-        return cws
+    valid_mcmc_steps = ('cn_flip',)

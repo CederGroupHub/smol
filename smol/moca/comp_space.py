@@ -7,13 +7,15 @@ from scipy.spatial import ConvexHull
 from collections import OrderedDict
 from itertools import combinations,product
 from copy import deepcopy
-from monty.json import MSONable, MontyDecoder
+from monty.json import MSONable
 import json
 
 from pymatgen import Composition
 
-from smol.cofe.configspace.domain import Vacancy
-from .utils import *
+from smol.cofe.space.domain import Vacancy
+
+from .utils.math_utils import *
+from .utils.format_utils import *
 
 """
 This file contains functions related to implementing and navigating the 
@@ -42,10 +44,6 @@ CHGBALANCEERROR = ValueError("Charge balance cannot be achieved with these speci
 OUTOFSUBSPACEERROR = ValueError("Given coordinate falls outside the subspace.")
 
 SLACK_TOL = 1E-5
-
-def decode_from_dict(d):
-    return MontyDecoder().decode(json.dumps(d))
-
 
 ####
 # Finding minimun charge-conserved, number-conserved flips to establish constrained
@@ -89,7 +87,7 @@ def get_unit_swps(bits):
 
     return unit_n_swps,chg_of_swps,swp_ids_in_sublat
 
-def flipvec_to_operations(unit_n_swps, nbits, prim_lat_vecs):
+def flipvec_to_flip_table(unit_n_swps, nbits, prim_lat_vecs):
     """
     This function translates flips from their vector from into their dictionary
     form.
@@ -110,13 +108,13 @@ def flipvec_to_operations(unit_n_swps, nbits, prim_lat_vecs):
     }
     """
     n_sls = len(nbits)
-    operations = []
+    flip_table = []
 
     for flip_vec in prim_lat_vecs:
-        operation = {'from':{},'to':{}}
+        mult_flip = {'from':{},'to':{}}
         
-        operation['from']={sl_id:{sp_id:0 for sp_id in nbits[sl_id]} for sl_id in range(n_sls)}
-        operation['to'] = {sl_id:{sp_id:0 for sp_id in nbits[sl_id]} for sl_id in range(n_sls)}
+        mult_flip['from']={sl_id:{sp_id:0 for sp_id in nbits[sl_id]} for sl_id in range(n_sls)}
+        mult_flip['to'] = {sl_id:{sp_id:0 for sp_id in nbits[sl_id]} for sl_id in range(n_sls)}
 
         for flip,n_flip in zip(unit_n_swps,flip_vec):
             if n_flip > 0:
@@ -128,51 +126,51 @@ def flipvec_to_operations(unit_n_swps, nbits, prim_lat_vecs):
             else:
                 continue
 
-            operation['from'][sl_id][flp_from] += n
-            operation['to'][sl_id][flp_to] += n
+            mult_flip['from'][sl_id][flp_from] += n
+            mult_flip['to'][sl_id][flp_to] += n
 
         #Simplify ionic equations
-        operation_clean = {'from':{},'to':{}}
+        mult_flip_clean = {'from':{},'to':{}}
         for sl_id in range(n_sls):
             for sp_id in nbits[sl_id]:
-                del_n = operation['from'][sl_id][sp_id]-operation['to'][sl_id][sp_id]
+                del_n = mult_flip['from'][sl_id][sp_id]-mult_flip['to'][sl_id][sp_id]
                 if del_n > 0:
-                    if sl_id not in operation_clean['from']:
-                        operation_clean['from'][sl_id]={}
-                    operation_clean['from'][sl_id][sp_id]=del_n
+                    if sl_id not in mult_flip_clean['from']:
+                        mult_flip_clean['from'][sl_id]={}
+                    mult_flip_clean['from'][sl_id][sp_id]=del_n
                 elif del_n < 0:
-                    if sl_id not in operation_clean['to']:
-                        operation_clean['to'][sl_id]={}
-                    operation_clean['to'][sl_id][sp_id]= -del_n
+                    if sl_id not in mult_flip_clean['to']:
+                        mult_flip_clean['to'][sl_id]={}
+                    mult_flip_clean['to'][sl_id][sp_id]= -del_n
                 else:
                     continue
 
-        operations.append(operation_clean)
+        flip_table.append(mult_flip_clean)
 
-    return operations    
+    return flip_table    
 
-def visualize_operations(operations,bits):
+def visualize_flip_table(flip_table,bits):
     """
-    This function turns an operation dict into an string for easy visualization,
+    This function turns an mult_flip dict into an string for easy visualization,
     """
-    operation_strs = []
-    for operation in operations:
+    mult_flip_strs = []
+    for mult_flip in flip_table:
         from_strs = []
         to_strs = []
-        for sl_id in operation['from']:
-            for swp_from,n in operation['from'][sl_id].items():
+        for sl_id in mult_flip['from']:
+            for swp_from,n in mult_flip['from'][sl_id].items():
                 from_name = str(bits[sl_id][swp_from])
                 from_strs.append('{} {}({})'.format(n,from_name,sl_id))
-        for sl_id in operation['to']:
-            for swp_to,n in operation['to'][sl_id].items():
+        for sl_id in mult_flip['to']:
+            for swp_to,n in mult_flip['to'][sl_id].items():
                 to_name = str(bits[sl_id][swp_to])
                 to_strs.append('{} {}({})'.format(n,to_name,sl_id))
 
         from_str = ' + '.join(from_strs)
         to_str = ' + '.join(to_strs)
-        operation_strs.append(from_str+' -> '+to_str) 
+        mult_flip_strs.append(from_str+' -> '+to_str) 
 
-    return operation_strs
+    return mult_flip_strs
 
 ####
 # Compsitional space class
@@ -219,11 +217,11 @@ class CompSpace(MSONable):
         enumeration method. For the exact way we do enumeration, please refer to the documentation of 
         each class methods.
             
-
+        By default, all other coordinate formats will not be normalized, except 'composition'.
     """
     def __init__(self,bits,sl_sizes=None):
         """
-        Inputs:
+        Args:
             bits(List of Specie/DummySpecie): 
                 bit list.
                 Sorted before use. We don't sort it here in case the order 
@@ -246,8 +244,8 @@ class CompSpace(MSONable):
 
         self.unit_n_swps,self.chg_of_swps,self.swp_ids_in_sublat = get_unit_swps(self.bits)
 
-        self._constr_spc_basis = None
-        self._constr_spc_vertices = None
+        self._unit_spc_basis = None
+        self._unit_spc_vertices = None
         #Minimum supercell size required to make vetices coordinates all integer.
         self._polytope = None
 
@@ -303,7 +301,7 @@ class CompSpace(MSONable):
             return d-1
 
     @property
-    def constr_spc_basis(self):
+    def unit_spc_basis(self):
         """
         Get 'minimal charge-neutral flips basis' in vector representation. 
         Given any compositional space, all valid, charge-neutral compoisitons are 
@@ -319,27 +317,29 @@ class CompSpace(MSONable):
 
         Type: 2d np.array of np.int64
         """        
-        if self._constr_spc_basis is None:
-            self._constr_spc_basis = \
+        if self._unit_spc_basis is None:
+            self._unit_spc_basis = \
                  np.array(get_integer_basis(self.chg_of_swps,sl_flips_list=self.swp_ids_in_sublat),dtype=np.int64)
-        return self._constr_spc_basis
+        return self._unit_spc_basis
 
     @property
     def min_flips(self):
         """
         Dictionary representation of minimal charge conserving flips.
+        Returns:
+            A flip table. Format described in flipvec_to_flip_table.
         """
-        _operations = flipvec_to_operations(self.unit_n_swps,\
+        _flip_table = flipvec_to_flip_table(self.unit_n_swps,\
                                             self.nbits,\
-                                            self.constr_spc_basis)
-        return _operations
+                                            self.unit_spc_basis)
+        return _flip_table
 
     @property
     def min_flip_strings(self):
         """
         Human readable minial charge conserving flips, written in ionic equations.
         """
-        return visualize_operations(self.min_flips,self.bits)
+        return visualize_flip_table(self.min_flips,self.bits)
 
     @property
     def polytope(self):
@@ -378,7 +378,7 @@ class CompSpace(MSONable):
                 # subspace as an empty set.
 
                 # x: unconstrained, x': constrained
-                R = np.vstack((self.constr_spc_basis,np.array(self.chg_of_swps)))
+                R = np.vstack((self.unit_spc_basis,np.array(self.chg_of_swps)))
                 t = np.zeros(self.unconstr_dim)
                 t[0] = -self.bkgrnd_chg/self.chg_of_swps[0]
                 A_sub = A@R.T
@@ -423,7 +423,7 @@ class CompSpace(MSONable):
         except:
             return False
 
-    def constr_spc_vertices(self,form='unconstr'):
+    def unit_spc_vertices(self,form='unconstr'):
         """
         Find extremums of the constrained compositional space in a primitive cell,
 
@@ -438,11 +438,11 @@ class CompSpace(MSONable):
                 'composition': use a pymatgen.composition for each sublattice 
                                (vacancies not explicitly included)
         """
-        if self._constr_spc_vertices is None:
+        if self._unit_spc_vertices is None:
             if not self.is_charge_constred:
                 A,b,_,_=self.polytope
                 poly = pc.Polytope(A,b)
-                self._constr_spc_vertices = pc.extreme(poly)
+                self._unit_spc_vertices = pc.extreme(poly)
             else:
                 A,b,R,t=self.polytope
                 poly_sub = pc.Polytope(A,b)
@@ -450,13 +450,48 @@ class CompSpace(MSONable):
                 n = vert_sub.shape[0]
                 vert = np.hstack((vert_sub,np.zeros((n,1))))
                 #Transform back into unconstraned coord
-                self._constr_spc_vertices = vert@R + t
+                self._unit_spc_vertices = vert@R + t
 
-        if len(self._constr_spc_vertices)==0:
+        if len(self._unit_spc_vertices)==0:
             raise CHGBALANCEERROR
 
         #This function formuates multiple unconstrained coords together.
-        return self._formulate_unconstr(self._constr_spc_vertices,form=form,sc_size=1)
+        return self._convert_unconstr_to(self._unit_spc_vertices,form=form,sc_size=1)
+
+    def get_random_point_in_unit_spc(self,form='unconstr'):
+        """
+        Get a random point that is strictly inside the unit, constrained space.
+
+        Args:
+            form(str):
+                Desired format of output.
+        """
+        verts = self.unit_spc_vertices(form='unconstr')
+        x = verts[0].copy() 
+
+        for i in range(1,len(verts)):
+            lam = np.random.random()
+            x = lam*x + (1-lam)*verts[i]
+
+            in_spc = True
+            if not self.is_charge_constred:
+                x_prime = deepcopy(x)
+            else:
+                x_prime = np.linalg.inv((self.R).T)@(x-self.t)
+                d_slack = x_prime[-1]
+                x_prime = x_prime[:-1]
+            
+            b = self.A@x_prime
+            for bi_p,bi in zip(b,self.b):
+                if bi_p-bi > -SLACK_TOL:
+                     in_spc = False
+                     break
+
+            if in_spc:
+                break
+
+        return self._convert_unconstr_to(x,form=form,sc_size=1)
+              
 
     @property
     def min_sc_size(self):
@@ -467,7 +502,7 @@ class CompSpace(MSONable):
         """
         if self._min_sc_size or self._min_int_vertices is None:
             self._min_int_vertices, self._min_sc_size = \
-                integerize_multiple(self.constr_spc_vertices())
+                integerize_multiple(self.unit_spc_vertices())
         return self._min_sc_size
 
     def min_int_vertices(self,form='unconstr'):
@@ -486,9 +521,9 @@ class CompSpace(MSONable):
         if self._min_sc_size or self._min_int_vertices is None:
             min_sc_size = self.min_sc_size
 
-        return self._formulate_unconstr(self._min_int_vertices,form=form,sc_size=self.min_sc_size)
+        return self._convert_unconstr_to(self._min_int_vertices,form=form,sc_size=self.min_sc_size)
 
-    def int_vertices(self,sc_size=1,step=1,form='unconstr'):
+    def int_vertices(self,sc_size=1,form='unconstr'):
         """
         Type: np.array of np.int64
         If supercell size is a multiple of min_sc_size, then int_vertices are just min_int_vertices*multiple;
@@ -516,7 +551,7 @@ class CompSpace(MSONable):
                 #points does not satisfy the requirement to form a hull in the constrained space
                 vertices = int_grids
 
-        return self._formulate_unconstr(vertices,form=form,sc_size=sc_size)
+        return self._convert_unconstr_to(vertices,form=form,sc_size=sc_size)
 
     def min_grid(self,form='unconstr'):
         """
@@ -536,7 +571,7 @@ class CompSpace(MSONable):
         if self._min_grid is None:
             self._min_grid = self._enum_int_grids(sc_size=self.min_sc_size)
 
-        return self._formulate_unconstr(self._min_grid,form=form,sc_size=self.min_sc_size)
+        return self._convert_unconstr_to(self._min_grid,form=form,sc_size=self.min_sc_size)
 
     def int_grids(self,sc_size=1,form='unconstr'):
         """
@@ -563,7 +598,7 @@ class CompSpace(MSONable):
         if sc_size not in self._int_grids:
             self._int_grids[sc_size] = self._enum_int_grids(sc_size=sc_size)
 
-        return self._formulate_unconstr(self._int_grids[sc_size],form=form,sc_size=sc_size)
+        return self._convert_unconstr_to(self._int_grids[sc_size],form=form,sc_size=sc_size)
 
     def _enum_int_grids(self,sc_size=1):
         """
@@ -582,7 +617,7 @@ class CompSpace(MSONable):
 
         else:
             #Then integer composition is not guaranteed to be found.
-            vertices = self.constr_spc_vertices()*sc_size
+            vertices = self.unitspc_vertices()*sc_size
             limiters_ub = np.array(np.ceil(np.max(vertices,axis=0)),dtype=np.int64)
             limiters_lb = np.array(np.floor(np.min(vertices,axis=0)),dtype=np.int64)
 
@@ -601,8 +636,9 @@ class CompSpace(MSONable):
 
     def frac_grids(self,sc_size=1,form='unconstr'):
         """
-        Enumerate integer compositions under a certain sc_size, and turn it into
-        float form by normalizeing with sc_size.
+        Enumerates integer compositions under a certain sc_size, and turns them into
+        proper form by normalizing with sc_size. ('composition' format normalized
+        with sublattice sizes.)
         Inputs:
             sc_size (int):
                 Supercell size to numerate on.
@@ -612,7 +648,8 @@ class CompSpace(MSONable):
                 'constr': use constrained (type 2) coordinates.
                 'compstat': use compstat lists.(See self._unconstr_to_compstat doc)
                 'composition': use a pymatgen.composition for each sublattice 
-                               (vacancies not explicitly included)
+                               (vacancies not explicitly included, even if already in
+                                self.bits)
         Note: if you want to stepped enumeration, just divide sc_size by step, and multiply
               the resulted array with step. (You don't even need to multiply back, when
               formula = 'composition', because this automatically gives you fractional 
@@ -620,9 +657,10 @@ class CompSpace(MSONable):
         """
         comps = np.array(self.int_grids(sc_size),dtype=np.float64)/sc_size
 
-        return self._formulate_unconstr(comps,form=form,sc_size=1)
+        return self._convert_unconstr_to(comps,form=form,sc_size=1)
 
-    def _unconstr_to_constr_coords(self,x,sc_size=1):
+#These formatting functions will not normalize or scale compositions. It's your responsibility.
+    def _unconstr_to_constr_coords(self,x,sc_size=1,to_int=False):
         """
         Unconstrained coordinate system to constrained coordinate system.
         In constrained coordinate system, a composition will be written as
@@ -634,7 +672,8 @@ class CompSpace(MSONable):
         to_int: if true, round coords to integers.
 
         Outputs:
-            x_prime: constrained coordinates vector, in its proper dimension
+            x_prime(np.array): 
+                   constrained coordinates vector, in its proper dimension
             d_slack: slack distance out of constraint plane. Will always be 0 if charge 
                    constraint does not apply.
                    if d_slack>SLACK_TOL, then we consider the charge constraint as broken.
@@ -661,11 +700,17 @@ class CompSpace(MSONable):
         x_prime = x_prime*sc_size
         d_slack = d_slack*sc_size
 
+        if to_int:
+            x_prime = np.round(x_prime)
+            x_prime = np.array(x_prime,dtype=np.int64)
+
         return x_prime
 
     def _constr_to_unconstr_coords(self,x_prime,sc_size=1,to_int=False):
         """
         Constrained coordinate system to unconstrained coordinate system.
+        Output:
+            np.array.
         """
         #scale down to unit comp space
         x_prime = np.array(x_prime)/sc_size
@@ -687,14 +732,14 @@ class CompSpace(MSONable):
 
         if to_int:
             x = np.round(x)
-            x = np.array(x_prime,dtype=np.int64)
+            x = np.array(x,dtype=np.int64)
 
         return x
  
     def _unconstr_to_compstat(self,x,sc_size=1):
         """
         Translate unconstrained coordinate to statistics of specie numbers on 
-        each sublattice. Will have the same shape as self.nbitsa
+        each sublattice. Will have the same shape as self.nbits.
 
         Return:
             Compstat: List of lists of int.
@@ -713,6 +758,18 @@ class CompSpace(MSONable):
 
         return compstat
 
+    def _compstat_to_unconstr(self,compstat):
+        """
+        Translate compstat table to unconstrained coordinate.
+        Return:
+            x(np.array): 
+                an array of unconstrained coordinate
+        """
+        x = []
+        for sl_stat in compstat:
+            x.extend(sl_stat[:-1])
+        return np.array(x)
+
     def _unconstr_to_composition(self,x,sc_size=1):
         """
         Translate an unconstranied coordinate into a list of composition dictionaries 
@@ -720,7 +777,6 @@ class CompSpace(MSONable):
         of structure generator.
         """
         compstat = self._unconstr_to_compstat(x,sc_size=sc_size)
-        sl_sizes = np.array(self.sl_sizes)*sc_size
 
         sl_comps = []
         for sl_id,sl_bits in enumerate(self.bits):
@@ -730,17 +786,46 @@ class CompSpace(MSONable):
                 #Trim vacancies from the composition, for pymatgen to read the structure.
                 if isinstance(bit, Vacancy):
                     continue
-                sl_comp[bit] = float(compstat[sl_id][b_id])/sl_sizes[sl_id]
+                #Composition will always be normalized!
+                sl_comp[bit] = compstat[sl_id][b_id]/(self.sl_sizes[sl_id]*sc_size)
 
             sl_comps.append(Composition(sl_comp))
 
         return sl_comps
 
-    def _formulate_unconstr(self,arr,form='unconstr',sc_size=1):
+    def _composition_to_unconstr(self,comp,sc_size=1):
+        """
+        Translate composition format to unconstrained coordinates.
+        Since compositions are always normalized, we will not 
+        need supercell size.
+        Returns:
+            np.array
+        """
+        x = []
+
+        for sl_id,sl_bits in enumerate(self.bits):
+            sl_size = self.sl_sizes[sl_id]*sc_size
+            for b_id, bit in enumerate(sl_bits[:-1]):
+                if isinstance(bit, Vacancy):
+                    sl_sum = sum(list(comp[sl_id].values()))\
+                             *sl_size
+                    if sl_sum > sl_size:
+                        raise ValueError("{} is not a valid composition."\
+                                         .format(comp[sl_id]))
+                    ucoord.append(sl_size - sl_sum)
+                else:
+                    ucoord.append(comp[sl_id][bit]*sl_size)
+
+        return np.array(x)
+
+
+    def _convert_unconstr_to(self,x,form='unconstr',sc_size=1):
         """
         Translates an unconstrained coordinate into different forms.
         Inputs:
-            arr: must be 2D np.array
+            x:
+                Any arraylike, the last dimension will be considered as an 
+                unconstrained coordinate.
             sc_size (int):
                 Supercell size to numerate on.
             form (string):
@@ -751,23 +836,92 @@ class CompSpace(MSONable):
                 'composition': use a pymatgen.composition for each sublattice 
                                (vacancies not explicitly included)
         """
+        if len(np.array(x).shape)>1:
+            result = [self._convert_unconstr_to(x_sub,form=form,sc_size=sc_size) \
+                      for x_sub in x])
+            if form in ['constr','unconstr']:
+                return np.array(result)
+            else:
+                return result
+
         if form == 'unconstr':
-            #Output is 2D array
-            return arr
+            return np.array(x)
         elif form == 'constr':
-            #Output is 2D array
-            return np.array([self._unconstr_to_constr_coords(x,sc_size=sc_size)
-                             for x in arr])
+            return np.array(self._unconstr_to_constr_coords(x,sc_size=sc_size))
         elif form == 'compstat':
-            #Output is a list of 2D lists, each 2D list is for an element in the
-            #Original 2D array
-            return [self._unconstr_to_compstat(x,sc_size=sc_size) for x in arr]
+            return self._unconstr_to_compstat(x,sc_size=sc_size)
         elif form == 'composition':
-            #Output will be a 2D list of pymatgen.Composition
-            return [self._unconstr_to_composition(x,sc_size=sc_size) for x in arr]
+            return self._unconstr_to_composition(x,sc_size=sc_size)
         else:
             raise ValueError('Requested format not supported.')
 
+
+    def _convert_to_unconstr(self,x,form,sc_size=1):
+        """
+        Translates different forms into an unconstrained coordinate.
+        Inputs:
+            x:
+                Any arraylike, the last dimension will be considered as an 
+                unconstrained coordinate.
+            sc_size (int):
+                Supercell size to numerate on.
+            form (string):
+                Specifies the format to output the compositions.
+                'unconstr': use unconstrained (type 1) coordinates.(default)
+                'constr': use constrained (type 2) coordinates.
+                'compstat': use compstat lists.(See self._unconstr_to_compstat doc)
+                'composition': use a pymatgen.composition for each sublattice 
+                               (vacancies not explicitly included, and must be normalized.
+        """
+        if form in ['unconstr','constr']:
+            if len(np.array(x).shape)>1:
+                result = [self._convert_to_unconstr(x_sub,form=form,sc_size=sc_size) \
+                          for x_sub in x]
+                return np.array(result)
+        elif form == 'compstat':
+            if isinstance(x[0][0],list):
+                result = [self._convert_to_unconstr(x_sub,form=form,sc_size=sc_size) \
+                          for x_sub in x]
+                return np.array(result)
+        elif form == 'composition':
+            if not isinstance(x[0],Composition):
+                result = [self._convert_to_unconstr(x_sub,form=form,sc_size=sc_size) \
+                          for x_sub in x]
+                return np.array(result)
+
+        if form == 'unconstr':
+            return np.array(x)
+        elif form == 'constr':
+            return np.array(self._constr_to_unconstr_coords(x,sc_size=sc_size))
+        elif form == 'compstat':
+            return np.array(self._compstat_to_unconstr(x))
+        elif form == 'composition':
+            #Output will be a 2D list of pymatgen.Composition
+            return np.array(self._composition_to_unconstr(x,sc_size=sc_size))
+        else:
+            raise ValueError('Requested format not supported.')
+
+   
+    def translate_format(self,x,from_format,to_format='unconstr',sc_size=1): 
+        """
+        Translates different forms into an unconstrained coordinate.
+        Inputs:
+            x:
+                Any arraylike, the last dimension will be considered as an 
+                unconstrained coordinate.
+            sc_size (int):
+                Supercell size to numerate on.
+                Default is 1, we suppose you are using primitive cell scale.
+            from_format,to_format (string):
+                Specifies the format to output the compositions.
+                'unconstr': use unconstrained (type 1) coordinates.(default)
+                'constr': use constrained (type 2) coordinates.
+                'compstat': use compstat lists.(See self._unconstr_to_compstat doc)
+                'composition': use a pymatgen.composition for each sublattice 
+                               (vacancies not explicitly included)
+        """
+        ucoords = self._convert_to_unconstr(x,form=from_format,sc_size=sc_size)
+        return self._convert_unconstr_to(ucoords,form=to_format,sc_size=sc_size)
 
     def as_dict(self):
         bits_d = [[sp.as_dict() for sp in sl_sps] for sl_sps in self.bits]
@@ -778,8 +932,8 @@ class CompSpace(MSONable):
         return {
                 'bits': bits_d,
                 'sl_sizes': self.sl_sizes,
-                'constr_spc_basis': self.constr_spc_basis.tolist(),
-                'constr_spc_vertices': self.constr_spc_vertices().tolist(),
+                'unit_spc_basis': self.unit_spc_basis.tolist(),
+                'unit_spc_vertices': self.unit_spc_vertices().tolist(),
                 'polytope': poly,
                 'min_sc_size': self.min_sc_size,
                 'min_int_vertices': self.min_int_vertices().tolist(),
@@ -795,12 +949,12 @@ class CompSpace(MSONable):
         
         obj = cls(bits,d['sl_sizes'])        
  
-        if 'constr_spc_basis' in d:
-            obj._constr_spc_basis = np.array(d['constr_spc_basis'],dtype=np.int64)
+        if 'unit_spc_basis' in d:
+            obj._unit_spc_basis = np.array(d['unit_spc_basis'],dtype=np.int64)
             
 
-        if 'constr_spc_vertices' in d:          
-            obj._constr_spc_vertices = np.array(d['constr_spc_vertices'])
+        if 'unit_spc_vertices' in d:          
+            obj._unit_spc_vertices = np.array(d['unit_spc_vertices'])
 
         if 'polytope' in d:            
             poly = d['polytope']

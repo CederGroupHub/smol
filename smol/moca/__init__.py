@@ -17,4 +17,5 @@ from .comp_space import CompSpace
 
 __all__ = ['CEProcessor', 'EwaldProcessor', 'CompositeProcessor',
            'CanonicalEnsemble', 'MuSemiGrandEnsemble', 'FuSemiGrandEnsemble',
-           'CNSemiGrandEnsemble', 'Sampler', 'SampleContainer', 'CompSpace']
+           'CNSemiGrandEnsemble',
+           'Sampler', 'SampleContainer', 'CompSpace']

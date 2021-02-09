@@ -14,8 +14,11 @@ from abc import ABC, abstractmethod
 import random
 
 from smol.utils import derived_class_factory
-from smol.moca.utils import *
-from smol.moca.comp_space import CompSpace
+from ..comp_space import CompSpace
+
+from ..utils.occu_utils import occu_to_species_stat, occu_to_species_list
+from ..utils.comp_utils import get_n_links
+from ..utils.math_utils import choose_section_from_partition
 
 class MCMCUsher(ABC):
     """Abstract base class for MCMC usher classes."""
@@ -137,16 +140,16 @@ class Swapper(MCMCUsher):
             swap = []
         return swap
 
-#### The CorrelatedFlip Usher ####
-class CorrelatedFlipper(MCMCUsher):
+#### The TableFlip Usher ####
+class TableFlipper(MCMCUsher):
     """
     Implementation of simultaneous flips on multiple sites.
     This is to further enable charge neutral unitary flips.
     """
-    def __init__(self, operations, sublattices):
+    def __init__(self, flip_table, sublattices):
         """
         Args:
-           operations(List of Dict): 
+           flip_table(List of Dict): 
                A list of dict containing information of all allowed flips
                For example, 
                  [
@@ -172,8 +175,11 @@ class CorrelatedFlipper(MCMCUsher):
                 list of probability to pick a site from a specific sublattice.
         """
         super().__init__(sublattices)
-        self.operations = operations
+        self.flip_table = flip_table
         #A flip has two directions. All links initialized with 0.
+
+        self.bits = [sl.species for sl in self.sublattices]
+        self.sl_list = [list(sl.sites) for sl in self.sublattices]
 
     def propose_step(self,occupancy):
         """Propose a single random swap step.
@@ -189,33 +195,33 @@ class CorrelatedFlipper(MCMCUsher):
         Returns:
             list(tuple): list of tuples each with (idex, code)
         """
-        species_stat = get_species_stat(self.sublattices,occupancy)
-        n_links_current = get_n_links(species_stat,self.operations)
+        species_stat = occu_to_species_stat(occupancy,self.bits,self.sl_list)
+        n_links_current = get_n_links(species_stat,self.flip_table)
     
         chosen_f_id = choose_section_from_partition(n_links_current)
-        operation = self.operations[chosen_f_id//2]
+        mult_flip = self.flip_table[chosen_f_id//2]
         direction = chosen_f_id%2 # 0 forward, 1 backward.
 
-        sp_list = occu_to_species_list(self.sublattices,occupancy)
+        sp_list = occu_to_species_list(occupancy,self.bits,self.sl_list)
 
-        chosen_sites_flip_from = [[] for sl in nbits]
-        chosen_sps_flip_to = [[] for sl in nbits]
+        chosen_sites_flip_from = [[] for sl in self.bits]
+        chosen_sps_flip_to = [[] for sl in self.bits]
 
         if direction == 0:
             #Apply the forward direction
-            for sl_id in operation['from']:
-                for sp_id in operation['from'][sl_id]:
-                    m_from = operation['from'][sl_id][sp_id]
+            for sl_id in mult_flip['from']:
+                for sp_id in mult_flip['from'][sl_id]:
+                    m_from = mult_flip['from'][sl_id][sp_id]
                     chosen_sites = random.sample(sp_list[sl_id][sp_id],m_from)
                     chosen_sites = sorted(chosen_sites)
                     #remove duplicacy
                     chosen_sites_flip_from[sl_id].extend(chosen_sites)
 
             from_sites_for_sublats = [[i for i in range(len(sl))] for sl in chosen_sites_flip_from]
-            for sl_id in operation['to']:
+            for sl_id in mult_flip['to']:
                 chosen_sps_flip_to[sl_id] = [None for st in chosen_sites_flip_from[sl_id]]
-                for sp_id in operation['to'][sl_id]:
-                    m_to = operation['to'][sl_id][sp_id]
+                for sp_id in mult_flip['to'][sl_id]:
+                    m_to = mult_flip['to'][sl_id][sp_id]
                     from_sites = from_sites_for_sublats[sl_id]
                     chosen_sites = random.sample(from_sites,m_to)
                     chosen_sites = sorted(chosen_sites)
@@ -229,19 +235,19 @@ class CorrelatedFlipper(MCMCUsher):
 
         else:
             #Apply the backward direction
-            for sl_id in operation['to']:
-                for sp_id in operation['to'][sl_id]:
-                    m_from = operation['to'][sl_id][sp_id]
+            for sl_id in mult_flip['to']:
+                for sp_id in mult_flip['to'][sl_id]:
+                    m_from = mult_flip['to'][sl_id][sp_id]
                     chosen_sites = random.sample(sp_list[sl_id][sp_id],m_from)
                     chosen_sites = sorted(chosen_sites)
                     #remove duplicacy
                     chosen_sites_flip_from[sl_id].extend(chosen_sites)
 
             from_sites_for_sublats = [[i for i in range(len(sl))] for sl in chosen_sites_flip_from]
-            for sl_id in operation['from']:
+            for sl_id in mult_flip['from']:
                 chosen_sps_flip_to[sl_id] = [None for st in chosen_sites_flip_from[sl_id]]
-                for sp_id in operation['from'][sl_id]:
-                    m_to = operation['from'][sl_id][sp_id]
+                for sp_id in mult_flip['from'][sl_id]:
+                    m_to = mult_flip['from'][sl_id][sp_id]
                     from_sites = from_sites_for_sublats[sl_id]
                     chosen_sites = random.sample(from_sites,m_to)
                     chosen_sites = sorted(chosen_sites)
@@ -269,11 +275,9 @@ class CNFlipper(MCMCUsher):
         Args:
             sublattices (list of Sublattice):
                 list of Sublattices to propose steps for.
-            sublattice_probabilities (list of float): optional
-                list of probability to pick a site from a specific sublattice.
 
         Attributes:
-            n_links:
+            n_links(int):
                 For each type of flip in the flip table, there is a number of 
                 possible flips of that type on the current occupancy. We store
                 these numbers in the same order of flips in the flip_table, and
@@ -281,7 +285,8 @@ class CNFlipper(MCMCUsher):
                 in flips selection of the CN-SG ensemble.
         """
         super().__init__(sublattices)
-        bits = [sl.species for sl in sublattices]
+        self.bits = [sl.species for sl in sublattices]
+        self.sl_list = [list(sl.sites) for sl in sublattices]
         sl_sizes = [len(sl.sites) for sl in sublattices]
 
         #Here we use the GCD of sublattice sizes as supercell size. It is not 
@@ -292,21 +297,21 @@ class CNFlipper(MCMCUsher):
 
         #self.comp_space and self.n_links contains complicated calculations. Saving them
         #elsewhere is highly recommended!
-        compspace = CompSpace(bits,sl_sizes=sl_sizes)
+        compspace = CompSpace(self.bits,sl_sizes=sl_sizes)
         
-        self.operations = compspace.min_flips
+        self.flip_table = compspace.min_flips
         comp_vertices = compspace.int_vertices(sc_size=sc_size,
-                                                    form='compstat')
+                                               form='compstat')
         
         if n_links is not None:
             #If n_links has been updated and computed before, utilize this
             self.n_links = n_links
         else:
-            self.n_links = max([sum(get_n_links(v,self.operations)) 
+            self.n_links = max([sum(get_n_links(v,self.flip_table)) 
                                 for v in comp_vertices])
 
         self.swapper = Swapper(self.sublattices)
-        self.corr_flipper = CorrelatedFlipper(self.operations,self.sublattices)
+        self.corr_flipper = TableFlipper(self.flip_table,self.sublattices)
 
     def propose_step(self,occupancy):
         """Propose a single random swap step.
@@ -322,12 +327,12 @@ class CNFlipper(MCMCUsher):
         Returns:
             list(tuple): list of tuples each with (idex, code)
         """
-        species_stat = get_species_stat(self.sublattices,occupancy)
-        n_links_current = get_n_links(species_stat,self.operations)
+        species_stat = occu_to_species_stat(occupancy,self.bits,self.sl_list)
+        n_links_current = get_n_links(species_stat,self.flip_table)
  
         if sum(n_links_current)>self.n_links:
         #Then update n_links value
-            self.n_links = n_links_current
+            self.n_links = sum(n_links_current)
         
         #assign a probabiltiy when we choose swaps instead of flips.
         p_swap = float(self.n_links-sum(n_links_current))/self.n_links
