@@ -162,6 +162,22 @@ class StructureWrangler(MSONable):
         cols = cols if cols is not None else range(self.num_features)
         return np.linalg.matrix_rank(self.feature_matrix[rows][:, cols])
 
+    def get_feature_matrix_orbit_rank(self, orbit_id, rows=None):
+        """Get the rank of an orbit submatrix of the feature matrix.
+
+        Args:
+            orbit_id (int):
+                Orbit id to obtain sub feature matrix rank of.
+            rows (list): optional
+                List of row indices corresponding to structures to include.
+
+        Returns:
+            int: rank of orbit sub feature matrix
+        """
+        columns = [i for i in self._subspace.function_orbit_ids
+                   if i == orbit_id]
+        return self.get_feature_matrix_rank(rows=rows, cols=columns)
+
     def get_condition_number(self, rows=None, cols=None, p=2):
         """Compute the condition number for the feature matrix or submatrix.
 

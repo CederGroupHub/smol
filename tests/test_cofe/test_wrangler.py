@@ -1,7 +1,7 @@
 import unittest
 import json
 from copy import deepcopy
-
+import random
 import numpy as np
 import numpy.testing as npt
 from smol.cofe import StructureWrangler, ClusterSubspace
@@ -74,6 +74,13 @@ class TestStructureWrangler(unittest.TestCase):
         print(self.sw.feature_matrix.shape)
         self.assertGreaterEqual(self.sw.get_feature_matrix_rank(rows, cols),
                                 self.sw.get_feature_matrix_rank(cols=cols[:-3]))
+
+    def test_orbit_rank(self):
+        for _ in range(10):
+            oid = random.choice(range(1, len(self.cs.orbits) + 1))
+            orb_size = self.cs.orbits[oid - 1]
+            self.assertLessEqual(self.sw.get_feature_matrix_orbit_rank(oid),
+                                 len(orb_size))
 
     def test_add_data(self):
         # Check that a structure that does not match raises error.
