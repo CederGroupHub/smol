@@ -5,7 +5,7 @@ import polytope as pc
 from scipy.spatial import ConvexHull
 
 from collections import OrderedDict
-from itertools import combinations,product
+from itertools import combinations,product,chain
 from copy import deepcopy
 from monty.json import MSONable
 import json
@@ -87,7 +87,7 @@ def get_unit_swps(bits):
 
     return unit_n_swps,chg_of_swps,swp_ids_in_sublat
 
-def flipvec_to_flip_table(unit_n_swps, nbits, prim_lat_vecs):
+def flipvec_to_operations(unit_n_swps, nbits, prim_lat_vecs):
     """
     This function translates flips from their vector from into their dictionary
     form.
@@ -108,13 +108,13 @@ def flipvec_to_flip_table(unit_n_swps, nbits, prim_lat_vecs):
     }
     """
     n_sls = len(nbits)
-    flip_table = []
+    operations = []
 
     for flip_vec in prim_lat_vecs:
-        mult_flip = {'from':{},'to':{}}
+        operation = {'from':{},'to':{}}
         
-        mult_flip['from']={sl_id:{sp_id:0 for sp_id in nbits[sl_id]} for sl_id in range(n_sls)}
-        mult_flip['to'] = {sl_id:{sp_id:0 for sp_id in nbits[sl_id]} for sl_id in range(n_sls)}
+        operation['from']={sl_id:{sp_id:0 for sp_id in nbits[sl_id]} for sl_id in range(n_sls)}
+        operation['to'] = {sl_id:{sp_id:0 for sp_id in nbits[sl_id]} for sl_id in range(n_sls)}
 
         for flip,n_flip in zip(unit_n_swps,flip_vec):
             if n_flip > 0:
@@ -126,51 +126,51 @@ def flipvec_to_flip_table(unit_n_swps, nbits, prim_lat_vecs):
             else:
                 continue
 
-            mult_flip['from'][sl_id][flp_from] += n
-            mult_flip['to'][sl_id][flp_to] += n
+            operation['from'][sl_id][flp_from] += n
+            operation['to'][sl_id][flp_to] += n
 
         #Simplify ionic equations
-        mult_flip_clean = {'from':{},'to':{}}
+        operation_clean = {'from':{},'to':{}}
         for sl_id in range(n_sls):
             for sp_id in nbits[sl_id]:
-                del_n = mult_flip['from'][sl_id][sp_id]-mult_flip['to'][sl_id][sp_id]
+                del_n = operation['from'][sl_id][sp_id]-operation['to'][sl_id][sp_id]
                 if del_n > 0:
-                    if sl_id not in mult_flip_clean['from']:
-                        mult_flip_clean['from'][sl_id]={}
-                    mult_flip_clean['from'][sl_id][sp_id]=del_n
+                    if sl_id not in operation_clean['from']:
+                        operation_clean['from'][sl_id]={}
+                    operation_clean['from'][sl_id][sp_id]=del_n
                 elif del_n < 0:
-                    if sl_id not in mult_flip_clean['to']:
-                        mult_flip_clean['to'][sl_id]={}
-                    mult_flip_clean['to'][sl_id][sp_id]= -del_n
+                    if sl_id not in operation_clean['to']:
+                        operation_clean['to'][sl_id]={}
+                    operation_clean['to'][sl_id][sp_id]= -del_n
                 else:
                     continue
 
-        flip_table.append(mult_flip_clean)
+        operations.append(operation_clean)
 
-    return flip_table    
+    return operations    
 
-def visualize_flip_table(flip_table,bits):
+def visualize_operations(operations,bits):
     """
-    This function turns an mult_flip dict into an string for easy visualization,
+    This function turns an operation dict into an string for easy visualization,
     """
-    mult_flip_strs = []
-    for mult_flip in flip_table:
+    operation_strs = []
+    for operation in operations:
         from_strs = []
         to_strs = []
-        for sl_id in mult_flip['from']:
-            for swp_from,n in mult_flip['from'][sl_id].items():
+        for sl_id in operation['from']:
+            for swp_from,n in operation['from'][sl_id].items():
                 from_name = str(bits[sl_id][swp_from])
                 from_strs.append('{} {}({})'.format(n,from_name,sl_id))
-        for sl_id in mult_flip['to']:
-            for swp_to,n in mult_flip['to'][sl_id].items():
+        for sl_id in operation['to']:
+            for swp_to,n in operation['to'][sl_id].items():
                 to_name = str(bits[sl_id][swp_to])
                 to_strs.append('{} {}({})'.format(n,to_name,sl_id))
 
         from_str = ' + '.join(from_strs)
         to_str = ' + '.join(to_strs)
-        mult_flip_strs.append(from_str+' -> '+to_str) 
+        operation_strs.append(from_str+' -> '+to_str) 
 
-    return mult_flip_strs
+    return operation_strs
 
 ####
 # Compsitional space class
@@ -181,7 +181,7 @@ class CompSpace(MSONable):
         This class generates a CN-compositional space from a list of Species or DummySpecies
         and sublattice sizes.
 
-        A composition in CEAuto can be expressed in two forms:
+        A composition in CEAuto can be expressed in 5 forms:
         1, A Coordinate in unconstrained space, with 'single site flips' as basis vectors, and
            a 'background occupation' as the origin.
            We call this 'unconstr_coord'
@@ -189,6 +189,12 @@ class CompSpace(MSONable):
            conserving elementary flips as basis vectors, and a charge neutral composition as 
            the origin.(Usually selected as one vertex of the constrained space.)
            We call this 'constr_coord'.
+        3, List of species counts on each sublattices, in the order of bits table. We call this,
+           'compositional_statistics'. 2D List of ints(un-normalized) or floats(normalized).
+        4, Normalized compostions of each sublattice. (This form is always normalized).
+        5, The above are all sublattice discriminative descriptions of the compositonal space.
+           By merging same specie on different sublattices into one coordinate, we can establish
+           'non-discriminative_coordinates'.
 
         For example, if bits = [[Li+,Mn3+,Ti4+],[P3-,O2-]] and sl_sizes = [1,1] (LMTOF rock-salt), then:
            'single site flips' basis are:
@@ -232,6 +238,21 @@ class CompSpace(MSONable):
                 If None given, sl_sizes will be reset to [1,1,....]
         """
         self.bits = bits
+
+        #For non-discriminative coordinates
+        species = list(set(chain(*self.bits)))
+        self.species = []
+        for b in species:
+            if isinstance(b,Vacancy):
+                vac_dupe = False
+                for b_old in self.species:
+                    if isinstance(b_old,Vacancy):
+                        vac_dupe=True
+                        break
+                if vac_dupe:
+                    continue
+            self.species.append(b)
+
         self.nbits = [list(range(len(sl_bits))) for sl_bits in bits]
         if sl_sizes is None:
             self.sl_sizes = [1 for i in range(len(self.bits))]
@@ -290,7 +311,7 @@ class CompSpace(MSONable):
     @property
     def dim(self):
         """
-        Type: Boolean
+        Type: Int
 
         Dimensionality of the allowed conpositional space.
         """
@@ -299,6 +320,14 @@ class CompSpace(MSONable):
             return d
         else:
             return d-1
+
+    @property
+    def dim_nondisc(self):
+        """
+        Type: int
+        Dimension of non-discriminative coordinates
+        """
+        return len(self.species)
 
     @property
     def unit_spc_basis(self):
@@ -326,20 +355,18 @@ class CompSpace(MSONable):
     def min_flips(self):
         """
         Dictionary representation of minimal charge conserving flips.
-        Returns:
-            A flip table. Format described in flipvec_to_flip_table.
         """
-        _flip_table = flipvec_to_flip_table(self.unit_n_swps,\
+        _operations = flipvec_to_operations(self.unit_n_swps,\
                                             self.nbits,\
                                             self.unit_spc_basis)
-        return _flip_table
+        return _operations
 
     @property
     def min_flip_strings(self):
         """
         Human readable minial charge conserving flips, written in ionic equations.
         """
-        return visualize_flip_table(self.min_flips,self.bits)
+        return visualize_operations(self.min_flips,self.bits)
 
     @property
     def polytope(self):
@@ -818,6 +845,33 @@ class CompSpace(MSONable):
 
         return np.array(x)
 
+    def _unconstr_to_nondisc(self,x,sc_size=1):
+        """
+        Translates an unconstrained coordinate into non-discriminative 
+        coordinate. Same specie on different sublattices will be summed
+        up as one coordinate.
+
+        Returns:
+            np.array
+        """
+        nondisc = np.zeros(self.dim_nondisc)
+        compstat = self._unconstr_to_compstat(x,sc_size=sc_size)
+   
+        for sl_bits,sl_ns in zip(self.bits,compstat):
+            for b,n in zip(sl_bits,sl_ns):
+                for sp_id,sp in enumerate(self.species):       
+                    if sp == b:
+                        nondisc[sp_id] += n
+                        break
+                    elif (isinstance(sp,Vacancy) and isinstance(b,Vacancy)):
+                        nondisc[sp_id] += n
+                        break
+
+        if np.sum(nondisc) != sc_size*sum(self.sl_sizes):
+            raise  OUTOFSUBSPACEERROR
+ 
+        return nondisc
+                        
 
     def _convert_unconstr_to(self,x,form='unconstr',sc_size=1):
         """
@@ -835,11 +889,12 @@ class CompSpace(MSONable):
                 'compstat': use compstat lists.(See self._unconstr_to_compstat doc)
                 'composition': use a pymatgen.composition for each sublattice 
                                (vacancies not explicitly included)
+                'nondisc': non-discriminate coordinates.
         """
         if len(np.array(x).shape)>1:
             result = [self._convert_unconstr_to(x_sub,form=form,sc_size=sc_size) \
                       for x_sub in x])
-            if form in ['constr','unconstr']:
+            if form in ['constr','unconstr','nondisc']:
                 return np.array(result)
             else:
                 return result
@@ -852,6 +907,8 @@ class CompSpace(MSONable):
             return self._unconstr_to_compstat(x,sc_size=sc_size)
         elif form == 'composition':
             return self._unconstr_to_composition(x,sc_size=sc_size)
+        elif form == 'nondisc':
+            return self._unconstr_to_nondisc(x,sc_size=sc_size)
         else:
             raise ValueError('Requested format not supported.')
 
@@ -872,6 +929,8 @@ class CompSpace(MSONable):
                 'compstat': use compstat lists.(See self._unconstr_to_compstat doc)
                 'composition': use a pymatgen.composition for each sublattice 
                                (vacancies not explicitly included, and must be normalized.
+
+        Note: 'non-disc' can not be converted back to 'unconstr'
         """
         if form in ['unconstr','constr']:
             if len(np.array(x).shape)>1:
@@ -920,6 +979,9 @@ class CompSpace(MSONable):
                 'composition': use a pymatgen.composition for each sublattice 
                                (vacancies not explicitly included)
         """
+        if from_format == 'nondisc':
+            raise ValueError('Non-discriminative coordinates can not be converted to discriminative!')
+
         ucoords = self._convert_to_unconstr(x,form=from_format,sc_size=sc_size)
         return self._convert_unconstr_to(ucoords,form=to_format,sc_size=sc_size)
 
