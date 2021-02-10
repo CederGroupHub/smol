@@ -18,8 +18,11 @@ from monty.json import MSONable
 from pymatgen import Species, DummySpecies, Element
 from smol.cofe.space.domain import get_species, Vacancy
 from smol.moca.processor.base import Processor
+
 from .base import Ensemble
 from .sublattice import Sublattice
+from ..utils.math_utils import GCD_list
+from ..comp_space import CompSpace
 
 class BaseSemiGrandEnsemble(Ensemble):
     """Abstract Semi-Grand Canonical Base Ensemble.
@@ -410,3 +413,137 @@ class CNSemiGrandEnsemble(MuSemiGrandEnsemble):
     only physical representation of a grand canonical ensemble.
     """
     valid_mcmc_steps = ('cn_flip',)
+
+    def compute_feature_vector_change(self,occupancy,step_direction):
+        """
+        Compute change of feature vector from a proposed step.
+        Args:
+            occupancy (ndarray):
+                encoded occupancy string.
+            step_direction (tuple(list of tuple),int):
+                A sequence of flips given my the MCMCUsher.propose_step
+                Note: Form will be different to the step list in other 
+                      ensembles. It consists of a List of tuples marking
+                      operation to the occupation array, and an integer
+                      marking the moving direction on constrained axis.
+                      For example, '0' stands for canonical swao;
+                      '1' stands for a positive move on the first axis;
+                      '-1' stands for a negative move on the first axis;
+                      etc.
+                      We take this special form to avoid recomputing direction,
+                      and to improve speed.
+                      
+        Returns:
+            ndarray: difference in feature vector
+        """
+        return super().compute_feature_vector_change(occupancy,step_direction[0])
+
+class CNSemiGrandDiscEnsemble(BaseSemiGrandEnsemble,MSONable):
+    """
+    Charge neutral semigrand ensemble on sublattice discriminative, constrained
+    coordinates. This is used to examine ground states convergence of 
+    cluster expansion only.
+    """
+    valid_mcmc_steps = ('cn_flip',)
+
+    def __init__(self,processor,mu,sublattices=None):
+        """Initialize CNSemiGrandDiscEnsemble.
+
+        Args:
+            processor (Processor):
+                A processor that can compute the change in a property given
+                a set of flips. See moca.processor
+            mu (1D arraylike):
+                chemical potentials on sublattice discriminative, contrained 
+                coordinates.
+            sublattices (list of Sublattice): optional
+                list of Sublattice objects representing sites in the processor
+                supercell with same site spaces.
+        """
+        super().__init__(processor,sublattices)
+        self.mu = np.array(mu)
+
+        self.bits = [sl.species for sl in self.sublattices]
+        self.sc_sublat_list = [sl.sites for sl in self.sublattices]
+        self.sc_sl_sizes = [len(sl_sites) for sl_sites in self.sc_sublat_list]
+
+        self.sc_size = GCD_list(self.sc_sl_sizes)
+        self.sl_sizes = [sl_size//self.sc_size for sl_size in self.sc_sl_sizes]
+ 
+        self._compspace = CompSpace(self.bits,self.sl_sizes)
+
+    def compute_chemical_work(self,occupancy):
+        """
+        Compute the chemical work under this definition.
+   
+        Args:
+            occupancy(ndarray):
+                encoded occupancy string.
+        Returns:
+            float: chemcial work of the occupancy.
+        """
+        compstat = occu_to_species_stat(occupancy,self.bits,self.sc_sublat_list)
+        ccoord = self._compspace.translate_format(compstat,from_format='compstat',to_format='constr',sc_size=self.sc_size)
+        return np.dot(ccoord,self.mu)
+
+    def compute_feature_vector_change(self,occupancy,step_direction):
+        """
+        Compute change of feature vector from a proposed step.
+        Args:
+            occupancy (ndarray):
+                encoded occupancy string.
+            step_direction (tuple(list of tuple),int):
+                A sequence of flips given my the MCMCUsher.propose_step
+                Note: Form will be different to the step list in other 
+                      ensembles. It consists of a List of tuples marking
+                      operation to the occupation array, and an integer
+                      marking the moving direction on constrained axis.
+                      For example, '0' stands for canonical swao;
+                      '1' stands for a positive move on the first axis;
+                      '-1' stands for a negative move on the first axis;
+                      etc.
+                      We take this special form to avoid recomputing direction,
+                      and to improve speed.
+                      
+        Returns:
+            ndarray: difference in feature vector
+        """
+        step, direction = step_direction
+
+        delta_feature = self.processor.compute_feature_vector_change(occupancy,
+                                                                     step)
+ 
+        if direction == 0: 
+            delta_mu = 0
+        elif direction < 0:
+            ccoord_id = abs(direction)-1
+            delta_mu = -self.mu[ccoord_id]
+        else:
+            ccoord_id = direction-1
+            delta_mu = self.mu[ccoord_id]
+
+        return np.append(delta_feature, delta_mu)
+
+    def as_dict(self):
+        """
+        Serialize object into dictionary.
+        Return:
+            dict.
+        """
+        d = super().as_dict()
+        d['mu']=self.mu.tolist()
+        return d
+
+    @classmethod
+    def from_dict(cls,d):
+        """
+        Initialize from a dictionary.
+        Args:
+            d(dict):
+                dictionary containing all neccessary info to initialize.
+        Returns:
+            CNSemigrandDiscEnsemble.
+        """
+        return cls(Processor.from_dict(d['processor']),\
+                   mu=d['mu'],\
+                   sublattices=[Sublattice.from_dict(s) for s in d['sublattices']])

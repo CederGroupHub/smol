@@ -192,8 +192,11 @@ class TableFlipper(MCMCUsher):
             occupancy (ndarray):
                 encoded occupancy string.
 
-        Returns:
-            list(tuple): list of tuples each with (idex, code)
+        Returns:   
+             Tupe(list(tuple),int): list of tuples each with (idex, code), and
+                                   an integer indication flip direction in
+                                   constrained coordinates. Different from
+                                   other ushers!
         """
         species_stat = occu_to_species_stat(occupancy,self.bits,self.sl_list)
         n_links_current = get_n_links(species_stat,self.flip_table)
@@ -264,7 +267,9 @@ class TableFlipper(MCMCUsher):
             for st_id,site in enumerate(sl_sites):
                 flip_list.append((site, chosen_sps_flip_to[sl_id][st_id]))
 
-        return flip_list
+
+        flip_direction = (chosen_f_id//2 + 1)*(-1 if chosen_fid%2 else 1)
+        return (flip_list,flip_direction)
 
 #### The actual CN-SGMC flipper is a probabilistic combination of Swapper and CorrelatedFlipper ####
 class CNFlipper(MCMCUsher):
@@ -325,7 +330,10 @@ class CNFlipper(MCMCUsher):
                 encoded occupancy string.
 
         Returns:
-            list(tuple): list of tuples each with (idex, code)
+            Tupe(list(tuple),int): list of tuples each with (idex, code), and
+                                   an integer indication flip direction in
+                                   constrained coordinates. Different from
+                                   other ushers!
         """
         species_stat = occu_to_species_stat(occupancy,self.bits,self.sl_list)
         n_links_current = get_n_links(species_stat,self.flip_table)
@@ -338,9 +346,9 @@ class CNFlipper(MCMCUsher):
         p_swap = float(self.n_links-sum(n_links_current))/self.n_links
         if random.random()<p_swap:
         #Choose a swap
-            return self.swapper.propose_step(occupancy)
+            return (self.swapper.propose_step(occupancy),0)
         else:
-        #Choose a correlated flip
+        #Choose a table flip
             return self.corr_flipper.propose_step(occupancy)
 
 def mcusher_factory(usher_type, sublattices, *args, **kwargs):
