@@ -174,8 +174,8 @@ class StructureWrangler(MSONable):
         Returns:
             int: rank of orbit sub feature matrix
         """
-        columns = [i for i in self._subspace.function_orbit_ids
-                   if i == orbit_id]
+        columns = [i for i, oid in enumerate(self._subspace.function_orbit_ids)
+                   if oid == orbit_id]
         return self.get_feature_matrix_rank(rows=rows, cols=columns)
 
     def get_condition_number(self, rows=None, cols=None, p=2):
