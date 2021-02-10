@@ -127,6 +127,7 @@ def test_msonable(composite_processor):
     d = composite_processor.as_dict()
     pr = Processor.from_dict(d)
     assert composite_processor.compute_property(occu) == pr.compute_property(occu)
+    npt.assert_array_equal(composite_processor.coefs, pr.coefs)
     # send in pr bc composite_processor is scoped for function and new random
     # coefficients will be created.
     assert_msonable(pr)

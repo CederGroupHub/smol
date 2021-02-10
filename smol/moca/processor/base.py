@@ -52,9 +52,9 @@ class Processor(MSONable, metaclass=ABCMeta):
         self._subspace = cluster_subspace
         self._structure = self._subspace.structure.copy()
         self._structure.make_supercell(supercell_matrix)
-        self._scmatrix = supercell_matrix
+        self._scmatrix = np.array(supercell_matrix)
 
-        self.coefs = coefficients
+        self.coefs = np.array(coefficients)
         # this can be used (maybe should) to check if a flip is valid
         site_spaces = get_site_spaces(self._subspace.expansion_structure)
         self.unique_site_spaces = tuple(set(site_spaces))
