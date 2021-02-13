@@ -55,6 +55,9 @@ Use this section to keep track of changes in the works.
 ([lbluque](https://github.com/lbluque))
  
 ### Fixed
+* Correctly recreate coefs in `CompositeProcessor.from_dict`
+[\#116](https://github.com/CederGroupHub/smol/pull/116)
+  ([lbluque](https://github.com/lbluque))
 * Disallow setting chemical potentials/fugacities with duplicate string/species
   in dictionary. [\#114](https://github.com/CederGroupHub/smol/pull/114)
   ([lbluque](https://github.com/lbluque))

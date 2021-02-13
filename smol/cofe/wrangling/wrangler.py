@@ -162,6 +162,22 @@ class StructureWrangler(MSONable):
         cols = cols if cols is not None else range(self.num_features)
         return np.linalg.matrix_rank(self.feature_matrix[rows][:, cols])
 
+    def get_feature_matrix_orbit_rank(self, orbit_id, rows=None):
+        """Get the rank of an orbit submatrix of the feature matrix.
+
+        Args:
+            orbit_id (int):
+                Orbit id to obtain sub feature matrix rank of.
+            rows (list): optional
+                List of row indices corresponding to structures to include.
+
+        Returns:
+            int: rank of orbit sub feature matrix
+        """
+        columns = [i for i, oid in enumerate(self._subspace.function_orbit_ids)
+                   if oid == orbit_id]
+        return self.get_feature_matrix_rank(rows=rows, cols=columns)
+
     def get_condition_number(self, rows=None, cols=None, p=2):
         """Compute the condition number for the feature matrix or submatrix.
 
@@ -362,11 +378,17 @@ class StructureWrangler(MSONable):
         """
         keys = ['structure', 'ref_structure', 'properties', 'weights',
                 'scmatrix', 'mapping', 'features', 'size']
-        for item in data_items:
+        for i, item in enumerate(data_items):
             if not all(key in keys for key in item.keys()):
                 raise ValueError(
-                    "A supplied data item is missing required keys. Make sure"
+                    f"Data item {i} is missing required keys. Make sure"
                     " they were obtained with the process_structure method.")
+            if len(self._items) > 0:
+                if not all(prop in self._items[0]['properties'].keys()
+                           for prop in item['properties'].keys()):
+                    raise ValueError(
+                        f"Data item {i} is missing one of the following "
+                        f"properties: {self.available_properties}")
             self._items.append(item)
             self._corr_duplicate_warning(self.num_structures - 1)
 
