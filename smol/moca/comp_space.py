@@ -650,7 +650,7 @@ class CompSpace(MSONable):
 
         else:
             #Then integer composition is not guaranteed to be found.
-            vertices = self.unitspc_vertices()*sc_size
+            vertices = self.unit_spc_vertices()*sc_size
             limiters_ub = np.array(np.ceil(np.max(vertices,axis=0)),dtype=np.int64)
             limiters_lb = np.array(np.floor(np.min(vertices,axis=0)),dtype=np.int64)
 
