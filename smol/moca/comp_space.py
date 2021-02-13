@@ -16,6 +16,7 @@ from smol.cofe.space.domain import Vacancy
 from pymatgen import Element
 
 from .utils.math_utils import *
+from .utils.serial_utils import *
 
 """
 This file contains functions related to implementing and navigating the 
@@ -258,6 +259,8 @@ class CompSpace(MSONable):
                 if vac_dupe:
                     continue
             self.species.append(b)
+        #Sort the species
+        self.species = sorted(self.species)
 
         self.nbits = [list(range(len(sl_bits))) for sl_bits in bits]
         if sl_sizes is None:
@@ -291,7 +294,7 @@ class CompSpace(MSONable):
         """
         chg = 0
         for sl_bits,sl_size in zip(self.bits,self.sl_sizes):
-            chg += int(sl_bits[-1].oxi_state)*sl_size
+            chg += int(get_oxi_state(sl_bits[-1]))*sl_size
         return chg
 
     @property
@@ -401,7 +404,7 @@ class CompSpace(MSONable):
  
             if not self.is_charge_constred:
                 #polytope = pc.Polytope(A,b) Ax<=b.
-                R = np.idendity(self.unconstr_dim)
+                R = np.identity(self.unconstr_dim)
                 t = np.zeros(self.unconstr_dim)
                 self._polytope = (A,b,R,t)          
             else:
@@ -721,7 +724,9 @@ class CompSpace(MSONable):
             d_slack = x_prime[-1]
             x_prime = x_prime[:-1]
             
+
         b = self.A@x_prime
+
         for bi_p,bi in zip(b,self.b):
             if bi_p-bi > SLACK_TOL:
                 raise OUTOFSUBSPACEERROR
