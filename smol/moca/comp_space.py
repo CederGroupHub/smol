@@ -893,7 +893,7 @@ class CompSpace(MSONable):
         """
         if len(np.array(x).shape)>1:
             result = [self._convert_unconstr_to(x_sub,form=form,sc_size=sc_size) \
-                      for x_sub in x])
+                      for x_sub in x]
             if form in ['constr','unconstr','nondisc']:
                 return np.array(result)
             else:
