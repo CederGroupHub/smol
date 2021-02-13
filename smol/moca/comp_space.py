@@ -13,6 +13,7 @@ import json
 from pymatgen import Composition
 
 from smol.cofe.space.domain import Vacancy
+from pymatgen import Element
 
 from .utils.math_utils import *
 
@@ -48,6 +49,12 @@ SLACK_TOL = 1E-5
 # Finding minimun charge-conserved, number-conserved flips to establish constrained
 # coords system.
 ####
+def get_oxi_state(sp):
+    if isinstance(sp,(Vacancy,Element)):
+        return 0
+    else:
+        return sp.oxi_state
+
 
 def get_unit_swps(bits):
     """
@@ -55,19 +62,19 @@ def get_unit_swps(bits):
     they gives rise to.
     For example, 'Ca2+ -> Mg2+', and 'Li+ -> Mn2+'+'F- -> O2-' are all such type of 
     flips.
-    Inputs:
-        bits: 
+    Args:
+        bits(List[List[Speice|Element|Vacancy]]): 
             a list of Species or DummySpecies on each sublattice. For example:
             [[Specie.from_string('Ca2+'),Specie.from_string('Mg2+'))],
              [Specie.from_string('O2-')]]
-    Outputs:
-        unit_n_swps: 
+    Returns:
+        unit_n_swps(List[Tuple(int)]): 
             a flatten list of all possible, single site flips represented in n_bits, 
             each term written as:
             (flip_to_nbit,flip_from_nbit,sublattice_id_of_flip)
-        chg_of_swps: 
+        chg_of_swps(List[int]): 
             change of charge caused by each flip. A flatten list of integers
-        swp_ids_in_sublat:
+        swp_ids_in_sublat(List[List[int]]):
              a list specifying which sublattice should each flip belongs to. Will
              be used to set normalization constraints in comp space.
     """
@@ -82,7 +89,7 @@ def get_unit_swps(bits):
         cur_swp_id += (len(sl_sps)-1)
         #(sp_before,sp_after,sublat_id)
 
-    chg_of_swps = [int(p[0].oxi_state-p[1].oxi_state) for p in unit_swps]
+    chg_of_swps = [int(get_oxi_state(p[0])-get_oxi_state(p[1])) for p in unit_swps]
 
     return unit_n_swps,chg_of_swps,swp_ids_in_sublat
 
@@ -312,7 +319,7 @@ class CompSpace(MSONable):
         """
         Type: Int
 
-        Dimensionality of the allowed conpositional space.
+        Dimensionality of the constrained conpositional space.
         """
         d = self.unconstr_dim
         if not self.is_charge_constred:
