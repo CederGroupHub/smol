@@ -168,7 +168,7 @@ def scale_compstat(compstat,by=1):
         for n_sp in sl_comp:
             n_sp_int = int(round(n_sp*by))
             if abs(n_sp)-n_sp_int > 1E-3:
-                raise ValueError("Composition can't be rounded after scale by {}!".format(by)))
+                raise ValueError("Composition can't be rounded after scale by {}!".format(by))
 
             sl_int_comp.append(n_sp_int)
         int_comp.append(sl_int_comp)   

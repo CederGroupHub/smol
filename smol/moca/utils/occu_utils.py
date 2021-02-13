@@ -43,7 +43,7 @@ def get_prim_sllist_from_sc(sl_list_sc,sc_size=1):
             sublattice sites indices in primitive cell.
     """
     sl_list_prim = []
-    for sl_sc in sl_list sc:
+    for sl_sc in sl_list_sc:
         sl_sc = sorted(sl_sc)
         if len(sl_sc)%sc_size!=0:
             raise ValueError("Supercell size does not match supercell sublattice size.")
