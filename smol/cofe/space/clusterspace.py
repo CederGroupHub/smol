@@ -897,7 +897,7 @@ class ClusterSubspace(MSONable):
             for orbit in orbits[size-1]:
                 if orbit.base_cluster.diameter > diameter:
                     continue
-                for site, _, index in neighbors:
+                for site, _, index,_ in neighbors:
                     p = site.frac_coords
                     if is_coord_subset([p], orbit.base_cluster.sites,
                                        atol=SITE_TOL):
