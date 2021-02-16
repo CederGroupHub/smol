@@ -3,6 +3,7 @@ __author__ = "Fengyu Xie"
 """
 Utility functions to handle encoded occupation arrays.
 """
+import numpy as np
 
 from smol.cofe import ClusterSubspace
 from smol.moca import CEProcessor
