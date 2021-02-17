@@ -431,7 +431,8 @@ class StructureWrangler(MSONable):
                 "Length of property_vector must match number of structures"
                 f" {len(property_vector)} != {self.num_structures}.")
         if normalized:
-            property_vector *= self.sizes
+            # make copy
+            property_vector = self.sizes * property_vector.copy()
 
         for prop, item in zip(property_vector, self._items):
             item['properties'][key] = prop
