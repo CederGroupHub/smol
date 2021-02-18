@@ -60,7 +60,7 @@ Use this section to keep track of changes in the works.
 ### Fixed
 * Raise error in `StructureWrangler.append_data_items` when item properties are
   missing keys already included.
-                                                               [\#117](https://github.com/CederGroupHub/smol/pull/117)
+[\#117](https://github.com/CederGroupHub/smol/pull/117)
   ([lbluque](https://github.com/lbluque))
 * Correctly recreate coefs in `CompositeProcessor.from_dict`
 [\#116](https://github.com/CederGroupHub/smol/pull/116)
