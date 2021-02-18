@@ -239,9 +239,11 @@ class StructureWrangler(MSONable):
             decimals (int): optional
                 number of decimals to round correlations in order to allow
                 some numerical tolerance for finding duplicates. If None is
-                given no rounding is done.
+                given no rounding will be done. Beware that orthogonal basis
+                will likeley be off by some numerical tolerance so rounding is
+                recommended.
         Returns:
-
+            list: list of lists, elements in the inner lists are duplicates
         """
         if len(self.feature_matrix) == 0:
             duplicate_inds = []
