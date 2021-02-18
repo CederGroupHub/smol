@@ -121,7 +121,7 @@ class Metropolis(MCMCKernel):
                 occupancy[f[0]] = f[1]
             self._usher.update_aux_state(step)
 
-        return accept, occupancy, delta_enthalpy, delta_features
+        return accept, occupancy, delta_enthalpy, delta_features, step
 
 
 def mcmckernel_factory(kernel_type, ensemble, temperature, step_type,

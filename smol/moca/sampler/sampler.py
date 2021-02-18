@@ -135,7 +135,8 @@ class Sampler:
         """Clear samples from sampler container."""
         self.samples.clear()
 
-    def sample(self, nsteps, initial_occupancies, thin_by=1, progress=False):
+    def sample(self, nsteps, initial_occupancies, thin_by=1, progress=False,
+               ignore_empty_proposals = False):
         """Generate MCMC samples.
 
         Yield a sampler state every `thin_by` iterations. A state is give by
@@ -150,6 +151,10 @@ class Sampler:
                 Number to thin iterations by and provide samples.
             progress (bool):
                 If true will show a progress bar.
+            ignore_empty_proposals (bool): optional
+                If True, nsteps will be incremented to account for empty step
+                proposals, which can happen if an insignificant step is proposed
+                (e.g. two Vacancies to be swapped in semi-grand-canonical.)
 
         Yields:
             tuple: accepted, occupancies, features change, enthalpies change
@@ -178,13 +183,20 @@ class Sampler:
         with progress_bar(progress, total=nsteps, description=desc) as bar:
             for _ in range(nsteps // thin_by):
                 for _ in range(thin_by):
-                    for i, (accept, occupancy, delta_enthalpy, delta_features)\
+                    for i, (accept, occupancy, delta_enthalpy,
+                            delta_features, step)\
                       in enumerate(map(self._kernel.single_step, occupancies)):
+                        if ignore_empty_proposals:
+                            while step == tuple():
+                                # keep proposing steps until we have a valid one
+                                accept, occupancy, delta_enthalpy, \
+                                delta_features, step = self._kernel.single_step(occupancies[i])
                         accepted[i] += accept
                         occupancies[i] = occupancy
                         if accept:
                             enthalpy[i] = enthalpy[i] + delta_enthalpy
                             features[i] = features[i] + delta_features
+
                     bar.update()
                 # yield copies
                 yield (accepted, temperature, occupancies.copy(),
@@ -192,7 +204,8 @@ class Sampler:
                 accepted[:] = 0  # reset acceptance array
 
     def run(self, nsteps, initial_occupancies=None, thin_by=1, progress=False,
-            stream_chunk=0, stream_file=None, swmr_mode=False):
+            stream_chunk=0, stream_file=None, swmr_mode=False,
+            ignore_empty_proposals = False):
         """Run an MCMC sampling simulation.
 
         This will run and save the samples every thin_by into a
@@ -219,6 +232,10 @@ class Sampler:
             swmr_mode (bool): optional
                 If true allows to read file from other processes. Single Writer
                 Multiple Readers.
+            ignore_empty_proposals (bool): optional
+                If True, nsteps will be incremented to account for empty step
+                proposals, which can happen if an insignificant step is proposed
+                (e.g. two Vacancies to be swapped in semi-grand-canonical.)
         """
         if initial_occupancies is None:
             try:
@@ -249,7 +266,8 @@ class Sampler:
             self.samples.allocate(nsteps // thin_by)
 
         for i, state in enumerate(self.sample(nsteps, initial_occupancies,
-                                  thin_by=thin_by, progress=progress)):
+                                  thin_by=thin_by, progress=progress,
+                                  ignore_empty_proposals=ignore_empty_proposals)):
             self.samples.save_sample(*state)
             if backend is not None and (i + 1) % stream_chunk == 0:
                 self.samples.flush_to_backend(backend)
