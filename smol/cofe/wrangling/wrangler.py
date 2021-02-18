@@ -228,19 +228,30 @@ class StructureWrangler(MSONable):
             X /= np.sqrt(X.T.dot(X).diagonal())
         return X.T.dot(X)
 
-    def get_duplicate_corr_inds(self):
+    def get_duplicate_corr_inds(self, decimals=12):
         """Find indices of rows with duplicate corr vectors in feature matrix.
 
         Returns:
             list: list containing lists of indices of rows in feature_matrix
             where duplicates occur
+
+        Args:
+            decimals (int): optional
+                number of decimals to round correlations in order to allow
+                some numerical tolerance for finding duplicates. If None is
+                given no rounding is done.
+        Returns:
+
         """
         if len(self.feature_matrix) == 0:
             duplicate_inds = []
         else:
             num_ext = len(self.cluster_subspace.external_terms)
             end = self.feature_matrix.shape[1] - num_ext - 1
-            _, inverse = np.unique(self.feature_matrix[:, :end],
+            feature_matrix = self.feature_matrix if decimals is None \
+                else np.around(self.feature_matrix, decimals,
+                               self.feature_matrix.copy())
+            _, inverse = np.unique(feature_matrix[:, :end],
                                    return_inverse=True, axis=0)
             duplicate_inds = [list(np.where(inverse == i)[0])
                               for i in np.unique(inverse)
