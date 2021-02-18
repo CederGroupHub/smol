@@ -528,7 +528,7 @@ class Grandcanonicaltableswapper(MCMCUsher):
 
     def __init__(self, sublattices, allow_crossover=True,
                  GC_step_probability=0.0, swap_table = None,
-                 gc_step_table = None):
+                 gc_step_table = None, domains_intersect = True):
         """
         Implementation of a swap step for two random sites within
         the same randomly chosen (shared or unshared) sublattice.
@@ -551,6 +551,7 @@ class Grandcanonicaltableswapper(MCMCUsher):
         self.allow_crossover = allow_crossover
         self.gc_probability = GC_step_probability  # rename default variables
         self.gc_step_table = gc_step_table
+        self.domains_intersect = domains_intersect
         self.Mn_flip_table = {('Mn2+', 'Mn2+'): ['None'],
                               ('Mn2+', 'Mn3+'): ['swap'],
                               ('Mn3+', 'Mn2+'): ['swap'],
@@ -799,9 +800,6 @@ class Grandcanonicaltableswapper(MCMCUsher):
                 old_sp2 = sp2
                 #sublatt1, sublatt2 = sublatt2, sublatt1
                 # crucial step! was not here in v0.0
-            #else:
-            #    old_sp1 = list(sublatt1)[flip[1][1]]
-            #    old_sp2 = list(sublatt2)[flip[0][1]]
 
             # remove old species from table
             self._site_table[old_sp1][sublatt1][:] = \
@@ -810,9 +808,8 @@ class Grandcanonicaltableswapper(MCMCUsher):
             self._site_table[old_sp2][sublatt2][:] = \
                 [x for x in self._site_table[old_sp2][sublatt2]
                  if x != site2]
-
             # add new species to table
-            if flip_type == 'crossover':
+            if flip_type == 'crossover' or flip_type == 'semi-grand':
                 self._site_table[sp1][sublatt2].append(site2)
                 self._site_table[sp2][sublatt1].append(site1)
             else:
@@ -920,14 +917,16 @@ class Grandcanonicaltableswapper(MCMCUsher):
         :param sublattice_to_pick: site space
         :return: list of sites
         """
-        site_space = self.flip_to_sublattice[chosen_gc_flip]
+        site_space_list = self.flip_to_sublattice[chosen_gc_flip]
         if chosen_gc_flip == 'Mn_disproportionation':
             sp_list = self.Mn_species
         else:
             sp_list = [sp for flip in chosen_gc_flip for sp in flip]
         site_options = []
         for sp in sp_list:
-            site_options += self._site_table[sp][site_space]
+            for site_space in site_space_list:
+                if site_space in self._site_table[sp]: # Mn3+ won't have a tetrahedral site space
+                    site_options += self._site_table[sp][site_space]
         if len(site_options) < 2:
             raise ValueError("Cannot do swaps because there is "
                              "only one species in specie list", str(sp_list),
@@ -951,16 +950,26 @@ class Grandcanonicaltableswapper(MCMCUsher):
             else:
                 flattened = [item for sublist in flip for item in sublist]
             for sublatt in self.sublattices:
-                if np.alltrue([i in sublatt.site_space for i in flattened]):
-                    self.flip_to_sublattice[flip] = sublatt.site_space
-                    break
+                if self.domains_intersect or flip == 'Mn_disproportionation':
+                    if np.alltrue([i in sublatt.site_space for i in flattened]):
+                        self.flip_to_sublattice[flip] = [sublatt.site_space]
+                        break
+                elif not self.domains_intersect:
+                    if sum([i in sublatt.site_space for i in flattened]) > 0:
+                        # we can't have all anions
+                        if flip not in self.flip_to_sublattice:
+                            self.flip_to_sublattice[flip] = [sublatt.site_space]
+                        else:
+                            self.flip_to_sublattice[flip].append(sublatt.site_space)
+                    # take the union of all site spaces
+
         # assert that all gc flips have a sublattice
         assert len(self.flip_to_sublattice) == len(self.gc_step_table)
 
     def _do_species_change_flip(self, occupancy):
         """
         Pick a random GC flip. Similar to the canonical-table-swap method
-        where a flip is picked based on the keys of the Grtable
+        where a flip is picked based on the keys of the gc table
         :param occupancy:
         :return: (site1, newsp1), (site2, newsp2) in accordance with a
         semi-grand canonical, charge-balanced flip
@@ -968,7 +977,6 @@ class Grandcanonicaltableswapper(MCMCUsher):
         # Choose random GC swap type weighted by given probabilities in table
         chosen_gc_flip = random.choices(list(self.gc_step_table.keys()),
                                      weights=list(self.gc_step_table.values()))[0]
-
 
         site1_options = self._get_sublattice_for_flip(chosen_gc_flip)
         site1 = random.choice(site1_options)
@@ -981,7 +989,6 @@ class Grandcanonicaltableswapper(MCMCUsher):
                 site2 = site2_proposal
         sp2 = list(self._sites_to_sublattice[site2])[occupancy[site2]]
         sp1 = list(self._sites_to_sublattice[site1])[occupancy[site1]]
-
         if chosen_gc_flip == 'Mn_disproportionation':
             return self._do_Mn_flip(sp1, sp2, site1, site2)
         # charge-balanced sGC
@@ -991,9 +998,7 @@ class Grandcanonicaltableswapper(MCMCUsher):
         """
         Does the semi-grand-canonical specie swap given a sublattice
         and the types of allowable swaps have already been specified.
-        Only allow Li/Vac specie and Mn2/3/4 species swaps. This means that
-        a picked deliathiation move will not have Mn3+ swapping for a Li+
-        and a Mn2+ swapping for a Li+.
+        Only allow Li/Vac specie and Mn2/3/4 species steps.
         :param chosen_gc_flip: the semi-grand flip that is being done
         :param sp1: old specie 1 on site 1 to be swapped out
         :param sp2: old specie 2 on site 2 to be swapped out
@@ -1016,8 +1021,7 @@ class Grandcanonicaltableswapper(MCMCUsher):
         assert len(chosen) == 1
         newsp1 = chosen_gc_flip[chosen[0]][sp1index]
         newsp2 = chosen_gc_flip[chosen[0]][sp2index]
-        #print ('old-sp1', self.oldsp1, 'new:', newsp1, site1)
-        #print('old-sp2', self.oldsp2, 'new:', newsp2, site2)
+
         return ((site1, list(self._sites_to_sublattice[site1]).index(newsp1)),
                 (site2, list(self._sites_to_sublattice[site2]).index(newsp2))),\
                 'semi-grand'
