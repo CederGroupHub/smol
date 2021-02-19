@@ -18,9 +18,11 @@ __credits__ = "William Davidson Richard"
 
 from typing import Sequence
 import warnings
+from itertools import combinations
 import numpy as np
 from monty.json import MSONable, jsanitize
 from pymatgen import Structure
+from pymatgen.analysis.structure_matcher import StructureMatcher
 from smol.cofe.space.clusterspace import ClusterSubspace
 from smol.exceptions import StructureMatchError
 
@@ -228,12 +230,8 @@ class StructureWrangler(MSONable):
             X /= np.sqrt(X.T.dot(X).diagonal())
         return X.T.dot(X)
 
-    def get_duplicate_corr_inds(self, decimals=12):
+    def get_duplicate_corr_indices(self, decimals=12):
         """Find indices of rows with duplicate corr vectors in feature matrix.
-
-        Returns:
-            list: list containing lists of indices of rows in feature_matrix
-            where duplicates occur
 
         Args:
             decimals (int): optional
@@ -243,7 +241,8 @@ class StructureWrangler(MSONable):
                 will likeley be off by some numerical tolerance so rounding is
                 recommended.
         Returns:
-            list: list of lists, elements in the inner lists are duplicates
+            list: list containing lists of indices of rows in feature_matrix
+            where duplicates occur
         """
         if len(self.feature_matrix) == 0:
             duplicate_inds = []
@@ -259,6 +258,48 @@ class StructureWrangler(MSONable):
                               for i in np.unique(inverse)
                               if len(np.where(inverse == i)[0]) > 1]
         return duplicate_inds
+
+    def get_matching_corr_duplicate_indices(self, decimals=12,
+                                            structure_matcher=None,
+                                            **matcher_kwargs):
+        """Find indices of equivalent structures.
+
+        Args:
+            decimals (int): optional
+                number of decimals to round correlations in order to allow
+                some numerical tolerance for finding duplicates.
+            structure_matcher (StructureMatcher): optional
+                A StructureMatcher object to use for matching structures.
+            **matcher_kwargs:
+                Keyword arguments to use when initializing a structure matcher
+                if not given
+
+        Returns:
+            list: list of lists of equivalent structures (that match) and have
+                  duplicate correlation vectors.
+        """
+        matcher = structure_matcher if structure_matcher is not None \
+            else StructureMatcher(**matcher_kwargs)
+        duplicate_indices = self.get_duplicate_corr_indices(decimals)
+
+        matching_inds = []
+        for inds in duplicate_indices:
+            # match all combinations of duplicates
+            matches = [set(c) for c in combinations(inds, 2) if
+                       matcher.fit(self.structures[c[0]],
+                                   self.structures[c[1]],
+                                   symmetric=True)]
+            while overlaps := list(
+                    filter(lambda s: s[0] & s[1], combinations(matches, 2))):
+                all_overlaps = [o for overlap in overlaps for o in overlap]
+                # keep only disjoint sets
+                matches = [s for s in matches if s not in all_overlaps]
+                # add union of overlapping sets
+                for s1, s2 in overlaps:
+                    if s1 | s2 not in matches:
+                        matches.append(s1 | s2)
+            matching_inds += [list(sorted(m)) for m in matches]
+        return matching_inds
 
     def get_constant_features(self):
         """Find indices of constant feature vectors (columns).
@@ -587,7 +628,7 @@ class StructureWrangler(MSONable):
 
     def _corr_duplicate_warning(self, index):
         """Warn if corr vector of item with given index is duplicated."""
-        for duplicate_inds in self.get_duplicate_corr_inds():
+        for duplicate_inds in self.get_duplicate_corr_indices():
             if index in duplicate_inds:
                 duplicates = "".join(
                     f"Index {i} - {self._items[i]['structure'].composition}"
