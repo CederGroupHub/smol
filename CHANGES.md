@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Use this section to keep track of changes in the works.
 
 ### Added
+* Method in `StructureWrangler` to get structure matching duplicates
+  [\#122](https://github.com/CederGroupHub/smol/pull/122)
+  ([lbluque](https://github.com/lbluque))
+* Include tolerance when detecting duplicate correlation vectors.
+  [\#121](https://github.com/CederGroupHub/smol/pull/122)
+  ([lbluque](https://github.com/lbluque))
 * Convenience method to get feature matrix orbit ranks.
   [\#117](https://github.com/CederGroupHub/smol/pull/117)
   ([lbluque](https://github.com/lbluque))
