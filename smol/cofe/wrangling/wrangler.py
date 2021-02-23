@@ -365,8 +365,8 @@ class StructureWrangler(MSONable):
         return np.array([i['weights'][key] for i in self._items])
 
     def add_data(self, structure, properties, normalized=False, weights=None,
-                 verbose=False, supercell_matrix=None, site_mapping=None,
-                 raise_failed=False):
+                 supercell_matrix=None, site_mapping=None,
+                 verbose=True, raise_failed=False):
         """Add a structure and measured property to the StructureWrangler.
 
         The properties are usually extensive (i.e. not normalized per atom
@@ -395,8 +395,6 @@ class StructureWrangler(MSONable):
             weights (dict):
                 The weight given to the structure when doing the fit. The key
                 must match at least one of the given properties.
-            verbose (bool):
-                if True then print structures that fail in StructureMatcher.
             supercell_matrix (ndarray): optional
                 If the corresponding structure has already been matched to the
                 clustersubspace prim structure, passing the supercell_matrix
@@ -408,17 +406,21 @@ class StructureWrangler(MSONable):
                 such that the elements of site_mapping represent the indices
                 of the matching sites to the prim structure. I you pass this
                 option you are fully responsible that the mappings are correct!
+            verbose (bool): optional
+                if True then warn structures that fail in StructureMatcher, and
+                structures that have duplicate corr vectors.
             raise_failed (bool): optional
                 If true will raise the thrown error when adding a structure
                 fails. This can be helpful to keep a list of structures that
                 fail for further inspection.
         """
         item = self.process_structure(structure, properties, normalized,
-                                      weights, verbose, supercell_matrix,
-                                      site_mapping, raise_failed)
+                                      weights, supercell_matrix, site_mapping,
+                                      verbose, raise_failed)
         if item is not None:
             self._items.append(item)
-        self._corr_duplicate_warning(self.num_structures - 1)
+        if verbose:
+            self._corr_duplicate_warning(self.num_structures - 1)
 
     def append_data_items(self, data_items):
         """Append a list of data items.
@@ -549,8 +551,9 @@ class StructureWrangler(MSONable):
         self._items = []
 
     def process_structure(self, structure, properties, normalized=False,
-                          weights=None, verbose=False, supercell_matrix=None,
-                          site_mapping=None, raise_failed=False):
+                          weights=None, supercell_matrix=None,
+                          site_mapping=None, verbose=False,
+                          raise_failed=False):
         """Process a structure to be added to wrangler.
 
         Checks if the structure for this data item can be matched to the
@@ -572,8 +575,6 @@ class StructureWrangler(MSONable):
             weights (dict):
                 The weight given to the structure when doing the fit. The key
                 must match at least one of the given properties.
-            verbose (bool):
-                if True then print structures that fail in StructureMatcher.
             supercell_matrix (ndarray): optional
                 If the corresponding structure has already been matched to the
                 clustersubspace prim structure, passing the supercell_matrix
@@ -586,6 +587,9 @@ class StructureWrangler(MSONable):
                 such that the elements of site_mapping represent the indices
                 of the matching sites to the prim structure. If you pass this
                 option you are fully responsible that the mappings are correct!
+            verbose (bool):
+                if True then warn structures that fail in StructureMatcher, and
+                structures that have duplicate corr vectors.
             raise_failed (bool): optional
                 If true will raise the thrown error when adding a structure
                 fails. This can be helpful to keep a list of structures that
@@ -610,14 +614,18 @@ class StructureWrangler(MSONable):
                 site_mapping=site_mapping)
             refined_struct = self._subspace.refine_structure(
                 structure, supercell_matrix)
+
             if normalized:
                 properties = {key: val*size for key, val in properties.items()}
             weights = {} if weights is None else weights
+
         except StructureMatchError as e:
             if verbose:
-                print(f'Unable to match {structure.composition} with '
-                      f'properties {properties} to supercell_structure. '
-                      f'Throwing out.\n Error Message: {str(e)}')
+                warnings.warn(
+                    f'Unable to match {structure.composition} with '
+                    f'properties {properties} to supercell_structure. '
+                    f'Throwing out.\n Error Message: {str(e)}',
+                    UserWarning)
             if raise_failed:
                 raise e
             return

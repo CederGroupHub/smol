@@ -86,6 +86,8 @@ class TestStructureWrangler(unittest.TestCase):
         # Check that a structure that does not match raises error.
         self.assertRaises(Exception, self.sw.add_data, lno_data[0][0],
                           {'energy': 0}, raise_failed=True)
+        self.assertWarns(UserWarning, self.sw.add_data, lno_data[0][0],
+                         {'energy': 0})
 
         # Check data in setup was added correctly
         self.assertTrue(all(w == 2.0 for w in self.sw.get_weights('random')[:-1]))
