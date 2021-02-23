@@ -186,7 +186,6 @@ class Tableswapper(MCMCUsher):
                            self.Mn4_specie]
         self._sites_to_sublattice = None
         self.sublattice_probabilities_per_specie = None
-        #self.swap_table = None
         self.current_flip_type = None
         self._site_table = None
 
