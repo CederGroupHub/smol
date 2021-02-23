@@ -94,7 +94,7 @@ class Metropolis(MCMCKernel):
     The classic and nothing but the classic.
     """
 
-    valid_mcushers = {'flip': 'Flipper', 'swap': 'Swapper', 'cn_flip':'CNFlipper'}
+    valid_mcushers = {'flip': 'Flipper', 'swap': 'Swapper', 'cn_flip':'Cnflipper'}
 
     def single_step(self, occupancy):
         """Attempt an MC step.
@@ -115,8 +115,13 @@ class Metropolis(MCMCKernel):
         accept = (True if delta_enthalpy <= 0
                   else -self.beta * delta_enthalpy > log(random()))
         if accept:
-            for f in step:
-                occupancy[f[0]] = f[1]
+            if isinstance(step,tuple) and len(step)==2 and isinstance(step[1],int):
+            #is a table flip step
+                for f in step[0]:
+                    occupancy[f[0]] = f[1]
+            else:
+                for f in step:
+                    occupancy[f[0]] = f[1]
             self._usher.update_aux_state(step)
 
         return accept, occupancy, delta_enthalpy, delta_features

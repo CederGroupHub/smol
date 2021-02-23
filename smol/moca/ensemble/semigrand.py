@@ -22,6 +22,7 @@ from smol.moca.processor.base import Processor
 from .base import Ensemble
 from .sublattice import Sublattice
 from ..utils.math_utils import GCD_list
+from ..utils.occu_utils import occu_to_species_stat
 from ..comp_space import CompSpace
 
 class BaseSemiGrandEnsemble(Ensemble):

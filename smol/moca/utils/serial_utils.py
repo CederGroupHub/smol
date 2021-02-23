@@ -12,7 +12,7 @@ from pymatgen import Composition
 
 # Monty decoding any dict
 def decode_from_dict(d):
-    return MontyDecoder().decode(json.dumps(d))
+    return MontyDecoder().process_decoded(d)
 
 #serialize and de-serialize compositions
 def serialize_comp(comp):
@@ -65,7 +65,7 @@ def serialize_any(obj):
     Do not use this for composition!
     """
     if isinstance(obj,(list,tuple,set,np.ndarray)):
-        return serialize_any([o for o in obj])
+        return [serialize_any(o) for o in obj]
 
     if 'as_dict' in dir(obj):
         return obj.as_dict()

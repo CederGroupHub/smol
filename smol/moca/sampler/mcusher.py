@@ -12,13 +12,14 @@ __author__ = "Luis Barroso-Luque, Fengyu Xie"
 
 from abc import ABC, abstractmethod
 import random
+import numpy as np
 
 from smol.utils import derived_class_factory
 from ..comp_space import CompSpace
 
 from ..utils.occu_utils import occu_to_species_stat, occu_to_species_list
 from ..utils.comp_utils import get_n_links
-from ..utils.math_utils import choose_section_from_partition
+from ..utils.math_utils import choose_section_from_partition,GCD_list
 
 class MCMCUsher(ABC):
     """Abstract base class for MCMC usher classes."""
@@ -141,14 +142,16 @@ class Swapper(MCMCUsher):
         return swap
 
 #### The TableFlip Usher ####
-class TableFlipper(MCMCUsher):
+class Tableflipper(MCMCUsher):
     """
     Implementation of simultaneous flips on multiple sites.
     This is to further enable charge neutral unitary flips.
     """
-    def __init__(self, flip_table, sublattices):
+    def __init__(self, sublattices, flip_table):
         """
         Args:
+           sublattices (list of Sublattice):
+               list of Sublattices to propose steps for.
            flip_table(List of Dict): 
                A list of dict containing information of all allowed flips
                For example, 
@@ -169,10 +172,7 @@ class TableFlipper(MCMCUsher):
                   },
                   ...
                  ]
-            sublattices (list of Sublattice):
-                list of Sublattices to propose steps for.
-            sublattice_probabilities (list of float): optional
-                list of probability to pick a site from a specific sublattice.
+
         """
         super().__init__(sublattices)
         self.flip_table = flip_table
@@ -198,6 +198,8 @@ class TableFlipper(MCMCUsher):
                                    constrained coordinates. Different from
                                    other ushers!
         """
+        occupancy=np.array(occupancy)
+
         species_stat = occu_to_species_stat(occupancy,self.bits,self.sl_list)
         n_links_current = get_n_links(species_stat,self.flip_table)
     
@@ -268,13 +270,13 @@ class TableFlipper(MCMCUsher):
                 flip_list.append((site, chosen_sps_flip_to[sl_id][st_id]))
 
 
-        flip_direction = (chosen_f_id//2 + 1)*(-1 if chosen_fid%2 else 1)
+        flip_direction = (chosen_f_id//2 + 1)*(-1 if chosen_f_id%2 else 1)
         return (flip_list,flip_direction)
 
 #### The actual CN-SGMC flipper is a probabilistic combination of Swapper and CorrelatedFlipper ####
-class CNFlipper(MCMCUsher):
+class Cnflipper(MCMCUsher):
     """ Implement the MCMCUsher of CN-SGMC, which is a combination of Swapper and CorrelatedFlipper """
-    def __init___(self,sublattices,n_links=None):
+    def __init__(self,sublattices,n_links=None):
         """Initialize MCMCStep.
 
         Args:
@@ -290,6 +292,7 @@ class CNFlipper(MCMCUsher):
                 in flips selection of the CN-SG ensemble.
         """
         super().__init__(sublattices)
+
         self.bits = [sl.species for sl in sublattices]
         self.sl_list = [list(sl.sites) for sl in sublattices]
         sl_sizes = [len(sl.sites) for sl in sublattices]
@@ -316,7 +319,7 @@ class CNFlipper(MCMCUsher):
                                 for v in comp_vertices])
 
         self.swapper = Swapper(self.sublattices)
-        self.corr_flipper = TableFlipper(self.flip_table,self.sublattices)
+        self.corr_flipper = Tableflipper(self.sublattices,self.flip_table)
 
     def propose_step(self,occupancy):
         """Propose a single random swap step.
@@ -335,6 +338,7 @@ class CNFlipper(MCMCUsher):
                                    constrained coordinates. Different from
                                    other ushers!
         """
+        occupancy = np.array(occupancy)
         species_stat = occu_to_species_stat(occupancy,self.bits,self.sl_list)
         n_links_current = get_n_links(species_stat,self.flip_table)
  
