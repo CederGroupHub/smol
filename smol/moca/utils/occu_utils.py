@@ -5,9 +5,6 @@ Utility functions to handle encoded occupation arrays.
 """
 import numpy as np
 
-from smol.cofe import ClusterSubspace
-from smol.moca import CEProcessor
-
 # Utilities to get supercell sublattice sites from primitive sublattice sites.
 def get_sc_sllist_from_prim(sl_list_prim,sc_size=1):
     """
@@ -129,26 +126,3 @@ def occu_to_species_list(occupancy,bits,sublat_list_sc):
         species_list[sl_id][sp_id].append(site_id)
 
     return species_list
-
-#Wrap up structure_from_occu method from processor module
-def structure_from_occu(occu,prim,sc_matrix):
-    """
-    Decodes structure from encoded occupation array.
-    Args:
-        occu(1D arraylike):
-            encoded occupation string
-        prim(pymatgen.Structure):
-            primitive cell containing all occupying species information.
-            It is your responisibility to ensure that it is exactly the
-            one you used to initialize cluster expansion.
-        sc_matrix(3*3 arraylike):
-            Supercell matrix. It is your responsibility to check size
-            matches the length of occu
-    Returns:
-        Decoded pymatgen.Structure object.
-    """
-    dummy_cspace = ClusterSubspace.from_cutoffs(prim, cutoffs={2:0.01})
-    dummy_coefs = np.zeros(dummy_cspace.num_corr_functions)
-    dummy_proc = CEProcessor(dummy_cspace,sc_matrix,dummy_coefs)
-    return dummy_proc.structure_from_occupancy(occu)
-

@@ -370,34 +370,3 @@ def enumerate_partitions(n_part,enum_fold,constrs=None,quota=1.0):
             accumulated_enums.extend([[enum_x]+xs for xs in next_levels])
 
     return accumulated_enums
-
-#Grid
-def get_center_grid(center,step_per_dim,n_step_per_dim):
-    """
-    Generates a d-dimensional grid around center
-    Args:
-        center(1D arraylike):
-            d-dimensional vector
-        step_per_dim(float or List[float]):
-            step sizes of grid per dimension
-        n_step_per_dim(int or List[int]):
-            number of steps of grid per dimension
-    Returns: 
-        List[List[float]], all grid points
-    """
-    d = len(center)
-    center = np.array(center)
-
-    if isinstance(step_per_dim,float):
-        step_per_dim = [step_per_dim for i in range(d)]
-
-    if isinstance(n_step_per_dim,(int,np.int64)):
-        n_step_per_dim = [n_step_per_dim for i in range(d)]
-
-    if len(step_per_dim)!=d or len(n_step_per_dim)!=d:
-        raise ValueError("Length of given list parameters does not match dim of grid.")
-
-    dims = [np.linspace(-s*(n-1)/2,s*(n-1)/2,n).tolist() \
-            for s,n in zip(step_per_dim,n_step_per_dim)]
-
-    return (np.array(list(product(*dims)))+center).tolist()
