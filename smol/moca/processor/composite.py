@@ -157,6 +157,6 @@ class CompositeProcessor(Processor):
         """Create a Composite from serialized MSONable dict."""
         pr = cls(ClusterSubspace.from_dict(d['cluster_subspace']),
                  np.array(d['supercell_matrix']))
-        pr._processors = [Processor.from_dict(prd)
-                          for prd in d['processors']]
+        for prd in d['processors']:
+            pr.add_processor(Processor.from_dict(prd))
         return pr

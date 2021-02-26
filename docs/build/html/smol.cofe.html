@@ -1405,16 +1405,45 @@ vectors may be a sign of insufficient sampling of configuration space.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.StructureWrangler.get_duplicate_corr_inds">
-<code class="sig-name descname">get_duplicate_corr_inds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.get_duplicate_corr_inds" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.cofe.StructureWrangler.get_duplicate_corr_indices">
+<code class="sig-name descname">get_duplicate_corr_indices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">decimals</span><span class="o">=</span><span class="default_value">12</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.get_duplicate_corr_indices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find indices of rows with duplicate corr vectors in feature matrix.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>list containing lists of indices of rows in feature_matrix
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>decimals</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+number of decimals to round correlations in order to allow
+some numerical tolerance for finding duplicates. If None is
+given no rounding will be done. Beware that orthogonal basis
+will likeley be off by some numerical tolerance so rounding is
+recommended.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list containing lists of indices of rows in feature_matrix
 where duplicates occur</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.StructureWrangler.get_feature_matrix_orbit_rank">
+<code class="sig-name descname">get_feature_matrix_orbit_rank</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">orbit_id</span></em>, <em class="sig-param"><span class="n">rows</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.get_feature_matrix_orbit_rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the rank of an orbit submatrix of the feature matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>orbit_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Orbit id to obtain sub feature matrix rank of.</p></li>
+<li><p><strong>rows</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – optional
+List of row indices corresponding to structures to include.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>rank of orbit sub feature matrix</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1462,6 +1491,35 @@ feature matrix.</p></li>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.StructureWrangler.get_matching_corr_duplicate_indices">
+<code class="sig-name descname">get_matching_corr_duplicate_indices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">decimals</span><span class="o">=</span><span class="default_value">12</span></em>, <em class="sig-param"><span class="n">structure_matcher</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">matcher_kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.get_matching_corr_duplicate_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find indices of equivalent structures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>decimals</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+number of decimals to round correlations in order to allow
+some numerical tolerance for finding duplicates.</p></li>
+<li><p><strong>structure_matcher</strong> (<em>StructureMatcher</em>) – optional
+A StructureMatcher object to use for matching structures.</p></li>
+<li><p><strong>**matcher_kwargs</strong> – Keyword arguments to use when initializing a structure matcher
+if not given</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>list of lists of equivalent structures (that match) and have</dt><dd><p>duplicate correlation vectors.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
 </dd>
 </dl>
 </dd></dl>

@@ -12,6 +12,7 @@ __author__ = "Luis Barroso-Luque"
 
 from abc import abstractmethod
 from math import log
+from collections import Counter
 import numpy as np
 
 from monty.json import MSONable
@@ -144,6 +145,14 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     @chemical_potentials.setter
     def chemical_potentials(self, value):
         """Set the chemical potentials and update table."""
+        for sp, count in Counter(map(get_species, value.keys())).items():
+            if count > 1:
+                raise ValueError(
+                    f"{count} values of the chemical potential for the same "
+                    f"species {sp} were provided.\n Make sure the dictionary "
+                    "you are using has only string keys or only Species "
+                    "objects as keys."
+                )
         value = {get_species(k): v for k, v in value.items()}
         if set(value.keys()) != set(self._mus.keys()):
             raise ValueError('Chemical potentials given are missing species. '
@@ -297,6 +306,16 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     @fugacity_fractions.setter
     def fugacity_fractions(self, value):
         """Set the fugacity fractions and update table."""
+        for sub in value:
+            for sp, count in Counter(map(get_species, sub.keys())).items():
+                if count > 1:
+                    raise ValueError(
+                        f"{count} values of the fugacity for the same "
+                        f"species {sp} were provided.\n Make sure the "
+                        "dictionaries you are using have only "
+                        "string keys or only Species objects as keys."
+                    )
+
         value = [{get_species(k): v for k, v in sub.items()} for sub in value]
         if not all(sum(fus.values()) == 1 for fus in value):
             raise ValueError('Fugacity ratios must add to one.')

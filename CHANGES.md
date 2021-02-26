@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Use this section to keep track of changes in the works.
 
 ### Added
+* Method in `StructureWrangler` to get structure matching duplicates
+  [\#122](https://github.com/CederGroupHub/smol/pull/122)
+  ([lbluque](https://github.com/lbluque))
+* Include tolerance when detecting duplicate correlation vectors.
+  [\#121](https://github.com/CederGroupHub/smol/pull/122)
+  ([lbluque](https://github.com/lbluque))
+* Convenience method to get feature matrix orbit ranks.
+  [\#117](https://github.com/CederGroupHub/smol/pull/117)
+  ([lbluque](https://github.com/lbluque))
 * bit combo hierarchy in `ClusterSubspace` for fitting hierarchy constraints.
   [\#106](https://github.com/CederGroupHub/smol/pull/106)
   ([qchempku2017](https://github.com/qchempku2017))
@@ -55,6 +64,19 @@ Use this section to keep track of changes in the works.
 ([lbluque](https://github.com/lbluque))
  
 ### Fixed
+* Raise error in `StructureWrangler.append_data_items` when item properties are
+  missing keys already included.
+[\#117](https://github.com/CederGroupHub/smol/pull/117)
+  ([lbluque](https://github.com/lbluque))
+* Correctly recreate coefs in `CompositeProcessor.from_dict`
+[\#116](https://github.com/CederGroupHub/smol/pull/116)
+  ([lbluque](https://github.com/lbluque))
+* Disallow setting chemical potentials/fugacities with duplicate string/species
+  in dictionary. [\#114](https://github.com/CederGroupHub/smol/pull/114)
+  ([lbluque](https://github.com/lbluque))
+* Fixed loading `ClusterSubspace` with polynomial basis from dict.
+[\#112](https://github.com/CederGroupHub/smol/pull/112)
+  ([lbluque](https://github.com/lbluque))
 * Fixed `Sublattice` serialization, saving/loading `SiteSpaces`.
 [\#96](https://github.com/CederGroupHub/smol/pull/96)
   ([lbluque](https://github.com/lbluque))
