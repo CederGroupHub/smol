@@ -142,18 +142,18 @@ class Swapper(MCMCUsher):
         return swap
 
 #### The TableFlip Usher ####
-class Tableflipper(MCMCUsher):
+class Combinedflipper(MCMCUsher):
     """
     Implementation of simultaneous flips on multiple sites.
     This is to further enable charge neutral unitary flips.
     """
-    def __init__(self, sublattices, flip_table):
+    def __init__(self, sublattices, flip_combs):
         """
         Args:
            sublattices (list of Sublattice):
                list of Sublattices to propose steps for.
-           flip_table(List of Dict): 
-               A list of dict containing information of all allowed flips
+           flip_combs(List of Dict): 
+               A list of dict containing information of all allowed flip combinations.
                For example, 
                  [
                   {
@@ -175,14 +175,14 @@ class Tableflipper(MCMCUsher):
 
         """
         super().__init__(sublattices)
-        self.flip_table = flip_table
+        self.flip_combs = flip_combs
         #A flip has two directions. All links initialized with 0.
 
         self.bits = [sl.species for sl in self.sublattices]
         self.sl_list = [list(sl.sites) for sl in self.sublattices]
 
     def propose_step(self,occupancy):
-        """Propose a single random swap step.
+        """Propose a single random flip step.
 
         A step is given as a sequence of tuples, where each tuple is of the
         form (site index, species code to set)
@@ -201,10 +201,10 @@ class Tableflipper(MCMCUsher):
         occupancy=np.array(occupancy)
 
         species_stat = occu_to_species_stat(occupancy,self.bits,self.sl_list)
-        n_links_current = get_n_links(species_stat,self.flip_table)
+        n_links_current = get_n_links(species_stat,self.flip_combs)
     
         chosen_f_id = choose_section_from_partition(n_links_current)
-        mult_flip = self.flip_table[chosen_f_id//2]
+        mult_flip = self.flip_combs[chosen_f_id//2]
         direction = chosen_f_id%2 # 0 forward, 1 backward.
 
         sp_list = occu_to_species_list(occupancy,self.bits,self.sl_list)
@@ -269,15 +269,13 @@ class Tableflipper(MCMCUsher):
             for st_id,site in enumerate(sl_sites):
                 flip_list.append((site, chosen_sps_flip_to[sl_id][st_id]))
 
-
-        flip_direction = (chosen_f_id//2 + 1)*(-1 if chosen_f_id%2 else 1)
-        return (flip_list,flip_direction)
+        return flip_list
 
 #### The actual CN-SGMC flipper is a probabilistic combination of Swapper and CorrelatedFlipper ####
-class Cnflipper(MCMCUsher):
+class Chargeneutralflipper(MCMCUsher):
     """ Implement the MCMCUsher of CN-SGMC, which is a combination of Swapper and CorrelatedFlipper """
     def __init__(self,sublattices,n_links=None):
-        """Initialize MCMCStep.
+        """Initialize Chargeneutralflipper.
 
         Args:
             sublattices (list of Sublattice):
@@ -287,7 +285,7 @@ class Cnflipper(MCMCUsher):
             n_links(int):
                 For each type of flip in the flip table, there is a number of 
                 possible flips of that type on the current occupancy. We store
-                these numbers in the same order of flips in the flip_table, and
+                these numbers in the same order of flips in the flip_combs, and
                 the numbers will be useful to keep a-priori reversibility 
                 in flips selection of the CN-SG ensemble.
         """
@@ -307,7 +305,7 @@ class Cnflipper(MCMCUsher):
         #elsewhere is highly recommended!
         compspace = CompSpace(self.bits,sl_sizes=sl_sizes)
         
-        self.flip_table = compspace.min_flips
+        self._flip_combs = compspace.min_flips
         comp_vertices = compspace.int_vertices(sc_size=sc_size,
                                                form='compstat')
         
@@ -315,11 +313,11 @@ class Cnflipper(MCMCUsher):
             #If n_links has been updated and computed before, utilize this
             self.n_links = n_links
         else:
-            self.n_links = max([sum(get_n_links(v,self.flip_table)) 
+            self.n_links = max([sum(get_n_links(v,self._flip_combs)) 
                                 for v in comp_vertices])
 
         self.swapper = Swapper(self.sublattices)
-        self.corr_flipper = Tableflipper(self.sublattices,self.flip_table)
+        self.comb_flipper = Combinedflipper(self.sublattices,self._flip_combs)
 
     def propose_step(self,occupancy):
         """Propose a single random swap step.
@@ -327,7 +325,7 @@ class Cnflipper(MCMCUsher):
         A step is given as a sequence of tuples, where each tuple is of the
         form (site index, species code to set)
 
-        self.n_linkages are also updated here.
+        self.n_links are also updated here after every step.
         Args:
             occupancy (ndarray):
                 encoded occupancy string.
@@ -340,7 +338,7 @@ class Cnflipper(MCMCUsher):
         """
         occupancy = np.array(occupancy)
         species_stat = occu_to_species_stat(occupancy,self.bits,self.sl_list)
-        n_links_current = get_n_links(species_stat,self.flip_table)
+        n_links_current = get_n_links(species_stat,self._flip_combs)
  
         if sum(n_links_current)>self.n_links:
         #Then update n_links value
@@ -350,10 +348,10 @@ class Cnflipper(MCMCUsher):
         p_swap = float(self.n_links-sum(n_links_current))/self.n_links
         if random.random()<p_swap:
         #Choose a swap
-            return (self.swapper.propose_step(occupancy),0)
+            return self.swapper.propose_step(occupancy)
         else:
         #Choose a table flip
-            return self.corr_flipper.propose_step(occupancy)
+            return self.comb_flipper.propose_step(occupancy)
 
 def mcusher_factory(usher_type, sublattices, *args, **kwargs):
     """Get a MCMC Usher from string name.

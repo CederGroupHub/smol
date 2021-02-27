@@ -16,7 +16,8 @@ from smol.cofe.space.domain import Vacancy
 from pymatgen import Element
 
 from .utils.math_utils import *
-from .utils.serial_utils import *
+
+from monty.json import MontyDecoder
 
 """
 This file contains functions related to implementing and navigating the 
@@ -1018,7 +1019,7 @@ class CompSpace(MSONable):
 
     @classmethod
     def from_dict(cls,d):
-        bits = [[decode_from_dict(sp_d) for sp_d in sl_sps] for sl_sps in d['bits']]
+        bits = [[MontyDecoder().process_decoded(sp_d) for sp_d in sl_sps] for sl_sps in d['bits']]
         
         obj = cls(bits,d['sl_sizes'])        
  

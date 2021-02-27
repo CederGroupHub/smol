@@ -10,12 +10,12 @@ from .processor.ewald import EwaldProcessor
 from .processor.composite import CompositeProcessor
 from .ensemble.canonical import CanonicalEnsemble
 from .ensemble.semigrand import (MuSemiGrandEnsemble, FuSemiGrandEnsemble,
-                                 CNSemiGrandEnsemble, CNSemiGrandDiscEnsemble)
+                                 DiscChargeNeutralSemiGrandEnsemble)
 from .sampler.sampler import Sampler
 from .sampler.container import SampleContainer
 from .comp_space import CompSpace
 
 __all__ = ['CEProcessor', 'EwaldProcessor', 'CompositeProcessor',
            'CanonicalEnsemble', 'MuSemiGrandEnsemble', 'FuSemiGrandEnsemble',
-           'CNSemiGrandEnsemble','CNSemiGrandDiscEnsemble',
+           'DiscChargeNeutralSemiGrandEnsemble',
            'Sampler', 'SampleContainer', 'CompSpace']

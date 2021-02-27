@@ -6,6 +6,7 @@ variable concentration of species.
 Two classes are different SGC ensemble implemented:
 * MuSemiGrandEnsemble - for which relative chemical potentials are fixed
 * FuSemiGrandEnsemble - for which relative fugacity fractions are fixed.
+*
 """
 
 __author__ = "Luis Barroso-Luque"
@@ -22,7 +23,8 @@ from smol.moca.processor.base import Processor
 from .base import Ensemble
 from .sublattice import Sublattice
 from ..utils.math_utils import GCD_list
-from ..utils.occu_utils import occu_to_species_stat
+from ..utils.occu_utils import (occu_to_species_stat,
+                                direction_from_step)
 from ..comp_space import CompSpace
 
 class BaseSemiGrandEnsemble(Ensemble):
@@ -35,7 +37,7 @@ class BaseSemiGrandEnsemble(Ensemble):
     :class:`FuSemiGrandEnsemble` below.
     """
 
-    valid_mcmc_steps = ('flip',)
+    valid_mcmc_steps = ('flip','charge-neutral-flip')
 
     def __init__(self, processor, sublattices=None):
         """Initialize BaseSemiGrandEnsemble.
@@ -74,7 +76,7 @@ class BaseSemiGrandEnsemble(Ensemble):
             occupancy (ndarray):
                 encoded occupancy string
 
-        Returns:
+        Return:
             ndarray: feature vector
         """
         feature_vector = self.processor.compute_feature_vector(occupancy)
@@ -161,7 +163,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             step (list of tuple):
                 A sequence of flips given my the MCMCUsher.propose_step
 
-        Returns:
+        Return:
             ndarray: difference in feature vector
         """
         delta_feature = self.processor.compute_feature_vector_change(occupancy,
@@ -198,7 +200,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     def as_dict(self):
         """Get Json-serialization dict representation.
 
-        Returns:
+        Return:
             MSONable dict
         """
         d = super().as_dict()
@@ -210,7 +212,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     def from_dict(cls, d):
         """Instantiate a MuSemiGrandEnsemble from dict representation.
 
-        Returns:
+        Return:
             CanonicalEnsemble
         """
         chemical_potentials = {}
@@ -318,7 +320,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             step (list of tuple):
                 A sequence of flips given my the MCMCUsher.propose_step
 
-        Returns:
+        Return:
             ndarray: difference in feature vector
         """
         delta_feature = self.processor.compute_feature_vector_change(occupancy,
@@ -357,7 +359,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     def as_dict(self):
         """Get Json-serialization dict representation.
 
-        Returns:
+        Return:
             MSONable dict
         """
         d = super().as_dict()
@@ -370,7 +372,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     def from_dict(cls, d):
         """Instantiate a FuSemiGrandEnsemble from dict representation.
 
-        Returns:
+        Return:
             FuSemiGrandEnsemble
         """
         fugacity_fractions = []
@@ -394,61 +396,25 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
                    sublattices=[Sublattice.from_dict(s)
                                 for s in d['sublattices']])
 
-class CNSemiGrandEnsemble(MuSemiGrandEnsemble):
-    """Relative chemical potential based SemiGrand Ensemble.
-
-    A Semi-Grand Canonical Ensemble for Monte Carlo Simulations where charge
-    neutral constraint (CN) is enforced. Note that in the SGC Ensemble
-    implemented here, only the differences in chemical potentials with
-    respect to a reference species on each sublattice are fixed, and not the
-    absolute values. To obtain the absolute values you must calculate the
-    reference chemical potential and then simply subtract it from the given
-    values. While in charge neutral SGC, the constraints are more conplicated.
-    Only the chemical work of each charge neutral operation, such as:
-    1 Mn3+ + 1 O2- -> 1 Mn2+ + 1 F- delta_chem_work = mu(Mn2+)+mu(F-)-mu(O2-)
-                                                      -mu(Mn3+)
-    should be conserved. Absolute chemical potentials for each specie doesn't 
-    make much sense.
-
-    This ensemble does not discriminate species on each sublattice! And is the 
-    only physical representation of a grand canonical ensemble.
-    """
-    valid_mcmc_steps = ('cn_flip',)
-
-    def compute_feature_vector_change(self,occupancy,step_direction):
-        """
-        Compute change of feature vector from a proposed step.
-        Args:
-            occupancy (ndarray):
-                encoded occupancy string.
-            step_direction (tuple(list of tuple),int):
-                A sequence of flips given my the MCMCUsher.propose_step
-                Note: Form will be different to the step list in other 
-                      ensembles. It consists of a List of tuples marking
-                      operation to the occupation array, and an integer
-                      marking the moving direction on constrained axis.
-                      For example, '0' stands for canonical swao;
-                      '1' stands for a positive move on the first axis;
-                      '-1' stands for a negative move on the first axis;
-                      etc.
-                      We take this special form to avoid recomputing direction,
-                      and to improve speed.
-                      
-        Returns:
-            ndarray: difference in feature vector
-        """
-        return super().compute_feature_vector_change(occupancy,step_direction[0])
-
-class CNSemiGrandDiscEnsemble(BaseSemiGrandEnsemble,MSONable):
+class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble,MSONable):
     """
     Charge neutral semigrand ensemble on sublattice discriminative, constrained
     coordinates. This is used to examine ground states convergence of 
     cluster expansion only.
+
+    Discriminating the same specie on different sublattices is necessary when
+    computing ground state occupancies, because when talking about ground states
+    we actually care about internal distribution of species on each sublattice.
+
+    A non-discriminative charge neutral ensemble is not necessary, as you only need
+    to specify step_type = 'charge-neutral-flip' when intializing sampler with a 
+    MuSemiGrandEnsemble.
+
+    You are not recommended to use this ensemble for other purposes!
     """
-    valid_mcmc_steps = ('cn_flip',)
 
     def __init__(self,processor,mu,sublattices=None):
-        """Initialize CNSemiGrandDiscEnsemble.
+        """Initialize DiscChargeNeutralSemiGrandEnsemble.
 
         Args:
             processor (Processor):
@@ -472,6 +438,7 @@ class CNSemiGrandDiscEnsemble(BaseSemiGrandEnsemble,MSONable):
         self.sl_sizes = [sl_size//self.sc_size for sl_size in self.sc_sl_sizes]
  
         self._compspace = CompSpace(self.bits,self.sl_sizes)
+        self._flip_combs = self._compspace.min_flips
 
     def compute_chemical_work(self,occupancy):
         """
@@ -480,48 +447,40 @@ class CNSemiGrandDiscEnsemble(BaseSemiGrandEnsemble,MSONable):
         Args:
             occupancy(ndarray):
                 encoded occupancy string.
-        Returns:
+        Return:
             float: chemcial work of the occupancy.
         """
         compstat = occu_to_species_stat(occupancy,self.bits,self.sc_sublat_list)
         ccoord = self._compspace.translate_format(compstat,from_format='compstat',to_format='constr',sc_size=self.sc_size)
         return np.dot(ccoord,self.mu)
 
-    def compute_feature_vector_change(self,occupancy,step_direction):
+    def compute_feature_vector_change(self,occupancy,step):
         """
         Compute change of feature vector from a proposed step.
+        Currently only supports a single flip in the table, so do not
+        combine multiple flips!
+
         Args:
             occupancy (ndarray):
                 encoded occupancy string.
-            step_direction (tuple(list of tuple),int):
+            step (list[tuple(int,int)]):
                 A sequence of flips given my the MCMCUsher.propose_step
-                Note: Form will be different to the step list in other 
-                      ensembles. It consists of a List of tuples marking
-                      operation to the occupation array, and an integer
-                      marking the moving direction on constrained axis.
-                      For example, '0' stands for canonical swao;
-                      '1' stands for a positive move on the first axis;
-                      '-1' stands for a negative move on the first axis;
-                      etc.
-                      We take this special form to avoid recomputing direction,
-                      and to improve speed.
                       
-        Returns:
+        Return:
             ndarray: difference in feature vector
         """
-        step, direction = step_direction
 
-        delta_feature = self.processor.compute_feature_vector_change(occupancy,
-                                                                     step)
+        delta_feature = self.processor.compute_feature_vector_change(occupancy,step)
  
-        if direction == 0: 
+        #compute flip direction in the compositional space.
+        direction = direction_from_step(occupancy,step,self.sc_sublat_list)
+
+        if direction==0:
             delta_mu = 0
-        elif direction < 0:
-            ccoord_id = abs(direction)-1
-            delta_mu = -self.mu[ccoord_id]
+        elif direction<0:
+            delta_mu = self.mu[-direction-1]
         else:
-            ccoord_id = direction-1
-            delta_mu = self.mu[ccoord_id]
+            delta_mu = self.mu[direction-1]            
 
         return np.append(delta_feature, delta_mu)
 
@@ -542,7 +501,7 @@ class CNSemiGrandDiscEnsemble(BaseSemiGrandEnsemble,MSONable):
         Args:
             d(dict):
                 dictionary containing all neccessary info to initialize.
-        Returns:
+        Return:
             CNSemigrandDiscEnsemble.
         """
         return cls(Processor.from_dict(d['processor']),\

@@ -8,14 +8,12 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 
 # some test structures to use in tests
 files = ['AuPd_prim.json', 'CrFeW_prim.json', 'LiCaBr_prim.json',
-         'LiMOF_prim.json']
+         'LiMOF_prim.json','LiTiMnPO_prim.json']
 test_structures = [loadfn(os.path.join(DATA_DIR, file)) for file in files]
-
 
 @pytest.fixture(params=test_structures, scope='module')
 def structure(request):
     return request.param
-
 
 @pytest.fixture(params=test_structures)
 def cluster_subspace(request):

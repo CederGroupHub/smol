@@ -7,10 +7,16 @@ from smol.cofe import ClusterExpansion
 from smol.cofe.extern import EwaldTerm
 from smol.moca import (CanonicalEnsemble, MuSemiGrandEnsemble,
                        FuSemiGrandEnsemble, CompositeProcessor,
+                       DiscChargeNeutralSemiGrandEnsemble,
                        CEProcessor, EwaldProcessor)
-from tests.utils import assert_msonable, gen_random_occupancy
+from smol.moca.comp_space import CompSpace
+from smol.moca.sampler.mcusher import Chargeneutralflipper
 
-ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble]
+from tests.utils import assert_msonable, gen_random_occupancy,
+                        gen_random_occupancy_cn
+
+ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble,\
+             DiscChargeNeutralSemiGrandEnsemble]
 
 
 @pytest.fixture
@@ -47,6 +53,18 @@ def mugrand_ensemble(composite_processor):
 @pytest.fixture
 def fugrand_ensemble(composite_processor):
     return FuSemiGrandEnsemble(composite_processor)
+
+@pytest.fixture
+def disc_ensemble(composite_processor):
+    ca_ensemble = CanonicalEnsemble(composite_processor)
+    sublattices = ca_ensemble.sublattices
+
+    bits = [sl.species for sl in self.sublattices]
+    sl_sizes = [len(sl.sites) for sl in self.sublattices]
+
+    comp_space = CompSpace(bits,sl_sizes)
+    mu = [0.3 for i in range(comp_space.dim)]
+    return DiscChargeNeutralSemiGrandEnsemble(composite_processor,mu)
 
 
 # Test with composite processors to cover more ground
@@ -227,3 +245,20 @@ def test_build_fu_table(fugrand_ensemble):
                 fugacity_fractions = fus
         for i, species in enumerate(space):
             assert fugacity_fractions[species] == row[i]
+
+#Tests for Discriminative charge neutral semigrand ensemble.
+def test_compute_feature_vector(disc_ensemble):
+    proc = disc_ensemble.processor
+    occu = gen_random_occupancy_cn(disc_ensemble.sublattices,
+                                disc_ensemble.num_sites)
+    usher = Chargeneutralflipper(disc_ensemble.sublattices)
+    assert (np.dot(disc_ensemble.natural_parameters,
+                   disc_ensemble.compute_feature_vector(occu))
+            == proc.compute_property(occu) - disc_ensemble.compute_chemical_work(occu))
+    npt.assert_array_equal(disc_ensemble.compute_feature_vector(occu)[:-1],
+                           disc_ensemble.processor.compute_feature_vector(occu))
+
+    for _ in range(50):  # test a few flips
+        flip = usher.propose_step(occu)
+        dmu = disc_ensemble.compute_feature_vector_change(occu,flip)[-1]
+        assert np.any(np.append(np.array(disc_ensemble.mu),0)==dmu)

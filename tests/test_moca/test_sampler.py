@@ -2,13 +2,30 @@ import pytest
 import numpy as np
 import numpy.testing as npt
 from smol.moca import (CanonicalEnsemble, FuSemiGrandEnsemble,
-                       MuSemiGrandEnsemble, CEProcessor, Sampler)
-from smol.moca.sampler.mcusher import Swapper, Flipper
+                       MuSemiGrandEnsemble, 
+                       DiscChargeNeutralSemiGrandEnsemble,
+                       CEProcessor, Sampler)
+from smol.moca.sampler.mcusher import (Swapper, Flipper,
+                                       ChargeNeutralFlipper)
 from smol.moca.sampler.kernel import Metropolis
-from tests.utils import gen_random_occupancy
+from smol.moca.comp_space import CompSpace
 
-ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble]
+from tests.utils import (gen_random_occupancy,
+                         gen_random_occupancy_cn)
+
+ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble,
+             DiscChargeNeutralSemiGrandEnsemble]
 TEMPERATURE = 5000
+
+def initialize_occus(samp):
+    if not('Disc' in sampler.samples.metadata["name"]):
+        return np.vstack([gen_random_occupancy(samp.mcmckernel._usher.sublattices,
+                                               samp.num_sites)
+                          for _ in range(samp.samples.shape[0])])
+    else:
+        return np.vstack([gen_random_occupancy_cn(samp.mcmckernel._usher.sublattices,
+                                                  samp.num_sites)
+                          for _ in range(samp.samples.shape[0])])
 
 @pytest.fixture(params=ensembles)
 def ensemble(cluster_subspace, request):
@@ -18,10 +35,19 @@ def ensemble(cluster_subspace, request):
         kwargs = {'chemical_potentials':
                   {sp: 0.3 for space in proc.unique_site_spaces
                    for sp in space.keys()}}
+    elif request.param is DiscChargeNeutralSemiGrandEnsemble:    
+        ca_ensemble = CanoncialEnsemble(proc)
+        sublattices = ca_ensemble.sublattices
+    
+        bits = [sl.species for sl in self.sublattices]
+        sl_sizes = [len(sl.sites) for sl in self.sublattices]
+    
+        comp_space = CompSpace(bits,sl_sizes)
+        kwargs = {'mu':[0.3 for i in range(comp_space.dim)]}
+
     else:
         kwargs = {}
     return request.param(proc, **kwargs)
-
 
 @pytest.fixture(params=[1, 5])
 def sampler(ensemble, request):
@@ -31,10 +57,11 @@ def sampler(ensemble, request):
     sampler.num_sites = ensemble.num_sites
     return sampler
 
-
 def test_from_ensemble(sampler):
     if "Canonical" in sampler.samples.metadata["name"]:
         assert isinstance(sampler.mcmckernel._usher, Swapper)
+    elif "Disc" in sampler.samples.metadata["name"]:
+        assert isinstance(sampler.mcmckernel._usher, Chargeneutralflipper)
     else:
         assert isinstance(sampler.mcmckernel._usher, Flipper)
     assert isinstance(sampler.mcmckernel, Metropolis)
@@ -42,9 +69,7 @@ def test_from_ensemble(sampler):
 
 @pytest.mark.parametrize('thin', (1, 10))
 def test_sample(sampler, thin):
-    occu = np.vstack([gen_random_occupancy(sampler.mcmckernel._usher.sublattices,
-                                           sampler.num_sites)
-                      for _ in range(sampler.samples.shape[0])])
+    occu = initialize_occus(sampler)
     steps = 1000
     samples = [state for state
                in sampler.sample(1000, occu, thin_by=thin)]
@@ -57,9 +82,7 @@ def test_sample(sampler, thin):
 
 @pytest.mark.parametrize('thin', (1, 10))
 def test_run(sampler, thin):
-    occu = np.vstack([gen_random_occupancy(sampler.mcmckernel._usher.sublattices,
-                                           sampler.num_sites)
-                      for _ in range(sampler.samples.shape[0])])
+    occu = initialize_occus(sampler)
     steps = 1000
     sampler.run(steps, occu, thin_by=thin)
     assert len(sampler.samples) == steps // thin
@@ -69,9 +92,7 @@ def test_run(sampler, thin):
 
 def test_anneal(sampler):
     temperatures = np.linspace(2000, 500, 5)
-    occu = np.vstack([gen_random_occupancy(sampler.mcmckernel._usher.sublattices,
-                                           sampler.num_sites)
-                      for _ in range(sampler.samples.shape[0])])
+    occu = initialize_occus(sampler)
     steps = 100
     sampler.anneal(temperatures, steps, occu)
     expected = []
@@ -116,7 +137,6 @@ for sp in expected.keys():
 
 def test_reshape_occu(ensemble):
     sampler = Sampler.from_ensemble(ensemble, temperature=TEMPERATURE)
-    occu = gen_random_occupancy(ensemble.sublattices,
-                                ensemble.num_sites)
+    occu = initailize_occus(sampler)[0]
     assert sampler._reshape_occu(occu).shape == (1, len(occu))
 
