@@ -78,7 +78,8 @@ setup(
     cmdclass={"build_ext": build_ext},
     setup_requires=['numpy>=1.18.1', 'setuptools>=18.0'],
     python_requires='>=3.7',
-    install_requires=['numpy>=1.18.1', 'pymatgen>=2020.8.13', 'monty>=3.0.1'],
+    install_requires=['numpy>=1.18.1', 'pymatgen>=2020.8.13', 'monty>=3.0.1',\
+                      'polytope>=0.2.2','scipy>=1.6.0'],
     extras_require={
         "provenance": ["pybtex"],
         ':python_version > "3.7"': [
