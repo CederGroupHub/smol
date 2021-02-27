@@ -44,8 +44,8 @@ def canonical_ensemble(composite_processor):
 
 @pytest.fixture
 def mugrand_ensemble(composite_processor):
-    chemical_potentials= {sp: 0.3 for space in composite_processor.unique_site_spaces
-                          for sp in space.keys()}
+    chemical_potentials = {sp: 0.3 for space in composite_processor.unique_site_spaces
+                           for sp in space.keys()}
     return MuSemiGrandEnsemble(composite_processor,
                                chemical_potentials=chemical_potentials)
 
@@ -165,6 +165,7 @@ def test_compute_feature_vector(mugrand_ensemble):
 def test_bad_chemical_potentials(mugrand_ensemble):
     proc = mugrand_ensemble.processor
     chem_pots = mugrand_ensemble.chemical_potentials
+    print(chem_pots)
     with pytest.raises(ValueError):
         items = list(chem_pots.items())
         mugrand_ensemble.chemical_potentials = {items[0][0]: items[0][1]}
@@ -177,7 +178,10 @@ def test_bad_chemical_potentials(mugrand_ensemble):
         del chem_pots['foo']
         chem_pots.pop(items[0][0])
         MuSemiGrandEnsemble(proc, chemical_potentials=chem_pots)
-    
+    with pytest.raises(ValueError):
+        chem_pots[str(list(chem_pots.keys()))[0]] = 0.0
+        mugrand_ensemble.chemical_potentials = chem_pots
+
 
 def test_build_mu_table(mugrand_ensemble):
     proc = mugrand_ensemble.processor
@@ -231,6 +235,9 @@ def test_bad_fugacity_fractions(fugrand_ensemble):
     with pytest.raises(ValueError):
         del fug_fracs[0]['foo']
         FuSemiGrandEnsemble(proc, fugacity_fractions=fug_fracs)
+    with pytest.raises(ValueError):
+        fug_fracs[0][str(list(fug_fracs[0].keys())[0])] = 0.0
+        fugrand_ensemble.fugacity_fractions = fug_fracs
 
 
 def test_build_fu_table(fugrand_ensemble):
