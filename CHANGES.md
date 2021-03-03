@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 Use this section to keep track of changes in the works.
+### Added
+
+### Changed
+
+### Fixed
+
+## [v1.0.1]() (2021-03-03)
+#### [Full Changelog](https://github.com/CederGroupHub/smol/compare/v1.0.0...v1.0.1)
 
 ### Added
 * Method in `StructureWrangler` to get structure matching duplicates
@@ -39,6 +47,12 @@ Use this section to keep track of changes in the works.
   - `orbits_by_cutoffs`, `function_inds_by_cutoffs`, `function_inds_by_size`.
 
 ### Changed
+* Allow using external term values when detecting duplicate corr vectors.
+[\#124](https://github.com/CederGroupHub/smol/pull/124)
+([lbluque](https://github.com/lbluque))
+* Warn instead of printing when structure matching fails.
+[\#124](https://github.com/CederGroupHub/smol/pull/124)
+([lbluque](https://github.com/lbluque))
 * filter functions in `smol.wrangling` replaced with functions returning
   indices corresponding to structures to keep. This can be used saving indices
   with `StructureWrangler.add_data_indices`.
@@ -84,7 +98,7 @@ Use this section to keep track of changes in the works.
 sets. [\#90](https://github.com/CederGroupHub/smol/pull/90)
   ([lbluque](https://github.com/lbluque))
 
-## [v1.0.0]() (2020-10-27)
+## [v1.0.0](https://github.com/CederGroupHub/smol/releases/tag/v1.0.0) (2020-10-27)
 #### [Full Changelog](https://github.com/CederGroupHub/smol/compare/v0.0.0...v1.0.0)
 ### Added
 * Completely new `smol.moca` module. Design based generally up as follows:
