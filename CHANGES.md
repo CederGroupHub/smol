@@ -12,7 +12,7 @@ Use this section to keep track of changes in the works.
 
 ### Fixed
 
-## [v1.0.1]() (2021-03-03)
+## [v1.0.1](https://github.com/CederGroupHub/smol/tree/v1.0.1) (2021-03-03)
 #### [Full Changelog](https://github.com/CederGroupHub/smol/compare/v1.0.0...v1.0.1)
 
 ### Added
