@@ -991,9 +991,9 @@ class Grandcanonicaltableswapper(MCMCUsher):
         if chosen_gc_flip == 'Mn_disproportionation':
             return self._do_Mn_flip(sp1, sp2, site1, site2)
         # charge-balanced sGC
-        return self._do_sg_flip(chosen_gc_flip, sp1, sp2, site1, site2)
+        return self._do_sgc_flip(chosen_gc_flip, sp1, sp2, site1, site2)
 
-    def _do_sg_flip(self, chosen_gc_flip, sp1, sp2, site1, site2):
+    def _do_sgc_flip(self, chosen_gc_flip, sp1, sp2, site1, site2):
         """
         Does the semi-grand-canonical specie swap given a sublattice
         and the types of allowable swaps have already been specified.
@@ -1020,6 +1020,11 @@ class Grandcanonicaltableswapper(MCMCUsher):
         assert len(chosen) == 1
         newsp1 = chosen_gc_flip[chosen[0]][sp1index]
         newsp2 = chosen_gc_flip[chosen[0]][sp2index]
+
+        # need to catch out-of-domain errors, e.g. Mn3+ goes tetrahedral
+        if newsp1 not in list(self._sites_to_sublattice[site1]) or \
+            newsp2 not in list(self._sites_to_sublattice[site2]):
+            return tuple(), None
 
         return ((site1, list(self._sites_to_sublattice[site1]).index(newsp1)),
                 (site2, list(self._sites_to_sublattice[site2]).index(newsp2))),\
