@@ -6,26 +6,27 @@ from smol.moca import (CanonicalEnsemble, FuSemiGrandEnsemble,
                        DiscChargeNeutralSemiGrandEnsemble,
                        CEProcessor, Sampler)
 from smol.moca.sampler.mcusher import (Swapper, Flipper,
-                                       ChargeNeutralFlipper)
+                                       Chargeneutralflipper)
 from smol.moca.sampler.kernel import Metropolis
 from smol.moca.comp_space import CompSpace
+from smol.moca.ensemble.sublattice import get_all_sublattices
 
 from tests.utils import (gen_random_occupancy,
-                         gen_random_occupancy_cn)
+                         gen_random_neutral_occupancy)
 
 ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble,
              DiscChargeNeutralSemiGrandEnsemble]
 TEMPERATURE = 5000
 
-def initialize_occus(samp):
+def initialize_occus(sampler):
     if not('Disc' in sampler.samples.metadata["name"]):
-        return np.vstack([gen_random_occupancy(samp.mcmckernel._usher.sublattices,
-                                               samp.num_sites)
-                          for _ in range(samp.samples.shape[0])])
+        return np.vstack([gen_random_occupancy(sampler.mcmckernel._usher.sublattices,
+                                               sampler.samples.num_sites)
+                          for _ in range(sampler.samples.shape[0])])
     else:
-        return np.vstack([gen_random_occupancy_cn(samp.mcmckernel._usher.sublattices,
-                                                  samp.num_sites)
-                          for _ in range(samp.samples.shape[0])])
+        return np.vstack([gen_random_neutral_occupancy(sampler.mcmckernel._usher.sublattices,
+                                                  sampler.samples.num_sites)
+                          for _ in range(sampler.samples.shape[0])])
 
 @pytest.fixture(params=ensembles)
 def ensemble(cluster_subspace, request):
@@ -36,11 +37,11 @@ def ensemble(cluster_subspace, request):
                   {sp: 0.3 for space in proc.unique_site_spaces
                    for sp in space.keys()}}
     elif request.param is DiscChargeNeutralSemiGrandEnsemble:    
-        ca_ensemble = CanoncialEnsemble(proc)
-        sublattices = ca_ensemble.sublattices
+
+        sublattices = get_all_sublattices(proc)
     
-        bits = [sl.species for sl in self.sublattices]
-        sl_sizes = [len(sl.sites) for sl in self.sublattices]
+        bits = [sl.species for sl in sublattices]
+        sl_sizes = [len(sl.sites) for sl in sublattices]
     
         comp_space = CompSpace(bits,sl_sizes)
         kwargs = {'mu':[0.3 for i in range(comp_space.dim)]}
@@ -53,8 +54,7 @@ def ensemble(cluster_subspace, request):
 def sampler(ensemble, request):
     sampler = Sampler.from_ensemble(ensemble, temperature=TEMPERATURE,
                                     nwalkers=request.param)
-    # fix this additional attribute to sampler to access in gen occus for tests
-    sampler.num_sites = ensemble.num_sites
+
     return sampler
 
 def test_from_ensemble(sampler):
@@ -137,6 +137,6 @@ for sp in expected.keys():
 
 def test_reshape_occu(ensemble):
     sampler = Sampler.from_ensemble(ensemble, temperature=TEMPERATURE)
-    occu = initailize_occus(sampler)[0]
+    occu = initialize_occus(sampler)[0]
     assert sampler._reshape_occu(occu).shape == (1, len(occu))
 

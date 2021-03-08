@@ -80,31 +80,31 @@ class TestCompSpace1(unittest.TestCase):
 
     def test_integer_grids(self):
         self.assertEqual(self.comp_space.min_sc_size,6)
-        self.assertTrue(vertices_equal(self.comp_space.min_grid,self.min_grid))
+        self.assertTrue(vertices_equal(self.comp_space.min_grid(),self.min_grid))
         self.assertTrue(vertices_equal(self.comp_space.int_grids(sc_size=5),\
                                        self.int_grids_5))
 
     def test_format_translate(self):
-        sc_size = 6
-        ucoord = [3,1,2]
-        comp = [Composition({'Li+':1/2,'Mn3+':1/6,'Ti4+':1/3}),\
-                Composition({'P3-':1/3,'O2-':2/3})]
-        compstat = [[3,1,2],[2,4]]
+        self.sc_size = 6
+        self.ucoord = [3,1,2]
+        self.comp = [Composition({'Li+':1/2,'Mn3+':1/6,'Ti4+':1/3}),\
+                    Composition({'P3-':1/3,'O2-':2/3})]
+        self.compstat = [[3,1,2],[2,4]]
 
-        ccoord_t = self.comp_space.translate_format(ucoord,from_format='unconstr',to_format='constr',sc_size=6)
-        ucoord_t1 = self.comp_space.translate_format(ccoord_t,from_format='constr',to_format='unconstr',sc_size=6)
+        self.ccoord_t = self.comp_space.translate_format(self.ucoord,from_format='unconstr',to_format='constr',sc_size=6)
+        self.ucoord_t1 = self.comp_space.translate_format(self.ccoord_t,from_format='constr',to_format='unconstr',sc_size=6)
 
-        comp_t = self.comp_space.translate_format(ucoord,from_format='unconstr',to_format='composition',sc_size=6)
-        ucoord_t2 = self.comp_space.translate_format(comp_t,from_format='composition',to_format='unconstr',sc_size=6)
+        self.comp_t = self.comp_space.translate_format(self.ucoord,from_format='unconstr',to_format='composition',sc_size=6)
+        self.ucoord_t2 = self.comp_space.translate_format(self.comp_t,from_format='composition',to_format='unconstr',sc_size=6)
 
-        compstat_t = self.comp_space.translate_format(ucoord,from_format='unconstr',to_format='compstat',sc_size=6)
-        ucoord_t3 = self.comp_space.translate_format(comp_t,from_format='compstat',to_format='unconstr',sc_size=6)
+        self.compstat_t = self.comp_space.translate_format(self.ucoord,from_format='unconstr',to_format='compstat',sc_size=6)
+        self.ucoord_t3 = self.comp_space.translate_format(self.compstat_t,from_format='compstat',to_format='unconstr',sc_size=6)
 
-        self.assertTrue(np.allclose(ucoord,ucoord_t1))
-        self.assertTrue(np.allclose(ucoord,ucoord_t2))
-        self.assertTrue(np.allclose(ucoord,ucoord_t3))
-        self.assertEqual(comp,comp_t)
-        self.assertEqual(compstat,compstat_t)
+        self.assertTrue(np.allclose(self.ucoord,self.ucoord_t1))
+        self.assertTrue(np.allclose(self.ucoord,self.ucoord_t2))
+        self.assertTrue(np.allclose(self.ucoord,self.ucoord_t3))
+        self.assertEqual(self.comp,self.comp_t)
+        self.assertEqual(self.compstat,self.compstat_t)
 
 #Uncharged, with vacancy.
 class TestCompSpace2(unittest.TestCase):

@@ -1,7 +1,7 @@
 import unittest
 import json
 from copy import deepcopy
-import random
+
 import numpy as np
 import numpy.testing as npt
 from smol.cofe import StructureWrangler, ClusterSubspace
@@ -74,13 +74,6 @@ class TestStructureWrangler(unittest.TestCase):
         print(self.sw.feature_matrix.shape)
         self.assertGreaterEqual(self.sw.get_feature_matrix_rank(rows, cols),
                                 self.sw.get_feature_matrix_rank(cols=cols[:-3]))
-
-    def test_orbit_rank(self):
-        for _ in range(10):
-            oid = random.choice(range(1, len(self.cs.orbits) + 1))
-            orb_size = self.cs.orbits[oid - 1]
-            self.assertLessEqual(self.sw.get_feature_matrix_orbit_rank(oid),
-                                 len(orb_size))
 
     def test_add_data(self):
         # Check that a structure that does not match raises error.
@@ -223,22 +216,8 @@ class TestStructureWrangler(unittest.TestCase):
         dup_item = deepcopy(self.sw.data_items[ind])
         self.assertWarns(UserWarning, self.sw.add_data, dup_item["structure"],
                          dup_item["properties"])
-        self.assertEqual(self.sw.get_duplicate_corr_indices(),
+        self.assertEqual(self.sw.get_duplicate_corr_inds(),
                          [[ind, self.sw.num_structures - 1]])
-
-    def test_get_matching_corr_duplicate_inds(self):
-        ind = np.random.randint(self.sw.num_structures)
-        dup_item = deepcopy(self.sw.data_items[ind])
-        ind2 = np.random.randint(self.sw.num_structures)
-        dup_item2 = deepcopy(self.sw.data_items[ind2])
-        # change the structure for this one:
-        dup_item2['structure'] = np.random.choice(
-            [s for s in self.sw.structures if s != dup_item2['structure']])
-        self.sw.append_data_items([dup_item, dup_item2])
-        expected_matches = [[ind, self.sw.num_structures - 2]]
-        self.assertTrue(all(i in matches for matches, expected in
-                            zip(self.sw.get_matching_corr_duplicate_indices(),
-                                expected_matches) for i in expected))
 
     def test_get_constant_features(self):
         ind = np.random.randint(1, self.sw.num_features)

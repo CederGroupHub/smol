@@ -45,7 +45,7 @@ def gen_random_occupancy(sublattices, num_sites):
                                                     replace=True)
     return rand_occu
 
-def gen_random_occupancy_cn(sublattices, num_sites):
+def gen_random_neutral_occupancy(sublattices, num_sites):
     """Generate charge neutral occupancies according to a list of sublattices.
        Occupancies are encoded.
 

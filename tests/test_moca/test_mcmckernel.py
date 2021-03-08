@@ -6,13 +6,15 @@ from smol.moca import (CanonicalEnsemble, FuSemiGrandEnsemble,
                        MuSemiGrandEnsemble, 
                        DiscChargeNeutralSemiGrandEnsemble,
                        CEProcessor)
-from smol.moca.sampler.mcusher import Swapper, Flipper,
-                                      Chargeneutralflipper
+from smol.moca.sampler.mcusher import (Swapper, Flipper,
+                                       Chargeneutralflipper)
 from smol.moca.sampler.kernel import Metropolis
 from smol.moca.comp_space import CompSpace
+from smol.moca.ensemble.sublattice import get_all_sublattices
+from smol.moca.utils.math_utils import GCD_list
 
-from tests.utils import gen_random_occupancy,
-                        gen_random_occupancy_cn
+from tests.utils import (gen_random_occupancy,
+                         gen_random_neutral_occupancy)
 
 ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble]
 
@@ -35,11 +37,12 @@ def disc_ensemble(cluster_subspace):
     coefs = np.random.random(cluster_subspace.num_corr_functions)
     proc = CEProcessor(cluster_subspace, 4*np.eye(3), coefs)
 
-    ca_ensemble = CanoncialEnsemble(proc)
-    sublattices = ca_ensemble.sublattices
+    sublattices = get_all_sublattices(proc)
 
-    bits = [sl.species for sl in self.sublattices]
-    sl_sizes = [len(sl.sites) for sl in self.sublattices]
+    bits = [sl.species for sl in sublattices]
+    sl_sizes = [len(sl.sites) for sl in sublattices]
+    sc_size = GCD_list(sl_sizes)
+    sl_sizes = [sz//sc_size for sz in sl_sizes]
 
     comp_space = CompSpace(bits,sl_sizes)
     mu = [0.3 for i in range(comp_space.dim)]
@@ -53,8 +56,8 @@ def metropolis_kernel(ensemble, request):
     return mkernel
 
 @pytest.fixture
-def metropolis_kernel_cn(disc_ensemble):
-    mkernel = Metropolis(ensemble, temperature=5000, step_type='charge-neutral-flip')
+def metropolis_kernel_neutral(disc_ensemble):
+    mkernel = Metropolis(disc_ensemble, temperature=5000, step_type='charge-neutral-flip')
     mkernel.num_sites = disc_ensemble.num_sites
     return mkernel
 
@@ -64,7 +67,7 @@ def test_constructor(ensemble, step_type, mcusher):
     assert isinstance(Metropolis(ensemble, 5000, step_type)._usher, mcusher)
 
 
-def test_constructor_cn(disc_ensemble):
+def test_constructor_neutral(disc_ensemble):
     assert isinstance(Metropolis(disc_ensemble, 5000, 'charge-neutral-flip')._usher,
                       Chargeneutralflipper)
 
@@ -81,13 +84,13 @@ def test_single_step(metropolis_kernel):
         else:
             npt.assert_array_equal(occu, occu_)
 
-def test_single_step_cn(metropolis_kernel_cn):
-    occu_ = gen_random_occupancy_cn(metropolis_kernel_cn._usher.sublattices,
-                                    metropolis_kernel_cn.num_sites)
+def test_single_step_neutral(metropolis_kernel_neutral):
+    occu_ = gen_random_neutral_occupancy(metropolis_kernel_neutral._usher.sublattices,
+                                    metropolis_kernel_neutral.num_sites)
 
     for _ in range(20):
         init_occu = occu_.copy()
-        acc, occu, denth, dfeat = metropolis_kernel_cn.single_step(init_occu)
+        acc, occu, denth, dfeat = metropolis_kernel_neutral.single_step(init_occu)
         if acc:
             assert not np.array_equal(occu, occu_)
         else:

@@ -15,7 +15,6 @@ from smol.cofe.space.domain import get_allowed_species, Vacancy
 from smol.exceptions import StructureMatchError
 from src.mc_utils import corr_from_occupancy
 
-
 # TODO test correlations for ternary and for applications of symops to structure
 def test_invert_mapping_table():
     forward = [[],[],[1],[1],[1],[2,4],[3,4],[2,3],[5,6,7]]
@@ -26,7 +25,6 @@ def test_invert_mapping_table():
 
     assert forward_invert == backward
     assert backward_invert == forward
-
 
 def test_get_complete_mapping():
     forward = [[],[],[1],[1],[1],[2,4],[3,4],[2,3],[5,6,7]]
@@ -40,7 +38,6 @@ def test_get_complete_mapping():
 
     assert forward_comp == forward_full
     assert backward_comp == backward_full
-
 
 class TestClusterSubSpace(unittest.TestCase):
     def setUp(self) -> None:
@@ -551,8 +548,7 @@ class TestClusterSubSpace(unittest.TestCase):
 
     def test_msonable(self):
         # get corr for a few supercells to cache their orbit indices
-        struct = Structure(self.lattice,
-                           ['Li+', ] * 2 + ['Ca+'] + ['Br-'],
+        struct = Structure(self.lattice, ['Li+', ] * 2 + ['Ca+'] + ['Br-'],
                            self.coords)
         struct1 = struct.copy()
         struct1.make_supercell(2)
@@ -605,10 +601,6 @@ class TestClusterSubSpace(unittest.TestCase):
         d['external_terms'][0]['@module'] = module
         d['external_terms'][0]['@class'] = 'Blab'
         self.assertWarns(RuntimeWarning, ClusterSubspace.from_dict, d)
-        # test if serializable and correctly instantiates for all basis
-        for basis in ('indicator', 'sinusoid', 'chebyshev', 'legendre', 'polynomial'):
-            cs.change_site_bases(basis)
-            d = cs.as_dict()
-            self.assertEqual(d, ClusterSubspace.from_dict(d).as_dict())
-            j = json.dumps(d)
-            json.loads(j)
+        # test if serializable
+        j = json.dumps(d)
+        json.loads(j)

@@ -15,11 +15,13 @@ from abc import abstractmethod
 from math import log
 from collections import Counter
 import numpy as np
+from copy import deepcopy
 
 from monty.json import MSONable
 from pymatgen import Species, DummySpecies, Element
-from smol.cofe.space.domain import get_species, Vacancy
+from smol.cofe.space.domain import get_species, Vacancy, get_site_spaces
 from smol.moca.processor.base import Processor
+from smol.moca.ensemble.sublattice import Sublattice,get_all_sublattices
 
 from .base import Ensemble
 from .sublattice import Sublattice
@@ -38,7 +40,7 @@ class BaseSemiGrandEnsemble(Ensemble):
     :class:`FuSemiGrandEnsemble` below.
     """
 
-    valid_mcmc_steps = ('flip','charge-neutral-flip')
+    valid_mcmc_steps = ('flip',)
 
     def __init__(self, processor, sublattices=None):
         """Initialize BaseSemiGrandEnsemble.
@@ -415,6 +417,123 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
                    sublattices=[Sublattice.from_dict(s)
                                 for s in d['sublattices']])
 
+class ChargeNeutralSemiGrandEnsemble(MuSemiGrandEnsemble,MSONable):
+    """
+    Charge neutral semigrand ensemble, BUT NOT DISCRIMINATIVE ON sublattices.
+    This means the same specie on different sublattices shall be assigned same
+    chemical potential by MuSemiGrandEnsemble. These chemical potentials will
+    have exact physical meanings, therefore this ensemble shall be used for 
+    thermo properties calculation.
+
+    It is necessary to make this a separate class, not only because it uses a 
+    different mcusher, but also because it requires a full sublattice table just 
+    like DiscChargeNeutralSemiGrandEnsemble, not just sublattice table of active 
+    sites!
+    """
+    valid_mcmc_steps = ('charge-neutral-flip',)
+    
+    def __init__(self,processor,chemical_potentials,active_sublattices=None,all_sublattices=None):
+        """
+        Initialize ChargeNeutralSemiGrandEnsemble.
+ 
+        Args:
+            processor (Processor):
+                A processor that can compute the change in a property given
+                a set of flips.
+            chemical_potentials (dict):
+                Dictionary with species and chemical potentials.
+            sublattices (list of Sublattice): optional
+                List of Sublattice objects representing sites in the processor
+                supercell with same site spaces.       
+        """
+        super(MuSemiGrandEnsemble,self).__init__(processor, active_sublattices)
+        self._active_sublattices = deepcopy(self._sublattices)
+
+        # check that species are valid
+        chemical_potentials = {get_species(k): v for k, v
+                               in chemical_potentials.items()}
+
+        species = set([sp for sps in processor.unique_site_spaces
+                       for sp in sps])
+
+        for sp in chemical_potentials.keys():
+            if sp not in species:
+                raise ValueError(f'Species {sp} in provided chemical '
+                                 'potentials is not an allowed species in the '
+                                 f'system: {species}')
+        for sp in species:
+            if sp not in chemical_potentials.keys():
+                raise ValueError(f'Species {sp} was not assigned a chemical '
+                                 ' potential, a value must be provided.')
+
+        self._mus = chemical_potentials
+        self._mu_table = self._build_mu_table(chemical_potentials)
+
+        self.thermo_boundaries = {'chemical-potentials':
+                                  {str(k): v for k, v
+                                   in chemical_potentials.items()}}
+
+        self._sublattices = all_sublattices or get_all_sublattices(processor)
+
+    def _build_mu_table(self, chemical_potentials):
+        """Build an array for chemical potentials for all sites in system.
+        Since self._sublattices have been changed to all sublattices, including
+        inactive ones, this will only include active sublattices.
+
+        Rows represent sites and columns species. This allows quick evaluation
+        of chemical potential changes from flips. Not that the total number
+        of columns will be the number of species in the largest site space. For
+        smaller site spaces the values at those rows are meaningless and will
+        be given values of 0. Also rows representing sites with not partial
+        occupancy will have all 0 values and should never be used.
+        """
+        num_cols = max(len(site_space) for site_space
+                       in self.processor.unique_site_spaces)
+        table = np.zeros((self.num_sites, num_cols))
+        for sublatt in self._active_sublattices:
+            ordered_pots = [chemical_potentials[sp]
+                            for sp in sublatt.site_space]
+            table[sublatt.sites, :len(ordered_pots)] = ordered_pots
+        return table
+
+    def as_dict(self):
+        """
+        Serialize into a dictionary.
+        Return:
+            MSONable dict.
+        """
+        d = super().as_dict()
+        d['active_sublattices'] = [s.as_dict() for s in self._active_sublattices]
+        return d
+
+    @classmethod
+    def from_dict(cls, d):
+        """Instantiate a ChargeNeutralSemiGrandEnsemble from dict representation.
+
+        Return:
+            ChargeNeutralSemiGrandEnsemble.
+        """
+        chemical_potentials = {}
+        for sp, c in d['chemical_potentials']:
+            if ("oxidation_state" in sp
+                    and Element.is_valid_symbol(sp["element"])):
+                sp = Species.from_dict(sp)
+            elif "oxidation_state" in sp:
+                if sp['@class'] == 'Vacancy':
+                    sp = Vacancy.from_dict(sp)
+                else:
+                    sp = DummySpecies.from_dict(sp)
+            else:
+                sp = Element(sp["element"])
+            chemical_potentials[sp] = c
+        return cls(Processor.from_dict(d['processor']),
+                   chemical_potentials=chemical_potentials,
+                   active_sublattices=[Sublattice.from_dict(s)
+                                for s in d['active_sublattices']],
+                   all_sublattices=[Sublattice.from_dict(s)
+                                for s in d['sublattices']])
+
+
 class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble,MSONable):
     """
     Charge neutral semigrand ensemble on sublattice discriminative, constrained
@@ -431,6 +550,7 @@ class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble,MSONable):
 
     You are not recommended to use this ensemble for other purposes!
     """
+    valid_mcmc_steps = ('charge-neutral-flip',)    
 
     def __init__(self,processor,mu,sublattices=None):
         """Initialize DiscChargeNeutralSemiGrandEnsemble.
@@ -447,6 +567,12 @@ class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble,MSONable):
                 supercell with same site spaces.
         """
         super().__init__(processor,sublattices)
+
+        #Must use complete sublattices, instead of sublattices generated by 
+        #expansion structure
+        self._active_sublattices = deepcopy(self._sublattices)
+        self._sublattices = get_all_sublattices(processor)
+
         self.mu = np.array(mu)
 
         self.bits = [sl.species for sl in self.sublattices]
@@ -457,6 +583,8 @@ class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble,MSONable):
         self.sl_sizes = [sl_size//self.sc_size for sl_size in self.sc_sl_sizes]
  
         self._compspace = CompSpace(self.bits,self.sl_sizes)
+        if len(self.mu)!= self._compspace.dim:
+            raise ValueError("Chemcial potential dimension mismatch compositional space!")
         self._flip_combs = self._compspace.min_flips
 
     def compute_chemical_work(self,occupancy):
@@ -492,7 +620,7 @@ class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble,MSONable):
         delta_feature = self.processor.compute_feature_vector_change(occupancy,step)
  
         #compute flip direction in the compositional space.
-        direction = direction_from_step(occupancy,step,self.sc_sublat_list)
+        direction = direction_from_step(step,self.sc_sublat_list,self._flip_combs)
 
         if direction==0:
             delta_mu = 0

@@ -8,15 +8,20 @@ from smol.cofe.extern import EwaldTerm
 from smol.moca import (CanonicalEnsemble, MuSemiGrandEnsemble,
                        FuSemiGrandEnsemble, CompositeProcessor,
                        DiscChargeNeutralSemiGrandEnsemble,
+                       ChargeNeutralSemiGrandEnsemble,
                        CEProcessor, EwaldProcessor)
+
+from smol.moca.ensemble.sublattice import get_all_sublattices
+
 from smol.moca.comp_space import CompSpace
 from smol.moca.sampler.mcusher import Chargeneutralflipper
+from smol.moca.utils.math_utils import GCD_list
 
-from tests.utils import assert_msonable, gen_random_occupancy,
-                        gen_random_occupancy_cn
+from tests.utils import (assert_msonable, gen_random_occupancy,
+                         gen_random_neutral_occupancy)
 
 ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble,\
-             DiscChargeNeutralSemiGrandEnsemble]
+             DiscChargeNeutralSemiGrandEnsemble, ChargeNeutralSemiGrandEnsemble]
 
 
 @pytest.fixture
@@ -28,10 +33,24 @@ def composite_processor(cluster_subspace):
 
 @pytest.fixture(params=ensembles)
 def ensemble(composite_processor, request):
-    if request.param is MuSemiGrandEnsemble:
+    if request.param in (MuSemiGrandEnsemble,ChargeNeutralSemiGrandEnsemble):
         kwargs = {'chemical_potentials':
                   {sp: 0.3 for space in composite_processor.unique_site_spaces
                    for sp in space.keys()}}
+
+    elif request.param is DiscChargeNeutralSemiGrandEnsemble:
+
+        sublattices = get_all_sublattices(composite_processor)
+    
+        bits = [sl.species for sl in sublattices]
+        sl_sizes = [len(sl.sites) for sl in sublattices]
+        sc_size = GCD_list(sl_sizes)
+        sl_sizes = [sz//sc_size for sz in sl_sizes]
+    
+        comp_space = CompSpace(bits,sl_sizes)
+        mu = [0.3 for i in range(comp_space.dim)]
+        kwargs = {'mu':mu}
+
     else:
         kwargs = {}
     return request.param(composite_processor, **kwargs)
@@ -56,11 +75,13 @@ def fugrand_ensemble(composite_processor):
 
 @pytest.fixture
 def disc_ensemble(composite_processor):
-    ca_ensemble = CanonicalEnsemble(composite_processor)
-    sublattices = ca_ensemble.sublattices
 
-    bits = [sl.species for sl in self.sublattices]
-    sl_sizes = [len(sl.sites) for sl in self.sublattices]
+    sublattices = get_all_sublattices(composite_processor)
+
+    bits = [sl.species for sl in sublattices]
+    sl_sizes = [len(sl.sites) for sl in sublattices]
+    sc_size = GCD_list(sl_sizes)     
+    sl_sizes = [sz//sc_size for sz in sl_sizes]
 
     comp_space = CompSpace(bits,sl_sizes)
     mu = [0.3 for i in range(comp_space.dim)]
@@ -81,12 +102,27 @@ def test_from_cluster_expansion(cluster_subspace, ensemble_cls):
                                       coefficient=coefs[-1]))
     fake_feature_matrix = np.random.random((5, len(coefs)))
     expansion = ClusterExpansion(cluster_subspace, coefs, fake_feature_matrix)
-    if ensemble_cls is MuSemiGrandEnsemble:
+    if ensemble_cls in (MuSemiGrandEnsemble,ChargeNeutralSemiGrandEnsemble):
         kwargs = {'chemical_potentials':
                   {sp: 0.3 for space in proc.unique_site_spaces
                    for sp in space.keys()}}
+
+    elif ensemble_cls is DiscChargeNeutralSemiGrandEnsemble:
+        
+        sublattices = get_all_sublattices(proc)
+    
+        bits = [sl.species for sl in sublattices]
+        sl_sizes = [len(sl.sites) for sl in sublattices]
+        sc_size = GCD_list(sl_sizes)
+        sl_sizes = [sz//sc_size for sz in sl_sizes]
+    
+        comp_space = CompSpace(bits,sl_sizes)
+        mu = [0.3 for i in range(comp_space.dim)]
+        kwargs = {'mu':mu}
+
     else:
         kwargs = {}
+
     ensemble = ensemble_cls.from_cluster_expansion(expansion,
                                                    supercell_matrix=scmatrix,
                                                    **kwargs)
@@ -256,12 +292,13 @@ def test_build_fu_table(fugrand_ensemble):
 #Tests for Discriminative charge neutral semigrand ensemble.
 def test_compute_feature_vector(disc_ensemble):
     proc = disc_ensemble.processor
-    occu = gen_random_occupancy_cn(disc_ensemble.sublattices,
+    occu = gen_random_neutral_occupancy(disc_ensemble.sublattices,
                                 disc_ensemble.num_sites)
     usher = Chargeneutralflipper(disc_ensemble.sublattices)
-    assert (np.dot(disc_ensemble.natural_parameters,
-                   disc_ensemble.compute_feature_vector(occu))
-            == proc.compute_property(occu) - disc_ensemble.compute_chemical_work(occu))
+    assert np.dot(disc_ensemble.natural_parameters,
+                   disc_ensemble.compute_feature_vector(occu))\
+            == pytest.approx(proc.compute_property(occu) - disc_ensemble.compute_chemical_work(occu),
+                             abs=1E-7)
     npt.assert_array_equal(disc_ensemble.compute_feature_vector(occu)[:-1],
                            disc_ensemble.processor.compute_feature_vector(occu))
 

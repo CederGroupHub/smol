@@ -392,6 +392,8 @@ class CompSpace(MSONable):
         if self._polytope is None:
             facets_unconstred = []
             for sl_flp_ids,sl_size in zip(self.swp_ids_in_sublat,self.sl_sizes):
+                if len(sl_flp_ids)==0:
+                    continue
                 a = np.zeros(self.unconstr_dim)
                 a[sl_flp_ids]=1
                 bi = sl_size
@@ -851,9 +853,9 @@ class CompSpace(MSONable):
                     if sl_sum > sl_size:
                         raise ValueError("{} is not a valid composition."\
                                          .format(comp[sl_id]))
-                    ucoord.append(sl_size - sl_sum)
+                    x.append(sl_size - sl_sum)
                 else:
-                    ucoord.append(comp[sl_id][bit]*sl_size)
+                    x.append(comp[sl_id][bit]*sl_size)
 
         return np.array(x)
 
