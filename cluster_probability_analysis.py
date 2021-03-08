@@ -99,6 +99,28 @@ def calculate_LiV5_fs(corr, fs_groupID):
                                                   str(fs_groupID), corr)))
 
 #################################################
+# calculate dumb-bell concentrations #
+fs_groupID = 3
+db_groupID = 8
+db_oct_groupID = 48
+
+def calculate_LiLi_dumbbell_withOct(corr):
+    cation_oct = [li_oct, v4_oct, vac_oct]
+    labels = ['li_oct', 'v4_oct', 'vac_oct']
+    db_with_oct = dict()
+    for i, oct in enumerate(cation_oct):
+        db_with_oct[labels[i]] = 1/tetM * 1/tetM * 1/octM * (1 + 2*np.dot(litet, corr[startTet:endTet]) +
+                               np.dot(oct, corr[startOct:endOct]) +
+                               2* calculate_subcluster([litet, oct],
+                                                    str(fs_groupID), corr) +
+                               calculate_subcluster([litet, litet],
+                                                  str(db_groupID), corr) +
+                               calculate_subcluster([litet, oct, litet],
+                                                    str(db_oct_groupID), corr))
+    return db_with_oct
+
+
+#################################################
 # calculate 0/1/2TM concentrations #
 oct_oct_groupID = None # user inputs this
 oct_oct_oct_groupID = None # user inputs this
