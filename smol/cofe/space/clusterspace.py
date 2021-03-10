@@ -897,24 +897,28 @@ class ClusterSubspace(MSONable):
             for orbit in orbits[size-1]:
                 if orbit.base_cluster.diameter > diameter:
                     continue
-                for site, _, index in neighbors:
-                    p = site.frac_coords
-                    if is_coord_subset([p], orbit.base_cluster.sites,
-                                       atol=SITE_TOL):
+                for neighbor in neighbors:
+                    if is_coord_subset(
+                            [neighbor.frac_coords], orbit.base_cluster.sites,
+                            atol=SITE_TOL):
                         continue
-                    new_sites = np.concatenate([orbit.base_cluster.sites, [p]])
-                    new_orbit = Orbit(new_sites, exp_struct.lattice,
-                                      orbit.bits + [list(range(nbits[index]))],
-                                      orbit.site_bases + [site_bases[index]],
-                                      symops)
+                    new_sites = np.concatenate(
+                        [orbit.base_cluster.sites, [neighbor.frac_coords]])
+                    new_orbit = Orbit(
+                        new_sites, exp_struct.lattice,
+                        orbit.bits + [list(range(nbits[neighbor.index]))],
+                        orbit.site_bases + [site_bases[neighbor.index]],
+                        symops)
+
                     if new_orbit.base_cluster.diameter > diameter + 1e-8:
                         continue
                     elif new_orbit not in new_orbits:
                         new_orbits.append(new_orbit)
 
-            orbits[size] = sorted(new_orbits,
-                                  key=lambda x: (np.round(x.base_cluster.diameter, 6),  # noqa
-                                                 -x.multiplicity))
+            orbits[size] = sorted(
+                new_orbits,
+                key=lambda x: (np.round(x.base_cluster.diameter, 6),
+                               -x.multiplicity))
         return orbits
 
     def _gen_orbit_indices(self, scmatrix):
