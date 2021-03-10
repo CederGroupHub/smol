@@ -21,7 +21,7 @@ from monty.json import MSONable
 from pymatgen import Species, DummySpecies, Element
 from smol.cofe.space.domain import get_species, Vacancy, get_site_spaces
 from smol.moca.processor.base import Processor
-from smol.moca.ensemble.sublattice import Sublattice,get_all_sublattices
+from smol.moca.ensemble.sublattice import Sublattice, get_all_sublattices
 
 from .base import Ensemble
 from .sublattice import Sublattice
@@ -29,6 +29,7 @@ from ..utils.math_utils import GCD_list
 from ..utils.occu_utils import (occu_to_species_stat,
                                 direction_from_step)
 from ..comp_space import CompSpace
+
 
 class BaseSemiGrandEnsemble(Ensemble):
     """Abstract Semi-Grand Canonical Base Ensemble.
@@ -417,25 +418,27 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
                    sublattices=[Sublattice.from_dict(s)
                                 for s in d['sublattices']])
 
-class ChargeNeutralSemiGrandEnsemble(MuSemiGrandEnsemble,MSONable):
+
+class ChargeNeutralSemiGrandEnsemble(MuSemiGrandEnsemble, MSONable):
     """
     Charge neutral semigrand ensemble, BUT NOT DISCRIMINATIVE ON sublattices.
     This means the same specie on different sublattices shall be assigned same
     chemical potential by MuSemiGrandEnsemble. These chemical potentials will
-    have exact physical meanings, therefore this ensemble shall be used for 
+    have exact physical meanings, therefore this ensemble shall be used for
     thermo properties calculation.
 
-    It is necessary to make this a separate class, not only because it uses a 
-    different mcusher, but also because it requires a full sublattice table just 
-    like DiscChargeNeutralSemiGrandEnsemble, not just sublattice table of active 
-    sites!
+    It is necessary to make this a separate class, not only because it uses a
+    different mcusher, but also because it requires a full sublattice table
+    just like DiscChargeNeutralSemiGrandEnsemble, not only sublattice table
+    of active sites!
     """
-    valid_mcmc_steps = ('charge-neutral-flip',)
-    
-    def __init__(self,processor,chemical_potentials,active_sublattices=None,all_sublattices=None):
+    valid_mcmc_steps = ('charge-neutral-flip', )
+
+    def __init__(self, processor, chemical_potentials,
+                 active_sublattices=None, all_sublattices=None):
         """
         Initialize ChargeNeutralSemiGrandEnsemble.
- 
+
         Args:
             processor (Processor):
                 A processor that can compute the change in a property given
@@ -444,12 +447,13 @@ class ChargeNeutralSemiGrandEnsemble(MuSemiGrandEnsemble,MSONable):
                 Dictionary with species and chemical potentials.
             sublattices (list of Sublattice): optional
                 List of Sublattice objects representing sites in the processor
-                supercell with same site spaces.       
+                supercell with same site spaces.
         """
-        super(MuSemiGrandEnsemble,self).__init__(processor, active_sublattices)
+        super(MuSemiGrandEnsemble, self).__init__(processor,
+                                                  active_sublattices)
         self._active_sublattices = deepcopy(self._sublattices)
 
-        # check that species are valid
+        # Check all species are valid
         chemical_potentials = {get_species(k): v for k, v
                                in chemical_potentials.items()}
 
@@ -503,12 +507,15 @@ class ChargeNeutralSemiGrandEnsemble(MuSemiGrandEnsemble,MSONable):
             MSONable dict.
         """
         d = super().as_dict()
-        d['active_sublattices'] = [s.as_dict() for s in self._active_sublattices]
+        d['active_sublattices'] = [s.as_dict() for s in
+                                   self._active_sublattices]
         return d
 
     @classmethod
     def from_dict(cls, d):
-        """Instantiate a ChargeNeutralSemiGrandEnsemble from dict representation.
+        """
+        Instantiate a ChargeNeutralSemiGrandEnsemble from dict
+        representation.
 
         Return:
             ChargeNeutralSemiGrandEnsemble.
@@ -529,47 +536,49 @@ class ChargeNeutralSemiGrandEnsemble(MuSemiGrandEnsemble,MSONable):
         return cls(Processor.from_dict(d['processor']),
                    chemical_potentials=chemical_potentials,
                    active_sublattices=[Sublattice.from_dict(s)
-                                for s in d['active_sublattices']],
+                                       for s in d['active_sublattices']],
                    all_sublattices=[Sublattice.from_dict(s)
-                                for s in d['sublattices']])
+                                    for s in d['sublattices']])
 
 
-class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble,MSONable):
+class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     """
-    Charge neutral semigrand ensemble on sublattice discriminative, constrained
-    coordinates. This is used to examine ground states convergence of 
-    cluster expansion only.
+    Charge neutral semigrand ensemble on sublattice discriminative,
+    constrained coordinates. This is used to examine ground states
+    convergence of cluster expansion only.
 
-    Discriminating the same specie on different sublattices is necessary when
-    computing ground state occupancies, because when talking about ground states
-    we actually care about internal distribution of species on each sublattice.
+    Discriminating the same specie on different sublattices is necessary
+    when computing ground state occupancies, because when talking about
+    ground states we actually care about internal distribution of species
+    on each sublattice.
 
-    A non-discriminative charge neutral ensemble is not necessary, as you only need
-    to specify step_type = 'charge-neutral-flip' when intializing sampler with a 
-    MuSemiGrandEnsemble.
+    A non-discriminative charge neutral ensemble is not necessary, as you
+    only need to specify step_type = 'charge-neutral-flip' when intializing
+    sampler with a MuSemiGrandEnsemble.
 
     You are not recommended to use this ensemble for other purposes!
     """
-    valid_mcmc_steps = ('charge-neutral-flip',)    
 
-    def __init__(self,processor,mu,sublattices=None):
+    valid_mcmc_steps = ('charge-neutral-flip', )
+
+    def __init__(self, processor, mu, sublattices=None):
         """Initialize DiscChargeNeutralSemiGrandEnsemble.
 
         Args:
             processor (Processor):
                 A processor that can compute the change in a property given
                 a set of flips. See moca.processor
-            mu (1D arraylike):
-                chemical potentials on sublattice discriminative, contrained 
+            mu (1D arrayLike):
+                chemical potentials on sublattice discriminative, contrained
                 coordinates.
             sublattices (list of Sublattice): optional
                 list of Sublattice objects representing sites in the processor
                 supercell with same site spaces.
         """
-        super().__init__(processor,sublattices)
+        super().__init__(processor, sublattices)
 
-        #Must use complete sublattices, instead of sublattices generated by 
-        #expansion structure
+        # Must use complete sublattices, instead of sublattices generated by
+        # expansion structure.
         self._active_sublattices = deepcopy(self._sublattices)
         self._sublattices = get_all_sublattices(processor)
 
@@ -580,28 +589,34 @@ class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble,MSONable):
         self.sc_sl_sizes = [len(sl_sites) for sl_sites in self.sc_sublat_list]
 
         self.sc_size = GCD_list(self.sc_sl_sizes)
-        self.sl_sizes = [sl_size//self.sc_size for sl_size in self.sc_sl_sizes]
- 
-        self._compspace = CompSpace(self.bits,self.sl_sizes)
-        if len(self.mu)!= self._compspace.dim:
-            raise ValueError("Chemcial potential dimension mismatch compositional space!")
+        self.sl_sizes = [sl_size // self.sc_size
+                         for sl_size in self.sc_sl_sizes]
+
+        self._compspace = CompSpace(self.bits, self.sl_sizes)
+        if len(self.mu) != self._compspace.dim:
+            raise ValueError("Chemcial potential dimension mismatch \
+                             compositional space!")
         self._flip_combs = self._compspace.min_flips
 
-    def compute_chemical_work(self,occupancy):
+    def compute_chemical_work(self, occupancy):
         """
         Compute the chemical work under this definition.
-   
+
         Args:
             occupancy(ndarray):
                 encoded occupancy string.
         Return:
             float: chemcial work of the occupancy.
         """
-        compstat = occu_to_species_stat(occupancy,self.bits,self.sc_sublat_list)
-        ccoord = self._compspace.translate_format(compstat,from_format='compstat',to_format='constr',sc_size=self.sc_size)
-        return np.dot(ccoord,self.mu)
+        compstat = occu_to_species_stat(occupancy,
+                                        self.bits, self.sc_sublat_list)
+        ccoord = self._compspace.translate_format(compstat,
+                                                  from_format='compstat',
+                                                  to_format='constr',
+                                                  sc_size=self.sc_size)
+        return np.dot(ccoord, self.mu)
 
-    def compute_feature_vector_change(self,occupancy,step):
+    def compute_feature_vector_change(self, occupancy, step):
         """
         Compute change of feature vector from a proposed step.
         Currently only supports a single flip in the table, so do not
@@ -612,22 +627,25 @@ class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble,MSONable):
                 encoded occupancy string.
             step (list[tuple(int,int)]):
                 A sequence of flips given my the MCMCUsher.propose_step
-                      
+
         Return:
             ndarray: difference in feature vector
         """
 
-        delta_feature = self.processor.compute_feature_vector_change(occupancy,step)
- 
-        #compute flip direction in the compositional space.
-        direction = direction_from_step(step,self.sc_sublat_list,self._flip_combs)
+        delta_feature = self.processor.compute_feature_vector_change(occupancy,
+                                                                     step)
 
-        if direction==0:
+        # Compute flip direction in the compositional space.
+        direction = direction_from_step(step,
+                                        self.sc_sublat_list,
+                                        self._flip_combs)
+
+        if direction == 0:
             delta_mu = 0
-        elif direction<0:
-            delta_mu = self.mu[-direction-1]
+        elif direction < 0:
+            delta_mu = self.mu[-direction - 1]
         else:
-            delta_mu = self.mu[direction-1]            
+            delta_mu = self.mu[direction - 1]
 
         return np.append(delta_feature, delta_mu)
 
@@ -638,11 +656,11 @@ class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble,MSONable):
             dict.
         """
         d = super().as_dict()
-        d['mu']=self.mu.tolist()
+        d['mu'] = self.mu.tolist()
         return d
 
     @classmethod
-    def from_dict(cls,d):
+    def from_dict(cls, d):
         """
         Initialize from a dictionary.
         Args:
@@ -651,6 +669,7 @@ class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble,MSONable):
         Return:
             CNSemigrandDiscEnsemble.
         """
-        return cls(Processor.from_dict(d['processor']),\
-                   mu=d['mu'],\
-                   sublattices=[Sublattice.from_dict(s) for s in d['sublattices']])
+        return cls(Processor.from_dict(d['processor']),
+                   mu=d['mu'],
+                   sublattices=[Sublattice.from_dict(s)
+                                for s in d['sublattices']])

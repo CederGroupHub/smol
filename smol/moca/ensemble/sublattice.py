@@ -31,7 +31,7 @@ def get_sublattices(processor):
 def get_all_sublattices(processor):
     """Get a list of sublattices from a processor,and will
        include all sublattices, regardless of active or not.
-      
+
        This is only to be used  by the two charge neutral ensembles.
 
        Args:
@@ -43,15 +43,15 @@ def get_all_sublattices(processor):
     """
     unique_site_spaces = []
     for site_space in get_site_spaces(processor.cluster_subspace.structure):
-        if not site_space in unique_site_spaces:
+        if site_space not in unique_site_spaces:
             unique_site_spaces.append(site_space)
 
     return [Sublattice(site_space,
-                      np.array([i for i,sp in enumerate(processor.allowed_species)
-                               if sp == list(site_space.keys())]))
-            for site_space in unique_site_spaces]    
+            np.array([i for i, sp in enumerate(processor.allowed_species)
+                     if sp == list(site_space.keys())]))
+            for site_space in unique_site_spaces]
 
-# TODO consider adding the inactive sublattices?
+
 class Sublattice(MSONable):
     """Sublattice class.
 

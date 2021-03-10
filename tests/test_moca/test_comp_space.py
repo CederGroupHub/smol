@@ -71,8 +71,14 @@ class TestCompSpace1(unittest.TestCase):
         self.assertEqual(self.comp_space.dim_nondisc,5)
 
     def test_vertices(self):
-        self.assertTrue(vertices_equal(self.comp_space.unit_spc_vertices(),\
-                                        self.vertices))
+        self.assertTrue(vertices_equal(self.comp_space.unit_spc_vertices(),
+                                       self.vertices))
+        self.assertTrue(vertices_equal(self.comp_space.int_vertices(sc_size=6),
+                                       self.min_grid[[0,2,12,13]]))
+        #print(self.comp_space.int_vertices(sc_size=5))
+        #print(self.int_grids_5[[0,1,2,6,8,9]])
+        self.assertTrue(vertices_equal(self.comp_space.int_vertices(sc_size=5),
+                                       self.int_grids_5[[0,1,2,6,8,9]]))
 
     def test_random_point(self):
         rand_ucoord = self.comp_space.get_random_point_in_unit_spc()

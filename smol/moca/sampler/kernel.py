@@ -94,7 +94,8 @@ class Metropolis(MCMCKernel):
     The classic and nothing but the classic.
     """
 
-    valid_mcushers = {'flip': 'Flipper', 'swap': 'Swapper', 'charge-neutral-flip':'Chargeneutralflipper'}
+    valid_mcushers = {'flip': 'Flipper', 'swap': 'Swapper',
+                      'charge-neutral-flip': 'Chargeneutralflipper'}
 
     def single_step(self, occupancy):
         """Attempt an MC step.
