@@ -572,6 +572,7 @@ class Grandcanonicaltableswapper(MCMCUsher):
         self._site_table = None
         self.oldsp1 = None
         self.oldsp2 = None
+        self.chosen_gc_flip = None
         self._initialize_flips_to_sublattice()
 
     def _initialize_occupancies(self, occupancy):
@@ -955,7 +956,7 @@ class Grandcanonicaltableswapper(MCMCUsher):
                         break
                 elif not self.domains_intersect:
                     if sum([i in sublatt.site_space for i in flattened]) > 0:
-                        # we can't have all anions
+                        # pure cation flips don't ever flip onto pure anion sites
                         if flip not in self.flip_to_sublattice:
                             self.flip_to_sublattice[flip] = [sublatt.site_space]
                         else:
@@ -976,7 +977,7 @@ class Grandcanonicaltableswapper(MCMCUsher):
         # Choose random GC swap type weighted by given probabilities in table
         chosen_gc_flip = random.choices(list(self.gc_step_table.keys()),
                                      weights=list(self.gc_step_table.values()))[0]
-
+        self.chosen_gc_flip = chosen_gc_flip
         site1_options = self._get_sublattice_for_flip(chosen_gc_flip)
         site1 = random.choice(site1_options)
         # This implementation should still have p(s2) = 1/(N_Mn-1) for a
@@ -988,6 +989,7 @@ class Grandcanonicaltableswapper(MCMCUsher):
                 site2 = site2_proposal
         sp2 = list(self._sites_to_sublattice[site2])[occupancy[site2]]
         sp1 = list(self._sites_to_sublattice[site1])[occupancy[site1]]
+        #print (sp1, sp2, site1, site2)
         if chosen_gc_flip == 'Mn_disproportionation':
             return self._do_Mn_flip(sp1, sp2, site1, site2)
         # charge-balanced sGC
@@ -1008,18 +1010,31 @@ class Grandcanonicaltableswapper(MCMCUsher):
         chosen = [0, 1]
         for i, flip in enumerate(chosen_gc_flip):
             if sp1 in flip and sp2 in flip and sp1 != sp2:
+                # sgc flip
                 chosen.pop(i)
                 sp1index = flip.index(sp1)  # save the index of sp1
                 sp2index = flip.index(sp2)  # save the index of sp2
                 self.oldsp1 = chosen_gc_flip[i][sp1index]
                 self.oldsp2 = chosen_gc_flip[i][sp2index]
+
+        # for efficiency, check if a canonical swap was selected
+        if (sp1 in chosen_gc_flip[0] and sp2 in chosen_gc_flip[1] and
+            chosen_gc_flip[0].index(sp1) == chosen_gc_flip[1].index(sp2)) or \
+           (sp1 in chosen_gc_flip[1] and sp2 in chosen_gc_flip[0] and
+            chosen_gc_flip[1].index(sp1) == chosen_gc_flip[0].index(sp2)):
+            return ((site1, list(self._sites_to_sublattice[site1]).index(sp2)),
+             (site2, list(self._sites_to_sublattice[site2]).index(sp1))), \
+                'swap'
+
         if len(chosen) == 2:
             # selected species are not ones we can flip.
             # Best way now to ensure detailed balance is to return None
             return tuple(), None
         assert len(chosen) == 1
+
         newsp1 = chosen_gc_flip[chosen[0]][sp1index]
         newsp2 = chosen_gc_flip[chosen[0]][sp2index]
+        #print('new', newsp1, newsp2)
 
         # need to catch out-of-domain errors, e.g. Mn3+ goes tetrahedral
         if newsp1 not in list(self._sites_to_sublattice[site1]) or \
