@@ -1,9 +1,9 @@
-__author___ = 'Fengyu Xie'
+"""Mathematic utilities.
 
+Including linear algebra, combinatorics and integer enumerations.
 """
-Mathematic utilities, including linear algebra, combinatorics and
-integerization.
-"""
+
+__author___ = 'Fengyu Xie'
 
 import numpy as np
 from itertools import combinations, product
@@ -16,8 +16,9 @@ from sympy.ntheory import factorint
 from sympy.solvers.diophantine import diop_linear
 from sympy import symbols
 
+
 def GCD(a, b):
-    """ The Euclidean Algorithm, giving positive GCD's """
+    """Euclidean Algorithm, giving positive GCD's."""
     if round(a) != a or round(b) != b:
         raise ValueError("GCD input must be integers!")
     a = abs(a)
@@ -28,7 +29,7 @@ def GCD(a, b):
 
 
 def GCD_list(L):
-    """ Find GCD of a list of numbers """
+    """Find GCD of a list of numbers."""
     if len(L) < 1:
         return None
     elif len(L) == 1:
@@ -38,6 +39,7 @@ def GCD_list(L):
 
 
 def LCM(a, b):
+    """Find LCM of two numbers."""
     if a == 0 and b == 0:
         return 0
     elif a == 0 and b != 0:
@@ -49,6 +51,7 @@ def LCM(a, b):
 
 
 def LCM_list(L):
+    """Find LCM of a list of numbers."""
     if len(L) < 1:
         return None
     elif len(L) == 1:
@@ -59,7 +62,8 @@ def LCM_list(L):
 
 # Combinatoric and intergerization
 def reverse_ordering(L, ordering):
-    """
+    """Reverse mapping.
+
     Given a mapping order of list, reverse that order
     and return the original list
     """
@@ -70,10 +74,8 @@ def reverse_ordering(L, ordering):
 
 
 def rationalize_number(a, dim_limiter=100, dtol=1E-5):
-    """
-    Find a rational number near a within dtol.
-    Returns the rational number in numerator/denominator
-    form.
+    """Find a rational number near real number within dtol.
+
     Args:
         a(float):
             A number to be rationalized
@@ -82,8 +84,8 @@ def rationalize_number(a, dim_limiter=100, dtol=1E-5):
         dtol(float,default=1E-5):
             Maximum allowed difference of variable a
             to its rational form
-    Returns:
-        int, int
+    Return:
+        (int, int): (numerator, denominator)
     """
     if a == 0:
         return 0, 1
@@ -97,10 +99,11 @@ def rationalize_number(a, dim_limiter=100, dtol=1E-5):
 
 
 def integerize_vector(v, dim_limiter=100, dtol=1E-5):
-    """
-    Ratioanlize all components of a vector v, and multiply the vector
-    by LCM of all the component's denominator, so that all vector
-    components are converted to integers.
+    """Rationalize all components of a vector v.
+
+    Multiply the vector by LCM of all the component's denominator, so
+    that all vector components are converted to integers.
+
     We call this process 'intergerization' of a vector.
     Args:
         v(np.ndarray(float)):
@@ -110,7 +113,7 @@ def integerize_vector(v, dim_limiter=100, dtol=1E-5):
         dtol(float,default=1E-5):
             Maximum allowed difference of variable a
             to its rational form
-    Returns:
+    Return:
         np.ndarray, int
     """
     denos = []
@@ -126,8 +129,8 @@ def integerize_vector(v, dim_limiter=100, dtol=1E-5):
 
 
 def integerize_multiple(vs, dim_limiter=100, dtol=1E-5):
-    """
-    Integerize multiple vectors as a flattened vector.
+    """Flatten and integerize multiple vectors.
+
     Args:
         v(np.ndarray(float)):
             A vector to be rationalized.
@@ -136,7 +139,7 @@ def integerize_multiple(vs, dim_limiter=100, dtol=1E-5):
         dtol(float,default=1E-5):
             Maximum allowed difference of variable a
             to its rational form.
-    Returns:
+    Return:
         np.ndarray, int
     """
     vs = np.array(vs)
@@ -150,16 +153,14 @@ def integerize_multiple(vs, dim_limiter=100, dtol=1E-5):
 
 
 def combinatorial_number(n, m):
-    """
-    Calculate the combinatorial number when choosing m
-    instances from a set of n.
+    """Calculate the combinatorial number.
 
     Args:
         m(int):
             Chosen size.
         n(int):
             Choose from size.
-    Returns:
+    Return:
         int, the combinatorial number.
     """
     if m > n:
@@ -169,11 +170,16 @@ def combinatorial_number(n, m):
 
 
 def get_integer_grid(subspc_normv, right_side=0, limiters=None):
-    """
+    """Enumerate all points on a diophantine lattice.
+
     Gives all integer grid points in a subspace (on a hyperplane
     defined by a normal vector). The normal vector's components
     should all be positive, non-zero, and sorted (from low to high).
     Also know as the standard integer enumeration problem.
+
+    Note:
+        Diophatine enumeration is NP-hard, so try not to enumerate
+        when dimensions of diophantine equation is too high!
 
     Args:
         subspc_normv(1D ArrayLike[float]):
@@ -185,12 +191,8 @@ def get_integer_grid(subspc_normv, right_side=0, limiters=None):
              Lowerbounds and upperbounds of enumeration in
              each dimension.
 
-    Returns:
+    Return:
         List[List[int]], enumerated integer coordinates.
-
-    Note:
-        This algorithm is far from optimal, so do not abuse it with overly high
-        dimensionality!
     """
     d = len(subspc_normv)
     if limiters is None:
@@ -230,8 +232,7 @@ def get_integer_grid(subspc_normv, right_side=0, limiters=None):
 
 
 def get_integer_base_solution(subspc_normv, right_side=0):
-    """
-    Gets a base interger solution of a linear diophitine equation.
+    """Get a base integer solution of a linear diophitine equation.
 
     Args:
         subspc_normv(1D ArrayLike[float]):
@@ -240,7 +241,7 @@ def get_integer_base_solution(subspc_normv, right_side=0):
             Right side intercept of the hyper plane equation.
             Normal vector @ coordinate = intercept.
 
-    Returns:
+    Return:
         List[int], base integer solution.
     """
     symtags = ','.join(["x_{}".format(i) for i in range(len(subspc_normv))])
@@ -261,7 +262,8 @@ def get_integer_base_solution(subspc_normv, right_side=0):
 
 
 def get_integer_basis(normal_vec, sl_flips_list=None):
-    """
+    """Primitive cell vectors of a diophatine lattice.
+
     The integer points on a hyperplane n x = 0 can form a lattice.
     This function can find the primitive lattice vectors with
     smallest norm, and are closest to orthogonal.
@@ -276,7 +278,7 @@ def get_integer_basis(normal_vec, sl_flips_list=None):
             Match index of each coordinate dimension into sublattice.
              A list of indices. If none, each coordinate dimension
              will be mapped into independent sublattices.
-    Returns:
+    Return:
         List[np.ndarray(int)], basis of the integer lattice.
     """
     gcd = GCD_list(normal_vec)
@@ -371,9 +373,10 @@ def get_integer_basis(normal_vec, sl_flips_list=None):
 
 
 def formula_norm(v, sl_flips_list=None):
-    """
-       L = sum_over_sublats(max_in_sublat(|x_i|))
-         = total number of atoms flipped.
+    """Get formula norm.
+
+    L = sum_over_sublats(max_in_sublat(|x_i|)).
+      = total number of atoms flipped.
     """
     v = np.array(v)
     if sl_flips_list is None:
@@ -391,13 +394,14 @@ def formula_norm(v, sl_flips_list=None):
 
 # Partition selection tools
 def choose_section_from_partition(probs):
-    """
+    """Choose one partition from multiple partitions.
+
     This function choose one section from a partition based on each section's
     normalized probability.
     Args:
         probs(1D Arraylike[float]):
             Probabilities of each sections. Will be normalized if not yet.
-    Returns:
+    Return:
         int, the index of randomly chosen section.
     """
     N_secs = len(probs)

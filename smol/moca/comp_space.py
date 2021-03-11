@@ -1,4 +1,5 @@
-"""
+"""Compositional space file.
+
 This file contains functions related to implementing and navigating the
 compositional space.
 
@@ -54,12 +55,12 @@ SLACK_TOL = 1E-5
 # Finding minimun charge-conserved, number-conserved flips to establish
 # constrained coords system.
 def get_oxi_state(sp):
-    """
-    Get oxidation state from a pymatgen specie/Element/Vacancy.
+    """Oxidation state from Specie/Element/Vacancy.
+
     Args:
        sp(Specie):
           A species object.
-    Returns:
+    Return:
        Int.
     """
     if isinstance(sp, (Vacancy, Element)):
@@ -69,7 +70,8 @@ def get_oxi_state(sp):
 
 
 def get_unit_swps(bits):
-    """
+    """One atom flips.
+
     Get all possible single site flips on each sublattice, and the
     charge changes given by the flips. Flips will be encoded by
     species indices, and will always flip from the last specie in
@@ -81,7 +83,7 @@ def get_unit_swps(bits):
             For example:
             [[Specie.from_string('Ca2+'),Specie.from_string('Mg2+'))],
              [Specie.from_string('O2-')]]
-    Returns:
+    Return:
         tuple:(list of flips in unconstrained space,
                list of charge changes of each flip,
                list of flip indices in each sublattice)
@@ -105,8 +107,9 @@ def get_unit_swps(bits):
 
 
 def flipvec_to_operations(unit_n_swps, nbits, prim_lat_vecs):
-    """
-    This function translates flips from their vector from into their
+    """Turn multi-atom flip to flip table format.
+
+    Translates flips from their vector from into their
     dictionary form.
     Each dictionary is written in the form below:
     {
@@ -185,8 +188,9 @@ def flipvec_to_operations(unit_n_swps, nbits, prim_lat_vecs):
 
 
 def visualize_operations(operations, bits):
-    """
-    This function turns a charge constrained flip from dictionary format
+    """Turn multi-atom flip into reaction formula.
+
+    Turns a charge constrained flip from dictionary format
     into a string of reaction formula for easy interpretation.
     Args:
         operations(List[dict]):
@@ -194,7 +198,7 @@ def visualize_operations(operations, bits):
             operation for details.
         bits(List[List[Specie|DummySpecie|Element|Vacancy]]):
             A list containing a species on all sublattices.
-    Returns:
+    Return:
         List[str].
     """
     operation_strs = []
@@ -224,9 +228,10 @@ def visualize_operations(operations, bits):
 
 # Compsitional space class
 class CompSpace(MSONable):
-    """
-    This class generates a CN-compositional space from a list of Species
-    or DummySpecies and sublattice sizes.
+    """Compositional space class.
+
+    Generates a charge neutral compositional space from a list of Species
+    or DummySpecies and size of sublattices in a PRIMITIVE CELL.
 
     A composition in CEAuto can be expressed in 5 forms:
     1, A Coordinate in compositional space without the charge constraint,
@@ -308,8 +313,10 @@ class CompSpace(MSONable):
             All minimal, charge neutral and number conserving flip
             combinations in the given system, in dictionary format.
     """
+
     def __init__(self, bits, sl_sizes=None):
-        """
+        """Initialize CompSpace.
+
         Args:
             bits(List of Specie/DummySpecie):
                 bit list.
@@ -367,10 +374,10 @@ class CompSpace(MSONable):
 
     @property
     def bkgrnd_chg(self):
-        """
-        Charge of the background composition, by summing charges
-        of the last specie on each SiteSpaces.
-        Returns:
+        """Charge of the background composition.
+
+        Computed by summing charges of the last specie on each SiteSpace's.
+        Return:
             Int.
         """
         chg = 0
@@ -380,20 +387,21 @@ class CompSpace(MSONable):
 
     @property
     def unconstr_dim(self):
-        """
-        Dimensionality of the unconstrained space.
-        Returns:
+        """Dimensionality of the unconstrained space.
+
+        Return:
             Int.
         """
         return len(self.unit_n_swps)
 
     @property
     def is_charge_constred(self):
-        """
+        """Check charge constrained.
+
         Whether or not this system has charge, and requires charge
         constraint. If true, charge neutrality reduces space dim by
         1.
-        Returns:
+        Return:
             Boolean.
         """
         d = len(self.chg_of_swps)
@@ -402,9 +410,9 @@ class CompSpace(MSONable):
 
     @property
     def dim(self):
-        """
-        Dimensionality of the constrained conpositional space.
-        Returns:
+        """Dimensionality of the constrained conpositional space.
+
+        Return:
             Int.
         """
         d = self.unconstr_dim
@@ -415,16 +423,17 @@ class CompSpace(MSONable):
 
     @property
     def dim_nondisc(self):
-        """
-        Dimension of non-discriminative coordinates.
-        Returns:
+        """Dimension of non-discriminative coordinates.
+
+        Return:
             Int.
         """
         return len(self.species)
 
     @property
     def unit_spc_basis(self):
-        """
+        """Minimal charge-conserving flips in unconstrained coordinates.
+
         Get minimal charge neutral flip combinations in vector representation.
         Given any compositional space, all valid, charge-neutral compoisitons
         are integer grids on this space or its subspace. What we do is to get
@@ -437,7 +446,7 @@ class CompSpace(MSONable):
         Their vector forms are:
         (1,-3,0), (0,1,-1)
 
-        Returns:
+        Return:
             2D np.ndarray of np.int64
         """
         if self._unit_spc_basis is None:
@@ -448,9 +457,9 @@ class CompSpace(MSONable):
 
     @property
     def min_flips(self):
-        """
-        Dictionary representation of minimal charge conserving flips.
-        Returns:
+        """Minimal charge conserving flips in table form.
+
+        Return:
             List[Dict]
         """
         _operations = flipvec_to_operations(self.unit_n_swps,
@@ -460,18 +469,18 @@ class CompSpace(MSONable):
 
     @property
     def min_flip_strings(self):
-        """
-        Human readable minial charge conserving flips, written in ionic
-        reaction formulae.
+        """Reaction formulas of charge conserving flips.
 
-        Returns:
+        Intended to be human-readable.
+        Return:
             List[str]
         """
         return visualize_operations(self.min_flips, self.bits)
 
     @property
     def polytope(self):
-        """
+        """Constrained space in polytope form.
+
         Express the constrained configurational space as arrays necessary
         to initailize a polytope.Polytope object.
 
@@ -487,7 +496,7 @@ class CompSpace(MSONable):
                 therefore must normalize coordinates before applying these
                 matrices.
 
-        Returns:
+        Return:
             tuple: (A, b, R, t), all np.ndarray.
         """
         if self._polytope is None:
@@ -537,46 +546,49 @@ class CompSpace(MSONable):
 
     @property
     def A(self):
-        """
-        Returns:
+        """Polytope inequality matrix.
+
+        Return:
             np.ndarray
         """
         return self.polytope[0]
 
     @property
     def b(self):
-        """
-        Returns:
+        """Polytope inequality intercepts.
+
+        Return:
             np.ndarray
         """
         return self.polytope[1]
 
     @property
     def R(self):
-        """
-        Returns:
+        """Rotation matrix for coordinates conversion.
+
+        Return:
             np.ndarray
         """
         return self.polytope[2]
 
     @property
     def t(self):
-        """
-        Returns:
+        """T vector for coordinates conversion.
+
+        Return:
             np.ndarray
         """
         return self.polytope[3]
 
     def _is_in_subspace(self, x, sc_size=1):
-        """
-        Given an unconstrained coordinate and its corresponding supercell
-        size, check if it is in the constrained subspace.
+        """Check if unconstrained coords in charge neutral space.
+
         Args:
             x(1D arrayLike[int|float]):
                 The unconstrained coordinate to examine.
             sc_size(int):
                 Supercell size corresponding to the current coordinates.
-        Returns:
+        Return:
             Boolean.
         """
         x_scaled = np.array(x) / sc_size
@@ -588,37 +600,36 @@ class CompSpace(MSONable):
             return False
 
     def _constr_is_in_subspace(self, x, sc_size=1):
-        """
-        Given a constrained coordinates and its correspoinding supercell
-        size, check if it is in the constrained subspace.
+        """Check if unconstrained coords in charge neutral space.
+
         Args:
             x(1D arrayLike[int|float]):
                 The constrained coordinates to check.
             sc_size(int, Default=1):
                 Supercell size corresponding to the current coordinates.
-        Returns:
+        Return:
             Boolean.
         """
         return np.all(self.A @ (x / sc_size) <= self.b + SLACK_TOL)
 
     def unit_spc_vertices(self, form='unconstr'):
-        """
-        Find extremums of the constrained compositional space in a primitive
-        cell.
+        """Extremums of the constrained compositional space.
+
+        All coordinates in a primitive cell.
 
         Args:
             form (string):
                 Specifies the format to output the compositions.
                 'unconstr': use unconstrained (type 1) coordinates.(default)
-                            Returns 2D np.ndarray.
+                            Return 2D np.ndarray.
                 'constr': use constrained (type 2) coordinates.
-                          Returns 2D np.ndarray.
+                          Return 2D np.ndarray.
                 'compstat': use compstat lists.(See self._unconstr_to_compstat)
-                            Returns List[List[List[int]]].
+                            Return List[List[List[int]]].
                 'composition': use a pymatgen.composition for each sublattice
                                (vacancies not explicitly included)
-                               Returns List[List[Composition]].
-        Returns:
+                               Return List[List[Composition]].
+        Return:
             Depends on form.
         """
         if self._unit_spc_vertices is None:
@@ -645,22 +656,21 @@ class CompSpace(MSONable):
                                          sc_size=1)
 
     def get_random_point_in_unit_spc(self, form='unconstr'):
-        """
-        Get a random point inside the unit, constrained space.
+        """Random point inside the prim, charge-neutral space.
 
         Args:
             form(str):
                 Desired format of output.
                 'unconstr': use unconstrained (type 1) coordinates.(default)
-                            Returns np.ndarray.
+                            Return np.ndarray.
                 'constr': use constrained (type 2) coordinates.
-                          Returns np.ndarray.
+                          Return np.ndarray.
                 'compstat': use compstat lists.(See self._unconstr_to_compstat)
-                            Returns List[List[float]].
+                            Return List[List[float]].
                 'composition': use a pymatgen.composition for each sublattice
                                (vacancies not explicitly included)
-                               Returns List[Composition]].
-        Returns:
+                               Return List[Composition]].
+        Return:
             Depends on form.
         """
         verts = self.unit_spc_vertices(form='unconstr')
@@ -691,10 +701,9 @@ class CompSpace(MSONable):
 
     @property
     def min_sc_size(self):
-        """
-        Minimal supercell size to get integer composition.
+        """Minimal supercell size to have a integer composition.
 
-        Returns:
+        Return:
             Int.
         """
         if self._min_sc_size or self._min_int_vertices is None:
@@ -703,23 +712,21 @@ class CompSpace(MSONable):
         return self._min_sc_size
 
     def min_int_vertices(self, form='unconstr'):
-        """
-        minimal integerized compositional space vertices
-        (unconstrained format).
+        """Minimal integerized compositional space vertices.
 
         Args:
             form (string):
                 Desired format of output.
                 'unconstr': use unconstrained (type 1) coordinates.(default)
-                            Returns 2D np.ndarray.
+                            Return 2D np.ndarray.
                 'constr': use constrained (type 2) coordinates.
-                          Returns 2D np.ndarray.
+                          Return 2D np.ndarray.
                 'compstat': use compstat lists.(See self._unconstr_to_compstat)
-                            Returns List[List[List[int]]].
+                            Return List[List[List[int]]].
                 'composition': use a pymatgen.composition for each sublattice
                                (vacancies not explicitly included)
-                               Returns List[List[Composition]]].
-        Returns:
+                               Return List[List[Composition]]].
+        Return:
             Depends on form.
         """
         if self._min_sc_size or self._min_int_vertices is None:
@@ -729,7 +736,8 @@ class CompSpace(MSONable):
                                          form=form, sc_size=self.min_sc_size)
 
     def int_vertices(self, sc_size=1, form='unconstr'):
-        """
+        """Integer vertices in a neutral space of specific supercell size.
+
         If supercell size is a multiple of min_sc_size, then int_vertices are
         just min_int_vertices*multiple. Otherwise int_vertices are taken as
         convex hull vertices of set self.int_grids(sc_size)
@@ -740,15 +748,15 @@ class CompSpace(MSONable):
             form (string):
                 Desired format of output.
                 'unconstr': use unconstrained (type 1) coordinates.(default)
-                            Returns 2D np.ndarray.
+                            Return 2D np.ndarray.
                 'constr': use constrained (type 2) coordinates.
-                          Returns 2D np.ndarray.
+                          Return 2D np.ndarray.
                 'compstat': use compstat lists.(See self._unconstr_to_compstat)
-                            Returns List[List[List[int]]].
+                            Return List[List[List[int]]].
                 'composition': use a pymatgen.composition for each sublattice
                                (vacancies not explicitly included)
-                               Returns List[List[Composition]]].
-        Returns:
+                               Return List[List[Composition]]].
+        Return:
             Depends on form.
         """
         if sc_size % self.min_sc_size == 0:
@@ -794,23 +802,21 @@ class CompSpace(MSONable):
         return self._convert_unconstr_to(vertices, form=form, sc_size=sc_size)
 
     def min_grid(self, form='unconstr'):
-        """
-        Get all charge-neutral integer compositions in a supercell with size=
-        min_sc_size.
+        """All charge-neutral integer compositions in under min_sc_size.
 
         Args:
             form (string):
                 Desired format of output.
                 'unconstr': use unconstrained (type 1) coordinates.(default)
-                            Returns 2D np.ndarray.
+                            Return 2D np.ndarray.
                 'constr': use constrained (type 2) coordinates.
-                          Returns 2D np.ndarray.
+                          Return 2D np.ndarray.
                 'compstat': use compstat lists.(See self._unconstr_to_compstat)
-                            Returns List[List[List[int]]].
+                            Return List[List[List[int]]].
                 'composition': use a pymatgen.composition for each sublattice
                                (vacancies not explicitly included)
-                               Returns List[List[Composition]]].
-        Returns:
+                               Return List[List[Composition]]].
+        Return:
             Depends on form.
         """
         if self._min_grid is None:
@@ -820,8 +826,7 @@ class CompSpace(MSONable):
                                          form=form, sc_size=self.min_sc_size)
 
     def int_grids(self, sc_size=1, form='unconstr'):
-        """
-        Get all integer compositions in a super cell with specified size.
+        """All integer compositions in a supercell with specified size.
 
         Args:
             sc_size(int):
@@ -829,15 +834,15 @@ class CompSpace(MSONable):
             form (string):
                 Desired format of output.
                 'unconstr': use unconstrained (type 1) coordinates.(default)
-                            Returns 2D np.ndarray.
+                            Return 2D np.ndarray.
                 'constr': use constrained (type 2) coordinates.
-                          Returns 2D np.ndarray.
+                          Return 2D np.ndarray.
                 'compstat': use compstat lists.(See self._unconstr_to_compstat)
-                            Returns List[List[List[int]]].
+                            Return List[List[List[int]]].
                 'composition': use a pymatgen.composition for each sublattice
                                (vacancies not explicitly included)
-                               Returns List[List[Composition]]].
-        Returns:
+                               Return List[List[Composition]]].
+        Return:
             Depends on form.
 
         Note: if you want enumeration by a step!=1, just divide sc_size by that
@@ -852,15 +857,16 @@ class CompSpace(MSONable):
                                          form=form, sc_size=sc_size)
 
     def _enum_int_grids(self, sc_size=1):
-        """
-        Enumerate all possible integer compositions in charge-neutral space.
-        Gives unconstrained coordinates.
+        """Enumerate all possible integer compositions.
+
+        Gives unconstrained coordinates only.
+
         Args:
             sc_size(int):
                 The supercell size to enumerate integer compositions on.
                 Recommended is a multiply of self.min_sc_size, otherwise
                 we can't guarantee to find any integer composition.
-        Returns:
+        Return:
             np.ndarray
         """
         if sc_size % self.min_sc_size == 0:
@@ -890,7 +896,8 @@ class CompSpace(MSONable):
         return np.array(enum_grid, dtype=np.int64)
 
     def frac_grids(self, sc_size=1, form='unconstr'):
-        """
+        """Normalize neutral compositions with a supercell size.
+
         Enumerates integer compositions under a certain sc_size, and normalize
         with sc_size. ('composition' format normalized with sublattice sizes.)
 
@@ -900,16 +907,16 @@ class CompSpace(MSONable):
             form (string):
                 Desired format of output.
                 'unconstr': use unconstrained (type 1) coordinates.(default)
-                            Returns 2D np.ndarray.
+                            Return 2D np.ndarray.
                 'constr': use constrained (type 2) coordinates.
-                          Returns 2D np.ndarray.
+                          Return 2D np.ndarray.
                 'compstat': use compstat lists.(See self._unconstr_to_compstat)
-                            Returns List[List[List[int]]].
+                            Return List[List[List[int]]].
                 'composition': use a pymatgen.composition for each sublattice
                                (vacancies not explicitly included)
-                               Returns List[List[Composition]]].
+                               Return List[List[Composition]]].
 
-        Returns:
+        Return:
             Depends on form.
 
         Note: if you want to stepped enumeration, just divide sc_size by step,
@@ -922,11 +929,7 @@ class CompSpace(MSONable):
 # These formatting functions will not normalize or scale compositions.
 # It's your responsibility to check scales are correct.
     def _unconstr_to_constr_coords(self, x, sc_size=1, to_int=False):
-        """
-        Unconstrained coordinate system to constrained coordinate system.
-        In constrained coordinate system, a composition will be written as
-        number of flips required to reach this composition from a starting
-        composition.
+        """Unconstrained coordinates to constrained coordinates.
 
         Args:
             x(1D Arraylike):
@@ -936,7 +939,7 @@ class CompSpace(MSONable):
             to_int(Boolean):
                 If true, round coords to integers.
 
-        Returns:
+        Return:
             np.ndarray
         """
         # Scale down to unit comp space
@@ -971,8 +974,7 @@ class CompSpace(MSONable):
         return x_prime
 
     def _constr_to_unconstr_coords(self, x_prime, sc_size=1, to_int=False):
-        """
-        Constrained coordinate system to unconstrained coordinate system.
+        """Constrained coordinates to unconstrained coordinates.
 
         Args:
             x_prime(1D Arraylike):
@@ -982,7 +984,7 @@ class CompSpace(MSONable):
             to_int(Boolean):
                 If true, round coords to integers.
 
-        Returns:
+        Return:
             np.ndarray
         """
         # Scale down to unit comp space.
@@ -1010,9 +1012,7 @@ class CompSpace(MSONable):
         return x
 
     def _unconstr_to_compstat(self, x, sc_size=1):
-        """
-        Translate unconstrained coordinate to statistics of specie numbers on
-        each sublattice. Will have the same shape as self.nbits.
+        """Unconstrained coordinates to compstats.
 
         Args:
             x(1D arrayLike):
@@ -1020,7 +1020,7 @@ class CompSpace(MSONable):
             sc_size(int):
                 Supercell size corresponding to given coordinates.
 
-        Returns:
+        Return:
             List[List[int]]
         """
         v_id = 0
@@ -1042,8 +1042,8 @@ class CompSpace(MSONable):
         return compstat
 
     def _compstat_to_unconstr(self, compstat):
-        """
-        Translate compstat table to unconstrained coordinates.
+        """Compstat to unconstrained coordinates.
+
         Args:
             compstat(List[List[int]]):
                 Species counts on each sublattices.
@@ -1056,7 +1056,8 @@ class CompSpace(MSONable):
         return np.array(x)
 
     def _unconstr_to_composition(self, x, sc_size=1):
-        """
+        """Unconstrained coordinates to composition format.
+
         Translate an unconstranied coordinate into a list of Composition
         by each sublattice. Vacancies are not explicitly included for the
         convenience structure generation.
@@ -1067,7 +1068,7 @@ class CompSpace(MSONable):
             sc_size(int):
                 Supercell size corresponding to the coordinates.
 
-        Returns:
+        Return:
             List[Composition]
         """
         compstat = self._unconstr_to_compstat(x, sc_size=sc_size)
@@ -1090,8 +1091,7 @@ class CompSpace(MSONable):
         return sl_comps
 
     def _composition_to_unconstr(self, comp, sc_size=1):
-        """
-        Translate composition format to unconstrained coordinates.
+        """Composition format to unconstrained coordinates.
 
         Args:
             comp(List[Composition]) :
@@ -1099,7 +1099,7 @@ class CompSpace(MSONable):
             sc_size(int):
                 Supercell size corresponding to this compositon.
 
-        Returns:
+        Return:
             np.ndarray
         """
         x = []
@@ -1120,7 +1120,8 @@ class CompSpace(MSONable):
         return np.array(x)
 
     def _unconstr_to_nondisc(self, x, sc_size=1):
-        """
+        """Unconstrained coordinates to non-discriminative (irreversible).
+
         Translates an unconstrained coordinate into non-discriminative
         coordinate. Same specie on different sublattices will be summed
         up as one coordinate.
@@ -1131,7 +1132,7 @@ class CompSpace(MSONable):
             sc_size(int):
                 Supercell size.
 
-        Returns:
+        Return:
             np.ndarray
         """
         nondisc = np.zeros(self.dim_nondisc)
@@ -1153,8 +1154,8 @@ class CompSpace(MSONable):
         return nondisc
 
     def _convert_unconstr_to(self, x, form='unconstr', sc_size=1):
-        """
-        Translates an unconstrained coordinate into specified forms.
+        """Unconstrained coordinates to any specified form.
+
         Args:
             x(1D ArrayLike):
                 Unconstrained coordinates.
@@ -1168,7 +1169,7 @@ class CompSpace(MSONable):
                 'composition': use a pymatgen.composition for each sublattice
                                (vacancies not explicitly included)
                 'nondisc': non-discriminate coordinates.
-        Returns:
+        Return:
             Depends on form.
         """
         if len(np.array(x).shape) > 1:
@@ -1194,8 +1195,8 @@ class CompSpace(MSONable):
             raise ValueError('Requested format not supported.')
 
     def _convert_to_unconstr(self, x, form, sc_size=1):
-        """
-        Translates different forms into an unconstrained coordinate.
+        """Different forms into unconstrained coordinates.
+
         Args:
             x:
                 Input composition coordinates, format depends on form.
@@ -1209,7 +1210,7 @@ class CompSpace(MSONable):
                 'composition': use a pymatgen.composition for each sublattice
                                (vacancies not explicitly included, and must be
                                 normalized.)
-        Returns:
+        Return:
             np.ndarray
 
         Note: 'non-disc' can not be converted back to 'unconstr'.
@@ -1251,8 +1252,8 @@ class CompSpace(MSONable):
 
     def translate_format(self, x, from_format, to_format='unconstr',
                          sc_size=1):
-        """
-        Translates different forms into an unconstrained coordinate.
+        """Translate between compositional coordinates forms.
+
         Args:
             x:
                 Input compositional coordinates. Format depends on
@@ -1269,7 +1270,7 @@ class CompSpace(MSONable):
                                (vacancies not explicitly included)
                 'nondisc': Non discriminative compositional coordinates.
                            Can only be taken by 'to_format' argument.
-        Returns:
+        Return:
             Depends on 'to_format' argument.
         """
         if from_format == 'nondisc':
@@ -1282,9 +1283,9 @@ class CompSpace(MSONable):
                                          sc_size=sc_size)
 
     def as_dict(self):
-        """
-        Serialize into dictionary.
-        Returns:
+        """Serialize into dictionary.
+
+        Return:
             Dict.
         """
         bits_d = [[sp.as_dict() for sp in sl_sps] for sl_sps in self.bits]
@@ -1309,12 +1310,12 @@ class CompSpace(MSONable):
 
     @classmethod
     def from_dict(cls, d):
-        """
-        Load CompSpace object from dictionary.
+        """Load CompSpace object from dictionary.
+
         Args:
             d(dict):
                 Dictionary to decode from.
-        Returns:
+        Return:
             CompSpace
         """
         bits = [[MontyDecoder().process_decoded(sp_d) for sp_d in sl_sps]

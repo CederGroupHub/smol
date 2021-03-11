@@ -1,9 +1,6 @@
-__author__ = 'Fengyu Xie'
+"""Compositional space utilities functions."""
 
-"""
-Compositional space utilities function. Also includes functions that deals
-with table filps in charge neutral compspace.
-"""
+__author__ = 'Fengyu Xie'
 
 from .math_utils import combinatorial_number
 from smol.cofe.space.domain import get_species
@@ -11,7 +8,8 @@ from smol.cofe.space.domain import get_species
 
 # Composition linkage number for Charge neutral semi-grand flip rules
 def get_n_links(comp_stat, flip_table):
-    """
+    """Count linkages for a compositional point.
+
     Get the total number of configurations reachable by a single flip in
     flip_table set.
 
@@ -23,7 +21,7 @@ def get_n_links(comp_stat, flip_table):
         flip_table:
             a list of dictionaries, each representing a charge-conserving,
             minimal flip in the compositional space.
-        Output:
+    Return:
             n_links:
                 A list of integers, length = 2*len(flip_table),
                 giving number of possible flips along each

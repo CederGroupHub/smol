@@ -420,24 +420,25 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
 
 
 class ChargeNeutralSemiGrandEnsemble(MuSemiGrandEnsemble, MSONable):
-    """
-    Charge neutral semigrand ensemble, BUT NOT DISCRIMINATIVE ON sublattices.
-    This means the same specie on different sublattices shall be assigned same
-    chemical potential by MuSemiGrandEnsemble. These chemical potentials will
-    have exact physical meanings, therefore this ensemble shall be used for
-    thermo properties calculation.
+    """Charge neutral semigrand ensemble.
+
+    This ensemble is not discriminative on sublattices, which means the same
+    specie on different sublattices shall be assigned same chemical potential
+    by MuSemiGrandEnsemble. These chemical potentials will have exact physical
+    meanings, therefore this ensemble shall be used for thermo properties
+    calculation.
 
     It is necessary to make this a separate class, not only because it uses a
     different mcusher, but also because it requires a full sublattice table
     just like DiscChargeNeutralSemiGrandEnsemble, not only sublattice table
     of active sites!
     """
+
     valid_mcmc_steps = ('charge-neutral-flip', )
 
     def __init__(self, processor, chemical_potentials,
                  active_sublattices=None, all_sublattices=None):
-        """
-        Initialize ChargeNeutralSemiGrandEnsemble.
+        """Initialize ChargeNeutralSemiGrandEnsemble.
 
         Args:
             processor (Processor):
@@ -481,6 +482,7 @@ class ChargeNeutralSemiGrandEnsemble(MuSemiGrandEnsemble, MSONable):
 
     def _build_mu_table(self, chemical_potentials):
         """Build an array for chemical potentials for all sites in system.
+
         Since self._sublattices have been changed to all sublattices, including
         inactive ones, this will only include active sublattices.
 
@@ -501,8 +503,8 @@ class ChargeNeutralSemiGrandEnsemble(MuSemiGrandEnsemble, MSONable):
         return table
 
     def as_dict(self):
-        """
-        Serialize into a dictionary.
+        """Serialize into a dictionary.
+
         Return:
             MSONable dict.
         """
@@ -513,9 +515,7 @@ class ChargeNeutralSemiGrandEnsemble(MuSemiGrandEnsemble, MSONable):
 
     @classmethod
     def from_dict(cls, d):
-        """
-        Instantiate a ChargeNeutralSemiGrandEnsemble from dict
-        representation.
+        """Instantiate a ChargeNeutralSemiGrandEnsemble from dict.
 
         Return:
             ChargeNeutralSemiGrandEnsemble.
@@ -542,10 +542,10 @@ class ChargeNeutralSemiGrandEnsemble(MuSemiGrandEnsemble, MSONable):
 
 
 class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
-    """
-    Charge neutral semigrand ensemble on sublattice discriminative,
-    constrained coordinates. This is used to examine ground states
-    convergence of cluster expansion only.
+    """Sublattice disctiminative charge neutral semigrand ensemble.
+
+    This is used to examine ground states convergence of cluster expansion
+    only.
 
     Discriminating the same specie on different sublattices is necessary
     when computing ground state occupancies, because when talking about
@@ -599,8 +599,7 @@ class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         self._flip_combs = self._compspace.min_flips
 
     def compute_chemical_work(self, occupancy):
-        """
-        Compute the chemical work under this definition.
+        """Compute the chemical work.
 
         Args:
             occupancy(ndarray):
@@ -617,8 +616,8 @@ class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         return np.dot(ccoord, self.mu)
 
     def compute_feature_vector_change(self, occupancy, step):
-        """
-        Compute change of feature vector from a proposed step.
+        """Compute change of feature vector from a proposed step.
+
         Currently only supports a single flip in the table, so do not
         combine multiple flips!
 
@@ -631,7 +630,6 @@ class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         Return:
             ndarray: difference in feature vector
         """
-
         delta_feature = self.processor.compute_feature_vector_change(occupancy,
                                                                      step)
 
@@ -650,8 +648,8 @@ class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         return np.append(delta_feature, delta_mu)
 
     def as_dict(self):
-        """
-        Serialize object into dictionary.
+        """Serialize object into dict.
+
         Return:
             dict.
         """
@@ -661,8 +659,8 @@ class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
 
     @classmethod
     def from_dict(cls, d):
-        """
-        Initialize from a dictionary.
+        """Initialize from a dict.
+
         Args:
             d(dict):
                 dictionary containing all neccessary info to initialize.

@@ -29,17 +29,18 @@ def get_sublattices(processor):
 
 
 def get_all_sublattices(processor):
-    """Get a list of sublattices from a processor,and will
-       include all sublattices, regardless of active or not.
+    """Get a list of all sublattices from a processor.
 
-       This is only to be used  by the two charge neutral ensembles.
+    Will include all sublattices, active or not.
 
-       Args:
-           processor (Processor):
-               A processor object to extract sublattices from.
-       Returns:
-           list of Sublattice, containing all sites, even
-           if only occupied by one specie.
+    This is only to be used by the charge neutral ensembles.
+
+    Args:
+        processor (Processor):
+            A processor object to extract sublattices from.
+    Returns:
+        list of Sublattice, containing all sites, even
+        if only occupied by one specie.
     """
     unique_site_spaces = []
     for site_space in get_site_spaces(processor.cluster_subspace.structure):

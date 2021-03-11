@@ -145,12 +145,14 @@ class Swapper(MCMCUsher):
 
 # The Combinedflip Usher
 class Combinedflipper(MCMCUsher):
-    """
-    Implementation of simultaneous flips on multiple sites.
+    """Implementation of combined flips on multiple sites.
+
     This is to further enable charge neutral unitary flips.
     """
+
     def __init__(self, sublattices, flip_combs):
-        """
+        """Initialize Combinedflipper.
+
         Args:
            sublattices (list of Sublattice):
                list of Sublattices to propose steps for.
@@ -174,7 +176,6 @@ class Combinedflipper(MCMCUsher):
                   },
                   ...
                  ]
-
         """
         super().__init__(sublattices)
         self.flip_combs = flip_combs
@@ -283,10 +284,11 @@ class Combinedflipper(MCMCUsher):
 # The actual CN-SGMC flipper is a probabilistic combination of Swapper
 # and CorrelatedFlipper
 class Chargeneutralflipper(MCMCUsher):
+    """Charge neutral flipper usher.
+
+    This a combination of Swapper and CorrelatedFlipper.
     """
-    Implement the MCMCUsher of CN-SGMC, which is a combination of
-    Swapper and CorrelatedFlipper.
-    """
+
     def __init__(self, sublattices, n_links=None):
         """Initialize Chargeneutralflipper.
 
@@ -345,7 +347,7 @@ class Chargeneutralflipper(MCMCUsher):
             occupancy (ndarray):
                 encoded occupancy string.
 
-        Returns:
+        Return:
             Tupe(list(tuple),int): list of tuples each with (idex, code), and
                                    an integer indication flip direction in
                                    constrained coordinates. Different from
