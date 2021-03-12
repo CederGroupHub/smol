@@ -150,32 +150,36 @@ class Combinedflipper(MCMCUsher):
     This is to further enable charge neutral unitary flips.
     """
 
-    def __init__(self, sublattices, flip_combs):
+    def __init__(self, sublattices, flip_combs, flip_weights=None):
         """Initialize Combinedflipper.
 
         Args:
-           sublattices (list of Sublattice):
-               list of Sublattices to propose steps for.
-           flip_combs(List of Dict):
-               A list of multi-site flips in dictionary format.
-               For example,
-                 [
-                  {
-                  'from':
-                     {0(sublattice_id):
-                        {0(specie_id in sublattice.species):
-                             number_of_atoms_flipped,
-                         1:
-                             ...
-                        },
-                      1:
-                        ...
-                     },
-                  'to':
-                     ...
-                  },
-                  ...
-                 ]
+            sublattices (list of Sublattice):
+                list of Sublattices to propose steps for.
+            flip_combs(List of Dict):
+                A list of multi-site flips in dictionary format.
+                For example,
+                  [
+                   {
+                   'from':
+                      {0(sublattice_id):
+                         {0(specie_id in sublattice.species):
+                              number_of_atoms_flipped,
+                          1:
+                              ...
+                         },
+                       1:
+                         ...
+                      },
+                   'to':
+                      ...
+                   },
+                   ...
+                  ]
+            flip_weights(1D Arraylike|Nonetype):
+                Weights to adjust probability of each flip. If
+                None given, will assign equal weights to each
+                flip.
         """
         super().__init__(sublattices)
         self.flip_combs = flip_combs
@@ -183,6 +187,14 @@ class Combinedflipper(MCMCUsher):
 
         self.bits = [sl.species for sl in self.sublattices]
         self.sl_list = [list(sl.sites) for sl in self.sublattices]
+
+        if flip_weights is None:
+            self.flip_weights = np.ones(len(flip_combs), dtype=np.int64)
+        else:
+            if len(flip_weights) != len(flip_combs):
+                raise ValueError("Flip reweighted, but not enough weights \
+                                 supplied!")
+            self.flip_weights = np.array(flip_weights)
 
     def propose_step(self, occupancy):
         """Propose a single random flip step.
@@ -205,6 +217,11 @@ class Combinedflipper(MCMCUsher):
 
         species_stat = occu_to_species_stat(occupancy, self.bits, self.sl_list)
         n_links_current = get_n_links(species_stat, self.flip_combs)
+        # Re-adjust by flip weights.
+        flip_weights_tiled = np.array([self.flip_weights[i // 2]
+                                      for i in range(2 *
+                                                     len(self.flip_weights))])
+        n_links_current = np.array(n_links_current) * flip_weights_tiled
 
         chosen_f_id = choose_section_from_partition(n_links_current)
         mult_flip = self.flip_combs[chosen_f_id // 2]
@@ -289,7 +306,7 @@ class Chargeneutralflipper(MCMCUsher):
     This a combination of Swapper and CorrelatedFlipper.
     """
 
-    def __init__(self, sublattices, n_links=None):
+    def __init__(self, sublattices, flip_weights=None, n_links=None):
         """Initialize Chargeneutralflipper.
 
         Args:
@@ -297,6 +314,9 @@ class Chargeneutralflipper(MCMCUsher):
                 list of Sublattices to propose steps for.
 
         Attributes:
+            flip_weights(1D arrayLike|Nonetype):
+                Weights to adjust probability of each flip. If None given,
+                will assign equal weights to each flip.
             n_links(int):
                 For each type of flip in the flip table, there is a number of
                 possible flips of that type on the current occupancy. We store
@@ -325,15 +345,33 @@ class Chargeneutralflipper(MCMCUsher):
         comp_vertices = compspace.int_vertices(sc_size=sc_size,
                                                form='compstat')
 
+        if flip_weights is None:
+            self.flip_weights = np.ones(len(self._flip_combs), dtype=np.int64)
+        else:
+            if len(flip_weights) != len(self._flip_combs):
+                raise ValueError("Flip reweighted, but not enough weights \
+                                 supplied!")
+            self.flip_weights = np.array(flip_weights)
+
         if n_links is not None:
             # If n_links has been updated and computed before, utilize this
             self.n_links = n_links
         else:
-            self.n_links = max([sum(get_n_links(v, self._flip_combs))
-                                for v in comp_vertices])
+            n_links_init = []
+            for v in comp_vertices:
+                n_links_current = get_n_links(v, self._flip_combs)
+                flip_weights_tiled = np.array([self.flip_weights[i // 2]
+                                               for i in range(2 *
+                                               len(self.flip_weights))])
+
+                n_links_init.append(sum(np.array(n_links_current) *
+                                    flip_weights_tiled))
+
+            self.n_links = max(n_links_init)
 
         self.swapper = Swapper(self.sublattices)
-        self.comb_flipper = Combinedflipper(self.sublattices, self._flip_combs)
+        self.comb_flipper = Combinedflipper(self.sublattices, self._flip_combs,
+                                            self.flip_weights)
 
     def propose_step(self, occupancy):
         """Propose a single random swap step.
@@ -356,6 +394,11 @@ class Chargeneutralflipper(MCMCUsher):
         occupancy = np.array(occupancy)
         species_stat = occu_to_species_stat(occupancy, self.bits, self.sl_list)
         n_links_current = get_n_links(species_stat, self._flip_combs)
+        # Re-adjust probabilities with flip weights.
+        flip_weights_tiled = np.array([self.flip_weights[i // 2]
+                                      for i in range(2 *
+                                                     len(self.flip_weights))])
+        n_links_current = np.array(n_links_current) * flip_weights_tiled
 
         if sum(n_links_current) > self.n_links:
             # Then update n_links value

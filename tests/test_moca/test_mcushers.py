@@ -142,3 +142,9 @@ def test_combined_flip(sublattices_neutral,flip_combinations):
 def test_charge_neutral_flip(sublattices_neutral):
     cf = Chargeneutralflipper(sublattices_neutral)
     assert cf.n_links == 180
+
+    cf_weighted = Chargeneutralflipper(sublattices_neutral,flip_weights=[1,2])
+    assert cf_weighted.n_links == 360
+
+    cf_weighted_2 = Chargeneutralflipper(sublattices_neutral,flip_weights=[2,1])
+    assert cf_weighted_2.n_links == 180
