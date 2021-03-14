@@ -1022,7 +1022,12 @@ class Grandcanonicaltableswapper(MCMCUsher):
             chosen_gc_flip[0].index(sp1) == chosen_gc_flip[1].index(sp2)) or \
            (sp1 in chosen_gc_flip[1] and sp2 in chosen_gc_flip[0] and
             chosen_gc_flip[1].index(sp1) == chosen_gc_flip[0].index(sp2)):
-            return ((site1, list(self._sites_to_sublattice[site1]).index(sp2)),
+            # check first for index errors (e.g. Mn3+ flipping with a tetrahedral Mn2+)
+            if sp2 not in list(self._sites_to_sublattice[site1]) or \
+                sp1 not in list(self._sites_to_sublattice[site2]):
+                return (), None
+            else:
+                return ((site1, list(self._sites_to_sublattice[site1]).index(sp2)),
              (site2, list(self._sites_to_sublattice[site2]).index(sp1))), \
                 'swap'
 
