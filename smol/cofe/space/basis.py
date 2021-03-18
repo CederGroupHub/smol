@@ -22,6 +22,8 @@ from monty.json import MSONable
 from .domain import SiteSpace
 from smol.utils import derived_class_factory
 
+ATOL, RTOL = 1E-12, 1E-8
+
 
 class SiteBasis(MSONable):
     r"""Class that represents the basis for a site function space.
