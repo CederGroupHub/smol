@@ -133,16 +133,18 @@ class SiteBasis(MSONable):
         Due to how the func_arr is saved (rows are vectors/functions) this
         allows us to not sprinkle so many transposes.
         """
-        q, r = np.linalg.qr((np.sqrt(self.measure_vector) * self._f_array).T,
-                            mode='complete')
-        # r[abs(r) < 2 * np.finfo(np.float64).eps] = 0
-        # q[abs(q) < 2 * np.finfo(np.float64).eps] = 0
+        q, r = np.linalg.qr(
+            (np.sqrt(self.measure_vector) * self._f_array).T, mode='complete')
+
+        # make zeros actually zeros
+        r[abs(r) < 2 * np.finfo(np.float64).eps] = 0.0
+        q[abs(q) < 2 * np.finfo(np.float64).eps] = 0.0
+
         self._r_array = q[:, 0] / np.sqrt(self.measure_vector) * r.T
         self._f_array = q.T/q[:, 0]  # make first row constant = 1
 
     def rotate(self, angle, index1=0, index2=1):
-        """Rotate basis functions about subspace spaned by 2 vectors by given
-        angle.
+        """Rotate basis functions about subspace spaned by 2 vectors.
 
         This operation will rotate the two selected basis vectors about a
         subspace spanned by them. This implies a rotation orthogonal to
@@ -179,11 +181,11 @@ class SiteBasis(MSONable):
         else:
             if index1 == index2:
                 raise ValueError("Basis function indices cannot be the same!")
-            elif index1 > len(self.site_space) - 2:
+            elif abs(index1) > len(self.site_space) - 2:
                 raise ValueError(
                     f"Basis index {index1} is out of bounds for "
                     f"{len(self.site_space) - 1} functions!")
-            elif index2 > len(self.site_space) - 2:
+            elif abs(index2) > len(self.site_space) - 2:
                 raise ValueError(
                     f"Basis index {index2} is out of bounds for "
                     f"{len(self.site_space) - 1} functions!")
@@ -194,6 +196,8 @@ class SiteBasis(MSONable):
                 + (np.outer(v1, v2) - np.outer(v2, v1)) * np.sin(angle) \
                 + (np.outer(v1, v1) + np.outer(v2, v2)) * (np.cos(angle) - 1)
             self._f_array[1:] = self._f_array[1:] @ R.T
+            # make really small numbers zero
+            self._f_array[abs(self._f_array) < 2 * np.finfo(np.float64).eps] = 0.0  # noqa
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation."""
@@ -296,7 +300,8 @@ class SinusoidIterator(BasisIterator):
     def __next__(self):
         """Generate the next basis function."""
         n = self.encoding[next(self.species_iter)] + 1
-        func = encode_domain(self.encoding)(sinusoid_factory(n, len(self.species)))  # noqa
+        func = encode_domain(self.encoding)(
+            sinusoid_factory(n, len(self.species)))
         return func
 
 
