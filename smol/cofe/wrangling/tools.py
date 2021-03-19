@@ -41,7 +41,7 @@ def unique_corr_vector_indices(wrangler, property_key, filter_by='min',
     choose_val = np.argmin if filter_by == 'min' else np.argmax
 
     property_vector = wrangler.get_property_vector(property_key)
-    dupe_inds = wrangler.get_duplicate_corr_inds()
+    dupe_inds = wrangler.get_duplicate_corr_indices()
     indices = {inds[choose_val(property_vector[inds])]
                for inds in dupe_inds}
     duplicates = set(i for inds in dupe_inds for i in inds) - indices

@@ -19,9 +19,11 @@ __credits__ = "William Davidson Richard"
 from typing import Sequence
 from importlib import import_module
 import warnings
+from itertools import combinations
 import numpy as np
 from monty.json import MSONable, jsanitize
 from pymatgen import Structure
+from pymatgen.analysis.structure_matcher import StructureMatcher
 from smol.cofe.space.clusterspace import ClusterSubspace
 from smol.exceptions import StructureMatchError
 
@@ -163,6 +165,22 @@ class StructureWrangler(MSONable):
         cols = cols if cols is not None else range(self.num_features)
         return np.linalg.matrix_rank(self.feature_matrix[rows][:, cols])
 
+    def get_feature_matrix_orbit_rank(self, orbit_id, rows=None):
+        """Get the rank of an orbit submatrix of the feature matrix.
+
+        Args:
+            orbit_id (int):
+                Orbit id to obtain sub feature matrix rank of.
+            rows (list): optional
+                List of row indices corresponding to structures to include.
+
+        Returns:
+            int: rank of orbit sub feature matrix
+        """
+        columns = [i for i, oid in enumerate(self._subspace.function_orbit_ids)
+                   if oid == orbit_id]
+        return self.get_feature_matrix_rank(rows=rows, cols=columns)
+
     def get_condition_number(self, rows=None, cols=None, p=2):
         """Compute the condition number for the feature matrix or submatrix.
 
@@ -213,9 +231,19 @@ class StructureWrangler(MSONable):
             X /= np.sqrt(X.T.dot(X).diagonal())
         return X.T.dot(X)
 
-    def get_duplicate_corr_inds(self):
+    def get_duplicate_corr_indices(self, decimals=12, rm_external_terms=True):
         """Find indices of rows with duplicate corr vectors in feature matrix.
 
+        Args:
+            decimals (int): optional
+                number of decimals to round correlations in order to allow
+                some numerical tolerance for finding duplicates. If None is
+                given no rounding will be done. Beware that orthogonal basis
+                will likeley be off by some numerical tolerance so rounding is
+                recommended.
+            rm_external_terms (bool) : optional
+                If true will not consider external terms and only consider
+                correlations proper when looking for duplicates.
         Returns:
             list: list containing lists of indices of rows in feature_matrix
             where duplicates occur
@@ -223,14 +251,63 @@ class StructureWrangler(MSONable):
         if len(self.feature_matrix) == 0:
             duplicate_inds = []
         else:
-            num_ext = len(self.cluster_subspace.external_terms)
-            end = self.feature_matrix.shape[1] - num_ext - 1
-            _, inverse = np.unique(self.feature_matrix[:, :end],
+            num_ext = len(self.cluster_subspace.external_terms) \
+                if rm_external_terms else 0
+            end = self.feature_matrix.shape[1] - num_ext
+            feature_matrix = self.feature_matrix if decimals is None \
+                else np.around(self.feature_matrix, decimals,
+                               self.feature_matrix.copy())
+            _, inverse = np.unique(feature_matrix[:, :end],
                                    return_inverse=True, axis=0)
             duplicate_inds = [list(np.where(inverse == i)[0])
                               for i in np.unique(inverse)
                               if len(np.where(inverse == i)[0]) > 1]
         return duplicate_inds
+
+    def get_matching_corr_duplicate_indices(self, decimals=12,
+                                            structure_matcher=None,
+                                            **matcher_kwargs):
+        """Find indices of equivalent structures.
+
+        Args:
+            decimals (int): optional
+                number of decimals to round correlations in order to allow
+                some numerical tolerance for finding duplicates.
+            structure_matcher (StructureMatcher): optional
+                A StructureMatcher object to use for matching structures.
+            **matcher_kwargs:
+                Keyword arguments to use when initializing a structure matcher
+                if not given
+
+        Returns:
+            list: list of lists of equivalent structures (that match) and have
+                  duplicate correlation vectors.
+        """
+        matcher = structure_matcher if structure_matcher is not None \
+            else StructureMatcher(**matcher_kwargs)
+        duplicate_indices = self.get_duplicate_corr_indices(decimals)
+
+        matching_inds = []
+        for inds in duplicate_indices:
+            # match all combinations of duplicates
+            matches = [set(c) for c in combinations(inds, 2) if
+                       matcher.fit(self.structures[c[0]],
+                                   self.structures[c[1]],
+                                   symmetric=True)]
+            overlaps = list(
+                filter(lambda s: s[0] & s[1], combinations(matches, 2)))
+            while overlaps:  # change to := walrus when commiting to 3.8 only
+                all_overlaps = [o for overlap in overlaps for o in overlap]
+                # keep only disjoint sets
+                matches = [s for s in matches if s not in all_overlaps]
+                # add union of overlapping sets
+                for s1, s2 in overlaps:
+                    if s1 | s2 not in matches:
+                        matches.append(s1 | s2)
+                overlaps = list(
+                    filter(lambda s: s[0] & s[1], combinations(matches, 2)))
+            matching_inds += [list(sorted(m)) for m in matches]
+        return matching_inds
 
     def get_constant_features(self):
         """Find indices of constant feature vectors (columns).
@@ -296,8 +373,8 @@ class StructureWrangler(MSONable):
         return np.array([i['weights'][key] for i in self._items])
 
     def add_data(self, structure, properties, normalized=False, weights=None,
-                 verbose=False, supercell_matrix=None, site_mapping=None,
-                 raise_failed=False):
+                 supercell_matrix=None, site_mapping=None,
+                 verbose=True, raise_failed=False):
         """Add a structure and measured property to the StructureWrangler.
 
         The properties are usually extensive (i.e. not normalized per atom
@@ -326,8 +403,6 @@ class StructureWrangler(MSONable):
             weights (dict):
                 The weight given to the structure when doing the fit. The key
                 must match at least one of the given properties.
-            verbose (bool):
-                if True then print structures that fail in StructureMatcher.
             supercell_matrix (ndarray): optional
                 If the corresponding structure has already been matched to the
                 clustersubspace prim structure, passing the supercell_matrix
@@ -339,17 +414,21 @@ class StructureWrangler(MSONable):
                 such that the elements of site_mapping represent the indices
                 of the matching sites to the prim structure. I you pass this
                 option you are fully responsible that the mappings are correct!
+            verbose (bool): optional
+                if True then warn structures that fail in StructureMatcher, and
+                structures that have duplicate corr vectors.
             raise_failed (bool): optional
                 If true will raise the thrown error when adding a structure
                 fails. This can be helpful to keep a list of structures that
                 fail for further inspection.
         """
         item = self.process_structure(structure, properties, normalized,
-                                      weights, verbose, supercell_matrix,
-                                      site_mapping, raise_failed)
+                                      weights, supercell_matrix, site_mapping,
+                                      verbose, raise_failed)
         if item is not None:
             self._items.append(item)
-        self._corr_duplicate_warning(self.num_structures - 1)
+        if verbose:
+            self._corr_duplicate_warning(self.num_structures - 1)
 
     def append_data_items(self, data_items):
         """Append a list of data items.
@@ -363,11 +442,17 @@ class StructureWrangler(MSONable):
         """
         keys = ['structure', 'ref_structure', 'properties', 'weights',
                 'scmatrix', 'mapping', 'features', 'size']
-        for item in data_items:
+        for i, item in enumerate(data_items):
             if not all(key in keys for key in item.keys()):
                 raise ValueError(
-                    "A supplied data item is missing required keys. Make sure"
+                    f"Data item {i} is missing required keys. Make sure"
                     " they were obtained with the process_structure method.")
+            if len(self._items) > 0:
+                if not all(prop in self._items[0]['properties'].keys()
+                           for prop in item['properties'].keys()):
+                    raise ValueError(
+                        f"Data item {i} is missing one of the following "
+                        f"properties: {self.available_properties}")
             self._items.append(item)
             self._corr_duplicate_warning(self.num_structures - 1)
 
@@ -410,7 +495,8 @@ class StructureWrangler(MSONable):
                 "Length of property_vector must match number of structures"
                 f" {len(property_vector)} != {self.num_structures}.")
         if normalized:
-            property_vector *= self.sizes
+            # make copy
+            property_vector = self.sizes * property_vector.copy()
 
         for prop, item in zip(property_vector, self._items):
             item['properties'][key] = prop
@@ -473,8 +559,9 @@ class StructureWrangler(MSONable):
         self._items = []
 
     def process_structure(self, structure, properties, normalized=False,
-                          weights=None, verbose=False, supercell_matrix=None,
-                          site_mapping=None, raise_failed=False):
+                          weights=None, supercell_matrix=None,
+                          site_mapping=None, verbose=False,
+                          raise_failed=False):
         """Process a structure to be added to wrangler.
 
         Checks if the structure for this data item can be matched to the
@@ -496,8 +583,6 @@ class StructureWrangler(MSONable):
             weights (dict):
                 The weight given to the structure when doing the fit. The key
                 must match at least one of the given properties.
-            verbose (bool):
-                if True then print structures that fail in StructureMatcher.
             supercell_matrix (ndarray): optional
                 If the corresponding structure has already been matched to the
                 clustersubspace prim structure, passing the supercell_matrix
@@ -510,6 +595,9 @@ class StructureWrangler(MSONable):
                 such that the elements of site_mapping represent the indices
                 of the matching sites to the prim structure. If you pass this
                 option you are fully responsible that the mappings are correct!
+            verbose (bool):
+                if True then warn structures that fail in StructureMatcher, and
+                structures that have duplicate corr vectors.
             raise_failed (bool): optional
                 If true will raise the thrown error when adding a structure
                 fails. This can be helpful to keep a list of structures that
@@ -534,14 +622,18 @@ class StructureWrangler(MSONable):
                 site_mapping=site_mapping)
             refined_struct = self._subspace.refine_structure(
                 structure, supercell_matrix)
+
             if normalized:
                 properties = {key: val*size for key, val in properties.items()}
             weights = {} if weights is None else weights
+
         except StructureMatchError as e:
             if verbose:
-                print(f'Unable to match {structure.composition} with '
-                      f'properties {properties} to supercell_structure. '
-                      f'Throwing out.\n Error Message: {str(e)}')
+                warnings.warn(
+                    f'Unable to match {structure.composition} with '
+                    f'properties {properties} to supercell_structure. '
+                    f'Throwing out.\n Error Message: {str(e)}',
+                    UserWarning)
             if raise_failed:
                 raise e
             return
@@ -552,7 +644,7 @@ class StructureWrangler(MSONable):
 
     def _corr_duplicate_warning(self, index):
         """Warn if corr vector of item with given index is duplicated."""
-        for duplicate_inds in self.get_duplicate_corr_inds():
+        for duplicate_inds in self.get_duplicate_corr_indices():
             if index in duplicate_inds:
                 duplicates = "".join(
                     f"Index {i} - {self._items[i]['structure'].composition}"

@@ -1184,7 +1184,7 @@ ClusterExpansion with the provided data.</p>
 </dl>
 <dl class="py method">
 <dt id="smol.cofe.StructureWrangler.add_data">
-<code class="sig-name descname">add_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">properties</span></em>, <em class="sig-param"><span class="n">normalized</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">site_mapping</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">raise_failed</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.add_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">properties</span></em>, <em class="sig-param"><span class="n">normalized</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">site_mapping</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">raise_failed</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.add_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a structure and measured property to the StructureWrangler.</p>
 <p>The properties are usually extensive (i.e. not normalized per atom
 or unit cell, directly from DFT). If the properties have already been
@@ -1208,7 +1208,6 @@ sure you are consistent for all structures that you add.</p></li>
 <li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether the given properties have already been normalized.</p></li>
 <li><p><strong>weights</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – The weight given to the structure when doing the fit. The key
 must match at least one of the given properties.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – if True then print structures that fail in StructureMatcher.</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – optional
 If the corresponding structure has already been matched to the
 clustersubspace prim structure, passing the supercell_matrix
@@ -1220,6 +1219,9 @@ Site mapping as obtained by StructureMatcher.get_mapping
 such that the elements of site_mapping represent the indices
 of the matching sites to the prim structure. I you pass this
 option you are fully responsible that the mappings are correct!</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+if True then warn structures that fail in StructureMatcher, and
+structures that have duplicate corr vectors.</p></li>
 <li><p><strong>raise_failed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
 If true will raise the thrown error when adding a structure
 fails. This can be helpful to keep a list of structures that
@@ -1405,16 +1407,50 @@ vectors may be a sign of insufficient sampling of configuration space.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.StructureWrangler.get_duplicate_corr_inds">
-<code class="sig-name descname">get_duplicate_corr_inds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.get_duplicate_corr_inds" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.cofe.StructureWrangler.get_duplicate_corr_indices">
+<code class="sig-name descname">get_duplicate_corr_indices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">decimals</span><span class="o">=</span><span class="default_value">12</span></em>, <em class="sig-param"><span class="n">rm_external_terms</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.get_duplicate_corr_indices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find indices of rows with duplicate corr vectors in feature matrix.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>list containing lists of indices of rows in feature_matrix
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>decimals</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+number of decimals to round correlations in order to allow
+some numerical tolerance for finding duplicates. If None is
+given no rounding will be done. Beware that orthogonal basis
+will likeley be off by some numerical tolerance so rounding is
+recommended.</p></li>
+<li><p><strong>rm_external_terms</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+If true will not consider external terms and only consider
+correlations proper when looking for duplicates.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list containing lists of indices of rows in feature_matrix
 where duplicates occur</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.StructureWrangler.get_feature_matrix_orbit_rank">
+<code class="sig-name descname">get_feature_matrix_orbit_rank</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">orbit_id</span></em>, <em class="sig-param"><span class="n">rows</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.get_feature_matrix_orbit_rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the rank of an orbit submatrix of the feature matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>orbit_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Orbit id to obtain sub feature matrix rank of.</p></li>
+<li><p><strong>rows</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – optional
+List of row indices corresponding to structures to include.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>rank of orbit sub feature matrix</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1462,6 +1498,35 @@ feature matrix.</p></li>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="smol.cofe.StructureWrangler.get_matching_corr_duplicate_indices">
+<code class="sig-name descname">get_matching_corr_duplicate_indices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">decimals</span><span class="o">=</span><span class="default_value">12</span></em>, <em class="sig-param"><span class="n">structure_matcher</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">matcher_kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.get_matching_corr_duplicate_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find indices of equivalent structures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>decimals</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+number of decimals to round correlations in order to allow
+some numerical tolerance for finding duplicates.</p></li>
+<li><p><strong>structure_matcher</strong> (<em>StructureMatcher</em>) – optional
+A StructureMatcher object to use for matching structures.</p></li>
+<li><p><strong>**matcher_kwargs</strong> – Keyword arguments to use when initializing a structure matcher
+if not given</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>list of lists of equivalent structures (that match) and have</dt><dd><p>duplicate correlation vectors.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1523,7 +1588,7 @@ already normalized, you need to normalize before fitting a CE.</p></li>
 
 <dl class="py method">
 <dt id="smol.cofe.StructureWrangler.process_structure">
-<code class="sig-name descname">process_structure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">properties</span></em>, <em class="sig-param"><span class="n">normalized</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">site_mapping</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">raise_failed</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.process_structure" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">process_structure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">properties</span></em>, <em class="sig-param"><span class="n">normalized</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">supercell_matrix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">site_mapping</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">raise_failed</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.process_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Process a structure to be added to wrangler.</p>
 <p>Checks if the structure for this data item can be matched to the
 cluster subspace prim structure to obtain its supercell matrix,
@@ -1541,7 +1606,6 @@ sure you are consistent for all structures that you add.</p></li>
 <li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Wether the given properties have already been normalized.</p></li>
 <li><p><strong>weights</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – The weight given to the structure when doing the fit. The key
 must match at least one of the given properties.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – if True then print structures that fail in StructureMatcher.</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – optional
 If the corresponding structure has already been matched to the
 clustersubspace prim structure, passing the supercell_matrix
@@ -1554,6 +1618,8 @@ Site mapping as obtained by
 such that the elements of site_mapping represent the indices
 of the matching sites to the prim structure. If you pass this
 option you are fully responsible that the mappings are correct!</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – if True then warn structures that fail in StructureMatcher, and
+structures that have duplicate corr vectors.</p></li>
 <li><p><strong>raise_failed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
 If true will raise the thrown error when adding a structure
 fails. This can be helpful to keep a list of structures that

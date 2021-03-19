@@ -23,16 +23,15 @@ from pymatgen.util.coord import \
      coord_list_mapping_pbc)
 
 from src.mc_utils import corr_from_occupancy
-from smol.cofe.space import \
-    Orbit, Cluster, Vacancy, basis_factory, \
-    get_site_spaces, get_allowed_species
+from smol.cofe.space import (Orbit, basis_factory, get_site_spaces,
+                             get_allowed_species, Vacancy, Cluster)
 from smol.cofe.space.basis import IndicatorBasis
 from smol.cofe.space.constants import SITE_TOL
-from smol.exceptions import \
-    SymmetryError, StructureMatchError, SYMMETRY_ERROR_MESSAGE
+from smol.exceptions import (SymmetryError, StructureMatchError,
+                             SYMMETRY_ERROR_MESSAGE)
 
-__author__ = "Luis Barroso-Luque, William Davidson Richards, Fengyu Xie," \
-             "Peichen Zhong"
+__author__ = "Luis Barroso-Luque, William Davidson Richards," \
+             "Fengyu Xie, Peichen Zhong"
 
 
 class ClusterSubspace(MSONable):
@@ -906,18 +905,19 @@ class ClusterSubspace(MSONable):
             for orbit in orbits[size-1]:
                 if orbit.base_cluster.diameter > diameter:
                     continue
-                for site, _, index in neighbors:
+                for neighbor in neighbors:
                     if is_coord_subset(
-                            [site.frac_coords], orbit.base_cluster.sites,
+                            [neighbor.frac_coords], orbit.base_cluster.sites,
                             atol=SITE_TOL):
                         continue
                     new_sites = np.concatenate(
-                        [orbit.base_cluster.sites, [site.frac_coords]])
+                        [orbit.base_cluster.sites, [neighbor.frac_coords]])
                     new_orbit = Orbit(
                         new_sites, exp_struct.lattice,
-                        orbit.bits + [list(range(nbits[index]))],
-                        orbit.site_bases + [site_bases[index]],
+                        orbit.bits + [list(range(nbits[neighbor.index]))],
+                        orbit.site_bases + [site_bases[neighbor.index]],
                         symops)
+
                     if new_orbit.base_cluster.diameter > diameter + 1e-8:
                         continue
                     elif new_orbit not in new_orbits:
