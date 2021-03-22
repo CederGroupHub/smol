@@ -95,7 +95,8 @@ class Metropolis(MCMCKernel):
     """
 
     valid_mcushers = {'flip': 'Flipper', 'swap': 'Swapper',
-                      'charge-neutral-flip': 'Chargeneutralflipper'}
+                      'charge-neutral-flip': 'Chargeneutralflipper',
+                      'table-flip': 'Tableflipper'}
 
     def single_step(self, occupancy):
         """Attempt an MC step.

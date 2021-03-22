@@ -18,7 +18,6 @@ from smol.utils import derived_class_factory
 from ..comp_space import CompSpace
 
 from ..utils.occu_utils import occu_to_species_stat, occu_to_species_list
-from ..utils.comp_utils import get_n_links
 from ..utils.math_utils import choose_section_from_partition, GCD_list
 
 
@@ -143,20 +142,30 @@ class Swapper(MCMCUsher):
         return swap
 
 
-# The Combinedflip Usher
-class Combinedflipper(MCMCUsher):
-    """Implementation of combined flips on multiple sites.
+# The TableFlip Usher
+class Tableflipper(MCMCUsher):
+    """Implementation of table flips.
 
-    This is to further enable charge neutral unitary flips.
+    Use user-specified or auto-calculated flip tables. Does not
+    check the correctness of the flip tables.
+
+    No longer computing and assigning a-priori proabilities
+    before flip selection, and selects sites instead.
+
+    Chargeneutralflipper is implemented based on this class.
+
+    Direct use of this class is not recommended, because the
+    dict form of the flip table is not very easy to read and
+    write.
     """
 
-    def __init__(self, sublattices, flip_combs, flip_weights=None):
-        """Initialize Combinedflipper.
+    def __init__(self, sublattices, flip_table, flip_weights=None):
+        """Initialize Tableflipper.
 
         Args:
             sublattices (list of Sublattice):
                 list of Sublattices to propose steps for.
-            flip_combs(List of Dict):
+            flip_table(List of Dict):
                 A list of multi-site flips in dictionary format.
                 For example,
                   [
@@ -182,16 +191,16 @@ class Combinedflipper(MCMCUsher):
                 flip.
         """
         super().__init__(sublattices)
-        self.flip_combs = flip_combs
+        self.flip_table = flip_table
         # A flip has two directions. All links initialized with 0.
 
         self.bits = [sl.species for sl in self.sublattices]
         self.sl_list = [list(sl.sites) for sl in self.sublattices]
 
         if flip_weights is None:
-            self.flip_weights = np.ones(len(flip_combs), dtype=np.int64)
+            self.flip_weights = np.ones(len(flip_table), dtype=np.int64)
         else:
-            if len(flip_weights) != len(flip_combs):
+            if len(flip_weights) != len(flip_table):
                 raise ValueError("Flip reweighted, but not enough weights \
                                  supplied!")
             self.flip_weights = np.array(flip_weights)
@@ -202,7 +211,9 @@ class Combinedflipper(MCMCUsher):
         A step is given as a sequence of tuples, where each tuple is of the
         form (site index, species code to set)
 
-        self.n_linkages are also updated here.
+        1, Pick a flip in table;
+        2, Pick sites;
+        3, See if sites have species in either side of the picked flip.
         Args:
             occupancy (ndarray):
                 encoded occupancy string.
@@ -215,98 +226,105 @@ class Combinedflipper(MCMCUsher):
         """
         occupancy = np.array(occupancy)
 
-        species_stat = occu_to_species_stat(occupancy, self.bits, self.sl_list)
-        n_links_current = get_n_links(species_stat, self.flip_combs)
-        # Re-adjust by flip weights.
-        flip_weights_tiled = np.array([self.flip_weights[i // 2]
-                                      for i in range(2 *
-                                                     len(self.flip_weights))])
-        n_links_current = np.array(n_links_current) * flip_weights_tiled
+        picked_flip = self.flip_table[choose_section_from_partition(
+                                      self.flip_weights)]
 
-        chosen_f_id = choose_section_from_partition(n_links_current)
-        mult_flip = self.flip_combs[chosen_f_id // 2]
-        direction = chosen_f_id % 2  # 0 forward, 1 backward.
-
-        sp_list = occu_to_species_list(occupancy, self.bits, self.sl_list)
-
-        chosen_sites_flip_from = [[] for sl in self.bits]
-        chosen_sps_flip_to = [[] for sl in self.bits]
-
-        if direction == 0:
-            # Apply the forward direction
-            for sl_id in mult_flip['from']:
-                for sp_id in mult_flip['from'][sl_id]:
-                    m_from = mult_flip['from'][sl_id][sp_id]
-                    chosen_sites = random.sample(sp_list[sl_id][sp_id], m_from)
-                    chosen_sites = sorted(chosen_sites)
-                    # Remove duplicacy
-                    chosen_sites_flip_from[sl_id].extend(chosen_sites)
-
-            from_sites_for_sublats = [[i for i in range(len(sl))]
-                                      for sl in chosen_sites_flip_from]
-
-            for sl_id in mult_flip['to']:
-                chosen_sps_flip_to[sl_id] = [None for st
-                                             in chosen_sites_flip_from[sl_id]]
-                for sp_id in mult_flip['to'][sl_id]:
-                    m_to = mult_flip['to'][sl_id][sp_id]
-                    from_sites = from_sites_for_sublats[sl_id]
-                    chosen_sites = random.sample(from_sites, m_to)
-                    chosen_sites = sorted(chosen_sites)
-                    for st_id in chosen_sites:
-                        chosen_sps_flip_to[sl_id][st_id] = sp_id
-                        from_sites_for_sublats[sl_id].remove(st_id)
-
-            for sl in from_sites_for_sublats:
-                if len(sl) > 0:
-                    raise ValueError("Flip not number conserved!")
-
-        else:
-            # Apply the backward direction
-            for sl_id in mult_flip['to']:
-                for sp_id in mult_flip['to'][sl_id]:
-                    m_from = mult_flip['to'][sl_id][sp_id]
-                    chosen_sites = random.sample(sp_list[sl_id][sp_id], m_from)
-                    chosen_sites = sorted(chosen_sites)
-                    # Remove duplicacy
-                    chosen_sites_flip_from[sl_id].extend(chosen_sites)
-
-            from_sites_for_sublats = [[i for i in range(len(sl))]
-                                      for sl in chosen_sites_flip_from]
-
-            for sl_id in mult_flip['from']:
-                chosen_sps_flip_to[sl_id] = [None for st
-                                             in chosen_sites_flip_from[sl_id]]
-                for sp_id in mult_flip['from'][sl_id]:
-                    m_to = mult_flip['from'][sl_id][sp_id]
-                    from_sites = from_sites_for_sublats[sl_id]
-                    chosen_sites = random.sample(from_sites, m_to)
-                    chosen_sites = sorted(chosen_sites)
-                    for st_id in chosen_sites:
-                        chosen_sps_flip_to[sl_id][st_id] = sp_id
-                        from_sites_for_sublats[sl_id].remove(st_id)
-
-            for sl in from_sites_for_sublats:
-                if len(sl) > 0:
-                    raise ValueError("Flip not number conserved!")
-
+        # Pick sites
+        species_list = occu_to_species_list(occupancy, self.bits,
+                                            self.sl_list)
         flip_list = []
-        for sl_id, sl_sites in enumerate(chosen_sites_flip_from):
-            for st_id, site in enumerate(sl_sites):
-                flip_list.append((site, chosen_sps_flip_to[sl_id][st_id]))
+        direction = None
+
+        for sl_id, sl_sites in enumerate(species_list):
+            if sl_id not in picked_flip['from']:
+                continue
+
+            union_sp_ids = (list(picked_flip['from'][sl_id].keys()) +
+                            list(picked_flip['to'][sl_id].keys()))
+            n_picks = sum(list(picked_flip['from'][sl_id].values()))
+            pickable_sites = []
+            for sp_id in union_sp_ids:
+                pickable_sites.extend(sl_sites[sp_id])
+
+            picked_sites_sl = random.sample(pickable_sites, n_picks)
+            picked_table = {}
+            for s_id in picked_sites_sl:
+                sp_id = None
+                for j, sp_sites in enumerate(sl_sites):
+                    if s_id in sp_sites:
+                        sp_id = j
+                        break
+                if sp_id not in picked_table:
+                    picked_table[sp_id] = 1
+                else:
+                    picked_table[sp_id] += 1
+
+            # Confirm direction.
+            if direction is None:
+                if (picked_table != picked_flip['from'][sl_id] and
+                        picked_table != picked_flip['to'][sl_id]):
+                    # Site selection not successful.
+                    flip_list = []
+                    break
+                elif picked_table == picked_flip['from'][sl_id]:
+                    flip_to_table = picked_flip['to'][sl_id]
+                    direction = 1
+                else:
+                    flip_to_table = picked_flip['from'][sl_id]
+                    direction = -1
+
+            elif direction > 0:
+                if picked_table == picked_flip['from'][sl_id]:
+                    flip_to_table = picked_flip['to'][sl_id]
+                else:
+                    flip_list = []
+                    break
+
+            else:
+                if picked_table == picked_flip['to'][sl_id]:
+                    flip_to_table = picked_flip['from'][sl_id]
+                else:
+                    flip_list = []
+                    break
+
+            n_flipped = 0
+            flip_failed = False
+            for sp_id, n_flip in flip_to_table.items():
+                flip_sites = picked_sites_sl[n_flipped: n_flipped + n_flip]
+                # This check is required to keep equal-a-priori.
+                if flip_sites != sorted(flip_sites):
+                    flip_list = []
+                    flip_failed = True
+                    break
+                flip_list.extend([(s_id, sp_id) for s_id in flip_sites])
+                n_flipped += n_flip
+
+            if flip_failed:
+                break
+
+            if n_flipped != n_picks:
+                raise ValueError("Flip is not number conserved!")
+
+        # If no valid flip is picked, try a canonical swap.
+        if len(flip_list) == 0:
+            active_sublattices = [sl for sl in self.sublattices
+                                  if not np.all(occupancy[sl.sites] ==
+                                                occupancy[sl.sites][0])]
+            if len(active_sublattices) != 0:
+                _swapper = Swapper(active_sublattices)
+                flip_list = _swapper.propose_step(occupancy)
 
         return flip_list
 
 
-# The actual CN-SGMC flipper is a probabilistic combination of Swapper
-# and CorrelatedFlipper
-class Chargeneutralflipper(MCMCUsher):
+class Chargeneutralflipper(Tableflipper):
     """Charge neutral flipper usher.
 
-    This a combination of Swapper and CorrelatedFlipper.
+    Implemented based on Tableflipper. Uses minial, sublattice
+    discriminative flip table.
     """
 
-    def __init__(self, sublattices, flip_weights=None, n_links=None):
+    def __init__(self, sublattices, flip_weights=None):
         """Initialize Chargeneutralflipper.
 
         Args:
@@ -317,101 +335,18 @@ class Chargeneutralflipper(MCMCUsher):
             flip_weights(1D arrayLike|Nonetype):
                 Weights to adjust probability of each flip. If None given,
                 will assign equal weights to each flip.
-            n_links(int):
-                For each type of flip in the flip table, there is a number of
-                possible flips of that type on the current occupancy. We store
-                these numbers in the same order of flips in the flip_combs, and
-                the numbers will be useful to keep a-priori reversibility
-                in flips selection of the CN-SG ensemble.
+                Length must equal to the dimensionality of CompSpace.
         """
-        super().__init__(sublattices)
-
-        self.bits = [sl.species for sl in sublattices]
-        self.sl_list = [list(sl.sites) for sl in sublattices]
+        bits = [sl.species for sl in sublattices]
+        sl_list = [list(sl.sites) for sl in sublattices]
         sl_sizes = [len(sl.sites) for sl in sublattices]
 
-        # Here we use the GCD of sublattice sizes as supercell size. It
-        # is not always the true supercell size, but always gives correct
-        # compositional space.
         sc_size = GCD_list(sl_sizes)
         sl_sizes = [s // sc_size for s in sl_sizes]
 
-        # self.comp_space and self.n_links contains complicated calculations.
-        # Saving them elsewhere is highly recommended!
-        compspace = CompSpace(self.bits, sl_sizes=sl_sizes)
+        flip_table = CompSpace(bits, sl_sizes).min_flip_table
 
-        self._flip_combs = compspace.min_flips
-        # This step may take quite some time.
-        comp_vertices = compspace.int_vertices(sc_size=sc_size,
-                                               form='compstat')
-
-        if flip_weights is None:
-            self.flip_weights = np.ones(len(self._flip_combs), dtype=np.int64)
-        else:
-            if len(flip_weights) != len(self._flip_combs):
-                raise ValueError("Flip reweighted, but not enough weights \
-                                 supplied!")
-            self.flip_weights = np.array(flip_weights)
-
-        if n_links is not None:
-            # If n_links has been updated and computed before, utilize this
-            self.n_links = n_links
-        else:
-            n_links_init = []
-            for v in comp_vertices:
-                n_links_current = get_n_links(v, self._flip_combs)
-                flip_weights_tiled = np.array([self.flip_weights[i // 2]
-                                               for i in range(2 *
-                                               len(self.flip_weights))])
-
-                n_links_init.append(sum(np.array(n_links_current) *
-                                    flip_weights_tiled))
-
-            self.n_links = max(n_links_init)
-
-        self.swapper = Swapper(self.sublattices)
-        self.comb_flipper = Combinedflipper(self.sublattices, self._flip_combs,
-                                            self.flip_weights)
-
-    def propose_step(self, occupancy):
-        """Propose a single random swap step.
-
-        A step is given as a sequence of tuples, where each tuple is of the
-        form (site index, species code to set)
-
-        self.n_links are also updated here after every step.
-
-        Args:
-            occupancy (ndarray):
-                encoded occupancy string.
-
-        Return:
-            Tupe(list(tuple),int): list of tuples each with (idex, code), and
-                                   an integer indication flip direction in
-                                   constrained coordinates. Different from
-                                   other ushers!
-        """
-        occupancy = np.array(occupancy)
-        species_stat = occu_to_species_stat(occupancy, self.bits, self.sl_list)
-        n_links_current = get_n_links(species_stat, self._flip_combs)
-        # Re-adjust probabilities with flip weights.
-        flip_weights_tiled = np.array([self.flip_weights[i // 2]
-                                      for i in range(2 *
-                                                     len(self.flip_weights))])
-        n_links_current = np.array(n_links_current) * flip_weights_tiled
-
-        if sum(n_links_current) > self.n_links:
-            # Then update n_links value
-            self.n_links = sum(n_links_current)
-
-        # Assign a probabiltiy when we choose swaps instead of flips.
-        p_swap = float(self.n_links - sum(n_links_current)) / self.n_links
-        if random.random() < p_swap:
-            # Choose a swap
-            return self.swapper.propose_step(occupancy)
-        else:
-            # Choose a flip in table.
-            return self.comb_flipper.propose_step(occupancy)
+        super().__init__(sublattices, flip_table, flip_weights=flip_weights)
 
 
 def mcusher_factory(usher_type, sublattices, *args, **kwargs):
@@ -430,5 +365,10 @@ def mcusher_factory(usher_type, sublattices, *args, **kwargs):
     Returns:
         MCMCUsher: instance of derived class.
     """
+    if usher_type.capitalize() == 'Chargeneutralflipper':
+        return derived_class_factory(usher_type.capitalize(),
+                                     Tableflipper, sublattices,
+                                     *args, **kwargs)
+
     return derived_class_factory(usher_type.capitalize(), MCMCUsher,
                                  sublattices, *args, **kwargs)

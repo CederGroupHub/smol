@@ -18,10 +18,10 @@ class TestCompSpace1(unittest.TestCase):
         p = Specie.from_string('P3-')
         
         self.bits = [[li,mn,ti],[p,o]]
-        self.nbits = [[0,1,2],[0,1]]
-        self.unit_n_swps = [(0,2,0),(1,2,0),(0,1,1)]
-        self.chg_of_swps = [-3,-1,-1]
-        self.swp_ids_in_sublat = [[0,1],[2]]
+        self.n_bits = [[0,1,2],[0,1]]
+        self.unit_n_excitations = [(0,2,0),(1,2,0),(0,1,1)]
+        self.chg_of_excitations = [-3,-1,-1]
+        self.excitation_ids_by_sublat = [[0,1],[2]]
         
         op1 = {'from':{0:{0:1, 2:1}, 1:{1:1}}, \
                'to':{0:{1:2}, 1:{0:1}}}
@@ -59,19 +59,19 @@ class TestCompSpace1(unittest.TestCase):
         self.comp_space = CompSpace(self.bits)
 
     def test_swps(self):
-        self.assertEqual(self.comp_space.unit_n_swps,self.unit_n_swps)
-        self.assertEqual(self.comp_space.chg_of_swps,self.chg_of_swps)
-        self.assertEqual(self.comp_space.swp_ids_in_sublat,self.swp_ids_in_sublat)
+        self.assertEqual(self.comp_space.unit_n_excitations,self.unit_n_excitations)
+        self.assertEqual(self.comp_space.chg_of_excitations,self.chg_of_excitations)
+        self.assertEqual(self.comp_space.excitation_ids_by_sublat,self.excitation_ids_by_sublat)
 
     def test_space_specs(self):
-        self.assertEqual(self.comp_space.bkgrnd_chg,2)
+        self.assertEqual(self.comp_space.background_charge,2)
         self.assertEqual(self.comp_space.unconstr_dim,3)
         self.assertEqual(self.comp_space.is_charge_constred,True)
         self.assertEqual(self.comp_space.dim,2)
         self.assertEqual(self.comp_space.dim_nondisc,5)
 
     def test_vertices(self):
-        self.assertTrue(vertices_equal(self.comp_space.unit_spc_vertices(),
+        self.assertTrue(vertices_equal(self.comp_space.unit_vertices(),
                                        self.vertices))
         self.assertTrue(vertices_equal(self.comp_space.int_vertices(sc_size=6),
                                        self.min_grid[[0,2,12,13]]))
@@ -81,7 +81,7 @@ class TestCompSpace1(unittest.TestCase):
                                        self.int_grids_5[[0,1,2,6,8,9]]))
 
     def test_random_point(self):
-        rand_ucoord = self.comp_space.get_random_point_in_unit_spc()
+        rand_ucoord = self.comp_space.get_random_point_in_unit_space()
         self.assertTrue(self.comp_space._is_in_subspace(rand_ucoord))
 
     def test_integer_grids(self):
@@ -121,9 +121,9 @@ class TestCompSpace2(unittest.TestCase):
         
         self.bits = [[li,ag,vac]]
         self.nbits = [[0,1,2]]
-        self.unit_n_swps = [(0,2,0),(1,2,0)]
-        self.chg_of_swps = [0,0]
-        self.swp_ids_in_sublat = [[0,1]]
+        self.unit_n_excitations = [(0,2,0),(1,2,0)]
+        self.chg_of_excitations = [0,0]
+        self.excitation_ids_by_sublat = [[0,1]]
 
         op1 = {'from':{0:{2:1}}, \
                'to':{0:{0:1}}}
@@ -133,12 +133,12 @@ class TestCompSpace2(unittest.TestCase):
         self.comp_space = CompSpace(self.bits)
 
     def test_swps(self):
-        self.assertEqual(self.comp_space.unit_n_swps,self.unit_n_swps)
-        self.assertEqual(self.comp_space.chg_of_swps,self.chg_of_swps)
-        self.assertEqual(self.comp_space.swp_ids_in_sublat,self.swp_ids_in_sublat)
+        self.assertEqual(self.comp_space.unit_n_excitations,self.unit_n_excitations)
+        self.assertEqual(self.comp_space.chg_of_excitations,self.chg_of_excitations)
+        self.assertEqual(self.comp_space.excitation_ids_by_sublat,self.excitation_ids_by_sublat)
 
     def test_space_specs(self):
-        self.assertEqual(self.comp_space.bkgrnd_chg,0)
+        self.assertEqual(self.comp_space.background_charge,0)
         self.assertEqual(self.comp_space.unconstr_dim,2)
         self.assertEqual(self.comp_space.is_charge_constred,False)
         self.assertEqual(self.comp_space.dim,2)

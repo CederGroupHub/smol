@@ -27,7 +27,7 @@ from .base import Ensemble
 from .sublattice import Sublattice
 from ..utils.math_utils import GCD_list
 from ..utils.occu_utils import (occu_to_species_stat,
-                                direction_from_step)
+                                delta_ccoords_from_step)
 from ..comp_space import CompSpace
 
 
@@ -434,7 +434,7 @@ class ChargeNeutralSemiGrandEnsemble(MuSemiGrandEnsemble, MSONable):
     of active sites!
     """
 
-    valid_mcmc_steps = ('charge-neutral-flip', )
+    valid_mcmc_steps = ('charge-neutral-flip', 'table-flip')
 
     def __init__(self, processor, chemical_potentials,
                  active_sublattices=None, all_sublattices=None):
@@ -559,7 +559,7 @@ class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     You are not recommended to use this ensemble for other purposes!
     """
 
-    valid_mcmc_steps = ('charge-neutral-flip', )
+    valid_mcmc_steps = ('charge-neutral-flip', 'table-flip')
 
     def __init__(self, processor, mu, sublattices=None):
         """Initialize DiscChargeNeutralSemiGrandEnsemble.
@@ -596,7 +596,6 @@ class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         if len(self.mu) != self._compspace.dim:
             raise ValueError("Chemcial potential dimension mismatch \
                              compositional space!")
-        self._flip_combs = self._compspace.min_flips
 
     def compute_chemical_work(self, occupancy):
         """Compute the chemical work.
@@ -634,16 +633,15 @@ class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
                                                                      step)
 
         # Compute flip direction in the compositional space.
-        direction = direction_from_step(step,
-                                        self.sc_sublat_list,
-                                        self._flip_combs)
+        delta_ccoords = delta_ccoords_from_step(occupancy,
+                                                step,
+                                                self.bits,
+                                                self.sc_sublat_list,
+                                                self._compspace.unit_basis,
+                                                self._compspace.
+                                                chg_of_excitations)
 
-        if direction == 0:
-            delta_mu = 0
-        elif direction < 0:
-            delta_mu = self.mu[-direction - 1]
-        else:
-            delta_mu = self.mu[direction - 1]
+        delta_mu = np.dot(delta_ccoords, self.mu)
 
         return np.append(delta_feature, delta_mu)
 

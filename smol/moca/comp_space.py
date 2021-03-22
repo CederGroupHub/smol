@@ -28,6 +28,7 @@ __author__ = "Fengyu Xie"
 import numpy as np
 import polytope as pc
 from scipy.spatial import ConvexHull
+from scipy.spatial.qhull import QhullError
 
 from collections import OrderedDict
 from itertools import combinations, product, chain
@@ -69,8 +70,8 @@ def get_oxi_state(sp):
         return sp.oxi_state
 
 
-def get_unit_swps(bits):
-    """One atom flips.
+def get_unit_excitations(bits):
+    """One atom excitations.
 
     Get all possible single site flips on each sublattice, and the
     charge changes given by the flips. Flips will be encoded by
@@ -88,26 +89,27 @@ def get_unit_swps(bits):
                list of charge changes of each flip,
                list of flip indices in each sublattice)
     """
-    unit_swps = []
-    unit_n_swps = []
-    swp_ids_in_sublat = []
-    cur_swp_id = 0
+    unit_excitations = []
+    unit_n_excitations = []
+    excitation_ids_by_sublat = []
+    cur_exi_id = 0
     for sl_id, sl_sps in enumerate(bits):
-        unit_swps.extend([(sp, sl_sps[-1], sl_id) for sp in sl_sps[:-1]])
-        unit_n_swps.extend([(sp_id, len(sl_sps) - 1, sl_id)
-                            for sp_id in range(len(sl_sps) - 1)])
-        swp_ids_in_sublat.append([cur_swp_id + i for i in
-                                  range(len(sl_sps) - 1)])
-        cur_swp_id += (len(sl_sps) - 1)
+        unit_excitations.extend([(sp, sl_sps[-1], sl_id)
+                                for sp in sl_sps[:-1]])
+        unit_n_excitations.extend([(sp_id, len(sl_sps) - 1, sl_id)
+                                  for sp_id in range(len(sl_sps) - 1)])
+        excitation_ids_by_sublat.append([cur_exi_id + i for i in
+                                        range(len(sl_sps) - 1)])
+        cur_exi_id += (len(sl_sps) - 1)
 
-    chg_of_swps = [int(get_oxi_state(p[0]) - get_oxi_state(p[1]))
-                   for p in unit_swps]
+    chg_of_excitations = [int(get_oxi_state(p[0]) - get_oxi_state(p[1]))
+                          for p in unit_excitations]
 
-    return unit_n_swps, chg_of_swps, swp_ids_in_sublat
+    return unit_n_excitations, chg_of_excitations, excitation_ids_by_sublat
 
 
-def flipvec_to_operations(unit_n_swps, nbits, prim_lat_vecs):
-    """Turn multi-atom flip to flip table format.
+def flip_vecs_to_flip_table(unit_n_excitations, n_bits, flip_vecs):
+    """Turn multi-atom flip vector to flip table format.
 
     Translates flips from their vector from into their
     dictionary form.
@@ -127,73 +129,73 @@ def flipvec_to_operations(unit_n_swps, nbits, prim_lat_vecs):
            }
     }
     Args:
-        unit_n_swps(List[Tuple(int)]):
+        unit_n_excitations(List[Tuple(int)]):
             A flatten list of all possible, single site flips
             represented in specie indices, each term written as:
              (flip_to_specie_index,flip_from_specie_index,
               sublattice_index_of_flip)
-        nbits(List[List[int]]):
+        n_bits(List[List[int]]):
             List containing specie indices in on each sublattice.
-        prim_lat_vecs(2D ArrayLike):
-            Combination parameters of unconstrained flips in charge
-            constrained flips.
+        flip_vecs(2D ArrayLike):
+            Vectors in the charge neutral space, can be interpreted as
+            charge neutral flips.
     Return:
         List[Dict]
     """
-    n_sls = len(nbits)
-    operations = []
+    n_sls = len(n_bits)
+    flip_table = []
 
-    for flip_vec in prim_lat_vecs:
-        operation = {'from': {}, 'to': {}}
+    for flip_vec in flip_vecs:
+        flip_dict = {'from': {}, 'to': {}}
 
-        operation['from'] = {sl_id: {sp_id: 0 for sp_id in nbits[sl_id]}
+        flip_dict['from'] = {sl_id: {sp_id: 0 for sp_id in n_bits[sl_id]}
                              for sl_id in range(n_sls)}
-        operation['to'] = {sl_id: {sp_id: 0 for sp_id in nbits[sl_id]}
+        flip_dict['to'] = {sl_id: {sp_id: 0 for sp_id in n_bits[sl_id]}
                            for sl_id in range(n_sls)}
 
-        for flip, n_flip in zip(unit_n_swps, flip_vec):
+        for flip, n_flip in zip(unit_n_excitations, flip_vec):
             if n_flip > 0:
-                flp_to, flp_from, sl_id = flip
+                flip_to, flip_from, sl_id = flip
                 n = n_flip
             elif n_flip < 0:
-                flp_from, flp_to, sl_id = flip
+                flip_from, flip_to, sl_id = flip
                 n = -1 * n_flip
             else:
                 continue
 
-            operation['from'][sl_id][flp_from] += n
-            operation['to'][sl_id][flp_to] += n
+            flip_dict['from'][sl_id][flip_from] += n
+            flip_dict['to'][sl_id][flip_to] += n
 
         # Simplify ionic equations
-        operation_clean = {'from': {}, 'to': {}}
+        flip_dict_clean = {'from': {}, 'to': {}}
         for sl_id in range(n_sls):
-            for sp_id in nbits[sl_id]:
-                del_n = (operation['from'][sl_id][sp_id]
-                         - operation['to'][sl_id][sp_id])
+            for sp_id in n_bits[sl_id]:
+                del_n = (flip_dict['from'][sl_id][sp_id]
+                         - flip_dict['to'][sl_id][sp_id])
 
                 if del_n > 0:
-                    if sl_id not in operation_clean['from']:
-                        operation_clean['from'][sl_id] = {}
-                    operation_clean['from'][sl_id][sp_id] = del_n
+                    if sl_id not in flip_dict_clean['from']:
+                        flip_dict_clean['from'][sl_id] = {}
+                    flip_dict_clean['from'][sl_id][sp_id] = del_n
                 elif del_n < 0:
-                    if sl_id not in operation_clean['to']:
-                        operation_clean['to'][sl_id] = {}
-                    operation_clean['to'][sl_id][sp_id] = -1 * del_n
+                    if sl_id not in flip_dict_clean['to']:
+                        flip_dict_clean['to'][sl_id] = {}
+                    flip_dict_clean['to'][sl_id][sp_id] = -1 * del_n
                 else:
                     continue
 
-        operations.append(operation_clean)
+        flip_table.append(flip_dict_clean)
 
-    return operations
+    return flip_table
 
 
-def visualize_operations(operations, bits):
-    """Turn multi-atom flip into reaction formula.
+def visualize_flip_table(flip_table, bits):
+    """Turn multi-atom flip table into reaction formulas.
 
     Turns a charge constrained flip from dictionary format
     into a string of reaction formula for easy interpretation.
     Args:
-        operations(List[dict]):
+        flip_table(List[dict]):
             List of flips in dictionary format. See doc of flipvec_to_
             operation for details.
         bits(List[List[Specie|DummySpecie|Element|Vacancy]]):
@@ -201,29 +203,29 @@ def visualize_operations(operations, bits):
     Return:
         List[str].
     """
-    operation_strs = []
+    formula_strs = []
 
-    for operation in operations:
+    for flip_dict in flip_table:
         from_strs = []
         to_strs = []
 
-        for sl_id in operation['from']:
-            for swp_from, n in operation['from'][sl_id].items():
-                from_name = str(bits[sl_id][swp_from])
+        for sl_id in flip_dict['from']:
+            for flip_from, n in flip_dict['from'][sl_id].items():
+                from_name = str(bits[sl_id][flip_from])
                 from_strs.append('{} {}({})'
                                  .format(n, from_name, sl_id))
 
         for sl_id in operation['to']:
-            for swp_to, n in operation['to'][sl_id].items():
-                to_name = str(bits[sl_id][swp_to])
+            for flip_to, n in flip_dict['to'][sl_id].items():
+                to_name = str(bits[sl_id][flip_to])
                 to_strs.append('{} {}({})'
                                .format(n, to_name, sl_id))
 
         from_str = ' + '.join(from_strs)
         to_str = ' + '.join(to_strs)
-        operation_strs.append(from_str + ' -> ' + to_str)
+        formula_strs.append(from_str + ' -> ' + to_str)
 
-    return operation_strs
+    return formula_strs
 
 
 # Compsitional space class
@@ -304,12 +306,12 @@ class CompSpace(MSONable):
     Attributes:
         species(List[Species|DummySpecies|Element|Vacancy]):
             All species in the given system (sorted).
-        nbits(List[List[int]]):
+        n_bits(List[List[int]]):
             Species indices on each sublattice, used to decode
             or encode occupations and the dictionary flips format.
         dim(int):
             Dimensionality of the charge constrained space.
-        min_flips(List[Dict]):
+        min_flip_table(List[Dict]):
             All minimal, charge neutral and number conserving flip
             combinations in the given system, in dictionary format.
     """
@@ -345,7 +347,7 @@ class CompSpace(MSONable):
         # Sort the species
         self.species = sorted(self.species)
 
-        self.nbits = [list(range(len(sl_bits))) for sl_bits in bits]
+        self.n_bits = [list(range(len(sl_bits))) for sl_bits in bits]
         if sl_sizes is None:
             self.sl_sizes = [1 for i in range(len(self.bits))]
         elif len(sl_sizes) == len(bits):
@@ -356,11 +358,11 @@ class CompSpace(MSONable):
 
         self.N_sts_prim = sum(self.sl_sizes)
 
-        (self.unit_n_swps, self.chg_of_swps,
-         self.swp_ids_in_sublat) = get_unit_swps(self.bits)
+        (self.unit_n_excitations, self.chg_of_excitations,
+         self.excitation_ids_by_sublat) = get_unit_excitations(self.bits)
 
-        self._unit_spc_basis = None
-        self._unit_spc_vertices = None
+        self._unit_basis = None
+        self._unit_vertices = None
 
         # Matrices containing constrained subspace information.
         self._polytope = None
@@ -373,8 +375,8 @@ class CompSpace(MSONable):
         self._int_grids = {}
 
     @property
-    def bkgrnd_chg(self):
-        """Charge of the background composition.
+    def background_charge(self):
+        """Charge of the background occupation state.
 
         Computed by summing charges of the last specie on each SiteSpace's.
         Return:
@@ -392,7 +394,7 @@ class CompSpace(MSONable):
         Return:
             Int.
         """
-        return len(self.unit_n_swps)
+        return len(self.unit_n_excitations)
 
     @property
     def is_charge_constred(self):
@@ -404,9 +406,9 @@ class CompSpace(MSONable):
         Return:
             Boolean.
         """
-        d = len(self.chg_of_swps)
+        d = len(self.chg_of_excitations)
         return not(np.allclose(np.zeros(d),
-                   self.chg_of_swps) and self.bkgrnd_chg == 0)
+                   self.chg_of_excitations) and self.background_charge == 0)
 
     @property
     def dim(self):
@@ -431,14 +433,14 @@ class CompSpace(MSONable):
         return len(self.species)
 
     @property
-    def unit_spc_basis(self):
+    def unit_basis(self):
         """Minimal charge-conserving flips in unconstrained coordinates.
 
-        Get minimal charge neutral flip combinations in vector representation.
-        Given any compositional space, all valid, charge-neutral compoisitons
-        are integer grids on this space or its subspace. What we do is to get
-        the primitive lattice vectors of the lattice defined by these grid
-        points.
+        Get minimal charge neutral flips to span the whole compositional,
+        space, in vector representation. These vectors are represented in
+        unconstrained coordinates, and they are lattice basis vectors of
+        the diophantine solutions.
+
         For example:
         [[Li+,Mn3+,Ti4+],[P3-,O2-]] system, minimal charge and number
         conserving flips are:
@@ -449,23 +451,24 @@ class CompSpace(MSONable):
         Return:
             2D np.ndarray of np.int64
         """
-        if self._unit_spc_basis is None:
-            self._unit_spc_basis = np.array(get_integer_basis(self.chg_of_swps,
-                                            self.swp_ids_in_sublat),
-                                            dtype=np.int64)
-        return self._unit_spc_basis
+        if self._unit_basis is None:
+            self._unit_basis = np.array(get_integer_basis(
+                                        self.chg_of_excitations,
+                                        self.excitation_ids_by_sublat),
+                                        dtype=np.int64)
+        return self._unit_basis
 
     @property
-    def min_flips(self):
+    def min_flip_table(self):
         """Minimal charge conserving flips in table form.
 
         Return:
             List[Dict]
         """
-        _operations = flipvec_to_operations(self.unit_n_swps,
-                                            self.nbits,
-                                            self.unit_spc_basis)
-        return _operations
+        _flip_table = flip_vecs_to_flip_table(self.unit_n_excitations,
+                                              self.n_bits,
+                                              self.unit_basis)
+        return _flip_table
 
     @property
     def min_flip_strings(self):
@@ -475,7 +478,7 @@ class CompSpace(MSONable):
         Return:
             List[str]
         """
-        return visualize_operations(self.min_flips, self.bits)
+        return visualize_flip_table(self.min_flip_table, self.bits)
 
     @property
     def polytope(self):
@@ -501,13 +504,13 @@ class CompSpace(MSONable):
         """
         if self._polytope is None:
             facets_unconstred = []
-            for sl_flp_ids, sl_size in zip(self.swp_ids_in_sublat,
-                                           self.sl_sizes):
-                if len(sl_flp_ids) == 0:
+            for sl_flip_ids, sl_size in zip(self.excitation_ids_by_sublat,
+                                            self.sl_sizes):
+                if len(sl_flip_ids) == 0:
                     continue
 
                 a = np.zeros(self.unconstr_dim)
-                a[sl_flp_ids] = 1
+                a[sl_flip_ids] = 1
                 bi = sl_size
                 facets_unconstred.append((a, bi))
 
@@ -531,10 +534,10 @@ class CompSpace(MSONable):
                 # subspace as an empty set.
 
                 # x: unconstrained, x': constrained
-                R = np.vstack((self.unit_spc_basis,
-                              np.array(self.chg_of_swps)))
+                R = np.vstack((self.unit_basis,
+                              np.array(self.chg_of_excitations)))
                 t = np.zeros(self.unconstr_dim)
-                t[0] = -1 * self.bkgrnd_chg / self.chg_of_swps[0]
+                t[0] = -1 * self.background_charge / self.chg_of_excitations[0]
                 A_sub = A @ R.T
                 A_sub = A_sub[:, :-1]
                 # Slice A, remove last col, because the last component of x'
@@ -612,7 +615,7 @@ class CompSpace(MSONable):
         """
         return np.all(self.A @ (x / sc_size) <= self.b + SLACK_TOL)
 
-    def unit_spc_vertices(self, form='unconstr'):
+    def unit_vertices(self, form='unconstr'):
         """Extremums of the constrained compositional space.
 
         All coordinates in a primitive cell.
@@ -632,12 +635,12 @@ class CompSpace(MSONable):
         Return:
             Depends on form.
         """
-        if self._unit_spc_vertices is None:
+        if self._unit_vertices is None:
 
             if not self.is_charge_constred:
                 A, b, _, _ = self.polytope
                 poly = pc.Polytope(A, b)
-                self._unit_spc_vertices = pc.extreme(poly)
+                self._unit_vertices = pc.extreme(poly)
 
             else:
                 A, b, R, t = self.polytope
@@ -646,16 +649,16 @@ class CompSpace(MSONable):
                 n = vert_sub.shape[0]
                 vert = np.hstack((vert_sub, np.zeros((n, 1))))
                 # Transform back into unconstraned coord
-                self._unit_spc_vertices = vert @ R + t
+                self._unit_vertices = vert @ R + t
 
-        if len(self._unit_spc_vertices) == 0:
+        if len(self._unit_vertices) == 0:
             raise CHGBALANCEERROR
 
         # This function formuates multiple unconstrained coords together.
-        return self._convert_unconstr_to(self._unit_spc_vertices, form=form,
+        return self._convert_unconstr_to(self._unit_vertices, form=form,
                                          sc_size=1)
 
-    def get_random_point_in_unit_spc(self, form='unconstr'):
+    def get_random_point_in_unit_space(self, form='unconstr'):
         """Random point inside the prim, charge-neutral space.
 
         Args:
@@ -673,7 +676,7 @@ class CompSpace(MSONable):
         Return:
             Depends on form.
         """
-        verts = self.unit_spc_vertices(form='unconstr')
+        verts = self.unit_vertices(form='unconstr')
         x = verts[0].copy()
 
         for i in range(1, len(verts)):
@@ -708,7 +711,7 @@ class CompSpace(MSONable):
         """
         if self._min_sc_size or self._min_int_vertices is None:
             self._min_int_vertices, self._min_sc_size \
-                = integerize_multiple(self.unit_spc_vertices())
+                = integerize_multiple(self.unit_vertices())
         return self._min_sc_size
 
     def min_int_vertices(self, form='unconstr'):
@@ -769,8 +772,9 @@ class CompSpace(MSONable):
             # Since constrained coords are no longer ints, we have to shift
             # by a basis solution.
             base_shift = np.array(get_integer_base_solution(
-                                  self.chg_of_swps,
-                                  right_side=-1 * self.bkgrnd_chg * sc_size))
+                                  self.chg_of_excitations,
+                                  right_side=-1 * self.background_charge
+                                  * sc_size))
             base_shift = (np.linalg.inv((self.R).T) @
                           (base_shift / sc_size - self.t) * sc_size)[:-1]
 
@@ -792,7 +796,7 @@ class CompSpace(MSONable):
             try:
                 hull = ConvexHull(vertices_estimate)
                 vertices = vertices_estimate[hull.vertices]
-            except:
+            except QhullError:
                 vertices = vertices_estimate
             vertices = self._convert_to_unconstr(vertices, form='constr',
                                                  sc_size=sc_size)
@@ -877,15 +881,15 @@ class CompSpace(MSONable):
 
         else:
             # Then integer composition is not guaranteed to be found.
-            vertices = self.unit_spc_vertices() * sc_size
+            vertices = self.unit_vertices() * sc_size
             limiters_ub = np.array(np.ceil(np.max(vertices, axis=0)),
                                    dtype=np.int64)
             limiters_lb = np.array(np.floor(np.min(vertices, axis=0)),
                                    dtype=np.int64)
 
         limiters = list(zip(limiters_lb, limiters_ub))
-        right_side = -1 * self.bkgrnd_chg * sc_size
-        grid = get_integer_grid(self.chg_of_swps, right_side=right_side,
+        right_side = -1 * self.background_charge * sc_size
+        grid = get_integer_grid(self.chg_of_excitations, right_side=right_side,
                                 limiters=limiters)
 
         enum_grid = []
@@ -1024,12 +1028,12 @@ class CompSpace(MSONable):
             List[List[int]]
         """
         v_id = 0
-        compstat = [[0 for i in range(len(sl_nbits))]
-                    for sl_nbits in self.nbits]
+        compstat = [[0 for i in range(len(sl_n_bits))]
+                    for sl_n_bits in self.n_bits]
 
-        for sl_id, sl_nbits in enumerate(self.nbits):
+        for sl_id, sl_n_bits in enumerate(self.n_bits):
             sl_sum = 0
-            for b_id, bit in enumerate(sl_nbits[:-1]):
+            for b_id, bit in enumerate(sl_n_bits[:-1]):
                 compstat[sl_id][b_id] = x[v_id]
                 sl_sum += x[v_id]
                 v_id += 1
@@ -1297,8 +1301,8 @@ class CompSpace(MSONable):
         return {
                 'bits': bits_d,
                 'sl_sizes': self.sl_sizes,
-                'unit_spc_basis': self.unit_spc_basis.tolist(),
-                'unit_spc_vertices': self.unit_spc_vertices().tolist(),
+                'unit_basis': self.unit_basis.tolist(),
+                'unit_vertices': self.unit_vertices().tolist(),
                 'polytope': poly,
                 'min_sc_size': self.min_sc_size,
                 'min_int_vertices': self.min_int_vertices().tolist(),
@@ -1323,12 +1327,12 @@ class CompSpace(MSONable):
 
         obj = cls(bits, d['sl_sizes'])
 
-        if 'unit_spc_basis' in d:
-            obj._unit_spc_basis = np.array(d['unit_spc_basis'],
-                                           dtype=np.int64)
+        if 'unit_basis' in d:
+            obj._unit_basis = np.array(d['unit_basis'],
+                                       dtype=np.int64)
 
-        if 'unit_spc_vertices' in d:
-            obj._unit_spc_vertices = np.array(d['unit_spc_vertices'])
+        if 'unit_vertices' in d:
+            obj._unit_vertices = np.array(d['unit_vertices'])
 
         if 'polytope' in d:
             poly = d['polytope']

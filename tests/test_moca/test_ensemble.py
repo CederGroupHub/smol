@@ -48,7 +48,7 @@ def ensemble(composite_processor, request):
         sl_sizes = [sz//sc_size for sz in sl_sizes]
     
         comp_space = CompSpace(bits,sl_sizes)
-        mu = [0.3 for i in range(comp_space.dim)]
+        mu = [0.3+i*0.01 for i in range(comp_space.dim)]
         kwargs = {'mu':mu}
 
     else:
@@ -84,7 +84,7 @@ def disc_ensemble(composite_processor):
     sl_sizes = [sz//sc_size for sz in sl_sizes]
 
     comp_space = CompSpace(bits,sl_sizes)
-    mu = [0.3 for i in range(comp_space.dim)]
+    mu = [0.3+0.01*i for i in range(comp_space.dim)]
     return DiscChargeNeutralSemiGrandEnsemble(composite_processor,mu)
 
 
@@ -117,7 +117,7 @@ def test_from_cluster_expansion(cluster_subspace, ensemble_cls):
         sl_sizes = [sz//sc_size for sz in sl_sizes]
     
         comp_space = CompSpace(bits,sl_sizes)
-        mu = [0.3 for i in range(comp_space.dim)]
+        mu = [0.3+i*0.01 for i in range(comp_space.dim)]
         kwargs = {'mu':mu}
 
     else:
@@ -292,17 +292,24 @@ def test_build_fu_table(fugrand_ensemble):
 #Tests for Discriminative charge neutral semigrand ensemble.
 def test_compute_feature_vector(disc_ensemble):
     proc = disc_ensemble.processor
-    occu = gen_random_neutral_occupancy(disc_ensemble.sublattices,
-                                disc_ensemble.num_sites)
+    dmus = []
     usher = Chargeneutralflipper(disc_ensemble.sublattices)
-    assert np.dot(disc_ensemble.natural_parameters,
-                   disc_ensemble.compute_feature_vector(occu))\
-            == pytest.approx(proc.compute_property(occu) - disc_ensemble.compute_chemical_work(occu),
-                             abs=1E-7)
-    npt.assert_array_equal(disc_ensemble.compute_feature_vector(occu)[:-1],
-                           disc_ensemble.processor.compute_feature_vector(occu))
+    for i in range(10):
+        occu = gen_random_neutral_occupancy(disc_ensemble.sublattices,
+                                            disc_ensemble.num_sites)
+        assert np.dot(disc_ensemble.natural_parameters,
+                       disc_ensemble.compute_feature_vector(occu))\
+                == pytest.approx(proc.compute_property(occu) - disc_ensemble.compute_chemical_work(occu),
+                                 abs=1E-7)
+        npt.assert_array_equal(disc_ensemble.compute_feature_vector(occu)[:-1],
+                               disc_ensemble.processor.compute_feature_vector(occu))
+    
+        # Using minimum flip table.
+        for _ in range(500):  # test a few flips
+            flip = usher.propose_step(occu)
+            dmu = disc_ensemble.compute_feature_vector_change(occu,flip)[-1]
+            if dmu != 0:
+                dmus.append(dmu)
+            assert np.any(np.append(np.array(disc_ensemble.mu),0)==dmu) or np.any(np.append(np.array(disc_ensemble.mu),0)==-dmu)
 
-    for _ in range(50):  # test a few flips
-        flip = usher.propose_step(occu)
-        dmu = disc_ensemble.compute_feature_vector_change(occu,flip)[-1]
-        assert np.any(np.append(np.array(disc_ensemble.mu),0)==dmu)
+    assert not(np.all(np.array(dmus)==dmus[0]))

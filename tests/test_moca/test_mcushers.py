@@ -1,17 +1,53 @@
 import pytest
 import numpy as np
+import random
+from copy import deepcopy
 from pymatgen import Composition,Specie
 from smol.cofe.space.domain import SiteSpace
 from smol.moca.ensemble.sublattice import Sublattice
-from smol.moca.sampler.mcusher import (Swapper, Flipper, 
-                                       Combinedflipper,
+from smol.moca.sampler.mcusher import (Swapper, Flipper,
                                        Chargeneutralflipper)
 from smol.moca.comp_space import CompSpace
-from smol.moca.utils.occu_utils import direction_from_step
+from smol.moca.utils.occu_utils import delta_ccoords_from_step
+from smol.moca.utils.math_utils import GCD_list
 
 mcmcusher_classes = [Flipper, Swapper]
 num_sites = 100
 
+def gen_random_neutral_occupancy(sublattices, num_sites):
+    """Generate charge neutral occupancies according to a list of sublattices.
+       Occupancies are encoded.
+
+    Args:
+        sublattices (Sequence of Sublattice):
+           A sequence of sublattices
+        num_sites (int):
+           Total number of sites
+
+    Returns:
+        ndarray: encoded occupancy, charge neutral guaranteed.
+    """
+    rand_occu = np.zeros(num_sites, dtype=int)
+    bits = [sl.species for sl in sublattices]
+    sl_sizes = [len(sl.sites) for sl in sublattices]
+    sc_size = GCD_list(sl_sizes)
+
+    sl_sizes_prim = np.array(sl_sizes)//sc_size
+    comp_space = CompSpace(bits,sl_sizes_prim)
+
+    random_comp = random.choice(comp_space.int_grids(sc_size=sc_size,form='compstat'))
+
+    sites = []
+    assignments = []
+    for sl,sl_comp in zip(sublattices,random_comp):
+        sl_sites = list(sl.sites)
+        random.shuffle(sl_sites)
+        sites.extend(sl_sites)
+        for sp_id,sp_n in enumerate(sl_comp):
+            assignments.extend([sp_id for i in range(sp_n)])
+
+    rand_occu[sites] = assignments
+    return rand_occu
 
 @pytest.fixture
 def sublattices():
@@ -36,17 +72,6 @@ def sublattices_neutral():
     return [sl1,sl2]
 
 @pytest.fixture
-def flip_combinations():
-    li = Specie.from_string('Li+')
-    mn = Specie.from_string('Mn3+')
-    ti = Specie.from_string('Ti4+')
-    p = Specie.from_string('P3-')
-    o = Specie.from_string('O2-')
-    bits = [[li,mn,ti],[p,o]]
-    return CompSpace(bits).min_flips
-
-
-@pytest.fixture
 def rand_occu(sublattices):
     # generate a random occupancy according to the sublattices
     occu = np.zeros(sum(len(s.sites) for s in sublattices), dtype=int)
@@ -56,12 +81,18 @@ def rand_occu(sublattices):
                 occu[site] = np.random.choice(range(len(sublattice.site_space)))
     return occu
 
+@pytest.fixture
+def rand_occu_neutral(sublattices_neutral):
+    return gen_random_neutral_occupancy(sublattices_neutral, 12)
 
 @pytest.fixture(params=mcmcusher_classes)
 def mcmcusher(request, sublattices):
     # instantiate mcmcushers to test
     return request.param(sublattices)
 
+@pytest.fixture
+def cnflipper(sublattices_neutral):
+    return Chargeneutralflipper(sublattices_neutral)
 
 def test_bad_propabilities(mcmcusher):
     with pytest.raises(ValueError):
@@ -122,29 +153,83 @@ def test_propose_step(mcmcusher, rand_occu):
     assert count1 / total == pytest.approx(0.8, abs=1E-2)
     assert count2 / total == pytest.approx(0.2, abs=1E-2)
 
+def test_flip_neutral(cnflipper, rand_occu_neutral):
+    def get_oxi_state(sp):
+        if 'oxi_state' in dir(sp):
+            return sp.oxi_state
+        else:
+            return 0
 
-def test_combined_flip(sublattices_neutral,flip_combinations):
-    tf = Combinedflipper(sublattices_neutral,flip_combinations)
-    occu = np.array([0,2,0,1,1,0,1,1,1,0,1,1])
-    
-    count_directions = {-1:0,1:0,-2:0,2:0}
-    for i in range(28000):
-        step = tf.propose_step(occu)
-        #print('Proposal number {}:'.format(i),step)
-        direction = direction_from_step(step,tf.sl_list,tf.flip_combs)
-        count_directions[direction]+=1
-    
-    true_directions = {-1:10000,1:1000,-2:2000,2:15000}
-    
-    for d in count_directions:
-        assert(abs(true_directions[d]-count_directions[d])/true_directions[d]<0.1)
+    def is_neutral(occu,bits,sublat_list):
+        charge = 0
+        for sl_id,sl in enumerate(sublat_list):
+            charge += sum([get_oxi_state(bits[sl_id][sp_id]) for sp_id in occu[sl]])
+        return charge == 0
 
-def test_charge_neutral_flip(sublattices_neutral):
-    cf = Chargeneutralflipper(sublattices_neutral)
-    assert cf.n_links == 180
+    occu = deepcopy(rand_occu_neutral)
+    sl_list = [[0,1,2,3,4,5],[6,7,8,9,10,11]]
+    bits = cnflipper.bits
 
-    cf_weighted = Chargeneutralflipper(sublattices_neutral,flip_weights=[1,2])
-    assert cf_weighted.n_links == 360
+    for i in range(30000):
+        assert is_neutral(occu,bits,sl_list)
+        step = cnflipper.propose_step(occu)
+        #print('step:',step)
+        for s_id, sp_id in step:
+            occu[s_id] = sp_id
 
-    cf_weighted_2 = Chargeneutralflipper(sublattices_neutral,flip_weights=[2,1])
-    assert cf_weighted_2.n_links == 180
+def test_equal_a_priori_neutral(cnflipper, rand_occu_neutral):
+    def is_canonical(occu,step,sublat_list):
+        if len(step)==0:
+            return False
+        if len(step)!=2:
+            return False
+        if (occu[step[0][0]] == step[1][1] and
+            occu[step[1][0]] == step[0][1]):
+            sl_id_0 = None
+            sl_id_1 = None
+            for sl_id, sl in enumerate(sublat_list):
+                if step[0][0] in sl:
+                    sl_id_0 = sl_id
+                if step[1][0] in sl:
+                    sl_id_1 = sl_id
+            if sl_id_0 == sl_id_1:
+                return True
+        return False
+
+    occu = deepcopy(rand_occu_neutral)
+    sl_list = [[0,1,2,3,4,5],[6,7,8,9,10,11]]
+    bits = cnflipper.bits
+    bias_values = []
+    for i in range(5):
+        print('Occu:',occu)
+
+        proposed_steps = [cnflipper.propose_step(occu) for i in range(80000)]
+        while True:
+            chosen_step = random.choice(proposed_steps)
+            if not is_canonical(occu,chosen_step,sl_list):
+                break
+        reverse_step = [(s_id,occu[s_id]) for s_id,sp_id in chosen_step]
+        chosen_count = 0
+        for step in proposed_steps:
+            if set(step) == set(chosen_step):
+                chosen_count += 1
+        
+        print('chosen_step:',chosen_step)
+
+        next_occu = deepcopy(occu)
+        for s_id, sp_id in chosen_step:
+            next_occu[s_id] = sp_id
+
+        proposed_rev_steps = [cnflipper.propose_step(next_occu) for i in range(80000)]
+        reverse_count = 0
+        for step in proposed_rev_steps:
+            if set(step) == set(reverse_step):
+                reverse_count += 1
+
+        assert abs(chosen_count-reverse_count)/chosen_count <= 0.15
+      
+        occu = next_occu # Move forward
+
+        bias_values.append((chosen_count-reverse_count)/chosen_count)
+
+    assert not(np.all(np.array(bias_values)>0)) and not(np.all(np.array(bias_values)<0))
