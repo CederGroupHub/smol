@@ -215,7 +215,7 @@ def visualize_flip_table(flip_table, bits):
                 from_strs.append('{} {}({})'
                                  .format(n, from_name, sl_id))
 
-        for sl_id in operation['to']:
+        for sl_id in flip_dict['to']:
             for flip_to, n in flip_dict['to'][sl_id].items():
                 to_name = str(bits[sl_id][flip_to])
                 to_strs.append('{} {}({})'
