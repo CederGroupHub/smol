@@ -8,20 +8,19 @@ from smol.cofe.extern import EwaldTerm
 from smol.moca import (CanonicalEnsemble, MuSemiGrandEnsemble,
                        FuSemiGrandEnsemble, CompositeProcessor,
                        DiscChargeNeutralSemiGrandEnsemble,
-                       ChargeNeutralSemiGrandEnsemble,
                        CEProcessor, EwaldProcessor)
 
 from smol.moca.ensemble.sublattice import get_all_sublattices
 
 from smol.moca.comp_space import CompSpace
-from smol.moca.sampler.mcusher import Chargeneutralflipper
+from smol.moca.sampler.mcusher import Tableflipper
 from smol.moca.utils.math_utils import GCD_list
 
 from tests.utils import (assert_msonable, gen_random_occupancy,
                          gen_random_neutral_occupancy)
 
-ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble,\
-             DiscChargeNeutralSemiGrandEnsemble, ChargeNeutralSemiGrandEnsemble]
+ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble,
+             DiscChargeNeutralSemiGrandEnsemble]
 
 
 @pytest.fixture
@@ -33,7 +32,7 @@ def composite_processor(cluster_subspace):
 
 @pytest.fixture(params=ensembles)
 def ensemble(composite_processor, request):
-    if request.param in (MuSemiGrandEnsemble,ChargeNeutralSemiGrandEnsemble):
+    if request.param is MuSemiGrandEnsemble:
         kwargs = {'chemical_potentials':
                   {sp: 0.3 for space in composite_processor.unique_site_spaces
                    for sp in space.keys()}}
@@ -102,7 +101,7 @@ def test_from_cluster_expansion(cluster_subspace, ensemble_cls):
                                       coefficient=coefs[-1]))
     fake_feature_matrix = np.random.random((5, len(coefs)))
     expansion = ClusterExpansion(cluster_subspace, coefs, fake_feature_matrix)
-    if ensemble_cls in (MuSemiGrandEnsemble,ChargeNeutralSemiGrandEnsemble):
+    if ensemble_cls is MuSemiGrandEnsemble:
         kwargs = {'chemical_potentials':
                   {sp: 0.3 for space in proc.unique_site_spaces
                    for sp in space.keys()}}
@@ -293,9 +292,10 @@ def test_build_fu_table(fugrand_ensemble):
 def test_compute_feature_vector(disc_ensemble):
     proc = disc_ensemble.processor
     dmus = []
-    usher = Chargeneutralflipper(disc_ensemble.sublattices)
+
+    usher = Tableflipper(disc_ensemble.all_sublattices)
     for i in range(10):
-        occu = gen_random_neutral_occupancy(disc_ensemble.sublattices,
+        occu = gen_random_neutral_occupancy(disc_ensemble.all_sublattices,
                                             disc_ensemble.num_sites)
         assert np.dot(disc_ensemble.natural_parameters,
                        disc_ensemble.compute_feature_vector(occu))\

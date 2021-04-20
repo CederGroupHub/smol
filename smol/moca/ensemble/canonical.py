@@ -29,7 +29,8 @@ class CanonicalEnsemble(Ensemble, MSONable):
                 a set of flips.
             sublattices (list of Sublattice): optional
                 list of Lattice objects representing sites in the processor
-                supercell with same site spaces.
+                supercell with same site spaces. Only active sublattices.
+                Active means to allow multiple species occupy one sublattice.
         """
         super().__init__(processor, sublattices=sublattices)
 
@@ -77,5 +78,9 @@ class CanonicalEnsemble(Ensemble, MSONable):
         Returns:
             CanonicalEnsemble
         """
+        sl_dicts = d.get('sublattices')
+        sublattices = ([Sublattice.from_dict(s) for s in sl_dicts] if
+                       sl_dicts is not None else None)
+
         return cls(Processor.from_dict(d['processor']),
-                   [Sublattice.from_dict(s) for s in d['sublattices']])
+                   sublattices=sublattices)

@@ -51,7 +51,8 @@ def gen_random_neutral_occupancy(sublattices, num_sites):
 
     Args:
         sublattices (Sequence of Sublattice):
-           A sequence of sublattices
+           A sequence of sublattices, must be all sublattices, no matter
+           active or not.
         num_sites (int):
            Total number of sites
 
