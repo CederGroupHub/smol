@@ -6,7 +6,7 @@ from smol.moca import (CanonicalEnsemble, FuSemiGrandEnsemble,
                        DiscChargeNeutralSemiGrandEnsemble,
                        CEProcessor, Sampler)
 from smol.moca.sampler.mcusher import (Swapper, Flipper,
-                                       Chargeneutralflipper)
+                                       Tableflipper)
 from smol.moca.sampler.kernel import Metropolis
 from smol.moca.comp_space import CompSpace
 from smol.moca.ensemble.sublattice import get_all_sublattices
@@ -24,8 +24,8 @@ def initialize_occus(sampler):
                                                sampler.samples.num_sites)
                           for _ in range(sampler.samples.shape[0])])
     else:
-        return np.vstack([gen_random_neutral_occupancy(sampler.mcmckernel._usher.sublattices,
-                                                  sampler.samples.num_sites)
+        return np.vstack([gen_random_neutral_occupancy(sampler.mcmckernel._usher.all_sublattices,
+                                                       sampler.samples.num_sites)
                           for _ in range(sampler.samples.shape[0])])
 
 @pytest.fixture(params=ensembles)
@@ -61,7 +61,7 @@ def test_from_ensemble(sampler):
     if "Canonical" in sampler.samples.metadata["name"]:
         assert isinstance(sampler.mcmckernel._usher, Swapper)
     elif "Disc" in sampler.samples.metadata["name"]:
-        assert isinstance(sampler.mcmckernel._usher, Chargeneutralflipper)
+        assert isinstance(sampler.mcmckernel._usher, Tableflipper)
     else:
         assert isinstance(sampler.mcmckernel._usher, Flipper)
     assert isinstance(sampler.mcmckernel, Metropolis)

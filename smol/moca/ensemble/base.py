@@ -4,7 +4,7 @@ __author__ = "Luis Barroso-Luque"
 
 from abc import ABC, abstractmethod
 from smol.moca import CompositeProcessor, CEProcessor, EwaldProcessor
-from .sublattice import get_sublattices
+from .sublattice import get_sublattices, get_all_sublattices
 
 
 class Ensemble(ABC):
@@ -34,14 +34,18 @@ class Ensemble(ABC):
                 a set of flips.
             sublattices (list of Sublattice): optional
                 list of Lattice objects representing sites in the processor
-                supercell with same site spaces.
+                supercell with same site spaces. Only active sublattices
+                are included here.
+                Active means to have multiple species occupy one sublattice.
         """
         if sublattices is None:
             sublattices = get_sublattices(processor)
+
         self.num_energy_coefs = len(processor.coefs)
         self.thermo_boundaries = {}  # not pretty way to save general info
         self._processor = processor
         self._sublattices = sublattices
+        self._all_sublattices = get_all_sublattices(processor)
 
     @classmethod
     def from_cluster_expansion(cls, cluster_expansion, supercell_matrix,
@@ -108,8 +112,13 @@ class Ensemble(ABC):
     #  all sites are included.
     @property
     def sublattices(self):
-        """Get list of sublattices included in ensemble."""
+        """Get list of active sublattices included in ensemble."""
         return self._sublattices
+
+    @property
+    def all_sublattices(self):
+        """Get list of all sublattices included in ensemble."""
+        return self._all_sublattices
 
     @property
     def restricted_sites(self):

@@ -41,6 +41,8 @@ def container(request):
 def fake_states(container):
     nwalkers = container.shape[0]
     occus = np.empty((NSAMPLES, nwalkers, NUM_SITES))
+    bias = np.zeros((NSAMPLES, nwalkers))
+    time = np.empty((NSAMPLES, nwalkers))
     enths = -5 * np.ones((NSAMPLES, nwalkers))
     temps = -300.56 * np.ones((NSAMPLES, nwalkers))
     feats = np.zeros((NSAMPLES, nwalkers,
@@ -65,15 +67,15 @@ def fake_states(container):
             # first and last feature real fake
             feats[i, j, [0, -1]] = 2.5
 
-    return accepted, temps, occus, enths, feats
+    return accepted, temps, occus, bias, enths, feats
 
 
 def add_samples(sample_container, fake_states, thinned_by=1):
-    accepted, temps, occus, enths, feats = fake_states
+    accepted, temps, occus, bias, enths, feats = fake_states
     sample_container.allocate(len(accepted))
     for i in range(len(accepted)):
         sample_container.save_sample(accepted[i], temps[i], occus[i],
-                                     enths[i], feats[i],
+                                     bias[i], enths[i], feats[i],
                                      thinned_by=thinned_by)
 
 
@@ -83,12 +85,16 @@ def test_allocate_and_save(container, fake_states):
     assert container._chain.shape == (0, nwalkers, NUM_SITES)
     assert container._enthalpy.shape == (0, nwalkers)
     assert container._accepted.shape == (0, nwalkers)
+    assert container._bias.shape == (0, nwalkers)
+    assert container._time.shape == (0, nwalkers)
 
     container.allocate(NSAMPLES)
     assert len(container) == 0
     assert container._chain.shape == (NSAMPLES, nwalkers, NUM_SITES)
     assert container._enthalpy.shape == (NSAMPLES, nwalkers)
     assert container._accepted.shape == (NSAMPLES, nwalkers)
+    assert container._bias.shape == (NSAMPLES, nwalkers)
+    assert container._time.shape == (NSAMPLES, nwalkers)
     container.clear()
 
     add_samples(container, fake_states)
@@ -106,7 +112,7 @@ def test_allocate_and_save(container, fake_states):
 @pytest.mark.parametrize('discard, thin', product((0, 100), (1, 10)))
 def test_get_sampled_values(container, fake_states, discard, thin):
     add_samples(container, fake_states)
-    accepted, temps, occus, enths, feats = fake_states
+    accepted, temps, occus, bias, enths, feats = fake_states
     nat_params = container.natural_parameters
     sublattices = container.sublattices
     nw = container.shape[0]
@@ -119,6 +125,8 @@ def test_get_sampled_values(container, fake_states, discard, thin):
     assert container.get_enthalpies(discard=discard, thin_by=thin).shape == (nsamples * nw,)
     assert container.get_energies(discard=discard, thin_by=thin).shape == (nsamples * nw,)
     assert container.get_temperatures(discard=discard, thin_by=thin).shape == (nsamples * nw,)
+    assert container.get_bias(discard=discard, thin_by=thin).shape == (nsamples * nw, )
+    assert container.get_time(discard=discard, thin_by=thin).shape == (nsamples * nw, )
     for sublattice, comp in zip(sublattices, SUBLATTICE_COMPOSITIONS):
         c = container.get_sublattice_compositions(sublattice, discard=discard, thin_by=thin)
         assert c.shape == (nsamples * nw, len(sublattice.species))

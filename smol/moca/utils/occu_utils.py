@@ -5,6 +5,7 @@ __author__ = "Fengyu Xie"
 import numpy as np
 import itertools
 
+
 # Utilities for parsing occupation, used in charge-neutral semigrand flip table
 def occu_to_species_stat(occupancy, bits, sublat_list_sc):
     """Make compstat format from occupation array.
@@ -38,9 +39,8 @@ def occu_to_species_stat(occupancy, bits, sublat_list_sc):
                 sl_id = i
                 break
         if sl_id is None:
-            raise ValueError("Occupancy site {} can not be matched to a \
-                             sublattice!"
-                             .format(s_id))
+            continue  # Site is inactive.
+
         species_stat[sl_id][sp_code] += 1
 
     return species_stat
@@ -77,9 +77,7 @@ def occu_to_species_list(occupancy, bits, sublat_list_sc):
                 sl_id = i
                 break
         if sl_id is None:
-            raise ValueError("Occupancy site {} can not be matched to a \
-                             sublattice!"
-                             .format(s_id))
+            continue  # Site is inactive.
 
         species_list[sl_id][sp_id].append(site_id)
 
@@ -149,34 +147,3 @@ def delta_ccoords_from_step(occu, step, bits, sublat_list_sc, base_vecs,
                           the dimensionality of the compositional space.")
 
     return del_ccoords
-                
-#    flip_to = {}
-#    for s_id, sp_id in step:
-#        sl_id = None
-#        for i, sl in enumerate(sublat_list_sc):
-#            if s_id in sl:
-#                sl_id = i
-#                break
-#        if sl_id is None:
-#            raise ValueError("Step contains a site {} not found in any \
-#                             sublattice!"
-#                             .format(s_id))
-#
-#        if sl_id not in flip_to:
-#            flip_to[sl_id] = {}
-#
-#        sp_to = sp_id
-#        if sp_to not in flip_to[sl_id]:
-#            flip_to[sl_id][sp_to] = 1
-#        else:
-#            flip_to[sl_id][sp_to] += 1
-#
-#    direction = 0
-#    for f_id, tflip in enumerate(flip_combs):
-#
-#        if flip_to == tflip['to']:
-#            direction = f_id + 1
-#        elif flip_to == tflip['from']:
-#            direction = - (f_id + 1)
-#
-#    return direction

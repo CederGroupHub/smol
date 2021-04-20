@@ -15,9 +15,10 @@ import random
 import numpy as np
 
 from smol.utils import derived_class_factory
+from .bias import mcbias_factory
 from ..comp_space import CompSpace
 
-from ..utils.occu_utils import occu_to_species_stat, occu_to_species_list
+from ..utils.occu_utils import occu_to_species_list
 from ..utils.math_utils import choose_section_from_partition, GCD_list
 
 
@@ -152,20 +153,21 @@ class Tableflipper(MCMCUsher):
     No longer computing and assigning a-priori proabilities
     before flip selection, and selects sites instead.
 
-    Chargeneutralflipper is implemented based on this class.
-
     Direct use of this class is not recommended, because the
     dict form of the flip table is not very easy to read and
     write.
     """
 
-    def __init__(self, sublattices, flip_table, flip_weights=None):
+    def __init__(self, all_sublattices, flip_table=None, add_swap=True,
+                 flip_weights=None):
         """Initialize Tableflipper.
 
         Args:
             sublattices (list of Sublattice):
-                list of Sublattices to propose steps for.
-            flip_table(List of Dict):
+                list of Sublattices to propose steps for. Must
+                be all sublattices, including active and inactive
+                ones.
+            flip_table(List of Dict), optional:
                 A list of multi-site flips in dictionary format.
                 For example,
                   [
@@ -185,22 +187,42 @@ class Tableflipper(MCMCUsher):
                    },
                    ...
                   ]
-            flip_weights(1D Arraylike|Nonetype):
+                If not given, will auto compute minimal charge neutral
+                flip table.
+            add_swap(Boolean, optional):
+                Whether or not to attempt canonical swap if a step
+                can not be proposed. May help accelerating equilibration.
+                Default to True.
+            flip_weights(1D Arraylike|Nonetype), optional:
                 Weights to adjust probability of each flip. If
                 None given, will assign equal weights to each
                 flip.
+
+        Note: In table flip, adding proposal bias to different sublattices
+        is impossible.
         """
-        super().__init__(sublattices)
-        self.flip_table = flip_table
+        self.all_sublattices = all_sublattices
+        self.sublattices = [s for s in all_sublattices
+                            if len(s.site_space) > 1]
+        self.bits = [sl.species for sl in self.all_sublattices]
+        self.sl_list = [list(sl.active_sites) for sl in self.all_sublattices]
+        self.sl_sizes = [len(sl.sites) for sl in self.all_sublattices]
+        self.sc_size = GCD_list(self.sl_sizes)
+        self.sl_sizes = [s // self.sc_size for s in self.sl_sizes]
+
+        if flip_table is None:
+            self.flip_table = CompSpace(self.bits,
+                                        self.sl_sizes).min_flip_table
+        else:
+            self.flip_table = flip_table
+
+        self.add_swap = add_swap
         # A flip has two directions. All links initialized with 0.
 
-        self.bits = [sl.species for sl in self.sublattices]
-        self.sl_list = [list(sl.sites) for sl in self.sublattices]
-
         if flip_weights is None:
-            self.flip_weights = np.ones(len(flip_table), dtype=np.int64)
+            self.flip_weights = np.ones(len(self.flip_table), dtype=np.int64)
         else:
-            if len(flip_weights) != len(flip_table):
+            if len(flip_weights) != len(self.flip_table):
                 raise ValueError("Flip reweighted, but not enough weights \
                                  supplied!")
             self.flip_weights = np.array(flip_weights)
@@ -219,10 +241,7 @@ class Tableflipper(MCMCUsher):
                 encoded occupancy string.
 
         Returns:
-             Tuple(list(tuple),int): list of tuples each with (idex, code), and
-                                   an integer indication flip direction in
-                                   constrained coordinates. Different from
-                                   other ushers!
+             list(tuple): list of tuples each with (idex, code).
         """
         occupancy = np.array(occupancy)
 
@@ -261,9 +280,9 @@ class Tableflipper(MCMCUsher):
 
             # Confirm direction.
             if direction is None:
+                # Site selection not successful.
                 if (picked_table != picked_flip['from'][sl_id] and
                         picked_table != picked_flip['to'][sl_id]):
-                    # Site selection not successful.
                     flip_list = []
                     break
                 elif picked_table == picked_flip['from'][sl_id]:
@@ -306,7 +325,7 @@ class Tableflipper(MCMCUsher):
                 raise ValueError("Flip is not number conserved!")
 
         # If no valid flip is picked, try a canonical swap.
-        if len(flip_list) == 0:
+        if len(flip_list) == 0 and self.add_swap:
             active_sublattices = [sl for sl in self.sublattices
                                   if not np.all(occupancy[sl.sites] ==
                                                 occupancy[sl.sites][0])]
@@ -317,36 +336,138 @@ class Tableflipper(MCMCUsher):
         return flip_list
 
 
-class Chargeneutralflipper(Tableflipper):
-    """Charge neutral flipper usher.
+class Subchainwalker(MCMCUsher):
+    """Subchain walker class.
 
-    Implemented based on Tableflipper. Uses minial, sublattice
-    discriminative flip table.
+    Walk the unconstrained whole space with a sub-monte-carlo. Calculate
+    acceptance and rejection with a bias term only to drive it back to
+    constrained hyperplane, and triggers a step proposal when the bias is
+    zero again, or chain length exceeds upper limit.
     """
 
-    def __init__(self, sublattices, flip_weights=None):
-        """Initialize Chargeneutralflipper.
+    # Update this and MCMCKernel after you enable more biasing terms.
+    valid_bias = {'null': 'Nullbias',
+                  'square-charge': 'Squarechargebias'}
+
+    def __init__(self, all_sublattices, sub_bias_type='null',
+                 cutoff_steps=200, add_swap=True,
+                 *args, **kwargs):
+        """Initialize Subchainwalker.
 
         Args:
-            sublattices (list of Sublattice):
-                list of Sublattices to propose steps for.
-
-        Attributes:
-            flip_weights(1D arrayLike|Nonetype):
-                Weights to adjust probability of each flip. If None given,
-                will assign equal weights to each flip.
-                Length must equal to the dimensionality of CompSpace.
+            all_sublattices(List[Sublattice]):
+                List of sublattices to walk on. Must contain all sublatices,
+                either active or not, otherwise may not be able to calculate
+                some bias, such as charge bias.
+            sub_bias_type(str):
+                Type of bias term in subchain. Optional, default is null bias.
+            cutoff_steps(int):
+                Maximum number of subchain length. Optional, default is 200.
+            add_swap(Boolean, optional):
+                Whether or not to attempt canonical swap if a step
+                can not be proposed. May help accelerating equilibration.
+                Default to True.
+            *args:
+                Positional arguments to initialize bias term.
+            **kwargs:
+                Keyword arguments to initialize bias term.
         """
-        bits = [sl.species for sl in sublattices]
-        sl_list = [list(sl.sites) for sl in sublattices]
-        sl_sizes = [len(sl.sites) for sl in sublattices]
+        # Keep active sublattices for perturbation only
+        self.all_sublattices = all_sublattices
+        self.sublattices = [s for s in all_sublattices
+                            if len(s.site_space) > 1]
+        self.cutoff = cutoff_steps
+        self.add_swap = add_swap
+        try:
+            self._bias = mcbias_factory(self.valid_bias[sub_bias_type],
+                                        all_sublattices,
+                                        *args, **kwargs)
+        except KeyError:
+            raise ValueError(f"Step type {bias_type} is not valid for a "
+                             f"{type(self)}.")
 
-        sc_size = GCD_list(sl_sizes)
-        sl_sizes = [s // sc_size for s in sl_sizes]
+        self._flipper = Flipper(self.sublattices)
 
-        flip_table = CompSpace(bits, sl_sizes).min_flip_table
+    def _count_species(self, occupancy):
+        """Count number of species on each sublattice.
 
-        super().__init__(sublattices, flip_table, flip_weights=flip_weights)
+        Used to check composition equivalence.
+        """
+        n_cols = max(len(s.site_space) for s in self.all_sublattices)
+        n_rows = len(self.all_sublattices)
+        count = np.zeros((n_rows, n_cols))
+
+        for i, s in enumerate(self.all_sublattices):
+            for j, sp in enumerate(s.site_space):
+                count[i, j] = np.sum(occupancy[s.sites] == j)
+
+        return count
+
+    def propose_step(self, occupancy):
+        """Propose a step by walking subchain.
+
+        Walk unconstrained space with constraint related penalty, and returns
+        a step when constraint is satisfied again.
+
+        Args:
+            occupancy (ndarray):
+                Encoded occupancy string. Does not check constraint, you have
+                to check it yourself!
+
+        Returns:
+             list(tuple): list of tuples each with (idex, code).
+        """
+        n_attempt = 0
+        step = []
+        subchain_occu = occupancy.copy()
+
+        counts_init = self._count_species(occupancy)
+        counts = counts_init.copy()
+        sublatt_ids = np.zeros(len(occupancy), dtype=np.int64)
+        for i, s in enumerate(self.all_sublattices):
+            sublatt_ids[s.sites] = i
+
+        while (n_attempt < self.cutoff and
+               (np.allclose(counts, counts_init) or
+                self._bias.compute_bias(subchain_occu) != 0)):
+
+            flip = self._flipper.propose_step(subchain_occu)
+            delta_bias = self._bias.compute_bias_change(subchain_occu, flip)
+            accept = (True if delta_bias <= 0
+                      else -delta_bias > np.log(random.random()))
+            if accept:
+                i, sp = flip[0]
+                counts[sublatt_ids[i], sp] += 1
+                counts[sublatt_ids[i], subchain_occu[i]] -= 1
+
+                subchain_occu[i] = sp
+                step = step + flip
+
+            n_attempt += 1
+
+        if n_attempt >= self.cutoff:
+            step = []
+            if self.add_swap:
+                active_sublattices = [s for s in self.sublattices
+                                      if not np.all(occupancy[s.sites] ==
+                                                    occupancy[s.sites][0])]
+
+                if len(active_sublattices) != 0:
+                    _swapper = Swapper(active_sublattices)
+                    step = _swapper.propose_step(occupancy)
+
+        # Clean up
+        step_clean = []
+        for i, sp in step:
+            flipped_ids = (list(zip(*step_clean))[0] if len(step_clean) > 0
+                           else [])
+            if i not in flipped_ids:
+                step_clean.append((i, sp))
+            else:
+                iid = flipped_ids.index(i)
+                step_clean[iid] = (i, sp)
+
+        return step_clean
 
 
 def mcusher_factory(usher_type, sublattices, *args, **kwargs):
@@ -365,10 +486,5 @@ def mcusher_factory(usher_type, sublattices, *args, **kwargs):
     Returns:
         MCMCUsher: instance of derived class.
     """
-    if usher_type.capitalize() == 'Chargeneutralflipper':
-        return derived_class_factory(usher_type.capitalize(),
-                                     Tableflipper, sublattices,
-                                     *args, **kwargs)
-
     return derived_class_factory(usher_type.capitalize(), MCMCUsher,
                                  sublattices, *args, **kwargs)

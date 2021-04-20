@@ -14,6 +14,10 @@ import numpy as np
 from smol.constants import kB
 from smol.utils import derived_class_factory
 from smol.moca.sampler.mcusher import mcusher_factory
+from smol.moca.sampler.bias import mcbias_factory
+
+from smol.moca.utils.math_utils import GCD_list
+from smol.moca.comp_space import CompSpace
 
 
 class MCMCKernel(ABC):
@@ -25,8 +29,10 @@ class MCMCKernel(ABC):
     """
 
     valid_mcushers = None  # set this in derived kernels
+    valid_bias = None  # set this in derived kernels
 
-    def __init__(self, ensemble, temperature, step_type, *args, **kwargs):
+    def __init__(self, ensemble, temperature, step_type, bias_type,
+                 *args, **kwargs):
         """Initialize MCMCKernel.
 
         Args:
@@ -35,25 +41,45 @@ class MCMCKernel(ABC):
                 used in computing log probabilities.
             temperature (float):
                 Temperature at which the MCMC sampling will be carried out.
-            step_type (str): optional
+            step_type (str):
                 String specifying the MCMC step type.
+            bias_type (str|List[str]):
+                String specifying the bias term type. If null, no bias sampling
+                will be used.
             args:
                 positional arguments to instantiate the mcusher for the
                 corresponding step size.
             kwargs:
                 Keyword arguments to instantiate the mcusher for the
-                corresponding step size.
+                corresponding step size, or to instantiate the bias term.
+        Note that passing values in args will not be used toinstantiate
+        bias terms, so when you intend to pass parameters tobias terms,
+        be sure to specify argument name so it goes into kwargs.
         """
         self.natural_params = ensemble.natural_parameters
         self.feature_fun = ensemble.compute_feature_vector
         self._feature_change = ensemble.compute_feature_vector_change
         self.temperature = temperature
+
         try:
+            if 'ChargeNeutral' in ensemble.__class__.__name__:
+                sublattices = ensemble.all_sublattices
+            else:
+                sublattices = ensemble.sublattices
+
             self._usher = mcusher_factory(self.valid_mcushers[step_type],
-                                          ensemble.sublattices,
+                                          sublattices,
                                           *args, **kwargs)
         except KeyError:
             raise ValueError(f"Step type {step_type} is not valid for a "
+                             f"{type(self)} MCMCKernel.")
+
+        try:
+            self._bias = mcbias_factory(self.valid_bias[bias_type],
+                                        ensemble.all_sublattices,
+                                        **kwargs)
+        except KeyError:
+            raise ValueError(f"Step type {bias_type} is not valid for a "
                              f"{type(self)} MCMCKernel.")
 
     @property
@@ -95,8 +121,10 @@ class Metropolis(MCMCKernel):
     """
 
     valid_mcushers = {'flip': 'Flipper', 'swap': 'Swapper',
-                      'charge-neutral-flip': 'Chargeneutralflipper',
-                      'table-flip': 'Tableflipper'}
+                      'table-flip': 'Tableflipper',
+                      'subchain-walk': 'Subchainwalker'}
+    valid_bias = {'null': 'Nullbias',
+                  'square-charge': 'Squarechargebias'}
 
     def single_step(self, occupancy):
         """Attempt an MC step.
@@ -114,18 +142,22 @@ class Metropolis(MCMCKernel):
         step = self._usher.propose_step(occupancy)
         delta_features = self._feature_change(occupancy, step)
         delta_enthalpy = np.dot(self.natural_params, delta_features)
-        accept = (True if delta_enthalpy <= 0
-                  else -self.beta * delta_enthalpy > log(random()))
+        delta_bias = self._bias.compute_bias_change(occupancy, step)
+        bias = self._bias.compute_bias(occupancy)
+        accept = ((-self.beta * delta_enthalpy - delta_bias)
+                  > log(random()))
         if accept:
             for f in step:
                 occupancy[f[0]] = f[1]
             self._usher.update_aux_state(step)
+            bias += delta_bias
 
-        return accept, occupancy, delta_enthalpy, delta_features
+        # Record the current bias term.
+        return accept, occupancy, bias, delta_enthalpy, delta_features
 
 
 def mcmckernel_factory(kernel_type, ensemble, temperature, step_type,
-                       *args, **kwargs):
+                       bias_type, *args, **kwargs):
     """Get a MCMC Kernel from string name.
 
     Args:
@@ -136,7 +168,9 @@ def mcmckernel_factory(kernel_type, ensemble, temperature, step_type,
         temperature (float)
             Temperature at which the MCMC sampling will be carried out.
         step_type (str):
-            String specifying the step type (ie key to mcusher type)
+            String specifying the step type (ie key to mcusher type).
+        bias_type (str):
+            String specifying MCMCBias type.
         *args:
             Positional arguments passed to class constructor
         **kwargs:
@@ -146,5 +180,5 @@ def mcmckernel_factory(kernel_type, ensemble, temperature, step_type,
         MCMCKernel: instance of derived class.
     """
     return derived_class_factory(kernel_type.capitalize(), MCMCKernel,
-                                 ensemble, temperature, step_type,
+                                 ensemble, temperature, step_type, bias_type,
                                  *args, **kwargs)

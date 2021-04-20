@@ -7,7 +7,8 @@ from smol.moca import (CanonicalEnsemble, FuSemiGrandEnsemble,
                        DiscChargeNeutralSemiGrandEnsemble,
                        CEProcessor)
 from smol.moca.sampler.mcusher import (Swapper, Flipper,
-                                       Chargeneutralflipper)
+                                       Tableflipper,
+                                       Subchainwalker)
 from smol.moca.sampler.kernel import Metropolis
 from smol.moca.comp_space import CompSpace
 from smol.moca.ensemble.sublattice import get_all_sublattices
@@ -48,28 +49,45 @@ def disc_ensemble(cluster_subspace):
     mu = [0.3 for i in range(comp_space.dim)]
     return DiscChargeNeutralSemiGrandEnsemble(proc,mu)
 
+
 @pytest.fixture(params=['swap', 'flip'])
 def metropolis_kernel(ensemble, request):
-    mkernel = Metropolis(ensemble, temperature=5000, step_type=request.param)
+    mkernel = Metropolis(ensemble, temperature=5000, step_type=request.param,
+                         bias_type='null')
     # fix num_sites to gen random occu
     mkernel.num_sites = ensemble.num_sites
     return mkernel
 
-@pytest.fixture
-def metropolis_kernel_neutral(disc_ensemble):
-    mkernel = Metropolis(disc_ensemble, temperature=5000, step_type='charge-neutral-flip')
+@pytest.fixture(params=['table-flip', 'subchain-walk'])
+def metropolis_kernel_neutral(disc_ensemble, request):
+    kwargs = {}
+    if request.param == 'subchain-walk':
+        kwargs['sub_bias_type'] = 'square-charge'
+
+    mkernel = Metropolis(disc_ensemble, temperature=5000, step_type=request.param,
+                         bias_type='null', **kwargs)
     mkernel.num_sites = disc_ensemble.num_sites
+    mkernel.all_sublattices = disc_ensemble.all_sublattices
     return mkernel
+
 
 @pytest.mark.parametrize("step_type, mcusher",
                          [("swap", Swapper), ("flip", Flipper)])
 def test_constructor(ensemble, step_type, mcusher):
-    assert isinstance(Metropolis(ensemble, 5000, step_type)._usher, mcusher)
+    assert isinstance(Metropolis(ensemble, 5000, step_type, 
+                      bias_type='null')._usher, mcusher)
 
 
 def test_constructor_neutral(disc_ensemble):
-    assert isinstance(Metropolis(disc_ensemble, 5000, 'charge-neutral-flip')._usher,
-                      Chargeneutralflipper)
+    assert isinstance(Metropolis(disc_ensemble, 5000,
+                      'table-flip', bias_type='null')._usher,
+                      Tableflipper)
+    assert isinstance(Metropolis(disc_ensemble, 5000,
+                      'subchain-walk', bias_type='null',
+                      sub_bias_type='square-charge',
+                      lam=0.1)._usher,
+                      Subchainwalker)
+
 
 def test_single_step(metropolis_kernel):
 
@@ -78,19 +96,19 @@ def test_single_step(metropolis_kernel):
 
     for _ in range(20):
         init_occu = occu_.copy()
-        acc, occu, denth, dfeat = metropolis_kernel.single_step(init_occu)
+        acc, occu, _, denth, dfeat = metropolis_kernel.single_step(init_occu)
         if acc:
             assert not np.array_equal(occu, occu_)
         else:
             npt.assert_array_equal(occu, occu_)
 
 def test_single_step_neutral(metropolis_kernel_neutral):
-    occu_ = gen_random_neutral_occupancy(metropolis_kernel_neutral._usher.sublattices,
-                                    metropolis_kernel_neutral.num_sites)
+    occu_ = gen_random_neutral_occupancy(metropolis_kernel_neutral.all_sublattices,
+                                         metropolis_kernel_neutral.num_sites)
 
     for _ in range(20):
         init_occu = occu_.copy()
-        acc, occu, denth, dfeat = metropolis_kernel_neutral.single_step(init_occu)
+        acc, occu, _, denth, dfeat = metropolis_kernel_neutral.single_step(init_occu)
         if acc:
             assert not np.array_equal(occu, occu_)
         else:

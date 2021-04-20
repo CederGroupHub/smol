@@ -52,7 +52,8 @@ class Sampler:
 
     @classmethod
     def from_ensemble(cls, ensemble, temperature, step_type=None,
-                      kernel_type=None, seed=None, nwalkers=1,
+                      kernel_type=None, bias_type=None,
+                      seed=None, nwalkers=1,
                       *args, **kwargs):
         """
         Create a sampler based on an Ensemble instances.
@@ -72,6 +73,9 @@ class Sampler:
                 string specifying the specific MCMC transition kernel. This
                 represents the underlying MC algorithm. Currently only
                 Metropolis is supported.
+            bias_type (str): optional
+                string specifying the specific MCMC bias term. Default to
+                null bias.
             seed (int): optional
                 Seed for the PRNG.
             nwalkers (int): optional
@@ -92,9 +96,11 @@ class Sampler:
                              f"sampling a {type(ensemble)}!")
         if kernel_type is None:
             kernel_type = "Metropolis"
+        if bias_type is None:
+            bias_type = "null"
 
         mcmckernel = mcmckernel_factory(kernel_type, ensemble, temperature,
-                                        step_type, *args, **kwargs)
+                                        step_type, bias_type, *args, **kwargs)
 
         sampling_metadata = {"name": type(ensemble).__name__}
         sampling_metadata.update(ensemble.thermo_boundaries)
@@ -173,6 +179,7 @@ class Sampler:
         features = np.ascontiguousarray(features)
         enthalpy = np.dot(self._kernel.natural_params, features.T)
         temperature = self._kernel.temperature * np.ones(occupancies.shape[0])
+        bias = np.zeros(occupancies.shape[0])
 
         # Initialise progress bar
         chains, nsites = self.samples.shape
@@ -181,16 +188,18 @@ class Sampler:
         with progress_bar(progress, total=nsteps, description=desc) as bar:
             for _ in range(nsteps // thin_by):
                 for _ in range(thin_by):
-                    for i, (accept, occupancy, delta_enthalpy, delta_features)\
+                    for i, (accept, occupancy, occu_bias, delta_enthalpy,
+                            delta_features)\
                       in enumerate(map(self._kernel.single_step, occupancies)):
                         accepted[i] += accept
                         occupancies[i] = occupancy
+                        bias[i] = occu_bias
                         if accept:
                             enthalpy[i] = enthalpy[i] + delta_enthalpy
                             features[i] = features[i] + delta_features
                     bar.update()
                 # yield copies
-                yield (accepted, temperature, occupancies.copy(),
+                yield (accepted, temperature, occupancies.copy(), bias.copy(),
                        enthalpy.copy(), features.copy(), thin_by)
                 accepted[:] = 0  # reset acceptance array
 
@@ -313,4 +322,3 @@ class Sampler:
 
 # TODO potential define two _sample functions serial/parallel that get called
 #  in one sampler function.
-# TODO streaming container to hdf5?
