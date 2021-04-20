@@ -158,7 +158,7 @@ class Tableflipper(MCMCUsher):
     write.
     """
 
-    def __init__(self, all_sublattices, flip_table=None, add_swap=True,
+    def __init__(self, all_sublattices, flip_table=None, add_swap=False,
                  flip_weights=None):
         """Initialize Tableflipper.
 
@@ -192,7 +192,7 @@ class Tableflipper(MCMCUsher):
             add_swap(Boolean, optional):
                 Whether or not to attempt canonical swap if a step
                 can not be proposed. May help accelerating equilibration.
-                Default to True.
+                Default to False.
             flip_weights(1D Arraylike|Nonetype), optional:
                 Weights to adjust probability of each flip. If
                 None given, will assign equal weights to each
@@ -350,7 +350,7 @@ class Subchainwalker(MCMCUsher):
                   'square-charge': 'Squarechargebias'}
 
     def __init__(self, all_sublattices, sub_bias_type='null',
-                 cutoff_steps=200, add_swap=True,
+                 cutoff_steps=200, add_swap=False,
                  *args, **kwargs):
         """Initialize Subchainwalker.
 
@@ -366,7 +366,7 @@ class Subchainwalker(MCMCUsher):
             add_swap(Boolean, optional):
                 Whether or not to attempt canonical swap if a step
                 can not be proposed. May help accelerating equilibration.
-                Default to True.
+                Default to False.
             *args:
                 Positional arguments to initialize bias term.
             **kwargs:
