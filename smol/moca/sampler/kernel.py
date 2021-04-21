@@ -62,7 +62,7 @@ class MCMCKernel(ABC):
         self.temperature = temperature
 
         try:
-            if 'ChargeNeutral' in ensemble.__class__.__name__:
+            if step_type in ['table-flip', 'subchain-walk']:
                 sublattices = ensemble.all_sublattices
             else:
                 sublattices = ensemble.sublattices

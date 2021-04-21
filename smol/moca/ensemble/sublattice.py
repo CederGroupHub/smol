@@ -42,10 +42,9 @@ def get_all_sublattices(processor):
         list of Sublattice, containing all sites, even
         if only occupied by one specie.
     """
-    unique_site_spaces = []
-    for site_space in get_site_spaces(processor.cluster_subspace.structure):
-        if site_space not in unique_site_spaces:
-            unique_site_spaces.append(site_space)
+    # Must keep the same order as processor.unique_site_spaces.
+    unique_site_spaces = tuple(set(get_site_spaces(
+                               processor.cluster_subspace.structure)))
 
     return [Sublattice(site_space,
             np.array([i for i, sp in enumerate(processor.allowed_species)
