@@ -614,6 +614,7 @@ class SampleContainer(MSONable):
                         d['natural_parameters'], d['num_energy_coefs'],
                         d['metadata'])
         container._nsamples = np.array(d['nsamples'])
+        container.total_mc_steps = d['total_mc_steps']
         container._chain = np.array(d['chain'], dtype=int)
         container._bias = np.array(d['bias'])
         container._time = np.array(d['time'])
