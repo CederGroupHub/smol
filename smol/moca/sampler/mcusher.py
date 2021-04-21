@@ -265,6 +265,10 @@ class Tableflipper(MCMCUsher):
             for sp_id in union_sp_ids:
                 pickable_sites.extend(sl_sites[sp_id])
 
+            if len(pickable_sites) < n_picks:
+                flip_list = []
+                break
+
             picked_sites_sl = random.sample(pickable_sites, n_picks)
             picked_table = {}
             for s_id in picked_sites_sl:
