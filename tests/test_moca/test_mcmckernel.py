@@ -96,7 +96,7 @@ def test_single_step(metropolis_kernel):
 
     for _ in range(20):
         init_occu = occu_.copy()
-        acc, occu, _, denth, dfeat = metropolis_kernel.single_step(init_occu)
+        acc, occu, _, _, denth, dfeat = metropolis_kernel.single_step(init_occu)
         if acc:
             assert not np.array_equal(occu, occu_)
         else:
@@ -108,7 +108,7 @@ def test_single_step_neutral(metropolis_kernel_neutral):
 
     for _ in range(20):
         init_occu = occu_.copy()
-        acc, occu, _, denth, dfeat = metropolis_kernel_neutral.single_step(init_occu)
+        acc, occu, _, _, denth, dfeat = metropolis_kernel_neutral.single_step(init_occu)
         if acc:
             assert not np.array_equal(occu, occu_)
         else:

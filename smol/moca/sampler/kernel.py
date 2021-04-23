@@ -157,8 +157,8 @@ class Metropolis(MCMCKernel):
 
         dt = time.time()-cur_time
         # Record the current bias term.
-        return accept, occupancy, bias, dt, delta_enthalpy,
-               delta_features
+        return (accept, occupancy, bias, dt, delta_enthalpy,
+                delta_features)
 
 
 def mcmckernel_factory(kernel_type, ensemble, temperature, step_type,
