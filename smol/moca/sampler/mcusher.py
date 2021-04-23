@@ -25,7 +25,7 @@ from ..utils.math_utils import choose_section_from_partition, GCD_list
 class MCMCUsher(ABC):
     """Abstract base class for MCMC usher classes."""
 
-    def __init__(self, sublattices, sublattice_probabilities=None):
+    def __init__(self, sublattices, sublattice_probabilities=None, *args, **kwargs):
         """Initialize MCMCStep.
 
         Args:
@@ -159,7 +159,7 @@ class Tableflipper(MCMCUsher):
     """
 
     def __init__(self, all_sublattices, flip_table=None, add_swap=False,
-                 flip_weights=None):
+                 flip_weights=None, *args, **kwargs):
         """Initialize Tableflipper.
 
         Args:
