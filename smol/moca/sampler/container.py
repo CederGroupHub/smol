@@ -95,6 +95,7 @@ class SampleContainer(MSONable):
         self._time = np.empty((0, nwalkers))  # For time stamping
         self.aux_checkpoint = None
         self._backend = None  # for streaming
+        self._time_init = time.time()
 
     @property
     def num_samples(self):
@@ -419,7 +420,7 @@ class SampleContainer(MSONable):
         self._temperature[self._nsamples, :] = temperature
         self._chain[self._nsamples, :, :] = occupancies
         self._bias[self._nsamples, :] = bias
-        self._time[self._nsamples, :] = time.time()
+        self._time[self._nsamples, :] = time.time() - self._time_init
         self._enthalpy[self._nsamples, :] = enthalpy
         self._features[self._nsamples, :, :] = features
         self._nsamples += 1
