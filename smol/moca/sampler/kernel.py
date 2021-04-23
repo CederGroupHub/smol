@@ -10,6 +10,7 @@ from abc import ABC, abstractmethod
 from math import log
 from random import random
 import numpy as np
+import time
 
 from smol.constants import kB
 from smol.utils import derived_class_factory
@@ -137,8 +138,10 @@ class Metropolis(MCMCKernel):
                 encoded occupancy.
 
         Returns:
-            tuple: (acceptance, occupancy, features change, enthalpy change)
+            tuple: (acceptance, occupancy, bias, dt, features change,
+                    enthalpy change)
         """
+        cur_time = time.time()
         step = self._usher.propose_step(occupancy)
         delta_features = self._feature_change(occupancy, step)
         delta_enthalpy = np.dot(self.natural_params, delta_features)
@@ -152,8 +155,10 @@ class Metropolis(MCMCKernel):
             self._usher.update_aux_state(step)
             bias += delta_bias
 
+        dt = time.time()-cur_time
         # Record the current bias term.
-        return accept, occupancy, bias, delta_enthalpy, delta_features
+        return accept, occupancy, bias, dt, delta_enthalpy,
+               delta_features
 
 
 def mcmckernel_factory(kernel_type, ensemble, temperature, step_type,

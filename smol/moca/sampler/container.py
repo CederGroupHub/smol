@@ -12,7 +12,6 @@ import warnings
 from collections import defaultdict
 import json
 import numpy as np
-import time
 
 from monty.json import MSONable
 from smol.moca.ensemble.sublattice import Sublattice
@@ -95,7 +94,6 @@ class SampleContainer(MSONable):
         self._time = np.empty((0, nwalkers))  # For time stamping
         self.aux_checkpoint = None
         self._backend = None  # for streaming
-        self._time_init = time.time()
 
     @property
     def num_samples(self):
@@ -395,7 +393,7 @@ class SampleContainer(MSONable):
             counts = self._flatten(counts)
         return counts
 
-    def save_sample(self, accepted, temperature, occupancies, bias,
+    def save_sample(self, accepted, temperature, occupancies, bias, times,
                     enthalpy, features, thinned_by):
         """Save a sample from the generated chain.
 
@@ -408,6 +406,8 @@ class SampleContainer(MSONable):
                 array of occupancies
             bias (ndarray):
                 array of bias
+            times (ndarray):
+                array of times
             enthalpy (ndarray):
                 array of generalized enthalpy changes
             features (ndarray):
@@ -420,7 +420,7 @@ class SampleContainer(MSONable):
         self._temperature[self._nsamples, :] = temperature
         self._chain[self._nsamples, :, :] = occupancies
         self._bias[self._nsamples, :] = bias
-        self._time[self._nsamples, :] = time.time() - self._time_init
+        self._time[self._nsamples, :] = times
         self._enthalpy[self._nsamples, :] = enthalpy
         self._features[self._nsamples, :, :] = features
         self._nsamples += 1
