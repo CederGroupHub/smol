@@ -25,7 +25,8 @@ from ..utils.math_utils import choose_section_from_partition, GCD_list
 class MCMCUsher(ABC):
     """Abstract base class for MCMC usher classes."""
 
-    def __init__(self, sublattices, sublattice_probabilities=None, *args, **kwargs):
+    def __init__(self, sublattices, sublattice_probabilities=None, *args,
+                 **kwargs):
         """Initialize MCMCStep.
 
         Args:
@@ -354,7 +355,7 @@ class Subchainwalker(MCMCUsher):
                   'square-charge': 'Squarechargebias'}
 
     def __init__(self, all_sublattices, sub_bias_type='null',
-                 cutoff_steps=200, add_swap=False,
+                 cutoff_steps=200, minimize_swap=False, add_swap=True,
                  *args, **kwargs):
         """Initialize Subchainwalker.
 
@@ -367,6 +368,11 @@ class Subchainwalker(MCMCUsher):
                 Type of bias term in subchain. Optional, default is null bias.
             cutoff_steps(int):
                 Maximum number of subchain length. Optional, default is 200.
+            minimize_swap(Boolean, optional):
+                If true, will try to minimize number of swaps by requiring the
+                subchain to terminate at not only bias=0, but also change of
+                composition!=0. Default is False, because allowing more swaps
+                helps incresing acceptace, and therefore faster equilibration.
             add_swap(Boolean, optional):
                 Whether or not to attempt canonical swap if a step
                 can not be proposed. May help accelerating equilibration.
@@ -381,6 +387,7 @@ class Subchainwalker(MCMCUsher):
         self.sublattices = [s for s in all_sublattices
                             if len(s.site_space) > 1]
         self.cutoff = cutoff_steps
+        self.minimize_swap = minimize_swap
         self.add_swap = add_swap
         try:
             self._bias = mcbias_factory(self.valid_bias[sub_bias_type],
@@ -431,9 +438,14 @@ class Subchainwalker(MCMCUsher):
         for i, s in enumerate(self.all_sublattices):
             sublatt_ids[s.sites] = i
 
-        while (n_attempt < self.cutoff and
-               (np.allclose(counts, counts_init) or
-                self._bias.compute_bias(subchain_occu) != 0)):
+        while n_attempt < self.cutoff:
+            if self._bias.compute_bias(subchain_occu) == 0:
+                if self.minimize_swap:
+                    if not np.allclose(counts, counts_init):
+                        break
+                else:
+                    if n_attempt > 0:  # Allows swaps to appear.
+                        break
 
             flip = self._flipper.propose_step(subchain_occu)
             delta_bias = self._bias.compute_bias_change(subchain_occu, flip)

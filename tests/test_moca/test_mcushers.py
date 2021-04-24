@@ -69,7 +69,8 @@ def tableflipper(sublattices_neutral):
 
 @pytest.fixture
 def subchainwalker(sublattices_neutral):
-    return Subchainwalker(sublattices_neutral, sub_bias_type='square-charge', add_swap=False)
+    return Subchainwalker(sublattices_neutral, sub_bias_type='square-charge',
+                          minimize_swap=True, add_swap=False)
 
 
 def test_bad_propabilities(mcmcusher):
