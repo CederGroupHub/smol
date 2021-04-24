@@ -159,7 +159,7 @@ class Tableflipper(MCMCUsher):
     write.
     """
 
-    def __init__(self, all_sublattices, flip_table=None, add_swap=False,
+    def __init__(self, all_sublattices, flip_table=None, add_swap=True,
                  flip_weights=None, *args, **kwargs):
         """Initialize Tableflipper.
 
@@ -192,8 +192,8 @@ class Tableflipper(MCMCUsher):
                 flip table.
             add_swap(Boolean, optional):
                 Whether or not to attempt canonical swap if a step
-                can not be proposed. May help accelerating equilibration.
-                Default to False.
+                can not be proposed. Helps accelerating equilibration.
+                Default to True.
             flip_weights(1D Arraylike|Nonetype), optional:
                 Weights to adjust probability of each flip. If
                 None given, will assign equal weights to each
@@ -375,8 +375,9 @@ class Subchainwalker(MCMCUsher):
                 helps incresing acceptace, and therefore faster equilibration.
             add_swap(Boolean, optional):
                 Whether or not to attempt canonical swap if a step
-                can not be proposed. May help accelerating equilibration.
-                Default to False.
+                can not be proposed. Helps accelerating equilibration and
+                sampling.
+                Default to True.
             *args:
                 Positional arguments to initialize bias term.
             **kwargs:
