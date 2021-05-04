@@ -77,6 +77,7 @@ class SiteBasis(MSONable):
         # stack the constant basis function on there for proper normalization
         self._f_array = np.vstack((np.ones_like(func_arr[0]), func_arr))
         self._r_array = None  # array from QR in basis orthonormalization
+        self._rot_array = np.ones_like(self._f_array)  # rotation arrray
 
     @property
     def function_array(self):
@@ -92,6 +93,11 @@ class SiteBasis(MSONable):
     def orthonormalization_array(self):
         """Get R array from QR factorization."""
         return self._r_array
+
+    @property
+    def rotation_array(self):
+        """Get the rotation array."""
+        return self._rot_array
 
     @property
     def species(self):
@@ -196,6 +202,7 @@ class SiteBasis(MSONable):
                 + (np.outer(v1, v2) - np.outer(v2, v1)) * np.sin(angle) \
                 + (np.outer(v1, v1) + np.outer(v2, v2)) * (np.cos(angle) - 1)
             self._f_array[1:] = self._f_array[1:] @ R.T
+            self._rot_array = R
             # make really small numbers zero
             self._f_array[abs(self._f_array) < 2 * np.finfo(np.float64).eps] = 0.0  # noqa
 
@@ -207,7 +214,8 @@ class SiteBasis(MSONable):
              "flavor": self.flavor,
              "func_array": self._f_array.tolist(),
              "orthonorm_array":
-                 None if self._r_array is None else self._r_array.tolist()
+                None if self._r_array is None else self._r_array.tolist(),
+             "rot_array": self._rot_array.tolist()
              }
         return d
 
@@ -230,6 +238,7 @@ class SiteBasis(MSONable):
         site_basis.flavor = d['flavor']
         site_basis._f_array = np.array(d['func_array'])
         site_basis._r_array = np.array(d['orthonorm_array'])
+        site_basis._rot_array = np.array(d['rot_array'])
         return site_basis
 
 
