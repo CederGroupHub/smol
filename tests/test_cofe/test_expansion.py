@@ -19,7 +19,7 @@ class TestClusterExpansionBinary(unittest.TestCase):
         self.sw = StructureWrangler(cs)
         data = synthetic_CE_binary['data']
         train_ids = np.random.choice(range(len(data)), size=len(data)//5,
-                                          replace=False)
+                                     replace=False)
         test_ids = np.array(list(set(range(len(data))) - set(train_ids)))
         self.test_structs = [data[i][0] for i in test_ids]
         self.test_energies = np.array([data[i][1] for i in test_ids])
@@ -27,8 +27,8 @@ class TestClusterExpansionBinary(unittest.TestCase):
             struct, energy = data[i]
             self.sw.add_data(struct, {'energy': energy})
         coefs = np.linalg.lstsq(self.sw.feature_matrix,
-                               self.sw.get_property_vector('energy', True),
-                               rcond=None)[0]
+                                self.sw.get_property_vector('energy', True),
+                                rcond=None)[0]
         self.ce = ClusterExpansion(cs, coefs, self.sw.feature_matrix)
 
     def test_predict_train(self):
@@ -48,12 +48,16 @@ class TestClusterExpansionBinary(unittest.TestCase):
         cs.change_site_bases('indicator', orthonormal=True)
         feature_matrix = np.array([cs.corr_from_structure(s)
                                    for s in self.sw.refined_structures])
-        eci = self.ce.convert_eci('indicator',
-                                  self.sw.refined_structures,
-                                  self.sw.supercell_matrices,
-                                  orthonormal=True)
+        eci = self.ce.convert_coefs('indicator',
+                                    self.sw.refined_structures,
+                                    self.sw.supercell_matrices,
+                                    orthonormal=True)
         self.assertTrue(np.allclose(np.dot(self.sw.feature_matrix, self.ce.coefs),
                                     np.dot(feature_matrix, eci)))
+        ce = ClusterExpansion(self.ce.cluster_subspace, self.ce.coefs)
+        self.assertRaises(AttributeError, ce.convert_coefs, 'indicator',
+                          self.sw.refined_structures,
+                          self.sw.supercell_matrices,)
 
     def test_prune(self):
         cs = ClusterSubspace.from_dict(synthetic_CE_binary['cluster_subspace'])
@@ -64,22 +68,22 @@ class TestClusterExpansionBinary(unittest.TestCase):
         new_coefs = self.ce.coefs[abs(self.ce.coefs) >= thresh]
         new_eci = self.ce.eci[ids]
         self.assertEqual(len(ce.coefs), len(new_coefs))
-        self.assertTrue(np.array_equal(new_coefs, ce.coefs))
         self.assertTrue(np.array_equal(new_eci, ce.eci))
-        self.assertEqual(ce.cluster_subspace.n_orbits, len(new_coefs))
+        self.assertTrue(np.array_equal(new_coefs, ce.coefs))
+        self.assertEqual(ce.cluster_subspace.num_orbits, len(new_coefs))
         self.assertEqual(len(ce.eci_orbit_ids), len(new_coefs))
+        # check the updated feature matrix is correct
+        self.assertTrue(np.array_equal(ce._feat_matrix,
+                        self.sw.feature_matrix[:, ids]))
+        # check that recomputing features produces whats expected
+        new_feature_matrix = np.array([cs.corr_from_structure(s)
+                                       for s in self.sw.structures])
+        self.assertTrue(np.equal(ce._feat_matrix, new_feature_matrix).all())
         # check new predictions
         preds = [ce.predict(s, normalize=True) for s in self.sw.structures]
         self.assertTrue(np.allclose(preds,
                                     np.dot(self.sw.feature_matrix[:, ids],
                                            new_coefs)))
-        # check the updated feature matrix is correct
-        self.assertTrue(np.equal(ce._feat_matrix,
-                               self.sw.feature_matrix[:, ids]).all())
-        # check that recomputing features produces whats expected
-        new_feature_matrix = np.array([cs.corr_from_structure(s)
-                                       for s in self.sw.structures])
-        self.assertTrue(np.equal(ce._feat_matrix, new_feature_matrix).all())
 
     def test_print(self):
         _ = str(self.ce)
@@ -112,9 +116,9 @@ class TestClusterExpansionEwaldBinary(unittest.TestCase):
 
     def test_ewald_only(self):
         data = self.dataset['ewald_data']
-        cs = ClusterSubspace.from_radii(self.cs.structure,
-                                        radii={2: 0},
-                                        basis='sinusoid')
+        cs = ClusterSubspace.from_cutoffs(self.cs.structure,
+                                          cutoffs={2: 0},
+                                          basis='sinusoid')
         self.assertEqual(len(cs.orbits), 1)
         cs.add_external_term(EwaldTerm())
         ecis = self._test_predictions(cs, data)

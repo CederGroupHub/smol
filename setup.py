@@ -55,12 +55,14 @@ else:
     USE_CYTHON = False
 
 ext = '.pyx' if USE_CYTHON else '.c'
-ext_modules = [Extension("src.mc_utils",
-                         ["src/mc_utils"+ext],
-                         language="c",
-                         include_dirs=["src/"],
-                         extra_compile_args=["-O3", "-ffast-math"]
-                         )]
+ext_modules = [
+    Extension("src.mc_utils",
+              ["src/mc_utils"+ext],
+              language="c",
+              include_dirs=["src/"],
+              extra_compile_args=["-O3", "-ffast-math"]
+              )
+]
 
 if USE_CYTHON:
     from Cython.Build import cythonize
@@ -72,12 +74,11 @@ if USE_CYTHON:
 setup(
     name="smol",
     packages=find_packages(),
-    version="2019.10.4",
+    version="v1.0.1",
     cmdclass={"build_ext": build_ext},
     setup_requires=['numpy>=1.18.1', 'setuptools>=18.0'],
     python_requires='>=3.7',
-    install_requires=['numpy>=1.18.1', 'pymatgen>=2020.7.13',
-                      'monty>=3.0.1', 'cvxopt'],
+    install_requires=['numpy>=1.18.1', 'pymatgen>=2020.8.13', 'monty>=3.0.1'],
     extras_require={
         "provenance": ["pybtex"],
         ':python_version > "3.7"': [

@@ -15,10 +15,10 @@ from tests.data import (icet_eci, icet_predictions, icet_fit_structs,
 class TestCEvicet(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.cs = ClusterSubspace.from_radii(aupt_prim,
-                                            {2: 13.5, 3: 6.0, 4: 5.5},
-                                            supercell_size='num_sites',
-                                            basis='sinusoid')
+        cls.cs = ClusterSubspace.from_cutoffs(aupt_prim,
+                                              {2: 13.5, 3: 6.0, 4: 5.5},
+                                              supercell_size='num_sites',
+                                              basis='sinusoid')
         cls.sw = StructureWrangler(cls.cs)
         for item in icet_fit_structs:
             cls.sw.add_data(item['structure'], item['properties'],
@@ -29,7 +29,7 @@ class TestCEvicet(unittest.TestCase):
                                     rcond=None)[0]
 
     def test_subspace(self):
-        self.assertEqual(self.cs.n_bit_orderings, len(icet_eci))
+        self.assertEqual(self.cs.num_corr_functions, len(icet_eci))
         self.assertEqual(len(self.cs.orbits_by_size[1]), 1)
         self.assertEqual(len(self.cs.orbits_by_size[2]), 25)
         self.assertEqual(len(self.cs.orbits_by_size[3]), 12)
