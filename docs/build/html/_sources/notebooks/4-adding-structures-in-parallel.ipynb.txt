@@ -16,7 +16,7 @@
     "import numpy as np\n",
     "import json\n",
     "from monty.serialization import loadfn\n",
-    "from pymatgen import Structure\n",
+    "from pymatgen.core.structure import Structure\n",
     "from smol.cofe import ClusterSubspace, StructureWrangler"
    ]
   },

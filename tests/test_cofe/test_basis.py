@@ -4,7 +4,7 @@ import numpy as np
 import numpy.testing as npt
 from numpy.polynomial.chebyshev import chebval
 from numpy.polynomial.legendre import legval
-from pymatgen import Composition
+from pymatgen.core import Composition
 from smol.cofe.space import domain
 from smol.cofe.space import basis
 from tests.utils import assert_msonable
