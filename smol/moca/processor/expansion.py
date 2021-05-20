@@ -1,0 +1,167 @@
+"""Implementation of CE processor class for a fixed size super cell.
+
+If you are using a Hamiltonian with an Ewald summation electrostatic term, you
+should use the CompositeProcessor with a CEProcessor and an EwaldProcessor
+class to handle changes in the electrostatic interaction energy.
+"""
+
+__author__ = "Luis Barroso-Luque"
+
+import numpy as np
+from collections import defaultdict
+from smol.cofe import ClusterSubspace
+from src.mc_utils import (corr_from_occupancy, general_delta_corr_single_flip,
+                          indicator_delta_corr_single_flip)
+
+from smol.moca.processor.base import Processor
+
+
+class CEProcessor(Processor):
+    """CEProcessor class to use a ClusterExpansion in MC simulations.
+
+    A CE processor is optimized to compute correlation vectors and local
+    changes in correlation vectors. This class allows the use a cluster
+    expansion Hamiltonian to run Monte Carlo based simulations.
+
+    A processor allows an ensemble class to generate a Markov chain
+    for sampling thermodynamic properties from a cluster expansion
+    Hamiltonian.
+
+    Attributes:
+        optimize_indicator (bool):
+            If true the local correlation update function specialized for
+            indicator bases is used. This should only be used when the
+            expansion was fit with an indicator basis and no additional
+            normalization.
+        coefs (ndarray):
+            Fitted coefficients from the cluster expansion.
+        n_orbit_functions (int):
+            Total number of orbit basis functions (correlation functions).
+            This includes all possible labellings/orderings for all orbits.
+            Same as :code:`ClusterSubspace.n_bit_orderings`.
+    """
+
+    def __init__(self, cluster_subspace, supercell_matrix, coefficients,
+                 optimize_indicator=False):
+        """Initialize a CEProcessor.
+
+        Args:
+            cluster_subspace (ClusterSubspace):
+                A cluster subspace
+            supercell_matrix (ndarray):
+                An array representing the supercell matrix with respect to the
+                Cluster Expansion prim structure.
+            coefficients (ndarray):
+                Fit coefficients for the represented cluster expansion.
+            optimize_indicator (bool):
+                When using an indicator basis, sets the function to compute
+                correlation differences to the indicator optimized function.
+                This can make MC steps faster.
+                Make sure your cluster expansion was indeed fit with an
+                indicator basis set, otherwise your MC results are no good.
+        """
+        super().__init__(cluster_subspace, supercell_matrix, coefficients)
+
+        self.n_orbit_functions = self.cluster_subspace.num_corr_functions
+        if len(coefficients) != self.n_orbit_functions:
+            raise ValueError('The provided coeffiecients are not the right '
+                             f'length. Got {len(coefficients)} coefficients, '
+                             f'the length must be {self.n_orbit_functions} '
+                             'based on the provided cluster subspace.')
+
+        # set the dcorr_single_flip function
+        self.optimize_indicator = optimize_indicator
+        self._dcorr_single_flip = indicator_delta_corr_single_flip \
+            if optimize_indicator \
+            else general_delta_corr_single_flip
+
+        # Prepare necssary information for local updates
+        self._orbit_inds = self._subspace.supercell_orbit_mappings(supercell_matrix)  # noqa
+        # List of orbit information and supercell site indices to compute corr
+        self._orbit_list = []
+        # Dictionary of orbits by site index and information
+        # necessary to compute local changes in correlation vectors from flips
+        self._orbits_by_sites = defaultdict(list)
+        # Store the orbits grouped by site index in the structure,
+        # to be used by delta_corr. We also store a reduced index array,
+        # where only the rows with the site index are stored. The ratio is
+        # needed because the correlations are averages over the full inds
+        # array.
+        for orbit, inds in self._orbit_inds:
+            self._orbit_list.append((
+                orbit.bit_id, orbit.bit_combo_array, orbit.bit_combo_inds,
+                orbit.bases_array, inds))
+
+            for site_ind in np.unique(inds):
+                in_inds = np.any(inds == site_ind, axis=-1)
+                ratio = len(inds) / np.sum(in_inds)
+                self._orbits_by_sites[site_ind].append(
+                    (orbit.bit_id, ratio, orbit.bit_combo_array,
+                     orbit.bit_combo_inds, orbit.bases_array, inds[in_inds]))
+
+    def compute_feature_vector(self, occupancy):
+        """Compute the correlation vector for a given occupancy string.
+
+        The correlation vector in this case is normalized per supercell. In
+        other works it is extensive corresponding to the size of the supercell.
+
+        Args:
+            occupancy (ndarray):
+                encoded occupation array
+
+        Returns:
+            array: correlation vector
+        """
+        return corr_from_occupancy(occupancy, self.n_orbit_functions,
+                                   self._orbit_list) * self.size
+
+    def compute_feature_vector_change(self, occupancy, flips):
+        """
+        Compute the change in the correlation vector from a list of flips.
+
+        The correlation vector in this case is normalized per supercell. In
+        other works it is extensive corresponding to the size of the supercell.
+
+        Args:
+            occupancy (ndarray):
+                encoded occupancy string
+            flips (list of tuple):
+                list of tuples with two elements. Each tuple represents a
+                single flip where the first element is the index of the site
+                in the occupancy string and the second element is the index
+                for the new species to place at that site.
+
+        Returns:
+            array: change in correlation vector
+        """
+        occu_i = occupancy
+        delta_corr = np.zeros(self.n_orbit_functions)
+        for f in flips:
+            occu_f = occu_i.copy()
+            occu_f[f[0]] = f[1]
+            orbits = self._orbits_by_sites[f[0]]
+            delta_corr += self._dcorr_single_flip(occu_f, occu_i,
+                                                  self.n_orbit_functions,
+                                                  orbits)
+            occu_i = occu_f
+
+        return delta_corr * self.size
+
+    def as_dict(self) -> dict:
+        """
+        Json-serialization dict representation.
+
+        Returns:
+            MSONable dict
+        """
+        d = super().as_dict()
+        d['optimize_indicator'] = self.optimize_indicator
+        return d
+
+    @classmethod
+    def from_dict(cls, d):
+        """Create a CEProcessor from serialized MSONable dict."""
+        return cls(ClusterSubspace.from_dict(d['cluster_subspace']),
+                   np.array(d['supercell_matrix']),
+                   coefficients=np.array(d['coefficients']),
+                   optimize_indicator=d['optimize_indicator'])

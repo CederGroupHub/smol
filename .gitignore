@@ -39,6 +39,7 @@ Thumbs.db
 # Python generated files #
 ##########################
 *.pyc
+*.egg
 *.egg-info/
 /build
 
@@ -50,3 +51,4 @@ Thumbs.db
 .coverage
 .ipynp_checkpoints
 /smol/cofe/debug/*
+*/.ipynb_checkpoints/*

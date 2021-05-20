@@ -5,11 +5,14 @@ The moca (pronounced mocha) holds implementations of classes used to run
 Monte Carlo simulations using Cluster Expansion Hamiltonians.
 """
 
-from __future__ import division
+from .processor.expansion import CEProcessor
+from .processor.ewald import EwaldProcessor
+from .processor.composite import CompositeProcessor
+from .ensemble.canonical import CanonicalEnsemble
+from .ensemble.semigrand import MuSemiGrandEnsemble, FuSemiGrandEnsemble
+from .sampler.sampler import Sampler
+from smol.moca.sampler.container import SampleContainer
 
-from .processor import CEProcessor, EwaldCEProcessor
-from .ensembles.canonical import CanonicalEnsemble
-from .ensembles.sgcanonical import MuSemiGrandEnsemble, FuSemiGrandEnsemble
-
-__all__ = ['CEProcessor', 'EwaldCEProcessor', 'CanonicalEnsemble',
-           'MuSemiGrandEnsemble', 'FuSemiGrandEnsemble']
+__all__ = ['CEProcessor', 'EwaldProcessor', 'CompositeProcessor',
+           'CanonicalEnsemble', 'MuSemiGrandEnsemble', 'FuSemiGrandEnsemble',
+           'Sampler', 'SampleContainer']

@@ -3,7 +3,7 @@ import json
 from itertools import combinations
 import numpy as np
 from pymatgen import Structure, Lattice
-from smol.cofe.configspace import Cluster
+from smol.cofe.space import Cluster
 
 
 class TestCluster(unittest.TestCase):
@@ -33,7 +33,7 @@ class TestCluster(unittest.TestCase):
     def test_radius(self):
         coords = self.lattice.get_cartesian_coords(self.cluster.sites)
         radius = max([np.sum((i - j)**2) for i, j in combinations(coords, 2)])**0.5
-        self.assertEqual(self.cluster.radius, radius)
+        self.assertEqual(self.cluster.diameter, radius)
 
     def test_periodicity(self):
         """Test periodicity of clusters."""
