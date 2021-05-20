@@ -14,7 +14,7 @@ __author__ = "Luis Barroso-Luque"
 from abc import ABCMeta, abstractmethod
 import numpy as np
 
-from pymatgen import Structure, PeriodicSite
+from pymatgen.core import Structure, PeriodicSite
 from monty.json import MSONable
 from smol.utils import get_subclasses
 from smol.cofe.space import (get_allowed_species, get_site_spaces,

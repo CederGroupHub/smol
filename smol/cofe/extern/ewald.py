@@ -10,7 +10,7 @@ W. D. Richards, et al., Energy Environ. Sci., 2016, 9, 3272–3278
 __author__ = "William Davidson Richard, Luis Barroso-Luque"
 
 import numpy as np
-from pymatgen import Structure, PeriodicSite
+from pymatgen.core import Structure, PeriodicSite
 from pymatgen.analysis.ewald import EwaldSummation
 from monty.json import MSONable
 from smol.cofe.space.domain import get_allowed_species, Vacancy

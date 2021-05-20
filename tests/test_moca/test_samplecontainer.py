@@ -3,7 +3,7 @@ from itertools import product
 import numpy as np
 import numpy.testing as npt
 
-from pymatgen import Composition
+from pymatgen.core import Composition
 from smol.cofe.space.domain import SiteSpace
 from smol.moca.ensemble.sublattice import Sublattice
 from smol.moca.sampler import SampleContainer
