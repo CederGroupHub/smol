@@ -440,7 +440,8 @@ class Subchainwalker(MCMCUsher):
             sublatt_ids[s.sites] = i
 
         while n_attempt < self.cutoff:
-            if self._bias.compute_bias(subchain_occu) == 0:
+            if (self._bias.compute_bias(subchain_occu) == 0 and
+                    (not np.allclose(subchain_occu, occupancy))):
                 if self.minimize_swap:
                     if not np.allclose(counts, counts_init):
                         break

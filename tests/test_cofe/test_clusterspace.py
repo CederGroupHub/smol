@@ -301,6 +301,12 @@ class TestClusterSubSpace(unittest.TestCase):
         self.assertTrue(np.allclose(cs.corr_from_structure(s), expected))
         self.assertWarns(UserWarning, cs.remove_orbit_bit_combos, [9])
 
+        cs_reload = ClusterSubspace.from_dict(cs.as_dict())
+        self.assertTrue(cs.orbits == cs_reload.orbits)
+        self.assertTrue(all([np.all(c1 == c2)
+                            for o1, o2 in zip(cs.orbits, cs_reload.orbits)
+                            for c1, c2 in zip(o1.bit_combos, o2.bit_combos)]))
+
     def test_orbit_mappings_from_matrix(self):
         # check that all supercell_structure index groups map to the correct
         # primitive cell sites, and check that max distance under supercell
