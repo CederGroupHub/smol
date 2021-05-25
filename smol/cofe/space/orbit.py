@@ -387,7 +387,8 @@ class Orbit(MSONable):
              "lattice": self.lattice.as_dict(),
              "bits": self.bits,
              "site_bases": [sb.as_dict() for sb in self.site_bases],
-             "structure_symops": [so.as_dict() for so in self.structure_symops],
+             "structure_symops": [so.as_dict() for so in
+                                  self.structure_symops],
              "_bit_combos": tuple(c.tolist() for c in self._bit_combos)
              }
         return d
