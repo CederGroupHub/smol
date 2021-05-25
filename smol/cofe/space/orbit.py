@@ -338,6 +338,7 @@ class Orbit(MSONable):
         """Check equality of orbits."""
         # when performing orbit in list, this ordering stops the
         # equivalent structures from generating
+        # NOTE: does not compare bit_combos!
         return self.base_cluster in other.clusters
 
     def __neq__(self, other):
@@ -366,8 +367,15 @@ class Orbit(MSONable):
         structure_symops = [SymmOp.from_dict(so_d)
                             for so_d in d['structure_symops']]
         site_bases = [SiteBasis.from_dict(sd) for sd in d['site_bases']]
-        return cls(d['sites'], Lattice.from_dict(d['lattice']),
-                   d['bits'], site_bases, structure_symops)
+        o = cls(d['sites'], Lattice.from_dict(d['lattice']),
+                d['bits'], site_bases, structure_symops)
+
+        o._bit_combos = (tuple(np.array(c, dtype=int)
+                               for c in d['_bit_combos'])
+                         if '_bit_combos' in d else None)
+        # This is to ensure that, after removing some bit_combos, an orbit
+        # can still be correctly recorded and reloaded.
+        return o
 
     def as_dict(self):
         """Get Json-serialization dict representation.
@@ -381,6 +389,8 @@ class Orbit(MSONable):
              "lattice": self.lattice.as_dict(),
              "bits": self.bits,
              "site_bases": [sb.as_dict() for sb in self.site_bases],
-             "structure_symops": [so.as_dict() for so in self.structure_symops]
+             "structure_symops": [so.as_dict() for so in
+                                  self.structure_symops],
+             "_bit_combos": tuple(c.tolist() for c in self.bit_combos)
              }
         return d
