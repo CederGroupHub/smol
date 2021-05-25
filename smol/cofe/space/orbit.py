@@ -369,8 +369,9 @@ class Orbit(MSONable):
         o = cls(d['sites'], Lattice.from_dict(d['lattice']),
                 d['bits'], site_bases, structure_symops)
 
-        o._bit_combos = tuple(np.array(c, dtype=int) for c
-                              in d.get('_bit_combos'))
+        o._bit_combos = (tuple(np.array(c, dtype=int)
+                               for c in d['_bit_combos'])
+                         if '_bit_combos' in d else None)
         # This is to ensure that, after removing some bit_combos, an orbit
         # can still be correctly recorded and reloaded.
         return o
@@ -389,6 +390,6 @@ class Orbit(MSONable):
              "site_bases": [sb.as_dict() for sb in self.site_bases],
              "structure_symops": [so.as_dict() for so in
                                   self.structure_symops],
-             "_bit_combos": tuple(c.tolist() for c in self._bit_combos)
+             "_bit_combos": tuple(c.tolist() for c in self.bit_combos)
              }
         return d
