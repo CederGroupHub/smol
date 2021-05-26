@@ -6,7 +6,9 @@ symmetry) clusters.
 
 __author__ = "Luis Barroso-Luque, William Davidson Richard"
 
+import operator
 from itertools import chain, product, accumulate
+from functools import reduce
 import numpy as np
 
 from monty.json import MSONable
@@ -216,14 +218,36 @@ class Orbit(MSONable):
         """
         if self._bases_arr is None or self._basis_arrs is None:
             max_dim = max(len(fa) for fa in self.basis_arrays)
-            self._bases_arr = np.ones((len(self.basis_arrays),
-                                       max_dim, max_dim + 1))
+            self._bases_arr = np.ones(
+                (len(self.basis_arrays), max_dim, max_dim + 1))
             for i, fa in enumerate(self.basis_arrays):
                 j, k = fa.shape
                 self._bases_arr[i, :j, :k] = fa
         return self._bases_arr
 
     @property
+    def rotation_array(self):
+        """Get the rotation array.
+
+        The rotation array is of size len(bit combos) x len(bit combos)
+        """
+        R = np.empty(2 * (len(self._bit_combos),))
+        for (i, j), (bcombos_i, bcombos_j) in zip(
+                product(range(len(self._bit_combos)), repeat=2),
+                product(self._bit_combos, repeat=2)):
+            R[i, j] = sum(
+                (reduce(
+                    operator.mul,
+                    (np.dot(
+                        self.site_bases[k].rotation_array.T @ self.basis_arrays[k][bj],
+                        self.site_bases[k].measure_vector * self.basis_arrays[k][bi]
+                    )
+                        for k, (bi, bj) in enumerate(zip(bcombo_i, bcombo_j))))
+                 for bcombo_i, bcombo_j in product(bcombos_i, bcombos_j)))
+            R[i, j] /= np.sqrt(len(bcombos_i) * len(bcombos_j))
+        # R.round(decimals=14)
+        return R
+
     def basis_orthogonal(self):
         """Test if the Orbit bases are orthogonal."""
         return all(basis.is_orthogonal for basis in self.site_bases)
