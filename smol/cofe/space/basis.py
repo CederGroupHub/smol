@@ -22,7 +22,8 @@ from monty.json import MSONable
 from .domain import SiteSpace
 from smol.utils import derived_class_factory
 
-ATOL, RTOL = 1E-12, 1E-8
+EPS_MULT = 10  # eps precision multiplier
+DECIMALS = 14
 
 
 class SiteBasis(MSONable):
@@ -51,7 +52,7 @@ class SiteBasis(MSONable):
                 object.
             basis_functions (Sequence like):
                 A Sequence of the nonconstant basis functions. Must take the
-                valuves of species as input.
+                values of species as input.
         """
         if isinstance(site_space, OrderedDict):
             if not np.allclose(sum(site_space.values()), 1):
@@ -73,11 +74,12 @@ class SiteBasis(MSONable):
 
         func_arr = np.array([[function(sp) for sp in self.species]
                              for function in basis_functions])
-        func_arr[abs(func_arr) < np.finfo(np.float64).eps] = 0
+        func_arr[abs(func_arr) < EPS_MULT * np.finfo(np.float64).eps] = 0.0
         # stack the constant basis function on there for proper normalization
         self._f_array = np.vstack((np.ones_like(func_arr[0]), func_arr))
+        #self._f_array.round(decimals=DECIMALS)
         self._r_array = None  # array from QR in basis orthonormalization
-        self._rot_array = np.ones_like(self._f_array)  # rotation arrray
+        self._rot_array = np.eye(self.function_array.shape[1])  # rotation arrray
 
     @property
     def function_array(self):
@@ -143,11 +145,13 @@ class SiteBasis(MSONable):
             (np.sqrt(self.measure_vector) * self._f_array).T, mode='complete')
 
         # make zeros actually zeros
-        r[abs(r) < 2 * np.finfo(np.float64).eps] = 0.0
-        q[abs(q) < 2 * np.finfo(np.float64).eps] = 0.0
+        #r[abs(r) < EPS_MULT * np.finfo(np.float64).eps] = 0.0
+        #q[abs(q) < EPS_MULT * np.finfo(np.float64).eps] = 0.0
 
         self._r_array = q[:, 0] / np.sqrt(self.measure_vector) * r.T
         self._f_array = q.T/q[:, 0]  # make first row constant = 1
+        # self._r_array.round(decimals=DECIMALS)
+        # self._f_array.round(decimals=DECIMALS)
 
     def rotate(self, angle, index1=0, index2=1):
         """Rotate basis functions about subspace spaned by 2 vectors.
@@ -184,6 +188,7 @@ class SiteBasis(MSONable):
 
         if len(self.site_space) == 2:
             self._f_array[1] *= -1
+            self._rot_array *= -1
         else:
             if index1 == index2:
                 raise ValueError("Basis function indices cannot be the same!")
@@ -204,7 +209,9 @@ class SiteBasis(MSONable):
             self._f_array[1:] = self._f_array[1:] @ R.T
             self._rot_array = R
             # make really small numbers zero
-            self._f_array[abs(self._f_array) < 2 * np.finfo(np.float64).eps] = 0.0  # noqa
+            # self._f_array[abs(self._f_array) < EPS_MULT * np.finfo(np.float64).eps] = 0.0  # noqa
+            # self._f_array.round(decimals=DECIMALS)
+            # self._rot_array.round(decimals=DECIMALS)
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation."""
@@ -310,7 +317,7 @@ class SinusoidIterator(BasisIterator):
         """Generate the next basis function."""
         n = self.encoding[next(self.species_iter)] + 1
         func = encode_domain(self.encoding)(
-            sinusoid_factory(n, len(self.species)))
+            trig_function(n, len(self.species)))
         return func
 
 
@@ -393,7 +400,7 @@ def indicator(s, sp):
     return float(s == sp)
 
 
-def sinusoid_factory(n, m):
+def trig_function(n, m):
     """Sine or cosine based on AVvW sinusoid site basis."""
     a = -(-n // 2)  # ceiling division
     if n % 2 == 0:
