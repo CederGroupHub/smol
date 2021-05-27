@@ -204,9 +204,9 @@ class SiteBasis(MSONable):
                 + (np.outer(v1, v2) - np.outer(v2, v1)) * np.sin(angle) \
                 + (np.outer(v1, v1) + np.outer(v2, v2)) * (np.cos(angle) - 1)
             self._f_array[1:] = self._f_array[1:] @ R.T
-            self._rot_array = R
             # make really small numbers zero
             self._f_array[abs(self._f_array) < EPS_MULT * np.finfo(np.float64).eps] = 0.0  # noqa
+            self._rot_array = R @ self._rot_array
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation."""
