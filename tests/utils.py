@@ -4,9 +4,10 @@ Some of these are borrowed from pymatgen test scripts.
 """
 
 import json
+import random
 import numpy as np
 from monty.json import MontyDecoder, MSONable
-
+from pymatgen.core import Composition
 
 def assert_msonable(obj, test_if_subclass=True):
     """
@@ -40,3 +41,23 @@ def gen_random_occupancy(sublattices, num_sites):
                                                     size=len(sublatt.sites),
                                                     replace=True)
     return rand_occu
+
+
+def gen_random_structure(prim, size=3):
+    """Generate an random ordered structure from a disordered prim
+
+    Args:
+        prim (pymatgen.Structure):
+            disordered primitive structure:
+        size (optional):
+            size argument to structure.make_supercell
+
+    Returns:
+        ordered structure
+    """
+    structure = prim.copy()
+    structure.make_supercell(size)
+    for site in structure:
+        site.species = Composition(
+            {random.choice(list(site.species.keys())): 1})
+    return structure

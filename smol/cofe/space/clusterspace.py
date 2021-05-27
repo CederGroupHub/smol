@@ -3,8 +3,9 @@
 from copy import deepcopy
 from importlib import import_module
 import warnings
-import numpy as np
 from itertools import combinations
+import numpy as np
+from scipy.linalg import block_diag
 
 from monty.json import MSONable
 from pymatgen import Structure, PeriodicSite
@@ -418,6 +419,15 @@ class ClusterSubspace(MSONable):
         (i.e. Ewald electrostatics)
         """
         return self._external_terms
+
+    @property
+    def site_rotation_matrix(self):
+        """Get change of basis matrix from site function rotations.
+
+        Note: this is meant only for rotations using orthonormal site bases.
+        Using it otherwise will not work as expected.
+        """
+        return block_diag([1], *[orb.rotation_array for orb in self.orbits])
 
     def orbits_by_cutoffs(self, upper, lower=0):
         """Get orbits with clusters within given diameter cutoffs (inclusive).
