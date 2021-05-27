@@ -77,7 +77,6 @@ class SiteBasis(MSONable):
         func_arr[abs(func_arr) < EPS_MULT * np.finfo(np.float64).eps] = 0.0
         # stack the constant basis function on there for proper normalization
         self._f_array = np.vstack((np.ones_like(func_arr[0]), func_arr))
-        #self._f_array.round(decimals=DECIMALS)
         self._r_array = None  # array from QR in basis orthonormalization
         self._rot_array = np.eye(self.function_array.shape[1])  # rotation arrray
 
@@ -150,8 +149,6 @@ class SiteBasis(MSONable):
 
         self._r_array = q[:, 0] / np.sqrt(self.measure_vector) * r.T
         self._f_array = q.T/q[:, 0]  # make first row constant = 1
-        # self._r_array.round(decimals=DECIMALS)
-        # self._f_array.round(decimals=DECIMALS)
 
     def rotate(self, angle, index1=0, index2=1):
         """Rotate basis functions about subspace spaned by 2 vectors.
@@ -209,9 +206,7 @@ class SiteBasis(MSONable):
             self._f_array[1:] = self._f_array[1:] @ R.T
             self._rot_array = R
             # make really small numbers zero
-            # self._f_array[abs(self._f_array) < EPS_MULT * np.finfo(np.float64).eps] = 0.0  # noqa
-            # self._f_array.round(decimals=DECIMALS)
-            # self._rot_array.round(decimals=DECIMALS)
+            self._f_array[abs(self._f_array) < EPS_MULT * np.finfo(np.float64).eps] = 0.0  # noqa
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation."""

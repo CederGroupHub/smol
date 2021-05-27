@@ -235,16 +235,16 @@ class Orbit(MSONable):
                 product(range(len(self._bit_combos)), repeat=2),
                 product(self._bit_combos, repeat=2)):
             R[i, j] = sum(
-                (reduce(
+                reduce(
                     operator.mul,
                     (np.dot(
                         self.site_bases[k].rotation_array.T @ self.basis_arrays[k][bj],
                         self.site_bases[k].measure_vector * self.basis_arrays[k][bi]
                     )
                         for k, (bi, bj) in enumerate(zip(bcombo_i, bcombo_j))))
-                 for bcombo_i, bcombo_j in product(bcombos_i, bcombos_j)))
-            R[i, j] /= np.sqrt(len(bcombos_i) * len(bcombos_j))
-        # R.round(decimals=14)
+                for bcombo_i, bcombo_j in product(bcombos_i, bcombos_j)) \
+                       / len(bcombos_i)
+            # \ (len(bcombos_i) * len(bcombos_j))**0.5 is unitary
         return R
 
     def basis_orthogonal(self):
