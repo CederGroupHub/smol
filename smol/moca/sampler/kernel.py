@@ -147,7 +147,7 @@ class Metropolis(MCMCKernel):
         delta_enthalpy = np.dot(self.natural_params, delta_features)
         delta_bias = self._bias.compute_bias_change(occupancy, step)
         bias = self._bias.compute_bias(occupancy)
-        accept = ((-self.beta * delta_enthalpy - delta_bias)
+        accept = ((-self.beta * (delta_enthalpy - delta_bias))
                   > log(random()))
         if accept:
             for f in step:
