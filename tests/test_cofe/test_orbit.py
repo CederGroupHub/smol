@@ -3,7 +3,7 @@ from collections import OrderedDict
 from itertools import combinations_with_replacement
 import json
 import numpy as np
-from pymatgen import Lattice, Structure, Composition
+from pymatgen.core import Lattice, Structure, Composition
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe.space import Orbit, Cluster
 from smol.cofe.space.basis import basis_factory

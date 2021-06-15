@@ -16,7 +16,7 @@ from collections import Counter
 import numpy as np
 
 from monty.json import MSONable
-from pymatgen import Species, DummySpecies, Element
+from pymatgen.core import Species, DummySpecies, Element
 from smol.cofe.space.domain import get_species, Vacancy
 from smol.moca.processor.base import Processor
 from .base import Ensemble

@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from pymatgen import Structure, Lattice
+from pymatgen.core import Structure, Lattice
 from pymatgen.analysis.ewald import EwaldSummation
 from smol.cofe import ClusterSubspace
 from smol.cofe.extern import EwaldTerm

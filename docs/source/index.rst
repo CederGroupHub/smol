@@ -44,7 +44,7 @@ subsequently using it to run Monte Carlo sampling::
 
     from sklearn.linear_model import LinearRegression
     from monty.serialization import loadfn
-    from pymatgen import Structure
+    from pymatgen.core.structure import Structure
     from pymatgen.transformations.standard_transformations import \
         OrderDisorderedStructureTransformation
     from smol.cofe import ClusterSubspace, StructureWrangler, ClusterExpansion
