@@ -310,6 +310,7 @@ def test_compute_feature_vector(disc_ensemble):
             dmu = disc_ensemble.compute_feature_vector_change(occu,flip)[-1]
             if dmu != 0:
                 dmus.append(dmu)
-            assert np.any(np.append(np.array(disc_ensemble.mu),0)==dmu) or np.any(np.append(np.array(disc_ensemble.mu),0)==-dmu)
+            assert (np.any(np.isclose(np.append(np.array(disc_ensemble.mu),0),dmu)) or
+                    np.any(np.isclose(np.append(np.array(disc_ensemble.mu),0),-dmu)))
 
     assert not(np.all(np.array(dmus)==dmus[0]))

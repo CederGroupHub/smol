@@ -125,7 +125,8 @@ class Metropolis(MCMCKernel):
                       'table-flip': 'Tableflipper',
                       'subchain-walk': 'Subchainwalker'}
     valid_bias = {'null': 'Nullbias',
-                  'square-charge': 'Squarechargebias'}
+                  'square-charge': 'Squarechargebias',
+                  'square-comp-constraint':'Squarecompconstraintbias'}
 
     def single_step(self, occupancy):
         """Attempt an MC step.
@@ -143,11 +144,13 @@ class Metropolis(MCMCKernel):
         """
         cur_time = time.time()
         step = self._usher.propose_step(occupancy)
+        factor = self._usher.compute_a_priori_factor(occupancy, step)
         delta_features = self._feature_change(occupancy, step)
         delta_enthalpy = np.dot(self.natural_params, delta_features)
         delta_bias = self._bias.compute_bias_change(occupancy, step)
         bias = self._bias.compute_bias(occupancy)
-        accept = ((-self.beta * delta_enthalpy - delta_bias)
+        accept = ((-self.beta * delta_enthalpy - delta_bias) +
+                  log(factor)
                   > log(random()))
         if accept:
             for f in step:

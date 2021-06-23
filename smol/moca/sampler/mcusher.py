@@ -13,13 +13,18 @@ __author__ = "Luis Barroso-Luque, Fengyu Xie"
 from abc import ABC, abstractmethod
 import random
 import numpy as np
+import warnings
+import math
+from copy import deepcopy
 
 from smol.utils import derived_class_factory
 from .bias import mcbias_factory
-from ..comp_space import CompSpace
+from ..comp_space import *
 
-from ..utils.occu_utils import occu_to_species_list
-from ..utils.math_utils import choose_section_from_partition, GCD_list
+from ..utils.occu_utils import (occu_to_species_list, flip_weights_mask,
+                                occu_to_species_stat)
+from ..utils.math_utils import (choose_section_from_partition, GCD_list,
+                                combinatorial_number)
 
 
 class MCMCUsher(ABC):
@@ -78,6 +83,23 @@ class MCMCUsher(ABC):
             list(tuple): tuple of tuples each with (idex, code)
         """
         return []
+
+    def compute_a_priori_factor(self, occupancy, step):
+        """Compute a-priori weight to adjust step acceptance ratio.
+       
+        This is essential in keeping detailed balance for some particular
+        metropolis proposal methods.
+
+        Args:
+            occupancy (ndarray):
+                encoded occupancy string
+            step (list[tuple]):
+                Metropolis step. list of tuples each with (index, code).
+        
+        Returns:
+            float: a-priori adjustment weight.
+        """
+        return 1
 
     def update_aux_state(self, step, *args, **kwargs):
         """Update any auxiliary state information based on an accepted step."""
@@ -159,8 +181,9 @@ class Tableflipper(MCMCUsher):
     write.
     """
 
-    def __init__(self, all_sublattices, flip_table=None, add_swap=True,
-                 flip_weights=None, *args, **kwargs):
+    def __init__(self, all_sublattices,
+                 flip_table=None, flip_vecs=None,
+                 flip_weights=None, swap_weight=0, *args, **kwargs):
         """Initialize Tableflipper.
 
         Args:
@@ -189,11 +212,20 @@ class Tableflipper(MCMCUsher):
                    ...
                   ]
                 If not given, will auto compute minimal charge neutral
-                flip table.
-            add_swap(Boolean, optional):
-                Whether or not to attempt canonical swap if a step
-                can not be proposed. Helps accelerating equilibration.
-                Default to True.
+                flip table. If given, must provide with flip_vecs.
+            flip_vecs(np.array), optional:
+                Vector form of table flips, expressed in uncontrained
+                coordinates.
+
+            You only need to provide one of flip_table and flip_vecs.
+            If you provide both, please confirm that they are not
+            conflicting. If they conflict, we will throw an error!
+            Do not provide duplicate flips in table!
+
+            swap_weight(float, optional):
+                Percentage of canonical swaps to attempt. Should be a 
+                positive value, but smaller than 1.
+                Default to 0.
             flip_weights(1D Arraylike|Nonetype), optional:
                 Weights to adjust probability of each flip. If
                 None given, will assign equal weights to each
@@ -211,22 +243,45 @@ class Tableflipper(MCMCUsher):
         self.sc_size = GCD_list(self.sl_sizes)
         self.sl_sizes = [s // self.sc_size for s in self.sl_sizes]
 
-        if flip_table is None:
-            self.flip_table = CompSpace(self.bits,
-                                        self.sl_sizes).min_flip_table
+        self._compspace = CompSpace(self.bits, self.sl_sizes)
+        if flip_table is None and flip_vecs is None:
+            self.flip_table = self._compspace.min_flip_table
+            self.flip_vecs = self._compspace.unit_basis
+        elif flip_table is None and flip_vecs is not None:
+            self.flip_table = flip_vecs_to_flip_table(self._compspace.
+                                                      unit_n_excitations,
+                                                      self._compspace.
+                                                      n_bits,
+                                                      flip_vecs)
+            self.flip_vecs = np.array(flip_vecs)
+        elif flip_table is not None and flip_vecs is None:
+            self.flip_table = flip_table
+            self.flip_vecs = flip_table_to_flip_vecs(self._compspace.
+                                                     n_bits,
+                                                     flip_table)
+
         else:
             self.flip_table = flip_table
+            flip_vec_check = flip_table_to_flip_vecs(self._compspace.
+                                                     n_bits,
+                                                     flip_table)
+            if not np.allclose(flip_vec_check, flip_vecs):
+                raise ValueError("Provided flip table and vecs can't match!")
+            self.flip_vecs = np.array(flip_vecs)
 
-        self.add_swap = add_swap
-        # A flip has two directions. All links initialized with 0.
+        self.swap_weight = swap_weight
 
+        # A flip has two directions.
         if flip_weights is None:
-            self.flip_weights = np.ones(len(self.flip_table), dtype=np.int64)
+            self.flip_weights = np.ones(len(self.flip_table) * 2)
         else:
             if len(flip_weights) != len(self.flip_table):
-                raise ValueError("Flip reweighted, but not enough weights \
-                                 supplied!")
-            self.flip_weights = np.array(flip_weights)
+                raise ValueError("Flip reweighted, but not enough weights" +
+                                 " supplied!")
+            # Forward and backward directions are assigned equal weights.
+            self.flip_weights = np.repeat(flip_weights, 2)
+
+        self._swapper = Swapper(self.sublattices, *args, **kwargs)
 
     def propose_step(self, occupancy):
         """Propose a single random flip step.
@@ -235,8 +290,16 @@ class Tableflipper(MCMCUsher):
         form (site index, species code to set)
 
         1, Pick a flip in table;
-        2, Pick sites;
-        3, See if sites have species in either side of the picked flip.
+        2, Choose sites from site specie statistics list according to the flip.
+        3, (Acceptance proability will be adjusted according to a-priori
+           weight to enforce detailed balance.)
+        4, If selection failed, may or may not attempt a canonical swap based
+           on self.add_swap parameter.
+
+        There are circumstances where the current occupancy can not be accessed
+        by minimal table flips. This method does not take care of that, please 
+        be careful when choosing starting compositions.
+
         Args:
             occupancy (ndarray):
                 encoded occupancy string.
@@ -245,100 +308,169 @@ class Tableflipper(MCMCUsher):
              list(tuple): list of tuples each with (idex, code).
         """
         occupancy = np.array(occupancy)
+        comp_stat = occu_to_species_stat(occupancy, self.bits, self.sl_list)
+        mask = flip_weights_mask(self.flip_table, comp_stat)
+        masked_weights = self.flip_weights * mask
+        # Masking effect will also be considered in a_priori factors.
 
-        picked_flip = self.flip_table[choose_section_from_partition(
-                                      self.flip_weights)]
+        if random.random() < self.swap_weight:
+            return self._swapper.propose_step(occupancy)
+        elif masked_weights.sum() == 0:
+            warnings.warn("Current composition is disconnected!")
+            return self._swapper.propose_step(occupancy)
+        else:
+            species_list = occu_to_species_list(occupancy, self.bits,
+                                                self.sl_list)
 
-        # Pick sites
-        species_list = occu_to_species_list(occupancy, self.bits,
-                                            self.sl_list)
-        flip_list = []
-        direction = None
+            idx = choose_section_from_partition(masked_weights)
+            flip = deepcopy(self.flip_table[idx // 2])
 
-        for sl_id, sl_sites in enumerate(species_list):
-            if sl_id not in picked_flip['from']:
-                continue
+            step = []
+            # Forward or backward
+            if idx % 2 == 1:
+                buf = deepcopy(flip['to'])
+                flip['to'] = flip['from']
+                flip['from'] = buf
 
-            union_sp_ids = (list(picked_flip['from'][sl_id].keys()) +
-                            list(picked_flip['to'][sl_id].keys()))
-            n_picks = sum(list(picked_flip['from'][sl_id].values()))
-            pickable_sites = []
-            for sp_id in union_sp_ids:
-                pickable_sites.extend(sl_sites[sp_id])
+            for sl_id in flip['from']:
+                site_ids = []
+                for sp_id in flip['from'][sl_id]:
+                    site_ids.extend(random.sample(
+                                    species_list[sl_id][sp_id],
+                                    flip['from'][sl_id][sp_id]))
+                for sp_id in flip['to'][sl_id]:
+                    n_to = flip['to'][sl_id][sp_id]
+                    chosen_ids = random.sample(site_ids, n_to)
+                    for sid in chosen_ids:
+                        step.append((sid, sp_id))
+                        site_ids.remove(sid)
 
-            if len(pickable_sites) < n_picks:
-                flip_list = []
-                break
+                if len(site_ids) != 0:
+                    raise ValueError("Flip id {} is not num conserved!"
+                                     .format(idx // 2))
+            return step
 
-            picked_sites_sl = random.sample(pickable_sites, n_picks)
-            picked_table = {}
-            for s_id in picked_sites_sl:
-                sp_id = None
-                for j, sp_sites in enumerate(sl_sites):
-                    if s_id in sp_sites:
-                        sp_id = j
-                        break
-                if sp_id not in picked_table:
-                    picked_table[sp_id] = 1
-                else:
-                    picked_table[sp_id] += 1
-
-            # Confirm direction.
-            if direction is None:
-                # Site selection not successful.
-                if (picked_table != picked_flip['from'][sl_id] and
-                        picked_table != picked_flip['to'][sl_id]):
-                    flip_list = []
+    def _get_flip_id(self, occupancy, step):
+        """Compute flip id in table from occupancy and step.
+        """
+        dcomp_stat = [[0 for sp in sl] for sl in self.bits]
+        for s_id, sp_to in step:
+            sl_id = None
+            for i, sl in enumerate(self.sl_list):
+                if s_id in sl:
+                    sl_id = i
                     break
-                elif picked_table == picked_flip['from'][sl_id]:
-                    flip_to_table = picked_flip['to'][sl_id]
-                    direction = 1
-                else:
-                    flip_to_table = picked_flip['from'][sl_id]
-                    direction = -1
+            if sl_id is None:
+                raise ValueError("Site id {} not in active sublattice."
+                                 .format(s_id))
+            sp_from = int(occupancy[s_id])
+            dcomp_stat[sl_id][sp_to] += 1
+            dcomp_stat[sl_id][sp_from] -= 1
 
-            elif direction > 0:
-                if picked_table == picked_flip['from'][sl_id]:
-                    flip_to_table = picked_flip['to'][sl_id]
-                else:
-                    flip_list = []
-                    break
+        ducoords = []
+        for sl in dcomp_stat:
+            ducoords.extend(sl[:-1])
+        #print("ducoords:", ducoords)
+        #print("bits:", self.bits)
+        #print("sublattices:",self.sl_list)
+        #print("flip table:",self.flip_table)
+        #print("flip vec:",self.flip_vecs)
 
-            else:
-                if picked_table == picked_flip['to'][sl_id]:
-                    flip_to_table = picked_flip['from'][sl_id]
-                else:
-                    flip_list = []
-                    break
+        # It is your responsibility not to have duplicate vectors in
+        # flip table.
+        if np.allclose(ducoords, 0):
+            return -1, 0
 
-            n_flipped = 0
-            flip_failed = False
-            for sp_id, n_flip in flip_to_table.items():
-                flip_sites = picked_sites_sl[n_flipped: n_flipped + n_flip]
-                # This check is required to keep equal-a-priori.
-                if flip_sites != sorted(flip_sites):
-                    flip_list = []
-                    flip_failed = True
-                    break
-                flip_list.extend([(s_id, sp_id) for s_id in flip_sites])
-                n_flipped += n_flip
+        for fid, v in enumerate(self.flip_vecs):
+            if np.allclose(v, ducoords):
+                return fid, 0
+            if np.allclose(-v, ducoords):
+                return fid, 1
 
-            if flip_failed:
-                break
+        return None, None
 
-            if n_flipped != n_picks:
-                raise ValueError("Flip is not number conserved!")
+    def compute_a_priori_factor(self, occupancy, step):
+        """Compute a-priori weight to adjust step acceptance ratio.
+       
+        This is essential in keeping detailed balance for some particular
+        metropolis proposal methods.
 
-        # If no valid flip is picked, try a canonical swap.
-        if len(flip_list) == 0 and self.add_swap:
-            active_sublattices = [sl for sl in self.sublattices
-                                  if not np.all(occupancy[sl.sites] ==
-                                                occupancy[sl.sites][0])]
-            if len(active_sublattices) != 0:
-                _swapper = Swapper(active_sublattices)
-                flip_list = _swapper.propose_step(occupancy)
+        Arg:
+            #occupancy (ndarray):
+                encoded occupancy string
+            step (list[tuple]):
+                Metropolis step. list of tuples each with (index, code).
+        
+        Returns:
+            float: a-priori adjustment weight.
+        """
+        fid, direction = self._get_flip_id(occupancy, step)
+        if fid is None:
+            raise ValueError("Step {} is not in flip table.".format(step))
 
-        return flip_list
+        if fid < 0:
+            # Canonical swap
+            return 1
+
+        flip = deepcopy(self.flip_table[fid])
+        #print("Occupancy:",occupancy)
+        #print("Flip:", flip)
+        #print("Direction:", direction)
+
+        if direction == 1:
+            # Backwards direction.
+            buf = deepcopy(flip['to'])
+            flip['to'] = flip['from']
+            flip['from'] = buf
+
+        comp_stat_now = occu_to_species_stat(occupancy,
+                                             self.bits, self.sl_list)
+        mask_now = flip_weights_mask(self.flip_table, comp_stat_now)
+        weights_now = self.flip_weights * mask_now
+        p_flip_now = ((1 - self.swap_weight) *
+                      weights_now[fid * 2 + direction]
+                      / weights_now.sum())
+
+        comp_stat_next = deepcopy(comp_stat_now)
+        for sl_id in flip['from']:
+            for sp_id in flip['from'][sl_id]:
+                comp_stat_next[sl_id][sp_id] -= flip['from'][sl_id][sp_id]
+        for sl_id in flip['to']:
+            for sp_id in flip['to'][sl_id]:
+                comp_stat_next[sl_id][sp_id] += flip['to'][sl_id][sp_id]
+        mask_next = flip_weights_mask(self.flip_table, comp_stat_next)
+        weights_next = self.flip_weights * mask_next
+        p_flip_next = ((1 - self.swap_weight) *
+                       weights_next[fid * 2 + (1 - direction)]
+                       / weights_next.sum())
+        #print("Compstat now:", comp_stat_now)
+        #print("Compstat next:", comp_stat_next)
+
+        # Combinatorial factor.
+        comb_factor = p_flip_next / p_flip_now
+        for sl_id in flip['from']:
+            factor_sl = 1
+            for sp_id in flip['from'][sl_id]:
+                dn = flip['from'][sl_id][sp_id]
+                n_now  = comp_stat_now[sl_id][sp_id]
+                n_next = comp_stat_next[sl_id][sp_id]
+                assert n_next == n_now - dn
+
+                factor_sl *= (math.factorial(dn) *
+                              combinatorial_number(n_now, dn))
+
+            for sp_id in flip['to'][sl_id]:
+                dn = flip['to'][sl_id][sp_id]
+                n_now = comp_stat_now[sl_id][sp_id]
+                n_next = comp_stat_next[sl_id][sp_id]
+                assert n_next == n_now + dn
+
+                factor_sl /= (math.factorial(dn) *
+                              combinatorial_number(n_next, dn))
+
+            comb_factor *= factor_sl
+
+        return comb_factor
 
 
 class Subchainwalker(MCMCUsher):
@@ -352,7 +484,8 @@ class Subchainwalker(MCMCUsher):
 
     # Update this and MCMCKernel after you enable more biasing terms.
     valid_bias = {'null': 'Nullbias',
-                  'square-charge': 'Squarechargebias'}
+                  'square-charge': 'Squarechargebias',
+                  'square-comp-constraint':'Squarecompconstraintbias'}
 
     def __init__(self, all_sublattices, sub_bias_type='null',
                  cutoff_steps=200, minimize_swap=False, add_swap=True,
