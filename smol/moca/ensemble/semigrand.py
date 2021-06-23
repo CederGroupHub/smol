@@ -520,11 +520,8 @@ class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         # Compute flip direction in the compositional space.
         delta_ccoords = delta_ccoords_from_step(occupancy,
                                                 step,
-                                                self.bits,
-                                                self.sc_sublat_list,
-                                                self._compspace.unit_basis,
-                                                self._compspace.
-                                                chg_of_excitations)
+                                                self._compspace,
+                                                self.sc_sublat_list)
 
         delta_mu = np.dot(delta_ccoords, self.mu)
 

@@ -120,9 +120,6 @@ class Squarechargebias(MCMCBias):
         super().__init__(all_sublattices, *args, **kwargs)
         self.lam = lam
 
-        if self.lam < 0:
-            raise ValueError("Lambda in charge bias can not be negative!")
-
         self._charge_table = self._build_charge_table()
 
     def _build_charge_table(self):
@@ -175,6 +172,84 @@ class Squarechargebias(MCMCBias):
                    for i, o in enumerate(occupancy)])
 
         return self.lam * (del_c**2 + 2 * del_c * c)
+
+
+class Squarecompconstraintbias(MCMCBias):
+    """Square composition deviation bias. lam * sum(||Cx-b||^2)."""
+
+    def __init__(self, all_sublattices, C, b, lam=0.5,
+                 *args, **kwargs):
+        """Initialize Squarecompconstraintbias.
+
+        Note: This class can also be used to represent the charge balance
+              constraint, but will be less interpreble than using
+              Squarechargebias. Use this only when you have multiple bias
+              to enforce together.
+
+        Args:
+            all_sublattices(List[Sublattice]):
+                List of sublattices, containing species information and site
+                indices in sublattice.
+            C(np.ndarray, 2 dimensional), b(np.ndarray):
+                In unconstrained composition space, Cx == b defines any
+                composition constraint. We will measure |Cx-b|^2 as penalty.
+                Note: the x here is unconstrained coordinates, and they are
+                      NOT normalized by supercell size!
+            lam(float or np.ndarray), optional:
+                Penalization factor(s). When using an array, should be the
+                same length as b. Must all be positive numbers.
+                Default to 0.5 for all bias terms.
+        """
+        super().__init__(all_sublattices, *args, **kwargs)
+        self.C = np.array(C)
+        self.b = np.array(b)
+        self.bits = [s.species for s in all_sublattices]
+        self.sl_list = [s.sites for s in all_sublattices]
+        if isinstance(lam, (int, float)):
+            self.lams = np.repeat(lam, len(self.b))
+        elif len(lam) == len(self.b):
+            self.lams = np.array(lam)
+        else:
+            raise ValueError("Array lambdas provided, but length does not " +
+                             "match number of composition constraints.")
+
+    def _compute_x(self, occupancy):
+        """Compute unconstrained coordinates from occupancy."""
+        occu = np.array(occupancy)
+        compstat = [[(occu[self.sl_list[sl_id]] == sp_id).sum()
+                    for sp_id, sp in enumerate(sl)]
+                    for sl_id, sl in enumerate(self.bits)]
+        ucoords = []
+        for sl in compstat:
+            ucoords.extend(sl[:-1])
+        return np.array(ucoords)
+
+    def compute_bias(self, occupancy):
+        """Compute composition constraint bias from occupancy.
+
+        Args:
+            occupancy(np.ndarray):
+                Encoded occupancy string.
+        """
+        x = self._compute_x(occupancy)
+        return np.sum(self.lams * (self.C @ x - self.b) ** 2)
+
+    def compute_bias_change(self, occupancy, step):
+        """Compute bias change from step.
+
+        Args:
+            occupancy(np.ndarray):
+                Encoded occupancy string.
+            step(List[tuple(int,int)]):
+                Step returned by MCUsher.
+        Return:
+            Float, change of bias value after step.
+        """
+        step = np.array(step, dtype=int)
+        occu_now = np.array(occupancy)
+        occu_next = np.array(occupancy)
+        occu_next[step[:, 0]] = step[:, 1]
+        return self.compute_bias(occu_next) - self.compute_bias(occu_now)
 
 
 def mcbias_factory(bias_type, all_sublattices, *args, **kwargs):

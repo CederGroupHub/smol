@@ -189,6 +189,37 @@ def flip_vecs_to_flip_table(unit_n_excitations, n_bits, flip_vecs):
     return flip_table
 
 
+def flip_table_to_flip_vecs(n_bits, flip_table):
+    """Compute flip vectors (unconstrained coords) from flip table.
+
+    Args:
+        n_bits(List[List[int]]):
+            List containing indices of species on sublattices.
+        flip_table(Dict):
+            Flip table, same as format described in documentation of
+            flip_vecs_to_flip_table.
+    Returns:
+        np.ndarray: Flip vectors in unconstrained coordinates.
+    """
+    flip_vecs = []
+    for flip in flip_table:
+        dcompstat = [[0 for sp_id in sl] for sl in n_bits]
+        for sl_id in flip['from']:
+            for sp_id in flip["from"][sl_id]:
+                dcompstat[sl_id][sp_id] -= flip['from'][sl_id][sp_id]
+        for sl_id in flip['to']:
+            for sp_id in flip["to"][sl_id]:
+                dcompstat[sl_id][sp_id] += flip['to'][sl_id][sp_id]
+        # Assert number conserving.
+        assert sum(chain(*dcompstat)) == 0
+        v = []
+        for dsl in dcompstat:
+            v.extend(dsl[:-1])
+        flip_vecs.append(v)
+
+    return np.array(flip_vecs, dtype=np.int64)
+
+
 def visualize_flip_table(flip_table, bits):
     """Turn multi-atom flip table into reaction formulas.
 

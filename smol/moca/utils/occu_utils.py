@@ -84,8 +84,7 @@ def occu_to_species_list(occupancy, bits, sublat_list_sc):
     return species_list
 
 
-def delta_ccoords_from_step(occu, step, bits, sublat_list_sc, base_vecs,
-                            base_norm=None):
+def delta_ccoords_from_step(occu, step, comp_space, sublat_list_sc):
     """Get the change of constrained coordinates from mcmcusher step.
 
     Args:
@@ -99,51 +98,86 @@ def delta_ccoords_from_step(occu, step, bits, sublat_list_sc, base_vecs,
             each sublattice.
         sublat_list_sc(List[List[int]]):
             List of sublattice site indices.
-        base_vecs(2D ArrayLike):
-            Base vectors in the charge neutral compositional
-            space.
-        base_norm(1D arrayLike, Optional):
-            Normal vector to the charge neutral subspace.
-            Usually, the parameters in the linear charge
-            neutral diophantine equation are given.
+        comp_space(smol.CompSpace):
+            composition space object.
 
     Return:
         np.ndarray, change of constrained coordinates.
     """
-    del_compstat = [[0 for sp_id in range(len(sl))] for sl in bits]
+    occu_0 = occu.copy()
+    occu_1 = occu.copy()
+    step = np.array(step, dtype=int)
+    occu_1[step[:, 0]] = step[:, 1]
 
-    for s_id, sp_id_to in step:
-        sl_id = None
-        for i, sl in enumerate(sublat_list_sc):
-            if s_id in sl:
-                sl_id = i
-                break
-        if sl_id is None:
-            raise ValueError("Step constains a site {} not found in any \
-                             sublattice!".format(s_id))
-        sp_id_from = occu[s_id]
-        del_compstat[sl_id][sp_id_from] -= 1
-        del_compstat[sl_id][sp_id_to] += 1
+    sc_size = len(sublat_list_sc[0]) // comp_space.sl_sizes[0]
+    compstat_0 = occu_to_species_stat(occu_0, comp_space.bits,
+                                      sublat_list_sc)
+    ccoords_0 = comp_space.translate_format(compstat_0,
+                                            from_format='compstat',
+                                            to_format='constr',
+                                            sc_size=sc_size)
+    compstat_1 = occu_to_species_stat(occu_1, comp_space.bits,
+                                      sublat_list_sc)
+    ccoords_1 = comp_space.translate_format(compstat_1,
+                                            from_format='compstat',
+                                            to_format='constr',
+                                            sc_size=sc_size)
+    return np.array(ccoords_1) - np.array(ccoords_0)
 
-    del_ucoords = list(itertools.chain(*[sl[:-1] for sl in del_compstat]))
-    del_ucoords = np.array(del_ucoords)
 
-    if len(base_vecs) == len(del_ucoords):
-        # Non-ionic systems.
-        del_ccoords = np.linalg.inv(np.array(base_vecs).T) @ del_ucoords
-    elif len(base_vecs) == len(del_ucoords) - 1:
-        if base_norm is None:
-            raise ValueError("No normal vector given for ionic system case.")
-        R = np.vstack((base_vecs, base_norm))
-        del_ccoords = np.linalg.inv(R.T) @ del_ucoords
-        slack = del_ccoords[-1]
-        del_ccoords = del_ccoords[:-1]
+def flip_weights_mask(flip_table, comp_stat):
+    """Mask pre-assiged flip weights.
 
-        if abs(slack) > 1E-5:
-            raise ValueError("Given flip can not be represented in charge \
-                             neutral space.")
-    else:
-        raise ValueError("Number of basis vectors supplied does not match \
-                          the dimensionality of the compositional space.")
+    On the edge or surface of constrained composition space, some flip
+    directions may not be possible. We shall re-adjust their weights to
+    0 to improve efficiency of step proposal.
 
-    return del_ccoords
+    Will be used by Tableflipper.
+
+    Args:
+        flip_table(list[dict]):
+            The flip table.
+        comp_stat(list[list[int]]):
+            Number of each specie on each sublattice. Generated
+            by occu_to_species_stat.
+
+    Return:
+        np.array: Weights mask of each flip direction, length =
+                  2 * len(flip_table). Impossible directions
+                  will be masked out with 0.
+    """
+    mask = []
+
+    for idx in range(2*len(flip_table)):
+        fid = idx // 2
+        direction = idx % 2
+        flip = flip_table[fid]
+
+        # Forward direction.
+        allowed = 1
+        if direction == 0:
+            for sl_id in flip['from']:
+                for sp_id in flip['from'][sl_id]:
+                    dn = flip['from'][sl_id][sp_id]
+                    n0 = comp_stat[sl_id][sp_id]
+                    if n0 < dn:
+                        allowed = 0
+                        break
+                if allowed == 0:
+                    break
+
+        # Backward direction.
+        if direction == 1:
+            for sl_id in flip['to']:
+                for sp_id in flip['to'][sl_id]:
+                    dn = flip['to'][sl_id][sp_id]
+                    n0 = comp_stat[sl_id][sp_id]
+                    if n0 < dn:
+                        allowed = 0
+                        break
+                if allowed == 0:
+                    break
+
+        mask.append(allowed)
+
+    return np.array(mask)

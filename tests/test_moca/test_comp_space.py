@@ -1,12 +1,15 @@
 import unittest
 import numpy as np
 
-from smol.moca.comp_space import CompSpace
+from smol.moca.comp_space import *
 from pymatgen import Specie,Element,Composition
 from smol.cofe.space.domain import Vacancy
 
 vertices_contain = lambda a,b: np.all([np.any(np.all(np.isclose(a_row,b),axis=1)) for a_row in a])
 vertices_equal = lambda a,b: vertices_contain(a,b) and vertices_contain(b,a)
+set_dicts_equal = lambda a,b: all([in_table(f, b) for f in a])
+in_table = lambda f, table: any([flip_equal(f, t) for t in table])
+flip_equal = lambda f, t: (f == t) or (f['from']==t['to'] and f['to']==t['from'])
 
 #Charged test case, without vacancy
 class TestCompSpace1(unittest.TestCase):
@@ -62,6 +65,14 @@ class TestCompSpace1(unittest.TestCase):
         self.assertEqual(self.comp_space.unit_n_excitations,self.unit_n_excitations)
         self.assertEqual(self.comp_space.chg_of_excitations,self.chg_of_excitations)
         self.assertEqual(self.comp_space.excitation_ids_by_sublat,self.excitation_ids_by_sublat)
+
+    def test_flip_table(self):
+        print("self.flip_table:",self.flip_table)
+        print("self.comp_space.min_flip_table:",self.comp_space.min_flip_table)
+        self.assertTrue(set_dicts_equal(self.comp_space.min_flip_table, self.flip_table))
+        check_basis = flip_table_to_flip_vecs(self.comp_space.n_bits,
+                                              self.comp_space.min_flip_table)
+        self.assertTrue(np.allclose(self.comp_space.unit_basis, check_basis))
 
     def test_space_specs(self):
         self.assertEqual(self.comp_space.background_charge,2)
@@ -143,3 +154,9 @@ class TestCompSpace2(unittest.TestCase):
         self.assertEqual(self.comp_space.is_charge_constred,False)
         self.assertEqual(self.comp_space.dim,2)
         self.assertEqual(self.comp_space.dim_nondisc,3)
+
+    def test_flip_table(self):
+        self.assertTrue(set_dicts_equal(self.comp_space.min_flip_table, self.flip_table))
+        check_basis = flip_table_to_flip_vecs(self.comp_space.n_bits,
+                                              self.comp_space.min_flip_table)
+        self.assertTrue(np.allclose(self.comp_space.unit_basis, check_basis))

@@ -189,7 +189,7 @@ class Sampler:
         with progress_bar(progress, total=nsteps, description=desc) as bar:
             for _ in range(nsteps // thin_by):
                 for _ in range(thin_by):
-                    for i, (accept, occupancy, occu_bias, occu_dt, 
+                    for i, (accept, occupancy, occu_bias, occu_dt,
                             delta_enthalpy, delta_features)\
                       in enumerate(map(self._kernel.single_step, occupancies)):
                         accepted[i] += accept

@@ -11,6 +11,7 @@ from monty.json import MontyDecoder, MSONable
 
 from smol.moca.utils.math_utils import GCD_list
 from smol.moca.comp_space import CompSpace
+from smol.moca.utils.occu_utils import flip_weights_mask
 
 def assert_msonable(obj, test_if_subclass=True):
     """
@@ -49,6 +50,8 @@ def gen_random_neutral_occupancy(sublattices, num_sites):
     """Generate charge neutral occupancies according to a list of sublattices.
        Occupancies are encoded.
 
+       Will check accessibility of composition by min flip table.
+
     Args:
         sublattices (Sequence of Sublattice):
            A sequence of sublattices, must be all sublattices, no matter
@@ -66,8 +69,10 @@ def gen_random_neutral_occupancy(sublattices, num_sites):
 
     sl_sizes_prim = np.array(sl_sizes)//sc_size
     comp_space = CompSpace(bits,sl_sizes_prim)
+    grids = comp_space.int_grids(sc_size=sc_size, form='compstat')
+    grids_accessible = [c for c in grids if flip_weights_mask(comp_space.min_flip_table, c).sum()!=0]
 
-    random_comp = random.choice(comp_space.int_grids(sc_size=sc_size,form='compstat'))
+    random_comp = random.choice(grids_accessible)
 
     sites = []
     assignments = []
