@@ -33,7 +33,7 @@ def gen_random_occupancy(sublattices, num_sites):
             Total number of sites
 
     Returns:
-        ndarry: encoded occupancy
+        ndarray: encoded occupancy
     """
     rand_occu = np.zeros(num_sites, dtype=int)
     for sublatt in sublattices:
@@ -43,6 +43,45 @@ def gen_random_occupancy(sublattices, num_sites):
                                                     replace=True)
     return rand_occu
 
+def gen_random_neutral_occupancy(sublattices, num_sites):
+    """Generate charge neutral occupancies according to a list of sublattices.
+       Occupancies are encoded.
+
+       Will check accessibility of composition by min flip table.
+
+    Args:
+        sublattices (Sequence of Sublattice):
+           A sequence of sublattices, must be all sublattices, no matter
+           active or not.
+        num_sites (int):
+           Total number of sites
+
+    Returns:
+        ndarray: encoded occupancy, charge neutral guaranteed.
+    """
+    rand_occu = np.zeros(num_sites, dtype=int)
+    bits = [sl.species for sl in sublattices]
+    sl_sizes = [len(sl.sites) for sl in sublattices]
+    sc_size = GCD_list(sl_sizes)
+
+    sl_sizes_prim = np.array(sl_sizes)//sc_size
+    comp_space = CompSpace(bits,sl_sizes_prim)
+    grids = comp_space.int_grids(sc_size=sc_size, form='compstat')
+    grids_accessible = [c for c in grids if flip_weights_mask(comp_space.min_flip_table, c).sum()!=0]
+
+    random_comp = random.choice(grids_accessible)
+
+    sites = []
+    assignments = []
+    for sl,sl_comp in zip(sublattices,random_comp):
+        sl_sites = list(sl.sites)
+        random.shuffle(sl_sites)
+        sites.extend(sl_sites)
+        for sp_id,sp_n in enumerate(sl_comp):
+            assignments.extend([sp_id for i in range(sp_n)])
+
+    rand_occu[sites] = assignments
+    return rand_occu
 
 def gen_random_structure(prim, size=3):
     """Generate an random ordered structure from a disordered prim
