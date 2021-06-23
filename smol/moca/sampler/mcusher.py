@@ -86,7 +86,7 @@ class MCMCUsher(ABC):
 
     def compute_a_priori_factor(self, occupancy, step):
         """Compute a-priori weight to adjust step acceptance ratio.
-       
+
         This is essential in keeping detailed balance for some particular
         metropolis proposal methods.
 
@@ -95,7 +95,7 @@ class MCMCUsher(ABC):
                 encoded occupancy string
             step (list[tuple]):
                 Metropolis step. list of tuples each with (index, code).
-        
+
         Returns:
             float: a-priori adjustment weight.
         """
@@ -223,7 +223,7 @@ class Tableflipper(MCMCUsher):
             Do not provide duplicate flips in table!
 
             swap_weight(float, optional):
-                Percentage of canonical swaps to attempt. Should be a 
+                Percentage of canonical swaps to attempt. Should be a
                 positive value, but smaller than 1.
                 Default to 0.
             flip_weights(1D Arraylike|Nonetype), optional:
@@ -297,7 +297,7 @@ class Tableflipper(MCMCUsher):
            on self.add_swap parameter.
 
         There are circumstances where the current occupancy can not be accessed
-        by minimal table flips. This method does not take care of that, please 
+        by minimal table flips. This method does not take care of that, please
         be careful when choosing starting compositions.
 
         Args:
@@ -351,8 +351,7 @@ class Tableflipper(MCMCUsher):
             return step
 
     def _get_flip_id(self, occupancy, step):
-        """Compute flip id in table from occupancy and step.
-        """
+        """Compute flip id in table from occupancy and step."""
         dcomp_stat = [[0 for sp in sl] for sl in self.bits]
         for s_id, sp_to in step:
             sl_id = None
@@ -370,11 +369,6 @@ class Tableflipper(MCMCUsher):
         ducoords = []
         for sl in dcomp_stat:
             ducoords.extend(sl[:-1])
-        #print("ducoords:", ducoords)
-        #print("bits:", self.bits)
-        #print("sublattices:",self.sl_list)
-        #print("flip table:",self.flip_table)
-        #print("flip vec:",self.flip_vecs)
 
         # It is your responsibility not to have duplicate vectors in
         # flip table.
@@ -391,16 +385,16 @@ class Tableflipper(MCMCUsher):
 
     def compute_a_priori_factor(self, occupancy, step):
         """Compute a-priori weight to adjust step acceptance ratio.
-       
+
         This is essential in keeping detailed balance for some particular
         metropolis proposal methods.
 
         Arg:
-            #occupancy (ndarray):
+            occupancy (ndarray):
                 encoded occupancy string
             step (list[tuple]):
                 Metropolis step. list of tuples each with (index, code).
-        
+
         Returns:
             float: a-priori adjustment weight.
         """
@@ -413,9 +407,6 @@ class Tableflipper(MCMCUsher):
             return 1
 
         flip = deepcopy(self.flip_table[fid])
-        #print("Occupancy:",occupancy)
-        #print("Flip:", flip)
-        #print("Direction:", direction)
 
         if direction == 1:
             # Backwards direction.
@@ -443,8 +434,6 @@ class Tableflipper(MCMCUsher):
         p_flip_next = ((1 - self.swap_weight) *
                        weights_next[fid * 2 + (1 - direction)]
                        / weights_next.sum())
-        #print("Compstat now:", comp_stat_now)
-        #print("Compstat next:", comp_stat_next)
 
         # Combinatorial factor.
         comb_factor = p_flip_next / p_flip_now
@@ -452,7 +441,7 @@ class Tableflipper(MCMCUsher):
             factor_sl = 1
             for sp_id in flip['from'][sl_id]:
                 dn = flip['from'][sl_id][sp_id]
-                n_now  = comp_stat_now[sl_id][sp_id]
+                n_now = comp_stat_now[sl_id][sp_id]
                 n_next = comp_stat_next[sl_id][sp_id]
                 assert n_next == n_now - dn
 
@@ -485,7 +474,7 @@ class Subchainwalker(MCMCUsher):
     # Update this and MCMCKernel after you enable more biasing terms.
     valid_bias = {'null': 'Nullbias',
                   'square-charge': 'Squarechargebias',
-                  'square-comp-constraint':'Squarecompconstraintbias'}
+                  'square-comp-constraint': 'Squarecompconstraintbias'}
 
     def __init__(self, all_sublattices, sub_bias_type='null',
                  cutoff_steps=200, minimize_swap=False, add_swap=True,

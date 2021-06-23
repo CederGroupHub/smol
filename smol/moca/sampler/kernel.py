@@ -126,7 +126,7 @@ class Metropolis(MCMCKernel):
                       'subchain-walk': 'Subchainwalker'}
     valid_bias = {'null': 'Nullbias',
                   'square-charge': 'Squarechargebias',
-                  'square-comp-constraint':'Squarecompconstraintbias'}
+                  'square-comp-constraint': 'Squarecompconstraintbias'}
 
     def single_step(self, occupancy):
         """Attempt an MC step.

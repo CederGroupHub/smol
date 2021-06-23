@@ -107,7 +107,7 @@ def delta_ccoords_from_step(occu, step, comp_space, sublat_list_sc):
     occu_0 = occu.copy()
     occu_1 = occu.copy()
     step = np.array(step, dtype=int)
-    occu_1[step[:,0]] = step[:,1]
+    occu_1[step[:, 0]] = step[:, 1]
 
     sc_size = len(sublat_list_sc[0]) // comp_space.sl_sizes[0]
     compstat_0 = occu_to_species_stat(occu_0, comp_space.bits,

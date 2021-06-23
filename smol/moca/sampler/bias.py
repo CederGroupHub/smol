@@ -175,8 +175,7 @@ class Squarechargebias(MCMCBias):
 
 
 class Squarecompconstraintbias(MCMCBias):
-    """Square composition deviation bias. lam * sum(||Cx-b||^2)
-    """
+    """Square composition deviation bias. lam * sum(||Cx-b||^2)."""
 
     def __init__(self, all_sublattices, C, b, lam=0.5,
                  *args, **kwargs):
@@ -207,16 +206,15 @@ class Squarecompconstraintbias(MCMCBias):
         self.bits = [s.species for s in all_sublattices]
         self.sl_list = [s.sites for s in all_sublattices]
         if isinstance(lam, (int, float)):
-            self.lams = np.repeat(lam,len(self.b))
+            self.lams = np.repeat(lam, len(self.b))
         elif len(lam) == len(self.b):
             self.lams = np.array(lam)
         else:
-            raise ValueError("Array lambdas provided, but length does not "+
+            raise ValueError("Array lambdas provided, but length does not " +
                              "match number of composition constraints.")
 
     def _compute_x(self, occupancy):
-        """Compute unconstrained coordinates from occupancy.
-        """
+        """Compute unconstrained coordinates from occupancy."""
         occu = np.array(occupancy)
         compstat = [[(occu[self.sl_list[sl_id]] == sp_id).sum()
                     for sp_id, sp in enumerate(sl)]
@@ -250,7 +248,7 @@ class Squarecompconstraintbias(MCMCBias):
         step = np.array(step, dtype=int)
         occu_now = np.array(occupancy)
         occu_next = np.array(occupancy)
-        occu_next[step[:,0]] = step[:,1]
+        occu_next[step[:, 0]] = step[:, 1]
         return self.compute_bias(occu_next) - self.compute_bias(occu_now)
 
 
