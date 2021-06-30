@@ -2,7 +2,7 @@
 
 from collections import defaultdict
 import numpy as np
-from pymatgen import Composition
+from pymatgen.core import Composition
 from pymatgen.analysis.phase_diagram import PDEntry, PhaseDiagram
 
 from smol.cofe.extern import EwaldTerm

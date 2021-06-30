@@ -3,7 +3,7 @@ import random
 import numpy as np
 from itertools import combinations
 import json
-from pymatgen import Lattice, Structure, Species
+from pymatgen.core import Lattice, Structure, Species
 from pymatgen.util.coord import is_coord_subset_pbc
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe import ClusterSubspace

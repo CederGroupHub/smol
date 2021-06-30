@@ -14,7 +14,7 @@ import numpy as np
 from itertools import combinations
 
 from monty.json import MSONable
-from pymatgen import Structure, PeriodicSite
+from pymatgen.core import Structure, PeriodicSite
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.analysis.structure_matcher import \
     StructureMatcher, OrderDisorderElementComparator
