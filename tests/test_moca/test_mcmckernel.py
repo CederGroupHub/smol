@@ -106,14 +106,22 @@ def test_single_step_neutral(metropolis_kernel_neutral):
     occu_ = gen_random_neutral_occupancy(metropolis_kernel_neutral.all_sublattices,
                                          metropolis_kernel_neutral.num_sites)
 
+    bit_charges = [[sp.oxi_state for sp in s.species] for s in metropolis_kernel_neutral.all_sublattices]
+    print("Bit charges:", bit_charges)
+    all_sublattices = metropolis_kernel_neutral.all_sublattices
     for _ in range(20):
         init_occu = occu_.copy()
         acc, occu, _, _, denth, dfeat = metropolis_kernel_neutral.single_step(init_occu)
+        c = 0
+        for sl_id, sl in enumerate(all_sublattices):
+            for sp_id, sp_c in enumerate(bit_charges[sl_id]):
+                c += (occu[sl.sites] == sp_id).sum() * sp_c
+            
+        assert c == 0
         if acc:
             assert not np.array_equal(occu, occu_)
         else:
             npt.assert_array_equal(occu, occu_)
-
 
 def test_temperature_setter(metropolis_kernel):
     assert metropolis_kernel.beta == 1/(kB*metropolis_kernel.temperature)

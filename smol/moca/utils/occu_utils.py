@@ -7,7 +7,7 @@ import itertools
 
 
 # Utilities for parsing occupation, used in charge-neutral semigrand flip table
-def occu_to_species_stat(occupancy, bits, sublat_list_sc):
+def occu_to_species_stat(occupancy, all_sublattices):
     """Make compstat format from occupation array.
 
     Get a statistics table of each specie on sublattices from an encoded
@@ -15,11 +15,8 @@ def occu_to_species_stat(occupancy, bits, sublat_list_sc):
     Args:
         occupancy(np.ndarray like):
             An array representing encoded occupancy, can be list.
-        bits(list of lists of Specie):
-            A list of species on each sublattice, must correspond to occupancy
-            encoding table
-        sublat_list_sc(List of lists of ints):
-            A list storing sublattice sites in a SUPER cell
+        all_sublattices(smol.moca.Sublattice):
+            All sublattices in the super cell, regardless of activeness.
 
     Return:
         species_stat(2D list of ints/floats)
@@ -30,23 +27,12 @@ def occu_to_species_stat(occupancy, bits, sublat_list_sc):
     """
     occu = np.array(occupancy)
 
-    species_stat = [[0 for i in range(len(sl_bits))] for sl_bits in bits]
-
-    for s_id, sp_code in enumerate(occu):
-        sl_id = None
-        for i, sl in enumerate(sublat_list_sc):
-            if s_id in sl:
-                sl_id = i
-                break
-        if sl_id is None:
-            continue  # Site is inactive.
-
-        species_stat[sl_id][sp_code] += 1
-
-    return species_stat
+    return [[int(round((occu[s.sites] == sp_id).sum()))
+            for sp_id in range(len(s.species))]
+            for s in all_sublattices]
 
 
-def occu_to_species_list(occupancy, bits, sublat_list_sc):
+def occu_to_species_list(occupancy, all_sublattices):
     """Get occupation status of each sublattice.
 
     Get table of the indices of sites that are occupied by each specie on
@@ -54,11 +40,9 @@ def occu_to_species_list(occupancy, bits, sublat_list_sc):
     Args:
         occupancy(np.ndarray like):
             An array representing encoded occupancy, can be list.
-        bits(list of lists of Specie):
-            A list of species on each sublattice, must correspond to
-            occupancy encoding table
-        sublat_list_sc(List of lists of ints):
-            A list storing sublattice sites in a SUPER cell
+        all_sublattices(smol.moca.Sublattice):
+            All sublattices in the super cell, regardless of activeness.
+
     Return:
         species_list(3d list of ints):
             Is a statistics of indices of sites occupied by each specie.
@@ -68,23 +52,55 @@ def occu_to_species_list(occupancy, bits, sublat_list_sc):
     """
     occu = np.array(occupancy)
 
-    species_list = [[[] for i in range(len(sl_bits))] for sl_bits in bits]
-
-    for site_id, sp_id in enumerate(occu):
-        sl_id = None
-        for i, sl in enumerate(sublat_list_sc):
-            if site_id in sl:
-                sl_id = i
-                break
-        if sl_id is None:
-            continue  # Site is inactive.
-
-        species_list[sl_id][sp_id].append(site_id)
-
-    return species_list
+    return [[s.sites[occu[s.sites] == sp_id].tolist()
+            for sp_id in range(len(s.species))]
+            for s in all_sublattices]
 
 
-def delta_ccoords_from_step(occu, step, comp_space, sublat_list_sc):
+def delta_ucoords_from_step(occu, step, comp_space, all_sublattices):
+    """Get the change of unconstrained coordinates from mcmcusher step.
+
+    Args:
+        occu(1D arrayLike):
+            Encoded occupation array.
+        step(List[type(int.int)]):
+            List of tuples corresponding to single flips
+            in a step.
+        bits(List[List[Specie]]):
+            A list specifying the species that can occupy
+            each sublattice.
+        comp_space(smol.CompSpace):
+            composition space object.
+        all_sublattices(smol.moca.Sublattice):
+            All sublattices in the super cell, regardless of activeness.
+
+        Note: comp_space and all_sublattices must match.
+    Return:
+        np.ndarray, change of constrained coordinates.
+    """
+    if len(step) == 0:
+        return np.zeros(comp_space.unconstr_dim)
+
+    occu_0 = occu.copy()
+    occu_1 = occu.copy()
+    step = np.array(step, dtype=int)
+    occu_1[step[:, 0]] = step[:, 1]
+
+    sc_size = len(all_sublattices[0].sites) // comp_space.sl_sizes[0]
+    compstat_0 = occu_to_species_stat(occu_0, all_sublattices)
+    ucoords_0 = comp_space.translate_format(compstat_0,
+                                            from_format='compstat',
+                                            to_format='unconstr',
+                                            sc_size=sc_size)
+    compstat_1 = occu_to_species_stat(occu_1, all_sublattices)
+    ucoords_1 = comp_space.translate_format(compstat_1,
+                                            from_format='compstat',
+                                            to_format='unconstr',
+                                            sc_size=sc_size)
+    return np.array(ucoords_1) - np.array(ucoords_0)
+
+
+def delta_ccoords_from_step(occu, step, comp_space, all_sublattices):
     """Get the change of constrained coordinates from mcmcusher step.
 
     Args:
@@ -96,28 +112,30 @@ def delta_ccoords_from_step(occu, step, comp_space, sublat_list_sc):
         bits(List[List[Specie]]):
             A list specifying the species that can occupy
             each sublattice.
-        sublat_list_sc(List[List[int]]):
-            List of sublattice site indices.
         comp_space(smol.CompSpace):
             composition space object.
+        all_sublattices(smol.moca.Sublattice):
+            All sublattices in the super cell, regardless of activeness.
 
+        Note: comp_space and all_sublattices must match.
     Return:
         np.ndarray, change of constrained coordinates.
     """
+    if len(step) == 0:
+        return np.zeros(comp_space.dim)
+
     occu_0 = occu.copy()
     occu_1 = occu.copy()
     step = np.array(step, dtype=int)
     occu_1[step[:, 0]] = step[:, 1]
 
-    sc_size = len(sublat_list_sc[0]) // comp_space.sl_sizes[0]
-    compstat_0 = occu_to_species_stat(occu_0, comp_space.bits,
-                                      sublat_list_sc)
+    sc_size = len(all_sublattices[0].sites) // comp_space.sl_sizes[0]
+    compstat_0 = occu_to_species_stat(occu_0, all_sublattices)
     ccoords_0 = comp_space.translate_format(compstat_0,
                                             from_format='compstat',
                                             to_format='constr',
                                             sc_size=sc_size)
-    compstat_1 = occu_to_species_stat(occu_1, comp_space.bits,
-                                      sublat_list_sc)
+    compstat_1 = occu_to_species_stat(occu_1, all_sublattices)
     ccoords_1 = comp_space.translate_format(compstat_1,
                                             from_format='compstat',
                                             to_format='constr',

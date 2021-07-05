@@ -22,7 +22,8 @@ from .bias import mcbias_factory
 from ..comp_space import *
 
 from ..utils.occu_utils import (occu_to_species_list, flip_weights_mask,
-                                occu_to_species_stat)
+                                occu_to_species_stat,
+                                delta_ucoords_from_step)
 from ..utils.math_utils import (choose_section_from_partition, GCD_list,
                                 combinatorial_number)
 
@@ -308,7 +309,7 @@ class Tableflipper(MCMCUsher):
              list(tuple): list of tuples each with (idex, code).
         """
         occupancy = np.array(occupancy)
-        comp_stat = occu_to_species_stat(occupancy, self.bits, self.sl_list)
+        comp_stat = occu_to_species_stat(occupancy, self.all_sublattices)
         mask = flip_weights_mask(self.flip_table, comp_stat)
         masked_weights = self.flip_weights * mask
         # Masking effect will also be considered in a_priori factors.
@@ -319,8 +320,8 @@ class Tableflipper(MCMCUsher):
             warnings.warn("Current composition is disconnected!")
             return self._swapper.propose_step(occupancy)
         else:
-            species_list = occu_to_species_list(occupancy, self.bits,
-                                                self.sl_list)
+            species_list = occu_to_species_list(occupancy,
+                                                self.all_sublattices)
 
             idx = choose_section_from_partition(masked_weights)
             flip = deepcopy(self.flip_table[idx // 2])
@@ -352,23 +353,13 @@ class Tableflipper(MCMCUsher):
 
     def _get_flip_id(self, occupancy, step):
         """Compute flip id in table from occupancy and step."""
-        dcomp_stat = [[0 for sp in sl] for sl in self.bits]
-        for s_id, sp_to in step:
-            sl_id = None
-            for i, sl in enumerate(self.sl_list):
-                if s_id in sl:
-                    sl_id = i
-                    break
-            if sl_id is None:
-                raise ValueError("Site id {} not in active sublattice."
-                                 .format(s_id))
-            sp_from = int(occupancy[s_id])
-            dcomp_stat[sl_id][sp_to] += 1
-            dcomp_stat[sl_id][sp_from] -= 1
-
-        ducoords = []
-        for sl in dcomp_stat:
-            ducoords.extend(sl[:-1])
+        if len(step) == 0:
+            raise ValueError("Null step proposed, " +
+                             "but table flip should not allow it!")
+        ducoords = delta_ucoords_from_step(occupancy,
+                                           step,
+                                           self._compspace,
+                                           self.all_sublattices)
 
         # It is your responsibility not to have duplicate vectors in
         # flip table.
@@ -414,8 +405,7 @@ class Tableflipper(MCMCUsher):
             flip['to'] = flip['from']
             flip['from'] = buf
 
-        comp_stat_now = occu_to_species_stat(occupancy,
-                                             self.bits, self.sl_list)
+        comp_stat_now = occu_to_species_stat(occupancy, self.all_sublattices)
         mask_now = flip_weights_mask(self.flip_table, comp_stat_now)
         weights_now = self.flip_weights * mask_now
         p_flip_now = ((1 - self.swap_weight) *
