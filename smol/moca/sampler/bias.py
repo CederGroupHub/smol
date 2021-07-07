@@ -169,12 +169,11 @@ class Squarechargebias(MCMCBias):
             return 0
 
         step_arr = np.array(step, dtype=int)
-        occu_before = occupancy.copy()
-        occu_after = occupancy.copy()
-        occu_after[step_arr[:, 0]] = step_arr[:, 1]
+        occu_now = occupancy.copy()
+        occu_next = occupancy.copy()
+        occu_next[step_arr[:, 0]] = step_arr[:, 1]
 
-        return self.lam * (self._get_charge(occu_after) -
-                           self._get_charge(occu_before)) ** 2
+        return self.compute_bias(occu_next) - self.compute_bias(occu_now)
 
 
 class Squarecompconstraintbias(MCMCBias):
