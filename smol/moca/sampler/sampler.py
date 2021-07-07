@@ -94,7 +94,7 @@ class Sampler:
             kernel_type = "Metropolis"
 
         mcmckernel = mcmckernel_factory(kernel_type, ensemble, temperature,
-                                        step_type, *args, **kwargs)
+                                        step_type, nwalkers, *args, **kwargs)
 
         sampling_metadata = {"name": type(ensemble).__name__}
         sampling_metadata.update(ensemble.thermo_boundaries)

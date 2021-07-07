@@ -76,8 +76,8 @@ class MCMCUsher(ABC):
         """Update any auxiliary state information based on an accepted step."""
         pass
 
-    def set_aux_state(self, state, *args, **kwargs):
-        """Set the auxiliary state from a checkpoint values."""
+    def set_aux_state(self, occupancies, *args, **kwargs):
+        """Set the auxiliary occupancies from a checkpoint values."""
         pass
 
     def get_random_sublattice(self):
