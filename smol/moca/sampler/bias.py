@@ -137,6 +137,12 @@ class Squarechargebias(MCMCBias):
             table[s.sites, :len(ordered_cs)] = ordered_cs
         return table
 
+    def _get_charge(self, occupancy):
+        """Compute charge from occupancy."""
+        occu = np.array(occupancy, dtype=int)
+        ids = np.arange(len(occupancy), dtype=int)
+        return np.sum(self._charge_table[ids, occu])
+
     def compute_bias(self, occupancy):
         """Compute bias from occupancy.
 
@@ -146,9 +152,7 @@ class Squarechargebias(MCMCBias):
         Returns:
             Float, bias value.
         """
-        return (self.lam *
-                np.sum([self._charge_table[i, o]
-                       for i, o in enumerate(occupancy)])**2)
+        return (self.lam * self._get_charge(occupancy) ** 2)
 
     def compute_bias_change(self, occupancy, step):
         """Compute bias change from step.
@@ -161,17 +165,16 @@ class Squarechargebias(MCMCBias):
         Return:
             Float, change of bias value after step.
         """
-        occu = occupancy.copy()
-        del_c = 0
-        for i, sp in step:
-            del_c += (self._charge_table[i, sp] -
-                      self._charge_table[i, occu[i]])
-            occu[i] = sp
+        if len(step) == 0:
+            return 0
 
-        c = np.sum([self._charge_table[i, o]
-                   for i, o in enumerate(occupancy)])
+        step_arr = np.array(step, dtype=int)
+        occu_before = occupancy.copy()
+        occu_after = occupancy.copy()
+        occu_after[step_arr[:, 0]] = step_arr[:, 1]
 
-        return self.lam * (del_c**2 + 2 * del_c * c)
+        return self.lam * (self._get_charge(occu_after) -
+                           self._get_charge(occu_before)) ** 2
 
 
 class Squarecompconstraintbias(MCMCBias):
@@ -245,6 +248,9 @@ class Squarecompconstraintbias(MCMCBias):
         Return:
             Float, change of bias value after step.
         """
+        if len(step) == 0:
+            return 0
+
         step = np.array(step, dtype=int)
         occu_now = np.array(occupancy)
         occu_next = np.array(occupancy)
