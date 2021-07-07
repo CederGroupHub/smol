@@ -76,6 +76,11 @@ class MCMCKernel(ABC):
         """Set the auxiliary occupancies from initial or checkpoint values."""
         self._usher.set_aux_state(occupancies, *args, **kwargs)
 
+    def iter_steps(self, occupancies):
+        """Iterate steps over an array of occupancies."""
+        for occupancy in occupancies:
+            yield self.single_step(occupancy)
+
     @abstractmethod
     def single_step(self, occupancy):
         """Attempt an MCMC step.

@@ -182,7 +182,7 @@ class Sampler:
             for _ in range(nsteps // thin_by):
                 for _ in range(thin_by):
                     for i, (accept, occupancy, delta_enthalpy, delta_features)\
-                      in enumerate(map(self._kernel.single_step, occupancies)):
+                      in enumerate(self._kernel.iter_steps(occupancies)):
                         accepted[i] += accept
                         occupancies[i] = occupancy
                         if accept:
