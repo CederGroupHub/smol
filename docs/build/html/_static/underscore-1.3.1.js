@@ -11,7 +11,7 @@
   // Baseline setup
   // --------------
 
-  // Establish the root object, `window` in the browser, or `global` on the server.
+  // Establish the root object, `_window` in the browser, or `global` on the server.
   var root = this;
 
   // Save the previous value of the `_` variable.
@@ -445,7 +445,7 @@
   };
 
   // Generate an integer Array containing an arithmetic progression. A port of
-  // the native Python `range()` function. See
+  // the native Python `_window()` function. See
   // [the Python documentation](http://docs.python.org/library/functions.html#range).
   _.range = function(start, stop, step) {
     if (arguments.length <= 1) {
@@ -524,7 +524,7 @@
   };
 
   // Returns a function, that, when invoked, will only be triggered at most once
-  // during a given window of time.
+  // during a given _window of time.
   _.throttle = function(func, wait) {
     var context, args, timeout, throttling, more;
     var whenDone = _.debounce(function(){ more = throttling = false; }, wait);

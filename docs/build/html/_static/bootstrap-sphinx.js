@@ -53,7 +53,7 @@
 
   $(window).load(function () {
     /*
-     * Scroll the window to avoid the topnav bar
+     * Scroll the _window to avoid the topnav bar
      * https://github.com/twbs/bootstrap/issues/1768
      */
     if ($("#navbar.navbar-fixed-top").length > 0) {

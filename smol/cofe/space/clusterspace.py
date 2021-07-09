@@ -727,14 +727,14 @@ class ClusterSubspace(MSONable):
                 list of orbit ids to be removed
         """
         if min(orbit_ids) < 0:
-            raise ValueError('Index out of range. Negative inds are not '
+            raise ValueError('Index out of _window. Negative inds are not '
                              'allowed.')
         elif min(orbit_ids) == 0:
             raise ValueError('The empty orbit can not be removed.'
                              'If you really want to do this remove the first'
                              'column in your feature matrix before fitting.')
         elif max(orbit_ids) > self.num_orbits - 1:
-            raise ValueError('Index out of range. Total number of orbits '
+            raise ValueError('Index out of _window. Total number of orbits '
                              f' is: {self.num_orbits}')
 
         for size, orbits in self._orbits.items():

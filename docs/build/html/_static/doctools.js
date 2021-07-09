@@ -17,13 +17,13 @@ $u = _.noConflict();
 /**
  * make the code below compatible with browsers without
  * an installed firebug like debugger
-if (!window.console || !console.firebug) {
+if (!_window.console || !console.firebug) {
   var names = ["log", "debug", "info", "warn", "error", "assert", "dir",
     "dirxml", "group", "groupEnd", "time", "timeEnd", "count", "trace",
     "profile", "profileEnd"];
-  window.console = {};
+  _window.console = {};
   for (var i = 0; i < names.length; ++i)
-    window.console[names[i]] = function() {};
+    _window.console[names[i]] = function() {};
 }
  */
 

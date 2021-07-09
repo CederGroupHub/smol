@@ -51,9 +51,8 @@ class Sampler:
         random.seed(seed)
 
     @classmethod
-    def from_ensemble(cls, ensemble, temperature, step_type=None,
-                      kernel_type=None, seed=None, nwalkers=1,
-                      *args, **kwargs):
+    def from_ensemble(cls, ensemble, step_type=None, kernel_type=None,
+                      seed=None, nwalkers=1, *args, **kwargs):
         """
         Create a sampler based on an Ensemble instances.
 
@@ -93,8 +92,8 @@ class Sampler:
         if kernel_type is None:
             kernel_type = "Metropolis"
 
-        mcmckernel = mcmckernel_factory(kernel_type, ensemble, temperature,
-                                        step_type, nwalkers, *args, **kwargs)
+        mcmckernel = mcmckernel_factory(kernel_type, ensemble, step_type,
+                                        nwalkers=nwalkers, *args, **kwargs)
 
         sampling_metadata = {"name": type(ensemble).__name__}
         sampling_metadata.update(ensemble.thermo_boundaries)

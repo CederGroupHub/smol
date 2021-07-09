@@ -10,6 +10,8 @@ from abc import ABC, abstractmethod
 from math import log, sqrt
 from random import random
 from collections import defaultdict
+from operator import itemgetter
+from itertools import repeat
 import numpy as np
 
 from smol.constants import kB
@@ -27,7 +29,7 @@ class MCMCKernel(ABC):
 
     valid_mcushers = None  # set this in derived kernels
 
-    def __init__(self, ensemble, temperature, step_type, nwalkers, *args,
+    def __init__(self, ensemble, step_type, temperature, nwalkers=1, *args,
                  **kwargs):
         """Initialize MCMCKernel.
 
@@ -35,10 +37,10 @@ class MCMCKernel(ABC):
             ensemble (Ensemble):
                 An Ensemble instance to obtain the feautures and parameters
                 used in computing log probabilities.
-            temperature (float):
-                Temperature at which the MCMC sampling will be carried out.
             step_type (str): optional
                 String specifying the MCMC step type.
+            temperature (float):
+                Temperature at which the MCMC sampling will be carried out.
             nwalkers (int): optional
                 Number of walkers/chains to sampler.
             args:
@@ -77,7 +79,7 @@ class MCMCKernel(ABC):
         self._usher.set_aux_state(occupancies, *args, **kwargs)
 
     def iter_steps(self, occupancies):
-        """Iterate steps over an array of occupancies."""
+        """Iterate steps for each walker over an array of occupancies."""
         for occupancy in occupancies:
             yield self.single_step(occupancy)
 
@@ -122,8 +124,10 @@ class Metropolis(MCMCKernel):
         step = self._usher.propose_step(occupancy)
         delta_features = self._feature_change(occupancy, step)
         delta_enthalpy = np.dot(self.natural_params, delta_features)
-        accept = (True if delta_enthalpy <= 0
-                  else -self.beta * delta_enthalpy > log(random()))
+
+        accept = True if delta_enthalpy <= 0 \
+            else -self.beta * delta_enthalpy > log(random())
+
         if accept:
             for f in step:
                 occupancy[f[0]] = f[1]
@@ -142,9 +146,9 @@ class WangLandau(MCMCKernel):
 
     valid_mcushers = {'flip': 'Flipper', 'swap': 'Swapper'}
 
-    def __init__(self, ensemble, step_type, nwalkers, bin_size, min_energy,
-                 max_energy, flatness=0.8, mod_factor=np.e, check_period=1000,
-                 fixed_window=False, mod_update=None):
+    def __init__(self, ensemble, step_type, bin_size, min_energy,
+                 max_energy, flatness=0.8, mod_factor=1.0, check_period=1000,
+                 fixed_window=False, mod_update=None, nwalkers=1):
         """Initialize a WangLandau Kernel
 
         Args:
@@ -152,8 +156,6 @@ class WangLandau(MCMCKernel):
                 The ensemble object to use to generate samples
             step_type (str):
                 An MC step type corresponding to an MCUsher. See valid_mcushers
-            nwalkers (int): optional
-                Number of walkers/chains to sampler. Default is 1.
             bin_size (float):
                 The energy bin size to determine different states.
             min_energy (float):
@@ -172,38 +174,103 @@ class WangLandau(MCMCKernel):
                 checked.
             fixed_window (bool): optional
                 Whether to update the max of min energy if an energy outside of
-                range is sampled. Default False.
+                _window is sampled. Default False.
             mod_update (Callable): optional
                 A function used to update the fill factor when the histogram
-                satisfies the flatness criteria. The function must
-                monotonically decrease to 1.
+                satisfies the flatness criteria. The function is used to update
+                the entropy value for an energy level and so must monotonically
+                decrease to 0.
+            nwalkers (int): optional
+                Number of walkers/chains to sampler. Default is 1.np.vstack(4 * init_occu)
         """
         if min_energy > max_energy:
             raise ValueError("min_energy can not be larger than max_energy.")
-        elif mod_factor <= 1:
-            raise ValueError("mod_factor must be greater than 1.")
-        self._mfactor = mod_factor
+        elif mod_factor <= 0:
+            raise ValueError("mod_factor must be greater than 0.")
+        elif fixed_window is True:
+            raise NotImplementedError(
+                "fixed_window=True is not implemented."
+                " If you need consider doing a PR.")
+        
         self.flatness = flatness
         self.check_period = check_period
-        self.range = (min_energy, max_energy)
         self.fixed_window = fixed_window
+        self._mfactors = np.array(nwalkers * [mod_factor, ])
+        self._window = (min_energy, max_energy)
         self._bin_size = bin_size
-        self._update = mod_update if mod_update is not None \
-            else lambda f: sqrt(f)
+        self._update_fun = mod_update if mod_update is not None \
+            else lambda f: f / 2.0
 
-        # default dict of arrays with [energy, DOS, histogram]
+        # TODO change DOS to entropy and use logs to see if overflow is better
+        # default dict of arrays with [entropy, histogram]
         # keys are generated by _get_key method
+        nbins = int((max_energy - min_energy) // bin_size)
         self._aux_states = defaultdict(
-            lambda: np.array(nwalkers * [[np.inf, 1, 0],]))
-        self._prev_states = np.array(nwalkers * [[np.inf, 1, 0],])
+            lambda: np.array(nwalkers * [[0.0, 0.0], ]),
+            {
+                bin_num: np.array(nwalkers * [[0.0, 0.0], ])
+                for bin_num in range(nbins)
+            }
+        )
+        self._current_energy = np.zeros(nwalkers)
+        # a little annoying to keep the temperature there...
         super().__init__(ensemble=ensemble, step_type=step_type, temperature=1,
                          nwalkers=nwalkers)
 
-    def _get_key(self, energy):
-        """Get key for _aux_states dict from given energy."""
-        return int((energy - self.range[0])//self._bin_size)
+    @property
+    def energy_levels(self):
+        """Get energies that have been visited or are inside initial window."""
+        energies = [self._get_bin_energy(b) for b in
+                    sorted(self._aux_states.keys())]
+        return np.array(energies)
 
-    def single_step(self, occupancy):
+    @property
+    def entropy(self):
+        """Return entropy values for each walker."""
+        return np.array(
+            [state[:, 0] for _, state in
+             sorted(self._aux_states.items(), key=itemgetter(0))]).T
+
+    @property
+    def dos(self):
+        """Get current DOS for each walker"""
+        return np.exp(self.entropy)
+
+    @property
+    def histograms(self):
+        """Get current histograms for each walker."""
+        return np.array(
+            [state[:, 1] for _, state in
+             sorted(self._aux_states.items(), key=itemgetter(0))]).T
+
+    @property
+    def mod_factors(self):
+        """Get the DOS modification factors"""
+        return self._mfactors
+
+    def _get_bin(self, energy):
+        """Get the histogram bin for _aux_states dict from given energy."""
+        return int((energy - self._window[0]) // self._bin_size)
+
+    def _get_bin_energy(self, bin_number):
+        """Get the bin energy for _aux_states dict from given energy."""
+        return self._window[0] + bin_number * self._bin_size
+
+    def iter_steps(self, occupancies):
+        """Iterate steps for each walker over an array of occupancies."""
+        for walker, occupancy in enumerate(occupancies):
+            yield self.single_step(occupancy, walker)
+
+        # check if histograms are flat and reset accordingly
+        histograms = self.histograms  # cache it
+        for i, flat in enumerate(
+                (histograms > self.flatness * histograms.mean(axis=1)).all(axis=1)):  # noqa
+            if flat:
+                self._mfactors[i] = self._update_fun(self._mfactors[i])
+                for level in self._aux_states.values():
+                    level[i, 1] = 0  # reset histogram
+
+    def single_step(self, occupancy, walker=0):
         """Attempt an MC step.
 
         Returns the next occupancies in the chain and if the attempted step was
@@ -212,31 +279,47 @@ class WangLandau(MCMCKernel):
         Args:
             occupancy (ndarray):
                 encoded occupancy.
+            walker (int):
+                index of walker to take step.
 
         Returns:
             tuple: (acceptance, occupancy, features change, enthalpy change)
         """
+        energy = self._current_energy[walker]
+        bin_num = self._get_bin(energy)
+        state = self._aux_states[bin_num][walker]
+
         step = self._usher.propose_step(occupancy)
         delta_features = self._feature_change(occupancy, step)
         delta_energy = np.dot(self.natural_params, delta_features)
-        # TODO need to make this work for aux states with many walkers...
+        new_energy = energy + delta_energy
+        new_bin_num = self._get_bin(new_energy)
+        new_state = self._aux_states[new_bin_num][walker]
 
-    def set_aux_state(self, occupancies, *args, **kwargs):
+        accept = state[0] - new_state[0] >= log(random())
+        if accept:
+            for f in step:
+                occupancy[f[0]] = f[1]
+            bin_num = new_bin_num
+            self._current_energy[walker] = new_energy
+            self._usher.update_aux_state(step)
+
+        mfactor = self._mfactors[walker]
+        # update DOS and histogram
+        self._aux_states[bin_num][walker][0] += mfactor
+        self._aux_states[bin_num][walker][1] += 1
+
+        return accept, occupancy, delta_energy, delta_features
+
+    def set_aux_state(self, occupancies):
         """Set the auxiliary occupancies based on an occupancy"""
-        energies = np.dot(self.feature_fun(occupancies), self.natural_params)
-        for i, energy in enumerate(energies):
-            key = self._get_key(energy)
-            self._aux_states[key][:, 0] = energy
-            # update only in corresponding chain
-            self._aux_states[key][i, 1] *= self._mfactor
-            self._aux_states[key][i, 2] += 1
-            self._prev_states[i] = self._aux_states[key][i]
-
-        self._usher.set_aux_state(occupancies, *args, **kwargs)
+        energies = np.dot(
+            list(map(self.feature_fun, occupancies)), self.natural_params)
+        self._current_energy[:] = energies
+        self._usher.set_aux_state(occupancies)
 
 
-def mcmckernel_factory(kernel_type, ensemble, temperature, step_type,
-                       *args, **kwargs):
+def mcmckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs):
     """Get a MCMC Kernel from string name.
 
     Args:
@@ -244,8 +327,6 @@ def mcmckernel_factory(kernel_type, ensemble, temperature, step_type,
             String specifying step to instantiate.
         ensemble (Ensemble)
             An Ensemble object to create the MCMC kernel from.
-        temperature (float)
-            Temperature at which the MCMC sampling will be carried out.
         step_type (str):
             String specifying the step type (ie key to mcusher type)
         *args:
@@ -256,6 +337,7 @@ def mcmckernel_factory(kernel_type, ensemble, temperature, step_type,
     Returns:
         MCMCKernel: instance of derived class.
     """
-    return derived_class_factory(kernel_type.capitalize(), MCMCKernel,
-                                 ensemble, temperature, step_type,
-                                 *args, **kwargs)
+
+    kernel_name = ''.join([s.capitalize() for s in kernel_type.split('-')])
+    return derived_class_factory(kernel_name, MCMCKernel,
+                                 ensemble, step_type, *args, **kwargs)

@@ -1174,7 +1174,7 @@ if (typeof (window.$jqTheme || window.jQuery) === 'undefined') {
 
   Modal.prototype.checkScrollbar = function () {
     var fullWindowWidth = window.innerWidth
-    if (!fullWindowWidth) { // workaround for missing window.innerWidth in IE8
+    if (!fullWindowWidth) { // workaround for missing _window.innerWidth in IE8
       var documentElementRect = document.documentElement.getBoundingClientRect()
       fullWindowWidth = documentElementRect.right - Math.abs(documentElementRect.left)
     }
@@ -1311,7 +1311,7 @@ if (typeof (window.$jqTheme || window.jQuery) === 'undefined') {
     this.inState   = { click: false, hover: false, focus: false }
 
     if (this.$element[0] instanceof document.constructor && !this.options.selector) {
-      throw new Error('`selector` option must be specified when initializing ' + this.type + ' on the window.document object!')
+      throw new Error('`selector` option must be specified when initializing ' + this.type + ' on the _window.document object!')
     }
 
     var triggers = this.options.trigger.split(' ')
