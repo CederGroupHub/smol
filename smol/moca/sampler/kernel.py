@@ -173,15 +173,15 @@ class WangLandau(MCMCKernel):
                 The period in number of steps for the histogram flatness to be
                 checked.
             fixed_window (bool): optional
-                Whether to update the max of min energy if an energy outside of
-                _window is sampled. Default False.
+                Whether to accept energies below the minimum and above the
+                maximum energy provided. Default is False
             mod_update (Callable): optional
                 A function used to update the fill factor when the histogram
                 satisfies the flatness criteria. The function is used to update
                 the entropy value for an energy level and so must monotonically
                 decrease to 0.
             nwalkers (int): optional
-                Number of walkers/chains to sampler. Default is 1.np.vstack(4 * init_occu)
+                Number of walkers/chains to sampler. Default is 1.
         """
         if min_energy > max_energy:
             raise ValueError("min_energy can not be larger than max_energy.")
@@ -235,6 +235,7 @@ class WangLandau(MCMCKernel):
     @property
     def dos(self):
         """Get current DOS for each walker"""
+        # TODO look into handling this to avoid overflow issues...
         return np.exp(self.entropy)
 
     @property
@@ -246,7 +247,7 @@ class WangLandau(MCMCKernel):
 
     @property
     def mod_factors(self):
-        """Get the DOS modification factors"""
+        """Get the entropy modification factors"""
         return self._mfactors
 
     def _get_bin(self, energy):
