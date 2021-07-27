@@ -34,16 +34,24 @@ class RegressionData:
     property_vector : np.ndarray
 
     @classmethod
-    def from_sklearn(cls, estimator):
+    def from_sklearn(cls, estimator, feature_matrix, property_vector):
         """Create a RegressionData object from sklearn estimator
 
         Args:
             estimator (object):
                 scikit-leanr estimator class or derived.
+            feature_matrix (ndarray):
+                feature matrix used in fit.
+            property_vector (ndarray):
+                target property vector used in fit.
         Returns:
             RegressionData
         """
-        pass
+        return cls(module=estimator.__module__,
+                   class_name=estimator.__class__.__name__,
+                   parameters=estimator.get_params(),
+                   feature_matrix=feature_matrix,
+                   property_vector=property_vector)
 
 
 class ClusterExpansion(MSONable):
