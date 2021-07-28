@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Use this section to keep track of changes in the works.
 ### Added
 * `rotate` method in SiteBasis class.
+[\#130](https://github.com/CederGroupHub/smol/pull/130)
+  ([lbluque](https://github.com/lbluque))
 
 ### Changed
 
@@ -16,6 +18,9 @@ Use this section to keep track of changes in the works.
   `Structure.sites_in_sphere` return value.
   [\#125](https://github.com/CederGroupHub/smol/pull/125)
   ([lbluque](https://github.com/lbluque))
+* Fix saving bit_combos in `Orbit.as_dict` when pruning has been done.
+[\#130](https://github.com/CederGroupHub/smol/pull/130)
+ ([qchempku2017](https://github.com/qchempku2017))
 
 ## [v1.0.1](https://github.com/CederGroupHub/smol/tree/v1.0.1) (2021-03-03)
 #### [Full Changelog](https://github.com/CederGroupHub/smol/compare/v1.0.0...v1.0.1)
