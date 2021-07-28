@@ -3,19 +3,19 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Creating a basic Cluster Expansion &#8212; smol 1.0.0 documentation</title>
-    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/_static/default.css" />
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/language_data.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
 <meta charset='utf-8'>
@@ -122,21 +122,35 @@
 /* CSS for nbsphinx extension */
 
 /* remove conflicting styling from Sphinx themes */
-div.nbinput.container,
-div.nbinput.container div.prompt,
-div.nbinput.container div.input_area,
-div.nbinput.container div[class*=highlight],
-div.nbinput.container div[class*=highlight] pre,
-div.nboutput.container,
-div.nboutput.container div.prompt,
-div.nboutput.container div.output_area,
-div.nboutput.container div[class*=highlight],
-div.nboutput.container div[class*=highlight] pre {
-    background: none;
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
     border: none;
-    padding: 0 0;
+    padding: 0;
     margin: 0;
     box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
 }
 
 /* avoid gaps between output lines */
@@ -237,7 +251,7 @@ div.nboutput.container div.output_area {
 div.nbinput.container div.input_area {
     border: 1px solid #e0e0e0;
     border-radius: 2px;
-    background: #f5f5f5;
+    /*background: #f5f5f5;*/
 }
 
 /* override MathJax center alignment in output cells */
@@ -303,6 +317,7 @@ div.nboutput.container div.output_area.rendered_html,
 div.nboutput.container div.output_area > div.output_javascript,
 div.nboutput.container div.output_area:not(.rendered_html) > img{
     padding: 5px;
+    margin: 0;
 }
 
 /* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
@@ -350,7 +365,7 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<div class="section" id="Creating-a-basic-Cluster-Expansion">
+<section id="Creating-a-basic-Cluster-Expansion">
 <h1>Creating a basic Cluster Expansion<a class="headerlink" href="#Creating-a-basic-Cluster-Expansion" title="Permalink to this headline">¶</a></h1>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -359,7 +374,7 @@ div.rendered_html tbody tr:hover {
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">pymatgen</span> <span class="kn">import</span> <span class="n">Structure</span>
+<span class="kn">from</span> <span class="nn">pymatgen.core.structure</span> <span class="kn">import</span> <span class="n">Structure</span>
 <span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">ClusterSubspace</span><span class="p">,</span> <span class="n">StructureWrangler</span><span class="p">,</span> <span class="n">ClusterExpansion</span>
 </pre></div>
 </div>
@@ -410,7 +425,7 @@ div.rendered_html tbody tr:hover {
 630/630 structures map to the lattice
 </pre></div></div>
 </div>
-<div class="section" id="0)-The-prim-structure">
+<section id="0)-The-prim-structure">
 <h2>0) The prim structure<a class="headerlink" href="#0)-The-prim-structure" title="Permalink to this headline">¶</a></h2>
 <p>The prim structure defines the <strong>configurational space</strong> for the Cluster Expansion. The <strong>configurational space</strong> is defined by the site <strong>compositional spaces</strong> and the crystal symetries of the prim structure. The occupancy of the sites determine site <strong>compositional spaces</strong>. Sites are <strong>active</strong> if they have compositional degrees of freedom.</p>
 <p>Active sites have fractional compositions. Vacancies are allowed in sites where the composition does not sum to one.</p>
@@ -445,8 +460,8 @@ Sites (2)
   1  O2-                                0.5  0.5  0.5
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="1)-The-cluster-subspace">
+</section>
+<section id="1)-The-cluster-subspace">
 <h2>1) The cluster subspace<a class="headerlink" href="#1)-The-cluster-subspace" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">ClusterSubspace</span></code> represents all the orbits (groups of equivalent clusters) that will be considered when fitting the cluster expansion. Its main purpose is to compute the <strong>correlations functions</strong> for each included orbit given a structure in the compositional space defined by the prim.</p>
 <p>In order to do be able to compute the correlation functions, the given structure must match the prim structure in a “crystallographic” sense but allowing for compositional degrees of freedom in the “active” sites.</p>
@@ -503,7 +518,7 @@ ClusterBasis: [Prim Composition] Li+0.33333333 Mn3+0.33333333 Ti4+0.33333333 O2-
 
 </pre></div></div>
 </div>
-<div class="section" id="1.1)-Computing-a-correlation-vector.">
+<section id="1.1)-Computing-a-correlation-vector.">
 <h3>1.1) Computing a correlation vector.<a class="headerlink" href="#1.1)-Computing-a-correlation-vector." title="Permalink to this headline">¶</a></h3>
 <p>A correlation vector for a specific structure (represents the feature vector) used to train and predict target values.</p>
 <div class="nbinput docutils container">
@@ -515,8 +530,8 @@ ClusterBasis: [Prim Composition] Li+0.33333333 Mn3+0.33333333 Ti4+0.33333333 O2-
 <span class="n">corr</span> <span class="o">=</span> <span class="n">subspace</span><span class="o">.</span><span class="n">corr_from_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The correlation vector for a structure with&#39;</span>
-      <span class="sa">f</span><span class="s1">&#39; composition </span><span class="si">{structure.composition}</span><span class="s1"> is: &#39;</span>
-      <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{corr}</span><span class="s1">&#39;</span><span class="p">)</span>
+      <span class="sa">f</span><span class="s1">&#39; composition </span><span class="si">{</span><span class="n">structure</span><span class="o">.</span><span class="n">composition</span><span class="si">}</span><span class="s1"> is: &#39;</span>
+      <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{</span><span class="n">corr</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -533,9 +548,9 @@ The correlation vector for a structure with composition Li+16 Mn3+16 O2-32 is:
   0.03222656 -0.02283465  0.01757812]
 </pre></div></div>
 </div>
-</div>
-</div>
-<div class="section" id="2)-The-structure-wrangler">
+</section>
+</section>
+<section id="2)-The-structure-wrangler">
 <h2>2) The structure wrangler<a class="headerlink" href="#2)-The-structure-wrangler" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> is a class that will is used to create and organize the data that will be used to train (and possibly test) the cluster expansion. It makes sure that all the supplied structures appropriately match the prim structure, and obtains the necessary information to correctly normalize target properties (such as energy) necessary for training.</p>
 <p>Matching relaxed structures can be a tricky problem, especially for ionic systems with vacancies. See the notebook on structure matching for tips on how to tweak parameters.</p>
@@ -557,7 +572,7 @@ The correlation vector for a structure with composition Li+16 Mn3+16 O2-32 is:
                       <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="c1"># The verbose flag will print structures that fail to match.</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Total structures that match </span><span class="si">{wrangler.num_structures}</span><span class="s1">/{len(valid_structs)}&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Total structures that match </span><span class="si">{</span><span class="n">wrangler</span><span class="o">.</span><span class="n">num_structures</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">valid_structs</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1423,7 +1438,7 @@ array([[ 1.        , -0.25      ,  0.4330127 , ...,  0.03222656,
 </pre></div>
 </div>
 </div>
-<div class="section" id="3.1)-Check-the-quality-of-the-fit">
+<section id="3.1)-Check-the-quality-of-the-fit">
 <h3>3.1) Check the quality of the fit<a class="headerlink" href="#3.1)-Check-the-quality-of-the-fit" title="Permalink to this headline">¶</a></h3>
 <p>There are many ways to evaluate the quality of a fit. The simplest involve stadard training set prediction error metrics. But when evaluating a CE more seriously we need to consider further metrics and how the CE will be used. Here we will just look at in sample mean squared error and max error.</p>
 <div class="nbinput docutils container">
@@ -1440,8 +1455,8 @@ array([[ 1.        , -0.25      ,  0.4330127 , ...,  0.03222656,
 <span class="n">maxer</span> <span class="o">=</span> <span class="n">max_error</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;total_energy&#39;</span><span class="p">),</span>
                   <span class="n">train_predictions</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RMSE </span><span class="si">{rmse}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MAX </span><span class="si">{maxer}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RMSE </span><span class="si">{</span><span class="n">rmse</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MAX </span><span class="si">{</span><span class="n">maxer</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1454,9 +1469,9 @@ RMSE 0.013720944562109929 eV/prim
 MAX 0.10238344490559825 eV/prim
 </pre></div></div>
 </div>
-</div>
-</div>
-<div class="section" id="4)-The-cluster-expansion">
+</section>
+</section>
+<section id="4)-The-cluster-expansion">
 <h2>4) The cluster expansion<a class="headerlink" href="#4)-The-cluster-expansion" title="Permalink to this headline">¶</a></h2>
 <p>Now we can use the above work to create the <code class="docutils literal notranslate"><span class="pre">ClusterExpansion</span></code>. The cluster expansion can be used to predict the fitted property for new structures, either for testing quality or for simulations such as in Monte Carlo. Note that when using the <code class="docutils literal notranslate"><span class="pre">predict</span></code> function, the cluster expansion will have to match the given structure if it has not seen it before.</p>
 <div class="nbinput docutils container">
@@ -1472,9 +1487,9 @@ MAX 0.10238344490559825 eV/prim
 <span class="n">prediction</span> <span class="o">=</span> <span class="n">expansion</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The predicted energy for a structure with composition &#39;</span>
-      <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{structure.composition}</span><span class="s1"> is </span><span class="si">{prediction}</span><span class="s1"> eV/prim.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The fitted coefficients are:</span><span class="se">\n</span><span class="si">{expansion.coefs}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The effective cluster interactions are:</span><span class="se">\n</span><span class="si">{expansion.eci}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+      <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">structure</span><span class="o">.</span><span class="n">composition</span><span class="si">}</span><span class="s1"> is </span><span class="si">{</span><span class="n">prediction</span><span class="si">}</span><span class="s1"> eV/prim.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The fitted coefficients are:</span><span class="se">\n</span><span class="si">{</span><span class="n">expansion</span><span class="o">.</span><span class="n">coefs</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The effective cluster interactions are:</span><span class="se">\n</span><span class="si">{</span><span class="n">expansion</span><span class="o">.</span><span class="n">eci</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">expansion</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1565,8 +1580,8 @@ Num orbit functions: 27
   &#34;&#34;&#34;
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="5)-Saving-your-work">
+</section>
+<section id="5)-Saving-your-work">
 <h2>5) Saving your work<a class="headerlink" href="#5)-Saving-your-work" title="Permalink to this headline">¶</a></h2>
 <p>All core classes in <code class="docutils literal notranslate"><span class="pre">smol</span></code> are <code class="docutils literal notranslate"><span class="pre">MSONables</span></code> and so can be saved using their <code class="docutils literal notranslate"><span class="pre">as_dict</span></code> methods or better yet with <code class="docutils literal notranslate"><span class="pre">monty.serialization.dumpfn</span></code>.</p>
 <p>Currently there is also a convenience function in <code class="docutils literal notranslate"><span class="pre">smol</span></code> that will nicely save all of your work for you in a standardized way. Work saved with the <code class="docutils literal notranslate"><span class="pre">save_work</span></code> function is saved as a dictionary with standardized names for the classes. Since a work flow should only contain 1 of each core classes the function will complain if you give it two of the same class (i.e. two wranglers)</p>
@@ -1584,7 +1599,7 @@ Num orbit functions: 27
 </pre></div>
 </div>
 </div>
-<div class="section" id="5.1)-Loading-previously-saved-work">
+<section id="5.1)-Loading-previously-saved-work">
 <h3>5.1) Loading previously saved work<a class="headerlink" href="#5.1)-Loading-previously-saved-work" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
@@ -1595,7 +1610,7 @@ Num orbit functions: 27
 
 <span class="n">work</span> <span class="o">=</span> <span class="n">load_work</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">work</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{name}</span><span class="s1">: {type(obj)}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1619,9 +1634,9 @@ ClusterExpansion: &lt;class &#39;smol.cofe.expansion.ClusterExpansion&#39;&gt;
 </pre></div>
 </div>
 </div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
     </div>
@@ -1639,7 +1654,7 @@ ClusterExpansion: &lt;class &#39;smol.cofe.expansion.ClusterExpansion&#39;&gt;
     </p>
     <p>
         &copy; Copyright 2020, Ceder Group.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br/>
     </p>
   </div>
 </footer>

@@ -10,6 +10,9 @@ Use this section to keep track of changes in the works.
 * `rotate` method in SiteBasis class.
 [\#130](https://github.com/CederGroupHub/smol/pull/130)
   ([lbluque](https://github.com/lbluque))
+* `RegressionData` dataclass to save regression details in `ClusterExpansions`
+[\#132](https://github.com/CederGroupHub/smol/pull/132)
+  ([lbluque](https://github.com/lbluque))
 
 ### Changed
 

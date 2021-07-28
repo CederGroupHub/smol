@@ -3,19 +3,19 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Translating a Cluster Expansion created with pyabinitio.cluster_expansion &#8212; smol 1.0.0 documentation</title>
-    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/_static/default.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
 <meta charset='utf-8'>
@@ -114,21 +114,35 @@
 /* CSS for nbsphinx extension */
 
 /* remove conflicting styling from Sphinx themes */
-div.nbinput.container,
-div.nbinput.container div.prompt,
-div.nbinput.container div.input_area,
-div.nbinput.container div[class*=highlight],
-div.nbinput.container div[class*=highlight] pre,
-div.nboutput.container,
-div.nboutput.container div.prompt,
-div.nboutput.container div.output_area,
-div.nboutput.container div[class*=highlight],
-div.nboutput.container div[class*=highlight] pre {
-    background: none;
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
     border: none;
-    padding: 0 0;
+    padding: 0;
     margin: 0;
     box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
 }
 
 /* avoid gaps between output lines */
@@ -229,7 +243,7 @@ div.nboutput.container div.output_area {
 div.nbinput.container div.input_area {
     border: 1px solid #e0e0e0;
     border-radius: 2px;
-    background: #f5f5f5;
+    /*background: #f5f5f5;*/
 }
 
 /* override MathJax center alignment in output cells */
@@ -295,6 +309,7 @@ div.nboutput.container div.output_area.rendered_html,
 div.nboutput.container div.output_area > div.output_javascript,
 div.nboutput.container div.output_area:not(.rendered_html) > img{
     padding: 5px;
+    margin: 0;
 }
 
 /* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
@@ -342,7 +357,7 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<div class="section" id="Translating-a-Cluster-Expansion-created-with-pyabinitio.cluster_expansion">
+<section id="Translating-a-Cluster-Expansion-created-with-pyabinitio.cluster_expansion">
 <h1>Translating a Cluster Expansion created with <code class="docutils literal notranslate"><span class="pre">pyabinitio.cluster_expansion</span></code><a class="headerlink" href="#Translating-a-Cluster-Expansion-created-with-pyabinitio.cluster_expansion" title="Permalink to this headline">¶</a></h1>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -367,7 +382,7 @@ MaterialsProjectCompatibility will be updated with new correction classes as wel
   def get_pourbaix_entries(self, chemsys, solid_compat=MaterialsProjectCompatibility()):
 </pre></div></div>
 </div>
-<div class="section" id="1)-Loading-and-extracting-information-from-a-pyabinitio-EciGenerator">
+<section id="1)-Loading-and-extracting-information-from-a-pyabinitio-EciGenerator">
 <h2>1) Loading and extracting information from a pyabinitio <code class="docutils literal notranslate"><span class="pre">EciGenerator</span></code><a class="headerlink" href="#1)-Loading-and-extracting-information-from-a-pyabinitio-EciGenerator" title="Permalink to this headline">¶</a></h2>
 <p>Cluster expansions created with the <code class="docutils literal notranslate"><span class="pre">pyabinitio.cluster_expanstion</span></code> module, can be very easily translated into <code class="docutils literal notranslate"><span class="pre">smol</span></code>.</p>
 <p>The only thing you will need is the <code class="docutils literal notranslate"><span class="pre">EciGenerator</span></code> object you created.</p>
@@ -383,7 +398,7 @@ MaterialsProjectCompatibility will be updated with new correction classes as wel
 <span class="c1"># Get the prim structure</span>
 <span class="n">prim</span> <span class="o">=</span> <span class="n">ecigen</span><span class="o">.</span><span class="n">ce</span><span class="o">.</span><span class="n">structure</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;This is the prim </span><span class="se">\n</span><span class="si">{prim}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;This is the prim </span><span class="se">\n</span><span class="si">{</span><span class="n">prim</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
 <span class="c1"># Get cluster diameter cutoffs from previous CE object</span>
 <span class="n">cutoffs</span> <span class="o">=</span> <span class="p">{}</span>
@@ -391,16 +406,16 @@ MaterialsProjectCompatibility will be updated with new correction classes as wel
     <span class="k">if</span> <span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="k">continue</span>
     <span class="n">cutoffs</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">c</span><span class="o">.</span><span class="n">max_radius</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">clusters</span><span class="p">])</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cutoff radii obtained are </span><span class="si">{cutoffs}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cutoff radii obtained are </span><span class="si">{</span><span class="n">cutoffs</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
 <span class="c1"># determine if an ewald term is used</span>
 <span class="n">use_ewald</span> <span class="o">=</span> <span class="n">ecigen</span><span class="o">.</span><span class="n">ce</span><span class="o">.</span><span class="n">use_ewald</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cluster expansion used Ewald: </span><span class="si">{use_ewald}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cluster expansion used Ewald: </span><span class="si">{</span><span class="n">use_ewald</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
 <span class="c1"># Check the fit did not constrain dielectric</span>
 <span class="c1"># In case you plan to refit the same way.</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Was the dieletric constrained: &#39;</span>
-      <span class="sa">f</span><span class="s1">&#39;{ecigen.max_dielectric is not None}&#39;</span><span class="p">)</span>
+      <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ecigen</span><span class="o">.</span><span class="n">max_dielectric</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
 <span class="c1"># obtain the structurematcher parameters used</span>
 <span class="c1"># You should get these because the default values</span>
@@ -437,8 +452,8 @@ Cluster expansion used Ewald: True
 Was the dieletric constrained: False
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="2)-Now-create-the-corresponding-ClusterSubspace">
+</section>
+<section id="2)-Now-create-the-corresponding-ClusterSubspace">
 <h2>2) Now create the corresponding <code class="docutils literal notranslate"><span class="pre">ClusterSubspace</span></code><a class="headerlink" href="#2)-Now-create-the-corresponding-ClusterSubspace" title="Permalink to this headline">¶</a></h2>
 <p>We can now create the corrseponding subspace using <code class="docutils literal notranslate"><span class="pre">smol</span></code>. Here you can choose to use a different basis if you want to refit to an orthogonal one. In this example we will keep the <strong>indicator</strong> basis to compare that our new features match the ones from before.</p>
 <div class="nbinput nblast docutils container">
@@ -465,8 +480,8 @@ Was the dieletric constrained: False
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="3)-We-can-now-create-a-StructureWrangler-and-add-the-structures-used.">
+</section>
+<section id="3)-We-can-now-create-a-StructureWrangler-and-add-the-structures-used.">
 <h2>3) We can now create a <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> and add the structures used.<a class="headerlink" href="#3)-We-can-now-create-a-StructureWrangler-and-add-the-structures-used." title="Permalink to this headline">¶</a></h2>
 <p>If you don’t plan to refit or compare that features are the same (if still using indicator basis), then you can skip to 4)</p>
 <div class="nbinput nblast docutils container">
@@ -505,8 +520,8 @@ Was the dieletric constrained: False
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="4)-Creating-new-ClusterExpansion-using-previous-fit">
+</section>
+<section id="4)-Creating-new-ClusterExpansion-using-previous-fit">
 <h2>4) Creating new <code class="docutils literal notranslate"><span class="pre">ClusterExpansion</span></code> using previous fit<a class="headerlink" href="#4)-Creating-new-ClusterExpansion-using-previous-fit" title="Permalink to this headline">¶</a></h2>
 <p>If you want to keep the previous fit you can just use the eci directly in the new cluster expansion (the previous implementation in pyabinitio has the eci as the eci * multiplicity so these are the coefficients) Make sure you are using an indicator basis otherwise it makes no sense to use the same eci</p>
 <div class="nbinput nblast docutils container">
@@ -528,8 +543,8 @@ Was the dieletric constrained: False
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="5)-(Re)Fitting-the-ClusterExpansion">
+</section>
+<section id="5)-(Re)Fitting-the-ClusterExpansion">
 <h2>5) (Re)Fitting the <code class="docutils literal notranslate"><span class="pre">ClusterExpansion</span></code><a class="headerlink" href="#5)-(Re)Fitting-the-ClusterExpansion" title="Permalink to this headline">¶</a></h2>
 <p>You can also refit the cluster expansion (this is useful if you want to switch over to using an orthogonal basis) Here we will just redo it with the original indicator basis to compare with the old fit.</p>
 <div class="nbinput docutils container">
@@ -593,8 +608,8 @@ Consider using 3rd party estimators such as scikit learn.
 (-218.95642689474653, -218.95642680173313)
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="Now-you-are-ready-to-use-your-cluster-expansion-from-before-in-smol!">
+</section>
+<section id="Now-you-are-ready-to-use-your-cluster-expansion-from-before-in-smol!">
 <h2>Now you are ready to use your cluster expansion from before in <code class="docutils literal notranslate"><span class="pre">smol</span></code>!<a class="headerlink" href="#Now-you-are-ready-to-use-your-cluster-expansion-from-before-in-smol!" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
@@ -605,8 +620,8 @@ Consider using 3rd party estimators such as scikit learn.
 </pre></div>
 </div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
     </div>
@@ -624,7 +639,7 @@ Consider using 3rd party estimators such as scikit learn.
     </p>
     <p>
         &copy; Copyright 2020, Ceder Group.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br/>
     </p>
   </div>
 </footer>

@@ -3,19 +3,19 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>smol.cofe.space package &#8212; smol 1.0.0 documentation</title>
-    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -111,12 +111,12 @@
   <div class="row">
     <div class="body col-md-12 content" role="main">
       
-  <div class="section" id="smol-cofe-space-package">
+  <section id="smol-cofe-space-package">
 <h1>smol.cofe.space package<a class="headerlink" href="#smol-cofe-space-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="submodules">
+<section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-smol.cofe.space.basis">
+</section>
+<section id="module-smol.cofe.space.basis">
 <span id="smol-cofe-space-basis-module"></span><h2>smol.cofe.space.basis module<a class="headerlink" href="#module-smol.cofe.space.basis" title="Permalink to this headline">¶</a></h2>
 <p>Definitions for basis functions over a site function space.</p>
 <p>The product of single site functions make up a cluster/orbit function used to
@@ -124,16 +124,16 @@ obtain correlation vectors. The domain of a site function is a site space,
 which is defined by the allowed species at the site and their measures, which
 is concentration of the species in the random structure)</p>
 <dl class="py class">
-<dt id="smol.cofe.space.basis.BasisIterator">
-<em class="property">class </em><code class="sig-name descname">BasisIterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">species</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.BasisIterator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.BasisIterator">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">BasisIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">species</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.BasisIterator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Iterator</span></code></a></p>
 <p>Abstract basis iterator class.</p>
 <p>A basis iterator iterates through all non-constant site basis functions.
 i.e. for basis <span class="math notranslate nohighlight">\(\phi_0 = 1, \phi_1, ..., \phi_{n-1}\)</span>,
 the iterator will just iterate through <span class="math notranslate nohighlight">\(\phi_1, ..., \phi_{n-1}\)</span></p>
 <dl class="py attribute">
-<dt id="smol.cofe.space.basis.BasisIterator.flavor">
-<code class="sig-name descname">flavor</code><a class="headerlink" href="#smol.cofe.space.basis.BasisIterator.flavor" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.BasisIterator.flavor">
+<span class="sig-name descname"><span class="pre">flavor</span></span><a class="headerlink" href="#smol.cofe.space.basis.BasisIterator.flavor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Name specifying the type of basis that is generated.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -149,15 +149,15 @@ the iterator will just iterate through <span class="math notranslate nohighlight
 </dd>
 </dl>
 <dl class="py attribute">
-<dt id="id0">
-<code class="sig-name descname">flavor</code><em class="property"> = 'abstract'</em><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">flavor</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'abstract'</span></em><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt id="smol.cofe.space.basis.ChebyshevIterator">
-<em class="property">class </em><code class="sig-name descname">ChebyshevIterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">species</span></em>, <em class="sig-param"><span class="n">low</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">high</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.ChebyshevIterator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.ChebyshevIterator">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ChebyshevIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">species</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.ChebyshevIterator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.NumpyPolyIterator" title="smol.cofe.space.basis.NumpyPolyIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.space.basis.NumpyPolyIterator</span></code></a></p>
 <p>Chebyshev polynomial basis set iterator.</p>
 <p>Initialize a NumpyPolyIterator.</p>
@@ -173,21 +173,21 @@ higher limit of interval for encoding</p></li>
 </dd>
 </dl>
 <dl class="py attribute">
-<dt id="smol.cofe.space.basis.ChebyshevIterator.flavor">
-<code class="sig-name descname">flavor</code><em class="property"> = 'chebyshev'</em><a class="headerlink" href="#smol.cofe.space.basis.ChebyshevIterator.flavor" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.ChebyshevIterator.flavor">
+<span class="sig-name descname"><span class="pre">flavor</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'chebyshev'</span></em><a class="headerlink" href="#smol.cofe.space.basis.ChebyshevIterator.flavor" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.basis.ChebyshevIterator.polyval">
-<em class="property">property </em><code class="sig-name descname">polyval</code><a class="headerlink" href="#smol.cofe.space.basis.ChebyshevIterator.polyval" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.basis.ChebyshevIterator.polyval">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">polyval</span></span><a class="headerlink" href="#smol.cofe.space.basis.ChebyshevIterator.polyval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return numpy Chebyshev polynomial eval.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt id="smol.cofe.space.basis.IndicatorIterator">
-<em class="property">class </em><code class="sig-name descname">IndicatorIterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">species</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.IndicatorIterator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.IndicatorIterator">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">IndicatorIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">species</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.IndicatorIterator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.BasisIterator" title="smol.cofe.space.basis.BasisIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.space.basis.BasisIterator</span></code></a></p>
 <p>Iterator for cluster indicator site basis functions.</p>
 <p>The basis generated as defined is not orthogonal for any number of species.</p>
@@ -198,15 +198,15 @@ higher limit of interval for encoding</p></li>
 </dd>
 </dl>
 <dl class="py attribute">
-<dt id="smol.cofe.space.basis.IndicatorIterator.flavor">
-<code class="sig-name descname">flavor</code><em class="property"> = 'indicator'</em><a class="headerlink" href="#smol.cofe.space.basis.IndicatorIterator.flavor" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.IndicatorIterator.flavor">
+<span class="sig-name descname"><span class="pre">flavor</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'indicator'</span></em><a class="headerlink" href="#smol.cofe.space.basis.IndicatorIterator.flavor" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt id="smol.cofe.space.basis.LegendreIterator">
-<em class="property">class </em><code class="sig-name descname">LegendreIterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">species</span></em>, <em class="sig-param"><span class="n">low</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">high</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.LegendreIterator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.LegendreIterator">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">LegendreIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">species</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.LegendreIterator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.NumpyPolyIterator" title="smol.cofe.space.basis.NumpyPolyIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.space.basis.NumpyPolyIterator</span></code></a></p>
 <p>Legendre polynomial basis set iterator.</p>
 <p>Initialize a NumpyPolyIterator.</p>
@@ -222,21 +222,21 @@ higher limit of interval for encoding</p></li>
 </dd>
 </dl>
 <dl class="py attribute">
-<dt id="smol.cofe.space.basis.LegendreIterator.flavor">
-<code class="sig-name descname">flavor</code><em class="property"> = 'legendre'</em><a class="headerlink" href="#smol.cofe.space.basis.LegendreIterator.flavor" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.LegendreIterator.flavor">
+<span class="sig-name descname"><span class="pre">flavor</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'legendre'</span></em><a class="headerlink" href="#smol.cofe.space.basis.LegendreIterator.flavor" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.basis.LegendreIterator.polyval">
-<em class="property">property </em><code class="sig-name descname">polyval</code><a class="headerlink" href="#smol.cofe.space.basis.LegendreIterator.polyval" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.basis.LegendreIterator.polyval">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">polyval</span></span><a class="headerlink" href="#smol.cofe.space.basis.LegendreIterator.polyval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return numpy Legendre polynomial eval.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt id="smol.cofe.space.basis.NumpyPolyIterator">
-<em class="property">class </em><code class="sig-name descname">NumpyPolyIterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">species</span></em>, <em class="sig-param"><span class="n">low</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">high</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.NumpyPolyIterator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.NumpyPolyIterator">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">NumpyPolyIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">species</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.NumpyPolyIterator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.BasisIterator" title="smol.cofe.space.basis.BasisIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.space.basis.BasisIterator</span></code></a></p>
 <p>Class to quickly implement polynomial basis sets included in numpy.</p>
 <p>Initialize a NumpyPolyIterator.</p>
@@ -252,21 +252,21 @@ higher limit of interval for encoding</p></li>
 </dd>
 </dl>
 <dl class="py attribute">
-<dt id="smol.cofe.space.basis.NumpyPolyIterator.flavor">
-<code class="sig-name descname">flavor</code><em class="property"> = 'numpy-poly'</em><a class="headerlink" href="#smol.cofe.space.basis.NumpyPolyIterator.flavor" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.NumpyPolyIterator.flavor">
+<span class="sig-name descname"><span class="pre">flavor</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'numpy-poly'</span></em><a class="headerlink" href="#smol.cofe.space.basis.NumpyPolyIterator.flavor" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.basis.NumpyPolyIterator.polyval">
-<em class="property">abstract property </em><code class="sig-name descname">polyval</code><a class="headerlink" href="#smol.cofe.space.basis.NumpyPolyIterator.polyval" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.basis.NumpyPolyIterator.polyval">
+<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">polyval</span></span><a class="headerlink" href="#smol.cofe.space.basis.NumpyPolyIterator.polyval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a numpy polyval function.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt id="smol.cofe.space.basis.PolynomialIterator">
-<em class="property">class </em><code class="sig-name descname">PolynomialIterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">species</span></em>, <em class="sig-param"><span class="n">low</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">high</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.PolynomialIterator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.PolynomialIterator">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">PolynomialIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">species</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.PolynomialIterator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.NumpyPolyIterator" title="smol.cofe.space.basis.NumpyPolyIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.space.basis.NumpyPolyIterator</span></code></a></p>
 <p>A standard polynomial basis set iterator.</p>
 <p>Initialize a NumpyPolyIterator.</p>
@@ -282,21 +282,21 @@ higher limit of interval for encoding</p></li>
 </dd>
 </dl>
 <dl class="py attribute">
-<dt id="smol.cofe.space.basis.PolynomialIterator.flavor">
-<code class="sig-name descname">flavor</code><em class="property"> = 'polynomial'</em><a class="headerlink" href="#smol.cofe.space.basis.PolynomialIterator.flavor" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.PolynomialIterator.flavor">
+<span class="sig-name descname"><span class="pre">flavor</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'polynomial'</span></em><a class="headerlink" href="#smol.cofe.space.basis.PolynomialIterator.flavor" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.basis.PolynomialIterator.polyval">
-<em class="property">property </em><code class="sig-name descname">polyval</code><a class="headerlink" href="#smol.cofe.space.basis.PolynomialIterator.polyval" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.basis.PolynomialIterator.polyval">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">polyval</span></span><a class="headerlink" href="#smol.cofe.space.basis.PolynomialIterator.polyval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return numpy polynomial eval.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt id="smol.cofe.space.basis.SinusoidIterator">
-<em class="property">class </em><code class="sig-name descname">SinusoidIterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">species</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.SinusoidIterator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.SinusoidIterator">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">SinusoidIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">species</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.SinusoidIterator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.BasisIterator" title="smol.cofe.space.basis.BasisIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.space.basis.BasisIterator</span></code></a></p>
 <p>Iterator for sinusoid (trig basis) as proposed by A. van de Walle.</p>
 <ol class="upperalpha simple">
@@ -311,15 +311,15 @@ the box, but it is not orthonormal for allowed species &gt; 2.</p>
 </dd>
 </dl>
 <dl class="py attribute">
-<dt id="smol.cofe.space.basis.SinusoidIterator.flavor">
-<code class="sig-name descname">flavor</code><em class="property"> = 'sinusoid'</em><a class="headerlink" href="#smol.cofe.space.basis.SinusoidIterator.flavor" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.SinusoidIterator.flavor">
+<span class="sig-name descname"><span class="pre">flavor</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'sinusoid'</span></em><a class="headerlink" href="#smol.cofe.space.basis.SinusoidIterator.flavor" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt id="smol.cofe.space.basis.SiteBasis">
-<em class="property">class </em><code class="sig-name descname">SiteBasis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">site_space</span></em>, <em class="sig-param"><span class="n">basis_functions</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.SiteBasis">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">SiteBasis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">site_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis_functions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Class that represents the basis for a site function space.</p>
 <p>Note that all SiteBasis in theory have the first basis function
@@ -344,14 +344,14 @@ valuves of species as input.</p></li>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="smol.cofe.space.basis.SiteBasis.as_dict">
-<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.as_dict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.SiteBasis.as_dict">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get MSONable dict representation.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.basis.SiteBasis.from_dict">
-<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.from_dict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.SiteBasis.from_dict">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a SiteSpace from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -363,39 +363,39 @@ valuves of species as input.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.basis.SiteBasis.function_array">
-<em class="property">property </em><code class="sig-name descname">function_array</code><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.function_array" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.basis.SiteBasis.function_array">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">function_array</span></span><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.function_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get array with the non-constant site functions as rows.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.basis.SiteBasis.is_orthogonal">
-<em class="property">property </em><code class="sig-name descname">is_orthogonal</code><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.is_orthogonal" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.basis.SiteBasis.is_orthogonal">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">is_orthogonal</span></span><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.is_orthogonal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test if the basis is orthogonal.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.basis.SiteBasis.is_orthonormal">
-<em class="property">property </em><code class="sig-name descname">is_orthonormal</code><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.is_orthonormal" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.basis.SiteBasis.is_orthonormal">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">is_orthonormal</span></span><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.is_orthonormal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test if the basis is orthonormal.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.basis.SiteBasis.measure_vector">
-<em class="property">property </em><code class="sig-name descname">measure_vector</code><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.measure_vector" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.basis.SiteBasis.measure_vector">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">measure_vector</span></span><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.measure_vector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get vector of site species measures.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.basis.SiteBasis.orthonormalization_array">
-<em class="property">property </em><code class="sig-name descname">orthonormalization_array</code><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.orthonormalization_array" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.basis.SiteBasis.orthonormalization_array">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">orthonormalization_array</span></span><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.orthonormalization_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get R array from QR factorization.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.basis.SiteBasis.orthonormalize">
-<code class="sig-name descname">orthonormalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.orthonormalize" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.SiteBasis.orthonormalize">
+<span class="sig-name descname"><span class="pre">orthonormalize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.orthonormalize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Orthonormalizes basis function set based on initial basis set.</p>
 <p>Functions are orthonormal w.r.t the measure given.
 (basis functions are also orthogonal to phi_0 = 1).</p>
@@ -406,25 +406,51 @@ allows us to not sprinkle so many transposes.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.basis.SiteBasis.site_space">
-<em class="property">property </em><code class="sig-name descname">site_space</code><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.site_space" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.SiteBasis.rotate">
+<span class="sig-name descname"><span class="pre">rotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate basis functions about subspace spaned by 2 vectors.</p>
+<p>This operation will rotate the two selected basis vectors about a
+subspace spanned by them. This implies a rotation orthogonal to
+all other basis vectors. This will keep any underlying orthogonality.</p>
+<p>WARNING: this is only implemented for uniform site space measures, not
+for non-uniform measures.</p>
+<p>SECOND WARNING: I haven’t really thought through what happens if basis
+vectors are not orthogonal to the constant (ie indicator basis) use
+at your own peril with non-orthogonal basis sets.</p>
+<p>THIRD WARNING: When rotating a binary space basis this will only
+multiply by -1, regardless of the indices or angle provided. Think
+about what it means to rotate in this case…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>angle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – angle to rotate in radians</p></li>
+<li><p><strong>index1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – index of first basis vector in function_array</p></li>
+<li><p><strong>index2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – index of second basis vector in function_array</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.basis.SiteBasis.site_space">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">site_space</span></span><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.site_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get dict of the site probability space.</p>
 <p>The site space refers to the probability space represented by the
 allowed species and their respective probabilities (concentration)
 over which the site functions are defined.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.basis.SiteBasis.species">
-<em class="property">property </em><code class="sig-name descname">species</code><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.species" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.basis.SiteBasis.species">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">species</span></span><a class="headerlink" href="#smol.cofe.space.basis.SiteBasis.species" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of allowed site species.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
-<dt id="smol.cofe.space.basis.basis_factory">
-<code class="sig-name descname">basis_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basis_name</span></em>, <em class="sig-param"><span class="n">site_space</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.basis_factory" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.basis_factory">
+<span class="sig-name descname"><span class="pre">basis_factory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_space</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.basis_factory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a site basis for the given basis name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -440,14 +466,14 @@ over which the site functions are defined.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="smol.cofe.space.basis.cos_f">
-<code class="sig-name descname">cos_f</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">m</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.cos_f" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.cos_f">
+<span class="sig-name descname"><span class="pre">cos_f</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.cos_f" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return basis function for odd indices.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="smol.cofe.space.basis.encode_domain">
-<code class="sig-name descname">encode_domain</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">encoding</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.encode_domain" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.encode_domain">
+<span class="sig-name descname"><span class="pre">encode_domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encoding</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.encode_domain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decorate a function with an encoding for its domain.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -457,32 +483,32 @@ over which the site functions are defined.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="smol.cofe.space.basis.indicator">
-<code class="sig-name descname">indicator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">sp</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.indicator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.indicator">
+<span class="sig-name descname"><span class="pre">indicator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.indicator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Singleton indicator function for elementary events.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="smol.cofe.space.basis.sin_f">
-<code class="sig-name descname">sin_f</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">m</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.sin_f" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.sin_f">
+<span class="sig-name descname"><span class="pre">sin_f</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.sin_f" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return basis function for even indices.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="smol.cofe.space.basis.sinusoid_factory">
-<code class="sig-name descname">sinusoid_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">m</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.sinusoid_factory" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis.sinusoid_factory">
+<span class="sig-name descname"><span class="pre">sinusoid_factory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.sinusoid_factory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sine or cosine based on AVvW sinusoid site basis.</p>
 </dd></dl>
 
-</div>
-<div class="section" id="module-smol.cofe.space.cluster">
+</section>
+<section id="module-smol.cofe.space.cluster">
 <span id="smol-cofe-space-cluster-module"></span><h2>smol.cofe.space.cluster module<a class="headerlink" href="#module-smol.cofe.space.cluster" title="Permalink to this headline">¶</a></h2>
 <p>Implementation of the Cluster class.</p>
 <p>Represents a group of sites of a given lattice. These are the building blocks
 for a cluster basis of functions over configurational space.</p>
 <dl class="py class">
-<dt id="smol.cofe.space.cluster.Cluster">
-<em class="property">class </em><code class="sig-name descname">Cluster</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sites</span></em>, <em class="sig-param"><span class="n">lattice</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>An undecorated (no occupancies) cluster.</p>
 <p>Represented simply by a list of sites, its centroid, and the underlying
@@ -490,8 +516,8 @@ lattice.</p>
 <p>You probably never need to instantiate this class directly. Look at
 ClusterSubspace to create orbits and clusters necessary for a CE.</p>
 <dl class="py attribute">
-<dt id="smol.cofe.space.cluster.Cluster.sites">
-<code class="sig-name descname">sites</code><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.sites" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.sites">
+<span class="sig-name descname"><span class="pre">sites</span></span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.sites" title="Permalink to this definition">¶</a></dt>
 <dd><p>list of fractional coordinates of each site.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -501,8 +527,8 @@ ClusterSubspace to create orbits and clusters necessary for a CE.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="smol.cofe.space.cluster.Cluster.lattice">
-<code class="sig-name descname">lattice</code><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.lattice" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.lattice">
+<span class="sig-name descname"><span class="pre">lattice</span></span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.lattice" title="Permalink to this definition">¶</a></dt>
 <dd><p>underlying lattice of cluster.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -512,8 +538,8 @@ ClusterSubspace to create orbits and clusters necessary for a CE.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="smol.cofe.space.cluster.Cluster.centroid">
-<code class="sig-name descname">centroid</code><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.centroid" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.centroid">
+<span class="sig-name descname"><span class="pre">centroid</span></span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.centroid" title="Permalink to this definition">¶</a></dt>
 <dd><p>goemetric centroid of included sites.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -523,8 +549,8 @@ ClusterSubspace to create orbits and clusters necessary for a CE.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="smol.cofe.space.cluster.Cluster.id">
-<code class="sig-name descname">id</code><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.id" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.id" title="Permalink to this definition">¶</a></dt>
 <dd><p>id of cluster.
 Used to identify the cluster in a given ClusterSubspace.</p>
 <dl class="field-list simple">
@@ -544,8 +570,8 @@ Used to identify the cluster in a given ClusterSubspace.</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="smol.cofe.space.cluster.Cluster.as_dict">
-<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.as_dict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.as_dict">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -555,50 +581,50 @@ Used to identify the cluster in a given ClusterSubspace.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.cluster.Cluster.assign_ids">
-<code class="sig-name descname">assign_ids</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.assign_ids" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.assign_ids">
+<span class="sig-name descname"><span class="pre">assign_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.assign_ids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Recursively assign ids to clusters after initialization.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.cluster.Cluster.diameter">
-<em class="property">property </em><code class="sig-name descname">diameter</code><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.diameter" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.diameter">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">diameter</span></span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.diameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get maximum distance between 2 sites in cluster.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.cluster.Cluster.from_dict">
-<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.from_dict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.from_dict">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a cluster from serialized dict.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.cluster.Cluster.from_sites">
-<em class="property">classmethod </em><code class="sig-name descname">from_sites</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sites</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.from_sites" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.from_sites">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_sites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.from_sites" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a cluster from a list of pymatgen Sites.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.cluster.Cluster.radius">
-<em class="property">property </em><code class="sig-name descname">radius</code><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.radius" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.radius">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">radius</span></span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.radius" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get half the maximum distance between 2 sites in cluster.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.cluster.Cluster.size">
-<em class="property">property </em><code class="sig-name descname">size</code><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.size" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.size">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get number of sites in the cluster.</p>
 </dd></dl>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-smol.cofe.space.clusterspace">
+</section>
+<section id="module-smol.cofe.space.clusterspace">
 <span id="smol-cofe-space-clusterspace-module"></span><h2>smol.cofe.space.clusterspace module<a class="headerlink" href="#module-smol.cofe.space.clusterspace" title="Permalink to this headline">¶</a></h2>
 <p>Implements the ClusterSubspace class.</p>
 <dl class="py class">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace">
-<em class="property">class </em><code class="sig-name descname">ClusterSubspace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">expansion_structure</span></em>, <em class="sig-param"><span class="n">symops</span></em>, <em class="sig-param"><span class="n">orbits</span></em>, <em class="sig-param"><span class="n">supercell_matcher</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">site_matcher</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">matcher_kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ClusterSubspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansion_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symops</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>ClusterSubspace represents a subspace of functions of configuration.</p>
 <p>A <a class="reference internal" href="#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code></a> is the main work horse used in constructing a
@@ -621,8 +647,8 @@ functions that are to be considered in the fit.</p>
 <p>You probably want to generate from <code class="code docutils literal notranslate"><span class="pre">ClusterSubspace.from_cutoffs</span></code>,
 which will auto-generate the orbits from diameter cutoffs.</p>
 <dl class="py attribute">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.symops">
-<code class="sig-name descname">symops</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.symops" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.symops">
+<span class="sig-name descname"><span class="pre">symops</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.symops" title="Permalink to this definition">¶</a></dt>
 <dd><p>Symmetry operations of structure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -632,8 +658,8 @@ which will auto-generate the orbits from diameter cutoffs.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.num_corr_functions">
-<code class="sig-name descname">num_corr_functions</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_corr_functions" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.num_corr_functions">
+<span class="sig-name descname"><span class="pre">num_corr_functions</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_corr_functions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Total number of correlation functions (orbit basis functions)
 included in the subspace.</p>
 <dl class="field-list simple">
@@ -644,8 +670,8 @@ included in the subspace.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.num_orbits">
-<code class="sig-name descname">num_orbits</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_orbits" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.num_orbits">
+<span class="sig-name descname"><span class="pre">num_orbits</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_orbits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Total number of crystallographic orbits included in the subspace.
 This includes the empty orbit.</p>
 <dl class="field-list simple">
@@ -656,8 +682,8 @@ This includes the empty orbit.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.num_clusters">
-<code class="sig-name descname">num_clusters</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_clusters" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.num_clusters">
+<span class="sig-name descname"><span class="pre">num_clusters</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_clusters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Total number of clusters in the primitive cell that are included
 in the subspace.</p>
 <dl class="field-list simple">
@@ -705,8 +731,8 @@ more details.</p></li>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.add_external_term">
-<code class="sig-name descname">add_external_term</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">term</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.add_external_term" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.add_external_term">
+<span class="sig-name descname"><span class="pre">add_external_term</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">term</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.add_external_term" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add an external term to subspace.</p>
 <p>Add an external term (e.g. an Ewald term) to the cluster expansion
 terms. External term classes must be MSONable and implement a method
@@ -719,17 +745,17 @@ implemented.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.all_bit_combos">
-<em class="property">property </em><code class="sig-name descname">all_bit_combos</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.all_bit_combos" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.all_bit_combos">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">all_bit_combos</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.all_bit_combos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return flattened all bit_combos for each correlation function.</p>
 <p>A list of all bit_combos of length self.num_corr_functions.
 This allows to obtain a bit combo by bit id (empty cluster has None)</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.as_dict">
-<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.as_dict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.as_dict">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -738,27 +764,27 @@ This allows to obtain a bit combo by bit id (empty cluster has None)</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.basis_orthogonal">
-<em class="property">property </em><code class="sig-name descname">basis_orthogonal</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.basis_orthogonal" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.basis_orthogonal">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">basis_orthogonal</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.basis_orthogonal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if the orbit basis defined is orthogonal.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.basis_orthonormal">
-<em class="property">property </em><code class="sig-name descname">basis_orthonormal</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.basis_orthonormal" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.basis_orthonormal">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">basis_orthonormal</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.basis_orthonormal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if the orbit basis is orthonormal.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.basis_type">
-<em class="property">property </em><code class="sig-name descname">basis_type</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.basis_type" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.basis_type">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">basis_type</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.basis_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the type of site basis set used.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.bit_combo_hierarchy">
-<code class="sig-name descname">bit_combo_hierarchy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">min_size</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">invert</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.bit_combo_hierarchy" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.bit_combo_hierarchy">
+<span class="sig-name descname"><span class="pre">bit_combo_hierarchy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.bit_combo_hierarchy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get 1-level-down hierarchy of correlation functions.</p>
 <p>The size difference between the current corr function and its
 sub-clusters is only 1! We only give one-level down hierarchy. Because
@@ -795,8 +821,8 @@ contained by the correlation function with the current index.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.change_site_bases">
-<code class="sig-name descname">change_site_bases</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_basis</span></em>, <em class="sig-param"><span class="n">orthonormal</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.change_site_bases" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.change_site_bases">
+<span class="sig-name descname"><span class="pre">change_site_bases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_basis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthonormal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.change_site_bases" title="Permalink to this definition">¶</a></dt>
 <dd><p>Change the type of site basis used in the site basis functions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -809,14 +835,14 @@ contained by the correlation function with the current index.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.copy">
-<code class="sig-name descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.copy" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deep copy of instance.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.corr_from_structure">
-<code class="sig-name descname">corr_from_structure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">normalized</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">scmatrix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">site_mapping</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.corr_from_structure" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.corr_from_structure">
+<span class="sig-name descname"><span class="pre">corr_from_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scmatrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.corr_from_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get correlation vector for structure.</p>
 <p>Returns the correlation vector for a given structure. To do this the
 correct supercell matrix of the prim needs to be found to then
@@ -853,31 +879,31 @@ option you are fully responsible that the mappings are correct!</p></li>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.cutoffs">
-<em class="property">property </em><code class="sig-name descname">cutoffs</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.cutoffs" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.cutoffs">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cutoffs</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.cutoffs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return dict of orbit cluster cutoffs.</p>
 <p>These are “tight” cutoffs, as in the maximum diameter for each cluster
 size, which is &lt;= the input to from_cutoffs.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.expansion_structure">
-<em class="property">property </em><code class="sig-name descname">expansion_structure</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.expansion_structure" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.expansion_structure">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">expansion_structure</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.expansion_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the primitive expansion structure (excludes inactive sites).</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.external_terms">
-<em class="property">property </em><code class="sig-name descname">external_terms</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.external_terms" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.external_terms">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">external_terms</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.external_terms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get external terms to be fitted together with the correlations.</p>
 <p>External terms are those represented by pair interaction Hamiltonians
 (i.e. Ewald electrostatics)</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.from_cutoffs">
-<em class="property">classmethod </em><code class="sig-name descname">from_cutoffs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">cutoffs</span></em>, <em class="sig-param"><span class="n">basis</span><span class="o">=</span><span class="default_value">'indicator'</span></em>, <em class="sig-param"><span class="n">orthonormal</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_concentration</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">supercell_matcher</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">site_matcher</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">matcher_kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.from_cutoffs" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.from_cutoffs">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'indicator'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthonormal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_concentration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.from_cutoffs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a ClusterSubspace from diameter cutoffs.</p>
 <p>Creates a <a class="reference internal" href="#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code></a> with orbits of the given size and
 diameter smaller than or equal to the given value. The diameter of an
@@ -929,14 +955,14 @@ to use a species that has a constant amount per formula unit.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.from_dict">
-<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.from_dict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.from_dict">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create ClusterSubspace from an MSONable dict.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_cutoffs">
-<code class="sig-name descname">function_inds_by_cutoffs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">upper</span></em>, <em class="sig-param"><span class="n">lower</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_cutoffs" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_cutoffs">
+<span class="sig-name descname"><span class="pre">function_inds_by_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_cutoffs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get indices of corr functions by cluster cutoffs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -955,23 +981,23 @@ lower diameter for clusters to include.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_size">
-<em class="property">property </em><code class="sig-name descname">function_inds_by_size</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_size" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_size">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">function_inds_by_size</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get correlation function indices by cluster sizes.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.function_orbit_ids">
-<em class="property">property </em><code class="sig-name descname">function_orbit_ids</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_orbit_ids" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.function_orbit_ids">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">function_orbit_ids</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_orbit_ids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get Orbit IDs corresponding to each correlation function.</p>
 <p>If the Cluster Subspace includes external terms these are not included
 in the list since they are not associated with any orbit.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.function_ordering_multiplicities">
-<em class="property">property </em><code class="sig-name descname">function_ordering_multiplicities</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_ordering_multiplicities" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.function_ordering_multiplicities">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">function_ordering_multiplicities</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_ordering_multiplicities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get array of ordering multiplicity of each correlation function.</p>
 <p>The length of the array returned is the total number of correlation
 functions in the subspace for all orbits. The ordering multiplicity of
@@ -979,9 +1005,9 @@ a correlation function is the number of symmetrically equivalent bit
 orderings the result in the product of the same single site functions.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.function_total_multiplicities">
-<em class="property">property </em><code class="sig-name descname">function_total_multiplicities</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_total_multiplicities" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.function_total_multiplicities">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">function_total_multiplicities</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_total_multiplicities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get array of total multiplicity of each correlation function.</p>
 <p>The length of the array returned is the total number of correlation
 functions in the subspace for all orbits. The total multiplicity of a
@@ -991,28 +1017,28 @@ times the (crystallographic) multiplicity of the orbit.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.iterorbits">
-<code class="sig-name descname">iterorbits</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.iterorbits" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.iterorbits">
+<span class="sig-name descname"><span class="pre">iterorbits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.iterorbits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Yield orbits.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.num_functions_per_orbit">
-<em class="property">property </em><code class="sig-name descname">num_functions_per_orbit</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_functions_per_orbit" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.num_functions_per_orbit">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">num_functions_per_orbit</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_functions_per_orbit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the number of correlation functions for each orbit.</p>
 <p>The list returned is of length total number of orbits, each entry is
 the total number of correlation functions assocaited with that orbit.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.num_prims_from_matrix">
-<em class="property">static </em><code class="sig-name descname">num_prims_from_matrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">scmatrix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_prims_from_matrix" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.num_prims_from_matrix">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">num_prims_from_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scmatrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_prims_from_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get number of prim structures in a supercell for a given matrix.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.occupancy_from_structure">
-<code class="sig-name descname">occupancy_from_structure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">scmatrix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">site_mapping</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">encode</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.occupancy_from_structure" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.occupancy_from_structure">
+<span class="sig-name descname"><span class="pre">occupancy_from_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scmatrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.occupancy_from_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Occupancy string for a given structure.</p>
 <p>Returns a list of occupancies of each site in a the structure in the
 appropriate order set implicitly by the supercell matrix that is found.</p>
@@ -1053,21 +1079,21 @@ species itself.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.orbit_multiplicities">
-<em class="property">property </em><code class="sig-name descname">orbit_multiplicities</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbit_multiplicities" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.orbit_multiplicities">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">orbit_multiplicities</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbit_multiplicities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the crystallographic multiplicities for each orbit.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.orbits">
-<em class="property">property </em><code class="sig-name descname">orbits</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.orbits">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">orbits</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a list of all orbits sorted by size.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_cutoffs">
-<code class="sig-name descname">orbits_by_cutoffs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">upper</span></em>, <em class="sig-param"><span class="n">lower</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_cutoffs" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_cutoffs">
+<span class="sig-name descname"><span class="pre">orbits_by_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_cutoffs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get orbits with clusters within given diameter cutoffs (inclusive).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1083,15 +1109,15 @@ lower diameter for clusters to include.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_size">
-<em class="property">property </em><code class="sig-name descname">orbits_by_size</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_size" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_size">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">orbits_by_size</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get dictionary of orbits with key being the orbit size.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.refine_structure">
-<code class="sig-name descname">refine_structure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">scmatrix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">site_mapping</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.refine_structure" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.refine_structure">
+<span class="sig-name descname"><span class="pre">refine_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scmatrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.refine_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Refine a (relaxed) structure.</p>
 <p>Refine a (relaxed) structure to a perfect supercell structure of the
 the prim structure (aka the corresponding “unrelaxed” structure).</p>
@@ -1120,8 +1146,8 @@ responsible.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.remove_orbit_bit_combos">
-<code class="sig-name descname">remove_orbit_bit_combos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bit_ids</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.remove_orbit_bit_combos" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.remove_orbit_bit_combos">
+<span class="sig-name descname"><span class="pre">remove_orbit_bit_combos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bit_ids</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.remove_orbit_bit_combos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove orbit bit combos by their ids.</p>
 <p>Removes a specific bit combo from an orbit. This allows more granular
 removal of terms involved in fitting/evaluating a cluster expansion.
@@ -1143,8 +1169,8 @@ does anyway…</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.remove_orbits">
-<code class="sig-name descname">remove_orbits</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">orbit_ids</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.remove_orbits" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.remove_orbits">
+<span class="sig-name descname"><span class="pre">remove_orbits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit_ids</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.remove_orbits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove whole orbits by their ids.</p>
 <p>Removes orbits from cluster spaces. It is helpful to print a
 ClusterSubspace or ClusterExpansion to obtain orbit ids. After removing
@@ -1165,8 +1191,8 @@ vector.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.scmatrix_from_structure">
-<code class="sig-name descname">scmatrix_from_structure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.scmatrix_from_structure" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.scmatrix_from_structure">
+<span class="sig-name descname"><span class="pre">scmatrix_from_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.scmatrix_from_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get supercell matrix from a given structure.</p>
 <p>Obtain the supercell structure matrix to convert the prim structure
 to a supercell equivalent to given structure.</p>
@@ -1183,15 +1209,15 @@ to a supercell equivalent to given structure.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.structure">
-<em class="property">property </em><code class="sig-name descname">structure</code><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.structure" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.structure">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">structure</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the underlying primitive structure including inactive sites.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.structure_site_mapping">
-<code class="sig-name descname">structure_site_mapping</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">supercell</span></em>, <em class="sig-param"><span class="n">structure</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.structure_site_mapping" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.structure_site_mapping">
+<span class="sig-name descname"><span class="pre">structure_site_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">supercell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.structure_site_mapping" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get structure site mapping.</p>
 <p>Returns the mapping between sites in the given structure and a prim
 supercell of the corresponding size.</p>
@@ -1212,8 +1238,8 @@ supercell of the corresponding size.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.clusterspace.ClusterSubspace.supercell_orbit_mappings">
-<code class="sig-name descname">supercell_orbit_mappings</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">scmatrix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.supercell_orbit_mappings" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.supercell_orbit_mappings">
+<span class="sig-name descname"><span class="pre">supercell_orbit_mappings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scmatrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.supercell_orbit_mappings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get orbit mappings for a structure from supercell of prim.</p>
 <p>Return the orbit mappings for a specific supercell of the prim
 structure represented by the given matrix</p>
@@ -1235,8 +1261,8 @@ from the given matrix.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="smol.cofe.space.clusterspace.get_complete_mapping">
-<code class="sig-name descname">get_complete_mapping</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mapping</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.get_complete_mapping" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.get_complete_mapping">
+<span class="sig-name descname"><span class="pre">get_complete_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.get_complete_mapping" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a complete mapping from a 1 level mapping.</p>
 <p>If we allow transferability between mapping linkages, there would be
 a full mapping containing all linkages at all connectivity level.
@@ -1261,8 +1287,8 @@ all connectivity levels. Same format as input</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="smol.cofe.space.clusterspace.invert_mapping_table">
-<code class="sig-name descname">invert_mapping_table</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mapping</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.invert_mapping_table" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.invert_mapping_table">
+<span class="sig-name descname"><span class="pre">invert_mapping_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.invert_mapping_table" title="Permalink to this definition">¶</a></dt>
 <dd><p>Invert a mapping table from forward to backward, vice versa.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1280,12 +1306,12 @@ Same format as input.</p>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-smol.cofe.space.constants">
+</section>
+<section id="module-smol.cofe.space.constants">
 <span id="smol-cofe-space-constants-module"></span><h2>smol.cofe.space.constants module<a class="headerlink" href="#module-smol.cofe.space.constants" title="Permalink to this headline">¶</a></h2>
 <p>Definitions of global constants used in cofe.cofigspace module.</p>
-</div>
-<div class="section" id="module-smol.cofe.space.domain">
+</section>
+<section id="module-smol.cofe.space.domain">
 <span id="smol-cofe-space-domain-module"></span><h2>smol.cofe.space.domain module<a class="headerlink" href="#module-smol.cofe.space.domain" title="Permalink to this headline">¶</a></h2>
 <p>Implementation of SiteSpace and functions to get spaces and allowed species.</p>
 <p>Implementation functions to generate lists of site spaces and allowed species
@@ -1294,8 +1320,8 @@ for a given disordered strucuture.</p>
 including special species such as vacancies. A site spaces makes up the domain
 of a site function and many site spaces make up the space of configurations.</p>
 <dl class="py class">
-<dt id="smol.cofe.space.domain.SiteSpace">
-<em class="property">class </em><code class="sig-name descname">SiteSpace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">composition</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.domain.SiteSpace">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">SiteSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">composition</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Mapping</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Hashable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Hashable</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Represents a site space.</p>
 <p>A site spaces is a set of allowed species at a site and their corresponding
@@ -1312,34 +1338,34 @@ always the last species. Key errors are raised for species not in space.</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="smol.cofe.space.domain.SiteSpace.as_dict">
-<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.as_dict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.domain.SiteSpace.as_dict">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get MSONable dict representation.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.domain.SiteSpace.codes">
-<em class="property">property </em><code class="sig-name descname">codes</code><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.codes" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.domain.SiteSpace.codes">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">codes</span></span><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.codes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return range of species.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.domain.SiteSpace.composition">
-<em class="property">property </em><code class="sig-name descname">composition</code><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.composition" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.domain.SiteSpace.composition">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">composition</span></span><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.composition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the underlying composition.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.domain.SiteSpace.from_dict">
-<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.from_dict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.domain.SiteSpace.from_dict">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a SiteSpace from dict representation.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt id="smol.cofe.space.domain.Vacancy">
-<em class="property">class </em><code class="sig-name descname">Vacancy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">symbol</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span> <span class="o">=</span> <span class="default_value">'A'</span></em>, <em class="sig-param"><span class="n">oxidation_state</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">0</span></em>, <em class="sig-param"><span class="n">properties</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.Vacancy" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.domain.Vacancy">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Vacancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oxidation_state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><span class="pre">float</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.Vacancy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymatgen.core.periodic_table.DummySpecie</span></code></p>
 <p>Wrapper class around DummySpecie to treat vacancies as their own.</p>
 <p>Initialize a Vacancy.</p>
@@ -1360,8 +1386,8 @@ the charge of a point defect. Defaults to zero.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="smol.cofe.space.domain.get_allowed_species">
-<code class="sig-name descname">get_allowed_species</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.get_allowed_species" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.domain.get_allowed_species">
+<span class="sig-name descname"><span class="pre">get_allowed_species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.get_allowed_species" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the allowed species for each site in a disordered structure.</p>
 <p>This will get all the allowed species for each site in a pymatgen structure
 If the site composition does not add to 1, a Vacancy will be appended to
@@ -1384,8 +1410,8 @@ be disordered, otherwise there is no point in using this.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="smol.cofe.space.domain.get_site_spaces">
-<code class="sig-name descname">get_site_spaces</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">include_measure</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.get_site_spaces" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.domain.get_site_spaces">
+<span class="sig-name descname"><span class="pre">get_site_spaces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_measure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.get_site_spaces" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get site spaces for each site in a disordered structure.</p>
 <p>Method to obtain the single site spaces for the sites in a structure.
 The single site spaces are represented by the allowed species for each site
@@ -1414,8 +1440,8 @@ otherwise a uniform measure is assumed.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="smol.cofe.space.domain.get_species">
-<code class="sig-name descname">get_species</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.get_species" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.domain.get_species">
+<span class="sig-name descname"><span class="pre">get_species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.get_species" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get specie object.</p>
 <p>Wraps pymatgen.core.periodic_table.get_el_sp. to be able to catch and
 return Vacancies when needed.</p>
@@ -1435,15 +1461,15 @@ properties that can be determined.</p>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-smol.cofe.space.orbit">
+</section>
+<section id="module-smol.cofe.space.orbit">
 <span id="smol-cofe-space-orbit-module"></span><h2>smol.cofe.space.orbit module<a class="headerlink" href="#module-smol.cofe.space.orbit" title="Permalink to this headline">¶</a></h2>
 <p>Implementation of an Orbit.</p>
 <p>A set of symmetrically equivalent (with respect to the given random structure
 symmetry) clusters.</p>
 <dl class="py class">
-<dt id="smol.cofe.space.orbit.Orbit">
-<em class="property">class </em><code class="sig-name descname">Orbit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sites</span></em>, <em class="sig-param"><span class="n">lattice</span></em>, <em class="sig-param"><span class="n">bits</span></em>, <em class="sig-param"><span class="n">site_bases</span></em>, <em class="sig-param"><span class="n">structure_symops</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Orbit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure_symops</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Orbit set of symmetrically equivalent clusters.</p>
 <p>An Orbit represents a set of clusters that are symmetrically equivalent
@@ -1458,8 +1484,8 @@ a minimum have translational symmetry).</p>
 <p>You probably never need to instantiate this class directly. Look at
 ClusterSubspace to create orbits and clusters necessary for a CE.</p>
 <dl class="py attribute">
-<dt id="smol.cofe.space.orbit.Orbit.bits">
-<code class="sig-name descname">bits</code><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.bits" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.bits">
+<span class="sig-name descname"><span class="pre">bits</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.bits" title="Permalink to this definition">¶</a></dt>
 <dd><p>list of lists describing the posible non-constant site function
 indices at each site of a cluster in the orbit.</p>
 <dl class="field-list simple">
@@ -1470,8 +1496,8 @@ indices at each site of a cluster in the orbit.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="smol.cofe.space.orbit.Orbit.site_bases">
-<code class="sig-name descname">site_bases</code><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.site_bases" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.site_bases">
+<span class="sig-name descname"><span class="pre">site_bases</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.site_bases" title="Permalink to this definition">¶</a></dt>
 <dd><p>list of the SiteBasis for each site.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1481,8 +1507,8 @@ indices at each site of a cluster in the orbit.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="smol.cofe.space.orbit.Orbit.structure_symops">
-<code class="sig-name descname">structure_symops</code><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.structure_symops" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.structure_symops">
+<span class="sig-name descname"><span class="pre">structure_symops</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.structure_symops" title="Permalink to this definition">¶</a></dt>
 <dd><p>list of underlying structure symmetry operations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1492,8 +1518,8 @@ indices at each site of a cluster in the orbit.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="smol.cofe.space.orbit.Orbit.lattice">
-<code class="sig-name descname">lattice</code><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.lattice" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.lattice">
+<span class="sig-name descname"><span class="pre">lattice</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.lattice" title="Permalink to this definition">¶</a></dt>
 <dd><p>underlying structure lattice.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1521,8 +1547,8 @@ phi_0 = 1.</p></li>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="smol.cofe.space.orbit.Orbit.as_dict">
-<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.as_dict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.as_dict">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1532,8 +1558,8 @@ phi_0 = 1.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.orbit.Orbit.assign_ids">
-<code class="sig-name descname">assign_ids</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">orbit_id</span></em>, <em class="sig-param"><span class="n">orbit_bit_id</span></em>, <em class="sig-param"><span class="n">start_cluster_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.assign_ids" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.assign_ids">
+<span class="sig-name descname"><span class="pre">assign_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbit_bit_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_cluster_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.assign_ids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assign unique orbit and cluster ids.</p>
 <p>This should be called iteratively for a list of orbits to get a proper
 set of unique id’s for the orbits.</p>
@@ -1554,9 +1580,9 @@ set of unique id’s for the orbits.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.orbit.Orbit.bases_array">
-<em class="property">property </em><code class="sig-name descname">bases_array</code><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.bases_array" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.bases_array">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">bases_array</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.bases_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get bases array.</p>
 <p>3D array with all basis arrays. Since each basis array can be of
 different dimension the 3D array is the size of the largest array.
@@ -1564,60 +1590,60 @@ Smaller arrays are padded with ones. Doing this allows using numpy
 fancy indexing which can be faster than for loops.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.orbit.Orbit.basis_arrays">
-<em class="property">property </em><code class="sig-name descname">basis_arrays</code><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.basis_arrays" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.basis_arrays">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">basis_arrays</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.basis_arrays" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a tuple of all site function arrays for each site in orbit.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.orbit.Orbit.basis_orthogonal">
-<em class="property">property </em><code class="sig-name descname">basis_orthogonal</code><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.basis_orthogonal" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.basis_orthogonal">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">basis_orthogonal</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.basis_orthogonal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test if the Orbit bases are orthogonal.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.orbit.Orbit.basis_orthonormal">
-<em class="property">property </em><code class="sig-name descname">basis_orthonormal</code><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.basis_orthonormal" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.basis_orthonormal">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">basis_orthonormal</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.basis_orthonormal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test if the orbit bases are orthonormal.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.orbit.Orbit.basis_type">
-<em class="property">property </em><code class="sig-name descname">basis_type</code><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.basis_type" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.basis_type">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">basis_type</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.basis_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the name of basis set used.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.orbit.Orbit.bit_combo_array">
-<em class="property">property </em><code class="sig-name descname">bit_combo_array</code><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.bit_combo_array" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.bit_combo_array">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">bit_combo_array</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.bit_combo_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Single array of all bit combos.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.orbit.Orbit.bit_combo_inds">
-<em class="property">property </em><code class="sig-name descname">bit_combo_inds</code><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.bit_combo_inds" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.bit_combo_inds">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">bit_combo_inds</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.bit_combo_inds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get indices to symmetrically equivalent bits in bit combo array.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.orbit.Orbit.bit_combo_multiplicities">
-<em class="property">property </em><code class="sig-name descname">bit_combo_multiplicities</code><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.bit_combo_multiplicities" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.bit_combo_multiplicities">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">bit_combo_multiplicities</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.bit_combo_multiplicities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the multiplicites of the symmetrically distinct bit ordering.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.orbit.Orbit.bit_combos">
-<em class="property">property </em><code class="sig-name descname">bit_combos</code><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.bit_combos" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.bit_combos">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">bit_combos</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.bit_combos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of site bit orderings.</p>
 <p>tuple of ndarrays, each array is a set of symmetrically equivalent bit
 orderings represented by row. Bit combos represent non-constant site
 function orderings.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.orbit.Orbit.cluster_symops">
-<em class="property">property </em><code class="sig-name descname">cluster_symops</code><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.cluster_symops" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.cluster_symops">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cluster_symops</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.cluster_symops" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get symmetry operations that map a cluster to its periodic image.</p>
 <p>Each element is a tuple of (pymatgen.core.operations.Symop, mapping)
 where mapping is a tuple such that
@@ -1625,15 +1651,15 @@ Symop.operate(sites) = sites[mapping]
 (after translation back to unit cell)</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.orbit.Orbit.clusters">
-<em class="property">property </em><code class="sig-name descname">clusters</code><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.clusters" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.clusters">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">clusters</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.clusters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get symmetrically equivalent clusters.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.orbit.Orbit.eval">
-<code class="sig-name descname">eval</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bits</span></em>, <em class="sig-param"><span class="n">species_encoding</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.eval" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.eval">
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species_encoding</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.eval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate a cluster function defined for this orbit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1652,36 +1678,36 @@ species in species bits)</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.orbit.Orbit.from_dict">
-<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.from_dict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.from_dict">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create Orbit from serialized MSONable dict.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.orbit.Orbit.multiplicity">
-<em class="property">property </em><code class="sig-name descname">multiplicity</code><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.multiplicity" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.multiplicity">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">multiplicity</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.multiplicity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get number of clusters in orbit.</p>
 <p>Number of clusters in the given sites of the lattice object that are in
 the orbit.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.orbit.Orbit.remove_bit_combo">
-<code class="sig-name descname">remove_bit_combo</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bits</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.remove_bit_combo" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.remove_bit_combo">
+<span class="sig-name descname"><span class="pre">remove_bit_combo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.remove_bit_combo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove bit_combos from orbit.</p>
 <p>Only a single set bits in the bit combo (symmetrically equivalent bit
 orderings) needs to be passed.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.orbit.Orbit.remove_bit_combos_by_inds">
-<code class="sig-name descname">remove_bit_combos_by_inds</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.remove_bit_combos_by_inds" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.remove_bit_combos_by_inds">
+<span class="sig-name descname"><span class="pre">remove_bit_combos_by_inds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.remove_bit_combos_by_inds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove bit combos by their indices in the bit_combo list.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.orbit.Orbit.transform_site_bases">
-<code class="sig-name descname">transform_site_bases</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basis_name</span></em>, <em class="sig-param"><span class="n">orthonormal</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.transform_site_bases" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.transform_site_bases">
+<span class="sig-name descname"><span class="pre">transform_site_bases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthonormal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.transform_site_bases" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transform the Orbits site bases to new basis set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1695,15 +1721,15 @@ orderings) needs to be passed.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-smol.cofe.space">
+</section>
+<section id="module-smol.cofe.space">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-smol.cofe.space" title="Permalink to this headline">¶</a></h2>
 <p>Classes to define subspaces of functions over crystalline configurations.</p>
 <p>Contains classes and functions necessary to represent the configurational space
 of a crystalline system and the space of functions over it.</p>
 <dl class="py class">
-<dt id="smol.cofe.space.Cluster">
-<em class="property">class </em><code class="sig-name descname">Cluster</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sites</span></em>, <em class="sig-param"><span class="n">lattice</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Cluster" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Cluster">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Cluster" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>An undecorated (no occupancies) cluster.</p>
 <p>Represented simply by a list of sites, its centroid, and the underlying
@@ -1711,8 +1737,8 @@ lattice.</p>
 <p>You probably never need to instantiate this class directly. Look at
 ClusterSubspace to create orbits and clusters necessary for a CE.</p>
 <dl class="py attribute">
-<dt id="smol.cofe.space.Cluster.sites">
-<code class="sig-name descname">sites</code><a class="headerlink" href="#smol.cofe.space.Cluster.sites" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Cluster.sites">
+<span class="sig-name descname"><span class="pre">sites</span></span><a class="headerlink" href="#smol.cofe.space.Cluster.sites" title="Permalink to this definition">¶</a></dt>
 <dd><p>list of fractional coordinates of each site.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1722,8 +1748,8 @@ ClusterSubspace to create orbits and clusters necessary for a CE.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="smol.cofe.space.Cluster.lattice">
-<code class="sig-name descname">lattice</code><a class="headerlink" href="#smol.cofe.space.Cluster.lattice" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Cluster.lattice">
+<span class="sig-name descname"><span class="pre">lattice</span></span><a class="headerlink" href="#smol.cofe.space.Cluster.lattice" title="Permalink to this definition">¶</a></dt>
 <dd><p>underlying lattice of cluster.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1733,8 +1759,8 @@ ClusterSubspace to create orbits and clusters necessary for a CE.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="smol.cofe.space.Cluster.centroid">
-<code class="sig-name descname">centroid</code><a class="headerlink" href="#smol.cofe.space.Cluster.centroid" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Cluster.centroid">
+<span class="sig-name descname"><span class="pre">centroid</span></span><a class="headerlink" href="#smol.cofe.space.Cluster.centroid" title="Permalink to this definition">¶</a></dt>
 <dd><p>goemetric centroid of included sites.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1744,8 +1770,8 @@ ClusterSubspace to create orbits and clusters necessary for a CE.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="smol.cofe.space.Cluster.id">
-<code class="sig-name descname">id</code><a class="headerlink" href="#smol.cofe.space.Cluster.id" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Cluster.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#smol.cofe.space.Cluster.id" title="Permalink to this definition">¶</a></dt>
 <dd><p>id of cluster.
 Used to identify the cluster in a given ClusterSubspace.</p>
 <dl class="field-list simple">
@@ -1765,8 +1791,8 @@ Used to identify the cluster in a given ClusterSubspace.</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="smol.cofe.space.Cluster.as_dict">
-<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Cluster.as_dict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Cluster.as_dict">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Cluster.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1776,46 +1802,46 @@ Used to identify the cluster in a given ClusterSubspace.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.Cluster.assign_ids">
-<code class="sig-name descname">assign_ids</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Cluster.assign_ids" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Cluster.assign_ids">
+<span class="sig-name descname"><span class="pre">assign_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Cluster.assign_ids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Recursively assign ids to clusters after initialization.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.Cluster.diameter">
-<em class="property">property </em><code class="sig-name descname">diameter</code><a class="headerlink" href="#smol.cofe.space.Cluster.diameter" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.Cluster.diameter">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">diameter</span></span><a class="headerlink" href="#smol.cofe.space.Cluster.diameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get maximum distance between 2 sites in cluster.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.Cluster.from_dict">
-<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Cluster.from_dict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Cluster.from_dict">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Cluster.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a cluster from serialized dict.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.Cluster.from_sites">
-<em class="property">classmethod </em><code class="sig-name descname">from_sites</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sites</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Cluster.from_sites" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Cluster.from_sites">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_sites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Cluster.from_sites" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a cluster from a list of pymatgen Sites.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.Cluster.radius">
-<em class="property">property </em><code class="sig-name descname">radius</code><a class="headerlink" href="#smol.cofe.space.Cluster.radius" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.Cluster.radius">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">radius</span></span><a class="headerlink" href="#smol.cofe.space.Cluster.radius" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get half the maximum distance between 2 sites in cluster.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.Cluster.size">
-<em class="property">property </em><code class="sig-name descname">size</code><a class="headerlink" href="#smol.cofe.space.Cluster.size" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.Cluster.size">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#smol.cofe.space.Cluster.size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get number of sites in the cluster.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt id="smol.cofe.space.Orbit">
-<em class="property">class </em><code class="sig-name descname">Orbit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sites</span></em>, <em class="sig-param"><span class="n">lattice</span></em>, <em class="sig-param"><span class="n">bits</span></em>, <em class="sig-param"><span class="n">site_bases</span></em>, <em class="sig-param"><span class="n">structure_symops</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Orbit" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Orbit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure_symops</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Orbit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Orbit set of symmetrically equivalent clusters.</p>
 <p>An Orbit represents a set of clusters that are symmetrically equivalent
@@ -1830,8 +1856,8 @@ a minimum have translational symmetry).</p>
 <p>You probably never need to instantiate this class directly. Look at
 ClusterSubspace to create orbits and clusters necessary for a CE.</p>
 <dl class="py attribute">
-<dt id="smol.cofe.space.Orbit.bits">
-<code class="sig-name descname">bits</code><a class="headerlink" href="#smol.cofe.space.Orbit.bits" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.bits">
+<span class="sig-name descname"><span class="pre">bits</span></span><a class="headerlink" href="#smol.cofe.space.Orbit.bits" title="Permalink to this definition">¶</a></dt>
 <dd><p>list of lists describing the posible non-constant site function
 indices at each site of a cluster in the orbit.</p>
 <dl class="field-list simple">
@@ -1842,8 +1868,8 @@ indices at each site of a cluster in the orbit.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="smol.cofe.space.Orbit.site_bases">
-<code class="sig-name descname">site_bases</code><a class="headerlink" href="#smol.cofe.space.Orbit.site_bases" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.site_bases">
+<span class="sig-name descname"><span class="pre">site_bases</span></span><a class="headerlink" href="#smol.cofe.space.Orbit.site_bases" title="Permalink to this definition">¶</a></dt>
 <dd><p>list of the SiteBasis for each site.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1853,8 +1879,8 @@ indices at each site of a cluster in the orbit.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="smol.cofe.space.Orbit.structure_symops">
-<code class="sig-name descname">structure_symops</code><a class="headerlink" href="#smol.cofe.space.Orbit.structure_symops" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.structure_symops">
+<span class="sig-name descname"><span class="pre">structure_symops</span></span><a class="headerlink" href="#smol.cofe.space.Orbit.structure_symops" title="Permalink to this definition">¶</a></dt>
 <dd><p>list of underlying structure symmetry operations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1864,8 +1890,8 @@ indices at each site of a cluster in the orbit.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="smol.cofe.space.Orbit.lattice">
-<code class="sig-name descname">lattice</code><a class="headerlink" href="#smol.cofe.space.Orbit.lattice" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.lattice">
+<span class="sig-name descname"><span class="pre">lattice</span></span><a class="headerlink" href="#smol.cofe.space.Orbit.lattice" title="Permalink to this definition">¶</a></dt>
 <dd><p>underlying structure lattice.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1893,8 +1919,8 @@ phi_0 = 1.</p></li>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="smol.cofe.space.Orbit.as_dict">
-<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Orbit.as_dict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.as_dict">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Orbit.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1904,8 +1930,8 @@ phi_0 = 1.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.Orbit.assign_ids">
-<code class="sig-name descname">assign_ids</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">orbit_id</span></em>, <em class="sig-param"><span class="n">orbit_bit_id</span></em>, <em class="sig-param"><span class="n">start_cluster_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Orbit.assign_ids" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.assign_ids">
+<span class="sig-name descname"><span class="pre">assign_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbit_bit_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_cluster_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Orbit.assign_ids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assign unique orbit and cluster ids.</p>
 <p>This should be called iteratively for a list of orbits to get a proper
 set of unique id’s for the orbits.</p>
@@ -1926,9 +1952,9 @@ set of unique id’s for the orbits.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.Orbit.bases_array">
-<em class="property">property </em><code class="sig-name descname">bases_array</code><a class="headerlink" href="#smol.cofe.space.Orbit.bases_array" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.bases_array">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">bases_array</span></span><a class="headerlink" href="#smol.cofe.space.Orbit.bases_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get bases array.</p>
 <p>3D array with all basis arrays. Since each basis array can be of
 different dimension the 3D array is the size of the largest array.
@@ -1936,60 +1962,60 @@ Smaller arrays are padded with ones. Doing this allows using numpy
 fancy indexing which can be faster than for loops.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.Orbit.basis_arrays">
-<em class="property">property </em><code class="sig-name descname">basis_arrays</code><a class="headerlink" href="#smol.cofe.space.Orbit.basis_arrays" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.basis_arrays">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">basis_arrays</span></span><a class="headerlink" href="#smol.cofe.space.Orbit.basis_arrays" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a tuple of all site function arrays for each site in orbit.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.Orbit.basis_orthogonal">
-<em class="property">property </em><code class="sig-name descname">basis_orthogonal</code><a class="headerlink" href="#smol.cofe.space.Orbit.basis_orthogonal" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.basis_orthogonal">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">basis_orthogonal</span></span><a class="headerlink" href="#smol.cofe.space.Orbit.basis_orthogonal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test if the Orbit bases are orthogonal.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.Orbit.basis_orthonormal">
-<em class="property">property </em><code class="sig-name descname">basis_orthonormal</code><a class="headerlink" href="#smol.cofe.space.Orbit.basis_orthonormal" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.basis_orthonormal">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">basis_orthonormal</span></span><a class="headerlink" href="#smol.cofe.space.Orbit.basis_orthonormal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test if the orbit bases are orthonormal.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.Orbit.basis_type">
-<em class="property">property </em><code class="sig-name descname">basis_type</code><a class="headerlink" href="#smol.cofe.space.Orbit.basis_type" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.basis_type">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">basis_type</span></span><a class="headerlink" href="#smol.cofe.space.Orbit.basis_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the name of basis set used.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.Orbit.bit_combo_array">
-<em class="property">property </em><code class="sig-name descname">bit_combo_array</code><a class="headerlink" href="#smol.cofe.space.Orbit.bit_combo_array" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.bit_combo_array">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">bit_combo_array</span></span><a class="headerlink" href="#smol.cofe.space.Orbit.bit_combo_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Single array of all bit combos.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.Orbit.bit_combo_inds">
-<em class="property">property </em><code class="sig-name descname">bit_combo_inds</code><a class="headerlink" href="#smol.cofe.space.Orbit.bit_combo_inds" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.bit_combo_inds">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">bit_combo_inds</span></span><a class="headerlink" href="#smol.cofe.space.Orbit.bit_combo_inds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get indices to symmetrically equivalent bits in bit combo array.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.Orbit.bit_combo_multiplicities">
-<em class="property">property </em><code class="sig-name descname">bit_combo_multiplicities</code><a class="headerlink" href="#smol.cofe.space.Orbit.bit_combo_multiplicities" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.bit_combo_multiplicities">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">bit_combo_multiplicities</span></span><a class="headerlink" href="#smol.cofe.space.Orbit.bit_combo_multiplicities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the multiplicites of the symmetrically distinct bit ordering.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.Orbit.bit_combos">
-<em class="property">property </em><code class="sig-name descname">bit_combos</code><a class="headerlink" href="#smol.cofe.space.Orbit.bit_combos" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.bit_combos">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">bit_combos</span></span><a class="headerlink" href="#smol.cofe.space.Orbit.bit_combos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of site bit orderings.</p>
 <p>tuple of ndarrays, each array is a set of symmetrically equivalent bit
 orderings represented by row. Bit combos represent non-constant site
 function orderings.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.Orbit.cluster_symops">
-<em class="property">property </em><code class="sig-name descname">cluster_symops</code><a class="headerlink" href="#smol.cofe.space.Orbit.cluster_symops" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.cluster_symops">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cluster_symops</span></span><a class="headerlink" href="#smol.cofe.space.Orbit.cluster_symops" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get symmetry operations that map a cluster to its periodic image.</p>
 <p>Each element is a tuple of (pymatgen.core.operations.Symop, mapping)
 where mapping is a tuple such that
@@ -1997,15 +2023,15 @@ Symop.operate(sites) = sites[mapping]
 (after translation back to unit cell)</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.Orbit.clusters">
-<em class="property">property </em><code class="sig-name descname">clusters</code><a class="headerlink" href="#smol.cofe.space.Orbit.clusters" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.clusters">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">clusters</span></span><a class="headerlink" href="#smol.cofe.space.Orbit.clusters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get symmetrically equivalent clusters.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.Orbit.eval">
-<code class="sig-name descname">eval</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bits</span></em>, <em class="sig-param"><span class="n">species_encoding</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Orbit.eval" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.eval">
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species_encoding</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Orbit.eval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate a cluster function defined for this orbit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2024,36 +2050,36 @@ species in species bits)</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.Orbit.from_dict">
-<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Orbit.from_dict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.from_dict">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Orbit.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create Orbit from serialized MSONable dict.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="smol.cofe.space.Orbit.multiplicity">
-<em class="property">property </em><code class="sig-name descname">multiplicity</code><a class="headerlink" href="#smol.cofe.space.Orbit.multiplicity" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.multiplicity">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">multiplicity</span></span><a class="headerlink" href="#smol.cofe.space.Orbit.multiplicity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get number of clusters in orbit.</p>
 <p>Number of clusters in the given sites of the lattice object that are in
 the orbit.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.Orbit.remove_bit_combo">
-<code class="sig-name descname">remove_bit_combo</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bits</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Orbit.remove_bit_combo" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.remove_bit_combo">
+<span class="sig-name descname"><span class="pre">remove_bit_combo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bits</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Orbit.remove_bit_combo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove bit_combos from orbit.</p>
 <p>Only a single set bits in the bit combo (symmetrically equivalent bit
 orderings) needs to be passed.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.Orbit.remove_bit_combos_by_inds">
-<code class="sig-name descname">remove_bit_combos_by_inds</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Orbit.remove_bit_combos_by_inds" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.remove_bit_combos_by_inds">
+<span class="sig-name descname"><span class="pre">remove_bit_combos_by_inds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Orbit.remove_bit_combos_by_inds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove bit combos by their indices in the bit_combo list.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="smol.cofe.space.Orbit.transform_site_bases">
-<code class="sig-name descname">transform_site_bases</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basis_name</span></em>, <em class="sig-param"><span class="n">orthonormal</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Orbit.transform_site_bases" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Orbit.transform_site_bases">
+<span class="sig-name descname"><span class="pre">transform_site_bases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthonormal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Orbit.transform_site_bases" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transform the Orbits site bases to new basis set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2068,8 +2094,8 @@ orderings) needs to be passed.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="smol.cofe.space.Vacancy">
-<em class="property">class </em><code class="sig-name descname">Vacancy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">symbol</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span> <span class="o">=</span> <span class="default_value">'A'</span></em>, <em class="sig-param"><span class="n">oxidation_state</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">0</span></em>, <em class="sig-param"><span class="n">properties</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Vacancy" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.Vacancy">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Vacancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oxidation_state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><span class="pre">float</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.Vacancy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymatgen.core.periodic_table.DummySpecie</span></code></p>
 <p>Wrapper class around DummySpecie to treat vacancies as their own.</p>
 <p>Initialize a Vacancy.</p>
@@ -2090,8 +2116,8 @@ the charge of a point defect. Defaults to zero.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="smol.cofe.space.basis_factory">
-<code class="sig-name descname">basis_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basis_name</span></em>, <em class="sig-param"><span class="n">site_space</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis_factory" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.basis_factory">
+<span class="sig-name descname"><span class="pre">basis_factory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_space</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis_factory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a site basis for the given basis name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2107,8 +2133,8 @@ the charge of a point defect. Defaults to zero.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="smol.cofe.space.get_allowed_species">
-<code class="sig-name descname">get_allowed_species</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.get_allowed_species" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.get_allowed_species">
+<span class="sig-name descname"><span class="pre">get_allowed_species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.get_allowed_species" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the allowed species for each site in a disordered structure.</p>
 <p>This will get all the allowed species for each site in a pymatgen structure
 If the site composition does not add to 1, a Vacancy will be appended to
@@ -2131,8 +2157,8 @@ be disordered, otherwise there is no point in using this.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="smol.cofe.space.get_site_spaces">
-<code class="sig-name descname">get_site_spaces</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em>, <em class="sig-param"><span class="n">include_measure</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.get_site_spaces" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.get_site_spaces">
+<span class="sig-name descname"><span class="pre">get_site_spaces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_measure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.get_site_spaces" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get site spaces for each site in a disordered structure.</p>
 <p>Method to obtain the single site spaces for the sites in a structure.
 The single site spaces are represented by the allowed species for each site
@@ -2161,8 +2187,8 @@ otherwise a uniform measure is assumed.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="smol.cofe.space.get_species">
-<code class="sig-name descname">get_species</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.get_species" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.get_species">
+<span class="sig-name descname"><span class="pre">get_species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.get_species" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get specie object.</p>
 <p>Wraps pymatgen.core.periodic_table.get_el_sp. to be able to catch and
 return Vacancies when needed.</p>
@@ -2182,8 +2208,8 @@ properties that can be determined.</p>
 </dl>
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
     </div>
@@ -2201,7 +2227,7 @@ properties that can be determined.</p>
     </p>
     <p>
         &copy; Copyright 2020, Ceder Group.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br/>
     </p>
   </div>
 </footer>
