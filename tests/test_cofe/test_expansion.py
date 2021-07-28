@@ -1,9 +1,27 @@
 import unittest
 import json
 import numpy as np
-from smol.cofe import StructureWrangler, ClusterSubspace, ClusterExpansion
+from sklearn.linear_model import LinearRegression
+from smol.cofe import StructureWrangler, ClusterSubspace, ClusterExpansion, \
+    RegressionData
 from smol.cofe.extern import EwaldTerm
 from tests.data import synthetic_CE_binary, synthetic_CEewald_binary
+from tests.utils import assert_msonable
+
+
+def test_regression_data(cluster_subspace):
+    reg = LinearRegression(fit_intercept=False)
+    n = np.random.randint(10, 100)
+    feat_matrix = np.random.random((n, len(cluster_subspace)))
+    prop_vec = np.random.random(n)
+    reg_data = RegressionData.from_sklearn(reg, feature_matrix=feat_matrix,
+                                           property_vector=prop_vec)
+    coeffs = np.random.random(len(cluster_subspace))
+    expansion = ClusterExpansion(cluster_subspace, coeffs, reg_data)
+    assert reg_data.class_name == reg.__class__.__name__
+    assert reg_data.module == reg.__module__
+    assert reg_data.parameters == reg.get_params()
+    assert_msonable(expansion)
 
 
 # TODO add tests with synthetic ternary dataset
