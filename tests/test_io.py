@@ -18,7 +18,7 @@ class TestSaveLoadWork(unittest.TestCase):
             cls.sw.add_data(struct, {'energy': energy})
 
         coefs = np.ones(cls.cs.num_corr_functions)
-        cls.ce = ClusterExpansion(cls.cs, coefs, cls.sw.feature_matrix)
+        cls.ce = ClusterExpansion(cls.cs, coefs)
         cls.pr = CEProcessor(cls.cs, 2 * np.eye(3), coefs)
         cls.en = CanonicalEnsemble(cls.pr)
         cls.file_path = './test_save_work.mson'

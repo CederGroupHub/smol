@@ -27,15 +27,16 @@ class RegressionData:
     recommended to initialize :class:`ClusterExpansion` objects with this
     class
     """
-    module : str
-    class_name : str
-    parameters : dict
-    feature_matrix : np.ndarray
-    property_vector : np.ndarray
+
+    module: str
+    class_name: str
+    parameters: dict
+    feature_matrix: np.ndarray
+    property_vector: np.ndarray
 
     @classmethod
     def from_sklearn(cls, estimator, feature_matrix, property_vector):
-        """Create a RegressionData object from sklearn estimator
+        """Create a RegressionData object from sklearn estimator.
 
         Args:
             estimator (object):
