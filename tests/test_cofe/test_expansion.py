@@ -47,7 +47,11 @@ class TestClusterExpansionBinary(unittest.TestCase):
         coefs = np.linalg.lstsq(self.sw.feature_matrix,
                                 self.sw.get_property_vector('energy', True),
                                 rcond=None)[0]
-        self.ce = ClusterExpansion(cs, coefs, self.sw.feature_matrix)
+        reg = LinearRegression(fit_intercept=False)
+        reg_data = RegressionData.from_sklearn(
+            reg, feature_matrix=self.sw.feature_matrix,
+            property_vector=self.sw.get_property_vector('energy'))
+        self.ce = ClusterExpansion(cs, coefs, reg_data)
 
     def test_predict_train(self):
         preds = [self.ce.predict(s) for s in self.sw.structures]
@@ -79,7 +83,7 @@ class TestClusterExpansionBinary(unittest.TestCase):
 
     def test_prune(self):
         cs = ClusterSubspace.from_dict(synthetic_CE_binary['cluster_subspace'])
-        ce = ClusterExpansion(cs, self.ce.coefs.copy(), self.ce._feat_matrix)
+        ce = ClusterExpansion(cs, self.ce.coefs.copy(), self.ce.regression_data)
         thresh = 8E-3
         ce.prune(threshold=thresh)
         ids = [i for i, coef in enumerate(self.ce.coefs) if abs(coef) >= thresh]
@@ -107,12 +111,13 @@ class TestClusterExpansionBinary(unittest.TestCase):
         _ = str(self.ce)
 
     def test_msonable(self):
-        self.ce.metadata['somethingimportant'] = 75
         d = self.ce.as_dict()
         ce1 = ClusterExpansion.from_dict(d)
         self.assertTrue(np.array_equal(self.ce.coefs, ce1.coefs))
         self.assertIsInstance(self.ce.cluster_subspace, ClusterSubspace)
-        self.assertEqual(ce1.metadata, self.ce.metadata)
+        # change this to just use assert_msonable
+        self.assertEqual(ce1.regression_data.module,
+                         self.ce.regression_data.module)
         j = json.dumps(d)
         json.loads(j)
 
@@ -158,7 +163,11 @@ class TestClusterExpansionEwaldBinary(unittest.TestCase):
         ecis = np.linalg.lstsq(sw.feature_matrix,
                                sw.get_property_vector('energy', True),
                                rcond=None)[0]
-        ce = ClusterExpansion(cs, ecis, sw.feature_matrix)
+        reg_data = RegressionData(
+            module='foo.bar', class_name='Estimator', parameters={'foo': 'bar'},
+            feature_matrix=sw.feature_matrix,
+            property_vector=sw.get_property_vector('energy'))
+        ce = ClusterExpansion(cs, ecis, reg_data)
         test_structs = [data[i][0] for i in self.test_ids]
         test_energies = np.array([data[i][1] for i in self.test_ids])
         preds = [ce.predict(s) for s in sw.structures]

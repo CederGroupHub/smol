@@ -12,6 +12,7 @@ strongly tested.
 
 __author__ = "Luis Barroso-Luque"
 
+from copy import deepcopy
 from dataclasses import dataclass, asdict
 import numpy as np
 from monty.json import MSONable, jsanitize
@@ -293,11 +294,12 @@ class ClusterExpansion(MSONable):
     def from_dict(cls, d):
         """Create ClusterExpansion from serialized MSONable dict."""
         if d['regression_data'] is not None:
-            d['regression_data']['feature_matrix'] = np.array(
+            dd = deepcopy(d)
+            dd['regression_data']['feature_matrix'] = np.array(
                 d['regression_data']['feature_matrix'])
-            d['regression_data']['property_vector'] = np.array(
+            dd['regression_data']['property_vector'] = np.array(
                 d['regression_data']['property_vector'])
-            reg_data = RegressionData(**d['regression_data'])
+            reg_data = RegressionData(**dd['regression_data'])
         else:
             reg_data = None
 
