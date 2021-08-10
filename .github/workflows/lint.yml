@@ -35,7 +35,7 @@ jobs:
             flake8 --count --exit-zero --max-complexity=20 --statistics smol
       - name: pylint
         run: |
-            pylint pymatgen
+            pylint smol
       - name: pydocstyle
         run: |
-            pydocstyle --count pymatgen
+            pydocstyle --count smol
