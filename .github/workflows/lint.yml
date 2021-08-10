@@ -3,12 +3,12 @@ name: lint
 on:
   push:
     branches:
-      - main
+      - master
       - experimental
 
   pull_request:
     branches:
-      - main
+      - master
       - experimental
 
 jobs:
