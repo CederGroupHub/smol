@@ -34,7 +34,7 @@ jobs:
           pip install -r requirements.txt
       - name: Install Package
         run: |
-          pip install -e smol --install-options="--use-cython"
+          pip install -e smol --install-option="--use-cython"
 
       - name: Test with pytest
         run: |
