@@ -1,0 +1,41 @@
+name: test
+
+on:
+  push:
+    branches:
+      - main
+      - experimental
+
+  pull_request:
+    branches:
+      - main
+      - experimental
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 6
+      matrix:
+        python_version: [3.7, 3.8]
+
+    steps:
+      - uses: actions/checkout@v2.3.4
+
+      - name: Set up Python ${{ matrix.python_version }}
+        uses: actions/setup-python@v2.2.2
+        with:
+          python-version:  ${{ matrix.python_version }}
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+          pip install -r requirements.txt
+      - name: Install Package
+        run: |
+          pip install -e smol --install-options="--use-cython"
+
+      - name: Test with pytest
+        run: |
+          pytest tests --cov=smol --cov-report=xml tests/
