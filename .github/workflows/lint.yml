@@ -33,9 +33,10 @@ jobs:
             flake8 --count --show-source --statistics smol
             # exit-zero treats all errors as warnings.
             flake8 --count --exit-zero --max-complexity=20 --statistics smol
-      - name: pylint
-        run: |
-            pylint smol
+      # Not in shape for this yet
+      # - name: pylint
+      #  run: |
+      #     pylint smol
       - name: pydocstyle
         run: |
             pydocstyle --count smol

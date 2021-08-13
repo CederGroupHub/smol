@@ -42,7 +42,9 @@ jobs:
           pip install -r requirements.txt
       - name: Install Package
         run: |
-          pip install -e . --install-option="--use-cython"
+          pip install -e .
+          # --install-option="--use-cython" errors bc dataclasses is for some
+          # odd reason built with this too.
 
       - name: Test with pytest
         run: |
