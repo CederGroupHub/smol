@@ -3,12 +3,12 @@ name: lint
 on:
   push:
     branches:
-      - main
+      - master
       - experimental
 
   pull_request:
     branches:
-      - main
+      - master
       - experimental
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install -r requirements-testing.txt
+          pip install -r requirements-dev.txt
       - name: flake8
         run: |
             flake8 --count --show-source --statistics smol
