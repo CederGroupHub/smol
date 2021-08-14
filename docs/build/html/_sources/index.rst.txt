@@ -13,9 +13,9 @@ Statistical Mechanics on Lattices
 for statistical mechanical calculations of configurational states for
 crystalline material systems.*
 
-.. image:: https://img.shields.io/circleci/build/gh/CederGroupHub/smol/master?logo=circleci&style=for-the-badge&token=96d0d7a959e1e12044ff45daa43218ae7fa4303e
-.. image:: https://img.shields.io/codacy/coverage/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge
-.. image:: https://img.shields.io/codacy/grade/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge
+.. image:: https://github.com/CederGroupHub/smol/actions/workflows/test.yml/badge.svg
+      :alt: Test Status
+      :target: https://github.com/CederGroupHub/smol/actions/workflows/test.yml
 
 -------------------------------------------------------------------------------
 

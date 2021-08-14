@@ -13,6 +13,9 @@ Use this section to keep track of changes in the works.
 * `RegressionData` dataclass to save regression details in `ClusterExpansions`
 [\#132](https://github.com/CederGroupHub/smol/pull/132)
   ([lbluque](https://github.com/lbluque))
+* `cofe.wrangling.select` structure selection functions.
+[\#133](https://github.com/CederGroupHub/smol/pull/133)
+  ([lbluque](https://github.com/lbluque))
 
 ### Changed
 
