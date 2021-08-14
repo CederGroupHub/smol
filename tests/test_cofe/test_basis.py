@@ -127,7 +127,7 @@ class TestBasis(unittest.TestCase):
         for flavor in ('sinusoid', 'legendre', 'polynomial', 'indicator'):
             b = basis.basis_factory(flavor, self.site_space)
             f_array = b._f_array.copy()
-            theta = np.pi / np.random.randint(10)
+            theta = np.pi / np.random.randint(2, 10)
             b.rotate(theta)
             if b.is_orthogonal:
                 self.assertTrue(b.is_orthogonal)

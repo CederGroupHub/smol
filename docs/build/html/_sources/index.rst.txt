@@ -13,9 +13,9 @@ Statistical Mechanics on Lattices
 for statistical mechanical calculations of configurational states for
 crystalline material systems.*
 
-.. image:: https://img.shields.io/circleci/build/gh/CederGroupHub/smol/master?logo=circleci&style=for-the-badge&token=96d0d7a959e1e12044ff45daa43218ae7fa4303e
-.. image:: https://img.shields.io/codacy/coverage/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge
-.. image:: https://img.shields.io/codacy/grade/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge
+.. image:: https://github.com/CederGroupHub/smol/actions/workflows/test.yml/badge.svg
+      :alt: Test Status
+      :target: https://github.com/CederGroupHub/smol/actions/workflows/test.yml
 
 -------------------------------------------------------------------------------
 
@@ -47,7 +47,8 @@ subsequently using it to run Monte Carlo sampling::
     from pymatgen.core.structure import Structure
     from pymatgen.transformations.standard_transformations import \
         OrderDisorderedStructureTransformation
-    from smol.cofe import ClusterSubspace, StructureWrangler, ClusterExpansion
+    from smol.cofe import ClusterSubspace, StructureWrangler, \
+        ClusterExpansion, RegressionData
     from smol.moca import CanonicalEnsemble, Sampler
     from smol.io import save_work
 
@@ -73,8 +74,14 @@ subsequently using it to run Monte Carlo sampling::
     reg = LinearRegression(fit_intercept=False)
     reg.fit(wrangler.feature_matrix, wrangler.get_property_vector("energy"))
 
+    # save details of the regression model used
+    reg_data = RegressionData.from_sklearn(
+        estimator=reg,
+        feature_matrix=wrangler.feature_matrix,
+        property_vector=wrangler.get_property_vector('energy'))
+
     expansion = ClusterExpansion(subspace, coefficients=reg.coef_,
-                                 feature_matrix=wrangler.feature_matrix)
+                                 regression_data=reg_data)
 
     # define a supercell and ensemble for MC sampling
     sc_matrix = [[5, 0, 0], [0, 5, 0], [0, 0, 5]]
@@ -93,8 +100,8 @@ subsequently using it to run Monte Carlo sampling::
     init_occu = ensemble.processor.occupancy_from_structure(structure)
     sampler.run(1000000, initial_occupancy=init_occu)
 
-    save_work("CuAu_ce_mc.json", wrangler, expansion, ensemble,
-              sampler.samples)
+    save_work(
+        "CuAu_ce_mc.json", wrangler, expansion, ensemble, sampler.samples)
 
 
 API Documentation

@@ -3,19 +3,19 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Bayes Cluster Expansion &#8212; smol 1.0.0 documentation</title>
-    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/_static/default.css" />
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/language_data.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
 <meta charset='utf-8'>
@@ -117,21 +117,35 @@
 /* CSS for nbsphinx extension */
 
 /* remove conflicting styling from Sphinx themes */
-div.nbinput.container,
-div.nbinput.container div.prompt,
-div.nbinput.container div.input_area,
-div.nbinput.container div[class*=highlight],
-div.nbinput.container div[class*=highlight] pre,
-div.nboutput.container,
-div.nboutput.container div.prompt,
-div.nboutput.container div.output_area,
-div.nboutput.container div[class*=highlight],
-div.nboutput.container div[class*=highlight] pre {
-    background: none;
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
     border: none;
-    padding: 0 0;
+    padding: 0;
     margin: 0;
     box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
 }
 
 /* avoid gaps between output lines */
@@ -232,7 +246,7 @@ div.nboutput.container div.output_area {
 div.nbinput.container div.input_area {
     border: 1px solid #e0e0e0;
     border-radius: 2px;
-    background: #f5f5f5;
+    /*background: #f5f5f5;*/
 }
 
 /* override MathJax center alignment in output cells */
@@ -298,6 +312,7 @@ div.nboutput.container div.output_area.rendered_html,
 div.nboutput.container div.output_area > div.output_javascript,
 div.nboutput.container div.output_area:not(.rendered_html) > img{
     padding: 5px;
+    margin: 0;
 }
 
 /* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
@@ -345,9 +360,9 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<div class="section" id="Bayes-Cluster-Expansion">
+<section id="Bayes-Cluster-Expansion">
 <h1>Bayes Cluster Expansion<a class="headerlink" href="#Bayes-Cluster-Expansion" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="Author-Peichen-Zhong">
+<section id="Author-Peichen-Zhong">
 <h2>Author Peichen Zhong<a class="headerlink" href="#Author-Peichen-Zhong" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
@@ -362,9 +377,9 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="Load-a-cluster-expansion-file-from-previous-saved-one">
+</section>
+</section>
+<section id="Load-a-cluster-expansion-file-from-previous-saved-one">
 <h1>Load a cluster expansion file from previous saved one<a class="headerlink" href="#Load-a-cluster-expansion-file-from-previous-saved-one" title="Permalink to this headline">¶</a></h1>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
@@ -374,7 +389,7 @@ div.rendered_html tbody tr:hover {
 
 <span></span><span class="n">work</span> <span class="o">=</span> <span class="n">load_work</span><span class="p">(</span><span class="s1">&#39;../data/LMTO_sinusoid.mson&#39;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">work</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{name}</span><span class="s1">: {type(obj)}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -399,8 +414,8 @@ ClusterExpansion: &lt;class &#39;smol.cofe.expansion.ClusterExpansion&#39;&gt;
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="Training-part">
+</section>
+<section id="Training-part">
 <h1>Training part<a class="headerlink" href="#Training-part" title="Permalink to this headline">¶</a></h1>
 <p>Training a cluster expansion is one of the most critical steps.</p>
 <p>Training with Bayesian regression typically requires the correlation vector to be represented in orthogonal basis. Indicator basis is not appropriate for Bayesian regression</p>
@@ -602,8 +617,8 @@ array([-13.11874117, -13.12903802, -13.17137952, -13.08021449,
        -13.60728083, -13.64882417])
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="Optimization-of-ridge-regularization-in-Li-Mn-Ti-O-system">
+</section>
+<section id="Optimization-of-ridge-regularization-in-Li-Mn-Ti-O-system">
 <h1>Optimization of ridge regularization in Li-Mn-Ti-O system<a class="headerlink" href="#Optimization-of-ridge-regularization-in-Li-Mn-Ti-O-system" title="Permalink to this headline">¶</a></h1>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
@@ -631,8 +646,8 @@ array([-13.11874117, -13.12903802, -13.17137952, -13.08021449,
    0.1189496   -0.11077483]
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="Optimization-of-Bayesian-regularization-in-Li-Mn-Ti-O-system">
+</section>
+<section id="Optimization-of-Bayesian-regularization-in-Li-Mn-Ti-O-system">
 <h1>Optimization of Bayesian regularization in Li-Mn-Ti-O system<a class="headerlink" href="#Optimization-of-Bayesian-regularization-in-Li-Mn-Ti-O-system" title="Permalink to this headline">¶</a></h1>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
@@ -712,8 +727,8 @@ array([-13.11874117, -13.12903802, -13.17137952, -13.08021449,
   1.01629257e-01  5.11382017e-02  1.95112931e-02]
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="Comparison-of-ridge-and-Bayesian-regression-in-Li-Mn-Ti-O-system">
+</section>
+<section id="Comparison-of-ridge-and-Bayesian-regression-in-Li-Mn-Ti-O-system">
 <h1>Comparison of ridge and Bayesian regression in Li-Mn-Ti-O system<a class="headerlink" href="#Comparison-of-ridge-and-Bayesian-regression-in-Li-Mn-Ti-O-system" title="Permalink to this headline">¶</a></h1>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
@@ -743,10 +758,10 @@ Non-zero ECIs in Bayesian:  27
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="notebooks/advanced-cluster-expansion-fitting/../../../build/doctrees/nbsphinx/notebooks_advanced-cluster-expansion-fitting_optimization_LMTO_Bayes_16_1.png" src="notebooks/advanced-cluster-expansion-fitting/../../../build/doctrees/nbsphinx/notebooks_advanced-cluster-expansion-fitting_optimization_LMTO_Bayes_16_1.png" />
+<img alt="../../_images/notebooks_advanced-cluster-expansion-fitting_optimization_LMTO_Bayes_16_1.png" src="../../_images/notebooks_advanced-cluster-expansion-fitting_optimization_LMTO_Bayes_16_1.png" />
 </div>
 </div>
-<div class="section" id="4)-The-cluster-expansion">
+<section id="4)-The-cluster-expansion">
 <h2>4) The cluster expansion<a class="headerlink" href="#4)-The-cluster-expansion" title="Permalink to this headline">¶</a></h2>
 <p>Now we can use the above work to create the <code class="docutils literal notranslate"><span class="pre">ClusterExpansion</span></code>. The cluster expansion can be used to predict the fitted property for new structures, either for testing quality or for simulations such as in Monte Carlo. Note that when using the <code class="docutils literal notranslate"><span class="pre">predict</span></code> function, the cluster expansion will have to match the given structure if it has not seen it before.</p>
 <div class="nbinput docutils container">
@@ -762,9 +777,9 @@ Non-zero ECIs in Bayesian:  27
 <span class="n">prediction</span> <span class="o">=</span> <span class="n">expansion</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The predicted energy for a structure with composition &#39;</span>
-      <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{structure.composition}</span><span class="s1"> is </span><span class="si">{prediction}</span><span class="s1"> eV/prim.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The fitted coefficients are:</span><span class="se">\n</span><span class="si">{expansion.coefs}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The effective cluster interactions are:</span><span class="se">\n</span><span class="si">{expansion.eci}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+      <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">structure</span><span class="o">.</span><span class="n">composition</span><span class="si">}</span><span class="s1"> is </span><span class="si">{</span><span class="n">prediction</span><span class="si">}</span><span class="s1"> eV/prim.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The fitted coefficients are:</span><span class="se">\n</span><span class="si">{</span><span class="n">expansion</span><span class="o">.</span><span class="n">coefs</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The effective cluster interactions are:</span><span class="se">\n</span><span class="si">{</span><span class="n">expansion</span><span class="o">.</span><span class="n">eci</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">expansion</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -855,8 +870,8 @@ Num orbit functions: 27
   &#34;&#34;&#34;
 </pre></div></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
     </div>
@@ -874,7 +889,7 @@ Num orbit functions: 27
     </p>
     <p>
         &copy; Copyright 2020, Ceder Group.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br/>
     </p>
   </div>
 </footer>

@@ -3,19 +3,19 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Creating a Cluster Expansion with an additional Ewald electrostatic term &#8212; smol 1.0.0 documentation</title>
-    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/_static/default.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
 <meta charset='utf-8'>
@@ -122,21 +122,35 @@
 /* CSS for nbsphinx extension */
 
 /* remove conflicting styling from Sphinx themes */
-div.nbinput.container,
-div.nbinput.container div.prompt,
-div.nbinput.container div.input_area,
-div.nbinput.container div[class*=highlight],
-div.nbinput.container div[class*=highlight] pre,
-div.nboutput.container,
-div.nboutput.container div.prompt,
-div.nboutput.container div.output_area,
-div.nboutput.container div[class*=highlight],
-div.nboutput.container div[class*=highlight] pre {
-    background: none;
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
     border: none;
-    padding: 0 0;
+    padding: 0;
     margin: 0;
     box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
 }
 
 /* avoid gaps between output lines */
@@ -237,7 +251,7 @@ div.nboutput.container div.output_area {
 div.nbinput.container div.input_area {
     border: 1px solid #e0e0e0;
     border-radius: 2px;
-    background: #f5f5f5;
+    /*background: #f5f5f5;*/
 }
 
 /* override MathJax center alignment in output cells */
@@ -303,6 +317,7 @@ div.nboutput.container div.output_area.rendered_html,
 div.nboutput.container div.output_area > div.output_javascript,
 div.nboutput.container div.output_area:not(.rendered_html) > img{
     padding: 5px;
+    margin: 0;
 }
 
 /* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
@@ -350,7 +365,7 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<div class="section" id="Creating-a-Cluster-Expansion-with-an-additional-Ewald-electrostatic-term">
+<section id="Creating-a-Cluster-Expansion-with-an-additional-Ewald-electrostatic-term">
 <h1>Creating a Cluster Expansion with an additional Ewald electrostatic term<a class="headerlink" href="#Creating-a-Cluster-Expansion-with-an-additional-Ewald-electrostatic-term" title="Permalink to this headline">¶</a></h1>
 <p>Fitting cluster expansions with an ewald term was proposed by former studet Will Richards. See chapter 4.6 of his <a class="reference external" href="https://ceder.berkeley.edu/theses/Will_Richards_2017.pdf">thesis</a> for details.</p>
 <div class="nbinput nblast docutils container">
@@ -361,8 +376,8 @@ div.rendered_html tbody tr:hover {
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">monty.serialization</span> <span class="kn">import</span> <span class="n">loadfn</span>
-<span class="kn">from</span> <span class="nn">pymatgen</span> <span class="kn">import</span> <span class="n">Structure</span>
-<span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">ClusterSubspace</span><span class="p">,</span> <span class="n">StructureWrangler</span><span class="p">,</span> <span class="n">ClusterExpansion</span>
+<span class="kn">from</span> <span class="nn">pymatgen.core.structure</span> <span class="kn">import</span> <span class="n">Structure</span>
+<span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">ClusterSubspace</span><span class="p">,</span> <span class="n">StructureWrangler</span><span class="p">,</span> <span class="n">ClusterExpansion</span><span class="p">,</span> <span class="n">RegressionData</span>
 </pre></div>
 </div>
 </div>
@@ -380,7 +395,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<div class="section" id="1)-Create-the-cluster-subspace">
+<section id="1)-Create-the-cluster-subspace">
 <h2>1) Create the cluster subspace<a class="headerlink" href="#1)-Create-the-cluster-subspace" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
@@ -394,8 +409,8 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="2)-Add-the-ewald-term.">
+</section>
+<section id="2)-Add-the-ewald-term.">
 <h2>2) Add the ewald term.<a class="headerlink" href="#2)-Add-the-ewald-term." title="Permalink to this headline">¶</a></h2>
 <p>An <code class="docutils literal notranslate"><span class="pre">EwaldTerm</span></code> can be added to a cluster expansion to account for long range electrostatic interactions in ionic materials and therefore reduce the cluster complexity required to train the cluster expansion.</p>
 <div class="nbinput nblast docutils container">
@@ -412,7 +427,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<div class="section" id="2.1)-The-Electrostatic-&quot;correlation&quot;">
+<section id="2.1)-The-Electrostatic-&quot;correlation&quot;">
 <h3>2.1) The Electrostatic “correlation”<a class="headerlink" href="#2.1)-The-Electrostatic-"correlation"" title="Permalink to this headline">¶</a></h3>
 <p>The last entry in the correlation vector corresponds to the electrostatic “correlation” from the Ewald summation. It essentially is the normalized electrostatic interaction energy. Since it has units of energy it is not rigorously a correlation like the orbit correlations which are unitless.</p>
 <div class="nbinput docutils container">
@@ -424,8 +439,8 @@ div.rendered_html tbody tr:hover {
 <span class="n">corr</span> <span class="o">=</span> <span class="n">subspace</span><span class="o">.</span><span class="n">corr_from_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The Ewald interaction for a structure with&#39;</span>
-      <span class="sa">f</span><span class="s1">&#39; composition </span><span class="si">{structure.composition}</span><span class="s1"> is: &#39;</span>
-      <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{corr[-1]}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
+      <span class="sa">f</span><span class="s1">&#39; composition </span><span class="si">{</span><span class="n">structure</span><span class="o">.</span><span class="n">composition</span><span class="si">}</span><span class="s1"> is: &#39;</span>
+      <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{</span><span class="n">corr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -438,12 +453,12 @@ The Ewald interaction for a structure with composition Li+1 Ni4+5 Ni3+1 O2-12 is
 -116.41651881128503 eV/prim
 </pre></div></div>
 </div>
-</div>
-</div>
-<div class="section" id="3)-Creating-the-cluster-expansion">
+</section>
+</section>
+<section id="3)-Creating-the-cluster-expansion">
 <h2>3) Creating the cluster expansion<a class="headerlink" href="#3)-Creating-the-cluster-expansion" title="Permalink to this headline">¶</a></h2>
 <p>Preparing the training data, fiting and creating the cluster expansion with the Ewald term is same procedure as done for a regular cluster expansion.</p>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
@@ -461,14 +476,37 @@ The Ewald interaction for a structure with composition Li+1 Ni4+5 Ni3+1 O2-12 is
 <span class="n">estimator</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span>
               <span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;total_energy&#39;</span><span class="p">))</span>
 
+<span class="c1"># save regression details</span>
+<span class="n">reg_data</span> <span class="o">=</span> <span class="n">RegressionData</span><span class="o">.</span><span class="n">from_sklearn</span><span class="p">(</span><span class="n">estimator</span><span class="p">,</span>
+                                       <span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span>
+                                       <span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;total_energy&#39;</span><span class="p">))</span>
 <span class="c1"># create the cluster expansion</span>
 <span class="n">expansion</span> <span class="o">=</span> <span class="n">ClusterExpansion</span><span class="p">(</span><span class="n">subspace</span><span class="p">,</span>
                              <span class="n">coefficients</span><span class="o">=</span><span class="n">estimator</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span>
-                             <span class="n">feature_matrix</span><span class="o">=</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">)</span>
+                             <span class="n">regression_data</span><span class="o">=</span><span class="n">reg_data</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="3.1)-Check-the-quality-of-the-fit-and-the-&quot;dielectric&quot;-constant">
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/lbluque/Develop/smol/smol/cofe/wrangling/wrangler.py:631: UserWarning: Unable to match Ni4+6 O2-12 with properties {&#39;total_energy&#39;: -188.28833} to supercell_structure. Throwing out.
+ Error Message: Supercell could not be found from structure
+  warnings.warn(
+/home/lbluque/Develop/smol/smol/cofe/wrangling/wrangler.py:631: UserWarning: Unable to match Li+2 Ni4+4 Ni3+2 O2-12 with properties {&#39;total_energy&#39;: -200.13866} to supercell_structure. Throwing out.
+ Error Message: Mapping could not be found from structure.
+  warnings.warn(
+/home/lbluque/Develop/smol/smol/cofe/wrangling/wrangler.py:631: UserWarning: Unable to match Li+2 Ni3+2 Ni4+4 O2-12 with properties {&#39;total_energy&#39;: -200.42049} to supercell_structure. Throwing out.
+ Error Message: Mapping could not be found from structure.
+  warnings.warn(
+/home/lbluque/Develop/smol/smol/cofe/wrangling/wrangler.py:631: UserWarning: Unable to match Li+3 Ni4+4 Ni2+1 Ni3+1 O2-12 with properties {&#39;total_energy&#39;: -206.70884} to supercell_structure. Throwing out.
+ Error Message: Supercell could not be found from structure
+  warnings.warn(
+</pre></div></div>
+</div>
+<section id="3.1)-Check-the-quality-of-the-fit-and-the-&quot;dielectric&quot;-constant">
 <h3>3.1) Check the quality of the fit and the “dielectric” constant<a class="headerlink" href="#3.1)-Check-the-quality-of-the-fit-and-the-"dielectric"-constant" title="Permalink to this headline">¶</a></h3>
 <p>We will check the quality of the fit with the simple methods from before.</p>
 <p>It is also useful to look at the value of the fit coefficient obtained for the Ewald interaction, since its inverse can be intepreted as a dielectric constant.</p>
@@ -486,9 +524,9 @@ The Ewald interaction for a structure with composition Li+1 Ni4+5 Ni3+1 O2-12 is
 <span class="n">maxer</span> <span class="o">=</span> <span class="n">max_error</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;total_energy&#39;</span><span class="p">),</span>
                   <span class="n">train_predictions</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RMSE </span><span class="si">{rmse}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MAX </span><span class="si">{maxer}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Fitted dielectric constant {1/expansion.coefs[-1]}&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RMSE </span><span class="si">{</span><span class="n">rmse</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MAX </span><span class="si">{</span><span class="n">maxer</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Fitted dielectric constant </span><span class="si">{</span><span class="mi">1</span><span class="o">/</span><span class="n">expansion</span><span class="o">.</span><span class="n">coefs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -497,14 +535,14 @@ The Ewald interaction for a structure with composition Li+1 Ni4+5 Ni3+1 O2-12 is
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-RMSE 0.00736646532812443 eV/prim
-MAX 0.016051863315240666 eV/prim
-Fitted dielectric constant 9.413114998055674
+RMSE 0.007366465328124704 eV/prim
+MAX 0.0160518633152833 eV/prim
+Fitted dielectric constant 9.413114998055905
 </pre></div></div>
 </div>
-</div>
-</div>
-<div class="section" id="4)-Constraining-the-value-of-the-&quot;dielectric&quot;-constant">
+</section>
+</section>
+<section id="4)-Constraining-the-value-of-the-&quot;dielectric&quot;-constant">
 <h2>4) Constraining the value of the “dielectric” constant<a class="headerlink" href="#4)-Constraining-the-value-of-the-"dielectric"-constant" title="Permalink to this headline">¶</a></h2>
 <p>Sometimes we want to constrain the obtained value of the dielectric constant, when it is too large or when it is negative (which would mean higher electrostatic interaction energy is more favorable?)</p>
 <div class="nbinput docutils container">
@@ -532,9 +570,9 @@ Fitted dielectric constant 9.413114998055674
 <span class="n">maxer</span> <span class="o">=</span> <span class="n">max_error</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;total_energy&#39;</span><span class="p">),</span>
                   <span class="n">train_predictions</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RMSE </span><span class="si">{rmse}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MAX </span><span class="si">{maxer}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Fitted dielectric constant {1/coefs[-1]}&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RMSE </span><span class="si">{</span><span class="n">rmse</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MAX </span><span class="si">{</span><span class="n">maxer</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Fitted dielectric constant </span><span class="si">{</span><span class="mi">1</span><span class="o">/</span><span class="n">coefs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -543,12 +581,12 @@ Fitted dielectric constant 9.413114998055674
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-RMSE 0.00736646532812443 eV/prim
-MAX 0.016051863315240666 eV/prim
+RMSE 0.007366465328124704 eV/prim
+MAX 0.0160518633152833 eV/prim
 Fitted dielectric constant 5.0
 </pre></div></div>
 </div>
-<div class="section" id="4.1)-If-you-want-to-play-with-decorators-you-can-also-do-the-above-in-a-cleaner-looking-way.">
+<section id="4.1)-If-you-want-to-play-with-decorators-you-can-also-do-the-above-in-a-cleaner-looking-way.">
 <h3>4.1) If you want to play with decorators you can also do the above in a cleaner looking way.<a class="headerlink" href="#4.1)-If-you-want-to-play-with-decorators-you-can-also-do-the-above-in-a-cleaner-looking-way." title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
@@ -570,9 +608,9 @@ Fitted dielectric constant 5.0
 <span class="n">maxer</span> <span class="o">=</span> <span class="n">max_error</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;total_energy&#39;</span><span class="p">),</span>
                   <span class="n">train_predictions</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RMSE </span><span class="si">{rmse}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MAX </span><span class="si">{maxer}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Fitted dielectric constant {1/coefs[-1]}&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RMSE </span><span class="si">{</span><span class="n">rmse</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MAX </span><span class="si">{</span><span class="n">maxer</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Fitted dielectric constant </span><span class="si">{</span><span class="mi">1</span><span class="o">/</span><span class="n">coefs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -581,14 +619,14 @@ Fitted dielectric constant 5.0
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-RMSE 0.00736646532812443 eV/prim
-MAX 0.016051863315240666 eV/prim
+RMSE 0.007366465328124704 eV/prim
+MAX 0.0160518633152833 eV/prim
 Fitted dielectric constant 5.0
 </pre></div></div>
 </div>
-</div>
-</div>
-<div class="section" id="5)-Save-work">
+</section>
+</section>
+<section id="5)-Save-work">
 <h2>5) Save work<a class="headerlink" href="#5)-Save-work" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
@@ -613,8 +651,8 @@ Fitted dielectric constant 5.0
 </pre></div>
 </div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
     </div>
@@ -632,7 +670,7 @@ Fitted dielectric constant 5.0
     </p>
     <p>
         &copy; Copyright 2020, Ceder Group.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br/>
     </p>
   </div>
 </footer>

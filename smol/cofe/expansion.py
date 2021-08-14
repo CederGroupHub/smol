@@ -12,9 +12,48 @@ strongly tested.
 
 __author__ = "Luis Barroso-Luque"
 
+from copy import deepcopy
+from dataclasses import dataclass, asdict
 import numpy as np
-from monty.json import MSONable
+from monty.json import MSONable, jsanitize
 from smol.cofe.space.clusterspace import ClusterSubspace
+
+
+@dataclass
+class RegressionData:
+    """Dataclass used to store regression model details.
+
+    This class is used to store the details used in fitting a cluster expansion
+    for future reference and good provenance practices. It is highly
+    recommended to initialize :class:`ClusterExpansion` objects with this
+    class
+    """
+
+    module: str
+    class_name: str
+    parameters: dict
+    feature_matrix: np.ndarray
+    property_vector: np.ndarray
+
+    @classmethod
+    def from_sklearn(cls, estimator, feature_matrix, property_vector):
+        """Create a RegressionData object from sklearn estimator.
+
+        Args:
+            estimator (object):
+                scikit-leanr estimator class or derived.
+            feature_matrix (ndarray):
+                feature matrix used in fit.
+            property_vector (ndarray):
+                target property vector used in fit.
+        Returns:
+            RegressionData
+        """
+        return cls(module=estimator.__module__,
+                   class_name=estimator.__class__.__name__,
+                   parameters=estimator.get_params(),
+                   feature_matrix=feature_matrix,
+                   property_vector=property_vector)
 
 
 class ClusterExpansion(MSONable):
@@ -44,7 +83,7 @@ class ClusterExpansion(MSONable):
             expansion. i.e. if it was pruned, any error metrics etc.
     """
 
-    def __init__(self, cluster_subspace, coefficients, feature_matrix=None):
+    def __init__(self, cluster_subspace, coefficients, regression_data=None):
         r"""Initialize a ClusterExpansion.
 
         Args:
@@ -57,16 +96,18 @@ class ClusterExpansion(MSONable):
                 coefficients to the correlation vector terms (length and order)
                 These correspond to the
                 ECI x the multiplicity of orbit x multiplicity of bit ordering
-            feature_matrix (ndarray): optional
-                The feature matrix used in fitting the given coefficients.
-                Useful to report metrics when printing and numerically
-                converting eci to another basis.
+            regression_data (RegressionData): optional
+                RegressionData object with details used in the fit of the
+                corresponding expansion. The feature_matrix attributed here is
+                necessary to compute things like numerical ECI transormations
+                for different bases.
         """
-        if feature_matrix is not None and \
-                len(coefficients) != feature_matrix.shape[1]:
+        if regression_data is not None and \
+                len(coefficients) != regression_data.feature_matrix.shape[1]:
             raise AttributeError(
-                f"Feature matrix shape {feature_matrix.shape} does not match "
-                f"the number of coefficients {len(coefficients)}.")
+                f"Feature matrix shape {regression_data.feature_matrix.shape} "
+                f"does not match the number of coefficients "
+                f"{len(coefficients)}.")
 
         if len(coefficients) != len(cluster_subspace):
             raise AttributeError(
@@ -74,9 +115,11 @@ class ClusterExpansion(MSONable):
                 f"not match the number of coefficients {len(coefficients)}")
 
         self.coefs = coefficients
-        self.metadata = {}
+        self.regression_data = regression_data
         self._subspace = cluster_subspace
-        self._feat_matrix = feature_matrix
+        # make copy for possible changes/pruning
+        self._feat_matrix = regression_data.feature_matrix.copy() \
+            if regression_data is not None else None
         self._eci = None
 
     @property
@@ -250,11 +293,23 @@ class ClusterExpansion(MSONable):
     @classmethod
     def from_dict(cls, d):
         """Create ClusterExpansion from serialized MSONable dict."""
+        if d['regression_data'] is not None:
+            dd = deepcopy(d)
+            dd['regression_data']['feature_matrix'] = np.array(
+                d['regression_data']['feature_matrix'])
+            dd['regression_data']['property_vector'] = np.array(
+                d['regression_data']['property_vector'])
+            reg_data = RegressionData(**dd['regression_data'])
+        else:
+            reg_data = None
+
         ce = cls(ClusterSubspace.from_dict(d['cluster_subspace']),
                  coefficients=np.array(d['coefs']),
-                 feature_matrix=np.array(d['feature_matrix'])
-                 if d['feature_matrix'] is not None else d['feature_matrix'])
-        ce.metadata = d['metadata']
+                 regression_data=reg_data)
+
+        # update copy of feature matrix to keep any changes
+        if d['feature_matrix'] is not None:
+            cls._feat_matrix = np.array(d['feature_matrix'])
         return ce
 
     def as_dict(self):
@@ -268,10 +323,15 @@ class ClusterExpansion(MSONable):
             feature_matrix = self._feat_matrix.tolist()
         else:
             feature_matrix = self._feat_matrix
+        if self.regression_data is not None:
+            reg_data = jsanitize(asdict(self.regression_data))
+        else:
+            reg_data = None
+
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
              'cluster_subspace': self.cluster_subspace.as_dict(),
              'coefs': self.coefs.tolist(),
-             'feature_matrix': feature_matrix,
-             'metadata': self.metadata}
+             'regression_data': reg_data,
+             'feature_matrix': feature_matrix}
         return d
