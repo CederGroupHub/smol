@@ -165,6 +165,23 @@ class ClusterExpansion(MSONable):
         return self._subspace.function_orbit_ids
 
     @property
+    def eci_orbit_norms(self):
+        """Calculate the norms of eci per orbit.
+
+        The value returned is a vector of length equal to the number of orbits
+        in subspaces. Note the elements of each orbit "vector" are weighted
+        by their bit combo or function ordering multiplicity.
+        """
+        norms = np.array(
+            [np.sum(
+                self._subspace.function_ordering_multiplicities[
+                    np.array(self._subspace.function_orbit_ids) == i]
+                * self.eci[np.array(self.eci_orbit_ids) == i] ** 2)
+                for i in range(len(self._subspace.orbits) + 1)]
+        )
+        return norms
+
+    @property
     def feature_matrix(self):
         """Get the feature matrix used in fit.
 
