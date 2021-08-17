@@ -21,6 +21,11 @@ from smol.moca.sampler.mcusher import mcusher_factory
 ALL_MCUSHERS = {'flip': 'Flipper', 'swap': 'Swapper'}
 
 
+# TODO make it easier to have multiple walkers, either have the sampler have
+#  a list of kernel copies or make a multi-kernel class that simply holds
+#  the copies but ow behaves the same, that will really simplify writing kernels!
+
+
 class MCKernel(ABC):
     """Abtract base class for transition kernels.
 
@@ -200,7 +205,7 @@ class Metropolis(ThermalKernel):
         return accept, occupancy, delta_enthalpy, delta_features
 
 
-class WangLandau(MCMCKernel):
+class WangLandau(MCKernel):
     """
     A Kernel for Wang Landau Sampling.
 

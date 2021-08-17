@@ -52,7 +52,7 @@ class Sampler:
 
     @classmethod
     def from_ensemble(cls, ensemble, *args, step_type=None, kernel_type=None,
-                      seed=None, **kwargs):
+                      nwalkers=1, seed=None, **kwargs):
         """
         Create a sampler based on an Ensemble instances.
 
@@ -72,11 +72,11 @@ class Sampler:
                 string specifying the specific MCMC transition kernel. This
                 represents the underlying MC algorithm. Currently only
                 Metropolis is supported.
-            seed (int): optional
-                Seed for the PRNG.
             nwalkers (int): optional
                 Number of walkers/chains to sampler. Default is 1. More than 1
                 is still experimental...
+            seed (int): optional
+                Seed for the PRNG.
             **kwargs:
                 Keyword arguments to pass to the MCKernel constructor.
                 More often than not you want to specify the temperature!
@@ -93,7 +93,7 @@ class Sampler:
             kernel_type = "Metropolis"
 
         mckernel = mckernel_factory(kernel_type, ensemble, step_type, *args,
-                                    **kwargs)
+                                    nwalkers=nwalkers, **kwargs)
 
         sampling_metadata = {"name": type(ensemble).__name__}
         sampling_metadata.update(ensemble.thermo_boundaries)
