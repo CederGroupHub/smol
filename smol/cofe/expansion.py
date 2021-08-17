@@ -176,7 +176,7 @@ class ClusterExpansion(MSONable):
             [np.sum(
                 self._subspace.function_ordering_multiplicities[
                     np.array(self._subspace.function_orbit_ids) == i]
-                * self.eci[np.array(self.eci_orbit_ids) == i] ** 2)
+                * self.eci[self.eci_orbit_ids == i] ** 2)
                 for i in range(len(self._subspace.orbits) + 1)]
         )
         return norms
@@ -205,6 +205,31 @@ class ClusterExpansion(MSONable):
         corrs = self.cluster_subspace.corr_from_structure(
             structure, normalized=normalize)
         return np.dot(corrs, self.coefs)
+
+    def orbit_function_vector(self, structure, normalize=True):
+        """Compute the vector of orbit function values.
+
+        The orbit function vector is simply a vector made up of the sum of
+        all orbit functions for each orbit evaluated for the given structure.
+
+        Args:
+            structure (Structure):
+                Structures to predict from
+            normalize (bool):
+                Whether to return the predicted property normalized by
+                the prim cell size.
+
+        Returns: ndarray
+            vector of orbit function values
+        """
+        corrs = self.cluster_subspace.corr_from_structure(
+            structure, normalized=normalize)
+        vals = self._eci * corrs
+        orbit_vector = np.array(
+            [np.sum(vals[self.eci_orbit_ids == i])
+                for i in range(len(self._subspace.orbits) + 1)]
+        )
+        return orbit_vector
 
     def prune(self, threshold=0, with_multiplicity=False):
         """Remove fit coefficients or ECI's with small values.

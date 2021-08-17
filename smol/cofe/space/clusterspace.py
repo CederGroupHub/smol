@@ -308,7 +308,7 @@ class ClusterSubspace(MSONable):
         The list returned is of length total number of orbits, each entry is
         the total number of correlation functions assocaited with that orbit.
         """
-        return [len(orbit) for orbit in self.iterorbits()]
+        return np.array([len(orbit) for orbit in self.iterorbits()])
 
     @property
     def function_orbit_ids(self):
@@ -320,7 +320,7 @@ class ClusterSubspace(MSONable):
         func_orb_ids = [0]
         for orbit in self.iterorbits():
             func_orb_ids += len(orbit) * [orbit.id, ]
-        return func_orb_ids
+        return np.array(func_orb_ids)
 
     @property
     def function_inds_by_size(self):
