@@ -92,8 +92,8 @@ class Sampler:
         if kernel_type is None:
             kernel_type = "Metropolis"
 
-        mckernel = mckernel_factory(kernel_type, ensemble, step_type,
-                                      *args, **kwargs)
+        mckernel = mckernel_factory(kernel_type, ensemble, step_type, *args,
+                                    **kwargs)
 
         sampling_metadata = {"name": type(ensemble).__name__}
         sampling_metadata.update(ensemble.thermo_boundaries)
@@ -172,7 +172,7 @@ class Sampler:
         features = np.ascontiguousarray(features)
         enthalpy = np.dot(self._kernel.natural_params, features.T)
 
-        # TODO clean up this hack so that temperature is saved in a general blob
+        # TODO clean up this hack so that temp is saved in a general blob
         try:
             temperature = self._kernel.temperature
         except AttributeError:
