@@ -46,3 +46,10 @@ def ensemble(cluster_subspace, request):
     else:
         kwargs = {}
     return request.param(proc, **kwargs)
+
+
+@pytest.fixture
+def single_canonical_ensemble(single_subspace):
+    coefs = np.random.random(single_subspace.num_corr_functions)
+    proc = CEProcessor(single_subspace, 4 * np.eye(3), coefs)
+    return CanonicalEnsemble(proc)

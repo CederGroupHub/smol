@@ -6,14 +6,13 @@ to generate states for sampling an MCMC chain.
 
 __author__ = "Luis Barroso-Luque"
 
-import re
 from abc import ABC, abstractmethod
 from math import log
 from random import random
 import numpy as np
 
 from smol.constants import kB
-from smol.utils import derived_class_factory
+from smol.utils import derived_class_factory, class_name_from_str
 from smol.moca.sampler.mcusher import mcusher_factory
 
 ALL_MCUSHERS = {'flip': 'Flipper', 'swap': 'Swapper'}
@@ -202,7 +201,6 @@ def mckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs):
     Returns:
         MCKernel: instance of derived class.
     """
-    kernel_name = ''.join([s.capitalize() for sub in kernel_type.split('-')
-                           for s in re.findall('[a-zA-Z][^A-Z]*', sub)])
+    kernel_name = class_name_from_str(kernel_type)
     return derived_class_factory(kernel_name, MCKernel, ensemble, step_type,
                                  *args, **kwargs)

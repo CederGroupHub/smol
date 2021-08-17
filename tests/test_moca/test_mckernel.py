@@ -44,11 +44,9 @@ def test_single_step(mckernel):
             npt.assert_array_equal(occu, occu_)
 
 
-def test_temperature_setter(single_subspace):
-    coefs = np.random.random(single_subspace.num_corr_functions)
-    proc = CEProcessor(single_subspace, 4 * np.eye(3), coefs)
-    ensemble = CanonicalEnsemble(proc)
-    metropolis_kernel = Metropolis(ensemble, step_type="flip", temperature=500)
+def test_temperature_setter(single_canonical_ensemble):
+    metropolis_kernel = Metropolis(single_canonical_ensemble, step_type="flip",
+                                   temperature=500)
     assert metropolis_kernel.beta == 1/(kB*metropolis_kernel.temperature)
     metropolis_kernel.temperature = 500
     assert metropolis_kernel.beta == 1 / (kB * 500)
