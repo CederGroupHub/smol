@@ -26,7 +26,7 @@ def _repr(instance: object, **fields: Dict[str, Any]) -> str:
 
 
 def class_name_from_str(class_str):
-    """Returns a class name based on given string.
+    """Return a class name based on given string.
 
     Assumes all class names are properly named with Camel Caps.
 
