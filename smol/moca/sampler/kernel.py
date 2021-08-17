@@ -16,10 +16,10 @@ from smol.utils import derived_class_factory
 from smol.moca.sampler.mcusher import mcusher_factory
 
 
-class MCMCKernel(ABC):
+class MCKernel(ABC):
     """Abtract base class for transition kernels.
 
-    A kernel is used to implement a specific MCMC algorithm used to sampler
+    A kernel is used to implement a specific MC algorithm used to sampler
     the ensemble classes. For an illustrtive example of how to derive from this
     and write a specific sampler see the MetropolisSampler.
     """
@@ -27,7 +27,7 @@ class MCMCKernel(ABC):
     valid_mcushers = None  # set this in derived kernels
 
     def __init__(self, ensemble, temperature, step_type, *args, **kwargs):
-        """Initialize MCMCKernel.
+        """Initialize MCKernel.
 
         Args:
             ensemble (Ensemble):
@@ -54,7 +54,7 @@ class MCMCKernel(ABC):
                                           *args, **kwargs)
         except KeyError:
             raise ValueError(f"Step type {step_type} is not valid for a "
-                             f"{type(self)} MCMCKernel.")
+                             f"{type(self)} MCKernel.")
 
     @property
     def temperature(self):
@@ -88,7 +88,7 @@ class MCMCKernel(ABC):
         return tuple()
 
 
-class Metropolis(MCMCKernel):
+class Metropolis(MCKernel):
     """A Metropolis-Hastings kernel.
 
     The classic and nothing but the classic.
@@ -122,8 +122,8 @@ class Metropolis(MCMCKernel):
         return accept, occupancy, delta_enthalpy, delta_features
 
 
-def mcmckernel_factory(kernel_type, ensemble, temperature, step_type,
-                       *args, **kwargs):
+def mckernel_factory(kernel_type, ensemble, temperature, step_type,
+                     *args, **kwargs):
     """Get a MCMC Kernel from string name.
 
     Args:
@@ -141,8 +141,8 @@ def mcmckernel_factory(kernel_type, ensemble, temperature, step_type,
             Keyword arguments passed to class constructor
 
     Returns:
-        MCMCKernel: instance of derived class.
+        MCKernel: instance of derived class.
     """
-    return derived_class_factory(kernel_type.capitalize(), MCMCKernel,
+    return derived_class_factory(kernel_type.capitalize(), MCKernel,
                                  ensemble, temperature, step_type,
                                  *args, **kwargs)

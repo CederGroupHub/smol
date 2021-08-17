@@ -13,7 +13,7 @@ import os
 import numpy as np
 
 from smol.utils import progress_bar
-from smol.moca.sampler.kernel import mcmckernel_factory
+from smol.moca.sampler.kernel import mckernel_factory
 from smol.moca.sampler.container import SampleContainer
 
 
@@ -21,7 +21,7 @@ class Sampler:
     """
     A sampler is used to run MCMC sampling simulations.
 
-    The specific MCMC algorithm is defined by the given MCMCKernel.
+    The specific MCMC algorithm is defined by the given MCKernel.
     The default will use a a simple Metropolis random walk kernel.
     """
 
@@ -32,8 +32,8 @@ class Sampler:
         method, unless you need more control.
 
         Args:
-            kernel (MCMCKernel):
-                An MCMCKernel instance.
+            kernel (MCKernel):
+                An MCKernel instance.
             container (SampleContainer):
                 A sampler containter to store samples. If given num_walkers is
                 taken from the container.
@@ -78,9 +78,9 @@ class Sampler:
                 Number of walkers/chains to sampler. Default is 1. More than 1
                 is still experimental...
             *args:
-                Positional arguments to pass to the MCMCKernel constructor
+                Positional arguments to pass to the MCKernel constructor
             **kwargs:
-                Keyword arguments to pass to the MCMCKernel constructor
+                Keyword arguments to pass to the MCKernel constructor
 
         Returns:
             Sampler
@@ -93,8 +93,8 @@ class Sampler:
         if kernel_type is None:
             kernel_type = "Metropolis"
 
-        mcmckernel = mcmckernel_factory(kernel_type, ensemble, temperature,
-                                        step_type, *args, **kwargs)
+        mcmckernel = mckernel_factory(kernel_type, ensemble, temperature,
+                                      step_type, *args, **kwargs)
 
         sampling_metadata = {"name": type(ensemble).__name__}
         sampling_metadata.update(ensemble.thermo_boundaries)

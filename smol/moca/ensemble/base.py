@@ -159,7 +159,7 @@ class Ensemble(ABC):
             occupancy (ndarray):
                 encoded occupancy string.
             step (list of tuple):
-                A sequence of flips given my the MCMCUsher.propose_step
+                A sequence of flips given my the MCUsher.propose_step
 
         Returns:
             ndarray: difference in feature vector
