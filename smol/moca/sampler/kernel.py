@@ -6,7 +6,8 @@ to generate states for sampling an MCMC chain.
 
 __author__ = "Luis Barroso-Luque"
 
-from abc import ABC, ABCMeta, abstractmethod
+import re
+from abc import ABC, abstractmethod
 from math import log
 from random import random
 import numpy as np
@@ -201,5 +202,7 @@ def mckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs):
     Returns:
         MCKernel: instance of derived class.
     """
-    return derived_class_factory(kernel_type.capitalize(), MCKernel,
-                                 ensemble, step_type, *args, **kwargs)
+    kernel_name = ''.join([s.capitalize() for sub in kernel_type.split('-')
+                           for s in re.findall('[a-zA-Z][^A-Z]*', sub)])
+    return derived_class_factory(kernel_name, MCKernel, ensemble, step_type,
+                                 *args, **kwargs)
