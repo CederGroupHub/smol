@@ -6,7 +6,7 @@ to generate states for sampling an MCMC chain.
 
 __author__ = "Luis Barroso-Luque"
 
-from abc import ABC, abstractmethod
+from abc import ABC, ABCMeta, abstractmethod
 from math import log
 from random import random
 import numpy as np
@@ -26,16 +26,14 @@ class MCKernel(ABC):
 
     valid_mcushers = None  # set this in derived kernels
 
-    def __init__(self, ensemble, temperature, step_type, *args, **kwargs):
+    def __init__(self, ensemble, step_type, *args, **kwargs):
         """Initialize MCKernel.
 
         Args:
             ensemble (Ensemble):
                 An Ensemble instance to obtain the feautures and parameters
                 used in computing log probabilities.
-            temperature (float):
-                Temperature at which the MCMC sampling will be carried out.
-            step_type (str): optional
+            step_type (str):
                 String specifying the MCMC step type.
             args:
                 positional arguments to instantiate the mcusher for the
@@ -47,7 +45,7 @@ class MCKernel(ABC):
         self.natural_params = ensemble.natural_parameters
         self.feature_fun = ensemble.compute_feature_vector
         self._feature_change = ensemble.compute_feature_vector_change
-        self.temperature = temperature
+
         try:
             self._usher = mcusher_factory(self.valid_mcushers[step_type],
                                           ensemble.sublattices,
@@ -55,17 +53,6 @@ class MCKernel(ABC):
         except KeyError:
             raise ValueError(f"Step type {step_type} is not valid for a "
                              f"{type(self)} MCKernel.")
-
-    @property
-    def temperature(self):
-        """Get the temperature of kernel."""
-        return self._temperature
-
-    @temperature.setter
-    def temperature(self, temperature):
-        """Set the temperature and beta accordingly."""
-        self._temperature = temperature
-        self.beta = 1.0 / (kB * temperature)
 
     def set_aux_state(self, state, *args, **kwargs):
         """Set the auxiliary state from initial or checkpoint values."""
@@ -88,7 +75,47 @@ class MCKernel(ABC):
         return tuple()
 
 
-class Metropolis(MCKernel):
+class ThermalKernel(MCKernel):
+    """Abtract base class for transition kernels with a set temperature.
+
+    Basically all kernels should derive from this with the exception of those
+    for multicanonical sampling and related methods
+    """
+
+    def __init__(self, ensemble, step_type, temperature, *args, **kwargs):
+        """Initialize ThermalKernel.
+
+        Args:
+            ensemble (Ensemble):
+                An Ensemble instance to obtain the feautures and parameters
+                used in computing log probabilities.
+            step_type (str):
+                String specifying the MCMC step type.
+            temperature (float):
+                Temperature at which the MCMC sampling will be carried out.
+            args:
+                positional arguments to instantiate the mcusher for the
+                corresponding step size.
+            kwargs:
+                Keyword arguments to instantiate the mcusher for the
+                corresponding step size.
+        """
+        super().__init__(ensemble, step_type, *args, **kwargs)
+        self.temperature = temperature
+
+    @property
+    def temperature(self):
+        """Get the temperature of kernel."""
+        return self._temperature
+
+    @temperature.setter
+    def temperature(self, temperature):
+        """Set the temperature and beta accordingly."""
+        self._temperature = temperature
+        self.beta = 1.0 / (kB * temperature)
+
+
+class Metropolis(ThermalKernel):
     """A Metropolis-Hastings kernel.
 
     The classic and nothing but the classic.
@@ -122,8 +149,7 @@ class Metropolis(MCKernel):
         return accept, occupancy, delta_enthalpy, delta_features
 
 
-def mckernel_factory(kernel_type, ensemble, temperature, step_type,
-                     *args, **kwargs):
+def mckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs):
     """Get a MCMC Kernel from string name.
 
     Args:
@@ -131,8 +157,6 @@ def mckernel_factory(kernel_type, ensemble, temperature, step_type,
             String specifying step to instantiate.
         ensemble (Ensemble)
             An Ensemble object to create the MCMC kernel from.
-        temperature (float)
-            Temperature at which the MCMC sampling will be carried out.
         step_type (str):
             String specifying the step type (ie key to mcusher type)
         *args:
@@ -144,5 +168,4 @@ def mckernel_factory(kernel_type, ensemble, temperature, step_type,
         MCKernel: instance of derived class.
     """
     return derived_class_factory(kernel_type.capitalize(), MCKernel,
-                                 ensemble, temperature, step_type,
-                                 *args, **kwargs)
+                                 ensemble, step_type, *args, **kwargs)

@@ -37,7 +37,9 @@ def metropolis_kernel(ensemble, request):
 @pytest.mark.parametrize("step_type, mcusher",
                          [("swap", Swapper), ("flip", Flipper)])
 def test_constructor(ensemble, step_type, mcusher):
-    assert isinstance(Metropolis(ensemble, 5000, step_type)._usher, mcusher)
+    assert isinstance(
+        Metropolis(ensemble, step_type=step_type, temperature=500)._usher,
+        mcusher)
 
 
 def test_single_step(metropolis_kernel):

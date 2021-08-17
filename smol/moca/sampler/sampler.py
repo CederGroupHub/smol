@@ -51,9 +51,8 @@ class Sampler:
         random.seed(seed)
 
     @classmethod
-    def from_ensemble(cls, ensemble, temperature, step_type=None,
-                      kernel_type=None, seed=None, nwalkers=1,
-                      *args, **kwargs):
+    def from_ensemble(cls, ensemble, *args, step_type=None, kernel_type=None,
+                      seed=None, nwalkers=1, **kwargs):
         """
         Create a sampler based on an Ensemble instances.
 
@@ -68,6 +67,9 @@ class Sampler:
             step_type (str): optional
                 type of step to run MCMC with. If not given the default is the
                 first entry in the Ensemble.valid_mcmc_steps.
+            *args:
+                Positional arguments to pass to the MCKernel constructor.
+                More often than not you want to specify the temperature!
             kernel_type (str): optional
                 string specifying the specific MCMC transition kernel. This
                 represents the underlying MC algorithm. Currently only
@@ -77,10 +79,9 @@ class Sampler:
             nwalkers (int): optional
                 Number of walkers/chains to sampler. Default is 1. More than 1
                 is still experimental...
-            *args:
-                Positional arguments to pass to the MCKernel constructor
             **kwargs:
-                Keyword arguments to pass to the MCKernel constructor
+                Keyword arguments to pass to the MCKernel constructor.
+                More often than not you want to specify the temperature!
 
         Returns:
             Sampler
@@ -93,8 +94,8 @@ class Sampler:
         if kernel_type is None:
             kernel_type = "Metropolis"
 
-        mcmckernel = mckernel_factory(kernel_type, ensemble, temperature,
-                                      step_type, *args, **kwargs)
+        mcmckernel = mckernel_factory(kernel_type, ensemble, step_type,
+                                      *args, **kwargs)
 
         sampling_metadata = {"name": type(ensemble).__name__}
         sampling_metadata.update(ensemble.thermo_boundaries)

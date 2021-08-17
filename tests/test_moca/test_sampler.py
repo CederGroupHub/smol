@@ -10,6 +10,7 @@ from tests.utils import gen_random_occupancy
 ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble]
 TEMPERATURE = 5000
 
+
 @pytest.fixture(params=ensembles)
 def ensemble(cluster_subspace, request):
     coefs = np.random.random(cluster_subspace.num_corr_functions)
