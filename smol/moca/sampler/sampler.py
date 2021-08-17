@@ -62,8 +62,6 @@ class Sampler:
         Args:
             ensemble (Ensemble):
                 An Ensemble class to obtain sample probabilities from.
-            temperature (float):
-                Temperature to run Monte Carlo at.
             step_type (str): optional
                 type of step to run MCMC with. If not given the default is the
                 first entry in the Ensemble.valid_mcmc_steps.
@@ -94,7 +92,7 @@ class Sampler:
         if kernel_type is None:
             kernel_type = "Metropolis"
 
-        mcmckernel = mckernel_factory(kernel_type, ensemble, step_type,
+        mckernel = mckernel_factory(kernel_type, ensemble, step_type,
                                       *args, **kwargs)
 
         sampling_metadata = {"name": type(ensemble).__name__}
@@ -105,10 +103,10 @@ class Sampler:
                                     ensemble.natural_parameters,
                                     ensemble.num_energy_coefs,
                                     sampling_metadata, nwalkers)
-        return cls(mcmckernel, container, seed=seed)
+        return cls(mckernel, container, seed=seed)
 
     @property
-    def mcmckernel(self):
+    def mckernel(self):
         """Get the underlying ensemble."""
         return self._kernel
 
@@ -173,12 +171,17 @@ class Sampler:
         features = list(map(self._kernel.feature_fun, occupancies))
         features = np.ascontiguousarray(features)
         enthalpy = np.dot(self._kernel.natural_params, features.T)
-        temperature = self._kernel.temperature * np.ones(occupancies.shape[0])
+
+        # TODO clean up this hack so that temperature is saved in a general blob
+        try:
+            temperature = self._kernel.temperature
+        except AttributeError:
+            temperature = 1
+        temperature = temperature * np.ones(occupancies.shape[0])
 
         # Initialise progress bar
         chains, nsites = self.samples.shape
-        desc = (f"Sampling {chains} chain(s) at {self._kernel.temperature:.2f}"
-                f" K from a cell with {nsites} sites")
+        desc = f"Sampling {chains} chain(s) from a cell with {nsites} sites..."
         with progress_bar(progress, total=nsteps, description=desc) as bar:
             for _ in range(nsteps // thin_by):
                 for _ in range(thin_by):

@@ -1,27 +1,12 @@
 import pytest
 import numpy as np
 import numpy.testing as npt
-from smol.moca import (CanonicalEnsemble, FuSemiGrandEnsemble,
-                       MuSemiGrandEnsemble, CEProcessor, Sampler)
+from smol.moca import Sampler
 from smol.moca.sampler.mcusher import Swapper, Flipper
 from smol.moca.sampler.kernel import Metropolis
 from tests.utils import gen_random_occupancy
 
-ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble]
 TEMPERATURE = 5000
-
-
-@pytest.fixture(params=ensembles)
-def ensemble(cluster_subspace, request):
-    coefs = np.random.random(cluster_subspace.num_corr_functions)
-    proc = CEProcessor(cluster_subspace, 4*np.eye(3), coefs)
-    if request.param is MuSemiGrandEnsemble:
-        kwargs = {'chemical_potentials':
-                  {sp: 0.3 for space in proc.unique_site_spaces
-                   for sp in space.keys()}}
-    else:
-        kwargs = {}
-    return request.param(proc, **kwargs)
 
 
 @pytest.fixture(params=[1, 5])
@@ -43,9 +28,10 @@ def test_from_ensemble(sampler):
 
 @pytest.mark.parametrize('thin', (1, 10))
 def test_sample(sampler, thin):
-    occu = np.vstack([gen_random_occupancy(sampler.mcmckernel._usher.sublattices,
-                                           sampler.num_sites)
-                      for _ in range(sampler.samples.shape[0])])
+    occu = np.vstack(
+        [gen_random_occupancy(
+            sampler.mcmckernel._usher.sublattices, sampler.num_sites)
+         for _ in range(sampler.samples.shape[0])])
     steps = 1000
     samples = [state for state
                in sampler.sample(1000, occu, thin_by=thin)]
@@ -58,9 +44,10 @@ def test_sample(sampler, thin):
 
 @pytest.mark.parametrize('thin', (1, 10))
 def test_run(sampler, thin):
-    occu = np.vstack([gen_random_occupancy(sampler.mcmckernel._usher.sublattices,
-                                           sampler.num_sites)
-                      for _ in range(sampler.samples.shape[0])])
+    occu = np.vstack(
+        [gen_random_occupancy(
+            sampler.mcmckernel._usher.sublattices, sampler.num_sites)
+            for _ in range(sampler.samples.shape[0])])
     steps = 1000
     sampler.run(steps, occu, thin_by=thin)
     assert len(sampler.samples) == steps // thin
@@ -70,14 +57,15 @@ def test_run(sampler, thin):
 
 def test_anneal(sampler):
     temperatures = np.linspace(2000, 500, 5)
-    occu = np.vstack([gen_random_occupancy(sampler.mcmckernel._usher.sublattices,
-                                           sampler.num_sites)
-                      for _ in range(sampler.samples.shape[0])])
+    occu = np.vstack(
+        [gen_random_occupancy(
+            sampler.mcmckernel._usher.sublattices, sampler.num_sites)
+            for _ in range(sampler.samples.shape[0])])
     steps = 100
     sampler.anneal(temperatures, steps, occu)
     expected = []
     for T in temperatures:
-        expected += steps*sampler.samples.shape[0]*[T, ]
+        expected += steps * sampler.samples.shape[0]*[T, ]
     npt.assert_array_equal(sampler.samples.get_temperatures(), expected)
     # test temp error
     with pytest.raises(ValueError):

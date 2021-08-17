@@ -15,6 +15,8 @@ from smol.constants import kB
 from smol.utils import derived_class_factory
 from smol.moca.sampler.mcusher import mcusher_factory
 
+ALL_MCUSHERS = {'flip': 'Flipper', 'swap': 'Swapper'}
+
 
 class MCKernel(ABC):
     """Abtract base class for transition kernels.
@@ -115,13 +117,45 @@ class ThermalKernel(MCKernel):
         self.beta = 1.0 / (kB * temperature)
 
 
+class UniformlyRandom(MCKernel):
+    """A Kernel that accepts all proposed steps.
+
+    This kernel samples the random limit distribution where all states have the
+    same probability (corresponds to an infinite temperature).
+    """
+
+    valid_mcushers = ALL_MCUSHERS
+
+    def single_step(self, occupancy):
+        """Attempt an MCMC step.
+
+        Returns the next state in the chain and if the attempted step was
+        successful.
+
+        Args:
+            occupancy (ndarray):
+                encoded occupancy.
+
+        Returns:
+            tuple: (acceptance, occupancy, enthalpy change, features change)
+        """
+        step = self._usher.propose_step(occupancy)
+        delta_features = self._feature_change(occupancy, step)
+        delta_enthalpy = np.dot(self.natural_params, delta_features)
+        self._usher.update_aux_state(step)
+        for f in step:
+            occupancy[f[0]] = f[1]
+
+        return True, occupancy, delta_enthalpy, delta_features
+
+
 class Metropolis(ThermalKernel):
     """A Metropolis-Hastings kernel.
 
     The classic and nothing but the classic.
     """
 
-    valid_mcushers = {'flip': 'Flipper', 'swap': 'Swapper'}
+    valid_mcushers = ALL_MCUSHERS
 
     def single_step(self, occupancy):
         """Attempt an MC step.
