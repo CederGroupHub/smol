@@ -15,23 +15,24 @@ from itertools import repeat
 import numpy as np
 
 from smol.constants import kB
-from smol.utils import derived_class_factory
+from smol.utils import derived_class_factory, class_name_from_str
 from smol.moca.sampler.mcusher import mcusher_factory
 
+ALL_MCUSHERS = {'flip': 'Flipper', 'swap': 'Swapper'}
 
-class MCMCKernel(ABC):
+
+class MCKernel(ABC):
     """Abtract base class for transition kernels.
 
-    A kernel is used to implement a specific MCMC algorithm used to sampler
+    A kernel is used to implement a specific MC algorithm used to sampler
     the ensemble classes. For an illustrtive example of how to derive from this
     and write a specific sampler see the MetropolisSampler.
     """
 
     valid_mcushers = None  # set this in derived kernels
 
-    def __init__(self, ensemble, step_type, temperature, nwalkers=1, *args,
-                 **kwargs):
-        """Initialize MCMCKernel.
+    def __init__(self, ensemble, step_type, *args, nwalkers=1, **kwargs):
+        """Initialize MCKernel.
 
         Args:
             ensemble (Ensemble):
@@ -39,8 +40,6 @@ class MCMCKernel(ABC):
                 used in computing log probabilities.
             step_type (str): optional
                 String specifying the MCMC step type.
-            temperature (float):
-                Temperature at which the MCMC sampling will be carried out.
             nwalkers (int): optional
                 Number of walkers/chains to sampler.
             args:
@@ -54,14 +53,68 @@ class MCMCKernel(ABC):
         self.feature_fun = ensemble.compute_feature_vector
         self._feature_change = ensemble.compute_feature_vector_change
         self._nwalkers = nwalkers
-        self.temperature = temperature
+
         try:
             self._usher = mcusher_factory(self.valid_mcushers[step_type],
                                           ensemble.sublattices,
                                           *args, **kwargs)
         except KeyError:
             raise ValueError(f"Step type {step_type} is not valid for a "
-                             f"{type(self)} MCMCKernel.")
+                             f"{type(self)} MCKernel.")
+
+    def set_aux_state(self, occupancies, *args, **kwargs):
+        """Set the auxiliary occupancies from initial or checkpoint values."""
+        self._usher.set_aux_state(occupancies, *args, **kwargs)
+
+    @abstractmethod
+    def single_step(self, occupancy):
+        """Attempt an MCMC step.
+
+        Returns the next state in the chain and if the attempted step was
+        successful.
+
+        Args:
+            occupancy (ndarray):
+                encoded occupancy.
+
+        Returns:
+            tuple: (acceptance, occupancy, enthalpy change, features change)
+        """
+        return tuple()
+
+    def iter_steps(self, occupancies):
+        """Iterate steps for each walker over an array of occupancies."""
+        for occupancy in occupancies:
+            yield self.single_step(occupancy)
+
+
+class ThermalKernel(MCKernel):
+    """Abtract base class for transition kernels with a set temperature.
+
+    Basically all kernels should derive from this with the exception of those
+    for multicanonical sampling and related methods
+    """
+
+    def __init__(self, ensemble, step_type, temperature, *args, **kwargs):
+        """Initialize ThermalKernel.
+
+        Args:
+            ensemble (Ensemble):
+                An Ensemble instance to obtain the feautures and parameters
+                used in computing log probabilities.
+            step_type (str):
+                String specifying the MCMC step type.
+            temperature (float):
+                Temperature at which the MCMC sampling will be carried out.
+            args:
+                positional arguments to instantiate the mcusher for the
+                corresponding step size.
+            kwargs:
+                Keyword arguments to instantiate the mcusher for the
+                corresponding step size.
+        """
+        super().__init__(ensemble, step_type, *args, **kwargs)
+        self.temperature = temperature
 
     @property
     def temperature(self):
@@ -78,12 +131,16 @@ class MCMCKernel(ABC):
         """Set the auxiliary occupancies from initial or checkpoint values."""
         self._usher.set_aux_state(occupancies, *args, **kwargs)
 
-    def iter_steps(self, occupancies):
-        """Iterate steps for each walker over an array of occupancies."""
-        for occupancy in occupancies:
-            yield self.single_step(occupancy)
 
-    @abstractmethod
+class UniformlyRandom(MCKernel):
+    """A Kernel that accepts all proposed steps.
+
+    This kernel samples the random limit distribution where all states have the
+    same probability (corresponds to an infinite temperature).
+    """
+
+    valid_mcushers = ALL_MCUSHERS
+
     def single_step(self, occupancy):
         """Attempt an MCMC step.
 
@@ -97,16 +154,23 @@ class MCMCKernel(ABC):
         Returns:
             tuple: (acceptance, occupancy, enthalpy change, features change)
         """
-        return tuple()
+        step = self._usher.propose_step(occupancy)
+        delta_features = self._feature_change(occupancy, step)
+        delta_enthalpy = np.dot(self.natural_params, delta_features)
+        self._usher.update_aux_state(step)
+        for f in step:
+            occupancy[f[0]] = f[1]
+
+        return True, occupancy, delta_enthalpy, delta_features
 
 
-class Metropolis(MCMCKernel):
+class Metropolis(ThermalKernel):
     """A Metropolis-Hastings kernel.
 
     The classic and nothing but the classic.
     """
 
-    valid_mcushers = {'flip': 'Flipper', 'swap': 'Swapper'}
+    valid_mcushers = ALL_MCUSHERS
 
     def single_step(self, occupancy):
         """Attempt an MC step.
@@ -191,7 +255,7 @@ class WangLandau(MCMCKernel):
             raise NotImplementedError(
                 "fixed_window=True is not implemented."
                 " If you need this, consider doing a PR.")
-        
+
         self.flatness = flatness
         self.check_period = check_period
         self.fixed_window = fixed_window
@@ -323,7 +387,7 @@ class WangLandau(MCMCKernel):
         self._usher.set_aux_state(occupancies)
 
 
-def mcmckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs):
+def mckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs):
     """Get a MCMC Kernel from string name.
 
     Args:
@@ -339,9 +403,8 @@ def mcmckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs):
             Keyword arguments passed to class constructor
 
     Returns:
-        MCMCKernel: instance of derived class.
+        MCKernel: instance of derived class.
     """
-
-    kernel_name = ''.join([s.capitalize() for s in kernel_type.split('-')])
-    return derived_class_factory(kernel_name, MCMCKernel,
-                                 ensemble, step_type, *args, **kwargs)
+    kernel_name = class_name_from_str(kernel_type)
+    return derived_class_factory(kernel_name, MCKernel, ensemble, step_type,
+                                 *args, **kwargs)

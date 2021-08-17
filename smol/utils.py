@@ -3,6 +3,7 @@
 __author__ = "Luis Barroso-Luque"
 
 import inspect
+import re
 import warnings
 from typing import Dict, Any
 
@@ -22,6 +23,28 @@ def _repr(instance: object, **fields: Dict[str, Any]) -> str:
                f"{hex(id(instance))}({','.join(attrs)})>"
     else:
         return f"<{instance.__class__.__name__} {hex(id(instance))}>"
+
+
+def class_name_from_str(class_str):
+    """Return a class name based on given string.
+
+    Assumes all class names are properly named with Camel Caps.
+
+    Used to generalize how classes can be identified by also allowing
+    capitalized words in class name to be separated by a hyphen and also allow
+    to ignore capitalization.
+
+    i.e. all of the following are valid strings for class TheBestClass:
+    'TheBestClass', 'The-Best-Class', 'the-best-class', 'The-best-Class', etc
+
+    Args:
+        class_str (str):
+            string identifying a class name.
+    Returns: str
+        class name in camel caps
+    """
+    return ''.join([s.capitalize() for sub in class_str.split('-')
+                    for s in re.findall('[a-zA-Z][^A-Z]*', sub)])
 
 
 def derived_class_factory(class_name: str, base_class: object,

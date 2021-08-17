@@ -316,7 +316,7 @@ processor.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string.</p></li>
-<li><p><strong>step</strong> (<em>list of tuple</em>) – A sequence of flips as given my the MCMCUsher.propose_step</p></li>
+<li><p><strong>step</strong> (<em>list of tuple</em>) – A sequence of flips as given my the MCUsher.propose_step</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -699,7 +699,7 @@ supercell with same site spaces.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string.</p></li>
-<li><p><strong>step</strong> (<em>list of tuple</em>) – A sequence of flips given my the MCMCUsher.propose_step</p></li>
+<li><p><strong>step</strong> (<em>list of tuple</em>) – A sequence of flips given my the MCUsher.propose_step</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -797,7 +797,7 @@ supercell with same site spaces.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string.</p></li>
-<li><p><strong>step</strong> (<em>list of tuple</em>) – A sequence of flips given my the MCMCUsher.propose_step</p></li>
+<li><p><strong>step</strong> (<em>list of tuple</em>) – A sequence of flips given my the MCUsher.propose_step</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1207,7 +1207,7 @@ the total mc iterations.</p></li>
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">container</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.Sampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A sampler is used to run MCMC sampling simulations.</p>
-<p>The specific MCMC algorithm is defined by the given MCMCKernel.
+<p>The specific MCMC algorithm is defined by the given MCKernel.
 The default will use a a simple Metropolis random walk kernel.</p>
 <p>Initialize BaseSampler.</p>
 <p>It is recommended to initialize a sampler with the from_ensemble
@@ -1215,7 +1215,7 @@ method, unless you need more control.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>kernel</strong> (<a class="reference internal" href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCMCKernel" title="smol.moca.sampler.kernel.MCMCKernel"><em>MCMCKernel</em></a>) – An MCMCKernel instance.</p></li>
+<li><p><strong>kernel</strong> (<a class="reference internal" href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCMCKernel" title="smol.moca.sampler.kernel.MCKernel"><em>MCKernel</em></a>) – An MCKernel instance.</p></li>
 <li><p><strong>container</strong> (<a class="reference internal" href="api.html#smol.moca.SampleContainer" title="smol.moca.SampleContainer"><em>SampleContainer</em></a>) – A sampler containter to store samples. If given num_walkers is
 taken from the container.</p></li>
 <li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
@@ -1281,8 +1281,8 @@ Seed for the PRNG.</p></li>
 <li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
 Number of walkers/chains to sampler. Default is 1. More than 1
 is still experimental…</p></li>
-<li><p><strong>*args</strong> – Positional arguments to pass to the MCMCKernel constructor</p></li>
-<li><p><strong>**kwargs</strong> – Keyword arguments to pass to the MCMCKernel constructor</p></li>
+<li><p><strong>*args</strong> – Positional arguments to pass to the MCKernel constructor</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments to pass to the MCKernel constructor</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

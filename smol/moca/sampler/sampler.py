@@ -13,7 +13,7 @@ import os
 import numpy as np
 
 from smol.utils import progress_bar
-from smol.moca.sampler.kernel import mcmckernel_factory
+from smol.moca.sampler.kernel import mckernel_factory
 from smol.moca.sampler.container import SampleContainer
 
 
@@ -21,7 +21,7 @@ class Sampler:
     """
     A sampler is used to run MCMC sampling simulations.
 
-    The specific MCMC algorithm is defined by the given MCMCKernel.
+    The specific MCMC algorithm is defined by the given MCKernel.
     The default will use a a simple Metropolis random walk kernel.
     """
 
@@ -32,8 +32,8 @@ class Sampler:
         method, unless you need more control.
 
         Args:
-            kernel (MCMCKernel):
-                An MCMCKernel instance.
+            kernel (MCKernel):
+                An MCKernel instance.
             container (SampleContainer):
                 A sampler containter to store samples. If given num_walkers is
                 taken from the container.
@@ -51,8 +51,8 @@ class Sampler:
         random.seed(seed)
 
     @classmethod
-    def from_ensemble(cls, ensemble, step_type=None, kernel_type=None,
-                      seed=None, nwalkers=1, *args, **kwargs):
+    def from_ensemble(cls, ensemble, *args, step_type=None, kernel_type=None,
+                      seed=None, **kwargs):
         """
         Create a sampler based on an Ensemble instances.
 
@@ -62,11 +62,12 @@ class Sampler:
         Args:
             ensemble (Ensemble):
                 An Ensemble class to obtain sample probabilities from.
-            temperature (float):
-                Temperature to run Monte Carlo at.
             step_type (str): optional
                 type of step to run MCMC with. If not given the default is the
                 first entry in the Ensemble.valid_mcmc_steps.
+            *args:
+                Positional arguments to pass to the MCKernel constructor.
+                More often than not you want to specify the temperature!
             kernel_type (str): optional
                 string specifying the specific MCMC transition kernel. This
                 represents the underlying MC algorithm. Currently only
@@ -76,10 +77,9 @@ class Sampler:
             nwalkers (int): optional
                 Number of walkers/chains to sampler. Default is 1. More than 1
                 is still experimental...
-            *args:
-                Positional arguments to pass to the MCMCKernel constructor
             **kwargs:
-                Keyword arguments to pass to the MCMCKernel constructor
+                Keyword arguments to pass to the MCKernel constructor.
+                More often than not you want to specify the temperature!
 
         Returns:
             Sampler
@@ -92,8 +92,8 @@ class Sampler:
         if kernel_type is None:
             kernel_type = "Metropolis"
 
-        mcmckernel = mcmckernel_factory(kernel_type, ensemble, step_type,
-                                        nwalkers=nwalkers, *args, **kwargs)
+        mckernel = mckernel_factory(kernel_type, ensemble, step_type, *args,
+                                    **kwargs)
 
         sampling_metadata = {"name": type(ensemble).__name__}
         sampling_metadata.update(ensemble.thermo_boundaries)
@@ -103,10 +103,10 @@ class Sampler:
                                     ensemble.natural_parameters,
                                     ensemble.num_energy_coefs,
                                     sampling_metadata, nwalkers)
-        return cls(mcmckernel, container, seed=seed)
+        return cls(mckernel, container, seed=seed)
 
     @property
-    def mcmckernel(self):
+    def mckernel(self):
         """Get the underlying ensemble."""
         return self._kernel
 
@@ -171,12 +171,17 @@ class Sampler:
         features = list(map(self._kernel.feature_fun, occupancies))
         features = np.ascontiguousarray(features)
         enthalpy = np.dot(self._kernel.natural_params, features.T)
-        temperature = self._kernel.temperature * np.ones(occupancies.shape[0])
+
+        # TODO clean up this hack so that temp is saved in a general blob
+        try:
+            temperature = self._kernel.temperature
+        except AttributeError:
+            temperature = 1
+        temperature = temperature * np.ones(occupancies.shape[0])
 
         # Initialise progress bar
         chains, nsites = self.samples.shape
-        desc = (f"Sampling {chains} chain(s) at {self._kernel.temperature:.2f}"
-                f" K from a cell with {nsites} sites")
+        desc = f"Sampling {chains} chain(s) from a cell with {nsites} sites..."
         with progress_bar(progress, total=nsteps, description=desc) as bar:
             for _ in range(nsteps // thin_by):
                 for _ in range(thin_by):

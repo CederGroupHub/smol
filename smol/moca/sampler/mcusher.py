@@ -16,8 +16,8 @@ import random
 from smol.utils import derived_class_factory
 
 
-class MCMCUsher(ABC):
-    """Abstract base class for MCMC usher classes."""
+class MCUsher(ABC):
+    """Abstract base class for MC usher classes."""
 
     def __init__(self, sublattices, sublattice_probabilities=None):
         """Initialize MCMCStep.
@@ -85,7 +85,7 @@ class MCMCUsher(ABC):
         return random.choices(self.sublattices, weights=self._sublatt_probs)[0]
 
 
-class Flipper(MCMCUsher):
+class Flipper(MCUsher):
     """Implementation of a simple flip step at a random site."""
 
     def propose_step(self, occupancy):
@@ -107,7 +107,7 @@ class Flipper(MCMCUsher):
         return [(site, random.choice(list(choices)))]
 
 
-class Swapper(MCMCUsher):
+class Swapper(MCUsher):
     """Implementation of a simple swap step for two random sites."""
 
     def propose_step(self, occupancy):
@@ -138,7 +138,7 @@ class Swapper(MCMCUsher):
 
 
 def mcusher_factory(usher_type, sublattices, *args, **kwargs):
-    """Get a MCMC Usher from string name.
+    """Get a MC Usher from string name.
 
     Args:
         usher_type (str):
@@ -151,7 +151,7 @@ def mcusher_factory(usher_type, sublattices, *args, **kwargs):
             Keyword arguments passed to class constructor
 
     Returns:
-        MCMCUsher: instance of derived class.
+        MCUsher: instance of derived class.
     """
-    return derived_class_factory(usher_type.capitalize(), MCMCUsher,
+    return derived_class_factory(usher_type.capitalize(), MCUsher,
                                  sublattices, *args, **kwargs)
