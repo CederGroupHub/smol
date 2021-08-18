@@ -16,6 +16,7 @@ import numpy as np
 import warnings
 import math
 from copy import deepcopy
+import warnings
 
 from smol.utils import derived_class_factory
 from .bias import mcbias_factory
@@ -353,9 +354,6 @@ class Tableflipper(MCMCUsher):
 
     def _get_flip_id(self, occupancy, step):
         """Compute flip id in table from occupancy and step."""
-        if len(step) == 0:
-            raise ValueError("Null step proposed, " +
-                             "but table flip should not allow it!")
         ducoords = delta_ucoords_from_step(occupancy,
                                            step,
                                            self._compspace,

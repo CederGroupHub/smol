@@ -18,7 +18,7 @@ import numpy as np
 from copy import deepcopy
 
 from monty.json import MSONable
-from pymatgen import Species, DummySpecies, Element
+from pymatgen.core import Species, DummySpecies, Element
 from smol.cofe.space.domain import get_species, Vacancy, get_site_spaces
 from smol.moca.processor.base import Processor
 from smol.moca.ensemble.sublattice import Sublattice, get_all_sublattices
