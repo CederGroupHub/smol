@@ -3,7 +3,7 @@ from copy import deepcopy
 import numpy.testing as npt
 import numpy as np
 
-from smol.cofe import ClusterExpansion
+from smol.cofe import ClusterExpansion, RegressionData
 from smol.cofe.extern import EwaldTerm
 from smol.moca import (CanonicalEnsemble, MuSemiGrandEnsemble,
                        FuSemiGrandEnsemble, CompositeProcessor,
@@ -61,8 +61,13 @@ def test_from_cluster_expansion(cluster_subspace, ensemble_cls):
     proc.add_processor(EwaldProcessor(cluster_subspace, scmatrix,
                        cluster_subspace.external_terms[0],
                                       coefficient=coefs[-1]))
-    fake_feature_matrix = np.random.random((5, len(coefs)))
-    expansion = ClusterExpansion(cluster_subspace, coefs, fake_feature_matrix)
+    reg_data = RegressionData(
+        module='fake.module', class_name='Estimator',
+        feature_matrix=np.random.random((5, len(coefs))),
+        property_vector=np.random.random(len(coefs)),
+        parameters={'foo': 'bar'})
+    expansion = ClusterExpansion(cluster_subspace, coefs, reg_data)
+
     if ensemble_cls is MuSemiGrandEnsemble:
         kwargs = {'chemical_potentials':
                   {sp: 0.3 for space in proc.unique_site_spaces

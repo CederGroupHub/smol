@@ -7,8 +7,9 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   smol.cofe.configspace
+   smol.cofe.space
    smol.cofe.extern
+   smol.cofe.wrangling
 
 Submodules
 ----------

@@ -10,6 +10,12 @@ Use this section to keep track of changes in the works.
 * `rotate` method in SiteBasis class.
 [\#130](https://github.com/CederGroupHub/smol/pull/130)
   ([lbluque](https://github.com/lbluque))
+* `RegressionData` dataclass to save regression details in `ClusterExpansions`
+[\#132](https://github.com/CederGroupHub/smol/pull/132)
+  ([lbluque](https://github.com/lbluque))
+* `cofe.wrangling.select` structure selection functions.
+[\#133](https://github.com/CederGroupHub/smol/pull/133)
+  ([lbluque](https://github.com/lbluque))
 
 ### Changed
 
@@ -128,10 +134,10 @@ sets. [\#90](https://github.com/CederGroupHub/smol/pull/90)
   * `Sampler` class to run MCMC trajectories based on the given kernel using
   a specific ensemble. [\#80](https://github.com/CederGroupHub/smol/pull/80)
   ([lbluque](https://github.com/lbluque))
-  * `MCMCKernel` classes used to implement specific MCMC algorithms.
+  * `MCKernel` classes used to implement specific MCMC algorithms.
      `Metropolis` currently only kernel implemented to run single site
      Metropolis random walk.
-  * `MCMCUsher` classes to handle specific MCMC step proposals (i.e. single 
+  * `MCUsher` classes to handle specific MCMC step proposals (i.e. single 
   swaps, to preseve composition, single flips, single constrained flips,
   multisite flips, local flips, etc).
   * `SampleContainer` class to hold MCMC samples and pertinent information for

@@ -3,19 +3,17 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>smol documentation &#8212; smol 1.0.0 documentation</title>
-    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -110,17 +108,15 @@
   <div class="row">
     <div class="body col-md-12 content" role="main">
       
-  <div class="figure align-left">
+  <figure class="align-left">
 <a class="reference internal image-reference" href="_images/logo.png"><img alt="server" src="_images/logo.png" style="width: 600px;" /></a>
-</div>
-<div class="section" id="statistical-mechanics-on-lattices">
+</figure>
+<section id="statistical-mechanics-on-lattices">
 <h1>Statistical Mechanics on Lattices<a class="headerlink" href="#statistical-mechanics-on-lattices" title="Permalink to this headline">¶</a></h1>
 <p><em>Lighthweight but caffeinated Python implementations of computational methods
 for statistical mechanical calculations of configurational states for
 crystalline material systems.</em></p>
-<img alt="https://img.shields.io/circleci/build/gh/CederGroupHub/smol/master?logo=circleci&amp;style=for-the-badge&amp;token=96d0d7a959e1e12044ff45daa43218ae7fa4303e" src="https://img.shields.io/circleci/build/gh/CederGroupHub/smol/master?logo=circleci&amp;style=for-the-badge&amp;token=96d0d7a959e1e12044ff45daa43218ae7fa4303e" />
-<img alt="https://img.shields.io/codacy/coverage/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge" src="https://img.shields.io/codacy/coverage/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge" />
-<img alt="https://img.shields.io/codacy/grade/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge" src="https://img.shields.io/codacy/grade/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge" />
+<a class="reference external image-reference" href="https://github.com/CederGroupHub/smol/actions/workflows/test.yml"><img alt="Test Status" src="https://github.com/CederGroupHub/smol/actions/workflows/test.yml/badge.svg" /></a>
 <hr class="docutils" />
 <p><strong>smol</strong> is a minimal implementation of computational methods to calculate
 statistical mechanical and thermodynamic properties of crystalline
@@ -131,8 +127,8 @@ follows underlying mathematical formalism and provides useful abstractions to
 easily extend existing methods or implement and test new ones. Finally,
 although conceived mainly for method development, <strong>smol</strong> can (and is being)
 used in production for materials science reasearch applications.</p>
-</div>
-<div class="section" id="installation">
+</section>
+<section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <ol class="arabic">
 <li><p>Clone the repository.</p></li>
@@ -142,18 +138,19 @@ used in production for materials science reasearch applications.</p>
 </div>
 </li>
 </ol>
-</div>
-<div class="section" id="basic-usage">
+</section>
+<section id="basic-usage">
 <h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h1>
 <p><strong>smol</strong> is designed to be simple and intuitive to use. Here is the most
 basic example of creating a Cluster Expansion for a binary alloy and
 subsequently using it to run Monte Carlo sampling:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
 <span class="kn">from</span> <span class="nn">monty.serialization</span> <span class="kn">import</span> <span class="n">loadfn</span>
-<span class="kn">from</span> <span class="nn">pymatgen</span> <span class="kn">import</span> <span class="n">Structure</span>
+<span class="kn">from</span> <span class="nn">pymatgen.core.structure</span> <span class="kn">import</span> <span class="n">Structure</span>
 <span class="kn">from</span> <span class="nn">pymatgen.transformations.standard_transformations</span> <span class="kn">import</span> \
     <span class="n">OrderDisorderedStructureTransformation</span>
-<span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">ClusterSubspace</span><span class="p">,</span> <span class="n">StructureWrangler</span><span class="p">,</span> <span class="n">ClusterExpansion</span>
+<span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">ClusterSubspace</span><span class="p">,</span> <span class="n">StructureWrangler</span><span class="p">,</span> \
+    <span class="n">ClusterExpansion</span><span class="p">,</span> <span class="n">RegressionData</span>
 <span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">CanonicalEnsemble</span><span class="p">,</span> <span class="n">Sampler</span>
 <span class="kn">from</span> <span class="nn">smol.io</span> <span class="kn">import</span> <span class="n">save_work</span>
 
@@ -179,8 +176,14 @@ subsequently using it to run Monte Carlo sampling:</p>
 <span class="n">reg</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">fit_intercept</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">reg</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span> <span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s2">&quot;energy&quot;</span><span class="p">))</span>
 
+<span class="c1"># save details of the regression model used</span>
+<span class="n">reg_data</span> <span class="o">=</span> <span class="n">RegressionData</span><span class="o">.</span><span class="n">from_sklearn</span><span class="p">(</span>
+    <span class="n">estimator</span><span class="o">=</span><span class="n">reg</span><span class="p">,</span>
+    <span class="n">feature_matrix</span><span class="o">=</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span>
+    <span class="n">property_vector</span><span class="o">=</span><span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">))</span>
+
 <span class="n">expansion</span> <span class="o">=</span> <span class="n">ClusterExpansion</span><span class="p">(</span><span class="n">subspace</span><span class="p">,</span> <span class="n">coefficients</span><span class="o">=</span><span class="n">reg</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span>
-                             <span class="n">feature_matrix</span><span class="o">=</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">)</span>
+                             <span class="n">regression_data</span><span class="o">=</span><span class="n">reg_data</span><span class="p">)</span>
 
 <span class="c1"># define a supercell and ensemble for MC sampling</span>
 <span class="n">sc_matrix</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">]]</span>
@@ -199,37 +202,37 @@ subsequently using it to run Monte Carlo sampling:</p>
 <span class="n">init_occu</span> <span class="o">=</span> <span class="n">ensemble</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">occupancy_from_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
 <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mi">1000000</span><span class="p">,</span> <span class="n">initial_occupancy</span><span class="o">=</span><span class="n">init_occu</span><span class="p">)</span>
 
-<span class="n">save_work</span><span class="p">(</span><span class="s2">&quot;CuAu_ce_mc.json&quot;</span><span class="p">,</span> <span class="n">wrangler</span><span class="p">,</span> <span class="n">expansion</span><span class="p">,</span> <span class="n">ensemble</span><span class="p">,</span>
-          <span class="n">sampler</span><span class="o">.</span><span class="n">samples</span><span class="p">)</span>
+<span class="n">save_work</span><span class="p">(</span>
+    <span class="s2">&quot;CuAu_ce_mc.json&quot;</span><span class="p">,</span> <span class="n">wrangler</span><span class="p">,</span> <span class="n">expansion</span><span class="p">,</span> <span class="n">ensemble</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">samples</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="api-documentation">
+</section>
+<section id="api-documentation">
 <h1>API Documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
 <p>See the <a class="reference internal" href="api.html"><span class="doc">API</span></a> documentation page for in depth reference to core classes
 and functions.</p>
-</div>
-<div class="section" id="detailed-examples">
+</section>
+<section id="detailed-examples">
 <h1>Detailed Examples<a class="headerlink" href="#detailed-examples" title="Permalink to this headline">¶</a></h1>
 <p>You can find more in-depth and advanced usage examples in the
 <a class="reference internal" href="examples.html"><span class="doc">Example Notebooks</span></a> page.</p>
-<div class="section" id="recent-changes">
+<section id="recent-changes">
 <h2>Recent Changes<a class="headerlink" href="#recent-changes" title="Permalink to this headline">¶</a></h2>
 <p>You can find updates and the most recent changes in the
 <a class="reference external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">Changelog</a>.</p>
-</div>
-<div class="section" id="help-issues-support">
+</section>
+<section id="help-issues-support">
 <h2>Help, Issues, Support<a class="headerlink" href="#help-issues-support" title="Permalink to this headline">¶</a></h2>
 <p>To get immediate help ask in the #cluster-expansion slack channel. For more
 detailed issues, bug reports and requests please submit a
 <a class="reference external" href="https://github.com/CederGroupHub/smol/issues">Github issue</a>.</p>
-</div>
-<div class="section" id="contributing">
+</section>
+<section id="contributing">
 <h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h2>
 <p>To contribute bug fixes or new code please refer to the contributing
 <a class="reference external" href="https://github.com/CederGroupHub/smol/blob/master/CONTRIBUTING.md">guidelines</a>.</p>
-</div>
-</div>
+</section>
+</section>
 
 
     </div>
@@ -247,7 +250,7 @@ detailed issues, bug reports and requests please submit a
     </p>
     <p>
         &copy; Copyright 2020, Ceder Group.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br/>
     </p>
   </div>
 </footer>
