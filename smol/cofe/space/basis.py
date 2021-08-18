@@ -240,9 +240,7 @@ class SiteBasis(MSONable):
         site_basis.flavor = d['flavor']
         site_basis._f_array = np.array(d['func_array'])
         site_basis._r_array = np.array(d['orthonorm_array'])
-        site_basis._rot_array = d.get('rot_array')  # backwards compat
-        if site_basis._rot_array is not None:
-            site_basis._rot_array = np.array(site_basis._rot_array)
+        site_basis._rot_array = np.array(d['rot_array'])
         return site_basis
 
 
