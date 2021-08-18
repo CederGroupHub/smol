@@ -20,17 +20,17 @@ def sampler(ensemble, request):
 
 def test_from_ensemble(sampler):
     if "Canonical" in sampler.samples.metadata["name"]:
-        assert isinstance(sampler.mcmckernel._usher, Swapper)
+        assert isinstance(sampler.mckernel._usher, Swapper)
     else:
-        assert isinstance(sampler.mcmckernel._usher, Flipper)
-    assert isinstance(sampler.mcmckernel, Metropolis)
+        assert isinstance(sampler.mckernel._usher, Flipper)
+    assert isinstance(sampler.mckernel, Metropolis)
 
 
 @pytest.mark.parametrize('thin', (1, 10))
 def test_sample(sampler, thin):
     occu = np.vstack(
         [gen_random_occupancy(
-            sampler.mcmckernel._usher.sublattices, sampler.num_sites)
+            sampler.mckernel._usher.sublattices, sampler.num_sites)
          for _ in range(sampler.samples.shape[0])])
     steps = 1000
     samples = [state for state
@@ -46,7 +46,7 @@ def test_sample(sampler, thin):
 def test_run(sampler, thin):
     occu = np.vstack(
         [gen_random_occupancy(
-            sampler.mcmckernel._usher.sublattices, sampler.num_sites)
+            sampler.mckernel._usher.sublattices, sampler.num_sites)
             for _ in range(sampler.samples.shape[0])])
     steps = 1000
     sampler.run(steps, occu, thin_by=thin)
@@ -59,7 +59,7 @@ def test_anneal(sampler):
     temperatures = np.linspace(2000, 500, 5)
     occu = np.vstack(
         [gen_random_occupancy(
-            sampler.mcmckernel._usher.sublattices, sampler.num_sites)
+            sampler.mckernel._usher.sublattices, sampler.num_sites)
             for _ in range(sampler.samples.shape[0])])
     steps = 100
     sampler.anneal(temperatures, steps, occu)
