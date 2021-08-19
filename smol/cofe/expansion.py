@@ -293,13 +293,13 @@ class ClusterExpansion(MSONable):
     @classmethod
     def from_dict(cls, d):
         """Create ClusterExpansion from serialized MSONable dict."""
-        if d['regression_data'] is not None:
-            dd = deepcopy(d)
-            dd['regression_data']['feature_matrix'] = np.array(
+        reg_data_dict = deepcopy(d.get('regression_data'))
+        if reg_data_dict is not None:
+            reg_data_dict['feature_matrix'] = np.array(
                 d['regression_data']['feature_matrix'])
-            dd['regression_data']['property_vector'] = np.array(
+            reg_data_dict['property_vector'] = np.array(
                 d['regression_data']['property_vector'])
-            reg_data = RegressionData(**dd['regression_data'])
+            reg_data = RegressionData(**reg_data_dict)
         else:
             reg_data = None
 
