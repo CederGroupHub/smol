@@ -239,8 +239,8 @@ class Orbit(MSONable):
                 reduce(
                     operator.mul,
                     (np.dot(
-                        self.site_bases[k].rotation_array.T @ self.basis_arrays[k][bj],
-                        self.site_bases[k].measure_vector * self.basis_arrays[k][bi]
+                        self.site_bases[k].rotation_array.T @ self.basis_arrays[k][bj],  # noqa
+                        self.site_bases[k].measure_vector * self.basis_arrays[k][bi]  # noqa
                     )
                         for k, (bi, bj) in enumerate(zip(bcombo_i, bcombo_j))))
                 for bcombo_i, bcombo_j in product(bcombos_i, bcombos_j)) \

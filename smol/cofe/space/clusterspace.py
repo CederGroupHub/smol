@@ -546,7 +546,7 @@ class ClusterSubspace(MSONable):
 
         if not normalized:
             corr *= size
-        
+
         # corr.round(decimals=14)
         return corr
 

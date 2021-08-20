@@ -23,7 +23,6 @@ from .domain import SiteSpace
 from smol.utils import derived_class_factory
 
 EPS_MULT = 10  # eps precision multiplier
-DECIMALS = 14
 
 
 class SiteBasis(MSONable):
@@ -78,7 +77,8 @@ class SiteBasis(MSONable):
         # stack the constant basis function on there for proper normalization
         self._f_array = np.vstack((np.ones_like(func_arr[0]), func_arr))
         self._r_array = None  # array from QR in basis orthonormalization
-        self._rot_array = np.eye(self.function_array.shape[1])  # rotation arrray
+        # rotation arrray
+        self._rot_array = np.eye(self.function_array.shape[1])
 
     @property
     def function_array(self):
@@ -144,8 +144,8 @@ class SiteBasis(MSONable):
             (np.sqrt(self.measure_vector) * self._f_array).T, mode='complete')
 
         # make zeros actually zeros
-        #r[abs(r) < EPS_MULT * np.finfo(np.float64).eps] = 0.0
-        #q[abs(q) < EPS_MULT * np.finfo(np.float64).eps] = 0.0
+        # r[abs(r) < EPS_MULT * np.finfo(np.float64).eps] = 0.0
+        # q[abs(q) < EPS_MULT * np.finfo(np.float64).eps] = 0.0
 
         self._r_array = q[:, 0] / np.sqrt(self.measure_vector) * r.T
         self._f_array = q.T/q[:, 0]  # make first row constant = 1
@@ -216,7 +216,7 @@ class SiteBasis(MSONable):
              "flavor": self.flavor,
              "func_array": self._f_array.tolist(),
              "orthonorm_array":
-                None if self._r_array is None else self._r_array.tolist(),
+                 None if self._r_array is None else self._r_array.tolist(),
              "rot_array": self._rot_array.tolist()
              }
         return d
@@ -240,7 +240,9 @@ class SiteBasis(MSONable):
         site_basis.flavor = d['flavor']
         site_basis._f_array = np.array(d['func_array'])
         site_basis._r_array = np.array(d['orthonorm_array'])
-        site_basis._rot_array = np.array(d['rot_array'])
+        rot_array = d.get('rot_array')
+        if rot_array is not None:
+            site_basis._rot_array = np.array(rot_array)
         return site_basis
 
 
