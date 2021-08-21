@@ -207,6 +207,7 @@ class Sampler:
                 accepted[:] = 0  # reset acceptance array
 
     def run(self, nsteps, initial_occupancies=None, thin_by=1, progress=False,
+            save_unbiased_only=False,
             stream_chunk=0, stream_file=None, swmr_mode=False):
         """Run an MCMC sampling simulation.
 
@@ -225,6 +226,8 @@ class Sampler:
                 the amount to thin by for saving samples.
             progress (bool): optional
                 If true will show a progress bar.
+            save_unbiased_only(bool):
+                If true, will only save bias=0 samples.
             stream_chunk (int): optional
                 Chunk of samples to stream into a file. If > 0 samples will
                 be flushed to backend file in stream_chucks
@@ -265,7 +268,8 @@ class Sampler:
 
         for i, state in enumerate(self.sample(nsteps, initial_occupancies,
                                   thin_by=thin_by, progress=progress)):
-            self.samples.save_sample(*state)
+            if (not save_unbiased_only) or state[3] == 0:
+                self.samples.save_sample(*state)
             if backend is not None and (i + 1) % stream_chunk == 0:
                 self.samples.flush_to_backend(backend)
 
