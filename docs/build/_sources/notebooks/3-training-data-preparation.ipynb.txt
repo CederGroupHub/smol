@@ -1,0 +1,286 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Training Data Preparation"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "/home/lbluque/Develop/pymatgen/pymatgen/ext/matproj.py:454: DeprecationWarning: __init__ is deprecated\n",
+      "MaterialsProjectCompatibility will be updated with new correction classes as well as new values of corrections and uncertainties in 2020\n",
+      "  def get_pourbaix_entries(self, chemsys, solid_compat=MaterialsProjectCompatibility()):\n"
+     ]
+    }
+   ],
+   "source": [
+    "import numpy as np\n",
+    "import json\n",
+    "from monty.serialization import loadfn\n",
+    "from pymatgen.core.structure import Structure\n",
+    "from smol.cofe import ClusterSubspace, StructureWrangler\n",
+    "from smol.cofe.configspace import get_specie"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 1) Preparing a `StructureWrangler`\n",
+    "Training structures and target data are handled by the `StructureWrangler` class. The class obtains the features and corresponding feature matrix based on the underlying `ClusterSubspace` provided.\n",
+    "\n",
+    "In the most simply settings we just use the feature matrix our supplied total energy from DFT to fit a cluster expansion. But it many cases we may want to improve our fit quality or reduce the model complexity by modifying the target property (i.e. using a reference energy or the energy of mixing) and/or by weighing structures based on some importance metric (i.e. by energy above hull). Using the `StructureWrangler` we can create this modified fitting data."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\n",
+      "Total structures that match 27/31\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Load the raw data\n",
+    "# load the prim structure\n",
+    "lno_prim = loadfn('data/lno_prim.json')\n",
+    "    \n",
+    "# load the fitting data\n",
+    "with open('data/lno_fitting_data.json', 'r') as f:\n",
+    "    lno_data = [(Structure.from_dict(x['s']), x['toten']) for x in json.load(f)]\n",
+    "\n",
+    "    \n",
+    "# create a cluster subspace\n",
+    "subspace = ClusterSubspace.from_cutoffs(lno_prim,\n",
+    "                                        cutoffs={2: 5, 3: 4.1},\n",
+    "                                        basis='sinusoid',\n",
+    "                                        supercell_size='O2-')\n",
+    "\n",
+    "# create the structre wrangler\n",
+    "wrangler = StructureWrangler(subspace)\n",
+    "\n",
+    "# add the raw data\n",
+    "for structure, tot_energy in lno_data:\n",
+    "    wrangler.add_data(structure,\n",
+    "                      properties={'total_energy': tot_energy})\n",
+    "\n",
+    "print(f'\\nTotal structures that match {wrangler.num_structures}/{len(lno_data)}')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 2) Modifying and adding new target properties\n",
+    "\n",
+    "Now that we have access to the structures that match to our cluster subspace, and access to the raw and normalized target properties, we can easily create new modifiend target properties to fit to.\n",
+    "\n",
+    "For a simple example say we simply want to set the minimum energy in our data as a new reference point."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# obtain the minimum energy. Calling the get_property_vector\n",
+    "# will by default give you the property normalized per prim \n",
+    "# (you should always used consistently normalized data when fitting)\n",
+    "min_energy = min(wrangler.get_property_vector('total_energy'))\n",
+    "\n",
+    "# simply create a new re-reference energy\n",
+    "reref_energy_vect = wrangler.get_property_vector('total_energy') - min_energy\n",
+    "\n",
+    "# add it as a new property to the wrangler\n",
+    "# in this case since the reref energy is a normalized\n",
+    "# quantity we need to explicitly tell the wrangler\n",
+    "wrangler.add_properties('rereferenced_energy',\n",
+    "                        reref_energy_vect,\n",
+    "                        normalized=False)\n",
+    "\n",
+    "# Now we have to properties in the wrangler that we can\n",
+    "# use to fit a cluster expansion, the total energy\n",
+    "# and the rereference energy"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 2.1) Another example of modifying target properties\n",
+    "\n",
+    "We can do more complex modifications of the target data. For example a very common target property to fit a cluster expansion is the mixing energy. \n",
+    "\n",
+    "For the current LNO dataset we don't have a fully delithiated structure, but for the sake of illustration lets assume that we use Ni2O3. (Plus in this dataset mixing energy is not very informative since it is almost linear in concentration.)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "e_Ni2O3 = -12.48\n",
+    "\n",
+    "# we can obtain the fully lithiated structure in the dataset by searching\n",
+    "# through the occupancy strings.\n",
+    "ind = [i for i, s in enumerate(wrangler.occupancy_strings) if 'Vacancy' not in s]\n",
+    "e_LiNiO2 = wrangler.get_property_vector('total_energy')[ind[0]]\n",
+    "\n",
+    "# Now we can calculate the Li/Vacancy mixing energy for the structures in our dataset\n",
+    "# There are many ways you can obtain concentrations/compositions, you can also use\n",
+    "# the stored pymatgen structures to do so, here I use the occupancy strings stored\n",
+    "# in the wrangler.\n",
+    "mixing_energy = []\n",
+    "concentration = []\n",
+    "for energy, occu in zip(wrangler.get_property_vector('total_energy'),\n",
+    "                        wrangler.occupancy_strings):\n",
+    "    n_Li = sum(sp == get_specie('Li+') for sp in occu)\n",
+    "    n_vac = sum(sp == get_specie('Vacancy') for sp in occu)\n",
+    "    c_Li = n_Li/(n_Li + n_vac)\n",
+    "    mix_en = energy - c_Li*e_LiNiO2 - (1 - c_Li)*e_Ni2O3\n",
+    "    concentration.append(c_Li)\n",
+    "    mixing_energy.append(mix_en)\n",
+    "\n",
+    "# add the properties to the wrangler\n",
+    "wrangler.add_properties('mixing_energy',\n",
+    "                        mixing_energy,\n",
+    "                        normalized=True)\n",
+    "wrangler.add_properties('li_concentration',\n",
+    "                        concentration,\n",
+    "                        normalized=True)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 3) Obtaining and adding weights\n",
+    "\n",
+    "Using the structure wrangler it is also very easy to obtain fitting weights based many things such as composition, total energy or energy above hull. Currently the code has the previously available functions to obtaine weights by energy above hull or by energy above composition."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from smol.cofe import weights_energy_above_hull, weights_energy_above_composition\n",
+    "\n",
+    "above_compostion = weights_energy_above_composition(wrangler.structures,\n",
+    "                                                    wrangler.get_property_vector('total_energy', normalize=False),\n",
+    "                                                    temperature=1000)\n",
+    "\n",
+    "above_hull = weights_energy_above_hull(wrangler.structures,\n",
+    "                                       wrangler.get_property_vector('total_energy', normalize=False),\n",
+    "                                       cs_structure=wrangler.cluster_subspace.structure,\n",
+    "                                       temperature=1000)\n",
+    "\n",
+    "# add them to the wrangler\n",
+    "wrangler.add_weights('e_above_comp', above_compostion)\n",
+    "wrangler.add_weights('e_above_hull', above_hull)\n",
+    "\n",
+    "# to use weights in a fit you would simply pass them to\n",
+    "# the corresponding argument or keyword argument of\n",
+    "# the fitting function you are using.\n",
+    "# For example if you are using a regression class from\n",
+    "# scikit-learn, the signature is:\n",
+    "# estimator.fit(wragler.feature_matrix,\n",
+    "#                wrangler.get_property_vectory('total_energy'),\n",
+    "#                sample_weight=wrangler.get_weights('e_above_hull'))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 4) Filtering structures\n",
+    "The `StructureWrangler` class can also be used to filter structures to use for a fit based on some criteria.\n",
+    "\n",
+    "Currently only a filter by maximum ewald energy is implemented as part of the class.\n",
+    "\n",
+    "Going forward more filtering options can be implemented as people write and use different methods of filtering functions."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "<ipython-input-6-aea799c1d123>:6: DeprecationWarning: the filter_by_ewald method is going to be deprecated.\n",
+      "The functionality will still be available but with a different interface\n",
+      "  wrangler.filter_by_ewald(max_ewald=2)\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Kept 26/27 structures with Ewald energies < 2 eV/prim.\n",
+      "The filters are saved as [{'Ewald': {'max_ewald': 2, 'nstructs_removed': 1, 'nstructs_total': 27}}]\n"
+     ]
+    }
+   ],
+   "source": [
+    "# filter by maximum ewald energy\n",
+    "# all structures with ewald energy above the cutoff\n",
+    "# will be removed\n",
+    "\n",
+    "n_structs_before = wrangler.num_structures\n",
+    "wrangler.filter_by_ewald(max_ewald=2)\n",
+    "\n",
+    "print(f'Kept {wrangler.num_structures}/{n_structs_before} structures with Ewald energies < 2 eV/prim.')\n",
+    "print(f\"The filters are saved as {wrangler.metadata['applied_filters']}\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "matx_dev",
+   "language": "python",
+   "name": "matx_dev"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.5"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

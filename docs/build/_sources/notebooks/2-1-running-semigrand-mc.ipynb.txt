@@ -1,0 +1,315 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Running Semigrand Canonical Monte Carlo Sampling"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import json\n",
+    "from pymatgen.core.structure import Structure\n",
+    "from smol.io import load_work"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 0) Load the previous LNO CE with electrostatics"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "work = load_work('./data/basic_ce_ewald.mson')\n",
+    "expansion = work['ClusterExpansion']"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 1) Create a semigrand ensemble\n",
+    "The `MuSemigrandEnsemble` class is used to run semigrand canonical MC by fixing relative chemical potentials.\n",
+    "\n",
+    "In SGC chemical potential differences are set as boundary conditions. Any one of the active species can be used as reference."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "The supercell size for the processor is 16 prims.\n",
+      "\n",
+      "The ensemble has a total of 64 sites.\n",
+      "\n",
+      "The active sublattices are:\n",
+      "Sublattice\n",
+      " Site space: {Species Ni3+: 0.5, Species Ni4+: 0.5}\n",
+      " Number of sites: 16\n",
+      "\n",
+      "Sublattice\n",
+      " Site space: {Species Li+: 0.5, Vacancy vacA0+: 0.5}\n",
+      " Number of sites: 16\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "from smol.moca import MuSemiGrandEnsemble\n",
+    "\n",
+    "# Create the ensemble\n",
+    "# This specifies the size of the MC simulation domain.\n",
+    "sc_matrix = np.array([[6, 1, 1],\n",
+    "                      [1, 2, 1],\n",
+    "                      [1, 1, 2]])\n",
+    "\n",
+    "# relative chemical potentials are provided as a dict\n",
+    "chemical_potentials = {'Li+': 0, 'Vacancy': 0,\n",
+    "                       'Ni3+': 0, 'Ni4+': 0}\n",
+    "\n",
+    "# this convenience method will take care of creating the appropriate\n",
+    "# processor for the given cluster expansion.\n",
+    "ensemble = MuSemiGrandEnsemble.from_cluster_expansion(expansion,\n",
+    "                                                      sc_matrix,\n",
+    "                                                      chemical_potentials=chemical_potentials)\n",
+    "\n",
+    "print(f'The supercell size for the processor is {ensemble.processor.size} prims.\\n')\n",
+    "print(f'The ensemble has a total of {ensemble.num_sites} sites.\\n')\n",
+    "print(f'The active sublattices are:')\n",
+    "for sublattice in ensemble.sublattices:\n",
+    "    print(sublattice)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 2) Create an MC sampler\n",
+    "A `Sampler` will take care of running MC sampling runs for a given ensemble. The sampler allows many different options for MC sampling most importantly setting the MCMC algorithm and the type of MC steps taken. However the defaults are usually enough for almost all use cases."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Sampling information: {'name': 'MuSemiGrandEnsemble', 'chemical-potentials': {'Li+': 0, 'vacA0+': 0, 'Ni3+': 0, 'Ni4+': 0}, 'kernel': 'Metropolis', 'step': 'flip', 'seed': 3294015828004676701}\n"
+     ]
+    }
+   ],
+   "source": [
+    "from smol.moca import Sampler\n",
+    "\n",
+    "# This will take care of setting the defaults\n",
+    "# for the supplied canonical ensemble\n",
+    "sampler = Sampler.from_ensemble(ensemble, temperature=500)\n",
+    "\n",
+    "print(f\"Sampling information: {sampler.samples.metadata}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 3) Create an initial structure and get occupancies"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Li+8 Ni3+8 Ni4+8 O2-32\n"
+     ]
+    }
+   ],
+   "source": [
+    "from pymatgen.transformations.standard_transformations import OrderDisorderedStructureTransformation\n",
+    "\n",
+    "# Here we will just use the order disordered transformation from\n",
+    "# pymatgen to get an ordered version of a prim supercell.\n",
+    "# The structure will have the same composition set in the prim.\n",
+    "transformation = OrderDisorderedStructureTransformation()\n",
+    "\n",
+    "supercell = expansion.cluster_subspace.structure.copy()\n",
+    "supercell.make_supercell(sc_matrix)\n",
+    "\n",
+    "# this can take a bit of time....\n",
+    "test_struct = transformation.apply_transformation(supercell)\n",
+    "print(test_struct.composition)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "The encoded occupancy is:\n",
+      "[0 1 1 0 0 0 1 0 0 1 0 1 1 1 1 0 0 0 1 1 1 1 0 1 0 0 1 0 0 0 1 1 0 0 0 0 0\n",
+      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]\n",
+      "The initial occupancy is:\n",
+      " [Species Li+, Vacancy vacA0+, Vacancy vacA0+, Species Li+, Species Li+, Species Li+, Vacancy vacA0+, Species Li+, Species Li+, Vacancy vacA0+, Species Li+, Vacancy vacA0+, Vacancy vacA0+, Vacancy vacA0+, Vacancy vacA0+, Species Li+, Species Ni3+, Species Ni3+, Species Ni4+, Species Ni4+, Species Ni4+, Species Ni4+, Species Ni3+, Species Ni4+, Species Ni3+, Species Ni3+, Species Ni4+, Species Ni3+, Species Ni3+, Species Ni3+, Species Ni4+, Species Ni4+, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-]\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Obtain the initial occupancy string from the\n",
+    "# test structure created above.\n",
+    "init_occu = ensemble.processor.occupancy_from_structure(test_struct)\n",
+    "\n",
+    "# The occupancy strings created by the processor\n",
+    "# are by default \"encoded\" by the indices of the species\n",
+    "# for each given site. You can always see the actual\n",
+    "# species in the occupancy string by decoding it.\n",
+    "print(f'The encoded occupancy is:\\n{init_occu}')\n",
+    "print(f'The initial occupancy is:\\n {ensemble.processor.decode_occupancy(init_occu)}')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 4) Sweeping chemical potentials\n",
+    "\n",
+    "Using a semigrand ensemble, we can sweep through relative chemical potentials and get average energies at various compositions.\n",
+    "\n",
+    "Here we will sweep only through the relative chemical potential of vacancies."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Sampling 1 chain(s) at 500.00 K from a cell with 64 sites: 100%|██████████| 10000/10000 [00:01<00:00, 9229.11it/s]\n",
+      "Sampling 1 chain(s) at 500.00 K from a cell with 64 sites: 100%|██████████| 100000/100000 [00:10<00:00, 9504.88it/s]\n",
+      "Sampling 1 chain(s) at 500.00 K from a cell with 64 sites: 100%|██████████| 100000/100000 [00:10<00:00, 9575.92it/s]\n",
+      "Sampling 1 chain(s) at 500.00 K from a cell with 64 sites: 100%|██████████| 100000/100000 [00:10<00:00, 9570.72it/s]\n",
+      "Sampling 1 chain(s) at 500.00 K from a cell with 64 sites: 100%|██████████| 100000/100000 [00:10<00:00, 9391.45it/s]\n",
+      "Sampling 1 chain(s) at 500.00 K from a cell with 64 sites: 100%|██████████| 100000/100000 [00:10<00:00, 9185.83it/s]\n",
+      "Sampling 1 chain(s) at 500.00 K from a cell with 64 sites: 100%|██████████| 100000/100000 [00:10<00:00, 9547.06it/s]\n",
+      "Sampling 1 chain(s) at 500.00 K from a cell with 64 sites: 100%|██████████| 100000/100000 [00:10<00:00, 9520.06it/s]\n",
+      "Sampling 1 chain(s) at 500.00 K from a cell with 64 sites: 100%|██████████| 100000/100000 [00:11<00:00, 9050.83it/s]\n",
+      "Sampling 1 chain(s) at 500.00 K from a cell with 64 sites: 100%|██████████| 100000/100000 [00:10<00:00, 9107.31it/s]\n",
+      "Sampling 1 chain(s) at 500.00 K from a cell with 64 sites: 100%|██████████| 100000/100000 [00:10<00:00, 9148.22it/s]\n",
+      "Sampling 1 chain(s) at 500.00 K from a cell with 64 sites: 100%|██████████| 100000/100000 [00:11<00:00, 9075.39it/s]\n"
+     ]
+    }
+   ],
+   "source": [
+    "from smol.cofe.space import Vacancy\n",
+    "dmus = np.arange(4, 7, .25)\n",
+    "discard, thin_by = 50, 10\n",
+    "concentration_avgs = []\n",
+    "energy_avg = []\n",
+    "sampler.clear_samples()\n",
+    "# initialize sampler\n",
+    "chemical_potentials['Vacancy'] = dmus[0]\n",
+    "ensemble.chemical_potentials = chemical_potentials\n",
+    "sampler.run(10000, init_occu, thin_by=thin_by, progress=True)\n",
+    "energy_avg.append(sampler.samples.mean_energy(discard=discard))\n",
+    "# this gets the composition in all active sites\n",
+    "# excludes inactive sites (i.e. O2- in this case)\n",
+    "# to get the composition per sublattice only\n",
+    "# mean_sublattice_composition\n",
+    "concentration_avgs.append(sampler.samples.mean_composition(discard=discard))\n",
+    "\n",
+    "# sweep through rest\n",
+    "for dmu in dmus[1:]:\n",
+    "    # update to get only averages of last samples\n",
+    "    # you can also clear samples and start fresh at each dmu\n",
+    "    discard_tot = discard + len(sampler.samples)\n",
+    "    chemical_potentials[\"Vacancy\"] = dmu\n",
+    "    ensemble.chemical_potentials = chemical_potentials\n",
+    "    sampler.run(100000, thin_by=thin_by, progress=True)\n",
+    "    energy_avg.append(sampler.samples.mean_energy(discard=discard_tot))\n",
+    "    concentration_avgs.append(sampler.samples.mean_composition(discard=discard_tot))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "# Plot some results\n",
+    "import matplotlib.pyplot as plt\n",
+    "# We need to use this since species keys are pymatgen Specie objects\n",
+    "from smol.cofe.space import get_species\n",
+    "\n",
+    "plt.plot([c[get_species(\"Li+\")] for c in concentration_avgs],\n",
+    "          energy_avg, 'o')\n",
+    "plt.xlabel('Li+ concentration')\n",
+    "plt.ylabel('Average total energy (eV)')\n",
+    "plt.show()"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "matx_dev",
+   "language": "python",
+   "name": "matx_dev"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.5"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
