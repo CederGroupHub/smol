@@ -30,10 +30,40 @@ class RegressionData:
     """
 
     module: str
-    class_name: str
+    estimator_name: str
     parameters: dict
     feature_matrix: np.ndarray
     property_vector: np.ndarray
+
+    @classmethod
+    def from_object(cls, estimator, feature_matrix, property_vector,
+                    parameters=None):
+        """Create a RegressionData object from an esimator class.
+
+        Args:
+            estimator (object):
+                Estimator class or function.
+            feature_matrix (ndarray):
+                feature matrix used in fit.
+            property_vector (ndarray):
+                target property vector used in fit.
+            parameters (dict):
+                dictionary with pertinent fitting parameters.
+                ie regularization, etc. It is highly recommended that you save
+                this out of good practice and to ensure reproducibility.
+        Returns:
+            RegressionData
+        """
+        try:
+            estimator_name = estimator.__class__.__name__
+        except AttributeError:
+            estimator_name = estimator.__name__
+
+        return cls(module=estimator.__module__,
+                   estimator_name=estimator_name,
+                   parameters=parameters,
+                   feature_matrix=feature_matrix,
+                   property_vector=property_vector)
 
     @classmethod
     def from_sklearn(cls, estimator, feature_matrix, property_vector):
@@ -50,7 +80,7 @@ class RegressionData:
             RegressionData
         """
         return cls(module=estimator.__module__,
-                   class_name=estimator.__class__.__name__,
+                   estimator_name=estimator.__class__.__name__,
                    parameters=estimator.get_params(),
                    feature_matrix=feature_matrix,
                    property_vector=property_vector)
