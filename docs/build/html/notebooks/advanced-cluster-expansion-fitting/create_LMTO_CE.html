@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Creating a basic Cluster Expansion &#8212; smol 1.0.0 documentation</title>
+    <title>&lt;no title&gt; &#8212; smol 1.0.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/_static/default.css" />
@@ -14,8 +14,6 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
 <meta charset='utf-8'>
@@ -70,24 +68,7 @@
      href="#">Page <b class="caret"></b></a>
   <ul class="dropdown-menu localtoc"
       role="menu"
-      aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">Creating a basic Cluster Expansion</a><ul>
-<li><a class="reference internal" href="#0)-The-prim-structure">0) The prim structure</a></li>
-<li><a class="reference internal" href="#1)-The-cluster-subspace">1) The cluster subspace</a><ul>
-<li><a class="reference internal" href="#1.1)-Computing-a-correlation-vector.">1.1) Computing a correlation vector.</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#2)-The-structure-wrangler">2) The structure wrangler</a><ul>
-<li><a class="reference internal" href="#3.1)-Check-the-quality-of-the-fit">3.1) Check the quality of the fit</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#4)-The-cluster-expansion">4) The cluster expansion</a></li>
-<li><a class="reference internal" href="#5)-Saving-your-work">5) Saving your work</a><ul>
-<li><a class="reference internal" href="#5.1)-Loading-previously-saved-work">5.1) Loading previously saved work</a></li>
-</ul>
-</li>
-</ul>
-</li>
+      aria-labelledby="dLabelLocalToc"><ul class="simple">
 </ul>
 </ul>
 </li>
@@ -117,1526 +98,1565 @@
   <div class="row">
     <div class="body col-md-12 content" role="main">
       
-  
-<style>
-/* CSS for nbsphinx extension */
-
-/* remove conflicting styling from Sphinx themes */
-div.nbinput.container div.prompt *,
-div.nboutput.container div.prompt *,
-div.nbinput.container div.input_area pre,
-div.nboutput.container div.output_area pre,
-div.nbinput.container div.input_area .highlight,
-div.nboutput.container div.output_area .highlight {
-    border: none;
-    padding: 0;
-    margin: 0;
-    box-shadow: none;
-}
-
-div.nbinput.container > div[class*=highlight],
-div.nboutput.container > div[class*=highlight] {
-    margin: 0;
-}
-
-div.nbinput.container div.prompt *,
-div.nboutput.container div.prompt * {
-    background: none;
-}
-
-div.nboutput.container div.output_area .highlight,
-div.nboutput.container div.output_area pre {
-    background: unset;
-}
-
-div.nboutput.container div.output_area div.highlight {
-    color: unset;  /* override Pygments text color */
-}
-
-/* avoid gaps between output lines */
-div.nboutput.container div[class*=highlight] pre {
-    line-height: normal;
-}
-
-/* input/output containers */
-div.nbinput.container,
-div.nboutput.container {
-    display: -webkit-flex;
-    display: flex;
-    align-items: flex-start;
-    margin: 0;
-    width: 100%;
-}
-@media (max-width: 540px) {
-    div.nbinput.container,
-    div.nboutput.container {
-        flex-direction: column;
-    }
-}
-
-/* input container */
-div.nbinput.container {
-    padding-top: 5px;
-}
-
-/* last container */
-div.nblast.container {
-    padding-bottom: 5px;
-}
-
-/* input prompt */
-div.nbinput.container div.prompt pre {
-    color: #307FC1;
-}
-
-/* output prompt */
-div.nboutput.container div.prompt pre {
-    color: #BF5B3D;
-}
-
-/* all prompts */
-div.nbinput.container div.prompt,
-div.nboutput.container div.prompt {
-    width: 4.5ex;
-    padding-top: 5px;
-    position: relative;
-    user-select: none;
-}
-
-div.nbinput.container div.prompt > div,
-div.nboutput.container div.prompt > div {
-    position: absolute;
-    right: 0;
-    margin-right: 0.3ex;
-}
-
-@media (max-width: 540px) {
-    div.nbinput.container div.prompt,
-    div.nboutput.container div.prompt {
-        width: unset;
-        text-align: left;
-        padding: 0.4em;
-    }
-    div.nboutput.container div.prompt.empty {
-        padding: 0;
-    }
-
-    div.nbinput.container div.prompt > div,
-    div.nboutput.container div.prompt > div {
-        position: unset;
-    }
-}
-
-/* disable scrollbars on prompts */
-div.nbinput.container div.prompt pre,
-div.nboutput.container div.prompt pre {
-    overflow: hidden;
-}
-
-/* input/output area */
-div.nbinput.container div.input_area,
-div.nboutput.container div.output_area {
-    -webkit-flex: 1;
-    flex: 1;
-    overflow: auto;
-}
-@media (max-width: 540px) {
-    div.nbinput.container div.input_area,
-    div.nboutput.container div.output_area {
-        width: 100%;
-    }
-}
-
-/* input area */
-div.nbinput.container div.input_area {
-    border: 1px solid #e0e0e0;
-    border-radius: 2px;
-    /*background: #f5f5f5;*/
-}
-
-/* override MathJax center alignment in output cells */
-div.nboutput.container div[class*=MathJax] {
-    text-align: left !important;
-}
-
-/* override sphinx.ext.imgmath center alignment in output cells */
-div.nboutput.container div.math p {
-    text-align: left;
-}
-
-/* standard error */
-div.nboutput.container div.output_area.stderr {
-    background: #fdd;
-}
-
-/* ANSI colors */
-.ansi-black-fg { color: #3E424D; }
-.ansi-black-bg { background-color: #3E424D; }
-.ansi-black-intense-fg { color: #282C36; }
-.ansi-black-intense-bg { background-color: #282C36; }
-.ansi-red-fg { color: #E75C58; }
-.ansi-red-bg { background-color: #E75C58; }
-.ansi-red-intense-fg { color: #B22B31; }
-.ansi-red-intense-bg { background-color: #B22B31; }
-.ansi-green-fg { color: #00A250; }
-.ansi-green-bg { background-color: #00A250; }
-.ansi-green-intense-fg { color: #007427; }
-.ansi-green-intense-bg { background-color: #007427; }
-.ansi-yellow-fg { color: #DDB62B; }
-.ansi-yellow-bg { background-color: #DDB62B; }
-.ansi-yellow-intense-fg { color: #B27D12; }
-.ansi-yellow-intense-bg { background-color: #B27D12; }
-.ansi-blue-fg { color: #208FFB; }
-.ansi-blue-bg { background-color: #208FFB; }
-.ansi-blue-intense-fg { color: #0065CA; }
-.ansi-blue-intense-bg { background-color: #0065CA; }
-.ansi-magenta-fg { color: #D160C4; }
-.ansi-magenta-bg { background-color: #D160C4; }
-.ansi-magenta-intense-fg { color: #A03196; }
-.ansi-magenta-intense-bg { background-color: #A03196; }
-.ansi-cyan-fg { color: #60C6C8; }
-.ansi-cyan-bg { background-color: #60C6C8; }
-.ansi-cyan-intense-fg { color: #258F8F; }
-.ansi-cyan-intense-bg { background-color: #258F8F; }
-.ansi-white-fg { color: #C5C1B4; }
-.ansi-white-bg { background-color: #C5C1B4; }
-.ansi-white-intense-fg { color: #A1A6B2; }
-.ansi-white-intense-bg { background-color: #A1A6B2; }
-
-.ansi-default-inverse-fg { color: #FFFFFF; }
-.ansi-default-inverse-bg { background-color: #000000; }
-
-.ansi-bold { font-weight: bold; }
-.ansi-underline { text-decoration: underline; }
-
-
-div.nbinput.container div.input_area div[class*=highlight] > pre,
-div.nboutput.container div.output_area div[class*=highlight] > pre,
-div.nboutput.container div.output_area div[class*=highlight].math,
-div.nboutput.container div.output_area.rendered_html,
-div.nboutput.container div.output_area > div.output_javascript,
-div.nboutput.container div.output_area:not(.rendered_html) > img{
-    padding: 5px;
-    margin: 0;
-}
-
-/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
-div.nbinput.container div.input_area > div[class^='highlight'],
-div.nboutput.container div.output_area > div[class^='highlight']{
-    overflow-y: hidden;
-}
-
-/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt a.copybtn {
-    display: none;
-}
-
-/* Some additional styling taken form the Jupyter notebook CSS */
-div.rendered_html table {
-  border: none;
-  border-collapse: collapse;
-  border-spacing: 0;
-  color: black;
-  font-size: 12px;
-  table-layout: fixed;
-}
-div.rendered_html thead {
-  border-bottom: 1px solid black;
-  vertical-align: bottom;
-}
-div.rendered_html tr,
-div.rendered_html th,
-div.rendered_html td {
-  text-align: right;
-  vertical-align: middle;
-  padding: 0.5em 0.5em;
-  line-height: normal;
-  white-space: normal;
-  max-width: none;
-  border: none;
-}
-div.rendered_html th {
-  font-weight: bold;
-}
-div.rendered_html tbody tr:nth-child(odd) {
-  background: #f5f5f5;
-}
-div.rendered_html tbody tr:hover {
-  background: rgba(66, 165, 245, 0.2);
-}
-</style>
-<section id="Creating-a-basic-Cluster-Expansion">
-<h1>Creating a basic Cluster Expansion<a class="headerlink" href="#Creating-a-basic-Cluster-Expansion" title="Permalink to this headline">¶</a></h1>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">pymatgen.core.structure</span> <span class="kn">import</span> <span class="n">Structure</span>
-<span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">ClusterSubspace</span><span class="p">,</span> <span class="n">StructureWrangler</span><span class="p">,</span> <span class="n">ClusterExpansion</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">prim</span> <span class="o">=</span> <span class="n">Structure</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s1">&#39;../data/LiF.cif&#39;</span><span class="p">)</span>
-<span class="n">ro</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Li+&#39;</span><span class="p">:{</span><span class="s1">&#39;Li+&#39;</span><span class="p">:</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;Mn3+&#39;</span><span class="p">:</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span>  <span class="s1">&#39;Ti4+&#39;</span><span class="p">:</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">},</span> <span class="s1">&#39;F-&#39;</span><span class="p">:{</span><span class="s1">&#39;O2-&#39;</span><span class="p">:</span><span class="mf">1.0</span><span class="p">}}</span>
-
-<span class="n">prim</span><span class="o">.</span><span class="n">replace_species</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<p>Loading the DFT data of Li-Mn-Ti-O system</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-
-<span></span><span class="n">calc_data</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="c1"># calc_indices = []</span>
-
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;./data/MnTi_O.json&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span> <span class="n">calc_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">fin</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-
-
-<span class="c1"># print(calc_data)</span>
-
-<span class="n">valid_structs</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">weights</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">calc_i</span><span class="p">,</span> <span class="n">calc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">calc_data</span><span class="p">):</span>
-
-    <span class="n">struct</span> <span class="o">=</span> <span class="n">Structure</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">calc</span><span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">])</span>
-    <span class="n">valid_structs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">struct</span><span class="p">,</span> <span class="n">calc</span><span class="p">[</span><span class="s1">&#39;toten&#39;</span><span class="p">]))</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2"> structures map to the lattice&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">valid_structs</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">calc_data</span><span class="p">)))</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-630/630 structures map to the lattice
-</pre></div></div>
-</div>
-<section id="0)-The-prim-structure">
-<h2>0) The prim structure<a class="headerlink" href="#0)-The-prim-structure" title="Permalink to this headline">¶</a></h2>
-<p>The prim structure defines the <strong>configurational space</strong> for the Cluster Expansion. The <strong>configurational space</strong> is defined by the site <strong>compositional spaces</strong> and the crystal symetries of the prim structure. The occupancy of the sites determine site <strong>compositional spaces</strong>. Sites are <strong>active</strong> if they have compositional degrees of freedom.</p>
-<p>Active sites have fractional compositions. Vacancies are allowed in sites where the composition does not sum to one.</p>
-<ol class="arabic simple" start="0">
-<li><p>Is active. The allowed species are: Li+ and vacancies.</p></li>
-<li><p>Is active. The allowed species are: Ni3+ and Ni4+.</p></li>
-<li><p>Is not active. Only O2- is allowed.</p></li>
-<li><p>Is not active. Only O2- is allowed.</p></li>
-</ol>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">print</span><span class="p">(</span><span class="n">prim</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Full Formula (Li0.33333333 Ti0.33333333 Mn0.33333333 O1)
-Reduced Formula: Li0.33333333Ti0.33333333Mn0.33333333O1
-abc   :   2.969848   2.969848   2.969848
-angles:  60.000000  60.000000  60.000000
-Sites (2)
-  #  SP                                   a    b    c
----  ---------------------------------  ---  ---  ---
-  0  Li+:0.333, Ti4+:0.333, Mn3+:0.333  0    0    0
-  1  O2-                                0.5  0.5  0.5
-</pre></div></div>
-</div>
-</section>
-<section id="1)-The-cluster-subspace">
-<h2>1) The cluster subspace<a class="headerlink" href="#1)-The-cluster-subspace" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">ClusterSubspace</span></code> represents all the orbits (groups of equivalent clusters) that will be considered when fitting the cluster expansion. Its main purpose is to compute the <strong>correlations functions</strong> for each included orbit given a structure in the compositional space defined by the prim.</p>
-<p>In order to do be able to compute the correlation functions, the given structure must match the prim structure in a “crystallographic” sense but allowing for compositional degrees of freedom in the “active” sites.</p>
-<p>A cluster subspace most easily created by providing: 1. The prim structure representing the configurational space. 2. A set of cutoff radii for each size of orbit we want to consider. 3. A type of site basis function to use.</p>
-<p>There are more options allowed by the code to fine grain and tune. See other notebooks for advanced use cases.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">subspace</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_radii</span><span class="p">(</span><span class="n">prim</span><span class="p">,</span>
-                                      <span class="n">radii</span><span class="o">=</span><span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mf">7.1</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span><span class="mi">4</span><span class="p">},</span> <span class="c1"># will include orbits of 2 and 3 sites.</span>
-                                      <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;sinusoid&#39;</span><span class="p">,</span>
-                                      <span class="n">supercell_size</span><span class="o">=</span><span class="s1">&#39;volume&#39;</span><span class="p">)</span>
-
-<span class="c1"># supercell_size specifies the method to determine the supercell size</span>
-<span class="c1"># when trying to match a structure.</span>
-<span class="c1"># (See pymatgen.structure_mathcer.StructureMatcher for more info)</span>
-
-<span class="c1"># subspace.add_external_term(EwaldTerm(eta=None))</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">subspace</span><span class="p">)</span> <span class="c1"># single site and empty orbits are always included.</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-ClusterBasis: [Prim Composition] Li+0.33333333 Mn3+0.33333333 Ti4+0.33333333 O2-1
-    [Size] 0
-      [Orbit] id: 0  orderings: 1
-    [Size] 1
-      [Orbit] id: 1  orderings: 2   multiplicity: 1    no. symops: 48
-              [Base Cluster] Radius: 0.0   Centroid: [0. 0. 0.]         Points: [[0. 0. 0.]]
-    [Size] 2
-      [Orbit] id: 2  orderings: 3   multiplicity: 6    no. symops: 8
-              [Base Cluster] Radius: 2.97  Centroid: [0.  0.  0.5]      Points: [[0. 0. 1.]  [0. 0. 0.]]
-      [Orbit] id: 3  orderings: 3   multiplicity: 3    no. symops: 16
-              [Base Cluster] Radius: 4.2   Centroid: [0.5 0.5 0.5]      Points: [[1. 1. 0.]  [0. 0. 1.]]
-      [Orbit] id: 4  orderings: 3   multiplicity: 12   no. symops: 4
-              [Base Cluster] Radius: 5.14  Centroid: [0.  0.5 0.5]      Points: [[0. 1. 1.]  [0. 0. 0.]]
-      [Orbit] id: 5  orderings: 3   multiplicity: 6    no. symops: 8
-              [Base Cluster] Radius: 5.94  Centroid: [0. 0. 0.]         Points: [[ 0.  0.  1.]  [ 0.  0. -1.]]
-      [Orbit] id: 6  orderings: 3   multiplicity: 12   no. symops: 4
-              [Base Cluster] Radius: 6.64  Centroid: [0.5 0.  0.5]      Points: [[ 1.  1.  0.]  [ 0. -1.  1.]]
-    [Size] 3
-      [Orbit] id: 7  orderings: 4   multiplicity: 8    no. symops: 6
-              [Base Cluster] Radius: 2.97  Centroid: [0.   0.67 0.67]   Points: [[0. 1. 1.]  [0. 1. 0.]  [0. 0. 1.]]
-    [Size] 4
-      [Orbit] id: 8  orderings: 5   multiplicity: 2    no. symops: 24
-              [Base Cluster] Radius: 2.97  Centroid: [0.75 0.75 0.75]   Points: [[1. 1. 1.]  [1. 1. 0.]  [1. 0. 1.]  [0. 1. 1.]]
-
-</pre></div></div>
-</div>
-<section id="1.1)-Computing-a-correlation-vector.">
-<h3>1.1) Computing a correlation vector.<a class="headerlink" href="#1.1)-Computing-a-correlation-vector." title="Permalink to this headline">¶</a></h3>
-<p>A correlation vector for a specific structure (represents the feature vector) used to train and predict target values.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">structure</span> <span class="o">=</span> <span class="n">Structure</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">calc_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;s&#39;</span><span class="p">])</span>
-<span class="n">corr</span> <span class="o">=</span> <span class="n">subspace</span><span class="o">.</span><span class="n">corr_from_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The correlation vector for a structure with&#39;</span>
-      <span class="sa">f</span><span class="s1">&#39; composition </span><span class="si">{</span><span class="n">structure</span><span class="o">.</span><span class="n">composition</span><span class="si">}</span><span class="s1"> is: &#39;</span>
-      <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{</span><span class="n">corr</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-The correlation vector for a structure with composition Li+16 Mn3+16 O2-32 is:
-[ 1.         -0.25        0.4330127  -0.0078125  -0.14884812  0.1640625
-  0.109375   -0.08118988  0.203125    0.0859375  -0.09472153  0.1953125
-  0.0625     -0.10825318  0.1875     -0.0078125  -0.14884812  0.1640625
-  0.05029297  0.02452611 -0.07177734  0.05328086  0.00390625  0.03129193
-  0.03222656 -0.02283465  0.01757812]
-</pre></div></div>
-</div>
-</section>
-</section>
-<section id="2)-The-structure-wrangler">
-<h2>2) The structure wrangler<a class="headerlink" href="#2)-The-structure-wrangler" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> is a class that will is used to create and organize the data that will be used to train (and possibly test) the cluster expansion. It makes sure that all the supplied structures appropriately match the prim structure, and obtains the necessary information to correctly normalize target properties (such as energy) necessary for training.</p>
-<p>Matching relaxed structures can be a tricky problem, especially for ionic systems with vacancies. See the notebook on structure matching for tips on how to tweak parameters.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">wrangler</span> <span class="o">=</span> <span class="n">StructureWrangler</span><span class="p">(</span><span class="n">subspace</span><span class="p">)</span>
-
-<span class="c1"># you can add any number of properties and name them</span>
-<span class="c1"># whatever you want. You should use something descriptive.</span>
-<span class="c1"># In this case we&#39;ll call it &#39;total_energy&#39;.</span>
-<span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">valid</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">valid_structs</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;processed: </span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_structs</span><span class="p">)))</span>
-    <span class="n">structure</span> <span class="o">=</span> <span class="n">valid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">wrangler</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span>
-                      <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;total_energy&#39;</span><span class="p">:</span> <span class="n">valid</span><span class="p">[</span><span class="mi">1</span><span class="p">]},</span>
-                      <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="c1"># The verbose flag will print structures that fail to match.</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Total structures that match </span><span class="si">{</span><span class="n">wrangler</span><span class="o">.</span><span class="n">num_structures</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">valid_structs</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-processed: 0/630
-processed: 1/630
-processed: 2/630
-processed: 3/630
-processed: 4/630
-processed: 5/630
-processed: 6/630
-processed: 7/630
-processed: 8/630
-processed: 9/630
-processed: 10/630
-processed: 11/630
-processed: 12/630
-processed: 13/630
-processed: 14/630
-processed: 15/630
-processed: 16/630
-processed: 17/630
-processed: 18/630
-processed: 19/630
-processed: 20/630
-processed: 21/630
-processed: 22/630
-processed: 23/630
-processed: 24/630
-processed: 25/630
-processed: 26/630
-processed: 27/630
-processed: 28/630
-processed: 29/630
-processed: 30/630
-processed: 31/630
-processed: 32/630
-processed: 33/630
-processed: 34/630
-processed: 35/630
-processed: 36/630
-processed: 37/630
-processed: 38/630
-processed: 39/630
-processed: 40/630
-processed: 41/630
-processed: 42/630
-processed: 43/630
-processed: 44/630
-processed: 45/630
-processed: 46/630
-processed: 47/630
-processed: 48/630
-processed: 49/630
-processed: 50/630
-processed: 51/630
-processed: 52/630
-processed: 53/630
-processed: 54/630
-processed: 55/630
-processed: 56/630
-processed: 57/630
-processed: 58/630
-processed: 59/630
-processed: 60/630
-processed: 61/630
-processed: 62/630
-processed: 63/630
-processed: 64/630
-processed: 65/630
-processed: 66/630
-processed: 67/630
-processed: 68/630
-processed: 69/630
-processed: 70/630
-processed: 71/630
-processed: 72/630
-processed: 73/630
-processed: 74/630
-processed: 75/630
-processed: 76/630
-processed: 77/630
-processed: 78/630
-processed: 79/630
-processed: 80/630
-processed: 81/630
-processed: 82/630
-processed: 83/630
-processed: 84/630
-processed: 85/630
-processed: 86/630
-processed: 87/630
-processed: 88/630
-processed: 89/630
-processed: 90/630
-processed: 91/630
-processed: 92/630
-processed: 93/630
-processed: 94/630
-processed: 95/630
-processed: 96/630
-processed: 97/630
-processed: 98/630
-processed: 99/630
-processed: 100/630
-processed: 101/630
-processed: 102/630
-processed: 103/630
-processed: 104/630
-processed: 105/630
-processed: 106/630
-processed: 107/630
-processed: 108/630
-processed: 109/630
-processed: 110/630
-processed: 111/630
-processed: 112/630
-processed: 113/630
-processed: 114/630
-processed: 115/630
-processed: 116/630
-processed: 117/630
-processed: 118/630
-processed: 119/630
-processed: 120/630
-processed: 121/630
-processed: 122/630
-processed: 123/630
-processed: 124/630
-processed: 125/630
-processed: 126/630
-processed: 127/630
-processed: 128/630
-processed: 129/630
-processed: 130/630
-processed: 131/630
-processed: 132/630
-processed: 133/630
-processed: 134/630
-processed: 135/630
-processed: 136/630
-processed: 137/630
-processed: 138/630
-processed: 139/630
-processed: 140/630
-processed: 141/630
-processed: 142/630
-processed: 143/630
-processed: 144/630
-processed: 145/630
-processed: 146/630
-processed: 147/630
-processed: 148/630
-processed: 149/630
-processed: 150/630
-processed: 151/630
-processed: 152/630
-processed: 153/630
-processed: 154/630
-processed: 155/630
-processed: 156/630
-processed: 157/630
-processed: 158/630
-processed: 159/630
-processed: 160/630
-processed: 161/630
-processed: 162/630
-processed: 163/630
-processed: 164/630
-processed: 165/630
-processed: 166/630
-processed: 167/630
-processed: 168/630
-processed: 169/630
-processed: 170/630
-processed: 171/630
-processed: 172/630
-processed: 173/630
-processed: 174/630
-processed: 175/630
-processed: 176/630
-processed: 177/630
-processed: 178/630
-processed: 179/630
-processed: 180/630
-processed: 181/630
-processed: 182/630
-processed: 183/630
-processed: 184/630
-processed: 185/630
-processed: 186/630
-processed: 187/630
-processed: 188/630
-processed: 189/630
-processed: 190/630
-processed: 191/630
-processed: 192/630
-processed: 193/630
-processed: 194/630
-processed: 195/630
-processed: 196/630
-processed: 197/630
-processed: 198/630
-processed: 199/630
-processed: 200/630
-processed: 201/630
-processed: 202/630
-processed: 203/630
-processed: 204/630
-processed: 205/630
-processed: 206/630
-processed: 207/630
-processed: 208/630
-processed: 209/630
-processed: 210/630
-processed: 211/630
-processed: 212/630
-processed: 213/630
-processed: 214/630
-processed: 215/630
-processed: 216/630
-processed: 217/630
-processed: 218/630
-processed: 219/630
-processed: 220/630
-processed: 221/630
-processed: 222/630
-processed: 223/630
-processed: 224/630
-processed: 225/630
-processed: 226/630
-processed: 227/630
-processed: 228/630
-processed: 229/630
-processed: 230/630
-processed: 231/630
-processed: 232/630
-processed: 233/630
-processed: 234/630
-processed: 235/630
-processed: 236/630
-processed: 237/630
-processed: 238/630
-processed: 239/630
-processed: 240/630
-processed: 241/630
-processed: 242/630
-processed: 243/630
-processed: 244/630
-processed: 245/630
-processed: 246/630
-processed: 247/630
-processed: 248/630
-processed: 249/630
-processed: 250/630
-processed: 251/630
-processed: 252/630
-processed: 253/630
-processed: 254/630
-processed: 255/630
-processed: 256/630
-processed: 257/630
-processed: 258/630
-processed: 259/630
-processed: 260/630
-processed: 261/630
-processed: 262/630
-processed: 263/630
-processed: 264/630
-processed: 265/630
-processed: 266/630
-processed: 267/630
-processed: 268/630
-processed: 269/630
-processed: 270/630
-processed: 271/630
-processed: 272/630
-processed: 273/630
-processed: 274/630
-processed: 275/630
-processed: 276/630
-processed: 277/630
-processed: 278/630
-processed: 279/630
-processed: 280/630
-processed: 281/630
-processed: 282/630
-processed: 283/630
-processed: 284/630
-processed: 285/630
-processed: 286/630
-processed: 287/630
-processed: 288/630
-processed: 289/630
-processed: 290/630
-processed: 291/630
-processed: 292/630
-processed: 293/630
-processed: 294/630
-processed: 295/630
-processed: 296/630
-processed: 297/630
-processed: 298/630
-processed: 299/630
-processed: 300/630
-processed: 301/630
-processed: 302/630
-processed: 303/630
-processed: 304/630
-processed: 305/630
-processed: 306/630
-processed: 307/630
-processed: 308/630
-processed: 309/630
-processed: 310/630
-processed: 311/630
-processed: 312/630
-processed: 313/630
-processed: 314/630
-processed: 315/630
-processed: 316/630
-processed: 317/630
-processed: 318/630
-processed: 319/630
-processed: 320/630
-processed: 321/630
-processed: 322/630
-processed: 323/630
-processed: 324/630
-processed: 325/630
-processed: 326/630
-processed: 327/630
-processed: 328/630
-processed: 329/630
-processed: 330/630
-processed: 331/630
-processed: 332/630
-processed: 333/630
-processed: 334/630
-processed: 335/630
-processed: 336/630
-processed: 337/630
-processed: 338/630
-processed: 339/630
-processed: 340/630
-processed: 341/630
-processed: 342/630
-processed: 343/630
-processed: 344/630
-processed: 345/630
-processed: 346/630
-processed: 347/630
-processed: 348/630
-processed: 349/630
-processed: 350/630
-processed: 351/630
-processed: 352/630
-processed: 353/630
-processed: 354/630
-processed: 355/630
-processed: 356/630
-processed: 357/630
-processed: 358/630
-processed: 359/630
-processed: 360/630
-processed: 361/630
-processed: 362/630
-processed: 363/630
-processed: 364/630
-processed: 365/630
-processed: 366/630
-processed: 367/630
-processed: 368/630
-processed: 369/630
-processed: 370/630
-processed: 371/630
-processed: 372/630
-processed: 373/630
-processed: 374/630
-processed: 375/630
-processed: 376/630
-processed: 377/630
-processed: 378/630
-processed: 379/630
-processed: 380/630
-processed: 381/630
-processed: 382/630
-processed: 383/630
-processed: 384/630
-processed: 385/630
-processed: 386/630
-processed: 387/630
-processed: 388/630
-processed: 389/630
-processed: 390/630
-processed: 391/630
-processed: 392/630
-processed: 393/630
-processed: 394/630
-processed: 395/630
-processed: 396/630
-processed: 397/630
-processed: 398/630
-processed: 399/630
-processed: 400/630
-processed: 401/630
-processed: 402/630
-processed: 403/630
-processed: 404/630
-processed: 405/630
-processed: 406/630
-processed: 407/630
-processed: 408/630
-processed: 409/630
-processed: 410/630
-processed: 411/630
-processed: 412/630
-processed: 413/630
-processed: 414/630
-processed: 415/630
-processed: 416/630
-processed: 417/630
-processed: 418/630
-processed: 419/630
-processed: 420/630
-processed: 421/630
-processed: 422/630
-processed: 423/630
-processed: 424/630
-processed: 425/630
-processed: 426/630
-processed: 427/630
-processed: 428/630
-processed: 429/630
-processed: 430/630
-processed: 431/630
-processed: 432/630
-processed: 433/630
-processed: 434/630
-processed: 435/630
-processed: 436/630
-processed: 437/630
-processed: 438/630
-processed: 439/630
-processed: 440/630
-processed: 441/630
-processed: 442/630
-processed: 443/630
-processed: 444/630
-processed: 445/630
-processed: 446/630
-processed: 447/630
-processed: 448/630
-processed: 449/630
-processed: 450/630
-processed: 451/630
-processed: 452/630
-processed: 453/630
-processed: 454/630
-processed: 455/630
-processed: 456/630
-processed: 457/630
-processed: 458/630
-processed: 459/630
-processed: 460/630
-processed: 461/630
-processed: 462/630
-processed: 463/630
-processed: 464/630
-processed: 465/630
-processed: 466/630
-processed: 467/630
-processed: 468/630
-processed: 469/630
-processed: 470/630
-processed: 471/630
-processed: 472/630
-processed: 473/630
-processed: 474/630
-processed: 475/630
-processed: 476/630
-processed: 477/630
-processed: 478/630
-processed: 479/630
-processed: 480/630
-processed: 481/630
-processed: 482/630
-processed: 483/630
-processed: 484/630
-processed: 485/630
-processed: 486/630
-processed: 487/630
-processed: 488/630
-processed: 489/630
-processed: 490/630
-processed: 491/630
-processed: 492/630
-processed: 493/630
-processed: 494/630
-processed: 495/630
-processed: 496/630
-processed: 497/630
-processed: 498/630
-processed: 499/630
-processed: 500/630
-processed: 501/630
-processed: 502/630
-processed: 503/630
-processed: 504/630
-processed: 505/630
-processed: 506/630
-processed: 507/630
-processed: 508/630
-processed: 509/630
-processed: 510/630
-processed: 511/630
-processed: 512/630
-processed: 513/630
-processed: 514/630
-processed: 515/630
-processed: 516/630
-processed: 517/630
-processed: 518/630
-processed: 519/630
-processed: 520/630
-processed: 521/630
-processed: 522/630
-processed: 523/630
-processed: 524/630
-processed: 525/630
-processed: 526/630
-processed: 527/630
-processed: 528/630
-processed: 529/630
-processed: 530/630
-processed: 531/630
-processed: 532/630
-processed: 533/630
-processed: 534/630
-processed: 535/630
-processed: 536/630
-processed: 537/630
-processed: 538/630
-processed: 539/630
-processed: 540/630
-processed: 541/630
-processed: 542/630
-processed: 543/630
-processed: 544/630
-processed: 545/630
-processed: 546/630
-processed: 547/630
-processed: 548/630
-processed: 549/630
-processed: 550/630
-processed: 551/630
-processed: 552/630
-processed: 553/630
-processed: 554/630
-processed: 555/630
-processed: 556/630
-processed: 557/630
-processed: 558/630
-processed: 559/630
-processed: 560/630
-processed: 561/630
-processed: 562/630
-processed: 563/630
-processed: 564/630
-processed: 565/630
-processed: 566/630
-processed: 567/630
-processed: 568/630
-processed: 569/630
-processed: 570/630
-processed: 571/630
-processed: 572/630
-processed: 573/630
-processed: 574/630
-processed: 575/630
-processed: 576/630
-processed: 577/630
-processed: 578/630
-processed: 579/630
-processed: 580/630
-processed: 581/630
-processed: 582/630
-processed: 583/630
-processed: 584/630
-processed: 585/630
-processed: 586/630
-processed: 587/630
-processed: 588/630
-processed: 589/630
-processed: 590/630
-processed: 591/630
-processed: 592/630
-processed: 593/630
-processed: 594/630
-processed: 595/630
-processed: 596/630
-processed: 597/630
-processed: 598/630
-processed: 599/630
-processed: 600/630
-processed: 601/630
-processed: 602/630
-processed: 603/630
-processed: 604/630
-processed: 605/630
-processed: 606/630
-processed: 607/630
-processed: 608/630
-processed: 609/630
-processed: 610/630
-processed: 611/630
-processed: 612/630
-processed: 613/630
-processed: 614/630
-processed: 615/630
-processed: 616/630
-processed: 617/630
-processed: 618/630
-processed: 619/630
-processed: 620/630
-processed: 621/630
-processed: 622/630
-processed: 623/630
-processed: 624/630
-processed: 625/630
-processed: 626/630
-processed: 627/630
-processed: 628/630
-processed: 629/630
-
-Total structures that match 630/630
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;total_energy&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-array([-13.11874117, -13.12903802, -13.17137952, -13.08021449,
-       -13.16362834, -13.10222821, -13.08156161, -13.15720459,
-       -13.06331364, -13.12062745, -13.17905239, -13.12440631,
-       -13.17411988, -13.20385514, -13.10332586, -13.12882567,
-       -13.13764792, -13.14550215, -13.1109768 , -13.13433355,
-       -13.08290429, -13.15571512, -13.12275268, -13.15715223,
-       -13.09132904, -13.08556145, -13.03954859, -13.12791847,
-       -13.12750551, -13.08865104, -13.05968182, -13.13590795,
-       -13.1004459 , -13.17690217, -13.14593605, -13.11400736,
-       -13.12124423, -13.14953541, -13.12336135, -13.13870288,
-       -13.14821189, -13.02921938, -13.10899456, -13.01145925,
-       -13.02529022, -13.09379601, -13.13166383, -13.06279359,
-       -13.11696813, -13.13820625, -13.07975418, -12.97458318,
-       -13.1316143 , -13.11638331, -13.15155213, -13.0794376 ,
-       -13.13064402, -13.15555385, -13.12331726, -13.10800658,
-       -13.01404902, -13.00900896, -13.09916021, -13.10927153,
-       -13.07672251, -13.13185649, -13.11282708, -13.12167617,
-       -13.04087802, -13.01169684, -13.0587653 , -13.11458426,
-       -12.90934915, -13.0502978 , -13.00419219, -13.10310079,
-       -13.04888816, -13.09223751, -13.17093394, -13.10057156,
-       -13.06968691, -13.09618374, -13.0463362 , -13.05644464,
-       -13.1565299 , -13.15934391, -13.18127829, -13.1192396 ,
-       -13.1157498 , -13.0959997 , -13.06298953, -13.02108122,
-       -13.07427856, -13.11027339, -13.12953357, -13.93821846,
-       -13.98331634, -13.96423646, -12.99992881, -13.09001874,
-       -13.09008873, -13.1069478 , -13.04828666, -13.04175016,
-       -13.07123935, -13.07452567, -13.11729511, -13.09430927,
-       -13.20387125, -13.1578425 , -13.04089833, -13.14134556,
-       -13.17340083, -13.06349639, -13.14546111, -13.1612075 ,
-       -13.10924472, -13.13041667, -13.11130139, -13.1332675 ,
-       -13.16401472, -13.10441333, -13.13344667, -13.11192056,
-       -13.12980389, -13.07824583, -13.14101417, -13.10469306,
-       -13.14541   , -13.14256958, -13.10940667, -13.11275792,
-       -13.080615  , -13.07073   , -13.10594167, -13.10149   ,
-       -13.09036861, -13.14154556, -13.14064333, -13.137325  ,
-       -13.13474111, -13.13045861, -13.13669611, -13.10038056,
-       -13.10118583, -13.07293   , -13.10892   , -13.06265111,
-       -13.12131167, -13.12181917, -13.12554417, -13.14341778,
-       -13.14350333, -13.12254972, -13.14204528, -13.14661278,
-       -13.13789194, -13.08177278, -13.08414111, -13.05187639,
-       -13.09285972, -13.08991806, -13.09019083, -13.11819889,
-       -13.13416222, -13.12714417, -13.13110833, -13.13611889,
-       -13.14361833, -13.13564556, -13.14480778, -13.14591389,
-       -13.15782806, -13.12951917, -13.06116361, -13.07472583,
-       -13.11633444, -13.08863694, -13.11368389, -13.11555417,
-       -13.14010194, -13.12396806, -13.12511389, -13.12287639,
-       -13.13116806, -13.12763139, -13.15545833, -13.10633458,
-       -13.15945417, -13.98041333, -13.92583639, -13.98779472,
-       -13.89786861, -13.88295722, -13.98405972, -14.01766944,
-       -13.99375611, -13.970485  , -14.01760683, -13.975045  ,
-       -13.77921217, -13.976957  , -13.98390317, -13.973006  ,
-       -13.84717633, -13.99055778, -13.6544184 , -13.6210654 ,
-       -13.1185075 , -13.08952583, -13.12549333, -13.12374958,
-       -13.15853875, -13.11807917, -13.34785625, -13.29249208,
-       -13.29037958, -13.31427625, -13.3407625 , -13.33056917,
-       -13.34638083, -13.33701458, -13.34379958, -13.52041208,
-       -13.54455333, -13.50460583, -13.54730667, -13.55183208,
-       -13.55658375, -13.5617875 , -13.74062667, -13.72810792,
-       -13.69105583, -13.704175  , -13.74108667, -13.97290708,
-       -13.97019875, -13.94800417, -13.97185417, -13.95053208,
-       -13.98777875, -13.98162042, -13.09025444, -13.10207972,
-       -13.10203528, -13.09289722, -13.09256   , -13.09419639,
-       -13.13418639, -13.14196944, -13.13465083, -13.14032389,
-       -13.14056444, -13.28789278, -13.23245333, -13.23603722,
-       -13.22986833, -13.21636417, -13.23841556, -13.2503275 ,
-       -13.27673417, -13.28149444, -13.26779   , -13.27011111,
-       -13.24788917, -13.27223944, -13.28348167, -13.28171   ,
-       -13.28310444, -13.29299306, -13.42904667, -13.37137056,
-       -13.34412139, -13.35594528, -13.38306917, -13.31193444,
-       -13.39412222, -13.40913778, -13.4021425 , -13.39436583,
-       -13.4066625 , -13.53865556, -13.44803083, -13.51324194,
-       -13.56212694, -13.53519472, -13.55070917, -13.54523194,
-       -13.5507625 , -13.55167361, -13.55807722, -13.55651472,
-       -13.54634   , -13.54936972, -13.54676417, -13.66570278,
-       -13.6607925 , -13.66662167, -13.60968611, -13.64760139,
-       -13.64959139, -13.68487472, -13.68938139, -13.68563139,
-       -13.68131722, -13.68744278, -13.68599417, -13.6634575 ,
-       -13.81898083, -13.80172361, -13.77560583, -13.78932139,
-       -13.76024556, -13.76752   , -13.79636778, -13.84205917,
-       -13.83469861, -13.83241944, -13.82626917, -13.82558833,
-       -13.81543028, -13.82311083, -13.80582056, -13.98584306,
-       -13.84087833, -13.9681475 , -13.8624    , -13.91771306,
-       -13.90193972, -13.105365  , -13.08356889, -13.09323556,
-       -13.1188525 , -13.12020611, -13.13287028, -13.14320806,
-       -13.13023444, -13.11880667, -13.11299528, -13.13512222,
-       -13.14391361, -13.141115  , -13.28696278, -13.24798972,
-       -13.19752611, -13.20732694, -13.21752972, -13.20022306,
-       -13.24457722, -13.25955306, -13.26468639, -13.26451861,
-       -13.2517325 , -13.25024333, -13.27246167, -13.27950306,
-       -13.27235389, -13.28117444, -13.27712611, -13.27558056,
-       -13.35196444, -13.36560583, -13.36500667, -13.3439825 ,
-       -13.38670417, -13.35645056, -13.40688528, -13.40375944,
-       -13.392525  , -13.39459167, -13.40347056, -13.41443444,
-       -13.4200325 , -13.51571   , -13.51313417, -13.53000472,
-       -13.47688611, -13.55053   , -13.51717694, -13.56226944,
-       -13.70336083, -13.65742556, -13.56850083, -13.61611639,
-       -13.69044306, -13.69806917, -13.68666   , -13.69319528,
-       -13.70045694, -13.70479306, -13.70367278, -13.70002889,
-       -13.70513917, -13.70382917, -13.70004   , -13.85402417,
-       -13.75708417, -13.79200028, -13.76500556, -13.76207056,
-       -13.73069639, -13.7203475 , -13.85400194, -13.85606611,
-       -13.85876917, -13.85539056, -13.846675  , -13.85842861,
-       -13.85376861, -13.85732111, -13.85414944, -13.97238722,
-       -13.94503361, -13.92957194, -13.92370194, -13.96124972,
-       -13.10541722, -13.09848972, -13.10497056, -13.11042861,
-       -13.08541083, -13.1358525 , -13.12282306, -13.13029944,
-       -13.11401222, -13.14186389, -13.14219417, -13.14671083,
-       -13.13504833, -13.27308556, -13.23535972, -13.23477833,
-       -13.19849278, -13.23081361, -13.20476111, -13.24296167,
-       -13.24020889, -13.26645056, -13.27706167, -13.25751556,
-       -13.27586389, -13.2770425 , -13.2710475 , -13.2776975 ,
-       -13.27951278, -13.26014056, -13.2689475 , -13.41926194,
-       -13.36256278, -13.33308306, -13.28647722, -13.37189444,
-       -13.33385556, -13.33259806, -13.38891472, -13.39180111,
-       -13.40184611, -13.38486944, -13.41511528, -13.41874056,
-       -13.41028194, -13.40036417, -13.40212167, -13.42302194,
-       -13.5379725 , -13.45919917, -13.48712444, -13.5112975 ,
-       -13.47293944, -13.55282417, -13.52368833, -13.53029972,
-       -13.54682194, -13.54041833, -13.55521167, -13.54602111,
-       -13.55371778, -13.55351667, -13.5566525 , -13.55854639,
-       -13.68805472, -13.61252972, -13.62291444, -13.66610111,
-       -13.6204725 , -13.696945  , -13.69176139, -13.66676944,
-       -13.66838111, -13.66583194, -13.68540556, -13.68905333,
-       -13.83446611, -13.82631528, -13.768465  , -13.65816444,
-       -13.76284694, -13.7309375 , -13.74123361, -13.81717556,
-       -13.79510889, -13.82381528, -13.82460417, -13.82498944,
-       -13.81519194, -13.83430333, -13.8336575 , -13.82894083,
-       -13.83365139, -13.98717528, -13.96827361, -13.90559083,
-       -13.90611528, -13.88497056, -13.86087194, -13.97315806,
-       -13.9958225 , -13.99543194, -13.93873333, -13.94036   ,
-       -13.07098722, -13.11130222, -13.10844167, -13.08145722,
-       -13.07384917, -13.12605056, -13.11794583, -13.10760583,
-       -13.12773111, -13.14037111, -13.12115389, -13.14041611,
-       -13.137315  , -13.21491278, -13.24539833, -13.20711333,
-       -13.18051111, -13.22668972, -13.2296125 , -13.26500694,
-       -13.24247   , -13.27303444, -13.25489667, -13.25021028,
-       -13.27519306, -13.27714139, -13.2806775 , -13.26994889,
-       -13.27528167, -13.32207583, -13.37016972, -13.392905  ,
-       -13.33471306, -13.3841575 , -13.37723472, -13.40240861,
-       -13.40766694, -13.39726944, -13.38731028, -13.3918025 ,
-       -13.40768083, -13.39792056, -13.39992556, -13.40656944,
-       -13.47546694, -13.45788389, -13.50745194, -13.55029639,
-       -13.52151167, -13.52256639, -13.531935  , -13.50325389,
-       -13.54369444, -13.55103361, -13.54291722, -13.55424861,
-       -13.54699444, -13.55721139, -13.69365778, -13.62617722,
-       -13.56791722, -13.65245   , -13.65468278, -13.64935361,
-       -13.64893917, -13.68513278, -13.65361639, -13.63843917,
-       -13.69744139, -13.69770361, -13.690305  , -13.69283556,
-       -13.68838222, -13.84275417, -13.79533639, -13.7192375 ,
-       -13.79394389, -13.73408   , -13.73262111, -13.81815389,
-       -13.8206    , -13.83320944, -13.82823   , -13.83609167,
-       -13.79211389, -13.85011667, -13.84169833, -13.84496917,
-       -13.83715806, -13.8419975 , -13.92657028, -13.95843972,
-       -13.91344722, -13.83904   , -13.96988389, -13.98643722,
-       -13.98708   , -13.99590444, -13.14453542, -13.35526625,
-       -13.340015  , -13.34658292, -13.35033292, -13.33110625,
-       -13.50697708, -13.54938042, -13.63493375, -13.74114042,
-       -13.60728083, -13.64882417])
-</pre></div></div>
-</div>
-<p>Training a cluster expansion is one of the most critical steps. This is how you get <strong>effective cluster interactions (ECI’s)</strong>. To do so you need an estimator class that implements some form of regression model. In this case we will use simple least squares regression using the <code class="docutils literal notranslate"><span class="pre">LinearRegression</span></code> estimator from <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code>.</p>
-<p>In <code class="docutils literal notranslate"><span class="pre">smol</span></code> the coefficients from the fit are not exactly the ECI’s but the ECI times the multiplicity of their orbit.</p>
-<p>Currently we also have the old l1regs estimator from pyabinitio in <code class="docutils literal notranslate"><span class="pre">smol.learn</span></code> as <code class="docutils literal notranslate"><span class="pre">WDRLasso</span></code>, but it will likely be deprecated and removed at some point…</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-array([[ 1.        , -0.25      ,  0.4330127 , ...,  0.03222656,
-        -0.02283465,  0.01757812],
-       [ 1.        , -0.25      ,  0.4330127 , ...,  0.03125   ,
-        -0.01776029,  0.02636719],
-       [ 1.        , -0.25      ,  0.4330127 , ...,  0.0703125 ,
-        -0.02029747,  0.        ],
-       ...,
-       [ 1.        , -0.4375    , -0.10825318, ..., -0.01041667,
-         0.        ,  0.        ],
-       [ 1.        , -0.4375    , -0.10825318, ..., -0.04166667,
-         0.        ,  0.        ],
-       [ 1.        , -0.4375    , -0.10825318, ...,  0.02083333,
-         0.        ,  0.        ]])
-</pre></div></div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
-<span class="c1"># Set fit_intercept to False because we already do this using</span>
-<span class="c1"># the empty cluster.</span>
-<span class="n">estimator</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">fit_intercept</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">estimator</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span>
-              <span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;total_energy&#39;</span><span class="p">))</span>
-<span class="n">coefs</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">coef_</span>
-</pre></div>
-</div>
-</div>
-<section id="3.1)-Check-the-quality-of-the-fit">
-<h3>3.1) Check the quality of the fit<a class="headerlink" href="#3.1)-Check-the-quality-of-the-fit" title="Permalink to this headline">¶</a></h3>
-<p>There are many ways to evaluate the quality of a fit. The simplest involve stadard training set prediction error metrics. But when evaluating a CE more seriously we need to consider further metrics and how the CE will be used. Here we will just look at in sample mean squared error and max error.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">max_error</span>
-
-<span class="n">train_predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span> <span class="n">coefs</span><span class="p">)</span>
-
-<span class="n">rmse</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;total_energy&#39;</span><span class="p">),</span>
-                          <span class="n">train_predictions</span><span class="p">,</span> <span class="n">squared</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">maxer</span> <span class="o">=</span> <span class="n">max_error</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;total_energy&#39;</span><span class="p">),</span>
-                  <span class="n">train_predictions</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RMSE </span><span class="si">{</span><span class="n">rmse</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MAX </span><span class="si">{</span><span class="n">maxer</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-RMSE 0.013720944562109929 eV/prim
-MAX 0.10238344490559825 eV/prim
-</pre></div></div>
-</div>
-</section>
-</section>
-<section id="4)-The-cluster-expansion">
-<h2>4) The cluster expansion<a class="headerlink" href="#4)-The-cluster-expansion" title="Permalink to this headline">¶</a></h2>
-<p>Now we can use the above work to create the <code class="docutils literal notranslate"><span class="pre">ClusterExpansion</span></code>. The cluster expansion can be used to predict the fitted property for new structures, either for testing quality or for simulations such as in Monte Carlo. Note that when using the <code class="docutils literal notranslate"><span class="pre">predict</span></code> function, the cluster expansion will have to match the given structure if it has not seen it before.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">expansion</span> <span class="o">=</span> <span class="n">ClusterExpansion</span><span class="p">(</span><span class="n">subspace</span><span class="p">,</span>
-                             <span class="n">coefficients</span><span class="o">=</span><span class="n">coefs</span><span class="p">,</span>
-                             <span class="n">feature_matrix</span><span class="o">=</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">)</span>
-
-<span class="n">structure</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">structures</span><span class="p">)</span>
-<span class="n">prediction</span> <span class="o">=</span> <span class="n">expansion</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The predicted energy for a structure with composition &#39;</span>
-      <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">structure</span><span class="o">.</span><span class="n">composition</span><span class="si">}</span><span class="s1"> is </span><span class="si">{</span><span class="n">prediction</span><span class="si">}</span><span class="s1"> eV/prim.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The fitted coefficients are:</span><span class="se">\n</span><span class="si">{</span><span class="n">expansion</span><span class="o">.</span><span class="n">coefs</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The effective cluster interactions are:</span><span class="se">\n</span><span class="si">{</span><span class="n">expansion</span><span class="o">.</span><span class="n">eci</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">expansion</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-The predicted energy for a structure with composition Li+24 Ti4+12 O2-36 is -13.987300872802734 eV/prim.
-
-The fitted coefficients are:
-[-1.35544505e+11 -3.38861262e+11  1.17384984e+11  7.93254683e-01
- -5.29937743e-01  1.55309988e-01  4.38745099e-01 -2.09149650e-01
-  5.71362778e-02  1.99013562e-01  1.62974586e-01 -1.10869341e-01
-  1.44048300e-01  6.10350667e-02 -3.39717283e-02  2.38907852e-01
- -1.30464459e-01 -1.23158891e-02 -2.50362531e-01 -1.03629705e-01
-  4.50214013e-01  7.77798931e-02 -6.63667219e-02 -1.05671815e-01
-  2.82000038e-01  1.38565502e-01 -1.30884770e-01]
-
-The effective cluster interactions are:
-[-1.35544505e+11 -3.38861262e+11  1.17384984e+11  1.32209114e-01
- -8.83229572e-02  2.58849980e-02  1.46248366e-01 -6.97165500e-02
-  1.90454259e-02  1.65844635e-02  1.35812155e-02 -9.23911179e-03
-  2.40080499e-02  1.01725111e-02 -5.66195471e-03  1.99089877e-02
- -1.08720382e-02 -1.02632409e-03 -3.12953163e-02 -1.29537132e-02
-  5.62767516e-02  9.72248664e-03 -3.31833610e-02 -5.28359074e-02
-  1.41000019e-01  6.92827509e-02 -6.54423852e-02]
-
-ClusterExpansion:
-    Prim Composition: Li+0.33333333 Mn3+0.33333333 Ti4+0.33333333 O2-1
- Num fit structures: 630
-Num orbit functions: 27
-    [Orbit]  id: 0
-        bit       eci
-        [X]       -1.36e+11
-    [Orbit]  id: 1   size: 1   radius: 0.0
-        id    bit       eci     feature avg  feature std  eci*std
-        1     [0]       -338861261544.998-0.337       0.089        -30176455109.588
-        2     [1]       117384984343.9190.182        0.257        30176455109.936
-    [Orbit]  id: 3   size: 2   radius: 2.97
-        id    bit       eci     feature avg  feature std  eci*std
-        3     [0 0]     0.793   0.049        0.080        0.064
-        4     [0 1]     -0.530  -0.050       0.115        -0.061
-        5     [1 1]     0.155   0.085        0.069        0.011
-    [Orbit]  id: 6   size: 2   radius: 4.2
-        id    bit       eci     feature avg  feature std  eci*std
-        6     [0 0]     0.439   0.089        0.108        0.047
-        7     [0 1]     -0.209  -0.029       0.112        -0.023
-        8     [1 1]     0.057   0.094        0.086        0.005
-    [Orbit]  id: 9   size: 2   radius: 5.14
-        id    bit       eci     feature avg  feature std  eci*std
-        9     [0 0]     0.199   0.163        0.083        0.016
-        10    [0 1]     0.163   -0.035       0.074        0.012
-        11    [1 1]     -0.111  0.099        0.089        -0.010
-    [Orbit]  id: 12  size: 2   radius: 5.94
-        id    bit       eci     feature avg  feature std  eci*std
-        12    [0 0]     0.144   0.117        0.131        0.019
-        13    [0 1]     0.061   -0.048       0.094        0.006
-        14    [1 1]     -0.034  0.097        0.080        -0.003
-    [Orbit]  id: 15  size: 2   radius: 6.64
-        id    bit       eci     feature avg  feature std  eci*std
-        15    [0 0]     0.239   0.105        0.081        0.019
-        16    [0 1]     -0.130  -0.045       0.093        -0.012
-        17    [1 1]     -0.012  0.093        0.078        -0.001
-    [Orbit]  id: 18  size: 3   radius: 2.97
-        id    bit       eci     feature avg  feature std  eci*std
-        18    [0 0 0]   -0.250  0.031        0.055        -0.014
-        19    [0 0 1]   -0.104  -0.009       0.039        -0.004
-        20    [0 1 1]   0.450   -0.043       0.035        0.016
-        21    [1 1 1]   0.078   0.021        0.028        0.002
-    [Orbit]  id: 22  size: 4   radius: 2.97
-        id    bit       eci     feature avg  feature std  eci*std
-        22    [0 0 0 0] -0.066  -0.011       0.085        -0.006
-        23    [0 0 0 1] -0.106  0.026        0.048        -0.005
-        24    [0 0 1 1] 0.282   0.017        0.027        0.008
-        25    [0 1 1 1] 0.139   -0.012       0.018        0.003
-        26    [1 1 1 1] -0.131  0.005        0.012        -0.002
-
-</pre></div></div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/anaconda3/lib/python3.7/site-packages/ipykernel_launcher.py:5: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify &#39;dtype=object&#39; when creating the ndarray
-  &#34;&#34;&#34;
-</pre></div></div>
-</div>
-</section>
-<section id="5)-Saving-your-work">
-<h2>5) Saving your work<a class="headerlink" href="#5)-Saving-your-work" title="Permalink to this headline">¶</a></h2>
-<p>All core classes in <code class="docutils literal notranslate"><span class="pre">smol</span></code> are <code class="docutils literal notranslate"><span class="pre">MSONables</span></code> and so can be saved using their <code class="docutils literal notranslate"><span class="pre">as_dict</span></code> methods or better yet with <code class="docutils literal notranslate"><span class="pre">monty.serialization.dumpfn</span></code>.</p>
-<p>Currently there is also a convenience function in <code class="docutils literal notranslate"><span class="pre">smol</span></code> that will nicely save all of your work for you in a standardized way. Work saved with the <code class="docutils literal notranslate"><span class="pre">save_work</span></code> function is saved as a dictionary with standardized names for the classes. Since a work flow should only contain 1 of each core classes the function will complain if you give it two of the same class (i.e. two wranglers)</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">smol.io</span> <span class="kn">import</span> <span class="n">load_work</span><span class="p">,</span> <span class="n">save_work</span>
-
-<span class="n">file_path</span> <span class="o">=</span> <span class="s1">&#39;data/LMTO_sinusoid.mson&#39;</span>
-<span class="c1"># we can save the subspace as well, but since both the wrangler</span>
-<span class="c1"># and the expansion have it, there is no need to do so.</span>
-<span class="n">save_work</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">wrangler</span><span class="p">,</span> <span class="n">expansion</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<section id="5.1)-Loading-previously-saved-work">
-<h3>5.1) Loading previously saved work<a class="headerlink" href="#5.1)-Loading-previously-saved-work" title="Permalink to this headline">¶</a></h3>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">smol.io</span> <span class="kn">import</span> <span class="n">load_work</span><span class="p">,</span> <span class="n">save_work</span>
-
-<span class="n">work</span> <span class="o">=</span> <span class="n">load_work</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">work</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-StructureWrangler: &lt;class &#39;smol.cofe.wrangler.StructureWrangler&#39;&gt;
-
-ClusterExpansion: &lt;class &#39;smol.cofe.expansion.ClusterExpansion&#39;&gt;
-
-</pre></div></div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>
-</pre></div>
-</div>
-</div>
-</section>
-</section>
-</section>
+  <dl>
+<dt>{</dt><dd><dl>
+<dt>“cells”: [</dt><dd><dl>
+<dt>{</dt><dd><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“# Creating a basic Cluster Expansion”</p>
+</div></blockquote>
+<p>]</p>
+</dd>
+</dl>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: 1,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“import numpy as npn”,
+“import jsonn”,
+“from pymatgen.core.structure import Structuren”,
+“from smol.cofe import ClusterSubspace, StructureWrangler, ClusterExpansion”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: 2,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“prim = Structure.from_file(‘../data/LiF.cif’)n”,
+“ro = {‘Li+’:{‘Li+’:1/3, ‘Mn3+’:1/3,  ‘Ti4+’:1/3}, ‘F-‘:{‘O2-‘:1.0}}n”,
+“n”,
+“prim.replace_species(ro)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“Loading the DFT data of Li-Mn-Ti-O system”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: 3,
+“metadata”: {},
+“outputs”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><p>“name”: “stdout”,
+“output_type”: “stream”,
+“text”: [</p>
+<blockquote>
+<div><p>“630/630 structures map to the latticen”</p>
+</div></blockquote>
+<p>]</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>],
+“source”: [</p>
+<blockquote>
+<div><p>“n”,
+“calc_data = []n”,
+“# calc_indices = []n”,
+“n”,
+“with open(‘./data/MnTi_O.json’, ‘r’) as fin: calc_data = json.loads(fin.read())n”,
+“n”,
+“n”,
+“# print(calc_data)n”,
+“n”,
+“valid_structs = []n”,
+“weights = []n”,
+“for calc_i, calc in enumerate(calc_data):n”,
+“n”,
+”    struct = Structure.from_dict(calc[‘s’])n”,
+”    valid_structs.append((struct, calc[‘toten’]))n”,
+“n”,
+“print(&quot;{}/{} structures map to the lattice&quot;.format(len(valid_structs), len(calc_data)))”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“### 0) The prim structuren”,
+“The prim structure defines the <strong>configurational space</strong> for the Cluster Expansion. n”,
+“The <strong>configurational space</strong> is defined by the site <strong>compositional spaces</strong> and the crystal symetries of the prim structure.n”,
+“The occupancy of the sites determine site <strong>compositional spaces</strong>. Sites are <strong>active</strong> if they have compositional degrees of freedom.n”,
+“n”,
+“n”,
+“Active sites have fractional compositions. Vacancies are allowed in sites where the composition does not sum to one.n”,
+“n”,
+“0. Is active. The allowed species are: Li+ and vacancies.n”,
+“1. Is active. The allowed species are: Ni3+ and Ni4+.n”,
+“2. Is not active. Only O2- is allowed.n”,
+“3. Is not active. Only O2- is allowed.”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: 4,
+“metadata”: {},
+“outputs”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><p>“name”: “stdout”,
+“output_type”: “stream”,
+“text”: [</p>
+<blockquote>
+<div><p>“Full Formula (Li0.33333333 Ti0.33333333 Mn0.33333333 O1)n”,
+“Reduced Formula: Li0.33333333Ti0.33333333Mn0.33333333O1n”,
+“abc   :   2.969848   2.969848   2.969848n”,
+“angles:  60.000000  60.000000  60.000000n”,
+“Sites (2)n”,
+”  #  SP                                   a    b    cn”,
+“—  ———————————  —  —  —n”,
+”  0  Li+:0.333, Ti4+:0.333, Mn3+:0.333  0    0    0n”,
+”  1  O2-                                0.5  0.5  0.5n”</p>
+</div></blockquote>
+<p>]</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>],
+“source”: [</p>
+<blockquote>
+<div><p>“print(prim)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“### 1) The cluster subspacen”,
+“The <cite>ClusterSubspace</cite> represents all the orbits (groups of equivalent clusters) that will be considered when fitting the cluster expansion. Its main purpose is to compute the <strong>correlations functions</strong> for each included orbit given a structure in the compositional space defined by the prim.n”,
+“n”,
+“In order to do be able to compute the correlation functions, the given structure must match the prim structure in a &quot;crystallographic&quot; sense but allowing for compositional degrees of freedom in the &quot;active&quot; sites.n”,
+“n”,
+“A cluster subspace most easily created by providing:n”,
+“1. The prim structure representing the configurational space.n”,
+“2. A set of cutoff radii for each size of orbit we want to consider.n”,
+“3. A type of site basis function to use.n”,
+“n”,
+“There are more options allowed by the code to fine grain and tune. See other notebooks for advanced use cases.”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: 6,
+“metadata”: {},
+“outputs”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><p>“name”: “stdout”,
+“output_type”: “stream”,
+“text”: [</p>
+<blockquote>
+<div><p>“ClusterBasis: [Prim Composition] Li+0.33333333 Mn3+0.33333333 Ti4+0.33333333 O2-1n”,
+”    [Size] 0n”,
+”      [Orbit] id: 0  orderings: 1n”,
+”    [Size] 1n”,
+”      [Orbit] id: 1  orderings: 2   multiplicity: 1    no. symops: 48  n”,
+”              [Base Cluster] Radius: 0.0   Centroid: [0. 0. 0.]         Points: [[0. 0. 0.]]         n”,
+”    [Size] 2n”,
+”      [Orbit] id: 2  orderings: 3   multiplicity: 6    no. symops: 8   n”,
+”              [Base Cluster] Radius: 2.97  Centroid: [0.  0.  0.5]      Points: [[0. 0. 1.]  [0. 0. 0.]]                  n”,
+”      [Orbit] id: 3  orderings: 3   multiplicity: 3    no. symops: 16  n”,
+”              [Base Cluster] Radius: 4.2   Centroid: [0.5 0.5 0.5]      Points: [[1. 1. 0.]  [0. 0. 1.]]                  n”,
+”      [Orbit] id: 4  orderings: 3   multiplicity: 12   no. symops: 4   n”,
+”              [Base Cluster] Radius: 5.14  Centroid: [0.  0.5 0.5]      Points: [[0. 1. 1.]  [0. 0. 0.]]                  n”,
+”      [Orbit] id: 5  orderings: 3   multiplicity: 6    no. symops: 8   n”,
+”              [Base Cluster] Radius: 5.94  Centroid: [0. 0. 0.]         Points: [[ 0.  0.  1.]  [ 0.  0. -1.]]            n”,
+”      [Orbit] id: 6  orderings: 3   multiplicity: 12   no. symops: 4   n”,
+”              [Base Cluster] Radius: 6.64  Centroid: [0.5 0.  0.5]      Points: [[ 1.  1.  0.]  [ 0. -1.  1.]]            n”,
+”    [Size] 3n”,
+”      [Orbit] id: 7  orderings: 4   multiplicity: 8    no. symops: 6   n”,
+”              [Base Cluster] Radius: 2.97  Centroid: [0.   0.67 0.67]   Points: [[0. 1. 1.]  [0. 1. 0.]  [0. 0. 1.]]                           n”,
+”    [Size] 4n”,
+”      [Orbit] id: 8  orderings: 5   multiplicity: 2    no. symops: 24  n”,
+”              [Base Cluster] Radius: 2.97  Centroid: [0.75 0.75 0.75]   Points: [[1. 1. 1.]  [1. 1. 0.]  [1. 0. 1.]  [0. 1. 1.]]                                    n”,
+“n”</p>
+</div></blockquote>
+<p>]</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>],
+“source”: [</p>
+<blockquote>
+<div><p>“subspace = ClusterSubspace.from_radii(prim,n”,
+”                                      radii={2: 7.1, 3: 4, 4:4}, # will include orbits of 2 and 3 sites.n”,
+”                                      basis=’sinusoid’,n”,
+”                                      supercell_size=’volume’)n”,
+“n”,
+“# supercell_size specifies the method to determine the supercell sizen”,
+“# when trying to match a structure.n”,
+“# (See pymatgen.structure_mathcer.StructureMatcher for more info)n”,
+“n”,
+“# subspace.add_external_term(EwaldTerm(eta=None))n”,
+“n”,
+“print(subspace) # single site and empty orbits are always included.”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“#### 1.1) Computing a correlation vector.n”,
+“A correlation vector for a specific structure (represents the feature vector) used to train and predict target values.”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: 7,
+“metadata”: {},
+“outputs”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><p>“name”: “stdout”,
+“output_type”: “stream”,
+“text”: [</p>
+<blockquote>
+<div><p>“The correlation vector for a structure with composition Li+16 Mn3+16 O2-32 is: n”,
+“[ 1.         -0.25        0.4330127  -0.0078125  -0.14884812  0.1640625n”,
+”  0.109375   -0.08118988  0.203125    0.0859375  -0.09472153  0.1953125n”,
+”  0.0625     -0.10825318  0.1875     -0.0078125  -0.14884812  0.1640625n”,
+”  0.05029297  0.02452611 -0.07177734  0.05328086  0.00390625  0.03129193n”,
+”  0.03222656 -0.02283465  0.01757812]n”</p>
+</div></blockquote>
+<p>]</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>],
+“source”: [</p>
+<blockquote>
+<div><p>“structure = Structure.from_dict(calc_data[0][‘s’])n”,
+“corr = subspace.corr_from_structure(structure)n”,
+“n”,
+“print(f’The correlation vector for a structure with’n”,
+”      f’ composition {structure.composition} is: ‘n”,
+”      f’\n{corr}’)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“### 2) The structure wranglern”,
+“The <cite>StructureWrangler</cite> is a class that will is used to create and organize the data that will be used to train (and possibly test) the cluster expansion. It makes sure that all the supplied structures appropriately match the prim structure, and obtains the necessary information to correctly normalize target properties (such as energy) necessary for training.n”,
+“n”,
+“Matching relaxed structures can be a tricky problem, especially for ionic systems with vacancies. See the notebook on structure matching for tips on how to tweak parameters.”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: 8,
+“metadata”: {</p>
+<blockquote>
+<div><p>“scrolled”: true</p>
+</div></blockquote>
+<p>},
+“outputs”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><p>“name”: “stdout”,
+“output_type”: “stream”,
+“text”: [</p>
+<blockquote>
+<div><p>“processed: 0/630n”,
+“processed: 1/630n”,
+“processed: 2/630n”,
+“processed: 3/630n”,
+“processed: 4/630n”,
+“processed: 5/630n”,
+“processed: 6/630n”,
+“processed: 7/630n”,
+“processed: 8/630n”,
+“processed: 9/630n”,
+“processed: 10/630n”,
+“processed: 11/630n”,
+“processed: 12/630n”,
+“processed: 13/630n”,
+“processed: 14/630n”,
+“processed: 15/630n”,
+“processed: 16/630n”,
+“processed: 17/630n”,
+“processed: 18/630n”,
+“processed: 19/630n”,
+“processed: 20/630n”,
+“processed: 21/630n”,
+“processed: 22/630n”,
+“processed: 23/630n”,
+“processed: 24/630n”,
+“processed: 25/630n”,
+“processed: 26/630n”,
+“processed: 27/630n”,
+“processed: 28/630n”,
+“processed: 29/630n”,
+“processed: 30/630n”,
+“processed: 31/630n”,
+“processed: 32/630n”,
+“processed: 33/630n”,
+“processed: 34/630n”,
+“processed: 35/630n”,
+“processed: 36/630n”,
+“processed: 37/630n”,
+“processed: 38/630n”,
+“processed: 39/630n”,
+“processed: 40/630n”,
+“processed: 41/630n”,
+“processed: 42/630n”,
+“processed: 43/630n”,
+“processed: 44/630n”,
+“processed: 45/630n”,
+“processed: 46/630n”,
+“processed: 47/630n”,
+“processed: 48/630n”,
+“processed: 49/630n”,
+“processed: 50/630n”,
+“processed: 51/630n”,
+“processed: 52/630n”,
+“processed: 53/630n”,
+“processed: 54/630n”,
+“processed: 55/630n”,
+“processed: 56/630n”,
+“processed: 57/630n”,
+“processed: 58/630n”,
+“processed: 59/630n”,
+“processed: 60/630n”,
+“processed: 61/630n”,
+“processed: 62/630n”,
+“processed: 63/630n”,
+“processed: 64/630n”,
+“processed: 65/630n”,
+“processed: 66/630n”,
+“processed: 67/630n”,
+“processed: 68/630n”,
+“processed: 69/630n”,
+“processed: 70/630n”,
+“processed: 71/630n”,
+“processed: 72/630n”,
+“processed: 73/630n”,
+“processed: 74/630n”,
+“processed: 75/630n”,
+“processed: 76/630n”,
+“processed: 77/630n”,
+“processed: 78/630n”,
+“processed: 79/630n”,
+“processed: 80/630n”,
+“processed: 81/630n”,
+“processed: 82/630n”,
+“processed: 83/630n”,
+“processed: 84/630n”,
+“processed: 85/630n”,
+“processed: 86/630n”,
+“processed: 87/630n”,
+“processed: 88/630n”,
+“processed: 89/630n”,
+“processed: 90/630n”,
+“processed: 91/630n”,
+“processed: 92/630n”,
+“processed: 93/630n”,
+“processed: 94/630n”,
+“processed: 95/630n”,
+“processed: 96/630n”,
+“processed: 97/630n”,
+“processed: 98/630n”,
+“processed: 99/630n”,
+“processed: 100/630n”,
+“processed: 101/630n”,
+“processed: 102/630n”,
+“processed: 103/630n”,
+“processed: 104/630n”,
+“processed: 105/630n”,
+“processed: 106/630n”,
+“processed: 107/630n”,
+“processed: 108/630n”,
+“processed: 109/630n”,
+“processed: 110/630n”,
+“processed: 111/630n”,
+“processed: 112/630n”,
+“processed: 113/630n”,
+“processed: 114/630n”,
+“processed: 115/630n”,
+“processed: 116/630n”,
+“processed: 117/630n”,
+“processed: 118/630n”,
+“processed: 119/630n”,
+“processed: 120/630n”,
+“processed: 121/630n”,
+“processed: 122/630n”,
+“processed: 123/630n”,
+“processed: 124/630n”,
+“processed: 125/630n”,
+“processed: 126/630n”,
+“processed: 127/630n”,
+“processed: 128/630n”,
+“processed: 129/630n”,
+“processed: 130/630n”,
+“processed: 131/630n”,
+“processed: 132/630n”,
+“processed: 133/630n”,
+“processed: 134/630n”,
+“processed: 135/630n”,
+“processed: 136/630n”,
+“processed: 137/630n”,
+“processed: 138/630n”,
+“processed: 139/630n”,
+“processed: 140/630n”,
+“processed: 141/630n”,
+“processed: 142/630n”,
+“processed: 143/630n”,
+“processed: 144/630n”,
+“processed: 145/630n”,
+“processed: 146/630n”,
+“processed: 147/630n”,
+“processed: 148/630n”,
+“processed: 149/630n”,
+“processed: 150/630n”,
+“processed: 151/630n”,
+“processed: 152/630n”,
+“processed: 153/630n”,
+“processed: 154/630n”,
+“processed: 155/630n”,
+“processed: 156/630n”,
+“processed: 157/630n”,
+“processed: 158/630n”,
+“processed: 159/630n”,
+“processed: 160/630n”,
+“processed: 161/630n”,
+“processed: 162/630n”,
+“processed: 163/630n”,
+“processed: 164/630n”,
+“processed: 165/630n”,
+“processed: 166/630n”,
+“processed: 167/630n”,
+“processed: 168/630n”,
+“processed: 169/630n”,
+“processed: 170/630n”,
+“processed: 171/630n”,
+“processed: 172/630n”,
+“processed: 173/630n”,
+“processed: 174/630n”,
+“processed: 175/630n”,
+“processed: 176/630n”,
+“processed: 177/630n”,
+“processed: 178/630n”,
+“processed: 179/630n”,
+“processed: 180/630n”,
+“processed: 181/630n”,
+“processed: 182/630n”,
+“processed: 183/630n”,
+“processed: 184/630n”,
+“processed: 185/630n”,
+“processed: 186/630n”,
+“processed: 187/630n”,
+“processed: 188/630n”,
+“processed: 189/630n”,
+“processed: 190/630n”,
+“processed: 191/630n”,
+“processed: 192/630n”,
+“processed: 193/630n”,
+“processed: 194/630n”,
+“processed: 195/630n”,
+“processed: 196/630n”,
+“processed: 197/630n”,
+“processed: 198/630n”,
+“processed: 199/630n”,
+“processed: 200/630n”,
+“processed: 201/630n”,
+“processed: 202/630n”,
+“processed: 203/630n”,
+“processed: 204/630n”,
+“processed: 205/630n”,
+“processed: 206/630n”,
+“processed: 207/630n”,
+“processed: 208/630n”,
+“processed: 209/630n”,
+“processed: 210/630n”,
+“processed: 211/630n”,
+“processed: 212/630n”,
+“processed: 213/630n”,
+“processed: 214/630n”,
+“processed: 215/630n”,
+“processed: 216/630n”,
+“processed: 217/630n”,
+“processed: 218/630n”,
+“processed: 219/630n”,
+“processed: 220/630n”,
+“processed: 221/630n”,
+“processed: 222/630n”,
+“processed: 223/630n”,
+“processed: 224/630n”,
+“processed: 225/630n”,
+“processed: 226/630n”,
+“processed: 227/630n”,
+“processed: 228/630n”,
+“processed: 229/630n”,
+“processed: 230/630n”,
+“processed: 231/630n”,
+“processed: 232/630n”,
+“processed: 233/630n”,
+“processed: 234/630n”,
+“processed: 235/630n”,
+“processed: 236/630n”,
+“processed: 237/630n”,
+“processed: 238/630n”,
+“processed: 239/630n”,
+“processed: 240/630n”,
+“processed: 241/630n”,
+“processed: 242/630n”,
+“processed: 243/630n”,
+“processed: 244/630n”,
+“processed: 245/630n”,
+“processed: 246/630n”,
+“processed: 247/630n”,
+“processed: 248/630n”,
+“processed: 249/630n”,
+“processed: 250/630n”,
+“processed: 251/630n”,
+“processed: 252/630n”,
+“processed: 253/630n”,
+“processed: 254/630n”,
+“processed: 255/630n”,
+“processed: 256/630n”,
+“processed: 257/630n”,
+“processed: 258/630n”,
+“processed: 259/630n”,
+“processed: 260/630n”,
+“processed: 261/630n”,
+“processed: 262/630n”,
+“processed: 263/630n”,
+“processed: 264/630n”,
+“processed: 265/630n”,
+“processed: 266/630n”,
+“processed: 267/630n”,
+“processed: 268/630n”,
+“processed: 269/630n”,
+“processed: 270/630n”,
+“processed: 271/630n”,
+“processed: 272/630n”,
+“processed: 273/630n”,
+“processed: 274/630n”,
+“processed: 275/630n”,
+“processed: 276/630n”,
+“processed: 277/630n”,
+“processed: 278/630n”,
+“processed: 279/630n”,
+“processed: 280/630n”,
+“processed: 281/630n”,
+“processed: 282/630n”,
+“processed: 283/630n”,
+“processed: 284/630n”,
+“processed: 285/630n”,
+“processed: 286/630n”,
+“processed: 287/630n”,
+“processed: 288/630n”,
+“processed: 289/630n”,
+“processed: 290/630n”,
+“processed: 291/630n”,
+“processed: 292/630n”,
+“processed: 293/630n”,
+“processed: 294/630n”,
+“processed: 295/630n”,
+“processed: 296/630n”,
+“processed: 297/630n”,
+“processed: 298/630n”,
+“processed: 299/630n”,
+“processed: 300/630n”,
+“processed: 301/630n”,
+“processed: 302/630n”,
+“processed: 303/630n”,
+“processed: 304/630n”,
+“processed: 305/630n”,
+“processed: 306/630n”,
+“processed: 307/630n”,
+“processed: 308/630n”,
+“processed: 309/630n”,
+“processed: 310/630n”,
+“processed: 311/630n”,
+“processed: 312/630n”,
+“processed: 313/630n”,
+“processed: 314/630n”,
+“processed: 315/630n”,
+“processed: 316/630n”,
+“processed: 317/630n”,
+“processed: 318/630n”,
+“processed: 319/630n”,
+“processed: 320/630n”,
+“processed: 321/630n”,
+“processed: 322/630n”,
+“processed: 323/630n”,
+“processed: 324/630n”,
+“processed: 325/630n”,
+“processed: 326/630n”,
+“processed: 327/630n”,
+“processed: 328/630n”,
+“processed: 329/630n”,
+“processed: 330/630n”,
+“processed: 331/630n”,
+“processed: 332/630n”,
+“processed: 333/630n”,
+“processed: 334/630n”,
+“processed: 335/630n”,
+“processed: 336/630n”,
+“processed: 337/630n”,
+“processed: 338/630n”,
+“processed: 339/630n”,
+“processed: 340/630n”,
+“processed: 341/630n”,
+“processed: 342/630n”,
+“processed: 343/630n”,
+“processed: 344/630n”,
+“processed: 345/630n”,
+“processed: 346/630n”,
+“processed: 347/630n”,
+“processed: 348/630n”,
+“processed: 349/630n”,
+“processed: 350/630n”,
+“processed: 351/630n”,
+“processed: 352/630n”,
+“processed: 353/630n”,
+“processed: 354/630n”,
+“processed: 355/630n”,
+“processed: 356/630n”,
+“processed: 357/630n”,
+“processed: 358/630n”,
+“processed: 359/630n”,
+“processed: 360/630n”,
+“processed: 361/630n”,
+“processed: 362/630n”,
+“processed: 363/630n”,
+“processed: 364/630n”,
+“processed: 365/630n”,
+“processed: 366/630n”,
+“processed: 367/630n”,
+“processed: 368/630n”,
+“processed: 369/630n”,
+“processed: 370/630n”,
+“processed: 371/630n”,
+“processed: 372/630n”,
+“processed: 373/630n”,
+“processed: 374/630n”,
+“processed: 375/630n”,
+“processed: 376/630n”,
+“processed: 377/630n”,
+“processed: 378/630n”,
+“processed: 379/630n”,
+“processed: 380/630n”,
+“processed: 381/630n”,
+“processed: 382/630n”,
+“processed: 383/630n”,
+“processed: 384/630n”,
+“processed: 385/630n”,
+“processed: 386/630n”,
+“processed: 387/630n”,
+“processed: 388/630n”,
+“processed: 389/630n”,
+“processed: 390/630n”,
+“processed: 391/630n”,
+“processed: 392/630n”,
+“processed: 393/630n”,
+“processed: 394/630n”,
+“processed: 395/630n”,
+“processed: 396/630n”,
+“processed: 397/630n”,
+“processed: 398/630n”,
+“processed: 399/630n”,
+“processed: 400/630n”,
+“processed: 401/630n”,
+“processed: 402/630n”,
+“processed: 403/630n”,
+“processed: 404/630n”,
+“processed: 405/630n”,
+“processed: 406/630n”,
+“processed: 407/630n”,
+“processed: 408/630n”,
+“processed: 409/630n”,
+“processed: 410/630n”,
+“processed: 411/630n”,
+“processed: 412/630n”,
+“processed: 413/630n”,
+“processed: 414/630n”,
+“processed: 415/630n”,
+“processed: 416/630n”,
+“processed: 417/630n”,
+“processed: 418/630n”,
+“processed: 419/630n”,
+“processed: 420/630n”,
+“processed: 421/630n”,
+“processed: 422/630n”,
+“processed: 423/630n”,
+“processed: 424/630n”,
+“processed: 425/630n”,
+“processed: 426/630n”,
+“processed: 427/630n”,
+“processed: 428/630n”,
+“processed: 429/630n”,
+“processed: 430/630n”,
+“processed: 431/630n”,
+“processed: 432/630n”,
+“processed: 433/630n”,
+“processed: 434/630n”,
+“processed: 435/630n”,
+“processed: 436/630n”,
+“processed: 437/630n”,
+“processed: 438/630n”,
+“processed: 439/630n”</p>
+</div></blockquote>
+<p>]</p>
+</dd>
+</dl>
+<p>},
+{</p>
+<blockquote>
+<div><p>“name”: “stdout”,
+“output_type”: “stream”,
+“text”: [</p>
+<blockquote>
+<div><p>“processed: 440/630n”,
+“processed: 441/630n”,
+“processed: 442/630n”,
+“processed: 443/630n”,
+“processed: 444/630n”,
+“processed: 445/630n”,
+“processed: 446/630n”,
+“processed: 447/630n”,
+“processed: 448/630n”,
+“processed: 449/630n”,
+“processed: 450/630n”,
+“processed: 451/630n”,
+“processed: 452/630n”,
+“processed: 453/630n”,
+“processed: 454/630n”,
+“processed: 455/630n”,
+“processed: 456/630n”,
+“processed: 457/630n”,
+“processed: 458/630n”,
+“processed: 459/630n”,
+“processed: 460/630n”,
+“processed: 461/630n”,
+“processed: 462/630n”,
+“processed: 463/630n”,
+“processed: 464/630n”,
+“processed: 465/630n”,
+“processed: 466/630n”,
+“processed: 467/630n”,
+“processed: 468/630n”,
+“processed: 469/630n”,
+“processed: 470/630n”,
+“processed: 471/630n”,
+“processed: 472/630n”,
+“processed: 473/630n”,
+“processed: 474/630n”,
+“processed: 475/630n”,
+“processed: 476/630n”,
+“processed: 477/630n”,
+“processed: 478/630n”,
+“processed: 479/630n”,
+“processed: 480/630n”,
+“processed: 481/630n”,
+“processed: 482/630n”,
+“processed: 483/630n”,
+“processed: 484/630n”,
+“processed: 485/630n”,
+“processed: 486/630n”,
+“processed: 487/630n”,
+“processed: 488/630n”,
+“processed: 489/630n”,
+“processed: 490/630n”,
+“processed: 491/630n”,
+“processed: 492/630n”,
+“processed: 493/630n”,
+“processed: 494/630n”,
+“processed: 495/630n”,
+“processed: 496/630n”,
+“processed: 497/630n”,
+“processed: 498/630n”,
+“processed: 499/630n”,
+“processed: 500/630n”,
+“processed: 501/630n”,
+“processed: 502/630n”,
+“processed: 503/630n”,
+“processed: 504/630n”,
+“processed: 505/630n”,
+“processed: 506/630n”,
+“processed: 507/630n”,
+“processed: 508/630n”,
+“processed: 509/630n”,
+“processed: 510/630n”,
+“processed: 511/630n”,
+“processed: 512/630n”,
+“processed: 513/630n”,
+“processed: 514/630n”,
+“processed: 515/630n”,
+“processed: 516/630n”,
+“processed: 517/630n”,
+“processed: 518/630n”,
+“processed: 519/630n”,
+“processed: 520/630n”,
+“processed: 521/630n”,
+“processed: 522/630n”,
+“processed: 523/630n”,
+“processed: 524/630n”,
+“processed: 525/630n”,
+“processed: 526/630n”,
+“processed: 527/630n”,
+“processed: 528/630n”,
+“processed: 529/630n”,
+“processed: 530/630n”,
+“processed: 531/630n”,
+“processed: 532/630n”,
+“processed: 533/630n”,
+“processed: 534/630n”,
+“processed: 535/630n”,
+“processed: 536/630n”,
+“processed: 537/630n”,
+“processed: 538/630n”,
+“processed: 539/630n”,
+“processed: 540/630n”,
+“processed: 541/630n”,
+“processed: 542/630n”,
+“processed: 543/630n”,
+“processed: 544/630n”,
+“processed: 545/630n”,
+“processed: 546/630n”,
+“processed: 547/630n”,
+“processed: 548/630n”,
+“processed: 549/630n”,
+“processed: 550/630n”,
+“processed: 551/630n”,
+“processed: 552/630n”,
+“processed: 553/630n”,
+“processed: 554/630n”,
+“processed: 555/630n”,
+“processed: 556/630n”,
+“processed: 557/630n”,
+“processed: 558/630n”,
+“processed: 559/630n”,
+“processed: 560/630n”,
+“processed: 561/630n”,
+“processed: 562/630n”,
+“processed: 563/630n”,
+“processed: 564/630n”,
+“processed: 565/630n”,
+“processed: 566/630n”,
+“processed: 567/630n”,
+“processed: 568/630n”,
+“processed: 569/630n”,
+“processed: 570/630n”,
+“processed: 571/630n”,
+“processed: 572/630n”,
+“processed: 573/630n”,
+“processed: 574/630n”,
+“processed: 575/630n”,
+“processed: 576/630n”,
+“processed: 577/630n”,
+“processed: 578/630n”,
+“processed: 579/630n”,
+“processed: 580/630n”,
+“processed: 581/630n”,
+“processed: 582/630n”,
+“processed: 583/630n”,
+“processed: 584/630n”,
+“processed: 585/630n”,
+“processed: 586/630n”,
+“processed: 587/630n”,
+“processed: 588/630n”,
+“processed: 589/630n”,
+“processed: 590/630n”,
+“processed: 591/630n”,
+“processed: 592/630n”,
+“processed: 593/630n”,
+“processed: 594/630n”,
+“processed: 595/630n”,
+“processed: 596/630n”,
+“processed: 597/630n”,
+“processed: 598/630n”,
+“processed: 599/630n”,
+“processed: 600/630n”,
+“processed: 601/630n”,
+“processed: 602/630n”,
+“processed: 603/630n”,
+“processed: 604/630n”,
+“processed: 605/630n”,
+“processed: 606/630n”,
+“processed: 607/630n”,
+“processed: 608/630n”,
+“processed: 609/630n”,
+“processed: 610/630n”,
+“processed: 611/630n”,
+“processed: 612/630n”,
+“processed: 613/630n”,
+“processed: 614/630n”,
+“processed: 615/630n”,
+“processed: 616/630n”,
+“processed: 617/630n”,
+“processed: 618/630n”,
+“processed: 619/630n”,
+“processed: 620/630n”,
+“processed: 621/630n”,
+“processed: 622/630n”,
+“processed: 623/630n”,
+“processed: 624/630n”,
+“processed: 625/630n”,
+“processed: 626/630n”,
+“processed: 627/630n”,
+“processed: 628/630n”,
+“processed: 629/630n”,
+“n”,
+“Total structures that match 630/630n”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>],
+“source”: [</p>
+<blockquote>
+<div><p>“wrangler = StructureWrangler(subspace)n”,
+“n”,
+“# you can add any number of properties and name themn”,
+“# whatever you want. You should use something descriptive.n”,
+“# In this case we’ll call it ‘total_energy’.n”,
+“for ii, valid in enumerate(valid_structs):n”,
+”    print(&quot;processed: {}/{}&quot;.format(ii, len(valid_structs)))n”,
+”    structure = valid[0]n”,
+”    wrangler.add_data(structure,n”,
+”                      properties={‘total_energy’: valid[1]},n”,
+”                      verbose=True)n”,
+“# The verbose flag will print structures that fail to match.n”,
+“n”,
+“print(f’\nTotal structures that match {wrangler.num_structures}/{len(valid_structs)}’)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: 9,
+“metadata”: {},
+“outputs”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><dl>
+<dt>“data”: {</dt><dd><dl class="simple">
+<dt>“text/plain”: [</dt><dd><p>“array([-13.11874117, -13.12903802, -13.17137952, -13.08021449,n”,
+”       -13.16362834, -13.10222821, -13.08156161, -13.15720459,n”,
+”       -13.06331364, -13.12062745, -13.17905239, -13.12440631,n”,
+”       -13.17411988, -13.20385514, -13.10332586, -13.12882567,n”,
+”       -13.13764792, -13.14550215, -13.1109768 , -13.13433355,n”,
+”       -13.08290429, -13.15571512, -13.12275268, -13.15715223,n”,
+”       -13.09132904, -13.08556145, -13.03954859, -13.12791847,n”,
+”       -13.12750551, -13.08865104, -13.05968182, -13.13590795,n”,
+”       -13.1004459 , -13.17690217, -13.14593605, -13.11400736,n”,
+”       -13.12124423, -13.14953541, -13.12336135, -13.13870288,n”,
+”       -13.14821189, -13.02921938, -13.10899456, -13.01145925,n”,
+”       -13.02529022, -13.09379601, -13.13166383, -13.06279359,n”,
+”       -13.11696813, -13.13820625, -13.07975418, -12.97458318,n”,
+”       -13.1316143 , -13.11638331, -13.15155213, -13.0794376 ,n”,
+”       -13.13064402, -13.15555385, -13.12331726, -13.10800658,n”,
+”       -13.01404902, -13.00900896, -13.09916021, -13.10927153,n”,
+”       -13.07672251, -13.13185649, -13.11282708, -13.12167617,n”,
+”       -13.04087802, -13.01169684, -13.0587653 , -13.11458426,n”,
+”       -12.90934915, -13.0502978 , -13.00419219, -13.10310079,n”,
+”       -13.04888816, -13.09223751, -13.17093394, -13.10057156,n”,
+”       -13.06968691, -13.09618374, -13.0463362 , -13.05644464,n”,
+”       -13.1565299 , -13.15934391, -13.18127829, -13.1192396 ,n”,
+”       -13.1157498 , -13.0959997 , -13.06298953, -13.02108122,n”,
+”       -13.07427856, -13.11027339, -13.12953357, -13.93821846,n”,
+”       -13.98331634, -13.96423646, -12.99992881, -13.09001874,n”,
+”       -13.09008873, -13.1069478 , -13.04828666, -13.04175016,n”,
+”       -13.07123935, -13.07452567, -13.11729511, -13.09430927,n”,
+”       -13.20387125, -13.1578425 , -13.04089833, -13.14134556,n”,
+”       -13.17340083, -13.06349639, -13.14546111, -13.1612075 ,n”,
+”       -13.10924472, -13.13041667, -13.11130139, -13.1332675 ,n”,
+”       -13.16401472, -13.10441333, -13.13344667, -13.11192056,n”,
+”       -13.12980389, -13.07824583, -13.14101417, -13.10469306,n”,
+”       -13.14541   , -13.14256958, -13.10940667, -13.11275792,n”,
+”       -13.080615  , -13.07073   , -13.10594167, -13.10149   ,n”,
+”       -13.09036861, -13.14154556, -13.14064333, -13.137325  ,n”,
+”       -13.13474111, -13.13045861, -13.13669611, -13.10038056,n”,
+”       -13.10118583, -13.07293   , -13.10892   , -13.06265111,n”,
+”       -13.12131167, -13.12181917, -13.12554417, -13.14341778,n”,
+”       -13.14350333, -13.12254972, -13.14204528, -13.14661278,n”,
+”       -13.13789194, -13.08177278, -13.08414111, -13.05187639,n”,
+”       -13.09285972, -13.08991806, -13.09019083, -13.11819889,n”,
+”       -13.13416222, -13.12714417, -13.13110833, -13.13611889,n”,
+”       -13.14361833, -13.13564556, -13.14480778, -13.14591389,n”,
+”       -13.15782806, -13.12951917, -13.06116361, -13.07472583,n”,
+”       -13.11633444, -13.08863694, -13.11368389, -13.11555417,n”,
+”       -13.14010194, -13.12396806, -13.12511389, -13.12287639,n”,
+”       -13.13116806, -13.12763139, -13.15545833, -13.10633458,n”,
+”       -13.15945417, -13.98041333, -13.92583639, -13.98779472,n”,
+”       -13.89786861, -13.88295722, -13.98405972, -14.01766944,n”,
+”       -13.99375611, -13.970485  , -14.01760683, -13.975045  ,n”,
+”       -13.77921217, -13.976957  , -13.98390317, -13.973006  ,n”,
+”       -13.84717633, -13.99055778, -13.6544184 , -13.6210654 ,n”,
+”       -13.1185075 , -13.08952583, -13.12549333, -13.12374958,n”,
+”       -13.15853875, -13.11807917, -13.34785625, -13.29249208,n”,
+”       -13.29037958, -13.31427625, -13.3407625 , -13.33056917,n”,
+”       -13.34638083, -13.33701458, -13.34379958, -13.52041208,n”,
+”       -13.54455333, -13.50460583, -13.54730667, -13.55183208,n”,
+”       -13.55658375, -13.5617875 , -13.74062667, -13.72810792,n”,
+”       -13.69105583, -13.704175  , -13.74108667, -13.97290708,n”,
+”       -13.97019875, -13.94800417, -13.97185417, -13.95053208,n”,
+”       -13.98777875, -13.98162042, -13.09025444, -13.10207972,n”,
+”       -13.10203528, -13.09289722, -13.09256   , -13.09419639,n”,
+”       -13.13418639, -13.14196944, -13.13465083, -13.14032389,n”,
+”       -13.14056444, -13.28789278, -13.23245333, -13.23603722,n”,
+”       -13.22986833, -13.21636417, -13.23841556, -13.2503275 ,n”,
+”       -13.27673417, -13.28149444, -13.26779   , -13.27011111,n”,
+”       -13.24788917, -13.27223944, -13.28348167, -13.28171   ,n”,
+”       -13.28310444, -13.29299306, -13.42904667, -13.37137056,n”,
+”       -13.34412139, -13.35594528, -13.38306917, -13.31193444,n”,
+”       -13.39412222, -13.40913778, -13.4021425 , -13.39436583,n”,
+”       -13.4066625 , -13.53865556, -13.44803083, -13.51324194,n”,
+”       -13.56212694, -13.53519472, -13.55070917, -13.54523194,n”,
+”       -13.5507625 , -13.55167361, -13.55807722, -13.55651472,n”,
+”       -13.54634   , -13.54936972, -13.54676417, -13.66570278,n”,
+”       -13.6607925 , -13.66662167, -13.60968611, -13.64760139,n”,
+”       -13.64959139, -13.68487472, -13.68938139, -13.68563139,n”,
+”       -13.68131722, -13.68744278, -13.68599417, -13.6634575 ,n”,
+”       -13.81898083, -13.80172361, -13.77560583, -13.78932139,n”,
+”       -13.76024556, -13.76752   , -13.79636778, -13.84205917,n”,
+”       -13.83469861, -13.83241944, -13.82626917, -13.82558833,n”,
+”       -13.81543028, -13.82311083, -13.80582056, -13.98584306,n”,
+”       -13.84087833, -13.9681475 , -13.8624    , -13.91771306,n”,
+”       -13.90193972, -13.105365  , -13.08356889, -13.09323556,n”,
+”       -13.1188525 , -13.12020611, -13.13287028, -13.14320806,n”,
+”       -13.13023444, -13.11880667, -13.11299528, -13.13512222,n”,
+”       -13.14391361, -13.141115  , -13.28696278, -13.24798972,n”,
+”       -13.19752611, -13.20732694, -13.21752972, -13.20022306,n”,
+”       -13.24457722, -13.25955306, -13.26468639, -13.26451861,n”,
+”       -13.2517325 , -13.25024333, -13.27246167, -13.27950306,n”,
+”       -13.27235389, -13.28117444, -13.27712611, -13.27558056,n”,
+”       -13.35196444, -13.36560583, -13.36500667, -13.3439825 ,n”,
+”       -13.38670417, -13.35645056, -13.40688528, -13.40375944,n”,
+”       -13.392525  , -13.39459167, -13.40347056, -13.41443444,n”,
+”       -13.4200325 , -13.51571   , -13.51313417, -13.53000472,n”,
+”       -13.47688611, -13.55053   , -13.51717694, -13.56226944,n”,
+”       -13.70336083, -13.65742556, -13.56850083, -13.61611639,n”,
+”       -13.69044306, -13.69806917, -13.68666   , -13.69319528,n”,
+”       -13.70045694, -13.70479306, -13.70367278, -13.70002889,n”,
+”       -13.70513917, -13.70382917, -13.70004   , -13.85402417,n”,
+”       -13.75708417, -13.79200028, -13.76500556, -13.76207056,n”,
+”       -13.73069639, -13.7203475 , -13.85400194, -13.85606611,n”,
+”       -13.85876917, -13.85539056, -13.846675  , -13.85842861,n”,
+”       -13.85376861, -13.85732111, -13.85414944, -13.97238722,n”,
+”       -13.94503361, -13.92957194, -13.92370194, -13.96124972,n”,
+”       -13.10541722, -13.09848972, -13.10497056, -13.11042861,n”,
+”       -13.08541083, -13.1358525 , -13.12282306, -13.13029944,n”,
+”       -13.11401222, -13.14186389, -13.14219417, -13.14671083,n”,
+”       -13.13504833, -13.27308556, -13.23535972, -13.23477833,n”,
+”       -13.19849278, -13.23081361, -13.20476111, -13.24296167,n”,
+”       -13.24020889, -13.26645056, -13.27706167, -13.25751556,n”,
+”       -13.27586389, -13.2770425 , -13.2710475 , -13.2776975 ,n”,
+”       -13.27951278, -13.26014056, -13.2689475 , -13.41926194,n”,
+”       -13.36256278, -13.33308306, -13.28647722, -13.37189444,n”,
+”       -13.33385556, -13.33259806, -13.38891472, -13.39180111,n”,
+”       -13.40184611, -13.38486944, -13.41511528, -13.41874056,n”,
+”       -13.41028194, -13.40036417, -13.40212167, -13.42302194,n”,
+”       -13.5379725 , -13.45919917, -13.48712444, -13.5112975 ,n”,
+”       -13.47293944, -13.55282417, -13.52368833, -13.53029972,n”,
+”       -13.54682194, -13.54041833, -13.55521167, -13.54602111,n”,
+”       -13.55371778, -13.55351667, -13.5566525 , -13.55854639,n”,
+”       -13.68805472, -13.61252972, -13.62291444, -13.66610111,n”,
+”       -13.6204725 , -13.696945  , -13.69176139, -13.66676944,n”,
+”       -13.66838111, -13.66583194, -13.68540556, -13.68905333,n”,
+”       -13.83446611, -13.82631528, -13.768465  , -13.65816444,n”,
+”       -13.76284694, -13.7309375 , -13.74123361, -13.81717556,n”,
+”       -13.79510889, -13.82381528, -13.82460417, -13.82498944,n”,
+”       -13.81519194, -13.83430333, -13.8336575 , -13.82894083,n”,
+”       -13.83365139, -13.98717528, -13.96827361, -13.90559083,n”,
+”       -13.90611528, -13.88497056, -13.86087194, -13.97315806,n”,
+”       -13.9958225 , -13.99543194, -13.93873333, -13.94036   ,n”,
+”       -13.07098722, -13.11130222, -13.10844167, -13.08145722,n”,
+”       -13.07384917, -13.12605056, -13.11794583, -13.10760583,n”,
+”       -13.12773111, -13.14037111, -13.12115389, -13.14041611,n”,
+”       -13.137315  , -13.21491278, -13.24539833, -13.20711333,n”,
+”       -13.18051111, -13.22668972, -13.2296125 , -13.26500694,n”,
+”       -13.24247   , -13.27303444, -13.25489667, -13.25021028,n”,
+”       -13.27519306, -13.27714139, -13.2806775 , -13.26994889,n”,
+”       -13.27528167, -13.32207583, -13.37016972, -13.392905  ,n”,
+”       -13.33471306, -13.3841575 , -13.37723472, -13.40240861,n”,
+”       -13.40766694, -13.39726944, -13.38731028, -13.3918025 ,n”,
+”       -13.40768083, -13.39792056, -13.39992556, -13.40656944,n”,
+”       -13.47546694, -13.45788389, -13.50745194, -13.55029639,n”,
+”       -13.52151167, -13.52256639, -13.531935  , -13.50325389,n”,
+”       -13.54369444, -13.55103361, -13.54291722, -13.55424861,n”,
+”       -13.54699444, -13.55721139, -13.69365778, -13.62617722,n”,
+”       -13.56791722, -13.65245   , -13.65468278, -13.64935361,n”,
+”       -13.64893917, -13.68513278, -13.65361639, -13.63843917,n”,
+”       -13.69744139, -13.69770361, -13.690305  , -13.69283556,n”,
+”       -13.68838222, -13.84275417, -13.79533639, -13.7192375 ,n”,
+”       -13.79394389, -13.73408   , -13.73262111, -13.81815389,n”,
+”       -13.8206    , -13.83320944, -13.82823   , -13.83609167,n”,
+”       -13.79211389, -13.85011667, -13.84169833, -13.84496917,n”,
+”       -13.83715806, -13.8419975 , -13.92657028, -13.95843972,n”,
+”       -13.91344722, -13.83904   , -13.96988389, -13.98643722,n”,
+”       -13.98708   , -13.99590444, -13.14453542, -13.35526625,n”,
+”       -13.340015  , -13.34658292, -13.35033292, -13.33110625,n”,
+”       -13.50697708, -13.54938042, -13.63493375, -13.74114042,n”,
+”       -13.60728083, -13.64882417])”</p>
+</dd>
+</dl>
+<p>]</p>
+</dd>
+</dl>
+<p>},
+“execution_count”: 9,
+“metadata”: {},
+“output_type”: “execute_result”</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>],
+“source”: [</p>
+<blockquote>
+<div><p>“wrangler.get_property_vector(‘total_energy’)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“## 3) Trainingn”,
+“n”,
+“Training a cluster expansion is one of the most critical steps. This is how you get <strong>effective cluster interactions (ECI’s)</strong>. To do so you need an estimator class that implements some form of regression model. In this case we will use simple least squares regression using the <cite>LinearRegression</cite> estimator from <cite>scikit-learn</cite>.n”,
+“n”,
+“In <cite>smol</cite> the coefficients from the fit are not exactly the ECI’s but the ECI times the multiplicity of their orbit.n”,
+“n”,
+“Currently we also have the old l1regs estimator from pyabinitio in <cite>smol.learn</cite> as <cite>WDRLasso</cite>, but it will likely be deprecated and removed at some point…”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: 10,
+“metadata”: {},
+“outputs”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><dl>
+<dt>“data”: {</dt><dd><dl class="simple">
+<dt>“text/plain”: [</dt><dd><p>“array([[ 1.        , -0.25      ,  0.4330127 , …,  0.03222656,n”,
+”        -0.02283465,  0.01757812],n”,
+”       [ 1.        , -0.25      ,  0.4330127 , …,  0.03125   ,n”,
+”        -0.01776029,  0.02636719],n”,
+”       [ 1.        , -0.25      ,  0.4330127 , …,  0.0703125 ,n”,
+”        -0.02029747,  0.        ],n”,
+”       …,n”,
+”       [ 1.        , -0.4375    , -0.10825318, …, -0.01041667,n”,
+”         0.        ,  0.        ],n”,
+”       [ 1.        , -0.4375    , -0.10825318, …, -0.04166667,n”,
+”         0.        ,  0.        ],n”,
+”       [ 1.        , -0.4375    , -0.10825318, …,  0.02083333,n”,
+”         0.        ,  0.        ]])”</p>
+</dd>
+</dl>
+<p>]</p>
+</dd>
+</dl>
+<p>},
+“execution_count”: 10,
+“metadata”: {},
+“output_type”: “execute_result”</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>],
+“source”: [</p>
+<blockquote>
+<div><p>“wrangler.feature_matrix”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: 11,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“from sklearn.linear_model import LinearRegressionn”,
+“# Set fit_intercept to False because we already do this usingn”,
+“# the empty cluster.n”,
+“estimator = LinearRegression(fit_intercept=False)n”,
+“estimator.fit(wrangler.feature_matrix,n”,
+”              wrangler.get_property_vector(‘total_energy’))n”,
+“coefs = <a href="#id1"><span class="problematic" id="id2">estimator.coef_</span></a>”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“#### 3.1) Check the quality of the fitn”,
+“There are many ways to evaluate the quality of a fit. The simplest involve stadard training set prediction error metrics. But when evaluating a CE more seriously we need to consider further metrics and how the CE will be used.n”,
+“Here we will just look at in sample mean squared error and max error.”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: 12,
+“metadata”: {},
+“outputs”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><p>“name”: “stdout”,
+“output_type”: “stream”,
+“text”: [</p>
+<blockquote>
+<div><p>“RMSE 0.013720944562109929 eV/primn”,
+“MAX 0.10238344490559825 eV/primn”</p>
+</div></blockquote>
+<p>]</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>],
+“source”: [</p>
+<blockquote>
+<div><p>“from sklearn.metrics import mean_squared_error, max_errorn”,
+“n”,
+“train_predictions = np.dot(wrangler.feature_matrix, coefs)n”,
+“n”,
+“rmse = mean_squared_error(wrangler.get_property_vector(‘total_energy’),n”,
+”                          train_predictions, squared=False)n”,
+“maxer = max_error(wrangler.get_property_vector(‘total_energy’),n”,
+”                  train_predictions)n”,
+“n”,
+“print(f’RMSE {rmse} eV/prim’)n”,
+“print(f’MAX {maxer} eV/prim’)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“### 4) The cluster expansionn”,
+“Now we can use the above work to create the <cite>ClusterExpansion</cite>. The cluster expansion can be used to predict the fitted property for new structures, either for testing quality or for simulations such as in Monte Carlo.n”,
+“Note that when using the <cite>predict</cite> function, the cluster expansion will have to match the given structure if it has not seen it before.”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: 13,
+“metadata”: {},
+“outputs”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><p>“name”: “stdout”,
+“output_type”: “stream”,
+“text”: [</p>
+<blockquote>
+<div><p>“The predicted energy for a structure with composition Li+24 Ti4+12 O2-36 is -13.987300872802734 eV/prim.n”,
+“n”,
+“The fitted coefficients are:n”,
+“[-1.35544505e+11 -3.38861262e+11  1.17384984e+11  7.93254683e-01n”,
+” -5.29937743e-01  1.55309988e-01  4.38745099e-01 -2.09149650e-01n”,
+”  5.71362778e-02  1.99013562e-01  1.62974586e-01 -1.10869341e-01n”,
+”  1.44048300e-01  6.10350667e-02 -3.39717283e-02  2.38907852e-01n”,
+” -1.30464459e-01 -1.23158891e-02 -2.50362531e-01 -1.03629705e-01n”,
+”  4.50214013e-01  7.77798931e-02 -6.63667219e-02 -1.05671815e-01n”,
+”  2.82000038e-01  1.38565502e-01 -1.30884770e-01]n”,
+“n”,
+“The effective cluster interactions are:n”,
+“[-1.35544505e+11 -3.38861262e+11  1.17384984e+11  1.32209114e-01n”,
+” -8.83229572e-02  2.58849980e-02  1.46248366e-01 -6.97165500e-02n”,
+”  1.90454259e-02  1.65844635e-02  1.35812155e-02 -9.23911179e-03n”,
+”  2.40080499e-02  1.01725111e-02 -5.66195471e-03  1.99089877e-02n”,
+” -1.08720382e-02 -1.02632409e-03 -3.12953163e-02 -1.29537132e-02n”,
+”  5.62767516e-02  9.72248664e-03 -3.31833610e-02 -5.28359074e-02n”,
+”  1.41000019e-01  6.92827509e-02 -6.54423852e-02]n”,
+“n”,
+“ClusterExpansion:n”,
+”    Prim Composition: Li+0.33333333 Mn3+0.33333333 Ti4+0.33333333 O2-1n”,
+” Num fit structures: 630n”,
+“Num orbit functions: 27n”,
+”    [Orbit]  id: 0  n”,
+”        bit       ecin”,
+”        [X]       -1.36e+11n”,
+”    [Orbit]  id: 1   size: 1   radius: 0.0 n”,
+”        id    bit       eci     feature avg  feature std  eci*stdn”,
+”        1     [0]       -338861261544.998-0.337       0.089        -30176455109.588n”,
+”        2     [1]       117384984343.9190.182        0.257        30176455109.936n”,
+”    [Orbit]  id: 3   size: 2   radius: 2.97n”,
+”        id    bit       eci     feature avg  feature std  eci*stdn”,
+”        3     [0 0]     0.793   0.049        0.080        0.064n”,
+”        4     [0 1]     -0.530  -0.050       0.115        -0.061n”,
+”        5     [1 1]     0.155   0.085        0.069        0.011n”,
+”    [Orbit]  id: 6   size: 2   radius: 4.2 n”,
+”        id    bit       eci     feature avg  feature std  eci*stdn”,
+”        6     [0 0]     0.439   0.089        0.108        0.047n”,
+”        7     [0 1]     -0.209  -0.029       0.112        -0.023n”,
+”        8     [1 1]     0.057   0.094        0.086        0.005n”,
+”    [Orbit]  id: 9   size: 2   radius: 5.14n”,
+”        id    bit       eci     feature avg  feature std  eci*stdn”,
+”        9     [0 0]     0.199   0.163        0.083        0.016n”,
+”        10    [0 1]     0.163   -0.035       0.074        0.012n”,
+”        11    [1 1]     -0.111  0.099        0.089        -0.010n”,
+”    [Orbit]  id: 12  size: 2   radius: 5.94n”,
+”        id    bit       eci     feature avg  feature std  eci*stdn”,
+”        12    [0 0]     0.144   0.117        0.131        0.019n”,
+”        13    [0 1]     0.061   -0.048       0.094        0.006n”,
+”        14    [1 1]     -0.034  0.097        0.080        -0.003n”,
+”    [Orbit]  id: 15  size: 2   radius: 6.64n”,
+”        id    bit       eci     feature avg  feature std  eci*stdn”,
+”        15    [0 0]     0.239   0.105        0.081        0.019n”,
+”        16    [0 1]     -0.130  -0.045       0.093        -0.012n”,
+”        17    [1 1]     -0.012  0.093        0.078        -0.001n”,
+”    [Orbit]  id: 18  size: 3   radius: 2.97n”,
+”        id    bit       eci     feature avg  feature std  eci*stdn”,
+”        18    [0 0 0]   -0.250  0.031        0.055        -0.014n”,
+”        19    [0 0 1]   -0.104  -0.009       0.039        -0.004n”,
+”        20    [0 1 1]   0.450   -0.043       0.035        0.016n”,
+”        21    [1 1 1]   0.078   0.021        0.028        0.002n”,
+”    [Orbit]  id: 22  size: 4   radius: 2.97n”,
+”        id    bit       eci     feature avg  feature std  eci*stdn”,
+”        22    [0 0 0 0] -0.066  -0.011       0.085        -0.006n”,
+”        23    [0 0 0 1] -0.106  0.026        0.048        -0.005n”,
+”        24    [0 0 1 1] 0.282   0.017        0.027        0.008n”,
+”        25    [0 1 1 1] 0.139   -0.012       0.018        0.003n”,
+”        26    [1 1 1 1] -0.131  0.005        0.012        -0.002n”,
+“n”</p>
+</div></blockquote>
+<p>]</p>
+</dd>
+</dl>
+<p>},
+{</p>
+<blockquote>
+<div><p>“name”: “stderr”,
+“output_type”: “stream”,
+“text”: [</p>
+<blockquote>
+<div><p>“/anaconda3/lib/python3.7/site-packages/ipykernel_launcher.py:5: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify ‘dtype=object’ when creating the ndarrayn”,
+”  &quot;&quot;&quot;n”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>],
+“source”: [</p>
+<blockquote>
+<div><p>“expansion = ClusterExpansion(subspace,n”,
+”                             coefficients=coefs,n”,
+”                             feature_matrix=wrangler.feature_matrix)n”,
+“n”,
+“structure = np.random.choice(wrangler.structures)n”,
+“prediction = expansion.predict(structure, normalize=True)n”,
+“n”,
+“print(f’The predicted energy for a structure with composition ‘n”,
+”      f’{structure.composition} is {prediction} eV/prim.\n’)n”,
+“print(f’The fitted coefficients are:\n{expansion.coefs}\n’)n”,
+“print(f’The effective cluster interactions are:\n{expansion.eci}\n’)n”,
+“print(expansion)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“### 5) Saving your workn”,
+“All core classes in <cite>smol</cite> are <cite>MSONables</cite> and so can be saved using their <cite>as_dict</cite> methods or better yet with <cite>monty.serialization.dumpfn</cite>.n”,
+“n”,
+“Currently there is also a convenience function in <cite>smol</cite> that will nicely save all of your work for you in a standardized way. Work saved with the <cite>save_work</cite> function is saved as a dictionary with standardized names for the classes. Since a work flow should only contain 1 of each core classes the function will complain if you give it two of the same class (i.e. two wranglers)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: 16,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“from smol.io import load_work, save_workn”,
+“n”,
+“file_path = ‘data/LMTO_sinusoid.mson’n”,
+“# we can save the subspace as well, but since both the wranglern”,
+“# and the expansion have it, there is no need to do so.n”,
+“save_work(file_path, wrangler, expansion)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“#### 5.1) Loading previously saved work”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: 17,
+“metadata”: {},
+“outputs”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><p>“name”: “stdout”,
+“output_type”: “stream”,
+“text”: [</p>
+<blockquote>
+<div><p>“StructureWrangler: &lt;class ‘smol.cofe.wrangler.StructureWrangler’&gt;n”,
+“n”,
+“ClusterExpansion: &lt;class ‘smol.cofe.expansion.ClusterExpansion’&gt;n”,
+“n”</p>
+</div></blockquote>
+<p>]</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>],
+“source”: [</p>
+<blockquote>
+<div><p>“from smol.io import load_work, save_workn”,
+“n”,
+“work = load_work(file_path)n”,
+“for name, obj in work.items():n”,
+”    print(f’{name}: {type(obj)}\n’)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“metadata”: {},
+“outputs”: [],
+“source”: []</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>],
+“metadata”: {</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“kernelspec”: {</dt><dd><p>“display_name”: “Python 3”,
+“language”: “python”,
+“name”: “python3”</p>
+</dd>
+</dl>
+<p>},
+“language_info”: {</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“codemirror_mode”: {</dt><dd><p>“name”: “ipython”,
+“version”: 3</p>
+</dd>
+</dl>
+<p>},
+“file_extension”: “.py”,
+“mimetype”: “text/x-python”,
+“name”: “python”,
+“nbconvert_exporter”: “python”,
+“pygments_lexer”: “ipython3”,
+“version”: “3.7.7”</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>},
+“nbformat”: 4,
+“nbformat_minor”: 4</p>
+</dd>
+</dl>
+<p>}</p>
 
 
     </div>

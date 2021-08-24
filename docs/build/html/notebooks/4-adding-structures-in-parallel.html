@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Adding Structures in Parallel &#8212; smol 1.0.0 documentation</title>
+    <title>&lt;no title&gt; &#8212; smol 1.0.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/_static/default.css" />
@@ -14,8 +14,6 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
 <meta charset='utf-8'>
@@ -70,12 +68,7 @@
      href="#">Page <b class="caret"></b></a>
   <ul class="dropdown-menu localtoc"
       role="menu"
-      aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">Adding Structures in Parallel</a><ul>
-<li><a class="reference internal" href="#1)-Preparing-a-StructureWrangler">1) Preparing a <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code></a></li>
-<li><a class="reference internal" href="#2)-Add-structures-in-parallel">2) Add structures in parallel</a></li>
-</ul>
-</li>
+      aria-labelledby="dLabelLocalToc"><ul class="simple">
 </ul>
 </ul>
 </li>
@@ -105,424 +98,288 @@
   <div class="row">
     <div class="body col-md-12 content" role="main">
       
-  
-<style>
-/* CSS for nbsphinx extension */
-
-/* remove conflicting styling from Sphinx themes */
-div.nbinput.container div.prompt *,
-div.nboutput.container div.prompt *,
-div.nbinput.container div.input_area pre,
-div.nboutput.container div.output_area pre,
-div.nbinput.container div.input_area .highlight,
-div.nboutput.container div.output_area .highlight {
-    border: none;
-    padding: 0;
-    margin: 0;
-    box-shadow: none;
-}
-
-div.nbinput.container > div[class*=highlight],
-div.nboutput.container > div[class*=highlight] {
-    margin: 0;
-}
-
-div.nbinput.container div.prompt *,
-div.nboutput.container div.prompt * {
-    background: none;
-}
-
-div.nboutput.container div.output_area .highlight,
-div.nboutput.container div.output_area pre {
-    background: unset;
-}
-
-div.nboutput.container div.output_area div.highlight {
-    color: unset;  /* override Pygments text color */
-}
-
-/* avoid gaps between output lines */
-div.nboutput.container div[class*=highlight] pre {
-    line-height: normal;
-}
-
-/* input/output containers */
-div.nbinput.container,
-div.nboutput.container {
-    display: -webkit-flex;
-    display: flex;
-    align-items: flex-start;
-    margin: 0;
-    width: 100%;
-}
-@media (max-width: 540px) {
-    div.nbinput.container,
-    div.nboutput.container {
-        flex-direction: column;
-    }
-}
-
-/* input container */
-div.nbinput.container {
-    padding-top: 5px;
-}
-
-/* last container */
-div.nblast.container {
-    padding-bottom: 5px;
-}
-
-/* input prompt */
-div.nbinput.container div.prompt pre {
-    color: #307FC1;
-}
-
-/* output prompt */
-div.nboutput.container div.prompt pre {
-    color: #BF5B3D;
-}
-
-/* all prompts */
-div.nbinput.container div.prompt,
-div.nboutput.container div.prompt {
-    width: 4.5ex;
-    padding-top: 5px;
-    position: relative;
-    user-select: none;
-}
-
-div.nbinput.container div.prompt > div,
-div.nboutput.container div.prompt > div {
-    position: absolute;
-    right: 0;
-    margin-right: 0.3ex;
-}
-
-@media (max-width: 540px) {
-    div.nbinput.container div.prompt,
-    div.nboutput.container div.prompt {
-        width: unset;
-        text-align: left;
-        padding: 0.4em;
-    }
-    div.nboutput.container div.prompt.empty {
-        padding: 0;
-    }
-
-    div.nbinput.container div.prompt > div,
-    div.nboutput.container div.prompt > div {
-        position: unset;
-    }
-}
-
-/* disable scrollbars on prompts */
-div.nbinput.container div.prompt pre,
-div.nboutput.container div.prompt pre {
-    overflow: hidden;
-}
-
-/* input/output area */
-div.nbinput.container div.input_area,
-div.nboutput.container div.output_area {
-    -webkit-flex: 1;
-    flex: 1;
-    overflow: auto;
-}
-@media (max-width: 540px) {
-    div.nbinput.container div.input_area,
-    div.nboutput.container div.output_area {
-        width: 100%;
-    }
-}
-
-/* input area */
-div.nbinput.container div.input_area {
-    border: 1px solid #e0e0e0;
-    border-radius: 2px;
-    /*background: #f5f5f5;*/
-}
-
-/* override MathJax center alignment in output cells */
-div.nboutput.container div[class*=MathJax] {
-    text-align: left !important;
-}
-
-/* override sphinx.ext.imgmath center alignment in output cells */
-div.nboutput.container div.math p {
-    text-align: left;
-}
-
-/* standard error */
-div.nboutput.container div.output_area.stderr {
-    background: #fdd;
-}
-
-/* ANSI colors */
-.ansi-black-fg { color: #3E424D; }
-.ansi-black-bg { background-color: #3E424D; }
-.ansi-black-intense-fg { color: #282C36; }
-.ansi-black-intense-bg { background-color: #282C36; }
-.ansi-red-fg { color: #E75C58; }
-.ansi-red-bg { background-color: #E75C58; }
-.ansi-red-intense-fg { color: #B22B31; }
-.ansi-red-intense-bg { background-color: #B22B31; }
-.ansi-green-fg { color: #00A250; }
-.ansi-green-bg { background-color: #00A250; }
-.ansi-green-intense-fg { color: #007427; }
-.ansi-green-intense-bg { background-color: #007427; }
-.ansi-yellow-fg { color: #DDB62B; }
-.ansi-yellow-bg { background-color: #DDB62B; }
-.ansi-yellow-intense-fg { color: #B27D12; }
-.ansi-yellow-intense-bg { background-color: #B27D12; }
-.ansi-blue-fg { color: #208FFB; }
-.ansi-blue-bg { background-color: #208FFB; }
-.ansi-blue-intense-fg { color: #0065CA; }
-.ansi-blue-intense-bg { background-color: #0065CA; }
-.ansi-magenta-fg { color: #D160C4; }
-.ansi-magenta-bg { background-color: #D160C4; }
-.ansi-magenta-intense-fg { color: #A03196; }
-.ansi-magenta-intense-bg { background-color: #A03196; }
-.ansi-cyan-fg { color: #60C6C8; }
-.ansi-cyan-bg { background-color: #60C6C8; }
-.ansi-cyan-intense-fg { color: #258F8F; }
-.ansi-cyan-intense-bg { background-color: #258F8F; }
-.ansi-white-fg { color: #C5C1B4; }
-.ansi-white-bg { background-color: #C5C1B4; }
-.ansi-white-intense-fg { color: #A1A6B2; }
-.ansi-white-intense-bg { background-color: #A1A6B2; }
-
-.ansi-default-inverse-fg { color: #FFFFFF; }
-.ansi-default-inverse-bg { background-color: #000000; }
-
-.ansi-bold { font-weight: bold; }
-.ansi-underline { text-decoration: underline; }
-
-
-div.nbinput.container div.input_area div[class*=highlight] > pre,
-div.nboutput.container div.output_area div[class*=highlight] > pre,
-div.nboutput.container div.output_area div[class*=highlight].math,
-div.nboutput.container div.output_area.rendered_html,
-div.nboutput.container div.output_area > div.output_javascript,
-div.nboutput.container div.output_area:not(.rendered_html) > img{
-    padding: 5px;
-    margin: 0;
-}
-
-/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
-div.nbinput.container div.input_area > div[class^='highlight'],
-div.nboutput.container div.output_area > div[class^='highlight']{
-    overflow-y: hidden;
-}
-
-/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt a.copybtn {
-    display: none;
-}
-
-/* Some additional styling taken form the Jupyter notebook CSS */
-div.rendered_html table {
-  border: none;
-  border-collapse: collapse;
-  border-spacing: 0;
-  color: black;
-  font-size: 12px;
-  table-layout: fixed;
-}
-div.rendered_html thead {
-  border-bottom: 1px solid black;
-  vertical-align: bottom;
-}
-div.rendered_html tr,
-div.rendered_html th,
-div.rendered_html td {
-  text-align: right;
-  vertical-align: middle;
-  padding: 0.5em 0.5em;
-  line-height: normal;
-  white-space: normal;
-  max-width: none;
-  border: none;
-}
-div.rendered_html th {
-  font-weight: bold;
-}
-div.rendered_html tbody tr:nth-child(odd) {
-  background: #f5f5f5;
-}
-div.rendered_html tbody tr:hover {
-  background: rgba(66, 165, 245, 0.2);
-}
-</style>
-<section id="Adding-Structures-in-Parallel">
-<h1>Adding Structures in Parallel<a class="headerlink" href="#Adding-Structures-in-Parallel" title="Permalink to this headline">¶</a></h1>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">monty.serialization</span> <span class="kn">import</span> <span class="n">loadfn</span>
-<span class="kn">from</span> <span class="nn">pymatgen.core.structure</span> <span class="kn">import</span> <span class="n">Structure</span>
-<span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">ClusterSubspace</span><span class="p">,</span> <span class="n">StructureWrangler</span>
-</pre></div>
-</div>
-</div>
-<section id="1)-Preparing-a-StructureWrangler">
-<h2>1) Preparing a <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code><a class="headerlink" href="#1)-Preparing-a-StructureWrangler" title="Permalink to this headline">¶</a></h2>
-<p>When adding large structures or structures that underwent a considerable amount of relaxation (compared to the primitive structure) to a <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code>, it can be time consuming to appropriately match the structures to compute the correlations vector for the feature matrix. In this case it can be very helpful (and easy!) to add structures in a dataset in parallel.</p>
-<p>First, we’ll prepare the cluster subspace and structure wrangler as before.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Load the raw data</span>
-
-<span class="c1"># load the prim structure</span>
-<span class="n">lmof_prim</span> <span class="o">=</span> <span class="n">loadfn</span><span class="p">(</span><span class="s1">&#39;data/lmof_prim.json&#39;</span><span class="p">)</span>
-
-<span class="c1"># load the fitting data</span>
-<span class="n">lmof_data</span> <span class="o">=</span><span class="n">loadfn</span><span class="p">(</span><span class="s1">&#39;data/lmof_fitting_data.json&#39;</span><span class="p">)</span>
-
-<span class="c1"># create a cluster subspace</span>
-<span class="n">subspace</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_cutoffs</span><span class="p">(</span><span class="n">lmof_prim</span><span class="p">,</span>
-                                        <span class="n">cutoffs</span><span class="o">=</span><span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
-                                        <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;sinusoid&#39;</span><span class="p">,</span>
-                                        <span class="n">supercell_size</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;O2-&#39;</span><span class="p">,</span> <span class="s1">&#39;F-&#39;</span><span class="p">),</span>
-                                        <span class="n">ltol</span> <span class="o">=</span> <span class="mf">0.15</span><span class="p">,</span> <span class="n">stol</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
-                                        <span class="n">angle_tol</span> <span class="o">=</span> <span class="mi">15</span><span class="p">)</span>
-
-<span class="c1"># create the structre wrangler</span>
-<span class="n">wrangler</span> <span class="o">=</span> <span class="n">StructureWrangler</span><span class="p">(</span><span class="n">subspace</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</section>
-<section id="2)-Add-structures-in-parallel">
-<h2>2) Add structures in parallel<a class="headerlink" href="#2)-Add-structures-in-parallel" title="Permalink to this headline">¶</a></h2>
-<p>Since adding structures is an embarassingly parallel operation, all we need to do is run a parallel loop. There are a few ways to do this in python. Here we will use the <code class="docutils literal notranslate"><span class="pre">joblib</span></code> library. But using <code class="docutils literal notranslate"><span class="pre">multiprocessing</span></code> would be very similar.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
-<span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span><span class="p">,</span> <span class="n">cpu_count</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;This computers has </span><span class="si">{</span><span class="n">cpu_count</span><span class="p">()</span><span class="si">}</span><span class="s1"> cpus.&#39;</span><span class="p">)</span>
-
-<span class="n">nprocs</span> <span class="o">=</span> <span class="n">cpu_count</span><span class="p">()</span>  <span class="c1"># setting this to -1 also uses all cpus</span>
-
-<span class="c1"># setting a batch size usually improves speed</span>
-<span class="n">batch_size</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span> <span class="c1">#len(lmof_data)//nprocs</span>
-
-<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-
-<span class="c1"># we need to add the data a bit differently to avoid having to use</span>
-<span class="c1"># shared memory between processes</span>
-<span class="k">with</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">nprocs</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">parallel</span><span class="p">:</span>
-    <span class="n">items</span> <span class="o">=</span> <span class="n">parallel</span><span class="p">(</span><span class="n">delayed</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">process_structure</span><span class="p">)(</span><span class="n">struct</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;energy&#39;</span><span class="p">:</span> <span class="n">energy</span><span class="p">})</span>
-                                                         <span class="k">for</span> <span class="n">struct</span><span class="p">,</span> <span class="n">energy</span> <span class="ow">in</span> <span class="n">lmof_data</span><span class="p">)</span>
-
-<span class="c1"># unpack the items and remove Nones from structure that failed to match</span>
-<span class="n">data_items</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span> <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
-<span class="n">wrangler</span><span class="o">.</span><span class="n">append_data_items</span><span class="p">(</span><span class="n">data_items</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Parallel finished in </span><span class="si">{</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">start</span><span class="si">}</span><span class="s1"> seconds.&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Matched </span><span class="si">{</span><span class="n">wrangler</span><span class="o">.</span><span class="n">num_structures</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">lmof_data</span><span class="p">)</span><span class="si">}</span><span class="s1"> structures.&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-This computers has 8 cpus.
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-[Parallel(n_jobs=8)]: Using backend LokyBackend with 8 concurrent workers.
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Parallel finished in 25.01846957206726 seconds.
-Matched 17/26
-</pre></div></div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-[Parallel(n_jobs=8)]: Done  26 out of  26 | elapsed:   25.0s finished
-</pre></div></div>
-</div>
-<p>1.1) Compare with serial code</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">wrangler</span><span class="o">.</span><span class="n">remove_all_data</span><span class="p">()</span>
-
-<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-
-<span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">lmof_data</span><span class="p">:</span>
-    <span class="n">wrangler</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;energy&#39;</span><span class="p">:</span> <span class="n">e</span><span class="p">},</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Serial finished in </span><span class="si">{</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">start</span><span class="si">}</span><span class="s1"> seconds.&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Matched </span><span class="si">{</span><span class="n">wrangler</span><span class="o">.</span><span class="n">num_structures</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">lmof_data</span><span class="p">)</span><span class="si">}</span><span class="s1"> structures.&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Unable to match Li+6 Mn3+6 Mn4+3 O2-18 with properties {&#39;energy&#39;: -363.8585} to supercell_structure. Throwing out.
- Error Message: Mapping could not be found from structure.
-Unable to match Mn3+32 O2-48 with properties {&#39;energy&#39;: -1057.1584} to supercell_structure. Throwing out.
- Error Message: Supercell could not be found from structure
-Unable to match Li+8 Mn2+4 Mn4+12 O2-32 with properties {&#39;energy&#39;: -636.38575} to supercell_structure. Throwing out.
- Error Message: Mapping could not be found from structure.
-Unable to match Li+9 Mn3+5 Mn4+2 O2-16 with properties {&#39;energy&#39;: -321.99251} to supercell_structure. Throwing out.
- Error Message: Mapping could not be found from structure.
-Unable to match Li+7 Mn3+6 Mn4+4 Mn2+1 O2-19 F-5 with properties {&#39;energy&#39;: -453.85747} to supercell_structure. Throwing out.
- Error Message: Mapping could not be found from structure.
-Unable to match Li+7 Mn3+7 Mn4+3 Mn2+1 O2-18 F-6 with properties {&#39;energy&#39;: -452.20166} to supercell_structure. Throwing out.
- Error Message: Mapping could not be found from structure.
-Unable to match Li+6 Mn3+6 Mn4+3 O2-18 with properties {&#39;energy&#39;: -363.96163} to supercell_structure. Throwing out.
- Error Message: Mapping could not be found from structure.
-Unable to match Li+9 Mn3+5 Mn4+2 O2-16 with properties {&#39;energy&#39;: -321.98387} to supercell_structure. Throwing out.
- Error Message: Mapping could not be found from structure.
-Unable to match Li+9 Mn3+5 Mn4+2 O2-16 with properties {&#39;energy&#39;: -321.62407} to supercell_structure. Throwing out.
- Error Message: Mapping could not be found from structure.
-Serial finished in 70.37592911720276 seconds.
-Matched 17/26
-</pre></div></div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>
-</pre></div>
-</div>
-</div>
-</section>
-</section>
+  <dl>
+<dt>{</dt><dd><dl>
+<dt>“cells”: [</dt><dd><dl>
+<dt>{</dt><dd><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“# Adding Structures in Parallel”</p>
+</div></blockquote>
+<p>]</p>
+</dd>
+</dl>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: 1,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“import numpy as npn”,
+“import jsonn”,
+“from monty.serialization import loadfnn”,
+“from pymatgen.core.structure import Structuren”,
+“from smol.cofe import ClusterSubspace, StructureWrangler”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“### 1) Preparing a <cite>StructureWrangler</cite>n”,
+“When adding large structures or structures that underwent a considerable amount of relaxation (compared to the primitive structure) to a <cite>StructureWrangler</cite>, it can be time consuming to appropriately match the structures to compute the correlations vector for the feature matrix. In this case it can be very helpful (and easy!) to add structures in a dataset in parallel.n”,
+“n”,
+“First, we’ll prepare the cluster subspace and structure wrangler as before.”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: 2,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“# Load the raw datan”,
+“n”,
+“# load the prim structuren”,
+“lmof_prim = loadfn(‘data/lmof_prim.json’)n”,
+”    n”,
+“# load the fitting datan”,
+“lmof_data =loadfn(‘data/lmof_fitting_data.json’)n”,
+”    n”,
+“# create a cluster subspacen”,
+“subspace = ClusterSubspace.from_cutoffs(lmof_prim,n”,
+”                                        cutoffs={2: 7, 3: 5},n”,
+”                                        basis=’sinusoid’,n”,
+”                                        supercell_size=(‘O2-’, ‘F-‘),n”,
+”                                        ltol = 0.15, stol = 0.2,n”,
+”                                        angle_tol = 15)n”,
+“n”,
+“# create the structre wranglern”,
+“wrangler = StructureWrangler(subspace)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“### 2) Add structures in paralleln”,
+“Since adding structures is an embarassingly parallel operation,n”,
+“all we need to do is run a parallel loop. There are a few ways ton”,
+“do this in python. Here we will use the <cite>joblib</cite> library. But using <cite>multiprocessing</cite> n”,
+“would be very similar.”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: 4,
+“metadata”: {},
+“outputs”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><p>“name”: “stdout”,
+“output_type”: “stream”,
+“text”: [</p>
+<blockquote>
+<div><p>“This computers has 8 cpus.n”</p>
+</div></blockquote>
+<p>]</p>
+</dd>
+</dl>
+<p>},
+{</p>
+<blockquote>
+<div><p>“name”: “stderr”,
+“output_type”: “stream”,
+“text”: [</p>
+<blockquote>
+<div><p>“[Parallel(n_jobs=8)]: Using backend LokyBackend with 8 concurrent workers.n”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“name”: “stdout”,
+“output_type”: “stream”,
+“text”: [</p>
+<blockquote>
+<div><p>“Parallel finished in 25.01846957206726 seconds.n”,
+“Matched 17/26n”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“name”: “stderr”,
+“output_type”: “stream”,
+“text”: [</p>
+<blockquote>
+<div><p>“[Parallel(n_jobs=8)]: Done  26 out of  26 | elapsed:   25.0s finishedn”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>],
+“source”: [</p>
+<blockquote>
+<div><p>“from time import timen”,
+“from joblib import Parallel, delayed, cpu_countn”,
+“n”,
+“print(f’This computers has {cpu_count()} cpus.’)n”,
+“n”,
+“nprocs = cpu_count()  # setting this to -1 also uses all cpusn”,
+“n”,
+“# setting a batch size usually improves speedn”,
+“batch_size = ‘auto’ #len(lmof_data)//nprocsn”,
+“n”,
+“start = time()n”,
+“n”,
+“# we need to add the data a bit differently to avoid having to usen”,
+“# shared memory between processesn”,
+“with Parallel(n_jobs=nprocs, batch_size=batch_size, verbose=True) as parallel: n”,
+”    items = parallel(delayed(wrangler.process_structure)(struct, {‘energy’: energy})n”,
+”                                                         for struct, energy in lmof_data)n”,
+“n”,
+“# unpack the items and remove Nones from structure that failed to matchn”,
+“data_items = [item for item in items if item is not None]n”,
+“wrangler.append_data_items(data_items)n”,
+“n”,
+“print(f’Parallel finished in {time()-start} seconds.’)n”,
+“print(f’Matched {wrangler.num_structures}/{len(lmof_data)} structures.’)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“1.1) Compare with serial code”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: 5,
+“metadata”: {},
+“outputs”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><p>“name”: “stdout”,
+“output_type”: “stream”,
+“text”: [</p>
+<blockquote>
+<div><p>“Unable to match Li+6 Mn3+6 Mn4+3 O2-18 with properties {‘energy’: -363.8585} to supercell_structure. Throwing out.n”,
+” Error Message: Mapping could not be found from structure.n”,
+“Unable to match Mn3+32 O2-48 with properties {‘energy’: -1057.1584} to supercell_structure. Throwing out.n”,
+” Error Message: Supercell could not be found from structuren”,
+“Unable to match Li+8 Mn2+4 Mn4+12 O2-32 with properties {‘energy’: -636.38575} to supercell_structure. Throwing out.n”,
+” Error Message: Mapping could not be found from structure.n”,
+“Unable to match Li+9 Mn3+5 Mn4+2 O2-16 with properties {‘energy’: -321.99251} to supercell_structure. Throwing out.n”,
+” Error Message: Mapping could not be found from structure.n”,
+“Unable to match Li+7 Mn3+6 Mn4+4 Mn2+1 O2-19 F-5 with properties {‘energy’: -453.85747} to supercell_structure. Throwing out.n”,
+” Error Message: Mapping could not be found from structure.n”,
+“Unable to match Li+7 Mn3+7 Mn4+3 Mn2+1 O2-18 F-6 with properties {‘energy’: -452.20166} to supercell_structure. Throwing out.n”,
+” Error Message: Mapping could not be found from structure.n”,
+“Unable to match Li+6 Mn3+6 Mn4+3 O2-18 with properties {‘energy’: -363.96163} to supercell_structure. Throwing out.n”,
+” Error Message: Mapping could not be found from structure.n”,
+“Unable to match Li+9 Mn3+5 Mn4+2 O2-16 with properties {‘energy’: -321.98387} to supercell_structure. Throwing out.n”,
+” Error Message: Mapping could not be found from structure.n”,
+“Unable to match Li+9 Mn3+5 Mn4+2 O2-16 with properties {‘energy’: -321.62407} to supercell_structure. Throwing out.n”,
+” Error Message: Mapping could not be found from structure.n”,
+“Serial finished in 70.37592911720276 seconds.n”,
+“Matched 17/26n”</p>
+</div></blockquote>
+<p>]</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>],
+“source”: [</p>
+<blockquote>
+<div><p>“wrangler.remove_all_data()n”,
+“n”,
+“start = time()n”,
+“n”,
+“for s, e in lmof_data:n”,
+”    wrangler.add_data(s, {‘energy’: e}, verbose=True)n”,
+“n”,
+“print(f’Serial finished in {time()-start} seconds.’)n”,
+“print(f’Matched {wrangler.num_structures}/{len(lmof_data)} structures.’)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“metadata”: {},
+“outputs”: [],
+“source”: []</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>],
+“metadata”: {</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“kernelspec”: {</dt><dd><p>“display_name”: “matx_dev”,
+“language”: “python”,
+“name”: “matx_dev”</p>
+</dd>
+</dl>
+<p>},
+“language_info”: {</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“codemirror_mode”: {</dt><dd><p>“name”: “ipython”,
+“version”: 3</p>
+</dd>
+</dl>
+<p>},
+“file_extension”: “.py”,
+“mimetype”: “text/x-python”,
+“name”: “python”,
+“nbconvert_exporter”: “python”,
+“pygments_lexer”: “ipython3”,
+“version”: “3.8.5”</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>},
+“nbformat”: 4,
+“nbformat_minor”: 4</p>
+</dd>
+</dl>
+<p>}</p>
 
 
     </div>

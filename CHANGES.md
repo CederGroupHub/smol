@@ -16,11 +16,13 @@ Use this section to keep track of changes in the works.
 * `cofe.wrangling.select` structure selection functions.
 [\#133](https://github.com/CederGroupHub/smol/pull/133)
   ([lbluque](https://github.com/lbluque))
-
-### Changed
+* `UniformlyRandomKernel` for high temperature/random limit sampling.
+`ThermalKernel` ABC class for all temperature based MC Kernels.
+  [\#133](https://github.com/CederGroupHub/smol/pull/134)
+  ([lbluque](https://github.com/lbluque))
 
 ### Fixed
-* Fix orbit generation to play niceley with changes in pymatgen
+* Fix orbit generation to play nicely with changes in pymatgen
   `Structure.sites_in_sphere` return value.
   [\#125](https://github.com/CederGroupHub/smol/pull/125)
   ([lbluque](https://github.com/lbluque))
