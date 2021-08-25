@@ -18,7 +18,7 @@ def test_regression_data(cluster_subspace):
                                            property_vector=prop_vec)
     coeffs = np.random.random(len(cluster_subspace))
     expansion = ClusterExpansion(cluster_subspace, coeffs, reg_data)
-    assert reg_data.class_name == reg.__class__.__name__
+    assert reg_data.estimator_name == reg.__class__.__name__
     assert reg_data.module == reg.__module__
     assert reg_data.parameters == reg.get_params()
     assert_msonable(expansion)
@@ -164,7 +164,7 @@ class TestClusterExpansionEwaldBinary(unittest.TestCase):
                                sw.get_property_vector('energy', True),
                                rcond=None)[0]
         reg_data = RegressionData(
-            module='foo.bar', class_name='Estimator', parameters={'foo': 'bar'},
+            module='foo.bar', estimator_name='Estimator', parameters={'foo': 'bar'},
             feature_matrix=sw.feature_matrix,
             property_vector=sw.get_property_vector('energy'))
         ce = ClusterExpansion(cs, ecis, reg_data)
