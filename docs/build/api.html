@@ -15,7 +15,7 @@
     <script src="_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -483,16 +483,30 @@ to use a species that has a constant amount per formula unit.</p></li>
 <dd><p>Create ClusterSubspace from an MSONable dict.</p>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.function_inds_by_size">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">function_inds_by_size</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_inds_by_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get correlation function indices by cluster sizes.</p>
+</dd></dl>
+
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.function_inds_by_cutoffs">
-<span class="sig-name descname"><span class="pre">function_inds_by_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_inds_by_cutoffs" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.function_inds_from_cutoffs">
+<span class="sig-name descname"><span class="pre">function_inds_from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_inds_from_cutoffs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get indices of corr functions by cluster cutoffs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – upper diameter for clusters to include.</p></li>
+<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – upper diameter for clusters to include. If a single float
+is given then that cutoff is used for all orbit sizes.
+Otherwise a dict can be used to specify the cutoff for the
+orbit cluster sizes,
+i.e. {2: cutoff_pairs, 3: cutoff_trips, …}</p></li>
 <li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – optional
-lower diameter for clusters to include.</p></li>
+lower diameter for clusters to include. If a single float
+is given then that cutoff is used for all orbit sizes.
+Otherwise a dict can be used to specify the cutoff for the
+orbit cluster sizes,
+i.e. {2: cutoff_pairs, 3: cutoff_trips, …}</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -502,12 +516,6 @@ lower diameter for clusters to include.</p></li>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.function_inds_by_size">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">function_inds_by_size</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_inds_by_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get correlation function indices by cluster sizes.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -614,28 +622,36 @@ species itself.</p></li>
 <dd><p>Return a list of all orbits sorted by size.</p>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.orbits_by_size">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">orbits_by_size</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbits_by_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get dictionary of orbits with key being the orbit size.</p>
+</dd></dl>
+
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.orbits_by_cutoffs">
-<span class="sig-name descname"><span class="pre">orbits_by_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbits_by_cutoffs" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.orbits_from_cutoffs">
+<span class="sig-name descname"><span class="pre">orbits_from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbits_from_cutoffs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get orbits with clusters within given diameter cutoffs (inclusive).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – upper diameter for clusters to include.</p></li>
+<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – upper diameter for clusters to include. If a single float
+is given then that cutoff is used for all orbit sizes.
+Otherwise a dict can be used to specify the cutoff for the
+orbit cluster sizes,
+i.e. {2: cutoff_pairs, 3: cutoff_trips, …}</p></li>
 <li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – optional
-lower diameter for clusters to include.</p></li>
+lower diameter for clusters to include. If a single float
+is given then that cutoff is used for all orbit sizes.
+Otherwise a dict can be used to specify the cutoff for the
+orbit cluster sizes,
+i.e. {2: cutoff_pairs, 3: cutoff_trips, …}</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>list of Orbits</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.orbits_by_size">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">orbits_by_size</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbits_by_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get dictionary of orbits with key being the orbit size.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1678,7 +1694,7 @@ ClusterExpansion.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_expansion</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterExpansion" title="smol.cofe.ClusterExpansion"><em>ClusterExpansion</em></a>) – A cluster expansion object.</p></li>
+<li><p><strong>cluster_expansion</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.expansion.ClusterExpansion" title="smol.cofe.expansion.ClusterExpansion"><em>ClusterExpansion</em></a>) – A cluster expansion object.</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – Supercell matrix defining the system size.</p></li>
 <li><p><strong>optimize_indicator</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
 Wether to optimize calculations for indicator basis.</p></li>
@@ -2149,7 +2165,7 @@ size/supercell.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 ClusterExpansion prim structure.</p></li>
 <li><p><strong>coefficients</strong> – single or array of fit coefficients.</p></li>
@@ -2399,7 +2415,7 @@ Same as <code class="code docutils literal notranslate"><span class="pre">Cluste
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 <li><p><strong>coefficients</strong> (<em>ndarray</em>) – Fit coefficients for the represented cluster expansion.</p></li>
@@ -2485,7 +2501,7 @@ energy using an Ewald Summation term.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace.</p></li>
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace.</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 <li><p><strong>ewald_term</strong> (<a class="reference internal" href="smol.cofe.extern.html#smol.cofe.extern.ewald.EwaldTerm" title="smol.cofe.extern.ewald.EwaldTerm"><em>EwaldTerm</em></a>) – An instance of EwaldTerm to compute electrostatic energies.</p></li>
@@ -2630,7 +2646,7 @@ creating a processor. This will take care of creating the correct
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 </ul>

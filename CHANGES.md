@@ -18,7 +18,7 @@ Use this section to keep track of changes in the works.
   ([lbluque](https://github.com/lbluque))
 * `UniformlyRandomKernel` for high temperature/random limit sampling.
 `ThermalKernel` ABC class for all temperature based MC Kernels.
-  [\#133](https://github.com/CederGroupHub/smol/pull/134)
+  [\#134](https://github.com/CederGroupHub/smol/pull/134)
   ([lbluque](https://github.com/lbluque))
 
 ### Fixed

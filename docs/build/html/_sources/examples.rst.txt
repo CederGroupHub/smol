@@ -20,7 +20,7 @@ Basic Examples
 
 .. _Running Semi-Grand Canonical Monte Carlo: notebooks/2-1-running-semigrand-mc.ipynb
 
-.. _Preparing cluster expansion training data: notebooks/3-training-data-preparations.ipynb
+.. _Preparing cluster expansion training data: notebooks/3-training-data-preparation.ipynb
 
 .. _Adding structures to a StructureWrangler in parallel: notebooks/4-adding-structures-in-parallel.ipynb
 
