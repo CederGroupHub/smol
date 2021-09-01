@@ -20,6 +20,12 @@ Use this section to keep track of changes in the works.
 `ThermalKernel` ABC class for all temperature based MC Kernels.
   [\#134](https://github.com/CederGroupHub/smol/pull/134)
   ([lbluque](https://github.com/lbluque))
+### Changed
+* Methods `orbits_from_cutoffs` and `function_inds_from_cutoffs` now allow a
+  dictionary as input to pick out orbits with different cluster diameter
+  cutoffs.
+  [\#135](https://github.com/CederGroupHub/smol/pull/135)
+  ([lbluque](https://github.com/lbluque))
 
 ### Fixed
 * Fix orbit generation to play nicely with changes in pymatgen
