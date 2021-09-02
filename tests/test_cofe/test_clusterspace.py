@@ -95,19 +95,45 @@ class TestClusterSubSpace(unittest.TestCase):
         for s, c in self.cs.cutoffs.items():
             self.assertTrue(self.cutoffs[s] >= c)
 
-    def test_orbits_by_cutoffs(self):
+    def test_orbits_from_cutoffs(self):
         # Get all of them
         self.assertTrue(
             all(o1 == o2 for o1, o2 in
-                zip(self.cs.orbits, self.cs.orbits_by_cutoffs(6))))
+                zip(self.cs.orbits, self.cs.orbits_from_cutoffs(6))))
         for upper, lower in ((5, 0), (6, 3), (5, 2)):
-            orbs = self.cs.orbits_by_cutoffs(upper, lower)
+            orbs = self.cs.orbits_from_cutoffs(upper, lower)
             self.assertTrue(len(orbs) < len(self.cs.orbits))
             self.assertTrue(
                 all(lower <= o.base_cluster.diameter <= upper for o in orbs)
             )
+
+        # Test with dict
+        upper = {2: 4.5, 3: 3.5}
+        orbs = self.cs.orbits_from_cutoffs(upper)
+        self.assertTrue(len(orbs) < len(self.cs.orbits))
+        self.assertTrue(
+            all(o.base_cluster.diameter <= upper[2] for o in orbs
+                if len(o.base_cluster) == 2)
+        )
+        self.assertTrue(
+            all(o.base_cluster.diameter <= upper[3] for o in orbs
+                if len(o.base_cluster) == 3)
+        )
+
+        # Test for only pairs
+        upper = {2: 4.5}
+        orbs = self.cs.orbits_from_cutoffs(upper)
+        self.assertTrue(len(orbs) < len(self.cs.orbits))
+        self.assertTrue(
+            all(o.base_cluster.diameter <= upper[2] for o in orbs
+                if len(o.base_cluster) == 2)
+        )
+        self.assertTrue(
+            all(len(o.base_cluster) == 2 for o in orbs)
+        )
+
         # bad cuttoffs
-        self.assertTrue(len(self.cs.orbits_by_cutoffs(2, 4)) == 0)
+        self.assertTrue(len(self.cs.orbits_from_cutoffs(2, 4)) == 0)
 
     def test_functions_inds_by_size(self):
         indices = self.cs.function_inds_by_size
@@ -122,12 +148,12 @@ class TestClusterSubSpace(unittest.TestCase):
                     for i in inds))
 
     def test_functions_inds_by_cutoffs(self):
-        indices = self.cs.function_inds_by_cutoffs(6)
+        indices = self.cs.function_inds_from_cutoffs(6)
         # check that all of them are in there.
         self.assertTrue(len(indices) == len(self.cs) - 1)
         fun_orb_ids = self.cs.function_orbit_ids
         for upper, lower in ((4, 0), (5, 3), (3, 1)):
-            indices = self.cs.function_inds_by_cutoffs(upper, lower)
+            indices = self.cs.function_inds_from_cutoffs(upper, lower)
             self.assertTrue(len(indices) < len(self.cs))
             self.assertTrue(
                 all(lower <= self.cs.orbits[fun_orb_ids[i] - 1].base_cluster.diameter <= upper
