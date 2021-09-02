@@ -1,4 +1,6 @@
+import pytest
 import unittest
+import numpy.testing as npt
 import random
 import numpy as np
 from itertools import combinations
@@ -40,6 +42,20 @@ def test_get_complete_mapping():
 
     assert forward_comp == forward_full
     assert backward_comp == backward_full
+
+
+def test_from_cutoffs(structure):
+    #TODO fix subspace so that empty sizes are not kept and .cutoff does not
+    # fail bc of max(empty sequence)
+    # test a few iterations tightening clusters to make sure none are missed
+    for cutoffs in [{2: 7, 3: 5, 4: 4.5}, {2: 8, 3: 5, 4: 4.5}]:
+        subspace = ClusterSubspace.from_cutoffs(structure, cutoffs)
+        tight_subspace = ClusterSubspace.from_cutoffs(
+            structure, subspace.cutoffs)
+        assert len(subspace) == len(tight_subspace)
+        npt.assert_allclose(
+            np.array(list(subspace.cutoffs.values())),
+            np.array(list(tight_subspace.cutoffs.values())))
 
 
 class TestClusterSubSpace(unittest.TestCase):
