@@ -427,34 +427,54 @@ class ClusterSubspace(MSONable):
         """
         return self._external_terms
 
-    def orbits_by_cutoffs(self, upper, lower=0):
+    def orbits_from_cutoffs(self, upper, lower=0):
         """Get orbits with clusters within given diameter cutoffs (inclusive).
 
         Args:
-            upper (float):
-                upper diameter for clusters to include.
+            upper (float or dict):
+                upper diameter for clusters to include. If a single float
+                is given then that cutoff is used for all orbit sizes.
+                Otherwise a dict can be used to specify the cutoff for the
+                orbit cluster sizes,
+                i.e. {2: cutoff_pairs, 3: cutoff_trips, ...}
             lower (float): optional
-                lower diameter for clusters to include.
+                lower diameter for clusters to include. If a single float
+                is given then that cutoff is used for all orbit sizes.
+                Otherwise a dict can be used to specify the cutoff for the
+                orbit cluster sizes,
+                i.e. {2: cutoff_pairs, 3: cutoff_trips, ...}
 
         Returns:
             list of Orbits
         """
-        return [orbit for orbit in self.iterorbits()
-                if lower <= orbit.base_cluster.diameter <= upper]
+        upper = upper if isinstance(upper, dict) \
+            else {k: upper for k in self._orbits.keys()}
+        lower = lower if isinstance(lower, dict) \
+            else {k: lower for k in self._orbits.keys()}
+        return [orbit for size in upper.keys() for orbit in self._orbits[size]
+                if lower[size] <= orbit.base_cluster.diameter <= upper[size]]
 
-    def function_inds_by_cutoffs(self, upper, lower=0):
+    def function_inds_from_cutoffs(self, upper, lower=0):
         """Get indices of corr functions by cluster cutoffs.
 
         Args:
-            upper (float):
-                upper diameter for clusters to include.
+            upper (float or dict):
+                upper diameter for clusters to include. If a single float
+                is given then that cutoff is used for all orbit sizes.
+                Otherwise a dict can be used to specify the cutoff for the
+                orbit cluster sizes,
+                i.e. {2: cutoff_pairs, 3: cutoff_trips, ...}
             lower (float): optional
-                lower diameter for clusters to include.
+                lower diameter for clusters to include. If a single float
+                is given then that cutoff is used for all orbit sizes.
+                Otherwise a dict can be used to specify the cutoff for the
+                orbit cluster sizes,
+                i.e. {2: cutoff_pairs, 3: cutoff_trips, ...}
 
         Returns:
             list: of corr function indices for clusters within cutoffs
         """
-        orbits = self.orbits_by_cutoffs(upper, lower)
+        orbits = self.orbits_from_cutoffs(upper, lower)
         inds = []
         for orbit in orbits:
             inds += list(range(orbit.bit_id, orbit.bit_id + len(orbit)))

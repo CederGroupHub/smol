@@ -136,7 +136,8 @@ class Orbit(MSONable):
                 new_bits = list(set(
                     tuple(bit_combo[np.array(bit_op)]) for bit_op in bit_ops))
                 all_combos.append(new_bits)
-        self._bit_combos = tuple(np.array(c, dtype=np.int) for c in all_combos)
+        self._bit_combos = tuple(
+            np.array(c, dtype=np.int_) for c in all_combos)
         return self._bit_combos
 
     @property

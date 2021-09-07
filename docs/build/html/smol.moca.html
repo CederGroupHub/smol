@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>smol.moca package &#8212; smol 1.0.0 documentation</title>
+    <title>smol.moca package &#8212; smol 1.0.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
@@ -275,7 +275,7 @@ for the new species to place at that site.</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.CanonicalEnsemble">
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">CanonicalEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CanonicalEnsemble" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="api.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.base.Ensemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.base.Ensemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Canonical Ensemble class to run Monte Carlo Simulations.</p>
 <p>Initialize CanonicalEnemble.</p>
 <dl class="field-list simple">
@@ -371,7 +371,7 @@ composite processor.</p>
 <p>It is recommended to use the <code class="code docutils literal notranslate"><span class="pre">from_cluster_expansion</span></code> to create an
 ensemble and the underlying processor automatically rather than directly
 creating a processor. This will take care of creating the correct
-<a class="reference internal" href="api.html#smol.moca.CompositeProcessor" title="smol.moca.CompositeProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CompositeProcessor</span></code></a> or <a class="reference internal" href="api.html#smol.moca.CEProcessor" title="smol.moca.CEProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CEProcessor</span></code></a> for you.</p>
+<a class="reference internal" href="#smol.moca.CompositeProcessor" title="smol.moca.CompositeProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CompositeProcessor</span></code></a> or <a class="reference internal" href="#smol.moca.CEProcessor" title="smol.moca.CEProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CEProcessor</span></code></a> for you.</p>
 <p>Initialize a CompositeProcessor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -636,7 +636,7 @@ ClusterExpansion.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.FuSemiGrandEnsemble">
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">FuSemiGrandEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fugacity_fractions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.FuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="api.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Fugacity fraction SemiGrandEnsemble.</p>
 <p>A Semi-Grand Canonical Ensemble for Monte Carlo simulations where the
 species fugacity ratios are set constant. This implicitly sets the chemical
@@ -733,7 +733,7 @@ supercell with same site spaces.</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.MuSemiGrandEnsemble">
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MuSemiGrandEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chemical_potentials</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.MuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="api.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Relative chemical potential based SemiGrand Ensemble.</p>
 <p>A Semi-Grand Canonical Ensemble for Monte Carlo Simulations where species
 relative chemical potentials are predefined. Note that in the SGC Ensemble
@@ -922,7 +922,7 @@ sampling from the last state of a previous MCMC run.
 <li><p><strong>natural_parameters</strong> (<em>ndarray</em>) – array of natural parameters used in the ensemble.</p></li>
 <li><p><strong>num_energy_coefs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the number of coeficients in the natural parameters that
 correspond to the energy only.</p></li>
-<li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="api.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – Sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
+<li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – Sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
 <li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of walkers used to generate chain. Default is 1</p></li>
 </ul>
 </dd>
@@ -1215,8 +1215,8 @@ method, unless you need more control.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>kernel</strong> (<a class="reference internal" href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCMCKernel" title="smol.moca.sampler.kernel.MCKernel"><em>MCKernel</em></a>) – An MCKernel instance.</p></li>
-<li><p><strong>container</strong> (<a class="reference internal" href="api.html#smol.moca.SampleContainer" title="smol.moca.SampleContainer"><em>SampleContainer</em></a>) – A sampler containter to store samples. If given num_walkers is
+<li><p><strong>kernel</strong> (<a class="reference internal" href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCKernel" title="smol.moca.sampler.kernel.MCKernel"><em>MCKernel</em></a>) – An MCKernel instance.</p></li>
+<li><p><strong>container</strong> (<a class="reference internal" href="#smol.moca.SampleContainer" title="smol.moca.SampleContainer"><em>SampleContainer</em></a>) – A sampler containter to store samples. If given num_walkers is
 taken from the container.</p></li>
 <li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
 seed for random number generator.</p></li>
@@ -1260,18 +1260,19 @@ the amount to thin by for saving samples.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.Sampler.from_ensemble">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.Sampler.from_ensemble" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.Sampler.from_ensemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a sampler based on an Ensemble instances.</p>
 <p>This is the easier way to spin up a Sampler. This will
 automatically populate and create an appropriate SampleContainer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ensemble</strong> (<a class="reference internal" href="api.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble class to obtain sample probabilities from.</p></li>
-<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Temperature to run Monte Carlo at.</p></li>
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble class to obtain sample probabilities from.</p></li>
 <li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – optional
 type of step to run MCMC with. If not given the default is the
 first entry in the Ensemble.valid_mcmc_steps.</p></li>
+<li><p><strong>*args</strong> – Positional arguments to pass to the MCKernel constructor.
+More often than not you want to specify the temperature!</p></li>
 <li><p><strong>kernel_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – optional
 string specifying the specific MCMC transition kernel. This
 represents the underlying MC algorithm. Currently only
@@ -1281,8 +1282,8 @@ Seed for the PRNG.</p></li>
 <li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
 Number of walkers/chains to sampler. Default is 1. More than 1
 is still experimental…</p></li>
-<li><p><strong>*args</strong> – Positional arguments to pass to the MCKernel constructor</p></li>
-<li><p><strong>**kwargs</strong> – Keyword arguments to pass to the MCKernel constructor</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments to pass to the MCKernel constructor.
+More often than not you want to specify the temperature!</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1292,8 +1293,8 @@ is still experimental…</p></li>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.Sampler.mcmckernel">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">mcmckernel</span></span><a class="headerlink" href="#smol.moca.Sampler.mcmckernel" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.moca.Sampler.mckernel">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">mckernel</span></span><a class="headerlink" href="#smol.moca.Sampler.mckernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the underlying ensemble.</p>
 </dd></dl>
 
