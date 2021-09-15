@@ -5,25 +5,23 @@ from importlib import import_module
 import warnings
 import numpy as np
 from itertools import combinations
-
 from monty.json import MSONable
 from pymatgen.core import Structure, PeriodicSite
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.analysis.structure_matcher import \
     StructureMatcher, OrderDisorderElementComparator
-from pymatgen.util.coord import \
-    (is_coord_subset, is_coord_subset_pbc, lattice_points_in_supercell,
-     coord_list_mapping_pbc)
-
+from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc, \
+    lattice_points_in_supercell, coord_list_mapping_pbc
 from src.mc_utils import corr_from_occupancy
-from smol.cofe.space import (Orbit, basis_factory, get_site_spaces,
-                             get_allowed_species, Vacancy, Cluster)
+from smol.cofe.space import Orbit, basis_factory, get_site_spaces, \
+    get_allowed_species, Vacancy, Cluster
+from smol.exceptions import SymmetryError, StructureMatchError, \
+    SYMMETRY_ERROR_MESSAGE
 from smol.cofe.space.constants import SITE_TOL
-from smol.exceptions import (SymmetryError, StructureMatchError,
-                             SYMMETRY_ERROR_MESSAGE)
+
 
 __author__ = "Luis Barroso-Luque, William Davidson Richards, Fengyu Xie," \
-             "Peichen Zhong"
+             " Peichen Zhong"
 
 
 class ClusterSubspace(MSONable):
@@ -916,9 +914,9 @@ class ClusterSubspace(MSONable):
         # Vector sum of a, b, c divided by 2.
         # diameter + max_lp gives maximum possible distance from
         # [0.5, 0.5, 0.5] prim centoid to a point in all enumerable
-        # clusters. Add 0.01 as a numerical tolerance grace.
-        max_lp = np.linalg.norm(np.sum(exp_struct.lattice.matrix, axis=0)) / 2
-        max_lp += 0.01
+        # clusters. Add SITE_TOL as a numerical tolerance grace.
+        max_lp = np.linalg.norm(exp_struct.lattice.matrix.sum(axis=0)) / 2
+        max_lp += SITE_TOL
         for size, diameter in sorted(cutoffs.items()):
             new_orbits = []
             neighbors = exp_struct.get_sites_in_sphere(
