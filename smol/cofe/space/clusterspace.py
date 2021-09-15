@@ -923,7 +923,7 @@ class ClusterSubspace(MSONable):
                         new_orbits.append(new_orbit)
 
             orbits[size] = sorted(new_orbits,
-                                  key=lambda x: 
+                                  key=lambda x:
                                   (np.round(x.base_cluster.diameter,
                                             6),  # noqa
                                    -x.multiplicity))
