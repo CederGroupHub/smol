@@ -943,10 +943,11 @@ class ClusterSubspace(MSONable):
                     elif new_orbit not in new_orbits:
                         new_orbits.append(new_orbit)
 
-            orbits[size] = sorted(
-                new_orbits,
-                key=lambda x: (np.round(x.base_cluster.diameter, 6),
-                               -x.multiplicity))
+            if len(new_orbits) > 0:
+                orbits[size] = sorted(
+                    new_orbits,
+                    key=lambda x: (np.round(x.base_cluster.diameter, 6),
+                                   -x.multiplicity))
         return orbits
 
     def _gen_orbit_indices(self, scmatrix):
