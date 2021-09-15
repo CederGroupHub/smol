@@ -7,7 +7,7 @@ import numpy as np
 from itertools import combinations
 
 from monty.json import MSONable
-from pymatgen import Structure, PeriodicSite
+from pymatgen.core import Structure, PeriodicSite
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.analysis.structure_matcher import \
     StructureMatcher, OrderDisorderElementComparator
@@ -851,7 +851,9 @@ class ClusterSubspace(MSONable):
             exp_struct (Structure):
                 Structure with all sites that have partial occupancy.
             cutoffs (dict):
-                dict of cutoffs for cluster diameters {size: cutoff}
+                dict of cutoffs for cluster diameters {size: cutoff}.
+                Cutoff diameters must decrease with cluster size, otherwise
+                algorithm can not guarantee completeness of cluster subspace.
             symops (list of SymmOps):
                 list of symmetry operations for structure
             basis (str):
@@ -876,7 +878,10 @@ class ClusterSubspace(MSONable):
         orbits = {}
         new_orbits = []
         for nbit, site, sbasis in zip(nbits, exp_struct, site_bases):
-            new_orbit = Orbit([site.frac_coords], exp_struct.lattice,
+            # Coordinates of point terms must stay in [0, 1] to guarantee
+            # correct math of the following algorithm.
+            new_orbit = Orbit([np.mod(site.frac_coords, 1)],
+                              exp_struct.lattice,
                               [list(range(nbit))], [sbasis], symops)
             if new_orbit not in new_orbits:
                 new_orbits.append(new_orbit)
@@ -888,7 +893,12 @@ class ClusterSubspace(MSONable):
         if len(cutoffs) == 0:  # return singlets only if no cutoffs provided
             return orbits
 
-        max_lp = max(exp_struct.lattice.abc) / 2
+        # Vector sum of a, b, c divided by 2.
+        # diameter + max_lp gives maximum possible distance from
+        # [0.5, 0.5, 0.5] prim centoid to a point in all enumerable
+        # clusters. Add 0.01 as a numerical tolerance grace.
+        max_lp = np.linalg.norm(np.sum(exp_struct.lattice.matrix, axis=0)) / 2
+        max_lp += 0.01
         for size, diameter in sorted(cutoffs.items()):
             new_orbits = []
             neighbors = exp_struct.get_sites_in_sphere([0.5, 0.5, 0.5],
@@ -913,8 +923,10 @@ class ClusterSubspace(MSONable):
                         new_orbits.append(new_orbit)
 
             orbits[size] = sorted(new_orbits,
-                                  key=lambda x: (np.round(x.base_cluster.diameter, 6),  # noqa
-                                                 -x.multiplicity))
+                                  key=lambda x:
+                                  (np.round(x.base_cluster.diameter,
+                                            6),  # noqa
+                                   -x.multiplicity))
         return orbits
 
     def _gen_orbit_indices(self, scmatrix):

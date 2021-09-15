@@ -13,7 +13,7 @@ __author__ = "Luis Barroso-Luque, Fengyu Xie"
 from collections.abc import Mapping, Hashable
 from collections import OrderedDict
 from monty.json import MSONable
-from pymatgen import Composition
+from pymatgen.core import Composition
 from pymatgen.core.periodic_table import DummySpecie, get_el_sp
 
 

@@ -18,7 +18,7 @@ import numpy as np
 from copy import deepcopy
 
 from monty.json import MSONable
-from pymatgen import Species, DummySpecies, Element
+from pymatgen.core import Species, DummySpecies, Element
 from smol.cofe.space.domain import get_species, Vacancy, get_site_spaces
 from smol.moca.processor.base import Processor
 from smol.moca.ensemble.sublattice import Sublattice, get_all_sublattices
@@ -492,7 +492,7 @@ class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             float: chemcial work of the occupancy.
         """
         compstat = occu_to_species_stat(occupancy,
-                                        self.bits, self.sc_sublat_list)
+                                        self.all_sublattices)
         ccoord = self._compspace.translate_format(compstat,
                                                   from_format='compstat',
                                                   to_format='constr',
@@ -521,7 +521,7 @@ class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         delta_ccoords = delta_ccoords_from_step(occupancy,
                                                 step,
                                                 self._compspace,
-                                                self.sc_sublat_list)
+                                                self.all_sublattices)
 
         delta_mu = np.dot(delta_ccoords, self.mu)
 

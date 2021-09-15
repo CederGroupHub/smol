@@ -36,7 +36,7 @@ from copy import deepcopy
 from monty.json import MSONable, MontyDecoder
 import json
 
-from pymatgen import Element, Composition
+from pymatgen.core import Element, Composition
 from smol.cofe.space.domain import Vacancy
 
 from .utils.math_utils import *

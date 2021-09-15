@@ -10,7 +10,7 @@ from itertools import chain, product, accumulate
 import numpy as np
 
 from monty.json import MSONable
-from pymatgen import Lattice, SymmOp
+from pymatgen.core import Lattice, SymmOp
 from pymatgen.util.coord import coord_list_mapping
 
 from smol.utils import _repr
