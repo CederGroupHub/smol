@@ -45,10 +45,11 @@ def test_get_complete_mapping():
 
 
 def test_from_cutoffs(structure):
-    #TODO fix subspace so that empty sizes are not kept and .cutoff does not
-    # fail bc of max(empty sequence)
-    # test a few iterations tightening clusters to make sure none are missed
-    for cutoffs in [{2: 7, 3: 5, 4: 4.5}, {2: 8, 3: 5, 4: 4.5}]:
+    cutoffs = {2: 5, 3: 4, 4: 4}
+    for increment in np.arange(0, 3, 1):
+        cutoffs.update(
+            {k: v + increment/(n + 1)
+             for n, (k, v) in enumerate(cutoffs.items())})
         subspace = ClusterSubspace.from_cutoffs(structure, cutoffs)
         tight_subspace = ClusterSubspace.from_cutoffs(
             structure, subspace.cutoffs)
