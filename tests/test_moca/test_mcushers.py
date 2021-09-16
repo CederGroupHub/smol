@@ -47,6 +47,16 @@ def sublattices_neutral():
     return [sl1,sl2]
 
 @pytest.fixture
+def sublattices_partial():
+    space1 = SiteSpace(Composition({'Li+':0.5,'Mn3+':0.3333333,'Ti4+':0.1666667}))
+    space2 = SiteSpace(Composition({'O2-':0.8333333,'P3-':0.1666667}))
+    sl1 = Sublattice(space1,np.array([0,1,2,3,4,5]))
+    sl1.restrict_sites([0, 3]) # Ti not on these sites.
+    sl2 = Sublattice(space2,np.array([6,7,8,9,10,11]))
+    sl2.restrict_sites([6, 9]) # P not on these sites.
+    return [sl1,sl2]
+
+@pytest.fixture
 def rand_occu(sublattices):
     # generate a random occupancy according to the sublattices
     occu = np.zeros(sum(len(s.sites) for s in sublattices), dtype=int)
@@ -60,6 +70,10 @@ def rand_occu(sublattices):
 def rand_occu_neutral(sublattices_neutral):
     return gen_random_neutral_occupancy(sublattices_neutral, 12)
 
+@pytest.fixture
+def rand_occu_partial():
+    return np.array([0, 0, 0, 2, 2, 1, 1, 1, 1, 1, 1, 0], dtype=int)
+
 @pytest.fixture(params=mcmcusher_classes)
 def mcmcusher(request, sublattices):
     # instantiate mcmcushers to test
@@ -70,10 +84,18 @@ def tableflipper(sublattices_neutral):
     return Tableflipper(sublattices_neutral, swap_weight = 0)
 
 @pytest.fixture
+def partialflipper(sublattices_partial):
+    return Tableflipper(sublattices_partial, swap_weight = 0)
+
+@pytest.fixture
 def subchainwalker(sublattices_neutral):
     return Subchainwalker(sublattices_neutral, sub_bias_type='square-charge',
                           minimize_swap=True, add_swap=False)
 
+@pytest.fixture
+def partialwalker(sublattices_partial):
+    return Subchainwalker(sublattices_partial, sub_bias_type='square-charge',
+                          minimize_swap=True, add_swap=False)
 
 def test_bad_propabilities(mcmcusher):
     with pytest.raises(ValueError):
@@ -158,6 +180,23 @@ def test_flip_neutral(tableflipper, rand_occu_neutral):
         step = tableflipper.propose_step(occu)
         # With weights mask, we should not propose null steps any more.
         assert len(step) > 0
+        #print('step:',step)
+        for s_id, sp_id in step:
+            occu[s_id] = sp_id
+
+def test_flip_partial(partialflipper, rand_occu_partial):
+
+    occu = deepcopy(rand_occu_partial)
+    sl_list = [[0,1,2,3,4,5],[6,7,8,9,10,11]]
+    bits = partialflipper.bits
+    print("Bits:", bits)
+
+    for i in range(30000):
+        assert is_neutral(occu,bits,sl_list)
+        step = partialflipper.propose_step(occu)
+        # With weights mask, we should not propose null steps any more.
+        assert len(step) > 0
+        assert not any(i in [0, 3, 6, 9] for i, s in step)
         #print('step:',step)
         for s_id, sp_id in step:
             occu[s_id] = sp_id
@@ -304,8 +343,51 @@ def test_neutral_probabilities():
     print("Average frequency:", np.average(list(state_counter.values())))
  
     # Test with zero hamiltonian, assert equal frequency.
-    assert len(state_counter) <= 34  # Total 5176 possible states.
+    assert len(state_counter) <= 34  # Total 34 possible states.
     assert len(state_counter) > 31
+    assert (max(state_counter.values())-min(state_counter.values()))/np.average(list(state_counter.values())) < 0.1
+
+def test_partial_probabilities():
+
+    space1 = SiteSpace(Composition({'Li+':0.5,'Mn3+':0.3333333,'Ti4+':0.1666667}))
+    space2 = SiteSpace(Composition({'O2-':0.8333333,'P3-':0.1666667}))
+    sl1 = Sublattice(space1,np.array([0,1,2]))
+    sl2 = Sublattice(space2,np.array([3,4,5]))
+    sl2.restrict_sites([5])
+
+    tableflipper = Tableflipper([sl1, sl2])
+    comp_space = tableflipper._compspace
+    state_counter = {}
+    print("Bits:", tableflipper.bits)
+
+    occu = np.array([2, 2, 2, 0, 0, 0])
+    print("Initial occupancy:", occu)
+    for i in range(500000):
+        occu_str = hash_occu(occu)
+        if i > 50000:
+            if occu_str not in state_counter:
+                state_counter[occu_str] = 1
+            else:
+                state_counter[occu_str] += 1
+        step = tableflipper.propose_step(occu)
+        factor = tableflipper.compute_a_priori_factor(occu, step)
+        #factor = 1
+        if np.log(random.random()) < np.log(factor):
+            # Accept step
+            for sid, sp_to in step:
+                occu[sid] = sp_to
+    N = sum(list(state_counter.values()))
+    sorted_counter = sorted(list(state_counter.items()), key=lambda x: x[1])
+    print("Total number of states:", len(state_counter))
+    print("Max frequency:", sorted_counter[-1][1])
+    print("Max frequency occu:", sorted_counter[-1][0])
+    print("Min frequency:", sorted_counter[0][1])
+    print("Min frequency occu:", sorted_counter[0][0])
+    print("Average frequency:", np.average(list(state_counter.values())))
+ 
+    # Test with zero hamiltonian, assert equal frequency.
+    assert len(state_counter) <= 19  # Total 19 possible states.
+    assert len(state_counter) > 17
     assert (max(state_counter.values())-min(state_counter.values()))/np.average(list(state_counter.values())) < 0.1
 
 def test_subchain_walk(subchainwalker, rand_occu_neutral):
@@ -318,6 +400,25 @@ def test_subchain_walk(subchainwalker, rand_occu_neutral):
     for _ in range(100):
         step = subchainwalker.propose_step(occu)
         assert is_neutral(occu, bits, sl_list)
+
+        if not is_canonical(occu, step, sl_list):
+            comp_change_count += 1
+        for i, sp in step:
+            occu[i] = sp
+
+    assert comp_change_count >= 80
+
+def test_partial_walk(partialwalker, rand_occu_partial):
+    comp_change_count = 0
+    occu = rand_occu_partial.copy()
+
+    bits = [s.species for s in partialwalker.all_sublattices]
+    sl_list = [[0,1,2,3,4,5],[6,7,8,9,10,11]]
+
+    for _ in range(100):
+        step = partialwalker.propose_step(occu)
+        assert is_neutral(occu, bits, sl_list)
+        assert not any(i in [0, 3, 6, 9] for i, s in step)
 
         if not is_canonical(occu, step, sl_list):
             comp_change_count += 1

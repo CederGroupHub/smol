@@ -1,6 +1,8 @@
 import pytest
 import numpy as np
 import numpy.testing as npt
+
+from pymatgen.core import Structure, Lattice, Composition
 from smol.moca import (CanonicalEnsemble, FuSemiGrandEnsemble,
                        MuSemiGrandEnsemble, 
                        DiscChargeNeutralSemiGrandEnsemble,
@@ -9,7 +11,9 @@ from smol.moca.sampler.mcusher import (Swapper, Flipper,
                                        Tableflipper)
 from smol.moca.sampler.kernel import Metropolis
 from smol.moca.comp_space import CompSpace
-from smol.moca.ensemble.sublattice import get_all_sublattices
+from smol.moca.ensemble.sublattice import get_all_sublattices, Sublattice
+from smol.cofe import ClusterSubspace, ClusterExpansion
+from smol.cofe.space.domain import SiteSpace
 
 from tests.utils import (gen_random_occupancy,
                          gen_random_neutral_occupancy)
@@ -140,3 +144,65 @@ def test_reshape_occu(ensemble):
     occu = initialize_occus(sampler)[0]
     assert sampler._reshape_occu(occu).shape == (1, len(occu))
 
+def test_partial():
+    space1 = SiteSpace(Composition({'Li+':0.5,'Mn3+':0.3333333,'Ti4+':0.1666667}))
+    space2 = SiteSpace(Composition({'O2-':0.8333333,'P3-':0.1666667}))
+    sl1 = Sublattice(space1,np.array([0,1,2]))
+    sl2 = Sublattice(space2,np.array([3,4,5]))
+    sl2.restrict_sites([5])
+
+    lat = Lattice.from_parameters(1,1,1,60,60,60)
+    prim = Structure(lat, [{'Li+':0.5,'Mn3+':0.3333333,'Ti4+':0.1666667}, {'O2-':0.8333333,'P3-':0.1666667}], [[0,0,0],[0.5,0.5,0.5]])
+    cutoffs = {2: 2.0, 3: 1.2, 4:1.2}
+    cspace = ClusterSubspace.from_cutoffs(prim, cutoffs=cutoffs)
+    coefs = np.zeros(cspace.num_corr_functions)
+    ce = ClusterExpansion(cspace, coefs)
+
+    ca_ens = CanonicalEnsemble.from_cluster_expansion(ce, [[3,0,0],[0,1,0],[0,0,1]], optimize_indicator=True, sublattices=[sl1, sl2])
+    #print("Sublattices:", [sl1, sl2])
+    #print("Ensemble sublattices:", ca_ens.all_sublattices)
+    for s in ca_ens.all_sublattices:
+        if sl1.species == s.species:
+            assert np.all(sl1.active_sites == s.active_sites)
+            assert np.all(sl1.sites == s.sites)
+        elif sl2.species == s.species:
+            assert np.all(sl2.active_sites == s.active_sites)
+            assert np.all(sl2.sites == s.sites)
+        else:
+            raise ValueError("A sublattice {} in ensemble not found in original sublattices!".format(s))
+
+    chempots = {'Li+':0, 'Mn3+':0, 'Ti4+':0, 'P3-':0, 'O2-':0}
+    gc_ens = MuSemiGrandEnsemble.from_cluster_expansion(ce, [[3,0,0],[0,1,0],[0,0,1]], optimize_indicator=True,
+                                                        chemical_potentials=chempots, sublattices=[sl1, sl2])
+
+    ca_sampler = Sampler.from_ensemble(ca_ens, temperature=4000)
+    gc_sampler = Sampler.from_ensemble(gc_ens, temperature=4000, step_type='table-flip', swap_weight=0)
+    ca_actives = []
+    gc_actives = []
+    for s in ca_sampler._kernel._usher.sublattices:
+        ca_actives.extend(list(s.active_sites))
+    for s in gc_sampler._kernel._usher.sublattices:
+        gc_actives.extend(list(s.active_sites))
+    assert set(ca_actives) == set([0, 1, 2, 3, 4])
+    assert set(gc_actives) == set([0, 1, 2, 3, 4])
+
+    def count_species(o):
+        return np.array([np.sum(o[:3]==0), np.sum(o[:3]==1), np.sum(o[:3]==2),
+                         np.sum(o[3:]==0), np.sum(o[3:]==1)])
+    ca_sampler.run(1000, initial_occupancies=np.array([[0, 1, 2, 0, 1, 0]]))
+    gc_sampler.run(1000, initial_occupancies=np.array([[0, 1, 2, 0, 1, 0]]))
+
+    ca_occus = np.array(ca_sampler.samples.get_occupancies(), dtype=int)
+    gc_occus = np.array(gc_sampler.samples.get_occupancies(), dtype=int)
+
+    gc_accept = gc_sampler.samples._accepted[:,0]
+    for o in ca_occus:
+        assert np.all(count_species(ca_occus[0]) == count_species(o))
+        assert o[5] == 0
+
+    assert np.sum(gc_accept) > 0
+    for oid, o in enumerate(gc_occus):
+        if oid>0:
+            if np.all(count_species(gc_occus[oid]) == count_species(gc_occus[oid-1])):
+                assert gc_accept[oid] == 0
+            assert o[5] == 0
