@@ -41,10 +41,15 @@ class MCMCUsher(ABC):
                 list of Sublattices to propose steps for.
             sublattice_probabilities (list of float): optional
                 list of probability to pick a site from a specific sublattice.
+                Must set to 0 for inactive sublattices.
         """
         self.sublattices = sublattices
         if sublattice_probabilities is None:
-            self._sublatt_probs = len(self.sublattices) * [1/len(self.sublattices), ]  # noqa
+            n_active = np.sum([len(s.active_sites) > 0
+                              for s in self.sublattices])
+            self._sublatt_probs = [(1 / n_active
+                                    if len(s.active_sites) > 0 else 0)
+                                   for s in self.sublattices]  # noqa
         elif len(sublattice_probabilities) != len(self.sublattices):
             raise AttributeError('Sublattice probabilites needs to be the '
                                  'same length as sublattices.')
@@ -214,7 +219,9 @@ class Tableflipper(MCMCUsher):
                    ...
                   ]
                 If not given, will auto compute minimal charge neutral
-                flip table. If given, must provide with flip_vecs.
+                flip table.
+                If you have extra composition constraint besides charge,
+                you have to provide your own flip table.
             flip_vecs(np.array), optional:
                 Vector form of table flips, expressed in uncontrained
                 coordinates.
@@ -240,7 +247,6 @@ class Tableflipper(MCMCUsher):
         self.sublattices = [s for s in all_sublattices
                             if len(s.site_space) > 1]
         self.bits = [sl.species for sl in self.all_sublattices]
-        self.sl_list = [list(sl.active_sites) for sl in self.all_sublattices]
         self.sl_sizes = [len(sl.sites) for sl in self.all_sublattices]
         self.sc_size = GCD_list(self.sl_sizes)
         self.sl_sizes = [s // self.sc_size for s in self.sl_sizes]
@@ -310,7 +316,9 @@ class Tableflipper(MCMCUsher):
              list(tuple): list of tuples each with (idex, code).
         """
         occupancy = np.array(occupancy)
-        comp_stat = occu_to_species_stat(occupancy, self.all_sublattices)
+        # We shall only flip active sites.
+        comp_stat = occu_to_species_stat(occupancy, self.all_sublattices,
+                                         active_only=True)
         mask = flip_weights_mask(self.flip_table, comp_stat)
         masked_weights = self.flip_weights * mask
         # Masking effect will also be considered in a_priori factors.
@@ -318,11 +326,13 @@ class Tableflipper(MCMCUsher):
         if random.random() < self.swap_weight:
             return self._swapper.propose_step(occupancy)
         elif masked_weights.sum() == 0:
-            warnings.warn("Current composition is disconnected!")
+            warnings.warn("Current occupancy can not be applied " +
+                          "any table flip!")
             return self._swapper.propose_step(occupancy)
         else:
             species_list = occu_to_species_list(occupancy,
-                                                self.all_sublattices)
+                                                self.all_sublattices,
+                                                active_only=True)
 
             idx = choose_section_from_partition(masked_weights)
             flip = deepcopy(self.flip_table[idx // 2])
@@ -403,7 +413,8 @@ class Tableflipper(MCMCUsher):
             flip['to'] = flip['from']
             flip['from'] = buf
 
-        comp_stat_now = occu_to_species_stat(occupancy, self.all_sublattices)
+        comp_stat_now = occu_to_species_stat(occupancy, self.all_sublattices,
+                                             active_only=True)
         mask_now = flip_weights_mask(self.flip_table, comp_stat_now)
         weights_now = self.flip_weights * mask_now
         p_flip_now = ((1 - self.swap_weight) *

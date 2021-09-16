@@ -7,7 +7,7 @@ import itertools
 
 
 # Utilities for parsing occupation, used in charge-neutral semigrand flip table
-def occu_to_species_stat(occupancy, all_sublattices):
+def occu_to_species_stat(occupancy, all_sublattices, active_only=False):
     """Make compstat format from occupation array.
 
     Get a statistics table of each specie on sublattices from an encoded
@@ -17,6 +17,8 @@ def occu_to_species_stat(occupancy, all_sublattices):
             An array representing encoded occupancy, can be list.
         all_sublattices(smol.moca.Sublattice):
             All sublattices in the super cell, regardless of activeness.
+        active_only(Boolean):
+            If true, will count un-restricted sites only. Default to false.
 
     Return:
         species_stat(2D list of ints/floats)
@@ -27,21 +29,25 @@ def occu_to_species_stat(occupancy, all_sublattices):
     """
     occu = np.array(occupancy)
 
-    return [[int(round((occu[s.sites] == sp_id).sum()))
+    return [[int(round((occu[s.active_sites if active_only else s.sites]
+                        == sp_id).sum()))
             for sp_id in range(len(s.species))]
             for s in all_sublattices]
 
 
-def occu_to_species_list(occupancy, all_sublattices):
+def occu_to_species_list(occupancy, all_sublattices, active_only=False):
     """Get occupation status of each sublattice.
 
     Get table of the indices of sites that are occupied by each specie on
     sublattices, from an encoded occupancy array.
+
     Args:
         occupancy(np.ndarray like):
             An array representing encoded occupancy, can be list.
         all_sublattices(smol.moca.Sublattice):
             All sublattices in the super cell, regardless of activeness.
+        active_only(Boolean):
+            If true, will count un-restricted sites only. Default to false.
 
     Return:
         species_list(3d list of ints):
@@ -52,9 +58,15 @@ def occu_to_species_list(occupancy, all_sublattices):
     """
     occu = np.array(occupancy)
 
-    return [[s.sites[occu[s.sites] == sp_id].tolist()
-            for sp_id in range(len(s.species))]
-            for s in all_sublattices]
+    if active_only:
+        species_list = [[s.active_sites[occu[s.active_sites] == sp_id].tolist()
+                         for sp_id in range(len(s.species))]
+                        for s in all_sublattices]
+    else:
+        species_list = [[s.sites[occu[s.sites] == sp_id].tolist()
+                         for sp_id in range(len(s.species))]
+                        for s in all_sublattices]
+    return species_list
 
 
 def delta_ucoords_from_step(occu, step, comp_space, all_sublattices):

@@ -36,6 +36,8 @@ class Ensemble(ABC):
                 list of Lattice objects representing sites in the processor
                 supercell with same site spaces. Only active sublattices
                 are included here.
+                If you want to restrict sites, specify restricted sublattices
+                as input.
                 Active means to have multiple species occupy one sublattice.
         """
         if sublattices is None:
@@ -46,6 +48,8 @@ class Ensemble(ABC):
         self._processor = processor
         self._sublattices = sublattices
         self._all_sublattices = get_all_sublattices(processor)
+        for s in self._all_sublattices:
+            s.restrict_sites(self.restricted_sites)
 
     @classmethod
     def from_cluster_expansion(cls, cluster_expansion, supercell_matrix,
@@ -124,8 +128,10 @@ class Ensemble(ABC):
     def restricted_sites(self):
         """Get indices of all restricted sites."""
         sites = []
+        # sublattice.restricted_sites is an np.ndarray;
+        # You must use extend, instead of += in concatenation.
         for sublattice in self.sublattices:
-            sites += sublattice.restricted_sites
+            sites.extend(sublattice.restricted_sites)
         return sites
 
     @property
