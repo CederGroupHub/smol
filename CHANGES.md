@@ -28,13 +28,18 @@ Use this section to keep track of changes in the works.
   ([lbluque](https://github.com/lbluque))
 
 ### Fixed
+* Fix cluster searching issue
+  [#104](https://github.com/CederGroupHub/smol/issues/104) when generating
+  orbits from cutoffs. [#138](https://github.com/CederGroupHub/smol/pull/125)
+  ([qchempku2017](https://github.com/qchempku2017))
 * Fix orbit generation to play nicely with changes in pymatgen
   `Structure.sites_in_sphere` return value.
   [\#125](https://github.com/CederGroupHub/smol/pull/125)
   ([lbluque](https://github.com/lbluque))
-* Fix saving bit_combos in `Orbit.as_dict` when pruning has been done.
-[\#130](https://github.com/CederGroupHub/smol/pull/130)
- ([qchempku2017](https://github.com/qchempku2017))
+* Fix [129](https://github.com/CederGroupHub/smol/issues/129)
+  saving bit_combos in `Orbit.as_dict` when pruning has been done.
+  [\#130](https://github.com/CederGroupHub/smol/pull/130)
+  ([qchempku2017](https://github.com/qchempku2017))
 
 ## [v1.0.1](https://github.com/CederGroupHub/smol/tree/v1.0.1) (2021-03-03)
 #### [Full Changelog](https://github.com/CederGroupHub/smol/compare/v1.0.0...v1.0.1)
