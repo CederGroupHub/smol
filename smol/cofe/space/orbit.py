@@ -332,6 +332,28 @@ class Orbit(MSONable):
             c_id = c.assign_ids(c_id)
         return orbit_id + 1, orbit_bit_id + len(self.bit_combos), c_id
 
+    def is_sub_orbit(self, orbit):
+        """Check if given orbits clusters are subclusters.
+
+        Note this does not consider bit_combos
+        Args:
+            orbit (Orbit):
+                Orbit object to check if
+        Returns:
+            bool: True if the clusters of given orbit are subclusters.
+        """
+        if self.base_cluster.size <= orbit.base_cluster.size:
+            return False
+        elif not np.all(sp in self.site_spaces for sp in orbit.site_spaces):
+            return False
+
+        match = any(
+            Cluster(self.base_cluster.sites[inds, :], self.base_cluster.lattice)
+            in orbit.clusters
+            for inds in combinations(
+                range(self.base_cluster.size), orbit.base_cluster.size))
+        return match
+
     def __len__(self):
         """Get total number of orbit basis functions.
 

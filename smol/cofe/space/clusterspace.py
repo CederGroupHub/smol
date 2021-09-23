@@ -1020,20 +1020,14 @@ class ClusterSubspace(MSONable):
         lattice = self._exp_structure.lattice
         sub_indices = []
         for comb in combinations(np.arange(size), size - 1):
-            sub_sites = np.array(sites[np.array(comb), :])
+            sub_sites = sites[comb, :]
             sub_bit_combos = np.array(bit_combos[:, np.array(comb)])
             sub_cluster = Cluster(sub_sites, lattice)
-            sub_equiv = [sub_cluster]
-            for symop in self.symops:
-                new_sites = symop.operate_multi(sub_sites)
-                c = Cluster(new_sites, lattice)
-                if c not in sub_equiv:
-                    sub_equiv.append(c)
 
             for sub_id in possible_sub_ids:
                 sub_bit_combo = self.all_bit_combos[sub_id]
                 sub_orbit = self.orbits[self.function_orbit_ids[sub_id] - 1]
-                cluster_match = sub_orbit.base_cluster in sub_equiv
+                cluster_match = sub_cluster in sub_orbit.clusters
                 bit_match = np.any(
                     np.all(sub_bit_combo[0] == sub_bit_combos, axis=1))
 
