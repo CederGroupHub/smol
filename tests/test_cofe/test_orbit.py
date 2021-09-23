@@ -1,5 +1,5 @@
 import unittest
-from itertools import combinations_with_replacement
+from itertools import combinations_with_replacement, combinations
 import json
 import numpy as np
 from pymatgen.core import Lattice, Structure, Composition
@@ -15,8 +15,8 @@ class TestOrbit(unittest.TestCase):
         species = [{'Li': 0.1, 'Ca': 0.1}] * 3 + ['Br']
         self.coords = ((0.25, 0.25, 0.25), (0.75, 0.75, 0.75),
                        (0.5, 0.5, 0.5), (0, 0, 0))
-        structure = Structure(self.lattice, species, self.coords)
-        sf = SpacegroupAnalyzer(structure)
+        self.structure = Structure(self.lattice, species, self.coords)
+        sf = SpacegroupAnalyzer(self.structure)
         self.symops = sf.get_symmetry_operations()
         self.spaces = [SiteSpace(Composition({'Li': 1.0 / 3.0, 'Ca': 1.0 / 3.0})),
                        SiteSpace(Composition({'Li': 1.0 / 3.0, 'Ca': 1.0 / 3.0}))]
@@ -54,6 +54,29 @@ class TestOrbit(unittest.TestCase):
                        self.bases + [None], self.symops)
         self.assertEqual(orbit1, self.orbit)
         self.assertNotEqual(orbit2, self.orbit)
+
+    def test_is_sub_orbit(self):
+        orbit = Orbit(self.coords[:3], self.lattice, [[0, 1], [0, 1], [0, 1]],
+                       self.bases + [None], self.symops)
+        self.assertFalse(self.orbit.is_sub_orbit(orbit))
+        orbit = Orbit(self.coords[:3], self.lattice, [[0, 1], [0, 1], [0, 1]],
+                      self.bases + [self.bases[0]], self.symops)
+        self.assertFalse(self.orbit.is_sub_orbit(orbit))
+        orbit = Orbit(self.coords[:2], self.lattice, [[0, 1], [0, 1]],
+                      self.bases, self.symops)
+        self.assertFalse(self.orbit.is_sub_orbit(orbit))
+        orbit = Orbit([self.coords[0], self.coords[2]], self.lattice, [[0, 1], [0, 1]],
+                      self.bases, self.symops)
+        self.assertFalse(self.orbit.is_sub_orbit(orbit))
+        orbit = Orbit([self.coords[0]], self.lattice, [[0, 1]],
+                      [self.bases[0]], self.symops)
+        self.assertTrue(self.orbit.is_sub_orbit(orbit))
+        orbit = Orbit([self.coords[1]], self.lattice, [[0, 1]],
+                      [self.bases[1]], self.symops)
+        self.assertTrue(self.orbit.is_sub_orbit(orbit))
+        orbit = Orbit([self.coords[2]], self.lattice, [[0, 1]],
+                      [self.bases[0]], self.symops)
+        self.assertFalse(self.orbit.is_sub_orbit(orbit))
 
     def test_bit_combos(self):
         # orbit with two symmetrically equivalent sites
