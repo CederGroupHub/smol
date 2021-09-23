@@ -6,7 +6,7 @@ symmetry) clusters.
 
 __author__ = "Luis Barroso-Luque, William Davidson Richard"
 
-from itertools import chain, product, accumulate
+from itertools import chain, product, accumulate, combinations
 import numpy as np
 
 from monty.json import MSONable
@@ -97,7 +97,6 @@ class Orbit(MSONable):
 
         # Create basecluster
         self.base_cluster = Cluster(sites, lattice)
-        self.lattice = lattice
 
     @property
     def basis_type(self):
@@ -137,6 +136,11 @@ class Orbit(MSONable):
         return self._bit_combos
 
     @property
+    def site_spaces(self):
+        """Get the site spaces for the site basis associate with each site."""
+        return [site_basis.site_space for site_basis in self.site_bases]
+
+    @property
     def bit_combo_array(self):
         """Single array of all bit combos."""
         if self._combo_arr is None:
@@ -164,7 +168,7 @@ class Orbit(MSONable):
         equiv = [self.base_cluster]
         for symop in self.structure_symops:
             new_sites = symop.operate_multi(self.base_cluster.sites)
-            c = Cluster(new_sites, self.lattice)
+            c = Cluster(new_sites, self.base_cluster.lattice)
             if c not in equiv:
                 equiv.append(c)
         self._equiv = equiv
@@ -351,15 +355,16 @@ class Orbit(MSONable):
         return f'[Orbit] id: {self.id:<3}' \
                f'orderings: {len(self):<4}' \
                f'multiplicity: {self.multiplicity:<4}' \
-               f' no. symops: {len(self.cluster_symops):<4}\n' \
-               f'              {str(self.base_cluster)}'
+               f' no. symops: {len(self.cluster_symops):<4}\n'\
+               f'        {self.site_spaces}\n' \
+               f'        {str(self.base_cluster)}'
 
     def __repr__(self):
         """Get Orbit representation."""
         return _repr(self, orb_id=self.id,
                      orb_b_id=self.bit_id,
                      radius=self.base_cluster.radius,
-                     lattice=self.lattice,
+                     lattice=self.base_cluster.lattice,
                      basecluster=self.base_cluster)
 
     @classmethod
@@ -387,7 +392,7 @@ class Orbit(MSONable):
         d = {"@module": self.__class__.__module__,
              "@class": self.__class__.__name__,
              "sites": self.base_cluster.sites.tolist(),
-             "lattice": self.lattice.as_dict(),
+             "lattice": self.base_cluster.lattice.as_dict(),
              "bits": self.bits,
              "site_bases": [sb.as_dict() for sb in self.site_bases],
              "structure_symops": [so.as_dict() for so in
