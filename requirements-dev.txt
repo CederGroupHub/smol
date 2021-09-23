@@ -1,8 +1,0 @@
-pytest>=6.2.4
-pytest-cov>=2.12.1
-coverage>=5.5
-pydocstyle>=6.1.1
-flake8>=3.9.2
-pylint>=2.9.6
-cython>=0.29.24
-scikit-learn>=0.24.2
