@@ -1,11 +1,9 @@
-import pytest
 import unittest
-import numpy.testing as npt
 import random
 import numpy as np
 from itertools import combinations
 import json
-from pymatgen.core import Lattice, Structure, Species
+from pymatgen import Lattice, Structure, Species
 from pymatgen.util.coord import is_coord_subset_pbc
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe import ClusterSubspace
@@ -17,7 +15,6 @@ from smol.cofe.space.domain import get_allowed_species, Vacancy
 from smol.exceptions import StructureMatchError
 from src.mc_utils import corr_from_occupancy
 
-
 # TODO test correlations for ternary and for applications of symops to structure
 def test_invert_mapping_table():
     forward = [[],[],[1],[1],[1],[2,4],[3,4],[2,3],[5,6,7]]
@@ -28,7 +25,6 @@ def test_invert_mapping_table():
 
     assert forward_invert == backward
     assert backward_invert == forward
-
 
 def test_get_complete_mapping():
     forward = [[],[],[1],[1],[1],[2,4],[3,4],[2,3],[5,6,7]]
@@ -42,22 +38,6 @@ def test_get_complete_mapping():
 
     assert forward_comp == forward_full
     assert backward_comp == backward_full
-
-
-def test_from_cutoffs(structure):
-    cutoffs = {2: 5, 3: 4, 4: 4}
-    for increment in np.arange(0, 3, 1):
-        cutoffs.update(
-            {k: v + increment/(n + 1)
-             for n, (k, v) in enumerate(cutoffs.items())})
-        subspace = ClusterSubspace.from_cutoffs(structure, cutoffs)
-        tight_subspace = ClusterSubspace.from_cutoffs(
-            structure, subspace.cutoffs)
-        assert len(subspace) == len(tight_subspace)
-        npt.assert_allclose(
-            np.array(list(subspace.cutoffs.values())),
-            np.array(list(tight_subspace.cutoffs.values())))
-
 
 class TestClusterSubSpace(unittest.TestCase):
     def setUp(self) -> None:
@@ -112,45 +92,19 @@ class TestClusterSubSpace(unittest.TestCase):
         for s, c in self.cs.cutoffs.items():
             self.assertTrue(self.cutoffs[s] >= c)
 
-    def test_orbits_from_cutoffs(self):
+    def test_orbits_by_cutoffs(self):
         # Get all of them
         self.assertTrue(
             all(o1 == o2 for o1, o2 in
-                zip(self.cs.orbits, self.cs.orbits_from_cutoffs(6))))
+                zip(self.cs.orbits, self.cs.orbits_by_cutoffs(6))))
         for upper, lower in ((5, 0), (6, 3), (5, 2)):
-            orbs = self.cs.orbits_from_cutoffs(upper, lower)
+            orbs = self.cs.orbits_by_cutoffs(upper, lower)
             self.assertTrue(len(orbs) < len(self.cs.orbits))
             self.assertTrue(
                 all(lower <= o.base_cluster.diameter <= upper for o in orbs)
             )
-
-        # Test with dict
-        upper = {2: 4.5, 3: 3.5}
-        orbs = self.cs.orbits_from_cutoffs(upper)
-        self.assertTrue(len(orbs) < len(self.cs.orbits))
-        self.assertTrue(
-            all(o.base_cluster.diameter <= upper[2] for o in orbs
-                if len(o.base_cluster) == 2)
-        )
-        self.assertTrue(
-            all(o.base_cluster.diameter <= upper[3] for o in orbs
-                if len(o.base_cluster) == 3)
-        )
-
-        # Test for only pairs
-        upper = {2: 4.5}
-        orbs = self.cs.orbits_from_cutoffs(upper)
-        self.assertTrue(len(orbs) < len(self.cs.orbits))
-        self.assertTrue(
-            all(o.base_cluster.diameter <= upper[2] for o in orbs
-                if len(o.base_cluster) == 2)
-        )
-        self.assertTrue(
-            all(len(o.base_cluster) == 2 for o in orbs)
-        )
-
         # bad cuttoffs
-        self.assertTrue(len(self.cs.orbits_from_cutoffs(2, 4)) == 0)
+        self.assertTrue(len(self.cs.orbits_by_cutoffs(2, 4)) == 0)
 
     def test_functions_inds_by_size(self):
         indices = self.cs.function_inds_by_size
@@ -165,12 +119,12 @@ class TestClusterSubSpace(unittest.TestCase):
                     for i in inds))
 
     def test_functions_inds_by_cutoffs(self):
-        indices = self.cs.function_inds_from_cutoffs(6)
+        indices = self.cs.function_inds_by_cutoffs(6)
         # check that all of them are in there.
         self.assertTrue(len(indices) == len(self.cs) - 1)
         fun_orb_ids = self.cs.function_orbit_ids
         for upper, lower in ((4, 0), (5, 3), (3, 1)):
-            indices = self.cs.function_inds_from_cutoffs(upper, lower)
+            indices = self.cs.function_inds_by_cutoffs(upper, lower)
             self.assertTrue(len(indices) < len(self.cs))
             self.assertTrue(
                 all(lower <= self.cs.orbits[fun_orb_ids[i] - 1].base_cluster.diameter <= upper
@@ -346,6 +300,12 @@ class TestClusterSubSpace(unittest.TestCase):
                     0, 0.25, 0.125, 0.125, 0, 0, 0.25, 0.125, 0, 0.1875]
         self.assertTrue(np.allclose(cs.corr_from_structure(s), expected))
         self.assertWarns(UserWarning, cs.remove_orbit_bit_combos, [9])
+
+        cs_reload = ClusterSubspace.from_dict(cs.as_dict())
+        self.assertTrue(cs.orbits == cs_reload.orbits)
+        self.assertTrue(all([np.all(c1 == c2)
+                            for o1, o2 in zip(cs.orbits, cs_reload.orbits)
+                            for c1, c2 in zip(o1.bit_combos, o2.bit_combos)]))
 
     def test_orbit_mappings_from_matrix(self):
         # check that all supercell_structure index groups map to the correct
@@ -594,8 +554,7 @@ class TestClusterSubSpace(unittest.TestCase):
 
     def test_msonable(self):
         # get corr for a few supercells to cache their orbit indices
-        struct = Structure(self.lattice,
-                           ['Li+', ] * 2 + ['Ca+'] + ['Br-'],
+        struct = Structure(self.lattice, ['Li+', ] * 2 + ['Ca+'] + ['Br-'],
                            self.coords)
         struct1 = struct.copy()
         struct1.make_supercell(2)
@@ -648,10 +607,6 @@ class TestClusterSubSpace(unittest.TestCase):
         d['external_terms'][0]['@module'] = module
         d['external_terms'][0]['@class'] = 'Blab'
         self.assertWarns(RuntimeWarning, ClusterSubspace.from_dict, d)
-        # test if serializable and correctly instantiates for all basis
-        for basis in ('indicator', 'sinusoid', 'chebyshev', 'legendre', 'polynomial'):
-            cs.change_site_bases(basis)
-            d = cs.as_dict()
-            self.assertEqual(d, ClusterSubspace.from_dict(d).as_dict())
-            j = json.dumps(d)
-            json.loads(j)
+        # test if serializable
+        j = json.dumps(d)
+        json.loads(j)

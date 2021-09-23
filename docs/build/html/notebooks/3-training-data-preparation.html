@@ -3,19 +3,19 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
-    <title>Training Data Preparation &#8212; smol 1.0.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Training Data Preparation &#8212; smol 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/_static/default.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
 <meta charset='utf-8'>
@@ -76,7 +76,7 @@
 <li><a class="reference internal" href="#2)-Modifying-and-adding-new-target-properties">2) Modifying and adding new target properties</a></li>
 <li><a class="reference internal" href="#2.1)-Another-example-of-modifying-target-properties">2.1) Another example of modifying target properties</a></li>
 <li><a class="reference internal" href="#3)-Obtaining-and-adding-weights">3) Obtaining and adding weights</a></li>
-<li><a class="reference internal" href="#4)-Structure-Selection">4) Structure Selection</a></li>
+<li><a class="reference internal" href="#4)-Filtering-structures">4) Filtering structures</a></li>
 </ul>
 </li>
 </ul>
@@ -113,35 +113,21 @@
 /* CSS for nbsphinx extension */
 
 /* remove conflicting styling from Sphinx themes */
-div.nbinput.container div.prompt *,
-div.nboutput.container div.prompt *,
-div.nbinput.container div.input_area pre,
-div.nboutput.container div.output_area pre,
-div.nbinput.container div.input_area .highlight,
-div.nboutput.container div.output_area .highlight {
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
     border: none;
-    padding: 0;
+    padding: 0 0;
     margin: 0;
     box-shadow: none;
-}
-
-div.nbinput.container > div[class*=highlight],
-div.nboutput.container > div[class*=highlight] {
-    margin: 0;
-}
-
-div.nbinput.container div.prompt *,
-div.nboutput.container div.prompt * {
-    background: none;
-}
-
-div.nboutput.container div.output_area .highlight,
-div.nboutput.container div.output_area pre {
-    background: unset;
-}
-
-div.nboutput.container div.output_area div.highlight {
-    color: unset;  /* override Pygments text color */
 }
 
 /* avoid gaps between output lines */
@@ -242,7 +228,7 @@ div.nboutput.container div.output_area {
 div.nbinput.container div.input_area {
     border: 1px solid #e0e0e0;
     border-radius: 2px;
-    /*background: #f5f5f5;*/
+    background: #f5f5f5;
 }
 
 /* override MathJax center alignment in output cells */
@@ -308,7 +294,6 @@ div.nboutput.container div.output_area.rendered_html,
 div.nboutput.container div.output_area > div.output_javascript,
 div.nboutput.container div.output_area:not(.rendered_html) > img{
     padding: 5px;
-    margin: 0;
 }
 
 /* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
@@ -356,9 +341,9 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<section id="Training-Data-Preparation">
+<div class="section" id="Training-Data-Preparation">
 <h1>Training Data Preparation<a class="headerlink" href="#Training-Data-Preparation" title="Permalink to this headline">¶</a></h1>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
@@ -366,13 +351,23 @@ div.rendered_html tbody tr:hover {
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">monty.serialization</span> <span class="kn">import</span> <span class="n">loadfn</span>
-<span class="kn">from</span> <span class="nn">pymatgen.core.structure</span> <span class="kn">import</span> <span class="n">Structure</span>
+<span class="kn">from</span> <span class="nn">pymatgen</span> <span class="kn">import</span> <span class="n">Structure</span>
 <span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">ClusterSubspace</span><span class="p">,</span> <span class="n">StructureWrangler</span>
-<span class="kn">from</span> <span class="nn">smol.cofe.space</span> <span class="kn">import</span> <span class="n">get_species</span>
+<span class="kn">from</span> <span class="nn">smol.cofe.configspace</span> <span class="kn">import</span> <span class="n">get_specie</span>
 </pre></div>
 </div>
 </div>
-<section id="1)-Preparing-a-StructureWrangler">
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/lbluque/Develop/pymatgen/pymatgen/ext/matproj.py:454: DeprecationWarning: __init__ is deprecated
+MaterialsProjectCompatibility will be updated with new correction classes as well as new values of corrections and uncertainties in 2020
+  def get_pourbaix_entries(self, chemsys, solid_compat=MaterialsProjectCompatibility()):
+</pre></div></div>
+</div>
+<div class="section" id="1)-Preparing-a-StructureWrangler">
 <h2>1) Preparing a <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code><a class="headerlink" href="#1)-Preparing-a-StructureWrangler" title="Permalink to this headline">¶</a></h2>
 <p>Training structures and target data are handled by the <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> class. The class obtains the features and corresponding feature matrix based on the underlying <code class="docutils literal notranslate"><span class="pre">ClusterSubspace</span></code> provided.</p>
 <p>In the most simply settings we just use the feature matrix our supplied total energy from DFT to fit a cluster expansion. But it many cases we may want to improve our fit quality or reduce the model complexity by modifying the target property (i.e. using a reference energy or the energy of mixing) and/or by weighing structures based on some importance metric (i.e. by energy above hull). Using the <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> we can create this modified fitting data.</p>
@@ -404,28 +399,9 @@ div.rendered_html tbody tr:hover {
     <span class="n">wrangler</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span>
                       <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;total_energy&#39;</span><span class="p">:</span> <span class="n">tot_energy</span><span class="p">})</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Total structures that match </span><span class="si">{</span><span class="n">wrangler</span><span class="o">.</span><span class="n">num_structures</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">lno_data</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Total structures that match </span><span class="si">{wrangler.num_structures}</span><span class="s1">/{len(lno_data)}&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/lbluque/Develop/smol/smol/cofe/wrangling/wrangler.py:631: UserWarning: Unable to match Ni4+6 O2-12 with properties {&#39;total_energy&#39;: -188.28833} to supercell_structure. Throwing out.
- Error Message: Supercell could not be found from structure
-  warnings.warn(
-/home/lbluque/Develop/smol/smol/cofe/wrangling/wrangler.py:631: UserWarning: Unable to match Li+2 Ni4+4 Ni3+2 O2-12 with properties {&#39;total_energy&#39;: -200.13866} to supercell_structure. Throwing out.
- Error Message: Mapping could not be found from structure.
-  warnings.warn(
-/home/lbluque/Develop/smol/smol/cofe/wrangling/wrangler.py:631: UserWarning: Unable to match Li+2 Ni3+2 Ni4+4 O2-12 with properties {&#39;total_energy&#39;: -200.42049} to supercell_structure. Throwing out.
- Error Message: Mapping could not be found from structure.
-  warnings.warn(
-/home/lbluque/Develop/smol/smol/cofe/wrangling/wrangler.py:631: UserWarning: Unable to match Li+3 Ni4+4 Ni2+1 Ni3+1 O2-12 with properties {&#39;total_energy&#39;: -206.70884} to supercell_structure. Throwing out.
- Error Message: Supercell could not be found from structure
-  warnings.warn(
-</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
@@ -436,8 +412,8 @@ div.rendered_html tbody tr:hover {
 Total structures that match 27/31
 </pre></div></div>
 </div>
-</section>
-<section id="2)-Modifying-and-adding-new-target-properties">
+</div>
+<div class="section" id="2)-Modifying-and-adding-new-target-properties">
 <h2>2) Modifying and adding new target properties<a class="headerlink" href="#2)-Modifying-and-adding-new-target-properties" title="Permalink to this headline">¶</a></h2>
 <p>Now that we have access to the structures that match to our cluster subspace, and access to the raw and normalized target properties, we can easily create new modifiend target properties to fit to.</p>
 <p>For a simple example say we simply want to set the minimum energy in our data as a new reference point.</p>
@@ -467,8 +443,8 @@ Total structures that match 27/31
 </pre></div>
 </div>
 </div>
-</section>
-<section id="2.1)-Another-example-of-modifying-target-properties">
+</div>
+<div class="section" id="2.1)-Another-example-of-modifying-target-properties">
 <h2>2.1) Another example of modifying target properties<a class="headerlink" href="#2.1)-Another-example-of-modifying-target-properties" title="Permalink to this headline">¶</a></h2>
 <p>We can do more complex modifications of the target data. For example a very common target property to fit a cluster expansion is the mixing energy.</p>
 <p>For the current LNO dataset we don’t have a fully delithiated structure, but for the sake of illustration lets assume that we use Ni2O3. (Plus in this dataset mixing energy is not very informative since it is almost linear in concentration.)</p>
@@ -492,8 +468,8 @@ Total structures that match 27/31
 <span class="n">concentration</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">energy</span><span class="p">,</span> <span class="n">occu</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;total_energy&#39;</span><span class="p">),</span>
                         <span class="n">wrangler</span><span class="o">.</span><span class="n">occupancy_strings</span><span class="p">):</span>
-    <span class="n">n_Li</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">sp</span> <span class="o">==</span> <span class="n">get_species</span><span class="p">(</span><span class="s1">&#39;Li+&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">sp</span> <span class="ow">in</span> <span class="n">occu</span><span class="p">)</span>
-    <span class="n">n_vac</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">sp</span> <span class="o">==</span> <span class="n">get_species</span><span class="p">(</span><span class="s1">&#39;Vacancy&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">sp</span> <span class="ow">in</span> <span class="n">occu</span><span class="p">)</span>
+    <span class="n">n_Li</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">sp</span> <span class="o">==</span> <span class="n">get_specie</span><span class="p">(</span><span class="s1">&#39;Li+&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">sp</span> <span class="ow">in</span> <span class="n">occu</span><span class="p">)</span>
+    <span class="n">n_vac</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">sp</span> <span class="o">==</span> <span class="n">get_specie</span><span class="p">(</span><span class="s1">&#39;Vacancy&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">sp</span> <span class="ow">in</span> <span class="n">occu</span><span class="p">)</span>
     <span class="n">c_Li</span> <span class="o">=</span> <span class="n">n_Li</span><span class="o">/</span><span class="p">(</span><span class="n">n_Li</span> <span class="o">+</span> <span class="n">n_vac</span><span class="p">)</span>
     <span class="n">mix_en</span> <span class="o">=</span> <span class="n">energy</span> <span class="o">-</span> <span class="n">c_Li</span><span class="o">*</span><span class="n">e_LiNiO2</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">c_Li</span><span class="p">)</span><span class="o">*</span><span class="n">e_Ni2O3</span>
     <span class="n">concentration</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c_Li</span><span class="p">)</span>
@@ -509,16 +485,16 @@ Total structures that match 27/31
 </pre></div>
 </div>
 </div>
-</section>
-<section id="3)-Obtaining-and-adding-weights">
+</div>
+<div class="section" id="3)-Obtaining-and-adding-weights">
 <h2>3) Obtaining and adding weights<a class="headerlink" href="#3)-Obtaining-and-adding-weights" title="Permalink to this headline">¶</a></h2>
 <p>Using the structure wrangler it is also very easy to obtain fitting weights based many things such as composition, total energy or energy above hull. Currently the code has the previously available functions to obtaine weights by energy above hull or by energy above composition.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">smol.cofe.wrangling</span> <span class="kn">import</span> <span class="n">weights_energy_above_hull</span><span class="p">,</span> <span class="n">weights_energy_above_composition</span>
+<span></span><span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">weights_energy_above_hull</span><span class="p">,</span> <span class="n">weights_energy_above_composition</span>
 
 <span class="n">above_compostion</span> <span class="o">=</span> <span class="n">weights_energy_above_composition</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">structures</span><span class="p">,</span>
                                                     <span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;total_energy&#39;</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
@@ -544,67 +520,59 @@ Total structures that match 27/31
 </pre></div>
 </div>
 </div>
-</section>
-<section id="4)-Structure-Selection">
-<h2>4) Structure Selection<a class="headerlink" href="#4)-Structure-Selection" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> class can also be used to ‘filter’ structures to use for a fit based on some criteria. To do so we obtain the indices of all structures that satisfy some filtering critera</p>
-<p>For example here we will obtain all the structures with electrostatic energy below a given cuttoff</p>
+</div>
+<div class="section" id="4)-Filtering-structures">
+<h2>4) Filtering structures<a class="headerlink" href="#4)-Filtering-structures" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> class can also be used to filter structures to use for a fit based on some criteria.</p>
+<p>Currently only a filter by maximum ewald energy is implemented as part of the class.</p>
+<p>Going forward more filtering options can be implemented as people write and use different methods of filtering functions.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># filter by maximum ewald energy</span>
 <span class="c1"># all structures with ewald energy above the cutoff</span>
 <span class="c1"># will be removed</span>
-<span class="kn">from</span> <span class="nn">smol.cofe.wrangling</span> <span class="kn">import</span> <span class="n">max_ewald_energy_indices</span>
 
-<span class="c1"># get the structure indices</span>
-<span class="n">indices</span> <span class="o">=</span> <span class="n">max_ewald_energy_indices</span><span class="p">(</span><span class="n">wrangler</span><span class="p">,</span>
-                                   <span class="n">max_relative_energy</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="c1"># save them in the structure wrangler</span>
-<span class="n">wrangler</span><span class="o">.</span><span class="n">add_data_indices</span><span class="p">(</span><span class="s1">&#39;max_ewald_2&#39;</span><span class="p">,</span> <span class="n">indices</span><span class="p">)</span>
+<span class="n">n_structs_before</span> <span class="o">=</span> <span class="n">wrangler</span><span class="o">.</span><span class="n">num_structures</span>
+<span class="n">wrangler</span><span class="o">.</span><span class="n">filter_by_ewald</span><span class="p">(</span><span class="n">max_ewald</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Included </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">wrangler</span><span class="o">.</span><span class="n">num_structures</span><span class="si">}</span><span class="s1"> structures with Ewald energies &lt; 2 eV/prim.&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Saved indices are </span><span class="si">{</span><span class="n">wrangler</span><span class="o">.</span><span class="n">available_indices</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Kept </span><span class="si">{wrangler.num_structures}</span><span class="s1">/</span><span class="si">{n_structs_before}</span><span class="s1"> structures with Ewald energies &lt; 2 eV/prim.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The filters are saved as </span><span class="si">{wrangler.metadata[&#39;applied_filters&#39;]}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+&lt;ipython-input-6-aea799c1d123&gt;:6: DeprecationWarning: the filter_by_ewald method is going to be deprecated.
+The functionality will still be available but with a different interface
+  wrangler.filter_by_ewald(max_ewald=2)
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Included 26/27 structures with Ewald energies &lt; 2 eV/prim.
-Saved indices are [&#39;max_ewald_2&#39;]
+Kept 26/27 structures with Ewald energies &lt; 2 eV/prim.
+The filters are saved as [{&#39;Ewald&#39;: {&#39;max_ewald&#39;: 2, &#39;nstructs_removed&#39;: 1, &#39;nstructs_total&#39;: 27}}]
 </pre></div></div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># you can use the indices for selected structures to</span>
-<span class="c1"># obtain only the corresponding values for those structures</span>
-<span class="n">feature_matrix</span> <span class="o">=</span> <span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
-<span class="n">prop_vector</span> <span class="o">=</span> <span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;total_energy&#39;</span><span class="p">)[</span><span class="n">indices</span><span class="p">]</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Feature matrix shape: </span><span class="si">{</span><span class="n">feature_matrix</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Property vector shape </span><span class="si">{</span><span class="n">prop_vector</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span></span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Feature matrix shape: (26, 11)
-Property vector shape (26,)
-</pre></div></div>
 </div>
-</section>
-</section>
 
 
     </div>
@@ -622,7 +590,7 @@ Property vector shape (26,)
     </p>
     <p>
         &copy; Copyright 2020, Ceder Group.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
     </p>
   </div>
 </footer>

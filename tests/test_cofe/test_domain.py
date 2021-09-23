@@ -1,7 +1,7 @@
 import pytest
 from random import choice
 from tests.utils import assert_msonable
-from pymatgen.core import Composition, Element, Species, DummySpecies
+from pymatgen import Composition, Element, Species, DummySpecies
 from smol.cofe.space.domain import (get_species, get_allowed_species,
                                     get_site_spaces, Vacancy)
 

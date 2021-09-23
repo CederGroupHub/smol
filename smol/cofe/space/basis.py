@@ -22,8 +22,6 @@ from monty.json import MSONable
 from .domain import SiteSpace
 from smol.utils import derived_class_factory
 
-ATOL, RTOL = 1E-12, 1E-8
-
 
 class SiteBasis(MSONable):
     r"""Class that represents the basis for a site function space.
@@ -133,71 +131,12 @@ class SiteBasis(MSONable):
         Due to how the func_arr is saved (rows are vectors/functions) this
         allows us to not sprinkle so many transposes.
         """
-        q, r = np.linalg.qr(
-            (np.sqrt(self.measure_vector) * self._f_array).T, mode='complete')
-
-        # make zeros actually zeros
-        r[abs(r) < 2 * np.finfo(np.float64).eps] = 0.0
-        q[abs(q) < 2 * np.finfo(np.float64).eps] = 0.0
-
+        q, r = np.linalg.qr((np.sqrt(self.measure_vector) * self._f_array).T,
+                            mode='complete')
+        # r[abs(r) < 2 * np.finfo(np.float64).eps] = 0
+        # q[abs(q) < 2 * np.finfo(np.float64).eps] = 0
         self._r_array = q[:, 0] / np.sqrt(self.measure_vector) * r.T
         self._f_array = q.T/q[:, 0]  # make first row constant = 1
-
-    def rotate(self, angle, index1=0, index2=1):
-        """Rotate basis functions about subspace spaned by 2 vectors.
-
-        This operation will rotate the two selected basis vectors about a
-        subspace spanned by them. This implies a rotation orthogonal to
-        all other basis vectors. This will keep any underlying orthogonality.
-
-        WARNING: this is only implemented for uniform site space measures, not
-        for non-uniform measures.
-
-        SECOND WARNING: I haven't really thought through what happens if basis
-        vectors are not orthogonal to the constant (ie indicator basis) use
-        at your own peril with non-orthogonal basis sets.
-
-        THIRD WARNING: When rotating a binary space basis this will only
-        multiply by -1, regardless of the indices or angle provided. Think
-        about what it means to rotate in this case...
-
-        Args:
-            angle (float):
-                angle to rotate in radians
-            index1 (int):
-                index of first basis vector in function_array
-            index2 (int):
-                index of second basis vector in function_array
-        """
-        if not np.allclose(self.measure_vector, self.measure_vector[0]):
-            warnings.warn(
-                "This basis has a non-uniform measure, rotations are not "
-                "implemented to handle this.\n The operation will still be "
-                "carried out, but it is recommended to run orthonormalize "
-                "again if the basis was originally so.")
-
-        if len(self.site_space) == 2:
-            self._f_array[1] *= -1
-        else:
-            if index1 == index2:
-                raise ValueError("Basis function indices cannot be the same!")
-            elif abs(index1) > len(self.site_space) - 2:
-                raise ValueError(
-                    f"Basis index {index1} is out of bounds for "
-                    f"{len(self.site_space) - 1} functions!")
-            elif abs(index2) > len(self.site_space) - 2:
-                raise ValueError(
-                    f"Basis index {index2} is out of bounds for "
-                    f"{len(self.site_space) - 1} functions!")
-
-            v1 = self.function_array[index1] / np.linalg.norm(self.function_array[index1])  # noqa
-            v2 = self.function_array[index2] / np.linalg.norm(self.function_array[index2])  # noqa
-            R = np.eye(len(v1)) \
-                + (np.outer(v1, v2) - np.outer(v2, v1)) * np.sin(angle) \
-                + (np.outer(v1, v1) + np.outer(v2, v2)) * (np.cos(angle) - 1)
-            self._f_array[1:] = self._f_array[1:] @ R.T
-            # make really small numbers zero
-            self._f_array[abs(self._f_array) < 2 * np.finfo(np.float64).eps] = 0.0  # noqa
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation."""
@@ -300,8 +239,7 @@ class SinusoidIterator(BasisIterator):
     def __next__(self):
         """Generate the next basis function."""
         n = self.encoding[next(self.species_iter)] + 1
-        func = encode_domain(self.encoding)(
-            sinusoid_factory(n, len(self.species)))
+        func = encode_domain(self.encoding)(sinusoid_factory(n, len(self.species)))  # noqa
         return func
 
 

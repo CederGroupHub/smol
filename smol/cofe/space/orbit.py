@@ -10,8 +10,7 @@ from itertools import chain, product, accumulate
 import numpy as np
 
 from monty.json import MSONable
-from pymatgen.core import Lattice
-from pymatgen.core.operations import SymmOp
+from pymatgen.core import Lattice, SymmOp
 from pymatgen.util.coord import coord_list_mapping
 
 from smol.utils import _repr
@@ -132,8 +131,7 @@ class Orbit(MSONable):
                 new_bits = list(set(tuple(bit_combo[np.array(bit_op)])
                                     for bit_op in bit_ops))
                 all_combos.append(new_bits)
-        self._bit_combos = tuple(
-            np.array(c, dtype=np.int_) for c in all_combos)
+        self._bit_combos = tuple(np.array(c, dtype=np.int) for c in all_combos)
         return self._bit_combos
 
     @property

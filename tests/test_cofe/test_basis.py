@@ -4,7 +4,7 @@ import numpy as np
 import numpy.testing as npt
 from numpy.polynomial.chebyshev import chebval
 from numpy.polynomial.legendre import legval
-from pymatgen.core import Composition
+from pymatgen import Composition
 from smol.cofe.space import domain
 from smol.cofe.space import basis
 from tests.utils import assert_msonable
@@ -122,48 +122,6 @@ class TestBasis(unittest.TestCase):
         self.assertFalse(b.is_orthogonal)
         b.orthonormalize()
         self.assertTrue(b.is_orthonormal)
-
-    def test_rotate(self):
-        for flavor in ('sinusoid', 'legendre', 'polynomial', 'indicator'):
-            b = basis.basis_factory(flavor, self.site_space)
-            f_array = b._f_array.copy()
-            theta = np.pi / np.random.randint(2, 10)
-            b.rotate(theta)
-            if b.is_orthogonal:
-                self.assertTrue(b.is_orthogonal)
-                # if orthogonal all inner products should match!
-                npt.assert_array_almost_equal(
-                    f_array @ f_array.T, b._f_array @ b._f_array.T)
-            else:
-                # if not orthogonal only vector norms should mathch!
-                npt.assert_array_almost_equal(
-                    np.diag(f_array @ f_array.T),
-                    np.diag(b._f_array @ b._f_array.T))
-
-            npt.assert_array_almost_equal(
-                b._f_array[0], np.ones(len(self.site_space)))
-            npt.assert_almost_equal(
-                np.arccos(
-                    np.dot(b._f_array[1], f_array[1])
-                    / (np.linalg.norm(b._f_array[1])
-                       * np.linalg.norm(f_array[1]))),
-                theta
-            )
-            b.rotate(-theta)
-            npt.assert_array_almost_equal(f_array, b._f_array)
-            b.orthonormalize()
-            self.assertTrue(b.is_orthonormal)
-            b.rotate(theta)
-            self.assertTrue(b.is_orthonormal)
-
-        self.assertRaises(ValueError, b.rotate, theta, 0, 0)
-        self.assertRaises(ValueError, b.rotate, theta, len(self.site_space))
-        self.assertRaises(ValueError, b.rotate, theta, 0, len(self.site_space))
-
-        comp = Composition((('A', 0.2), ('B', 0.2),
-                            ('C', 0.3), ('D', 0.3)))
-        b = basis.basis_factory('sinusoid', domain.SiteSpace(comp))
-        self.assertWarns(UserWarning, b.rotate, theta)
 
     def test_constructor(self):
         species = OrderedDict({'A': 1, 'B': 2, 'C': 1})

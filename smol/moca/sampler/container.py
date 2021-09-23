@@ -90,6 +90,8 @@ class SampleContainer(MSONable):
         self._enthalpy = np.empty((0, nwalkers))
         self._temperature = np.empty((0, nwalkers))
         self._accepted = np.zeros((0, nwalkers), dtype=int)
+        self._bias = np.empty((0, nwalkers))
+        self._time = np.empty((0, nwalkers))  # For time stamping
         self.aux_checkpoint = None
         self._backend = None  # for streaming
 
@@ -110,6 +112,23 @@ class SampleContainer(MSONable):
         if flat:
             efficiency = efficiency.mean()
         return efficiency
+
+    def get_bias(self, discard=0, thin_by=1, flat=True):
+        """Get all bias from samples."""
+        bias = self._bias[discard + thin_by - 1::thin_by]
+        if flat:
+            bias = self._flatten(bias)
+        return bias
+
+    def get_time(self, discard=0, thin_by=1, flat=True):
+        """Get all time stamps from samples.
+
+        For performance evaluation.
+        """
+        time = self._time[discard + thin_by - 1::thin_by]
+        if flat:
+            time = self._flatten(time)
+        return time
 
     def get_occupancies(self, discard=0, thin_by=1, flat=True):
         """Get an occupancy chain from samples."""
@@ -161,72 +180,170 @@ class SampleContainer(MSONable):
         counts = self.get_species_counts(discard, thin_by, flat)
         return {spec: count/self.shape[1] for spec, count in counts.items()}
 
-    def mean_enthalpy(self, discard=0, thin_by=1, flat=True):
-        """Get the mean generalized enthalpy."""
-        return self.get_enthalpies(discard, thin_by, flat).mean(axis=0)
+    def zero_bias_ratio(self, discard=0, thin_by=1, flat=True):
+        """Count ratio of state with zero bias.
 
-    def enthalpy_variance(self, discard=0, thin_by=1, flat=True):
+        Use in biased walk implementation of charge neutrality, etc.
+        """
+        bias = self.get_bias(discard, thin_by, flat)
+        return np.sum(bias == 0)/len(bias)
+
+    def mean_enthalpy(self, discard=0, thin_by=1, flat=True,
+                      cut_offbias=False):
+        """Get the mean generalized enthalpy.
+
+        Average will be reweighted by bias.
+        If enabled cut_offbias, will not count states whose bias are not 0.
+        Only used in constraint sampling.
+        """
+        hs = self.get_enthalpies(discard, thin_by, flat)
+        bias = self.get_bias(discard, thin_by, flat)
+        mask = (bias == 0) if cut_offbias else np.ones(bias.shape)
+        return np.average(hs, axis=0, weights=np.exp(bias) * mask)
+
+    def enthalpy_variance(self, discard=0, thin_by=1, flat=True,
+                          cut_offbias=False):
         """Get the variance in enthalpy."""
-        return self.get_enthalpies(discard, thin_by, flat).var(axis=0)
+        hs = self.get_enthalpies(discard, thin_by, flat)
+        bias = self.get_bias(discard, thin_by, flat)
+        mask = (bias == 0) if cut_offbias else np.ones(bias.shape)
+        hs_av = np.average(hs, axis=0, weights=np.exp(bias) * mask)
+        return np.average((hs - hs_av)**2, axis=0,
+                          weights=np.exp(bias) * mask)
 
-    def mean_energy(self, discard=0, thin_by=1, flat=True):
+    def mean_energy(self, discard=0, thin_by=1, flat=True,
+                    cut_offbias=False):
         """Calculate the mean energy from samples."""
-        return self.get_energies(discard, thin_by, flat).mean(axis=0)
+        es = self.get_energies(discard, thin_by, flat)
+        bias = self.get_bias(discard, thin_by, flat)
+        mask = (bias == 0) if cut_offbias else np.ones(bias.shape)
+        return np.average(es, axis=0, weights=np.exp(bias) * mask)
 
-    def energy_variance(self, discard=0, thin_by=1, flat=True):
+    def energy_variance(self, discard=0, thin_by=1, flat=True,
+                        cut_offbias=False):
         """Calculate the variance of sampled energies."""
-        return self.get_energies(discard, thin_by, flat).var(axis=0)
+        es = self.get_energies(discard, thin_by, flat)
+        bias = self.get_bias(discard, thin_by, flat)
+        mask = (bias == 0) if cut_offbias else np.ones(bias.shape)
+        es_av = np.average(es, axis=0, weights=np.exp(bias) * mask)
+        return np.average((es - es_av)**2, axis=0,
+                          weights=np.exp(bias) * mask)
 
-    def mean_feature_vector(self, discard=0, thin_by=1, flat=True):
+    def mean_feature_vector(self, discard=0, thin_by=1, flat=True,
+                            cut_offbias=False):
         """Get the mean feature vector from samples."""
-        return self.get_feature_vectors(discard, thin_by, flat).mean(axis=0)
+        vs = self.get_feature_vectors(discard, thin_by, flat)
+        bias = self.get_bias(discard, thin_by, flat)
+        mask = (bias == 0) if cut_offbias else np.ones(bias.shape)
+        weights = np.exp(bias) * mask
+        weights = np.repeat(weights.reshape((*vs.shape[:-1], -1)),
+                            vs.shape[-1], axis=-1)
+        return np.average(vs, axis=0, weights=weights)
 
-    def feature_vector_variance(self, discard=0, thin_by=1, flat=True):
+    def feature_vector_variance(self, discard=0, thin_by=1, flat=True,
+                                cut_offbias=False):
         """Get the variance of feature vector elements."""
-        return self.get_feature_vectors(discard, thin_by, flat).var(axis=0)
+        vs = self.get_feature_vectors(discard, thin_by, flat)
+        bias = self.get_bias(discard, thin_by, flat)
+        mask = (bias == 0) if cut_offbias else np.ones(bias.shape)
+        weights = np.exp(bias) * mask
+        weights = np.repeat(weights.reshape((*vs.shape[:-1], -1)),
+                            vs.shape[-1], axis=-1)
+        # Weights reshaped as feature vectors.
+        vs_av = np.average(vs, axis=0, weights=weights)
+        return np.average((vs - vs_av)**2, axis=0, weights=weights)
 
-    def mean_composition(self, discard=0, thin_by=1, flat=True):
+    def mean_composition(self, discard=0, thin_by=1, flat=True,
+                         cut_offbias=False):
         """Get mean composition for all species regardless of sublattice."""
         comps = self.get_compositions(discard, thin_by, flat)
-        return {spec: comp.mean(axis=0) for spec, comp in comps.items()}
+        bias = self.get_bias(discard, thin_by, flat)
+        mask = (bias == 0) if cut_offbias else np.ones(bias.shape)
+        return {spec: np.average(comp, axis=0, weights=np.exp(bias) * mask)
+                for spec, comp in comps.items()}
 
-    def composition_variance(self, discard=0, thin_by=1, flat=True):
+    def composition_variance(self, discard=0, thin_by=1, flat=True,
+                             cut_offbias=False):
         """Get the variance in composition of all species."""
         comps = self.get_compositions(discard, thin_by, flat)
-        return {spec: comp.var(axis=0) for spec, comp in comps.items()}
+        bias = self.get_bias(discard, thin_by, flat)
+        mask = (bias == 0) if cut_offbias else np.ones(bias.shape)
+        return {spec:
+                np.average((comp -
+                            np.average(comp, axis=0,
+                                       weights=np.exp(bias) * mask))**2,
+                           axis=0, weights=np.exp(bias) * mask)
+                for spec, comp in comps.items()}
 
     def mean_sublattice_composition(self, sublattice, discard=0, thin_by=1,
-                                    flat=True):
+                                    flat=True, cut_offbias=False):
         """Get the mean composition of a specific sublattice."""
-        return self.get_sublattice_compositions(sublattice, discard,
-                                                thin_by, flat).mean(axis=0)
+        xs = self.get_sublattice_compositions(sublattice, discard,
+                                              thin_by, flat)
+        bias = self.get_bias(discard, thin_by, flat)
+        mask = (bias == 0) if cut_offbias else np.ones(bias.shape)
+        weights = np.exp(bias) * mask
+        weights = np.repeat(weights.reshape((*xs.shape[:-1], -1)),
+                            xs.shape[-1], axis=-1)
+        return np.average(xs, axis=0, weights=weights)
 
     def sublattice_composition_variance(self, sublattice, discard=0, thin_by=1,
-                                        flat=True):
+                                        flat=True, cut_offbias=False):
         """Get the varience in composition of a specific sublattice."""
-        return self.get_sublattice_compositions(sublattice, discard,
-                                                thin_by, flat).var(axis=0)
+        xs = self.get_sublattice_compositions(sublattice, discard,
+                                              thin_by, flat)
+        bias = self.get_bias(discard, thin_by, flat)
+        mask = (bias == 0) if cut_offbias else np.ones(bias.shape)
+        weights = np.exp(bias) * mask
+        weights = np.repeat(weights.reshape((*xs.shape[:-1], -1)),
+                            xs.shape[-1], axis=-1)
 
-    def get_minimum_enthalpy(self, discard=0, thin_by=1,  flat=True):
+        xs_av = np.average(xs, axis=0, weights=weights)
+        return np.average((xs - xs_av)**2, axis=0, weights=weights)
+
+    def get_minimum_enthalpy(self, discard=0, thin_by=1, flat=True,
+                             cut_offbias=False):
         """Get the minimum energy from samples."""
-        return self.get_enthalpies(discard, thin_by, flat).min(axis=0)
+        bias = self.get_bias(discard, thin_by, flat)
+        mask = (bias == 0) if cut_offbias else np.ones(bias.shape)
+        hs = self.get_enthalpies(discard, thin_by, flat)
+        hs[mask == 0] = np.inf
+        return hs.min(axis=0)
 
-    def get_minimum_enthalpy_occupancy(self, discard=0, thin_by=1, flat=True):
+    def get_minimum_enthalpy_occupancy(self, discard=0, thin_by=1, flat=True,
+                                       cut_offbias=False):
         """Find the occupancy with minimum energy from samples."""
-        inds = self.get_enthalpies(discard, thin_by, flat).argmin(axis=0)
+        bias = self.get_bias(discard, thin_by, flat)
+        mask = (bias == 0) if cut_offbias else np.ones(bias.shape)
+        hs = self.get_enthalpies(discard, thin_by, flat)
+        hs[mask == 0] = np.inf
+
+        inds = hs.argmin(axis=0)
+
         if flat:
             occus = self.get_occupancies(discard, thin_by, flat)[inds]
         else:
             occus = self.get_occupancies(discard, thin_by, flat)[inds, np.arange(self.shape[0])]  # noqa
         return occus
 
-    def get_minimum_energy(self, discard=0, thin_by=1, flat=True):
+    def get_minimum_energy(self, discard=0, thin_by=1, flat=True,
+                           cut_offbias=False):
         """Get the minimum energy from samples."""
-        return self.get_energies(discard, thin_by, flat).min(axis=0)
+        bias = self.get_bias(discard, thin_by, flat)
+        mask = (bias == 0) if cut_offbias else np.ones(bias.shape)
+        es = self.get_energies(discard, thin_by, flat)
+        es[mask == 0] = np.inf
+        return es.min(axis=0)
 
-    def get_minimum_energy_occupancy(self, discard=0, thin_by=1, flat=True):
+    def get_minimum_energy_occupancy(self, discard=0, thin_by=1, flat=True,
+                                     cut_offbias=False):
         """Find the occupancy with minimum energy from samples."""
-        inds = self.get_energies(discard, thin_by, flat).argmin(axis=0)
+        bias = self.get_bias(discard, thin_by, flat)
+        mask = (bias == 0) if cut_offbias else np.ones(bias.shape)
+        es = self.get_energies(discard, thin_by, flat)
+        es[mask == 0] = np.inf
+
+        inds = es.argmin(axis=0)
         if flat:
             occus = self.get_occupancies(discard, thin_by, flat)[inds]
         else:
@@ -276,8 +393,8 @@ class SampleContainer(MSONable):
             counts = self._flatten(counts)
         return counts
 
-    def save_sample(self, accepted, temperature, occupancies, enthalpy,
-                    features, thinned_by):
+    def save_sample(self, accepted, temperature, occupancies, bias, times,
+                    enthalpy, features, thinned_by):
         """Save a sample from the generated chain.
 
         Args:
@@ -287,6 +404,10 @@ class SampleContainer(MSONable):
                 array of temperatures at which samples were taken.
             occupancies (ndarray):
                 array of occupancies
+            bias (ndarray):
+                array of bias
+            times (ndarray):
+                array of times
             enthalpy (ndarray):
                 array of generalized enthalpy changes
             features (ndarray):
@@ -298,6 +419,8 @@ class SampleContainer(MSONable):
         self._accepted[self._nsamples, :] = accepted
         self._temperature[self._nsamples, :] = temperature
         self._chain[self._nsamples, :, :] = occupancies
+        self._bias[self._nsamples, :] = bias
+        self._time[self._nsamples, :] = times
         self._enthalpy[self._nsamples, :] = enthalpy
         self._features[self._nsamples, :, :] = features
         self._nsamples += 1
@@ -309,6 +432,8 @@ class SampleContainer(MSONable):
         self.total_mc_steps = 0
         self._nsamples = 0
         self._chain = np.empty((0, nwalkers, num_sites), dtype=int)
+        self._bias = np.empty((0, nwalkers))
+        self._time = np.empty((0, nwalkers))
         self._features = np.empty((0, nwalkers, len(self.natural_parameters)))
         self._enthalpy = np.empty((0, nwalkers))
         self._temperature = np.empty((0, nwalkers))
@@ -318,6 +443,10 @@ class SampleContainer(MSONable):
         """Allocate more space in arrays for more samples."""
         arr = np.empty((nsamples, *self._chain.shape[1:]), dtype=int)
         self._chain = np.append(self._chain, arr, axis=0)
+        arr = np.empty((nsamples, *self._bias.shape[1:]))
+        self._bias = np.append(self._bias, arr, axis=0)
+        arr = np.empty((nsamples, *self._time.shape[1:]))
+        self._time = np.append(self._time, arr, axis=0)
         arr = np.empty((nsamples, *self._features.shape[1:]))
         self._features = np.append(self._features, arr, axis=0)
         arr = np.empty((nsamples, *self._enthalpy.shape[1:]))
@@ -334,6 +463,8 @@ class SampleContainer(MSONable):
         backend["accepted"][start:end, :] = self._accepted
         backend["temperature"][start:end, :] = self._temperature
         backend["chain"][start:end, :, :] = self._chain
+        backend["bias"][start:end, :] = self._bias
+        backend["time"][start:end, :] = self._time
         backend["enthalpy"][start:end, :] = self._enthalpy
         backend["features"][start:end, :, :] = self._features
         backend["chain"].attrs["total_mc_steps"] += self.total_mc_steps
@@ -403,6 +534,10 @@ class SampleContainer(MSONable):
         backend.create_dataset("chain", (nsamples, *self.shape))
         backend["chain"].attrs["nsamples"] = 0
         backend["chain"].attrs["total_mc_steps"] = 0
+        backend.create_dataset("bias",
+                               (nsamples, *self._bias.shape[1:]))
+        backend.create_dataset("time",
+                               (nsamples, *self._time.shape[1:]))
         backend.create_dataset("accepted",
                                (nsamples, *self._accepted.shape[1:]))
         backend.create_dataset("temperature",
@@ -416,6 +551,10 @@ class SampleContainer(MSONable):
         """Extend space available in a backend file."""
         backend["chain"].resize((backend["chain"].shape[0] + nsamples,
                                  *backend["chain"].shape[1:]))
+        backend["bias"].resize((backend["chain"].shape[0] + nsamples,
+                                *self._bias.shape[1:]))
+        backend["time"].resize((backend["chain"].shape[0] + nsamples,
+                                *self._time.shape[1:]))
         backend["accepted"].resize((backend["chain"].shape[0] + nsamples,
                                     *self._accepted.shape[1:]))
         backend["temperature"].resize((backend["chain"].shape[0] + nsamples,
@@ -452,6 +591,8 @@ class SampleContainer(MSONable):
              'total_mc_steps': self.total_mc_steps,
              'nsamples': self._nsamples,
              'chain': self._chain.tolist(),
+             'bias': self._bias.tolist(),
+             'time': self._time.tolist(),
              'features': self._features.tolist(),
              'enthalpy': self._enthalpy.tolist(),
              'accepted': self._accepted.tolist(),
@@ -474,7 +615,10 @@ class SampleContainer(MSONable):
                         d['natural_parameters'], d['num_energy_coefs'],
                         d['metadata'])
         container._nsamples = np.array(d['nsamples'])
+        container.total_mc_steps = d['total_mc_steps']
         container._chain = np.array(d['chain'], dtype=int)
+        container._bias = np.array(d['bias'])
+        container._time = np.array(d['time'])
         container._features = np.array(d['features'])
         container._enthalpy = np.array(d['enthalpy'])
         container._accepted = np.array(d['accepted'], dtype=int)
@@ -515,6 +659,8 @@ class SampleContainer(MSONable):
                             sampling_metadata=json.loads(f["sampling_metadata"][()]),  # noqa
                             nwalkers=f["chain"].shape[1])
             container._chain = f["chain"][:nsamples]
+            container._bias = f["bias"][:nsamples]
+            container._time = f["time"][:nsamples]
             container._accepted = f["accepted"][:nsamples]
             container._temperature = f["temperature"][:nsamples]
             container._enthalpy = f["enthalpy"][:nsamples]

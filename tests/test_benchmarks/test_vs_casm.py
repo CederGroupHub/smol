@@ -21,12 +21,11 @@ class TestvsCASM(unittest.TestCase):
         # Create the smol ClusterSubspace (takes a while...)
         cutoff_raddi = {int(s): r for s, r
                         in cls.fit_data['cutoff_radii'].items()}
-        cls.cs = ClusterSubspace.from_cutoffs(
-            cls.fit_data['prim'],
-            cutoffs=cutoff_raddi,
-            basis='sinusoid',
-            supercell_size='volume',
-            ltol=0.1, stol=0.1, angle_tol=5)
+        cls.cs = ClusterSubspace.from_cutoffs(cls.fit_data['prim'],
+                                              cutoffs=cutoff_raddi,
+                                              basis='sinusoid',
+                                              supercell_size='volume',
+                                              ltol=0.1, stol=0.1, angle_tol=5)
 
         # create the StructureWrangler
         cls.sw = StructureWrangler(cls.cs)

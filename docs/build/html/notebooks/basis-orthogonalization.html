@@ -3,19 +3,19 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
-    <title>Experimenting with orthogonality and different orthonormalizations (Under construction) &#8212; smol 1.0.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Experimenting with orthogonality and different orthonormalizations (Under construction) &#8212; smol 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/_static/default.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
 <meta charset='utf-8'>
@@ -115,35 +115,21 @@
 /* CSS for nbsphinx extension */
 
 /* remove conflicting styling from Sphinx themes */
-div.nbinput.container div.prompt *,
-div.nboutput.container div.prompt *,
-div.nbinput.container div.input_area pre,
-div.nboutput.container div.output_area pre,
-div.nbinput.container div.input_area .highlight,
-div.nboutput.container div.output_area .highlight {
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
     border: none;
-    padding: 0;
+    padding: 0 0;
     margin: 0;
     box-shadow: none;
-}
-
-div.nbinput.container > div[class*=highlight],
-div.nboutput.container > div[class*=highlight] {
-    margin: 0;
-}
-
-div.nbinput.container div.prompt *,
-div.nboutput.container div.prompt * {
-    background: none;
-}
-
-div.nboutput.container div.output_area .highlight,
-div.nboutput.container div.output_area pre {
-    background: unset;
-}
-
-div.nboutput.container div.output_area div.highlight {
-    color: unset;  /* override Pygments text color */
 }
 
 /* avoid gaps between output lines */
@@ -244,7 +230,7 @@ div.nboutput.container div.output_area {
 div.nbinput.container div.input_area {
     border: 1px solid #e0e0e0;
     border-radius: 2px;
-    /*background: #f5f5f5;*/
+    background: #f5f5f5;
 }
 
 /* override MathJax center alignment in output cells */
@@ -310,7 +296,6 @@ div.nboutput.container div.output_area.rendered_html,
 div.nboutput.container div.output_area > div.output_javascript,
 div.nboutput.container div.output_area:not(.rendered_html) > img{
     padding: 5px;
-    margin: 0;
 }
 
 /* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
@@ -358,7 +343,7 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<section id="Experimenting-with-orthogonality-and-different-orthonormalizations-(Under-construction)">
+<div class="section" id="Experimenting-with-orthogonality-and-different-orthonormalizations-(Under-construction)">
 <h1>Experimenting with orthogonality and different orthonormalizations (Under construction)<a class="headerlink" href="#Experimenting-with-orthogonality-and-different-orthonormalizations-(Under-construction)" title="Permalink to this headline">¶</a></h1>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
@@ -386,7 +371,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<section id="Orthogonal-vs-Non-orthogonal-basis">
+<div class="section" id="Orthogonal-vs-Non-orthogonal-basis">
 <h2>Orthogonal vs Non-orthogonal basis<a class="headerlink" href="#Orthogonal-vs-Non-orthogonal-basis" title="Permalink to this headline">¶</a></h2>
 <p>First lets look at how things can change when we use an orthogonal basis vs a non-orthogonal one.</p>
 <div class="nbinput docutils container">
@@ -427,7 +412,7 @@ div.rendered_html tbody tr:hover {
 True False
 </pre></div></div>
 </div>
-<section id="Look-at-differences-between-a-correlation-vectors">
+<div class="section" id="Look-at-differences-between-a-correlation-vectors">
 <h3>Look at differences between a correlation vectors<a class="headerlink" href="#Look-at-differences-between-a-correlation-vectors" title="Permalink to this headline">¶</a></h3>
 <p>Notice that for the standard indicator correlations will always be positive, but for an orthonormalized basis this is not always the case.</p>
 <div class="nbinput docutils container">
@@ -457,11 +442,11 @@ True False
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_basis-orthogonalization_5_1.png" src="../_images/notebooks_basis-orthogonalization_5_1.png" />
+<img alt="notebooks/../../build/doctrees/nbsphinx/notebooks_basis-orthogonalization_5_1.png" src="notebooks/../../build/doctrees/nbsphinx/notebooks_basis-orthogonalization_5_1.png" />
 </div>
 </div>
-</section>
-<section id="Fit-a-CE-with-the-two-bases">
+</div>
+<div class="section" id="Fit-a-CE-with-the-two-bases">
 <h3>Fit a CE with the two bases<a class="headerlink" href="#Fit-a-CE-with-the-two-bases" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
@@ -478,8 +463,8 @@ True False
 <span class="n">ce_nor</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
 
 <span class="c1"># Look at the different RMSE&#39;s, they should be very comparable since both are complete bases</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RMSE with orthonormalized basis: </span><span class="si">{</span><span class="n">ce_or</span><span class="o">.</span><span class="n">root_mean_squared_error</span><span class="si">}</span><span class="s2"> eV/prim&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RMSE with indicator basis: </span><span class="si">{</span><span class="n">ce_nor</span><span class="o">.</span><span class="n">root_mean_squared_error</span><span class="si">}</span><span class="s2"> eV/prim&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RMSE with orthonormalized basis: </span><span class="si">{ce_or.root_mean_squared_error}</span><span class="s2"> eV/prim&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RMSE with indicator basis: </span><span class="si">{ce_nor.root_mean_squared_error}</span><span class="s2"> eV/prim&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -492,8 +477,8 @@ RMSE with orthonormalized basis: 0.011779605584978455 eV/prim
 RMSE with indicator basis: 0.015345000402695588 eV/prim
 </pre></div></div>
 </div>
-</section>
-<section id="Compare-Canonical-Montecarlo-runs-with-the-different-bases">
+</div>
+<div class="section" id="Compare-Canonical-Montecarlo-runs-with-the-different-bases">
 <h3>Compare Canonical Montecarlo runs with the different bases<a class="headerlink" href="#Compare-Canonical-Montecarlo-runs-with-the-different-bases" title="Permalink to this headline">¶</a></h3>
 <p>Finally lets look at how MC runs differ for orthogonal vs non-orthogonal bases.</p>
 <div class="nbinput nblast docutils container">
@@ -530,16 +515,16 @@ RMSE with indicator basis: 0.015345000402695588 eV/prim
 <span class="n">energies_or</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;energy&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">en_or</span><span class="o">.</span><span class="n">data</span><span class="p">]</span>
 <span class="n">energies_nor</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;energy&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">en_nor</span><span class="o">.</span><span class="n">data</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Details for orthonormalized CE MC:&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Fraction of succesfull steps </span><span class="si">{</span><span class="n">en_or</span><span class="o">.</span><span class="n">accepted_steps</span><span class="o">/</span><span class="n">en_or</span><span class="o">.</span><span class="n">current_step</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The current step energy is </span><span class="si">{</span><span class="n">en_or</span><span class="o">.</span><span class="n">energy</span><span class="si">}</span><span class="s1"> eV&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The minimum energy in trajectory is </span><span class="si">{</span><span class="n">en_or</span><span class="o">.</span><span class="n">minimum_energy</span><span class="si">}</span><span class="s1"> eV&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The average energy is: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">energies_or</span><span class="p">)</span><span class="si">}</span><span class="s1"> eV&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Fraction of succesfull steps {en_or.accepted_steps/en_or.current_step}&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The current step energy is </span><span class="si">{en_or.energy}</span><span class="s1"> eV&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The minimum energy in trajectory is </span><span class="si">{en_or.minimum_energy}</span><span class="s1"> eV&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The average energy is: {np.average(energies_or)} eV&#39;</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Details for indicator CE MC:&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Fraction of succesfull steps </span><span class="si">{</span><span class="n">en_nor</span><span class="o">.</span><span class="n">accepted_steps</span><span class="o">/</span><span class="n">en_nor</span><span class="o">.</span><span class="n">current_step</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The current step energy is </span><span class="si">{</span><span class="n">en_nor</span><span class="o">.</span><span class="n">energy</span><span class="si">}</span><span class="s1"> eV&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The minimum energy in trajectory is </span><span class="si">{</span><span class="n">en_nor</span><span class="o">.</span><span class="n">minimum_energy</span><span class="si">}</span><span class="s1"> eV&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The average energy is: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">energies_nor</span><span class="p">)</span><span class="si">}</span><span class="s1"> eV&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Fraction of succesfull steps {en_nor.accepted_steps/en_nor.current_step}&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The current step energy is </span><span class="si">{en_nor.energy}</span><span class="s1"> eV&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The minimum energy in trajectory is </span><span class="si">{en_nor.minimum_energy}</span><span class="s1"> eV&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The average energy is: {np.average(energies_nor)} eV&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -586,12 +571,12 @@ The average energy is: -275.98755666602733 eV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_basis-orthogonalization_11_1.png" src="../_images/notebooks_basis-orthogonalization_11_1.png" />
+<img alt="notebooks/../../build/doctrees/nbsphinx/notebooks_basis-orthogonalization_11_1.png" src="notebooks/../../build/doctrees/nbsphinx/notebooks_basis-orthogonalization_11_1.png" />
 </div>
 </div>
-</section>
-</section>
-<section id="Constructing-a-Cluster-Subspace-orthonormalized-with-respect-to-a-concentration-measure">
+</div>
+</div>
+<div class="section" id="Constructing-a-Cluster-Subspace-orthonormalized-with-respect-to-a-concentration-measure">
 <h2>Constructing a Cluster Subspace orthonormalized with respect to a concentration measure<a class="headerlink" href="#Constructing-a-Cluster-Subspace-orthonormalized-with-respect-to-a-concentration-measure" title="Permalink to this headline">¶</a></h2>
 <p>This orthonormalized the basis functions with respect to the concentrations given in the prim structure. Note this does not give you a “concentration dependent” ECI’s. Only ECI’s centered about the given concentration.</p>
 <div class="nbinput docutils container">
@@ -686,8 +671,8 @@ True True
 </pre></div>
 </div>
 </div>
-</section>
-</section>
+</div>
+</div>
 
 
     </div>
@@ -705,7 +690,7 @@ True True
     </p>
     <p>
         &copy; Copyright 2020, Ceder Group.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
     </p>
   </div>
 </footer>

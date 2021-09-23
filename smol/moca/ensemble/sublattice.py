@@ -9,7 +9,7 @@ __author__ = "Luis Barroso-Luque"
 
 import numpy as np
 from monty.json import MSONable
-from smol.cofe.space.domain import SiteSpace
+from smol.cofe.space.domain import SiteSpace, get_site_spaces
 
 
 def get_sublattices(processor):
@@ -28,7 +28,30 @@ def get_sublattices(processor):
             for site_space in processor.unique_site_spaces]
 
 
-# TODO consider adding the inactive sublattices?
+def get_all_sublattices(processor):
+    """Get a list of all sublattices from a processor.
+
+    Will include all sublattices, active or not.
+
+    This is only to be used by the charge neutral ensembles.
+
+    Args:
+        processor (Processor):
+            A processor object to extract sublattices from.
+    Returns:
+        list of Sublattice, containing all sites, even
+        if only occupied by one specie.
+    """
+    # Must keep the same order as processor.unique_site_spaces.
+    unique_site_spaces = tuple(set(get_site_spaces(
+                               processor.cluster_subspace.structure)))
+
+    return [Sublattice(site_space,
+            np.array([i for i, sp in enumerate(processor.allowed_species)
+                     if sp == list(site_space.keys())]))
+            for site_space in unique_site_spaces]
+
+
 class Sublattice(MSONable):
     """Sublattice class.
 

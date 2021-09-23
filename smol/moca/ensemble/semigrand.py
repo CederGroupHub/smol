@@ -6,6 +6,7 @@ variable concentration of species.
 Two classes are different SGC ensemble implemented:
 * MuSemiGrandEnsemble - for which relative chemical potentials are fixed
 * FuSemiGrandEnsemble - for which relative fugacity fractions are fixed.
+*
 """
 
 __author__ = "Luis Barroso-Luque"
@@ -14,13 +15,20 @@ from abc import abstractmethod
 from math import log
 from collections import Counter
 import numpy as np
+from copy import deepcopy
 
 from monty.json import MSONable
 from pymatgen.core import Species, DummySpecies, Element
-from smol.cofe.space.domain import get_species, Vacancy
+from smol.cofe.space.domain import get_species, Vacancy, get_site_spaces
 from smol.moca.processor.base import Processor
+from smol.moca.ensemble.sublattice import Sublattice, get_all_sublattices
+
 from .base import Ensemble
 from .sublattice import Sublattice
+from ..utils.math_utils import GCD_list
+from ..utils.occu_utils import (occu_to_species_stat,
+                                delta_ccoords_from_step)
+from ..comp_space import CompSpace
 
 
 class BaseSemiGrandEnsemble(Ensemble):
@@ -33,7 +41,7 @@ class BaseSemiGrandEnsemble(Ensemble):
     :class:`FuSemiGrandEnsemble` below.
     """
 
-    valid_mcmc_steps = ('flip',)
+    valid_mcmc_steps = ('flip', 'table-flip', 'subchain-walk')
 
     def __init__(self, processor, sublattices=None):
         """Initialize BaseSemiGrandEnsemble.
@@ -44,7 +52,7 @@ class BaseSemiGrandEnsemble(Ensemble):
                 a set of flips. See moca.processor
             sublattices (list of Sublattice): optional
                 list of Lattice objects representing sites in the processor
-                supercell with same site spaces.
+                supercell with same site spaces. Active sublattices only.
         """
         super().__init__(processor, sublattices=sublattices)
         self._params = np.append(self.processor.coefs, -1.0)
@@ -72,7 +80,7 @@ class BaseSemiGrandEnsemble(Ensemble):
             occupancy (ndarray):
                 encoded occupancy string
 
-        Returns:
+        Return:
             ndarray: feature vector
         """
         feature_vector = self.processor.compute_feature_vector(occupancy)
@@ -109,7 +117,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
                 Dictionary with species and chemical potentials.
             sublattices (list of Sublattice): optional
                 List of Sublattice objects representing sites in the processor
-                supercell with same site spaces.
+                supercell with same site spaces. Active sublattices only.
         """
         super().__init__(processor, sublattices)
 
@@ -165,9 +173,9 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             occupancy (ndarray):
                 encoded occupancy string.
             step (list of tuple):
-                A sequence of flips given my the MCUsher.propose_step
+                A sequence of flips given my the MCMCUsher.propose_step
 
-        Returns:
+        Return:
             ndarray: difference in feature vector
         """
         delta_feature = self.processor.compute_feature_vector_change(occupancy,
@@ -204,7 +212,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     def as_dict(self):
         """Get Json-serialization dict representation.
 
-        Returns:
+        Return:
             MSONable dict
         """
         d = super().as_dict()
@@ -216,9 +224,13 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     def from_dict(cls, d):
         """Instantiate a MuSemiGrandEnsemble from dict representation.
 
-        Returns:
+        Return:
             CanonicalEnsemble
         """
+        sl_dicts = d.get('sublattices')
+        sublattices = ([Sublattice.from_dict(s) for s in sl_dicts] if
+                       sl_dicts is not None else None)
+
         chemical_potentials = {}
         for sp, c in d['chemical_potentials']:
             if ("oxidation_state" in sp
@@ -234,8 +246,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             chemical_potentials[sp] = c
         return cls(Processor.from_dict(d['processor']),
                    chemical_potentials=chemical_potentials,
-                   sublattices=[Sublattice.from_dict(s)
-                                for s in d['sublattices']])
+                   sublattices=sublattices)
 
 
 class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
@@ -332,9 +343,9 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             occupancy (ndarray):
                 encoded occupancy string.
             step (list of tuple):
-                A sequence of flips given my the MCUsher.propose_step
+                A sequence of flips given my the MCMCUsher.propose_step
 
-        Returns:
+        Return:
             ndarray: difference in feature vector
         """
         delta_feature = self.processor.compute_feature_vector_change(occupancy,
@@ -373,7 +384,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     def as_dict(self):
         """Get Json-serialization dict representation.
 
-        Returns:
+        Return:
             MSONable dict
         """
         d = super().as_dict()
@@ -386,9 +397,13 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     def from_dict(cls, d):
         """Instantiate a FuSemiGrandEnsemble from dict representation.
 
-        Returns:
+        Return:
             FuSemiGrandEnsemble
         """
+        sl_dicts = d.get('sublattices')
+        sublattices = ([Sublattice.from_dict(s) for s in sl_dicts] if
+                       sl_dicts is not None else None)
+
         fugacity_fractions = []
         for sublatt in d['fugacity_fractions']:
             fus = {}
@@ -407,5 +422,135 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             fugacity_fractions.append(fus)
         return cls(Processor.from_dict(d['processor']),
                    fugacity_fractions=fugacity_fractions,
-                   sublattices=[Sublattice.from_dict(s)
-                                for s in d['sublattices']])
+                   sublattices=sublattices)
+
+
+# ChargeNeutralSemiGrandEnsemble no longer needs a separate class.
+class DiscChargeNeutralSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
+    """Sublattice disctiminative charge neutral semigrand ensemble.
+
+    This is used to examine ground states convergence of cluster expansion
+    only.
+
+    Discriminating the same specie on different sublattices is necessary
+    when computing ground state occupancies, because when talking about
+    ground states we actually care about internal distribution of species
+    on each sublattice.
+
+    A non-discriminative charge neutral ensemble is not necessary, as you
+    only need to specify step_type = 'charge-neutral-flip' when intializing
+    sampler with a MuSemiGrandEnsemble.
+
+    You are not recommended to use this ensemble for other purposes!
+    """
+
+    valid_mcmc_steps = ('table-flip', 'subchain-walk')
+    # Biased walk is not allowed in Disc ensemble because intermediate
+    # states would appear in chain, and the chemical works of them can
+    # not be defined under constrained coordinates.
+
+    def __init__(self, processor, mu, sublattices=None):
+        """Initialize DiscChargeNeutralSemiGrandEnsemble.
+
+        Args:
+            processor (Processor):
+                A processor that can compute the change in a property given
+                a set of flips. See moca.processor
+            mu (1D arrayLike):
+                chemical potentials on sublattice discriminative, contrained
+                coordinates.
+            sublattices (list of Sublattice): optional
+                list of Sublattice objects representing sites in the processor
+                supercell with same site spaces. Must be active sublattices.
+        """
+        super().__init__(processor, sublattices)
+
+        # Must use complete sublattices, instead of sublattices generated by
+        # expansion structure.
+        self.mu = np.array(mu)
+
+        self.bits = [sl.species for sl in self.all_sublattices]
+        self.sc_sublat_list = [sl.sites for sl in self.all_sublattices]
+        self.sc_sl_sizes = [len(sl_sites) for sl_sites in self.sc_sublat_list]
+
+        self.sc_size = GCD_list(self.sc_sl_sizes)
+        self.sl_sizes = [sl_size // self.sc_size
+                         for sl_size in self.sc_sl_sizes]
+
+        self._compspace = CompSpace(self.bits, self.sl_sizes)
+        if len(self.mu) != self._compspace.dim:
+            raise ValueError("Chemcial potential dimension mismatch \
+                             compositional space!")
+
+    def compute_chemical_work(self, occupancy):
+        """Compute the chemical work.
+
+        Args:
+            occupancy(ndarray):
+                encoded occupancy string.
+        Return:
+            float: chemcial work of the occupancy.
+        """
+        compstat = occu_to_species_stat(occupancy,
+                                        self.all_sublattices)
+        ccoord = self._compspace.translate_format(compstat,
+                                                  from_format='compstat',
+                                                  to_format='constr',
+                                                  sc_size=self.sc_size)
+        return np.dot(ccoord, self.mu)
+
+    def compute_feature_vector_change(self, occupancy, step):
+        """Compute change of feature vector from a proposed step.
+
+        Currently only supports a single flip in the table, so do not
+        combine multiple flips!
+
+        Args:
+            occupancy (ndarray):
+                encoded occupancy string.
+            step (list[tuple(int,int)]):
+                A sequence of flips given my the MCMCUsher.propose_step
+
+        Return:
+            ndarray: difference in feature vector
+        """
+        delta_feature = self.processor.compute_feature_vector_change(occupancy,
+                                                                     step)
+
+        # Compute flip direction in the compositional space.
+        delta_ccoords = delta_ccoords_from_step(occupancy,
+                                                step,
+                                                self._compspace,
+                                                self.all_sublattices)
+
+        delta_mu = np.dot(delta_ccoords, self.mu)
+
+        return np.append(delta_feature, delta_mu)
+
+    def as_dict(self):
+        """Serialize object into dict.
+
+        Return:
+            dict.
+        """
+        d = super().as_dict()
+        d['mu'] = self.mu.tolist()
+        return d
+
+    @classmethod
+    def from_dict(cls, d):
+        """Initialize from a dict.
+
+        Args:
+            d(dict):
+                dictionary containing all neccessary info to initialize.
+        Return:
+            DiscChargeNeutralSemiGrandEnsemble.
+        """
+        sl_dicts = d.get('sublattices')
+        sublattices = ([Sublattice.from_dict(s) for s in sl_dicts] if
+                       sl_dicts is not None else None)
+
+        return cls(Processor.from_dict(d['processor']),
+                   mu=d['mu'],
+                   sublattices=sublattices)

@@ -2,7 +2,7 @@ import unittest
 import json
 from itertools import combinations
 import numpy as np
-from pymatgen.core import Structure, Lattice
+from pymatgen import Structure, Lattice
 from smol.cofe.space import Cluster
 
 

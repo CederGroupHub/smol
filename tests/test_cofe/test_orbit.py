@@ -1,8 +1,9 @@
 import unittest
+from collections import OrderedDict
 from itertools import combinations_with_replacement
 import json
 import numpy as np
-from pymatgen.core import Lattice, Structure, Composition
+from pymatgen import Lattice, Structure, Composition
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe.space import Orbit, Cluster
 from smol.cofe.space.basis import basis_factory
@@ -140,11 +141,3 @@ class TestOrbit(unittest.TestCase):
         # test serialization
         j = json.dumps(d)
         json.loads(j)
-        # test remove bit combos are properly reconstructed
-        print(self.orbit.bit_combos)
-        self.orbit.remove_bit_combos_by_inds(
-            np.random.randint(len(self.orbit.bit_combos), size=2))
-        orbit = Orbit.from_dict(self.orbit.as_dict())
-        self.assertTrue(
-            all(all(np.array_equal(b1, b2) for b1, b2 in zip(c1, c2)) for c1, c2 in
-                zip(self.orbit.bit_combos, orbit.bit_combos)))

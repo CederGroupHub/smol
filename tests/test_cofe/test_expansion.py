@@ -1,27 +1,9 @@
 import unittest
 import json
 import numpy as np
-from sklearn.linear_model import LinearRegression
-from smol.cofe import StructureWrangler, ClusterSubspace, ClusterExpansion, \
-    RegressionData
+from smol.cofe import StructureWrangler, ClusterSubspace, ClusterExpansion
 from smol.cofe.extern import EwaldTerm
 from tests.data import synthetic_CE_binary, synthetic_CEewald_binary
-from tests.utils import assert_msonable
-
-
-def test_regression_data(cluster_subspace):
-    reg = LinearRegression(fit_intercept=False)
-    n = np.random.randint(10, 100)
-    feat_matrix = np.random.random((n, len(cluster_subspace)))
-    prop_vec = np.random.random(n)
-    reg_data = RegressionData.from_sklearn(reg, feature_matrix=feat_matrix,
-                                           property_vector=prop_vec)
-    coeffs = np.random.random(len(cluster_subspace))
-    expansion = ClusterExpansion(cluster_subspace, coeffs, reg_data)
-    assert reg_data.estimator_name == reg.__class__.__name__
-    assert reg_data.module == reg.__module__
-    assert reg_data.parameters == reg.get_params()
-    assert_msonable(expansion)
 
 
 # TODO add tests with synthetic ternary dataset
@@ -47,11 +29,7 @@ class TestClusterExpansionBinary(unittest.TestCase):
         coefs = np.linalg.lstsq(self.sw.feature_matrix,
                                 self.sw.get_property_vector('energy', True),
                                 rcond=None)[0]
-        reg = LinearRegression(fit_intercept=False)
-        reg_data = RegressionData.from_sklearn(
-            reg, feature_matrix=self.sw.feature_matrix,
-            property_vector=self.sw.get_property_vector('energy'))
-        self.ce = ClusterExpansion(cs, coefs, reg_data)
+        self.ce = ClusterExpansion(cs, coefs, self.sw.feature_matrix)
 
     def test_predict_train(self):
         preds = [self.ce.predict(s) for s in self.sw.structures]
@@ -83,7 +61,7 @@ class TestClusterExpansionBinary(unittest.TestCase):
 
     def test_prune(self):
         cs = ClusterSubspace.from_dict(synthetic_CE_binary['cluster_subspace'])
-        ce = ClusterExpansion(cs, self.ce.coefs.copy(), self.ce.regression_data)
+        ce = ClusterExpansion(cs, self.ce.coefs.copy(), self.ce._feat_matrix)
         thresh = 8E-3
         ce.prune(threshold=thresh)
         ids = [i for i, coef in enumerate(self.ce.coefs) if abs(coef) >= thresh]
@@ -111,13 +89,12 @@ class TestClusterExpansionBinary(unittest.TestCase):
         _ = str(self.ce)
 
     def test_msonable(self):
+        self.ce.metadata['somethingimportant'] = 75
         d = self.ce.as_dict()
         ce1 = ClusterExpansion.from_dict(d)
         self.assertTrue(np.array_equal(self.ce.coefs, ce1.coefs))
         self.assertIsInstance(self.ce.cluster_subspace, ClusterSubspace)
-        # change this to just use assert_msonable
-        self.assertEqual(ce1.regression_data.module,
-                         self.ce.regression_data.module)
+        self.assertEqual(ce1.metadata, self.ce.metadata)
         j = json.dumps(d)
         json.loads(j)
 
@@ -163,11 +140,7 @@ class TestClusterExpansionEwaldBinary(unittest.TestCase):
         ecis = np.linalg.lstsq(sw.feature_matrix,
                                sw.get_property_vector('energy', True),
                                rcond=None)[0]
-        reg_data = RegressionData(
-            module='foo.bar', estimator_name='Estimator', parameters={'foo': 'bar'},
-            feature_matrix=sw.feature_matrix,
-            property_vector=sw.get_property_vector('energy'))
-        ce = ClusterExpansion(cs, ecis, reg_data)
+        ce = ClusterExpansion(cs, ecis, sw.feature_matrix)
         test_structs = [data[i][0] for i in self.test_ids]
         test_energies = np.array([data[i][1] for i in self.test_ids])
         preds = [ce.predict(s) for s in sw.structures]

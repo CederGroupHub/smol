@@ -13,7 +13,7 @@ import os
 import numpy as np
 
 from smol.utils import progress_bar
-from smol.moca.sampler.kernel import mckernel_factory
+from smol.moca.sampler.kernel import mcmckernel_factory
 from smol.moca.sampler.container import SampleContainer
 
 
@@ -21,7 +21,7 @@ class Sampler:
     """
     A sampler is used to run MCMC sampling simulations.
 
-    The specific MCMC algorithm is defined by the given MCKernel.
+    The specific MCMC algorithm is defined by the given MCMCKernel.
     The default will use a a simple Metropolis random walk kernel.
     """
 
@@ -32,8 +32,8 @@ class Sampler:
         method, unless you need more control.
 
         Args:
-            kernel (MCKernel):
-                An MCKernel instance.
+            kernel (MCMCKernel):
+                An MCMCKernel instance.
             container (SampleContainer):
                 A sampler containter to store samples. If given num_walkers is
                 taken from the container.
@@ -51,8 +51,10 @@ class Sampler:
         random.seed(seed)
 
     @classmethod
-    def from_ensemble(cls, ensemble, *args, step_type=None, kernel_type=None,
-                      seed=None, nwalkers=1, **kwargs):
+    def from_ensemble(cls, ensemble, temperature, step_type=None,
+                      kernel_type=None, bias_type=None,
+                      seed=None, nwalkers=1,
+                      *args, **kwargs):
         """
         Create a sampler based on an Ensemble instances.
 
@@ -62,24 +64,27 @@ class Sampler:
         Args:
             ensemble (Ensemble):
                 An Ensemble class to obtain sample probabilities from.
+            temperature (float):
+                Temperature to run Monte Carlo at.
             step_type (str): optional
                 type of step to run MCMC with. If not given the default is the
                 first entry in the Ensemble.valid_mcmc_steps.
-            *args:
-                Positional arguments to pass to the MCKernel constructor.
-                More often than not you want to specify the temperature!
             kernel_type (str): optional
                 string specifying the specific MCMC transition kernel. This
                 represents the underlying MC algorithm. Currently only
                 Metropolis is supported.
+            bias_type (str): optional
+                string specifying the specific MCMC bias term. Default to
+                null bias.
             seed (int): optional
                 Seed for the PRNG.
             nwalkers (int): optional
                 Number of walkers/chains to sampler. Default is 1. More than 1
                 is still experimental...
+            *args:
+                Positional arguments to pass to the MCMCKernel constructor
             **kwargs:
-                Keyword arguments to pass to the MCKernel constructor.
-                More often than not you want to specify the temperature!
+                Keyword arguments to pass to the MCMCKernel constructor
 
         Returns:
             Sampler
@@ -91,9 +96,11 @@ class Sampler:
                              f"sampling a {type(ensemble)}!")
         if kernel_type is None:
             kernel_type = "Metropolis"
+        if bias_type is None:
+            bias_type = "null"
 
-        mckernel = mckernel_factory(kernel_type, ensemble, step_type, *args,
-                                    **kwargs)
+        mcmckernel = mcmckernel_factory(kernel_type, ensemble, temperature,
+                                        step_type, bias_type, *args, **kwargs)
 
         sampling_metadata = {"name": type(ensemble).__name__}
         sampling_metadata.update(ensemble.thermo_boundaries)
@@ -103,10 +110,10 @@ class Sampler:
                                     ensemble.natural_parameters,
                                     ensemble.num_energy_coefs,
                                     sampling_metadata, nwalkers)
-        return cls(mckernel, container, seed=seed)
+        return cls(mcmckernel, container, seed=seed)
 
     @property
-    def mckernel(self):
+    def mcmckernel(self):
         """Get the underlying ensemble."""
         return self._kernel
 
@@ -171,34 +178,36 @@ class Sampler:
         features = list(map(self._kernel.feature_fun, occupancies))
         features = np.ascontiguousarray(features)
         enthalpy = np.dot(self._kernel.natural_params, features.T)
-
-        # TODO clean up this hack so that temp is saved in a general blob
-        try:
-            temperature = self._kernel.temperature
-        except AttributeError:
-            temperature = 1
-        temperature = temperature * np.ones(occupancies.shape[0])
+        temperature = self._kernel.temperature * np.ones(occupancies.shape[0])
+        bias = np.zeros(occupancies.shape[0])
+        times = np.zeros(occupancies.shape[0])
 
         # Initialise progress bar
         chains, nsites = self.samples.shape
-        desc = f"Sampling {chains} chain(s) from a cell with {nsites} sites..."
+        desc = (f"Sampling {chains} chain(s) at {self._kernel.temperature:.2f}"
+                f" K from a cell with {nsites} sites")
         with progress_bar(progress, total=nsteps, description=desc) as bar:
             for _ in range(nsteps // thin_by):
                 for _ in range(thin_by):
-                    for i, (accept, occupancy, delta_enthalpy, delta_features)\
+                    for i, (accept, occupancy, occu_bias, occu_dt,
+                            delta_enthalpy, delta_features)\
                       in enumerate(map(self._kernel.single_step, occupancies)):
                         accepted[i] += accept
                         occupancies[i] = occupancy
+                        bias[i] = occu_bias
+                        times[i] += occu_dt
+                        # Count from initial time for numerical accuracy.
                         if accept:
                             enthalpy[i] = enthalpy[i] + delta_enthalpy
                             features[i] = features[i] + delta_features
                     bar.update()
                 # yield copies
-                yield (accepted, temperature, occupancies.copy(),
-                       enthalpy.copy(), features.copy(), thin_by)
+                yield (accepted, temperature, occupancies.copy(), bias.copy(),
+                       times.copy(), enthalpy.copy(), features.copy(), thin_by)
                 accepted[:] = 0  # reset acceptance array
 
     def run(self, nsteps, initial_occupancies=None, thin_by=1, progress=False,
+            save_unbiased_only=False,
             stream_chunk=0, stream_file=None, swmr_mode=False):
         """Run an MCMC sampling simulation.
 
@@ -217,6 +226,8 @@ class Sampler:
                 the amount to thin by for saving samples.
             progress (bool): optional
                 If true will show a progress bar.
+            save_unbiased_only(bool):
+                If true, will only save bias=0 samples.
             stream_chunk (int): optional
                 Chunk of samples to stream into a file. If > 0 samples will
                 be flushed to backend file in stream_chucks
@@ -257,7 +268,8 @@ class Sampler:
 
         for i, state in enumerate(self.sample(nsteps, initial_occupancies,
                                   thin_by=thin_by, progress=progress)):
-            self.samples.save_sample(*state)
+            if (not save_unbiased_only) or state[3] == 0:
+                self.samples.save_sample(*state)
             if backend is not None and (i + 1) % stream_chunk == 0:
                 self.samples.flush_to_backend(backend)
 
@@ -317,4 +329,3 @@ class Sampler:
 
 # TODO potential define two _sample functions serial/parallel that get called
 #  in one sampler function.
-# TODO streaming container to hdf5?

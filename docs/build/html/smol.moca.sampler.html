@@ -3,17 +3,19 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
-    <title>smol.moca.sampler package &#8212; smol 1.0.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>smol.moca.sampler package &#8212; smol 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -107,20 +109,20 @@
   <div class="row">
     <div class="body col-md-12 content" role="main">
       
-  <section id="smol-moca-sampler-package">
+  <div class="section" id="smol-moca-sampler-package">
 <h1>smol.moca.sampler package<a class="headerlink" href="#smol-moca-sampler-package" title="Permalink to this headline">¶</a></h1>
-<section id="submodules">
+<div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</section>
-<section id="module-smol.moca.sampler.container">
+</div>
+<div class="section" id="module-smol.moca.sampler.container">
 <span id="smol-moca-sampler-container-module"></span><h2>smol.moca.sampler.container module<a class="headerlink" href="#module-smol.moca.sampler.container" title="Permalink to this headline">¶</a></h2>
 <p>Implementation of SampleContainer class.</p>
 <p>A SampleContainer is used to store data from Monte Carlo sampling simulation.
 It has some minimimal methods and properties useful to start analyzing the
 samples.</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">SampleContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">natural_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_energy_coefs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer">
+<em class="property">class </em><code class="sig-name descname">SampleContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_sites</span></em>, <em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">natural_parameters</span></em>, <em class="sig-param"><span class="n">num_energy_coefs</span></em>, <em class="sig-param"><span class="n">sampling_metadata</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nwalkers</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>A SampleContainter class stores Monte Carlo simulation samples.</p>
 <p>A SampleContainer holds samples and sampling information from an MCMC
@@ -141,8 +143,8 @@ chains into one. Defaults to True.</p>
 </dl>
 </div></blockquote>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.num_sites">
-<span class="sig-name descname"><span class="pre">num_sites</span></span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.num_sites" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.num_sites">
+<code class="sig-name descname">num_sites</code><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.num_sites" title="Permalink to this definition">¶</a></dt>
 <dd><p>Size of system (usually in number of prims in supercell, but
 can be anything representative i.e. number of sites)</p>
 <dl class="field-list simple">
@@ -153,8 +155,8 @@ can be anything representative i.e. number of sites)</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.sublattices">
-<span class="sig-name descname"><span class="pre">sublattices</span></span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.sublattices" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.sublattices">
+<code class="sig-name descname">sublattices</code><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.sublattices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sublattices of the ensemble sampled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -164,8 +166,8 @@ can be anything representative i.e. number of sites)</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.natural_parameters">
-<span class="sig-name descname"><span class="pre">natural_parameters</span></span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.natural_parameters" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.natural_parameters">
+<code class="sig-name descname">natural_parameters</code><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.natural_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>array of natural parameters used in the ensemble.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -175,8 +177,8 @@ can be anything representative i.e. number of sites)</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.total_mc_steps">
-<span class="sig-name descname"><span class="pre">total_mc_steps</span></span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.total_mc_steps" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.total_mc_steps">
+<code class="sig-name descname">total_mc_steps</code><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.total_mc_steps" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of iterations used in sampling</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -186,8 +188,8 @@ can be anything representative i.e. number of sites)</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.metadata">
-<span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.metadata" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.metadata">
+<code class="sig-name descname">metadata</code><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dictionary of metadata from the MC run that generated the samples.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -197,8 +199,8 @@ can be anything representative i.e. number of sites)</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.aux_checkpoint">
-<span class="sig-name descname"><span class="pre">aux_checkpoint</span></span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.aux_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.aux_checkpoint">
+<code class="sig-name descname">aux_checkpoint</code><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.aux_checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checkpoint dictionary of auxiliary states and variables to continue
 sampling from the last state of a previous MCMC run.
 (not implemented yet)</p>
@@ -224,14 +226,14 @@ correspond to the energy only.</p></li>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.allocate">
-<span class="sig-name descname"><span class="pre">allocate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nsamples</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.allocate" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.allocate">
+<code class="sig-name descname">allocate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nsamples</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.allocate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allocate more space in arrays for more samples.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.as_dict" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.as_dict">
+<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -241,44 +243,44 @@ correspond to the energy only.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.clear">
-<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.clear" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.clear">
+<code class="sig-name descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.clear" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clear all samples from container.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.composition_variance">
-<span class="sig-name descname"><span class="pre">composition_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.composition_variance" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.composition_variance">
+<code class="sig-name descname">composition_variance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.composition_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the variance in composition of all species.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.energy_variance">
-<span class="sig-name descname"><span class="pre">energy_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.energy_variance" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.energy_variance">
+<code class="sig-name descname">energy_variance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.energy_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the variance of sampled energies.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.enthalpy_variance">
-<span class="sig-name descname"><span class="pre">enthalpy_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.enthalpy_variance" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.enthalpy_variance">
+<code class="sig-name descname">enthalpy_variance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.enthalpy_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the variance in enthalpy.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.feature_vector_variance">
-<span class="sig-name descname"><span class="pre">feature_vector_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.feature_vector_variance" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.feature_vector_variance">
+<code class="sig-name descname">feature_vector_variance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.feature_vector_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the variance of feature vector elements.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.flush_to_backend">
-<span class="sig-name descname"><span class="pre">flush_to_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.flush_to_backend" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.flush_to_backend">
+<code class="sig-name descname">flush_to_backend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">backend</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.flush_to_backend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flush current samples and trace to backend file.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.from_dict">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.from_dict" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.from_dict">
+<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiate a SampleContainer from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -291,8 +293,8 @@ correspond to the energy only.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.from_hdf5">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.from_hdf5" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.from_hdf5">
+<em class="property">classmethod </em><code class="sig-name descname">from_hdf5</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span></em>, <em class="sig-param"><span class="n">swmr_mode</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.from_hdf5" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiate a SampleContainer from an hdf5 file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -310,8 +312,8 @@ Multiple Readers.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.get_backend">
-<span class="sig-name descname"><span class="pre">get_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alloc_nsamples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_backend" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.get_backend">
+<code class="sig-name descname">get_backend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span></em>, <em class="sig-param"><span class="n">alloc_nsamples</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">swmr_mode</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_backend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a backend file object.</p>
 <p>Currently only hdf5 files supported</p>
 <dl class="field-list simple">
@@ -334,74 +336,74 @@ Multiple Readers.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.get_compositions">
-<span class="sig-name descname"><span class="pre">get_compositions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_compositions" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.get_compositions">
+<code class="sig-name descname">get_compositions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_compositions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the compositions for each occupancy in the chain.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.get_energies">
-<span class="sig-name descname"><span class="pre">get_energies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_energies" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.get_energies">
+<code class="sig-name descname">get_energies</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_energies" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the energies from samples in chain.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.get_enthalpies">
-<span class="sig-name descname"><span class="pre">get_enthalpies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_enthalpies" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.get_enthalpies">
+<code class="sig-name descname">get_enthalpies</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_enthalpies" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the generalized entalpy changes from samples in chain.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.get_feature_vectors">
-<span class="sig-name descname"><span class="pre">get_feature_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_feature_vectors" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.get_feature_vectors">
+<code class="sig-name descname">get_feature_vectors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_feature_vectors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the feature vector changes from samples in chain.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.get_minimum_energy">
-<span class="sig-name descname"><span class="pre">get_minimum_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_minimum_energy" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.get_minimum_energy">
+<code class="sig-name descname">get_minimum_energy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_minimum_energy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the minimum energy from samples.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.get_minimum_energy_occupancy">
-<span class="sig-name descname"><span class="pre">get_minimum_energy_occupancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_minimum_energy_occupancy" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.get_minimum_energy_occupancy">
+<code class="sig-name descname">get_minimum_energy_occupancy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_minimum_energy_occupancy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find the occupancy with minimum energy from samples.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.get_minimum_enthalpy">
-<span class="sig-name descname"><span class="pre">get_minimum_enthalpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_minimum_enthalpy" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.get_minimum_enthalpy">
+<code class="sig-name descname">get_minimum_enthalpy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_minimum_enthalpy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the minimum energy from samples.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.get_minimum_enthalpy_occupancy">
-<span class="sig-name descname"><span class="pre">get_minimum_enthalpy_occupancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_minimum_enthalpy_occupancy" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.get_minimum_enthalpy_occupancy">
+<code class="sig-name descname">get_minimum_enthalpy_occupancy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_minimum_enthalpy_occupancy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find the occupancy with minimum energy from samples.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.get_occupancies">
-<span class="sig-name descname"><span class="pre">get_occupancies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_occupancies" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.get_occupancies">
+<code class="sig-name descname">get_occupancies</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_occupancies" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get an occupancy chain from samples.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.get_species_counts">
-<span class="sig-name descname"><span class="pre">get_species_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_species_counts" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.get_species_counts">
+<code class="sig-name descname">get_species_counts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_species_counts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the species counts for each occupancy in the chain.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.get_sublattice_compositions">
-<span class="sig-name descname"><span class="pre">get_sublattice_compositions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_sublattice_compositions" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.get_sublattice_compositions">
+<code class="sig-name descname">get_sublattice_compositions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sublattice</span></em>, <em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_sublattice_compositions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the compositions of a specific sublattice.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.get_sublattice_species_counts">
-<span class="sig-name descname"><span class="pre">get_sublattice_species_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_sublattice_species_counts" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.get_sublattice_species_counts">
+<code class="sig-name descname">get_sublattice_species_counts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sublattice</span></em>, <em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_sublattice_species_counts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the counts of each species in a sublattices.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -418,56 +420,56 @@ Multiple Readers.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.get_temperatures">
-<span class="sig-name descname"><span class="pre">get_temperatures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_temperatures" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.get_temperatures">
+<code class="sig-name descname">get_temperatures</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.get_temperatures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the generalized entalpy changes from samples in chain.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.mean_composition">
-<span class="sig-name descname"><span class="pre">mean_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.mean_composition" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.mean_composition">
+<code class="sig-name descname">mean_composition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.mean_composition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get mean composition for all species regardless of sublattice.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.mean_energy">
-<span class="sig-name descname"><span class="pre">mean_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.mean_energy" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.mean_energy">
+<code class="sig-name descname">mean_energy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.mean_energy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the mean energy from samples.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.mean_enthalpy">
-<span class="sig-name descname"><span class="pre">mean_enthalpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.mean_enthalpy" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.mean_enthalpy">
+<code class="sig-name descname">mean_enthalpy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.mean_enthalpy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the mean generalized enthalpy.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.mean_feature_vector">
-<span class="sig-name descname"><span class="pre">mean_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.mean_feature_vector" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.mean_feature_vector">
+<code class="sig-name descname">mean_feature_vector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.mean_feature_vector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the mean feature vector from samples.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.mean_sublattice_composition">
-<span class="sig-name descname"><span class="pre">mean_sublattice_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.mean_sublattice_composition" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.mean_sublattice_composition">
+<code class="sig-name descname">mean_sublattice_composition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sublattice</span></em>, <em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.mean_sublattice_composition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the mean composition of a specific sublattice.</p>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.num_samples">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">num_samples</span></span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.num_samples" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="smol.moca.sampler.container.SampleContainer.num_samples">
+<em class="property">property </em><code class="sig-name descname">num_samples</code><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.num_samples" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the total number of samples.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.sampling_efficiency">
-<span class="sig-name descname"><span class="pre">sampling_efficiency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.sampling_efficiency" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.sampling_efficiency">
+<code class="sig-name descname">sampling_efficiency</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.sampling_efficiency" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the sampling efficiency for chains.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.save_sample">
-<span class="sig-name descname"><span class="pre">save_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accepted</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">occupancies</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enthalpy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thinned_by</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.save_sample" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.save_sample">
+<code class="sig-name descname">save_sample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">accepted</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">occupancies</span></em>, <em class="sig-param"><span class="n">enthalpy</span></em>, <em class="sig-param"><span class="n">features</span></em>, <em class="sig-param"><span class="n">thinned_by</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.save_sample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save a sample from the generated chain.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -484,41 +486,43 @@ the total mc iterations.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.shape">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.shape" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="smol.moca.sampler.container.SampleContainer.shape">
+<em class="property">property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.shape" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the shape of the samples in chain.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.container.SampleContainer.sublattice_composition_variance">
-<span class="sig-name descname"><span class="pre">sublattice_composition_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.sublattice_composition_variance" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.container.SampleContainer.sublattice_composition_variance">
+<code class="sig-name descname">sublattice_composition_variance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sublattice</span></em>, <em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.container.SampleContainer.sublattice_composition_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the varience in composition of a specific sublattice.</p>
 </dd></dl>
 
 </dd></dl>
 
-</section>
-<section id="module-smol.moca.sampler.kernel">
+</div>
+<div class="section" id="module-smol.moca.sampler.kernel">
 <span id="smol-moca-sampler-kernel-module"></span><h2>smol.moca.sampler.kernel module<a class="headerlink" href="#module-smol.moca.sampler.kernel" title="Permalink to this headline">¶</a></h2>
 <p>Implementation of MCMC transition kernel classes.</p>
 <p>A kernel essentially is an implementation of the MCMC algorithm that is used
 to generate states for sampling an MCMC chain.</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.MCKernel">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MCKernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.MCKernel" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.kernel.MCMCKernel">
+<em class="property">class </em><code class="sig-name descname">MCMCKernel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ensemble</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">step_type</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.MCMCKernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
 <p>Abtract base class for transition kernels.</p>
-<p>A kernel is used to implement a specific MC algorithm used to sampler
+<p>A kernel is used to implement a specific MCMC algorithm used to sampler
 the ensemble classes. For an illustrtive example of how to derive from this
 and write a specific sampler see the MetropolisSampler.</p>
-<p>Initialize MCKernel.</p>
+<p>Initialize MCMCKernel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble instance to obtain the feautures and parameters
 used in computing log probabilities.</p></li>
-<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – String specifying the MCMC step type.</p></li>
+<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Temperature at which the MCMC sampling will be carried out.</p></li>
+<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – optional
+String specifying the MCMC step type.</p></li>
 <li><p><strong>args</strong> – positional arguments to instantiate the mcusher for the
 corresponding step size.</p></li>
 <li><p><strong>kwargs</strong> – Keyword arguments to instantiate the mcusher for the
@@ -527,14 +531,14 @@ corresponding step size.</p></li>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.MCKernel.set_aux_state">
-<span class="sig-name descname"><span class="pre">set_aux_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.MCKernel.set_aux_state" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.kernel.MCMCKernel.set_aux_state">
+<code class="sig-name descname">set_aux_state</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.MCMCKernel.set_aux_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the auxiliary state from initial or checkpoint values.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.MCKernel.single_step">
-<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">single_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.MCKernel.single_step" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.kernel.MCMCKernel.single_step">
+<em class="property">abstract </em><code class="sig-name descname">single_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.MCMCKernel.single_step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Attempt an MCMC step.</p>
 <p>Returns the next state in the chain and if the attempted step was
 successful.</p>
@@ -551,27 +555,34 @@ successful.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt id="smol.moca.sampler.kernel.MCMCKernel.temperature">
+<em class="property">property </em><code class="sig-name descname">temperature</code><a class="headerlink" href="#smol.moca.sampler.kernel.MCMCKernel.temperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the temperature of kernel.</p>
+</dd></dl>
+
 <dl class="py attribute">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.MCKernel.valid_mcushers">
-<span class="sig-name descname"><span class="pre">valid_mcushers</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#smol.moca.sampler.kernel.MCKernel.valid_mcushers" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.kernel.MCMCKernel.valid_mcushers">
+<code class="sig-name descname">valid_mcushers</code><em class="property"> = None</em><a class="headerlink" href="#smol.moca.sampler.kernel.MCMCKernel.valid_mcushers" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.Metropolis">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Metropolis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.Metropolis" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.kernel.ThermalKernel" title="smol.moca.sampler.kernel.ThermalKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.kernel.ThermalKernel</span></code></a></p>
+<dt id="smol.moca.sampler.kernel.Metropolis">
+<em class="property">class </em><code class="sig-name descname">Metropolis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ensemble</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">step_type</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.Metropolis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.kernel.MCMCKernel" title="smol.moca.sampler.kernel.MCMCKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.kernel.MCMCKernel</span></code></a></p>
 <p>A Metropolis-Hastings kernel.</p>
 <p>The classic and nothing but the classic.</p>
-<p>Initialize ThermalKernel.</p>
+<p>Initialize MCMCKernel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble instance to obtain the feautures and parameters
 used in computing log probabilities.</p></li>
-<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – String specifying the MCMC step type.</p></li>
 <li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Temperature at which the MCMC sampling will be carried out.</p></li>
+<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – optional
+String specifying the MCMC step type.</p></li>
 <li><p><strong>args</strong> – positional arguments to instantiate the mcusher for the
 corresponding step size.</p></li>
 <li><p><strong>kwargs</strong> – Keyword arguments to instantiate the mcusher for the
@@ -580,8 +591,8 @@ corresponding step size.</p></li>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.Metropolis.single_step">
-<span class="sig-name descname"><span class="pre">single_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.Metropolis.single_step" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.kernel.Metropolis.single_step">
+<code class="sig-name descname">single_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.Metropolis.single_step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Attempt an MC step.</p>
 <p>Returns the next state in the chain and if the attempted step was
 successful.</p>
@@ -599,98 +610,22 @@ successful.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.Metropolis.valid_mcushers">
-<span class="sig-name descname"><span class="pre">valid_mcushers</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'flip':</span> <span class="pre">'Flipper',</span> <span class="pre">'swap':</span> <span class="pre">'Swapper'}</span></em><a class="headerlink" href="#smol.moca.sampler.kernel.Metropolis.valid_mcushers" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.ThermalKernel">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ThermalKernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.ThermalKernel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.kernel.MCKernel" title="smol.moca.sampler.kernel.MCKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.kernel.MCKernel</span></code></a></p>
-<p>Abtract base class for transition kernels with a set temperature.</p>
-<p>Basically all kernels should derive from this with the exception of those
-for multicanonical sampling and related methods</p>
-<p>Initialize ThermalKernel.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble instance to obtain the feautures and parameters
-used in computing log probabilities.</p></li>
-<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – String specifying the MCMC step type.</p></li>
-<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Temperature at which the MCMC sampling will be carried out.</p></li>
-<li><p><strong>args</strong> – positional arguments to instantiate the mcusher for the
-corresponding step size.</p></li>
-<li><p><strong>kwargs</strong> – Keyword arguments to instantiate the mcusher for the
-corresponding step size.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.ThermalKernel.temperature">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">temperature</span></span><a class="headerlink" href="#smol.moca.sampler.kernel.ThermalKernel.temperature" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the temperature of kernel.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.UniformlyRandom">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">UniformlyRandom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.UniformlyRandom" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.kernel.MCKernel" title="smol.moca.sampler.kernel.MCKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.kernel.MCKernel</span></code></a></p>
-<p>A Kernel that accepts all proposed steps.</p>
-<p>This kernel samples the random limit distribution where all states have the
-same probability (corresponds to an infinite temperature).</p>
-<p>Initialize MCKernel.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble instance to obtain the feautures and parameters
-used in computing log probabilities.</p></li>
-<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – String specifying the MCMC step type.</p></li>
-<li><p><strong>args</strong> – positional arguments to instantiate the mcusher for the
-corresponding step size.</p></li>
-<li><p><strong>kwargs</strong> – Keyword arguments to instantiate the mcusher for the
-corresponding step size.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.UniformlyRandom.single_step">
-<span class="sig-name descname"><span class="pre">single_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.UniformlyRandom.single_step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attempt an MCMC step.</p>
-<p>Returns the next state in the chain and if the attempted step was
-successful.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>(acceptance, occupancy, enthalpy change, features change)</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)">tuple</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.UniformlyRandom.valid_mcushers">
-<span class="sig-name descname"><span class="pre">valid_mcushers</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'flip':</span> <span class="pre">'Flipper',</span> <span class="pre">'swap':</span> <span class="pre">'Swapper'}</span></em><a class="headerlink" href="#smol.moca.sampler.kernel.UniformlyRandom.valid_mcushers" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.kernel.Metropolis.valid_mcushers">
+<code class="sig-name descname">valid_mcushers</code><em class="property"> = {'flip': 'Flipper', 'swap': 'Swapper'}</em><a class="headerlink" href="#smol.moca.sampler.kernel.Metropolis.valid_mcushers" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.mckernel_factory">
-<span class="sig-name descname"><span class="pre">mckernel_factory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.mckernel_factory" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.kernel.mcmckernel_factory">
+<code class="sig-name descname">mcmckernel_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kernel_type</span></em>, <em class="sig-param"><span class="n">ensemble</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">step_type</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.mcmckernel_factory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a MCMC Kernel from string name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>kernel_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – String specifying step to instantiate.</p></li>
 <li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble object to create the MCMC kernel from.</p></li>
+<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Temperature at which the MCMC sampling will be carried out.</p></li>
 <li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – String specifying the step type (ie key to mcusher type)</p></li>
 <li><p><strong>*args</strong> – Positional arguments passed to class constructor</p></li>
 <li><p><strong>**kwargs</strong> – Keyword arguments passed to class constructor</p></li>
@@ -700,18 +635,18 @@ successful.</p>
 <dd class="field-even"><p>instance of derived class.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#smol.moca.sampler.kernel.MCKernel" title="smol.moca.sampler.kernel.MCKernel">MCKernel</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#smol.moca.sampler.kernel.MCMCKernel" title="smol.moca.sampler.kernel.MCMCKernel">MCMCKernel</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.random">
-<span class="sig-name descname"><span class="pre">random</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">x</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">interval</span> <span class="pre">[0,</span> <span class="pre">1).</span></span></span><a class="headerlink" href="#smol.moca.sampler.kernel.random" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.kernel.random">
+<code class="sig-name descname">random</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; x in the interval [0, 1).<a class="headerlink" href="#smol.moca.sampler.kernel.random" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</section>
-<section id="module-smol.moca.sampler.mcusher">
+</div>
+<div class="section" id="module-smol.moca.sampler.mcusher">
 <span id="smol-moca-sampler-mcusher-module"></span><h2>smol.moca.sampler.mcusher module<a class="headerlink" href="#module-smol.moca.sampler.mcusher" title="Permalink to this headline">¶</a></h2>
 <p>Implementations of MCMC Usher classes.</p>
 <p>An usher is used to generate step proposals for MC Monte Carlo sampling.
@@ -720,9 +655,9 @@ at a site, for use in a SemiGrand ensemble. A Swapper will propose a swap
 between species at two sites for use in Canonical ensemble simulations.</p>
 <p>More complex steps can be defined simply by deriving from the MCUsher</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="smol.moca.sampler.mcusher.Flipper">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Flipper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Flipper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.mcusher.MCUsher" title="smol.moca.sampler.mcusher.MCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.mcusher.MCUsher</span></code></a></p>
+<dt id="smol.moca.sampler.mcusher.Flipper">
+<em class="property">class </em><code class="sig-name descname">Flipper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">sublattice_probabilities</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Flipper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.mcusher.MCMCUsher" title="smol.moca.sampler.mcusher.MCMCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.mcusher.MCMCUsher</span></code></a></p>
 <p>Implementation of a simple flip step at a random site.</p>
 <p>Initialize MCMCStep.</p>
 <dl class="field-list simple">
@@ -735,8 +670,8 @@ list of probability to pick a site from a specific sublattice.</p></li>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.mcusher.Flipper.propose_step">
-<span class="sig-name descname"><span class="pre">propose_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Flipper.propose_step" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.mcusher.Flipper.propose_step">
+<code class="sig-name descname">propose_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Flipper.propose_step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Propose a single random flip step.</p>
 <p>A step is given as a sequence of tuples, where each tuple is of the
 form (site index, species code to set)</p>
@@ -756,10 +691,10 @@ form (site index, species code to set)</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="smol.moca.sampler.mcusher.MCUsher">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MCUsher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCUsher" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.mcusher.MCMCUsher">
+<em class="property">class </em><code class="sig-name descname">MCMCUsher</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">sublattice_probabilities</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCMCUsher" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
-<p>Abstract base class for MC usher classes.</p>
+<p>Abstract base class for MCMC usher classes.</p>
 <p>Initialize MCMCStep.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -771,14 +706,14 @@ list of probability to pick a site from a specific sublattice.</p></li>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.mcusher.MCUsher.get_random_sublattice">
-<span class="sig-name descname"><span class="pre">get_random_sublattice</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCUsher.get_random_sublattice" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.mcusher.MCMCUsher.get_random_sublattice">
+<code class="sig-name descname">get_random_sublattice</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCMCUsher.get_random_sublattice" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a random sublattice based on given probabilities.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.mcusher.MCUsher.propose_step">
-<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">propose_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCUsher.propose_step" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.mcusher.MCMCUsher.propose_step">
+<em class="property">abstract </em><code class="sig-name descname">propose_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCMCUsher.propose_step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Propose an MCMC step.</p>
 <p>A step is given as a sequence of tuples, where each tuple is of the
 form (site index, species code to set)</p>
@@ -796,29 +731,29 @@ form (site index, species code to set)</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.mcusher.MCUsher.set_aux_state">
-<span class="sig-name descname"><span class="pre">set_aux_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCUsher.set_aux_state" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.mcusher.MCMCUsher.set_aux_state">
+<code class="sig-name descname">set_aux_state</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCMCUsher.set_aux_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the auxiliary state from a checkpoint values.</p>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.sampler.mcusher.MCUsher.sublattice_probabilities">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">sublattice_probabilities</span></span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCUsher.sublattice_probabilities" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="smol.moca.sampler.mcusher.MCMCUsher.sublattice_probabilities">
+<em class="property">property </em><code class="sig-name descname">sublattice_probabilities</code><a class="headerlink" href="#smol.moca.sampler.mcusher.MCMCUsher.sublattice_probabilities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the sublattice probabilities.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.mcusher.MCUsher.update_aux_state">
-<span class="sig-name descname"><span class="pre">update_aux_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCUsher.update_aux_state" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.mcusher.MCMCUsher.update_aux_state">
+<code class="sig-name descname">update_aux_state</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">step</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCMCUsher.update_aux_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update any auxiliary state information based on an accepted step.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="smol.moca.sampler.mcusher.Swapper">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Swapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Swapper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.mcusher.MCUsher" title="smol.moca.sampler.mcusher.MCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.mcusher.MCUsher</span></code></a></p>
+<dt id="smol.moca.sampler.mcusher.Swapper">
+<em class="property">class </em><code class="sig-name descname">Swapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">sublattice_probabilities</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Swapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.mcusher.MCMCUsher" title="smol.moca.sampler.mcusher.MCMCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.mcusher.MCMCUsher</span></code></a></p>
 <p>Implementation of a simple swap step for two random sites.</p>
 <p>Initialize MCMCStep.</p>
 <dl class="field-list simple">
@@ -831,8 +766,8 @@ list of probability to pick a site from a specific sublattice.</p></li>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.mcusher.Swapper.propose_step">
-<span class="sig-name descname"><span class="pre">propose_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Swapper.propose_step" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.mcusher.Swapper.propose_step">
+<code class="sig-name descname">propose_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">occupancy</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Swapper.propose_step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Propose a single random swap step.</p>
 <p>A step is given as a sequence of tuples, where each tuple is of the
 form (site index, species code to set)</p>
@@ -852,9 +787,9 @@ form (site index, species code to set)</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="smol.moca.sampler.mcusher.mcusher_factory">
-<span class="sig-name descname"><span class="pre">mcusher_factory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">usher_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.mcusher_factory" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a MC Usher from string name.</p>
+<dt id="smol.moca.sampler.mcusher.mcusher_factory">
+<code class="sig-name descname">mcusher_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">usher_type</span></em>, <em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.mcusher_factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a MCMC Usher from string name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -868,23 +803,23 @@ form (site index, species code to set)</p>
 <dd class="field-even"><p>instance of derived class.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#smol.moca.sampler.mcusher.MCUsher" title="smol.moca.sampler.mcusher.MCUsher">MCUsher</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#smol.moca.sampler.mcusher.MCMCUsher" title="smol.moca.sampler.mcusher.MCMCUsher">MCMCUsher</a></p>
 </dd>
 </dl>
 </dd></dl>
 
-</section>
-<section id="module-smol.moca.sampler.sampler">
+</div>
+<div class="section" id="module-smol.moca.sampler.sampler">
 <span id="smol-moca-sampler-sampler-module"></span><h2>smol.moca.sampler.sampler module<a class="headerlink" href="#module-smol.moca.sampler.sampler" title="Permalink to this headline">¶</a></h2>
 <p>Implementation of base sampler classes.</p>
 <p>A sampler essentially is an implementation of the MCMC algorithm that is used
 by the corresponding ensemble to generate Monte Carlo samples.</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="smol.moca.sampler.sampler.Sampler">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">container</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.sampler.Sampler">
+<em class="property">class </em><code class="sig-name descname">Sampler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kernel</span></em>, <em class="sig-param"><span class="n">container</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A sampler is used to run MCMC sampling simulations.</p>
-<p>The specific MCMC algorithm is defined by the given MCKernel.
+<p>The specific MCMC algorithm is defined by the given MCMCKernel.
 The default will use a a simple Metropolis random walk kernel.</p>
 <p>Initialize BaseSampler.</p>
 <p>It is recommended to initialize a sampler with the from_ensemble
@@ -892,7 +827,7 @@ method, unless you need more control.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>kernel</strong> (<a class="reference internal" href="#smol.moca.sampler.kernel.MCKernel" title="smol.moca.sampler.kernel.MCKernel"><em>MCKernel</em></a>) – An MCKernel instance.</p></li>
+<li><p><strong>kernel</strong> (<a class="reference internal" href="#smol.moca.sampler.kernel.MCMCKernel" title="smol.moca.sampler.kernel.MCMCKernel"><em>MCMCKernel</em></a>) – An MCMCKernel instance.</p></li>
 <li><p><strong>container</strong> (<a class="reference internal" href="smol.moca.html#smol.moca.SampleContainer" title="smol.moca.SampleContainer"><em>SampleContainer</em></a>) – A sampler containter to store samples. If given num_walkers is
 taken from the container.</p></li>
 <li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
@@ -901,8 +836,8 @@ seed for random number generator.</p></li>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.sampler.Sampler.anneal">
-<span class="sig-name descname"><span class="pre">anneal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temperatures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcmc_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_occupancies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.anneal" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.sampler.Sampler.anneal">
+<code class="sig-name descname">anneal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">temperatures</span></em>, <em class="sig-param"><span class="n">mcmc_steps</span></em>, <em class="sig-param"><span class="n">initial_occupancies</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">progress</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.anneal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Carry out a simulated annealing procedure.</p>
 <p>Uses the total number of temperatures given by “steps” interpolating
 between the start and end temperature according to a cooling function.
@@ -924,20 +859,20 @@ the amount to thin by for saving samples.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.sampler.Sampler.clear_samples">
-<span class="sig-name descname"><span class="pre">clear_samples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.clear_samples" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.sampler.Sampler.clear_samples">
+<code class="sig-name descname">clear_samples</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.clear_samples" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clear samples from sampler container.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.sampler.Sampler.efficiency">
-<span class="sig-name descname"><span class="pre">efficiency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.efficiency" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.sampler.Sampler.efficiency">
+<code class="sig-name descname">efficiency</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.efficiency" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the efficiency of MCMC sampling (accepted/total).</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.sampler.Sampler.from_ensemble">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.from_ensemble" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.sampler.Sampler.from_ensemble">
+<em class="property">classmethod </em><code class="sig-name descname">from_ensemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ensemble</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">step_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">kernel_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nwalkers</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.from_ensemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a sampler based on an Ensemble instances.</p>
 <p>This is the easier way to spin up a Sampler. This will
 automatically populate and create an appropriate SampleContainer.</p>
@@ -945,11 +880,10 @@ automatically populate and create an appropriate SampleContainer.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble class to obtain sample probabilities from.</p></li>
+<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Temperature to run Monte Carlo at.</p></li>
 <li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – optional
 type of step to run MCMC with. If not given the default is the
 first entry in the Ensemble.valid_mcmc_steps.</p></li>
-<li><p><strong>*args</strong> – Positional arguments to pass to the MCKernel constructor.
-More often than not you want to specify the temperature!</p></li>
 <li><p><strong>kernel_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – optional
 string specifying the specific MCMC transition kernel. This
 represents the underlying MC algorithm. Currently only
@@ -959,8 +893,8 @@ Seed for the PRNG.</p></li>
 <li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
 Number of walkers/chains to sampler. Default is 1. More than 1
 is still experimental…</p></li>
-<li><p><strong>**kwargs</strong> – Keyword arguments to pass to the MCKernel constructor.
-More often than not you want to specify the temperature!</p></li>
+<li><p><strong>*args</strong> – Positional arguments to pass to the MCMCKernel constructor</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments to pass to the MCMCKernel constructor</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -969,15 +903,15 @@ More often than not you want to specify the temperature!</p></li>
 </dl>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.sampler.sampler.Sampler.mckernel">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">mckernel</span></span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.mckernel" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="smol.moca.sampler.sampler.Sampler.mcmckernel">
+<em class="property">property </em><code class="sig-name descname">mcmckernel</code><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.mcmckernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the underlying ensemble.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.sampler.Sampler.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nsteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_occupancies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.run" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.sampler.Sampler.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nsteps</span></em>, <em class="sig-param"><span class="n">initial_occupancies</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">progress</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">stream_chunk</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">stream_file</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">swmr_mode</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run an MCMC sampling simulation.</p>
 <p>This will run and save the samples every thin_by into a
 SampleContainer.</p>
@@ -1008,8 +942,8 @@ Multiple Readers.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.sampler.Sampler.sample">
-<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nsteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_occupancies</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.sample" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.sampler.Sampler.sample">
+<code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nsteps</span></em>, <em class="sig-param"><span class="n">initial_occupancies</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">progress</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.sample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate MCMC samples.</p>
 <p>Yield a sampler state every <cite>thin_by</cite> iterations. A state is give by
 a tuple of (occupancies, features, enthalpy)</p>
@@ -1029,22 +963,22 @@ Number to thin iterations by and provide samples.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.sampler.sampler.Sampler.samples">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">samples</span></span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.samples" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="smol.moca.sampler.sampler.Sampler.samples">
+<em class="property">property </em><code class="sig-name descname">samples</code><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.samples" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the SampleContainer.</p>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.sampler.sampler.Sampler.seed">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">seed</span></span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.seed" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="smol.moca.sampler.sampler.Sampler.seed">
+<em class="property">property </em><code class="sig-name descname">seed</code><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler.seed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Seed for the random number generator.</p>
 </dd></dl>
 
 </dd></dl>
 
-</section>
-<section id="module-smol.moca.sampler">
+</div>
+<div class="section" id="module-smol.moca.sampler">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-smol.moca.sampler" title="Permalink to this headline">¶</a></h2>
 <p>Implementation of Relevant classes for MCMC Sampling.</p>
 <p>Samplers should derive from ABC Sampler classes whenever possible.</p>
@@ -1052,8 +986,8 @@ Number to thin iterations by and provide samples.</p></li>
 simulations.</p>
 <p>Samples are saved in a Sample Container.</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">SampleContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">natural_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_energy_coefs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer">
+<em class="property">class </em><code class="sig-name descname">SampleContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_sites</span></em>, <em class="sig-param"><span class="n">sublattices</span></em>, <em class="sig-param"><span class="n">natural_parameters</span></em>, <em class="sig-param"><span class="n">num_energy_coefs</span></em>, <em class="sig-param"><span class="n">sampling_metadata</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nwalkers</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>A SampleContainter class stores Monte Carlo simulation samples.</p>
 <p>A SampleContainer holds samples and sampling information from an MCMC
@@ -1074,8 +1008,8 @@ chains into one. Defaults to True.</p>
 </dl>
 </div></blockquote>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.num_sites">
-<span class="sig-name descname"><span class="pre">num_sites</span></span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.num_sites" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.num_sites">
+<code class="sig-name descname">num_sites</code><a class="headerlink" href="#smol.moca.sampler.SampleContainer.num_sites" title="Permalink to this definition">¶</a></dt>
 <dd><p>Size of system (usually in number of prims in supercell, but
 can be anything representative i.e. number of sites)</p>
 <dl class="field-list simple">
@@ -1086,8 +1020,8 @@ can be anything representative i.e. number of sites)</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.sublattices">
-<span class="sig-name descname"><span class="pre">sublattices</span></span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.sublattices" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.sublattices">
+<code class="sig-name descname">sublattices</code><a class="headerlink" href="#smol.moca.sampler.SampleContainer.sublattices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sublattices of the ensemble sampled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1097,8 +1031,8 @@ can be anything representative i.e. number of sites)</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.natural_parameters">
-<span class="sig-name descname"><span class="pre">natural_parameters</span></span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.natural_parameters" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.natural_parameters">
+<code class="sig-name descname">natural_parameters</code><a class="headerlink" href="#smol.moca.sampler.SampleContainer.natural_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>array of natural parameters used in the ensemble.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1108,8 +1042,8 @@ can be anything representative i.e. number of sites)</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.total_mc_steps">
-<span class="sig-name descname"><span class="pre">total_mc_steps</span></span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.total_mc_steps" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.total_mc_steps">
+<code class="sig-name descname">total_mc_steps</code><a class="headerlink" href="#smol.moca.sampler.SampleContainer.total_mc_steps" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of iterations used in sampling</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1119,8 +1053,8 @@ can be anything representative i.e. number of sites)</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.metadata">
-<span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.metadata" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.metadata">
+<code class="sig-name descname">metadata</code><a class="headerlink" href="#smol.moca.sampler.SampleContainer.metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dictionary of metadata from the MC run that generated the samples.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1130,8 +1064,8 @@ can be anything representative i.e. number of sites)</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.aux_checkpoint">
-<span class="sig-name descname"><span class="pre">aux_checkpoint</span></span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.aux_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.aux_checkpoint">
+<code class="sig-name descname">aux_checkpoint</code><a class="headerlink" href="#smol.moca.sampler.SampleContainer.aux_checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checkpoint dictionary of auxiliary states and variables to continue
 sampling from the last state of a previous MCMC run.
 (not implemented yet)</p>
@@ -1157,14 +1091,14 @@ correspond to the energy only.</p></li>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.allocate">
-<span class="sig-name descname"><span class="pre">allocate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nsamples</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.allocate" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.allocate">
+<code class="sig-name descname">allocate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nsamples</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.allocate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allocate more space in arrays for more samples.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.as_dict" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.as_dict">
+<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1174,44 +1108,44 @@ correspond to the energy only.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.clear">
-<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.clear" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.clear">
+<code class="sig-name descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.clear" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clear all samples from container.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.composition_variance">
-<span class="sig-name descname"><span class="pre">composition_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.composition_variance" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.composition_variance">
+<code class="sig-name descname">composition_variance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.composition_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the variance in composition of all species.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.energy_variance">
-<span class="sig-name descname"><span class="pre">energy_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.energy_variance" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.energy_variance">
+<code class="sig-name descname">energy_variance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.energy_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the variance of sampled energies.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.enthalpy_variance">
-<span class="sig-name descname"><span class="pre">enthalpy_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.enthalpy_variance" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.enthalpy_variance">
+<code class="sig-name descname">enthalpy_variance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.enthalpy_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the variance in enthalpy.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.feature_vector_variance">
-<span class="sig-name descname"><span class="pre">feature_vector_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.feature_vector_variance" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.feature_vector_variance">
+<code class="sig-name descname">feature_vector_variance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.feature_vector_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the variance of feature vector elements.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.flush_to_backend">
-<span class="sig-name descname"><span class="pre">flush_to_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.flush_to_backend" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.flush_to_backend">
+<code class="sig-name descname">flush_to_backend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">backend</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.flush_to_backend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flush current samples and trace to backend file.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.from_dict">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.from_dict" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.from_dict">
+<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiate a SampleContainer from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1224,8 +1158,8 @@ correspond to the energy only.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.from_hdf5">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.from_hdf5" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.from_hdf5">
+<em class="property">classmethod </em><code class="sig-name descname">from_hdf5</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span></em>, <em class="sig-param"><span class="n">swmr_mode</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.from_hdf5" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiate a SampleContainer from an hdf5 file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1243,8 +1177,8 @@ Multiple Readers.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.get_backend">
-<span class="sig-name descname"><span class="pre">get_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alloc_nsamples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_backend" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.get_backend">
+<code class="sig-name descname">get_backend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span></em>, <em class="sig-param"><span class="n">alloc_nsamples</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">swmr_mode</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_backend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a backend file object.</p>
 <p>Currently only hdf5 files supported</p>
 <dl class="field-list simple">
@@ -1267,74 +1201,74 @@ Multiple Readers.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.get_compositions">
-<span class="sig-name descname"><span class="pre">get_compositions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_compositions" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.get_compositions">
+<code class="sig-name descname">get_compositions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_compositions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the compositions for each occupancy in the chain.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.get_energies">
-<span class="sig-name descname"><span class="pre">get_energies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_energies" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.get_energies">
+<code class="sig-name descname">get_energies</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_energies" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the energies from samples in chain.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.get_enthalpies">
-<span class="sig-name descname"><span class="pre">get_enthalpies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_enthalpies" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.get_enthalpies">
+<code class="sig-name descname">get_enthalpies</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_enthalpies" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the generalized entalpy changes from samples in chain.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.get_feature_vectors">
-<span class="sig-name descname"><span class="pre">get_feature_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_feature_vectors" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.get_feature_vectors">
+<code class="sig-name descname">get_feature_vectors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_feature_vectors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the feature vector changes from samples in chain.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.get_minimum_energy">
-<span class="sig-name descname"><span class="pre">get_minimum_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_minimum_energy" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.get_minimum_energy">
+<code class="sig-name descname">get_minimum_energy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_minimum_energy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the minimum energy from samples.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.get_minimum_energy_occupancy">
-<span class="sig-name descname"><span class="pre">get_minimum_energy_occupancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_minimum_energy_occupancy" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.get_minimum_energy_occupancy">
+<code class="sig-name descname">get_minimum_energy_occupancy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_minimum_energy_occupancy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find the occupancy with minimum energy from samples.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.get_minimum_enthalpy">
-<span class="sig-name descname"><span class="pre">get_minimum_enthalpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_minimum_enthalpy" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.get_minimum_enthalpy">
+<code class="sig-name descname">get_minimum_enthalpy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_minimum_enthalpy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the minimum energy from samples.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.get_minimum_enthalpy_occupancy">
-<span class="sig-name descname"><span class="pre">get_minimum_enthalpy_occupancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_minimum_enthalpy_occupancy" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.get_minimum_enthalpy_occupancy">
+<code class="sig-name descname">get_minimum_enthalpy_occupancy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_minimum_enthalpy_occupancy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find the occupancy with minimum energy from samples.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.get_occupancies">
-<span class="sig-name descname"><span class="pre">get_occupancies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_occupancies" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.get_occupancies">
+<code class="sig-name descname">get_occupancies</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_occupancies" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get an occupancy chain from samples.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.get_species_counts">
-<span class="sig-name descname"><span class="pre">get_species_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_species_counts" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.get_species_counts">
+<code class="sig-name descname">get_species_counts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_species_counts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the species counts for each occupancy in the chain.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.get_sublattice_compositions">
-<span class="sig-name descname"><span class="pre">get_sublattice_compositions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_sublattice_compositions" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.get_sublattice_compositions">
+<code class="sig-name descname">get_sublattice_compositions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sublattice</span></em>, <em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_sublattice_compositions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the compositions of a specific sublattice.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.get_sublattice_species_counts">
-<span class="sig-name descname"><span class="pre">get_sublattice_species_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_sublattice_species_counts" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.get_sublattice_species_counts">
+<code class="sig-name descname">get_sublattice_species_counts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sublattice</span></em>, <em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_sublattice_species_counts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the counts of each species in a sublattices.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1351,56 +1285,56 @@ Multiple Readers.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.get_temperatures">
-<span class="sig-name descname"><span class="pre">get_temperatures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_temperatures" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.get_temperatures">
+<code class="sig-name descname">get_temperatures</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.get_temperatures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the generalized entalpy changes from samples in chain.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.mean_composition">
-<span class="sig-name descname"><span class="pre">mean_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.mean_composition" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.mean_composition">
+<code class="sig-name descname">mean_composition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.mean_composition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get mean composition for all species regardless of sublattice.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.mean_energy">
-<span class="sig-name descname"><span class="pre">mean_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.mean_energy" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.mean_energy">
+<code class="sig-name descname">mean_energy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.mean_energy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the mean energy from samples.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.mean_enthalpy">
-<span class="sig-name descname"><span class="pre">mean_enthalpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.mean_enthalpy" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.mean_enthalpy">
+<code class="sig-name descname">mean_enthalpy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.mean_enthalpy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the mean generalized enthalpy.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.mean_feature_vector">
-<span class="sig-name descname"><span class="pre">mean_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.mean_feature_vector" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.mean_feature_vector">
+<code class="sig-name descname">mean_feature_vector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.mean_feature_vector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the mean feature vector from samples.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.mean_sublattice_composition">
-<span class="sig-name descname"><span class="pre">mean_sublattice_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.mean_sublattice_composition" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.mean_sublattice_composition">
+<code class="sig-name descname">mean_sublattice_composition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sublattice</span></em>, <em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.mean_sublattice_composition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the mean composition of a specific sublattice.</p>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.num_samples">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">num_samples</span></span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.num_samples" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="smol.moca.sampler.SampleContainer.num_samples">
+<em class="property">property </em><code class="sig-name descname">num_samples</code><a class="headerlink" href="#smol.moca.sampler.SampleContainer.num_samples" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the total number of samples.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.sampling_efficiency">
-<span class="sig-name descname"><span class="pre">sampling_efficiency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.sampling_efficiency" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.sampling_efficiency">
+<code class="sig-name descname">sampling_efficiency</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.sampling_efficiency" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the sampling efficiency for chains.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.save_sample">
-<span class="sig-name descname"><span class="pre">save_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accepted</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">occupancies</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enthalpy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thinned_by</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.save_sample" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.save_sample">
+<code class="sig-name descname">save_sample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">accepted</span></em>, <em class="sig-param"><span class="n">temperature</span></em>, <em class="sig-param"><span class="n">occupancies</span></em>, <em class="sig-param"><span class="n">enthalpy</span></em>, <em class="sig-param"><span class="n">features</span></em>, <em class="sig-param"><span class="n">thinned_by</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.save_sample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save a sample from the generated chain.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1417,22 +1351,22 @@ the total mc iterations.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.shape">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.shape" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="smol.moca.sampler.SampleContainer.shape">
+<em class="property">property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#smol.moca.sampler.SampleContainer.shape" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the shape of the samples in chain.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.SampleContainer.sublattice_composition_variance">
-<span class="sig-name descname"><span class="pre">sublattice_composition_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.sublattice_composition_variance" title="Permalink to this definition">¶</a></dt>
+<dt id="smol.moca.sampler.SampleContainer.sublattice_composition_variance">
+<code class="sig-name descname">sublattice_composition_variance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sublattice</span></em>, <em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">thin_by</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.SampleContainer.sublattice_composition_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the varience in composition of a specific sublattice.</p>
 </dd></dl>
 
 </dd></dl>
 
-</section>
-</section>
+</div>
+</div>
 
 
     </div>
@@ -1450,7 +1384,7 @@ the total mc iterations.</p></li>
     </p>
     <p>
         &copy; Copyright 2020, Ceder Group.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
     </p>
   </div>
 </footer>

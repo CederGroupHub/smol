@@ -5,10 +5,13 @@ import numpy as np
 from pymatgen.transformations.standard_transformations import OrderDisorderedStructureTransformation
 from smol.cofe import StructureWrangler, ClusterSubspace, ClusterExpansion
 from smol.cofe.extern import EwaldTerm
-from smol.moca import CanonicalEnsemble, Sampler
+from smol.moca import (CEProcessor, EwaldProcessor, CompositeProcessor, 
+                       CanonicalEnsemble, Sampler)
 from tests.data import (pyabinitio_LiMn3OF_dataset,
                         pyabinitio_LiNi2Mn4OF_dataset, lno_prim, lno_data,
                         lno_gc_run_10000)
+
+# TODO test montecarlo with a ternary.
 
 
 class TestvsPyabinitio(unittest.TestCase):
@@ -58,7 +61,8 @@ class TestvsPyabinitio(unittest.TestCase):
         coefs = np.linalg.lstsq(sw.feature_matrix,
                                sw.get_property_vector('energy'),
                                rcond=None)[0]
-        ce = ClusterExpansion(cs, coefficients=coefs)
+        ce = ClusterExpansion(cs, coefficients=coefs,
+                              feature_matrix=sw.feature_matrix)
 
         # make a supercell structure
         test_struct = lno_prim.copy()
@@ -77,19 +81,27 @@ class TestvsPyabinitio(unittest.TestCase):
         test_struct.make_supercell(matrix)
         sc_matrix = cs.scmatrix_from_structure(test_struct)
         n_atoms = len(test_struct)
+
+        ce_processor = CEProcessor(cs, sc_matrix, coefs[:-1])
+        ce_processor_ind = CEProcessor(cs, sc_matrix,
+                                         optimize_indicator=True)
+        ewald_processor = EwaldProcessor(cs,sc_matrix,cs.external_terms[0],coefs[-1])
+        processor = CompositeProcessor(cs,sc_matrix)
+        processor.add_processor(ce_processor)
+        processor.add_processor(ewald_processor)        
+
+        init_occu = processor.occupancy_from_structure(test_struct)
         iterations = 10000
         sample_interval = 100
         temp = lno_gc_run_10000['temperature']
-        for optim in (False, True):
-            ens = CanonicalEnsemble.from_cluster_expansion(
-                ce,
-                supercell_matrix=sc_matrix,
-                optimize_indicator=optim)
-            init_occu = ens.processor.occupancy_from_structure(test_struct)
-            sampler = Sampler.from_ensemble(ens, temperature=temp)
-            sampler.run(iterations, init_occu, thin_by=sample_interval)
+        for pr in (processor, processor_ind):
+            ens = CanonicalEnsemble(pr, temperature=temp)
+                                    
+            samp = Sampler.from_ensemble(ens,temperature=temp)
+            samp.run(iterations,initial_occupancies=np.array([init_occu]),\
+                     thin_by=sample_interval)
+
             self.assertAlmostEqual(lno_gc_run_10000['min_energy']/n_atoms,
-                                   sampler.samples.get_minimum_energy()/n_atoms,
-                                   places=1)
+                                   samp.samples.get_minimum_energy()/n_atoms, places=1)
             self.assertAlmostEqual(lno_gc_run_10000['average_energy']/n_atoms,
-                                   sampler.samples.mean_energy()/n_atoms, places=1)
+                                   samp.samples.mean_energy()/n_atoms, places=1)

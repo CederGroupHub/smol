@@ -6,8 +6,7 @@ functions to define and fit cluster expansions for crystalline materials.
 """
 
 from .space.clusterspace import ClusterSubspace
-from .expansion import ClusterExpansion, RegressionData
+from .expansion import ClusterExpansion
 from smol.cofe.wrangling.wrangler import (StructureWrangler)
 
-__all__ = ['ClusterSubspace', 'StructureWrangler', 'ClusterExpansion',
-           'RegressionData']
+__all__ = ['ClusterSubspace', 'StructureWrangler', 'ClusterExpansion']

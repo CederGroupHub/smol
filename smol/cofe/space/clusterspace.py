@@ -5,23 +5,25 @@ from importlib import import_module
 import warnings
 import numpy as np
 from itertools import combinations
+
 from monty.json import MSONable
 from pymatgen.core import Structure, PeriodicSite
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.analysis.structure_matcher import \
     StructureMatcher, OrderDisorderElementComparator
-from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc, \
-    lattice_points_in_supercell, coord_list_mapping_pbc
-from src.mc_utils import corr_from_occupancy
-from smol.cofe.space import Orbit, basis_factory, get_site_spaces, \
-    get_allowed_species, Vacancy, Cluster
-from smol.exceptions import SymmetryError, StructureMatchError, \
-    SYMMETRY_ERROR_MESSAGE
-from smol.cofe.space.constants import SITE_TOL
+from pymatgen.util.coord import \
+    (is_coord_subset, is_coord_subset_pbc, lattice_points_in_supercell,
+     coord_list_mapping_pbc)
 
+from src.mc_utils import corr_from_occupancy
+from smol.cofe.space import (Orbit, basis_factory, get_site_spaces,
+                             get_allowed_species, Vacancy, Cluster)
+from smol.cofe.space.constants import SITE_TOL
+from smol.exceptions import (SymmetryError, StructureMatchError,
+                             SYMMETRY_ERROR_MESSAGE)
 
 __author__ = "Luis Barroso-Luque, William Davidson Richards, Fengyu Xie," \
-             " Peichen Zhong"
+             "Peichen Zhong"
 
 
 class ClusterSubspace(MSONable):
@@ -417,54 +419,34 @@ class ClusterSubspace(MSONable):
         """
         return self._external_terms
 
-    def orbits_from_cutoffs(self, upper, lower=0):
+    def orbits_by_cutoffs(self, upper, lower=0):
         """Get orbits with clusters within given diameter cutoffs (inclusive).
 
         Args:
-            upper (float or dict):
-                upper diameter for clusters to include. If a single float
-                is given then that cutoff is used for all orbit sizes.
-                Otherwise a dict can be used to specify the cutoff for the
-                orbit cluster sizes,
-                i.e. {2: cutoff_pairs, 3: cutoff_trips, ...}
+            upper (float):
+                upper diameter for clusters to include.
             lower (float): optional
-                lower diameter for clusters to include. If a single float
-                is given then that cutoff is used for all orbit sizes.
-                Otherwise a dict can be used to specify the cutoff for the
-                orbit cluster sizes,
-                i.e. {2: cutoff_pairs, 3: cutoff_trips, ...}
+                lower diameter for clusters to include.
 
         Returns:
             list of Orbits
         """
-        upper = upper if isinstance(upper, dict) \
-            else {k: upper for k in self._orbits.keys()}
-        lower = lower if isinstance(lower, dict) \
-            else {k: lower for k in self._orbits.keys()}
-        return [orbit for size in upper.keys() for orbit in self._orbits[size]
-                if lower[size] <= orbit.base_cluster.diameter <= upper[size]]
+        return [orbit for orbit in self.iterorbits()
+                if lower <= orbit.base_cluster.diameter <= upper]
 
-    def function_inds_from_cutoffs(self, upper, lower=0):
+    def function_inds_by_cutoffs(self, upper, lower=0):
         """Get indices of corr functions by cluster cutoffs.
 
         Args:
-            upper (float or dict):
-                upper diameter for clusters to include. If a single float
-                is given then that cutoff is used for all orbit sizes.
-                Otherwise a dict can be used to specify the cutoff for the
-                orbit cluster sizes,
-                i.e. {2: cutoff_pairs, 3: cutoff_trips, ...}
+            upper (float):
+                upper diameter for clusters to include.
             lower (float): optional
-                lower diameter for clusters to include. If a single float
-                is given then that cutoff is used for all orbit sizes.
-                Otherwise a dict can be used to specify the cutoff for the
-                orbit cluster sizes,
-                i.e. {2: cutoff_pairs, 3: cutoff_trips, ...}
+                lower diameter for clusters to include.
 
         Returns:
             list: of corr function indices for clusters within cutoffs
         """
-        orbits = self.orbits_from_cutoffs(upper, lower)
+        orbits = self.orbits_by_cutoffs(upper, lower)
         inds = []
         for orbit in orbits:
             inds += list(range(orbit.bit_id, orbit.bit_id + len(orbit)))
@@ -898,9 +880,9 @@ class ClusterSubspace(MSONable):
         for nbit, site, sbasis in zip(nbits, exp_struct, site_bases):
             # Coordinates of point terms must stay in [0, 1] to guarantee
             # correct math of the following algorithm.
-            new_orbit = Orbit(
-                [np.mod(site.frac_coords, 1)], exp_struct.lattice,
-                [list(range(nbit))], [sbasis], symops)
+            new_orbit = Orbit([np.mod(site.frac_coords, 1)],
+                              exp_struct.lattice,
+                              [list(range(nbit))], [sbasis], symops)
             if new_orbit not in new_orbits:
                 new_orbits.append(new_orbit)
 
@@ -914,39 +896,36 @@ class ClusterSubspace(MSONable):
         # Vector sum of a, b, c divided by 2.
         # diameter + max_lp gives maximum possible distance from
         # [0.5, 0.5, 0.5] prim centoid to a point in all enumerable
-        # clusters. Add SITE_TOL as a numerical tolerance grace.
-        max_lp = np.linalg.norm(exp_struct.lattice.matrix.sum(axis=0)) / 2
-        max_lp += SITE_TOL
+        # clusters. Add 0.01 as a numerical tolerance grace.
+        max_lp = np.linalg.norm(np.sum(exp_struct.lattice.matrix, axis=0)) / 2
+        max_lp += 0.01
         for size, diameter in sorted(cutoffs.items()):
             new_orbits = []
-            neighbors = exp_struct.get_sites_in_sphere(
-                [0.5, 0.5, 0.5], diameter + max_lp, include_index=True)
-
+            neighbors = exp_struct.get_sites_in_sphere([0.5, 0.5, 0.5],
+                                                       diameter + max_lp,
+                                                       include_index=True)
             for orbit in orbits[size-1]:
                 if orbit.base_cluster.diameter > diameter:
                     continue
-                for neighbor in neighbors:
-                    if is_coord_subset(
-                            [neighbor.frac_coords], orbit.base_cluster.sites,
-                            atol=SITE_TOL):
+                for site, _, index, _ in neighbors:
+                    p = site.frac_coords
+                    if is_coord_subset([p], orbit.base_cluster.sites,
+                                       atol=SITE_TOL):
                         continue
-                    new_sites = np.concatenate(
-                        [orbit.base_cluster.sites, [neighbor.frac_coords]])
-                    new_orbit = Orbit(
-                        new_sites, exp_struct.lattice,
-                        orbit.bits + [list(range(nbits[neighbor.index]))],
-                        orbit.site_bases + [site_bases[neighbor.index]],
-                        symops)
-
+                    new_sites = np.concatenate([orbit.base_cluster.sites, [p]])
+                    new_orbit = Orbit(new_sites, exp_struct.lattice,
+                                      orbit.bits + [list(range(nbits[index]))],
+                                      orbit.site_bases + [site_bases[index]],
+                                      symops)
                     if new_orbit.base_cluster.diameter > diameter + 1e-8:
                         continue
                     elif new_orbit not in new_orbits:
                         new_orbits.append(new_orbit)
 
-            if len(new_orbits) > 0:
-                orbits[size] = sorted(
-                    new_orbits,
-                    key=lambda x: (np.round(x.base_cluster.diameter, 6),
+            orbits[size] = sorted(new_orbits,
+                                  key=lambda x:
+                                  (np.round(x.base_cluster.diameter,
+                                            6),  # noqa
                                    -x.multiplicity))
         return orbits
 
