@@ -351,6 +351,25 @@ class ClusterSubspace(MSONable):
         return self.orbit_multiplicities[self.function_orbit_ids] * \
             self.function_ordering_multiplicities
 
+    def orbit_hierarchy(self, level=1, min_size=1):
+        """Get orbit hierarchy by ids.
+
+        The empty/constant cluster is technically a suborbit of all orbits,
+        but is not added to the hierarchy.
+
+        Args:
+            level (int):
+            min_size (int):
+
+        Returns:
+            list of list: each element of the inner lists is the orbit id for
+            all suborbits corresponding to the orbit at the given outer list
+            index.
+        """
+        return [[], ] + [
+            self.get_sub_orbit_ids(orb.id, level=level, min_size=min_size)
+            for orb in self.orbits]
+
     def bit_combo_hierarchy(self, min_size=2, invert=False):
         """Get 1-level-down hierarchy of correlation functions.
 
@@ -984,6 +1003,36 @@ class ClusterSubspace(MSONable):
             orbit_indices.append((orbit, inds))
 
         return orbit_indices
+
+    def get_sub_orbit_ids(self, orbit_id, level=1, min_size=1):
+        """Get the orbit ids of all sub orbits corresponding to orbit_id
+
+        Args:
+            orbit_id (int):
+                id of orbit to get sub orbit id for
+            level (int): optional
+                how many levels down to look for suborbits. If all suborbits
+                are needed make level large enough or set to None.
+            min_size (int): optional
+                minimum size of clusters in sub orbits to include
+
+        Returns:
+            list of ints: list containing ids of suborbits
+        """
+        if orbit_id == 0:
+            return []
+        size = self.orbits[orbit_id - 1].base_cluster.size
+        if level is None or level < 0 or size - level - 1 < 0:
+            stop = 0
+        elif min_size > size - level:
+            stop = min_size - 1
+        else:
+            stop = size - level - 1
+
+        search_sizes = range(size - 1, stop, -1)
+        sub_ids = [orbit.id for s in search_sizes for orbit in self._orbits[s]
+                   if self.orbits[orbit_id - 1].is_sub_orbit(orbit)]
+        return sub_ids
 
     def _find_sub_cluster(self, bit_id, min_size=1):
         """Find 1-level-down subclusters of a given correlation function.
