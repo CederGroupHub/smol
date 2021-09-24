@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>smol.cofe.space package &#8212; smol 1.0.0 documentation</title>
+    <title>smol.cofe.space package &#8212; smol 1.0.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
@@ -960,16 +960,30 @@ to use a species that has a constant amount per formula unit.</p></li>
 <dd><p>Create ClusterSubspace from an MSONable dict.</p>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_size">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">function_inds_by_size</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get correlation function indices by cluster sizes.</p>
+</dd></dl>
+
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_cutoffs">
-<span class="sig-name descname"><span class="pre">function_inds_by_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_cutoffs" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.function_inds_from_cutoffs">
+<span class="sig-name descname"><span class="pre">function_inds_from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_from_cutoffs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get indices of corr functions by cluster cutoffs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – upper diameter for clusters to include.</p></li>
+<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – upper diameter for clusters to include. If a single float
+is given then that cutoff is used for all orbit sizes.
+Otherwise a dict can be used to specify the cutoff for the
+orbit cluster sizes,
+i.e. {2: cutoff_pairs, 3: cutoff_trips, …}</p></li>
 <li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – optional
-lower diameter for clusters to include.</p></li>
+lower diameter for clusters to include. If a single float
+is given then that cutoff is used for all orbit sizes.
+Otherwise a dict can be used to specify the cutoff for the
+orbit cluster sizes,
+i.e. {2: cutoff_pairs, 3: cutoff_trips, …}</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -979,12 +993,6 @@ lower diameter for clusters to include.</p></li>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_size">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">function_inds_by_size</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get correlation function indices by cluster sizes.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -1091,28 +1099,36 @@ species itself.</p></li>
 <dd><p>Return a list of all orbits sorted by size.</p>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_size">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">orbits_by_size</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get dictionary of orbits with key being the orbit size.</p>
+</dd></dl>
+
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_cutoffs">
-<span class="sig-name descname"><span class="pre">orbits_by_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_cutoffs" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.orbits_from_cutoffs">
+<span class="sig-name descname"><span class="pre">orbits_from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits_from_cutoffs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get orbits with clusters within given diameter cutoffs (inclusive).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – upper diameter for clusters to include.</p></li>
+<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – upper diameter for clusters to include. If a single float
+is given then that cutoff is used for all orbit sizes.
+Otherwise a dict can be used to specify the cutoff for the
+orbit cluster sizes,
+i.e. {2: cutoff_pairs, 3: cutoff_trips, …}</p></li>
 <li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – optional
-lower diameter for clusters to include.</p></li>
+lower diameter for clusters to include. If a single float
+is given then that cutoff is used for all orbit sizes.
+Otherwise a dict can be used to specify the cutoff for the
+orbit cluster sizes,
+i.e. {2: cutoff_pairs, 3: cutoff_trips, …}</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>list of Orbits</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_size">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">orbits_by_size</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get dictionary of orbits with key being the orbit size.</p>
 </dd></dl>
 
 <dl class="py method">

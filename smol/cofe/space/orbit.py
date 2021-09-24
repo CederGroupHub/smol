@@ -6,7 +6,7 @@ symmetry) clusters.
 
 __author__ = "Luis Barroso-Luque, William Davidson Richard"
 
-from itertools import chain, product, accumulate
+from itertools import chain, product, accumulate, combinations
 import numpy as np
 
 from monty.json import MSONable
@@ -97,7 +97,6 @@ class Orbit(MSONable):
 
         # Create basecluster
         self.base_cluster = Cluster(sites, lattice)
-        self.lattice = lattice
 
     @property
     def basis_type(self):
@@ -132,8 +131,14 @@ class Orbit(MSONable):
                 new_bits = list(set(tuple(bit_combo[np.array(bit_op)])
                                     for bit_op in bit_ops))
                 all_combos.append(new_bits)
-        self._bit_combos = tuple(np.array(c, dtype=np.int) for c in all_combos)
+        self._bit_combos = tuple(
+            np.array(c, dtype=np.int_) for c in all_combos)
         return self._bit_combos
+
+    @property
+    def site_spaces(self):
+        """Get the site spaces for the site basis associate with each site."""
+        return [site_basis.site_space for site_basis in self.site_bases]
 
     @property
     def bit_combo_array(self):
@@ -163,7 +168,7 @@ class Orbit(MSONable):
         equiv = [self.base_cluster]
         for symop in self.structure_symops:
             new_sites = symop.operate_multi(self.base_cluster.sites)
-            c = Cluster(new_sites, self.lattice)
+            c = Cluster(new_sites, self.base_cluster.lattice)
             if c not in equiv:
                 equiv.append(c)
         self._equiv = equiv
@@ -327,6 +332,28 @@ class Orbit(MSONable):
             c_id = c.assign_ids(c_id)
         return orbit_id + 1, orbit_bit_id + len(self.bit_combos), c_id
 
+    def is_sub_orbit(self, orbit):
+        """Check if given orbits clusters are subclusters.
+
+        Note this does not consider bit_combos
+        Args:
+            orbit (Orbit):
+                Orbit object to check if
+        Returns:
+            bool: True if the clusters of given orbit are subclusters.
+        """
+        if self.base_cluster.size <= orbit.base_cluster.size:
+            return False
+        elif not np.all(sp in self.site_spaces for sp in orbit.site_spaces):
+            return False
+
+        match = any(
+            Cluster(self.base_cluster.sites[inds, :], self.base_cluster.lattice)
+            in orbit.clusters
+            for inds in combinations(
+                range(self.base_cluster.size), orbit.base_cluster.size))
+        return match
+
     def __len__(self):
         """Get total number of orbit basis functions.
 
@@ -350,15 +377,16 @@ class Orbit(MSONable):
         return f'[Orbit] id: {self.id:<3}' \
                f'orderings: {len(self):<4}' \
                f'multiplicity: {self.multiplicity:<4}' \
-               f' no. symops: {len(self.cluster_symops):<4}\n' \
-               f'              {str(self.base_cluster)}'
+               f' no. symops: {len(self.cluster_symops):<4}\n'\
+               f'        {self.site_spaces}\n' \
+               f'        {str(self.base_cluster)}'
 
     def __repr__(self):
         """Get Orbit representation."""
         return _repr(self, orb_id=self.id,
                      orb_b_id=self.bit_id,
                      radius=self.base_cluster.radius,
-                     lattice=self.lattice,
+                     lattice=self.base_cluster.lattice,
                      basecluster=self.base_cluster)
 
     @classmethod
@@ -386,7 +414,7 @@ class Orbit(MSONable):
         d = {"@module": self.__class__.__module__,
              "@class": self.__class__.__name__,
              "sites": self.base_cluster.sites.tolist(),
-             "lattice": self.lattice.as_dict(),
+             "lattice": self.base_cluster.lattice.as_dict(),
              "bits": self.bits,
              "site_bases": [sb.as_dict() for sb in self.site_bases],
              "structure_symops": [so.as_dict() for so in
