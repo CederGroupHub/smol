@@ -3,7 +3,6 @@
 __author__ = "Fengyu Xie"
 
 import numpy as np
-import itertools
 
 
 # Utilities for parsing occupation, used in charge-neutral semigrand flip table

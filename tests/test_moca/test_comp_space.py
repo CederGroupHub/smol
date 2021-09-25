@@ -2,7 +2,8 @@ import unittest
 import numpy as np
 
 from smol.moca.comp_space import *
-from pymatgen import Specie,Element,Composition
+from pymatgen.core import Species ,Element, Composition
+
 from smol.cofe.space.domain import Vacancy
 
 vertices_contain = lambda a,b: np.all([np.any(np.all(np.isclose(a_row,b),axis=1)) for a_row in a])
@@ -14,11 +15,12 @@ flip_equal = lambda f, t: (f == t) or (f['from']==t['to'] and f['to']==t['from']
 #Charged test case, without vacancy
 class TestCompSpace1(unittest.TestCase):
     def setUp(self) -> None:
-        li = Specie.from_string('Li+')
-        mn = Specie.from_string('Mn3+')
-        ti = Specie.from_string('Ti4+')
-        o = Specie.from_string('O2-')
-        p = Specie.from_string('P3-')
+        li = Species.from_string('Li+')
+        mn = Species.from_string('Mn3+')
+        ti = Species.from_string('Ti4+')
+        o = Species.from_string('O2-')
+        p = Species.from_string('P3-')
+
         
         self.bits = [[li,mn,ti],[p,o]]
         self.n_bits = [[0,1,2],[0,1]]

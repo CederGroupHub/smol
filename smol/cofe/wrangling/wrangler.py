@@ -290,8 +290,10 @@ class StructureWrangler(MSONable):
                                    self.structures[c[1]],
                                    symmetric=True)]
             while True:
-                overlaps = list(filter(lambda s: s[0] & s[1], combinations(matches, 2)))
-                if overlaps is None or len(overlaps)==0:
+                overlaps = list(filter(lambda s: s[0] & s[1],
+                                       combinations(matches, 2)))
+                if overlaps is None or len(overlaps) == 0:
+
                     break
                 all_overlaps = [o for overlap in overlaps for o in overlap]
                 # keep only disjoint sets

@@ -6,14 +6,12 @@ Including linear algebra, combinatorics and integer enumerations.
 __author___ = 'Fengyu Xie'
 
 import numpy as np
-from itertools import combinations, product
 from functools import reduce
-from copy import deepcopy
-import random
+from itertools import combinations
 import math
 
-from sympy.ntheory import factorint
-from sympy.solvers.diophantine import diop_linear
+from sympy.solvers.diophantine import diop_linear  # Sympy 1.5.1
+
 from sympy import symbols
 
 
@@ -372,15 +370,14 @@ def get_integer_basis(normal_vec, sl_flips_list=None):
         return unit_basis + chosen_basis
 
 
-def formula_norm(v, sl_flips_list=None):
+
+def formula_norm(v, sl_flips_list):
     """Get formula norm.
 
     L = sum_over_sublats(max_in_sublat(|x_i|)).
       = total number of atoms flipped.
     """
     v = np.array(v)
-    if sl_flips_list is None:
-        sl_flips_list = [[i] for i in range(d)]
     sl_form_sizes = []
     for sl in sl_flips_list:
         flip_nums = v[sl].tolist() + [-1 * sum(v[sl])]

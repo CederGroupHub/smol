@@ -6,7 +6,8 @@ from collections import Counter
 
 from scipy.stats import norm
 
-from pymatgen import Composition,Specie
+from pymatgen.core import Composition, Species
+
 from smol.cofe.space.domain import SiteSpace
 from smol.moca.ensemble.sublattice import Sublattice
 from smol.moca.sampler.mcusher import (Swapper, Flipper,
@@ -278,7 +279,8 @@ def get_all_neutral_occus(compspace):
 
 
 def test_mask():
-    bits = [[Specie('Li',1), Specie('Mn',3), Specie('Ti',4)],[Specie('P',-3), Specie('O',-2)]]
+    bits = [[Species('Li',1), Species('Mn',3), Species('Ti',4)],[Species('P',-3), Species('O',-2)]]
+
     space = CompSpace(bits)
     # Flip 1: Ti+P -> Mn+O
     # Flip 2: Li+Ti+O -> 2Mn+P
