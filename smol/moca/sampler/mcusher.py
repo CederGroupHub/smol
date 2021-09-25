@@ -16,11 +16,11 @@ import numpy as np
 import warnings
 import math
 from copy import deepcopy
-import warnings
 
 from smol.utils import derived_class_factory
 from .bias import mcbias_factory
-from ..comp_space import *
+from ..comp_space import (flip_vecs_to_flip_table, flip_table_to_flip_vecs,
+                          CompSpace)
 
 from ..utils.occu_utils import (occu_to_species_list, flip_weights_mask,
                                 occu_to_species_stat,
@@ -516,7 +516,7 @@ class Subchainwalker(MCMCUsher):
                                         all_sublattices,
                                         *args, **kwargs)
         except KeyError:
-            raise ValueError(f"Step type {bias_type} is not valid for a "
+            raise ValueError(f"Bias type {sub_bias_type} is not valid for a "
                              f"{type(self)}.")
 
         self._flipper = Flipper(self.sublattices)

@@ -30,16 +30,16 @@ import polytope as pc
 from scipy.spatial import ConvexHull
 from scipy.spatial.qhull import QhullError
 
-from collections import OrderedDict
-from itertools import combinations, product, chain
+from itertools import product, chain
 from copy import deepcopy
 from monty.json import MSONable, MontyDecoder
-import json
 
 from pymatgen.core import Element, Composition
 from smol.cofe.space.domain import Vacancy
 
-from .utils.math_utils import *
+from .utils.math_utils import (get_integer_basis, integerize_multiple,
+                               get_integer_base_solution,
+                               get_integer_grid)
 
 
 NUMCONERROR = ValueError("Operation error, flipping not number \
@@ -628,7 +628,7 @@ class CompSpace(MSONable):
         x_scaled = np.array(x) / sc_size
 
         try:
-            x_prime = self._unconstr_to_constr_coords(x_scaled, sc_size=1)
+            _ = self._unconstr_to_constr_coords(x_scaled, sc_size=1)
             return True
         except ValueError:
             return False
@@ -719,7 +719,7 @@ class CompSpace(MSONable):
                 x_prime = deepcopy(x)
             else:
                 x_prime = np.linalg.inv((self.R).T) @ (x - self.t)
-                d_slack = x_prime[-1]
+                # d_slack = x_prime[-1]
                 x_prime = x_prime[:-1]
 
             b = self.A @ x_prime
@@ -764,7 +764,7 @@ class CompSpace(MSONable):
             Depends on form.
         """
         if self._min_sc_size or self._min_int_vertices is None:
-            min_sc_size = self.min_sc_size
+            _ = self.min_sc_size
 
         return self._convert_unconstr_to(self._min_int_vertices,
                                          form=form, sc_size=self.min_sc_size)

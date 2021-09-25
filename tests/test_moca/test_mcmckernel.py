@@ -65,7 +65,7 @@ def metropolis_kernel_neutral(disc_ensemble, request):
         kwargs['sub_bias_type'] = 'square-charge'
 
     mkernel = Metropolis(disc_ensemble, temperature=5000, step_type=request.param,
-                         bias_type='null', swap_weight=0.1, **kwargs)
+                         bias_type='null', swap_weight=0.0, **kwargs)
     mkernel.num_sites = disc_ensemble.num_sites
     mkernel.all_sublattices = disc_ensemble.all_sublattices
     return mkernel

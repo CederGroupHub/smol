@@ -17,9 +17,6 @@ from smol.utils import derived_class_factory
 from smol.moca.sampler.mcusher import mcusher_factory
 from smol.moca.sampler.bias import mcbias_factory
 
-from smol.moca.utils.math_utils import GCD_list
-from smol.moca.comp_space import CompSpace
-
 
 class MCMCKernel(ABC):
     """Abtract base class for transition kernels.

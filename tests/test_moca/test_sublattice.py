@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 import numpy.testing as npt
 
-from pymatgen import Composition, DummySpecies
+from pymatgen.core import Composition, DummySpecies
 from smol.cofe.space.domain import SiteSpace
 from smol.moca.ensemble.sublattice import Sublattice
 from tests.utils import assert_msonable

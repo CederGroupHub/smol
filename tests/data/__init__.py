@@ -1,7 +1,7 @@
 import os
 import json
 import numpy as np
-from pymatgen import Structure
+from pymatgen.core import Structure
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')
 

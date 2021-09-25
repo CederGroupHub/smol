@@ -15,16 +15,14 @@ from abc import abstractmethod
 from math import log
 from collections import Counter
 import numpy as np
-from copy import deepcopy
 
 from monty.json import MSONable
 from pymatgen.core import Species, DummySpecies, Element
-from smol.cofe.space.domain import get_species, Vacancy, get_site_spaces
+from smol.cofe.space.domain import get_species, Vacancy
 from smol.moca.processor.base import Processor
-from smol.moca.ensemble.sublattice import Sublattice, get_all_sublattices
+from smol.moca.ensemble.sublattice import Sublattice
 
 from .base import Ensemble
-from .sublattice import Sublattice
 from ..utils.math_utils import GCD_list
 from ..utils.occu_utils import (occu_to_species_stat,
                                 delta_ccoords_from_step)

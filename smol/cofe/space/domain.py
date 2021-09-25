@@ -254,5 +254,5 @@ class Vacancy(DummySpecie):
         return "Vacancy " + self.__str__()
 
     def __deepcopy__(self, memo):
-        """Deepcopy the vacancy object"""
-        return Vacancy(self.symbol,self._oxi_state,self._properties)
+        """Deepcopy the vacancy object."""
+        return Vacancy(self.symbol, self._oxi_state, self._properties)
