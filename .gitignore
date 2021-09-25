@@ -50,5 +50,6 @@ Thumbs.db
 *.pdfo
 .coverage
 .ipynp_checkpoints
+.pytest_cache*
 /smol/cofe/debug/*
 */.ipynb_checkpoints/*

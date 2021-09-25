@@ -11,6 +11,7 @@ from itertools import combinations
 import math
 
 from sympy.solvers.diophantine import diop_linear  # Sympy 1.5.1
+
 from sympy import symbols
 
 
@@ -367,6 +368,7 @@ def get_integer_basis(normal_vec, sl_flips_list=None):
                 break
 
         return unit_basis + chosen_basis
+
 
 
 def formula_norm(v, sl_flips_list):
