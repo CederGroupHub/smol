@@ -180,7 +180,6 @@ class Sampler:
         enthalpy = np.dot(self._kernel.natural_params, features.T)
         temperature = self._kernel.temperature * np.ones(occupancies.shape[0])
         bias = np.zeros(occupancies.shape[0])
-        times = np.zeros(occupancies.shape[0])
 
         # Initialise progress bar
         chains, nsites = self.samples.shape
@@ -189,21 +188,19 @@ class Sampler:
         with progress_bar(progress, total=nsteps, description=desc) as bar:
             for _ in range(nsteps // thin_by):
                 for _ in range(thin_by):
-                    for i, (accept, occupancy, occu_bias, occu_dt,
+                    for i, (accept, occupancy, occu_bias,
                             delta_enthalpy, delta_features)\
                       in enumerate(map(self._kernel.single_step, occupancies)):
                         accepted[i] += accept
                         occupancies[i] = occupancy
                         bias[i] = occu_bias
-                        times[i] += occu_dt
-                        # Count from initial time for numerical accuracy.
                         if accept:
                             enthalpy[i] = enthalpy[i] + delta_enthalpy
                             features[i] = features[i] + delta_features
                     bar.update()
                 # yield copies
                 yield (accepted, temperature, occupancies.copy(), bias.copy(),
-                       times.copy(), enthalpy.copy(), features.copy(), thin_by)
+                       enthalpy.copy(), features.copy(), thin_by)
                 accepted[:] = 0  # reset acceptance array
 
     def run(self, nsteps, initial_occupancies=None, thin_by=1, progress=False,

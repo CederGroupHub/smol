@@ -10,8 +10,7 @@ from pymatgen.core import Composition, Species
 from smol.cofe.space.domain import SiteSpace
 from smol.moca.ensemble.sublattice import Sublattice
 from smol.moca.sampler.mcusher import (Swapper, Flipper,
-                                       Tableflipper,
-                                       Subchainwalker)
+                                       Tableflipper)
 from smol.moca.comp_space import CompSpace
 from smol.moca.utils.occu_utils import (delta_ccoords_from_step,
                                         occu_to_species_stat,
@@ -86,16 +85,6 @@ def tableflipper(sublattices_neutral):
 @pytest.fixture
 def partialflipper(sublattices_partial):
     return Tableflipper(sublattices_partial, swap_weight = 0)
-
-@pytest.fixture
-def subchainwalker(sublattices_neutral):
-    return Subchainwalker(sublattices_neutral, sub_bias_type='square-charge',
-                          minimize_swap=True, add_swap=False)
-
-@pytest.fixture
-def partialwalker(sublattices_partial):
-    return Subchainwalker(sublattices_partial, sub_bias_type='square-charge',
-                          minimize_swap=True, add_swap=False)
 
 def test_bad_propabilities(mcmcusher):
     with pytest.raises(ValueError):
@@ -389,40 +378,3 @@ def test_partial_probabilities():
     assert len(state_counter) <= 19  # Total 19 possible states.
     assert len(state_counter) > 17
     assert (max(state_counter.values())-min(state_counter.values()))/np.average(list(state_counter.values())) < 0.1
-
-def test_subchain_walk(subchainwalker, rand_occu_neutral):
-    comp_change_count = 0
-    occu = rand_occu_neutral.copy()
-
-    bits = [s.species for s in subchainwalker.all_sublattices]
-    sl_list = [[0,1,2,3,4,5],[6,7,8,9,10,11]]
-
-    for _ in range(100):
-        step = subchainwalker.propose_step(occu)
-        assert is_neutral(occu, bits, sl_list)
-
-        if not is_canonical(occu, step, sl_list):
-            comp_change_count += 1
-        for i, sp in step:
-            occu[i] = sp
-
-    assert comp_change_count >= 80
-
-def test_partial_walk(partialwalker, rand_occu_partial):
-    comp_change_count = 0
-    occu = rand_occu_partial.copy()
-
-    bits = [s.species for s in partialwalker.all_sublattices]
-    sl_list = [[0,1,2,3,4,5],[6,7,8,9,10,11]]
-
-    for _ in range(100):
-        step = partialwalker.propose_step(occu)
-        assert is_neutral(occu, bits, sl_list)
-        assert not any(i in [0, 3, 6, 9] for i, s in step)
-
-        if not is_canonical(occu, step, sl_list):
-            comp_change_count += 1
-        for i, sp in step:
-            occu[i] = sp
-
-    assert comp_change_count >= 80
