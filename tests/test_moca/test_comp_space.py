@@ -3,6 +3,7 @@ import numpy as np
 
 from smol.moca.comp_space import *
 from pymatgen.core import Species ,Element, Composition
+
 from smol.cofe.space.domain import Vacancy
 
 vertices_contain = lambda a,b: np.all([np.any(np.all(np.isclose(a_row,b),axis=1)) for a_row in a])
@@ -19,6 +20,7 @@ class TestCompSpace1(unittest.TestCase):
         ti = Species.from_string('Ti4+')
         o = Species.from_string('O2-')
         p = Species.from_string('P3-')
+
         
         self.bits = [[li,mn,ti],[p,o]]
         self.n_bits = [[0,1,2],[0,1]]

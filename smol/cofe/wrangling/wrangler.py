@@ -293,6 +293,7 @@ class StructureWrangler(MSONable):
                 overlaps = list(filter(lambda s: s[0] & s[1],
                                        combinations(matches, 2)))
                 if overlaps is None or len(overlaps) == 0:
+
                     break
                 all_overlaps = [o for overlap in overlaps for o in overlap]
                 # keep only disjoint sets

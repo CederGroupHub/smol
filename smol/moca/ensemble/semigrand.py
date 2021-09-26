@@ -15,9 +15,11 @@ from abc import abstractmethod
 from math import log
 from collections import Counter
 import numpy as np
+from copy import deepcopy
 
 from monty.json import MSONable
 from pymatgen.core import Species, DummySpecies, Element
+
 from smol.cofe.space.domain import get_species, Vacancy
 from smol.moca.processor.base import Processor
 from smol.moca.ensemble.sublattice import Sublattice
