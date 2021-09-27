@@ -15,7 +15,6 @@ from abc import abstractmethod
 from math import log
 from collections import Counter
 import numpy as np
-from copy import deepcopy
 
 from monty.json import MSONable
 from pymatgen.core import Species, DummySpecies, Element
