@@ -25,7 +25,7 @@ class Ensemble(ABC):
 
     valid_mcmc_steps = None  # add this in derived classes
 
-    def __init__(self, processor, sublattices=None):
+    def __init__(self, processor, sublattices=None, all_sublattices=None):
         """Initialize class instance.
 
         Args:
@@ -39,17 +39,22 @@ class Ensemble(ABC):
                 If you want to restrict sites, specify restricted sublattices
                 as input.
                 Active means to have multiple species occupy one sublattice.
+            all_sublattices (list of Sublattice): optional
+                All sublattices, including inactive ones.
         """
         if sublattices is None:
             sublattices = get_sublattices(processor)
+        self._sublattices = sublattices
+
+        if all_sublattices is None:
+            all_sublattices = get_all_sublattices(processor)
+            for s in all_sublattices:
+                s.restrict_sites(self.restricted_sites)
+        self._all_sublattices = all_sublattices
 
         self.num_energy_coefs = len(processor.coefs)
         self.thermo_boundaries = {}  # not pretty way to save general info
         self._processor = processor
-        self._sublattices = sublattices
-        self._all_sublattices = get_all_sublattices(processor)
-        for s in self._all_sublattices:
-            s.restrict_sites(self.restricted_sites)
 
     @classmethod
     def from_cluster_expansion(cls, cluster_expansion, supercell_matrix,

@@ -91,7 +91,6 @@ class SampleContainer(MSONable):
         self._temperature = np.empty((0, nwalkers))
         self._accepted = np.zeros((0, nwalkers), dtype=int)
         self._bias = np.empty((0, nwalkers))
-        self._time = np.empty((0, nwalkers))  # For time stamping
         self.aux_checkpoint = None
         self._backend = None  # for streaming
 
@@ -119,16 +118,6 @@ class SampleContainer(MSONable):
         if flat:
             bias = self._flatten(bias)
         return bias
-
-    def get_time(self, discard=0, thin_by=1, flat=True):
-        """Get all time stamps from samples.
-
-        For performance evaluation.
-        """
-        time = self._time[discard + thin_by - 1::thin_by]
-        if flat:
-            time = self._flatten(time)
-        return time
 
     def get_occupancies(self, discard=0, thin_by=1, flat=True):
         """Get an occupancy chain from samples."""
@@ -393,7 +382,7 @@ class SampleContainer(MSONable):
             counts = self._flatten(counts)
         return counts
 
-    def save_sample(self, accepted, temperature, occupancies, bias, times,
+    def save_sample(self, accepted, temperature, occupancies, bias,
                     enthalpy, features, thinned_by):
         """Save a sample from the generated chain.
 
@@ -406,8 +395,6 @@ class SampleContainer(MSONable):
                 array of occupancies
             bias (ndarray):
                 array of bias
-            times (ndarray):
-                array of times
             enthalpy (ndarray):
                 array of generalized enthalpy changes
             features (ndarray):
@@ -420,7 +407,6 @@ class SampleContainer(MSONable):
         self._temperature[self._nsamples, :] = temperature
         self._chain[self._nsamples, :, :] = occupancies
         self._bias[self._nsamples, :] = bias
-        self._time[self._nsamples, :] = times
         self._enthalpy[self._nsamples, :] = enthalpy
         self._features[self._nsamples, :, :] = features
         self._nsamples += 1
@@ -433,7 +419,6 @@ class SampleContainer(MSONable):
         self._nsamples = 0
         self._chain = np.empty((0, nwalkers, num_sites), dtype=int)
         self._bias = np.empty((0, nwalkers))
-        self._time = np.empty((0, nwalkers))
         self._features = np.empty((0, nwalkers, len(self.natural_parameters)))
         self._enthalpy = np.empty((0, nwalkers))
         self._temperature = np.empty((0, nwalkers))
@@ -445,8 +430,6 @@ class SampleContainer(MSONable):
         self._chain = np.append(self._chain, arr, axis=0)
         arr = np.empty((nsamples, *self._bias.shape[1:]))
         self._bias = np.append(self._bias, arr, axis=0)
-        arr = np.empty((nsamples, *self._time.shape[1:]))
-        self._time = np.append(self._time, arr, axis=0)
         arr = np.empty((nsamples, *self._features.shape[1:]))
         self._features = np.append(self._features, arr, axis=0)
         arr = np.empty((nsamples, *self._enthalpy.shape[1:]))
@@ -464,7 +447,6 @@ class SampleContainer(MSONable):
         backend["temperature"][start:end, :] = self._temperature
         backend["chain"][start:end, :, :] = self._chain
         backend["bias"][start:end, :] = self._bias
-        backend["time"][start:end, :] = self._time
         backend["enthalpy"][start:end, :] = self._enthalpy
         backend["features"][start:end, :, :] = self._features
         backend["chain"].attrs["total_mc_steps"] += self.total_mc_steps
@@ -536,8 +518,6 @@ class SampleContainer(MSONable):
         backend["chain"].attrs["total_mc_steps"] = 0
         backend.create_dataset("bias",
                                (nsamples, *self._bias.shape[1:]))
-        backend.create_dataset("time",
-                               (nsamples, *self._time.shape[1:]))
         backend.create_dataset("accepted",
                                (nsamples, *self._accepted.shape[1:]))
         backend.create_dataset("temperature",
@@ -553,8 +533,6 @@ class SampleContainer(MSONable):
                                  *backend["chain"].shape[1:]))
         backend["bias"].resize((backend["chain"].shape[0] + nsamples,
                                 *self._bias.shape[1:]))
-        backend["time"].resize((backend["chain"].shape[0] + nsamples,
-                                *self._time.shape[1:]))
         backend["accepted"].resize((backend["chain"].shape[0] + nsamples,
                                     *self._accepted.shape[1:]))
         backend["temperature"].resize((backend["chain"].shape[0] + nsamples,
@@ -592,7 +570,6 @@ class SampleContainer(MSONable):
              'nsamples': self._nsamples,
              'chain': self._chain.tolist(),
              'bias': self._bias.tolist(),
-             'time': self._time.tolist(),
              'features': self._features.tolist(),
              'enthalpy': self._enthalpy.tolist(),
              'accepted': self._accepted.tolist(),
@@ -618,7 +595,6 @@ class SampleContainer(MSONable):
         container.total_mc_steps = d['total_mc_steps']
         container._chain = np.array(d['chain'], dtype=int)
         container._bias = np.array(d['bias'])
-        container._time = np.array(d['time'])
         container._features = np.array(d['features'])
         container._enthalpy = np.array(d['enthalpy'])
         container._accepted = np.array(d['accepted'], dtype=int)
@@ -660,7 +636,6 @@ class SampleContainer(MSONable):
                             nwalkers=f["chain"].shape[1])
             container._chain = f["chain"][:nsamples]
             container._bias = f["bias"][:nsamples]
-            container._time = f["time"][:nsamples]
             container._accepted = f["accepted"][:nsamples]
             container._temperature = f["temperature"][:nsamples]
             container._enthalpy = f["enthalpy"][:nsamples]
