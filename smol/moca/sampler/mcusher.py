@@ -57,6 +57,67 @@ class MCMCUsher(ABC):
         else:
             self._sublatt_probs = sublattice_probabilities
 
+    @staticmethod
+    def get_sublattice_ids_of_sites(sublattices):
+        """Gives sublattice indices from site index, Usher format."""
+        N_sites = max([max(sl.sites) for sl in sublattices]) + 1
+        sublattice_ids = np.zeros(N_sites, dtype=int)
+        for sl_id, sl in enumerate(sublattices):
+            sublattice_ids[sl.sites] = sl_id
+        return sublattice_ids
+
+    @staticmethod
+    def translate_occu_to_usher_encoding(occupancy, sublattices):
+        """Translate occupancy to usher encoding."""
+        occupancy_ush = np.array(occupancy, dtype=int)
+        site_unblocked = np.ones(len(occupancy), dtype=bool)
+        # Block translated sites to avoid double translating.
+        for sl in sublattices:
+            for ush_code, pro_code in enumerate(sl.encoding):
+                filt_ = ((occupancy_ush[sl.sites] == pro_code) &
+                         (site_unblocked[sl.sites]))
+                occupancy_ush[sl.sites[filt_]] = ush_code
+                site_unblocked[sl.sites[filt_]] = False
+                #print("Process sublattice:", sl)
+                #print("Process ush code:", ush_code)
+                #print("Block sites:", sl.sites[filt_])
+                #print("Block array:", site_unblocked)
+        return occupancy_ush
+
+    @staticmethod
+    def translate_occu_to_processor_encoding(occupancy, sublattices):
+        """Translate occupancy back to processor encoding."""
+        occupancy_pro = np.array(occupancy, dtype=int)
+        site_unblocked = np.ones(len(occupancy), dtype=bool)
+        for sl in sublattices:
+            for ush_code, pro_code in enumerate(sl.encoding):
+                filt_ = ((occupancy_pro[sl.sites] == ush_code) &
+                         (site_unblocked[sl.sites]))
+                occupancy_pro[sl.sites[filt_]] = pro_code
+                site_unblocked[sl.sites[filt_]] = False
+        return occupancy_pro
+
+    @staticmethod
+    def translate_step_to_usher_encoding(step, sublattices, sublattice_ids):
+        """Translate step encoding."""
+        step_ush = []
+        for i, sp_pro in step:
+            sl_id = sublattice_ids[i]
+            sp_ush = sublattices[sl_id].encoding.tolist().index(sp_pro)
+            step_ush.append((i, sp_ush))
+        return step_ush
+
+    @staticmethod
+    def translate_step_to_processor_encoding(step, sublattices,
+                                             sublattice_ids):
+        """Translate step encoding back."""
+        step_pro = []
+        for i, sp_ush in step:
+            sl_id = sublattice_ids[i]
+            sp_pro = sublattices[sl_id].encoding[sp_ush]
+            step_pro.append((i, sp_pro))
+        return step_pro
+
     @property
     def sublattice_probabilities(self):
         """Get the sublattice probabilities."""
@@ -138,7 +199,7 @@ class Flipper(MCMCUsher):
         """
         sublattice = self.get_random_sublattice()
         site = random.choice(sublattice.active_sites)
-        choices = set(range(len(sublattice.site_space))) - {occupancy[site]}
+        choices = set(sublattice.encoding) - {occupancy[site]}
         return [(site, random.choice(list(choices)))]
 
 
@@ -221,6 +282,13 @@ class Tableflipper(MCMCUsher):
                 flip table.
                 If you have extra composition constraint besides charge,
                 you have to provide your own flip table.
+
+                Note: if you have divided sublattice (eg. topotactic deLi),
+                      please supply processor encoding in both sublattices
+                      and all_sublattices, and write flip_table as Usher
+                      encoding!!
+                      (refer to Sublattice encoding argument)
+
             flip_vecs(np.array), optional:
                 Vector form of table flips, expressed in uncontrained
                 coordinates.
@@ -290,6 +358,19 @@ class Tableflipper(MCMCUsher):
 
         self._swapper = Swapper(self.sublattices, *args, **kwargs)
 
+        # Whether usher and processor encodings match.
+        self._translate_encoding = False
+        for sl in self.all_sublattices:
+            if not np.all(np.arange(len(sl.site_space))
+                          == np.array(sl.encoding)):
+                self._translate_encoding = True
+                break
+
+        # Table of sublattice indices, to expedite reverse lookup.
+        # In usher encoding.
+        self._sublattice_ids = \
+            self.get_sublattice_ids_of_sites(self.all_sublattices)
+
     def propose_step(self, occupancy):
         """Propose a single random flip step.
 
@@ -309,12 +390,20 @@ class Tableflipper(MCMCUsher):
 
         Args:
             occupancy (ndarray):
-                encoded occupancy string.
+                encoded occupancy string. (Processor encoding.)
 
         Returns:
-             list(tuple): list of tuples each with (idex, code).
+             list(tuple): list of tuples each with (idex, code). Given in
+                          Processor encoding.
         """
-        occupancy = np.array(occupancy)
+        # Do translation if needed.
+        if self._translate_encoding:
+            occupancy = (self.translate_occu_to_usher_encoding(
+                         occupancy,
+                         self.all_sublattices))
+        else:
+            occupancy = np.array(occupancy, dtype=int)
+
         # We shall only flip active sites.
         comp_stat = occu_to_species_stat(occupancy, self.all_sublattices,
                                          active_only=True)
@@ -323,11 +412,11 @@ class Tableflipper(MCMCUsher):
         # Masking effect will also be considered in a_priori factors.
 
         if random.random() < self.swap_weight:
-            return self._swapper.propose_step(occupancy)
+            step = self._swapper.propose_step(occupancy)
         elif masked_weights.sum() == 0:
             warnings.warn("Current occupancy can not be applied " +
                           "any table flip!")
-            return self._swapper.propose_step(occupancy)
+            step = self._swapper.propose_step(occupancy)
         else:
             species_list = occu_to_species_list(occupancy,
                                                 self.all_sublattices,
@@ -359,10 +448,21 @@ class Tableflipper(MCMCUsher):
                 if len(site_ids) != 0:
                     raise ValueError("Flip id {} is not num conserved!"
                                      .format(idx // 2))
+
+        # Translate step.
+        if self._translate_encoding:
+            return (self.translate_step_to_processor_encoding(
+                    step,
+                    self.all_sublattices,
+                    self._sublattice_ids))
+        else:
             return step
 
     def _get_flip_id(self, occupancy, step):
-        """Compute flip id in table from occupancy and step."""
+        """Compute flip id in table from occupancy and step.
+
+        Both should be given in Usher encoding!
+        """
         ducoords = delta_ucoords_from_step(occupancy,
                                            step,
                                            self._compspace,
@@ -389,13 +489,26 @@ class Tableflipper(MCMCUsher):
 
         Arg:
             occupancy (ndarray):
-                encoded occupancy string
+                encoded occupancy string. (Processor encoding.)
             step (list[tuple]):
                 Metropolis step. list of tuples each with (index, code).
+                (Processor encoding.)
 
         Returns:
             float: a-priori adjustment weight.
         """
+        # Translate step and occu.
+        if self._translate_encoding:
+            occupancy = (self.translate_occu_to_usher_encoding(
+                         occupancy,
+                         self.all_sublattices))
+            step = (self.translate_step_to_usher_encoding(
+                    step,
+                    self.all_sublattices,
+                    self._sublattice_ids))
+        else:
+            occupancy = np.array(occupancy, dtype=int)
+
         fid, direction = self._get_flip_id(occupancy, step)
         if fid is None:
             raise ValueError("Step {} is not in flip table.".format(step))

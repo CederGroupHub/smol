@@ -15,6 +15,8 @@ from sympy.solvers.diophantine import diop_linear  # Sympy 1.5.1
 from sympy import symbols
 
 
+# TODO: These are not very efficient. In the future, should switch
+# to sympy implementation
 def GCD(a, b):
     """Euclidean Algorithm, giving positive GCD's."""
     if round(a) != a or round(b) != b:

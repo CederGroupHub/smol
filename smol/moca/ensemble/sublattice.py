@@ -69,7 +69,7 @@ class Sublattice(MSONable):
         array of site indices for all unrestricted sites in the sublattice.
     """
 
-    def __init__(self, site_space, sites):
+    def __init__(self, site_space, sites, encoding=None):
         """Initialize Sublattice.
 
         Args:
@@ -77,10 +77,38 @@ class Sublattice(MSONable):
                 A site space object representing the sites in the sublattice
             sites (ndarray):
                 array with the site indices
+            encoding(ArrayLike):
+                Index of species on each sublattice of Processor.
+                This is required for some specific case, when MCUsher and
+                Processor runs with different coding.
+                For example, in topotactic delithiation of LiMnO2, Mn should
+                not move to Li sites, so in the Sublattice you supply to
+                Usher, you need to sub-divide the cation sublattice into
+                Li-Vac and Mn Sublattices to forbid interchange between Li
+                and TM.
+                But in that case, your processor is created for 2-sublattice
+                prim, so is your ocucpancy array encoded (Processor encoding).
+                However, you mcusher runs on 3-sublattices, and that has a
+                different encoding (Usher encoding). For both Usher and
+                Processor to work correctly, you need to provide species
+                Processor encoding in Usher sublattices as this option
+                'encoding' here.
+                eg. LiMnO2 DRX cations:
+                    Processor encoding: [{Li+:0, Mn3+:1,Mn4+:2,Vac:3}]
+                        [Li+, Li+, Mn3+, Mn4+, Vac] -> [0, 0, 1, 2, 3]
+                    Usher encoding: [{Li+:0, Vac:1}, {Mn3+: 0, Mn4+: 1}]
+                        [Li+, Li+, Mn3+, Mn4+, Vac] -> [0, 0, 0, 1, 1]
+                    When you provide sub-divided sublattices to usher,
+                    add encoding=[0, 3] to Li-Vac sublattice and encoding=
+                    [1, 2] to Mn sublattice, so as to translate between
+                    Processor and Usher encodings.
         """
         self.sites = sites
         self.site_space = site_space
         self.active_sites = sites.copy()
+        if encoding is None:
+            encoding = list(range(len(site_space)))
+        self._encoding = np.array(encoding, dtype=int)
 
     @property
     def species(self):
@@ -90,7 +118,7 @@ class Sublattice(MSONable):
     @property
     def encoding(self):
         """Get the encoding for the allowed species."""
-        return list(range(len(self.site_space)))
+        return self._encoding
 
     @property
     def restricted_sites(self):
@@ -114,12 +142,14 @@ class Sublattice(MSONable):
     def __str__(self):
         """Pretty print the sublattice species."""
         string = f'Sublattice\n Site space: {dict(self.site_space)}\n'
+        string += f' Encoding: {self.encoding}\n'
         string += f' Number of sites: {len(self.sites)}\n'
         return string
 
     def __repr__(self):
         """Repr for nice viewing."""
         rep = f'Sublattice Summary \n\n   site_space: {self.site_space}\n\n'
+        rep += f'   encoding: {self.encoding}\n\n'
         rep += f'   sites: {self.sites}\n\n active_sites: {self.active_sites}'
         return rep
 
@@ -130,6 +160,7 @@ class Sublattice(MSONable):
             MSONable dict
         """
         d = {'site_space': self.site_space.as_dict(),
+             'encoding': self.encoding.tolist(),
              'sites': self.sites.tolist(),
              'active_sites': self.active_sites.tolist()}
         return d
@@ -142,6 +173,7 @@ class Sublattice(MSONable):
             Sublattice
         """
         sublattice = cls(SiteSpace.from_dict(d['site_space']),
-                         sites=np.array(d['sites']))
+                         sites=np.array(d['sites']),
+                         encoding=d['encoding'])
         sublattice.active_sites = np.array(d['active_sites'])
         return sublattice

@@ -216,7 +216,7 @@ class TestStructureWrangler(unittest.TestCase):
         dup_item = deepcopy(self.sw.data_items[ind])
         self.assertWarns(UserWarning, self.sw.add_data, dup_item["structure"],
                          dup_item["properties"])
-        self.assertEqual(self.sw.get_duplicate_corr_inds(),
+        self.assertEqual(self.sw.get_duplicate_corr_indices(),
                          [[ind, self.sw.num_structures - 1]])
 
     def test_get_constant_features(self):
