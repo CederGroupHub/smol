@@ -366,9 +366,12 @@ class ClusterSubspace(MSONable):
             all suborbits corresponding to the orbit at the given outer list
             index.
         """
-        return [[], ] + [
-            self.get_sub_orbit_ids(orb.id, level=level, min_size=min_size)
-            for orb in self.orbits]
+        sub_ids = [
+            [suborb.id for suborb in self.get_sub_orbits(orb.id,
+                                                         level=level,
+                                                         min_size=min_size)]
+             for orb in self.orbits]
+        return [[], ] + sub_ids
 
     def bit_combo_hierarchy(self, min_size=2, invert=False):
         """Get 1-level-down hierarchy of correlation functions.
@@ -990,9 +993,9 @@ class ClusterSubspace(MSONable):
             # coordinate index]
             tcoords = fcoords[:, None, :, :] + ts[None, :, None, :]
             tcs = tcoords.shape
-            inds = coord_list_mapping_pbc(tcoords.reshape((-1, 3)),
-                                          supercell_fcoords,
-                                          atol=SITE_TOL).reshape((tcs[0] * tcs[1], tcs[2]))  # noqa
+            inds = coord_list_mapping_pbc(
+                tcoords.reshape((-1, 3)), supercell_fcoords,
+                atol=SITE_TOL).reshape((tcs[0] * tcs[1], tcs[2]))  # noqa
             # orbit_ids holds orbit, and 2d array of index groups that
             # correspond to the orbit
             # the 2d array may have some duplicates. This is due to
@@ -1004,8 +1007,8 @@ class ClusterSubspace(MSONable):
 
         return orbit_indices
 
-    def get_sub_orbit_ids(self, orbit_id, level=1, min_size=1):
-        """Get the orbit ids of all sub orbits corresponding to orbit_id
+    def get_sub_orbits(self, orbit_id, level=1, min_size=1):
+        """Get sub orbits of the orbit for the corresponding orbit_id
 
         Args:
             orbit_id (int):
@@ -1030,10 +1033,44 @@ class ClusterSubspace(MSONable):
             stop = size - level - 1
 
         search_sizes = range(size - 1, stop, -1)
-        sub_ids = [orbit.id for s in search_sizes for orbit in self._orbits[s]
-                   if self.orbits[orbit_id - 1].is_sub_orbit(orbit)]
-        return sub_ids
+        return [orbit for s in search_sizes for orbit in self._orbits[s]
+                if self.orbits[orbit_id - 1].is_sub_orbit(orbit)]
 
+    def get_sub_function_ids(self, corr_id, level=1, min_size=1):
+        """Get the bit combo ids of all sub corr functions.
+
+        Args:
+            corr_id (int):
+                id of orbit to get sub orbit id for
+            level (int): optional
+                how many levels down to look for suborbits. If all suborbits
+                are needed make level large enough or set to None.
+            min_size (int): optional
+                minimum size of clusters in sub orbits to include
+
+        Returns:
+            list of ints: list containing ids of sub correlation functions
+        """
+        if corr_id == 0:
+            return []
+
+        orbit = self.orbits[self.function_orbit_ids[corr_id] - 1]
+        bit_combo = orbit.bit_combos[corr_id - orbit.bit_id]
+
+        sub_fun_ids = []
+        for sub_orbit in self.get_sub_orbits(orbit.id, level=level,
+                                             min_size=min_size):
+            inds = orbit.sub_orbit_mappings(sub_orbit)
+            for i, sub_bit_combo in enumerate(sub_orbit.bit_combos):
+                if np.any(
+                        np.all(
+                            sub_bit_combo[0] == bit_combo[:, inds], axis=1)):
+                    sub_fun_ids.append(sub_orbit.bit_id + i)
+
+        return sub_fun_ids
+
+    # TODO try to use sub_orbit_mappings here and see if results are same as
+    #  without or the above function
     def _find_sub_cluster(self, bit_id, min_size=1):
         """Find 1-level-down subclusters of a given correlation function.
 
@@ -1077,6 +1114,7 @@ class ClusterSubspace(MSONable):
                 sub_bit_combo = self.all_bit_combos[sub_id]
                 sub_orbit = self.orbits[self.function_orbit_ids[sub_id] - 1]
                 cluster_match = sub_cluster in sub_orbit.clusters
+                #print(sub_id, sub_bit_combo[0], sub_bit_combos)
                 bit_match = np.any(
                     np.all(sub_bit_combo[0] == sub_bit_combos, axis=1))
 

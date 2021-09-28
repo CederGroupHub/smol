@@ -12,7 +12,7 @@ import numpy as np
 from monty.json import MSONable
 from pymatgen.core import Lattice
 from pymatgen.core.operations import SymmOp
-from pymatgen.util.coord import coord_list_mapping
+from pymatgen.util.coord import coord_list_mapping, is_coord_subset
 
 from smol.utils import _repr
 from smol.exceptions import SymmetryError, SYMMETRY_ERROR_MESSAGE
@@ -188,18 +188,22 @@ class Orbit(MSONable):
         """
         if self._symops:
             return self._symops
+
         self._symops = []
         for symop in self.structure_symops:
             new_sites = symop.operate_multi(self.base_cluster.sites)
-            c = Cluster(new_sites, self.base_cluster.lattice)
-            if c == self.base_cluster:
-                recenter = np.round(self.base_cluster.centroid - c.centroid)
-                c_sites = c.sites + recenter
-                mapping = tuple(coord_list_mapping(self.base_cluster.sites,
-                                                   c_sites, atol=SITE_TOL))
+            cluster = Cluster(new_sites, self.base_cluster.lattice)
+            if cluster == self.base_cluster:
+                recenter = np.round(
+                    self.base_cluster.centroid - cluster.centroid)
+                c_sites = cluster.sites + recenter
+                mapping = tuple(coord_list_mapping(
+                    self.base_cluster.sites, c_sites, atol=SITE_TOL))
                 self._symops.append((symop, mapping))
+
         if len(self._symops) * self.multiplicity != len(self.structure_symops):
             raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
+
         return self._symops
 
     @property
@@ -348,11 +352,49 @@ class Orbit(MSONable):
             return False
 
         match = any(
-            Cluster(self.base_cluster.sites[inds, :], self.base_cluster.lattice)
+            Cluster(self.base_cluster.sites[inds, :],
+                    self.base_cluster.lattice)
             in orbit.clusters
             for inds in combinations(
                 range(self.base_cluster.size), orbit.base_cluster.size))
         return match
+
+    def sub_orbit_mappings(self, orbit):
+        """Return a mapping of the sites in the orbit to a sub orbit
+
+        If the given orbit is not a sub-orbit will return an empty list.
+        Note this works for mapping between sites, sites spaces, and basis
+        functions associated with each site.
+
+        Args:
+            orbit (Orbit):
+                A sub orbit to return mapping of sites
+        Returns:
+            list: of indices sucht that
+                self.base_cluster.sites[indices] = orbit.base_cluster.sites
+        """
+
+        indsets = np.array(list(combinations(
+            (i for i, space in enumerate(self.site_spaces)
+             if space in orbit.site_spaces), len(orbit.site_spaces))))
+
+        mappings = []
+        for cluster in self.clusters:
+            # need to take the centroid of subset not base_cluster
+            for inds in indsets:
+                centroid = np.average(cluster.sites[inds], axis=0)
+                recenter = np.round(centroid - orbit.base_cluster.centroid)
+                c_sites = orbit.base_cluster.sites + recenter
+                if is_coord_subset(c_sites, cluster.sites):
+                    mappings.append(
+                        coord_list_mapping(
+                            c_sites, cluster.sites, atol=SITE_TOL))
+
+        if len(mappings) == 0 and self.is_sub_orbit(orbit):
+            raise RuntimeError("The given orbit is a suborbit, but no site "
+                               "mappings were found!\n"
+                               "Somethings is very wrong here!")
+        return np.unique(mappings, axis=0)
 
     def __len__(self):
         """Get total number of orbit basis functions.
