@@ -354,8 +354,8 @@ class ClusterSubspace(MSONable):
     def orbit_hierarchy(self, level=1, min_size=1):
         """Get orbit hierarchy by ids.
 
-        The empty/constant cluster is technically a suborbit of all orbits,
-        but is not added to the hierarchy.
+        The empty/constant cluster index 0 is technically a suborbit of all
+        orbits, but is not added to the hierarchy entries.
 
         Args:
             level (int):
@@ -372,6 +372,36 @@ class ClusterSubspace(MSONable):
                                                          min_size=min_size)]
              for orb in self.orbits]
         return [[], ] + sub_ids
+
+
+    def function_hierarchy(self, level=1, min_size=2, invert=False):
+        """Get the correlation function hierarchy.
+
+        The function hierarchy is t
+
+        Args:
+            level (int):
+            min_size (int):
+            invert (bool): optional
+                Default is invert=False which gives the high to low bit combo
+                hierarchy. Invert= True will invert the hierarchy into low to
+                high
+
+        Returns:
+            list of list: each element of the inner lists is the bit id for
+            all corr functions corresponding to the corr function at the given
+            outer list index.
+        """
+
+        hierarchy = [
+            self.get_sub_function_ids(i, level=level, min_size=min_size)
+            for i in range(self.num_corr_functions)
+        ]
+
+        if invert:
+            hierarchy = invert_mapping_table(hierarchy)
+
+        return hierarchy
 
     def bit_combo_hierarchy(self, min_size=2, invert=False):
         """Get 1-level-down hierarchy of correlation functions.
@@ -1064,13 +1094,11 @@ class ClusterSubspace(MSONable):
             for i, sub_bit_combo in enumerate(sub_orbit.bit_combos):
                 if np.any(
                         np.all(
-                            sub_bit_combo[0] == bit_combo[:, inds], axis=1)):
+                            sub_bit_combo[0] == bit_combo[:, inds], axis=2)):
                     sub_fun_ids.append(sub_orbit.bit_id + i)
 
         return sub_fun_ids
 
-    # TODO try to use sub_orbit_mappings here and see if results are same as
-    #  without or the above function
     def _find_sub_cluster(self, bit_id, min_size=1):
         """Find 1-level-down subclusters of a given correlation function.
 
