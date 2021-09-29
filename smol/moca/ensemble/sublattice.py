@@ -69,14 +69,14 @@ class Sublattice(MSONable):
         array of site indices for all unrestricted sites in the sublattice.
     """
 
-    def __init__(self, site_space, sites):
+    def __init__(self, site_space, sites, encoding=None):
         """Initialize Sublattice.
 
         Args:
             site_space (SiteSpace):
                 A site space object representing the sites in the sublattice
             sites (ndarray):
-                array with the site indices
+                array with the site indices.
         """
         self.sites = sites
         self.site_space = site_space

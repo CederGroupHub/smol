@@ -2,6 +2,7 @@ import pytest
 from copy import deepcopy
 import numpy.testing as npt
 import numpy as np
+import random
 
 from smol.cofe import ClusterExpansion
 from smol.cofe.extern import EwaldTerm
@@ -36,7 +37,6 @@ def ensemble(composite_processor, request):
     else:
         kwargs = {}
     return request.param(composite_processor, **kwargs)
-
 
 @pytest.fixture
 def canonical_ensemble(composite_processor):
@@ -98,12 +98,19 @@ def test_restrict_sites(ensemble):
     ensemble.restrict_sites(sites)
     for sublatt in ensemble.sublattices:
         assert not any(i in sublatt.active_sites for i in sites)
+    for sublatt in ensemble.all_sublattices:
+        assert not any(i in sublatt.active_sites for i in sites)
     ensemble.reset_restricted_sites()
     for sublatt in ensemble.sublattices:
         npt.assert_array_equal(sublatt.sites, sublatt.active_sites)
-
+    for sublatt in ensemble.all_sublattices:
+        npt.assert_array_equal(sublatt.sites, sublatt.active_sites)
 
 def test_msonable(ensemble):
+    assert_msonable(ensemble)
+    all_sites = np.concatenate([s.sites for s in ensemble.all_sublattices])
+    fix_sites = random.sample(all_sites.tolist(), len(all_sites)//2)
+    ensemble.restrict_sites(fix_sites)
     assert_msonable(ensemble)
 
 

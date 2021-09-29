@@ -20,7 +20,7 @@ class CanonicalEnsemble(Ensemble, MSONable):
 
     valid_mcmc_steps = ('swap',)
 
-    def __init__(self, processor, sublattices=None):
+    def __init__(self, processor, sublattices=None, all_sublattices=None):
         """Initialize CanonicalEnemble.
 
         Args:
@@ -31,8 +31,13 @@ class CanonicalEnsemble(Ensemble, MSONable):
                 list of Lattice objects representing sites in the processor
                 supercell with same site spaces. Only active sublattices.
                 Active means to allow multiple species occupy one sublattice.
+            all_sublattices (list of Sublattice): optional
+                All sublattices, including inactive ones. Needed when in
+                some special cases when you want to sub-divide sublattices.
+                For example, topotactic delitiation.
         """
-        super().__init__(processor, sublattices=sublattices)
+        super().__init__(processor, sublattices=sublattices,
+                         all_sublattices=all_sublattices)
 
     @property
     def natural_parameters(self):
@@ -81,6 +86,10 @@ class CanonicalEnsemble(Ensemble, MSONable):
         sl_dicts = d.get('sublattices')
         sublattices = ([Sublattice.from_dict(s) for s in sl_dicts] if
                        sl_dicts is not None else None)
+        sl_dicts = d.get('all_sublattices')
+        all_sublattices = ([Sublattice.from_dict(s) for s in sl_dicts] if
+                           sl_dicts is not None else None)
 
         return cls(Processor.from_dict(d['processor']),
-                   sublattices=sublattices)
+                   sublattices=sublattices,
+                   all_sublattices=all_sublattices)

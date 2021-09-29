@@ -336,7 +336,7 @@ def test_neutral_probabilities():
     # Test with zero hamiltonian, assert equal frequency.
     assert len(state_counter) <= 34  # Total 34 possible states.
     assert len(state_counter) > 31
-    assert (max(state_counter.values())-min(state_counter.values()))/np.average(list(state_counter.values())) < 0.1
+    assert (max(state_counter.values())-min(state_counter.values()))/np.average(list(state_counter.values())) < 0.2
 
 def test_partial_probabilities():
 
@@ -379,4 +379,4 @@ def test_partial_probabilities():
     # Test with zero hamiltonian, assert equal frequency.
     assert len(state_counter) <= 19  # Total 19 possible states.
     assert len(state_counter) > 17
-    assert (max(state_counter.values())-min(state_counter.values()))/np.average(list(state_counter.values())) < 0.1
+    assert (max(state_counter.values())-min(state_counter.values()))/np.average(list(state_counter.values())) < 0.2

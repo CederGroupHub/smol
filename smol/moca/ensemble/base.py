@@ -40,7 +40,9 @@ class Ensemble(ABC):
                 as input.
                 Active means to have multiple species occupy one sublattice.
             all_sublattices (list of Sublattice): optional
-                All sublattices, including inactive ones.
+                All sublattices, including inactive ones. Needed when in
+                some special cases when you want to sub-divide sublattices.
+                For example, topotactic delitiation.
         """
         if sublattices is None:
             sublattices = get_sublattices(processor)
@@ -199,10 +201,14 @@ class Ensemble(ABC):
         """
         for sublattice in self.sublattices:
             sublattice.restrict_sites(sites)
+        for sublattice in self.all_sublattices:
+            sublattice.restrict_sites(sites)
 
     def reset_restricted_sites(self):
         """Unfreeze all previously restricted sites."""
         for sublattice in self.sublattices:
+            sublattice.reset_restricted_sites()
+        for sublattice in self.all_sublattices:
             sublattice.reset_restricted_sites()
 
     def as_dict(self):
@@ -215,5 +221,6 @@ class Ensemble(ABC):
              '@class': self.__class__.__name__,
              'thermo_boundaries': self.thermo_boundaries,
              'processor': self._processor.as_dict(),
-             'sublattices': [s.as_dict() for s in self._sublattices]}
+             'sublattices': [s.as_dict() for s in self._sublattices],
+             'all_sublattices': [s.as_dict() for s in self._all_sublattices]}
         return d
