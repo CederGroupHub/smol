@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 from ..comp_space import get_oxi_state
+from ..utils.occu_utils import occu_to_species_stat
 from smol.utils import derived_class_factory
 
 
@@ -128,13 +129,21 @@ class Squarechargebias(MCMCBias):
         Rows reperesent sites and columns represent species. Allows
         quick evaluation of charge and charge change from steps.
         """
-        num_cols = max(len(s.site_space) for s in self.sublattices)
+        num_cols = max(max(s.encoding) + 1 for s in self.sublattices)
+        # Potential bug: when 3 species are encoded like [1, 2, 10000],
+        # This will waste a lot of memory. But hopefully no one will
+        # use like that.
         num_rows = sum(len(s.sites) for s in self.sublattices)
 
         table = np.zeros((num_rows, num_cols))
         for s in self.sublattices:
             ordered_cs = [get_oxi_state(sp) for sp in s.site_space]
-            table[s.sites, :len(ordered_cs)] = ordered_cs
+            # Block selection
+            index_sites = np.hstack([s.sites.reshape(-1, 1) for _ in
+                                    range(len(s.site_space))])
+            index_codes = np.vstack([s.encoding for _ in
+                                    range(len(s.sites))])
+            table[index_sites, index_codes] = ordered_cs
         return table
 
     def _get_charge(self, occupancy):
@@ -205,8 +214,6 @@ class Squarecompconstraintbias(MCMCBias):
         super().__init__(all_sublattices, *args, **kwargs)
         self.C = np.array(C)
         self.b = np.array(b)
-        self.bits = [s.species for s in all_sublattices]
-        self.sl_list = [s.sites for s in all_sublattices]
         if isinstance(lam, (int, float)):
             self.lams = np.repeat(lam, len(self.b))
         elif len(lam) == len(self.b):
@@ -217,10 +224,8 @@ class Squarecompconstraintbias(MCMCBias):
 
     def _compute_x(self, occupancy):
         """Compute unconstrained coordinates from occupancy."""
-        occu = np.array(occupancy)
-        compstat = [[(occu[self.sl_list[sl_id]] == sp_id).sum()
-                    for sp_id, sp in enumerate(sl)]
-                    for sl_id, sl in enumerate(self.bits)]
+        occu = np.array(occupancy, dtype=int)
+        compstat = occu_to_species_stat(occu, self.sublattices)
         ucoords = []
         for sl in compstat:
             ucoords.extend(sl[:-1])

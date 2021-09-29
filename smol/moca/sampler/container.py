@@ -372,12 +372,12 @@ class SampleContainer(MSONable):
                                          return_counts=True)
                 # check for zero counts
                 if len(codes) != len(sublattice.sites):
-                    n = len(sublattice.site_space)
-                    missed = list(set(range(n)) - set(codes))
+                    missed = list(set(sublattice.encoding) - set(codes))
                     codes = np.append(codes, missed)
                     count = np.append(count, len(missed) * [0])
 
-                counts[i][j] = count[codes.argsort()]  # order them accordingly
+                order = [codes.tolist().index(c) for c in sublattice.encoding]
+                counts[i][j] = count[order]  # order them accordingly
         if flat:
             counts = self._flatten(counts)
         return counts

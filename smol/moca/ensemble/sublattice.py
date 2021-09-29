@@ -78,30 +78,19 @@ class Sublattice(MSONable):
             sites (ndarray):
                 array with the site indices
             encoding(ArrayLike):
-                Index of species on each sublattice of Processor.
-                This is required for some specific case, when MCUsher and
-                Processor runs with different coding.
-                For example, in topotactic delithiation of LiMnO2, Mn should
-                not move to Li sites, so in the Sublattice you supply to
-                Usher, you need to sub-divide the cation sublattice into
-                Li-Vac and Mn Sublattices to forbid interchange between Li
-                and TM.
-                But in that case, your processor is created for 2-sublattice
-                prim, so is your ocucpancy array encoded (Processor encoding).
-                However, you mcusher runs on 3-sublattices, and that has a
-                different encoding (Usher encoding). For both Usher and
-                Processor to work correctly, you need to provide species
-                Processor encoding in Usher sublattices as this option
-                'encoding' here.
+                Integer encoding of each species, used to decode occupancy
+                array.
+                This is by default the same as range(len(site_space)), but
+                can be different from that.
                 eg. LiMnO2 DRX cations:
-                    Processor encoding: [{Li+:0, Mn3+:1,Mn4+:2,Vac:3}]
+                    Encoding: [{Li+:0, Mn3+:1,Mn4+:2,Vac:3}]
                         [Li+, Li+, Mn3+, Mn4+, Vac] -> [0, 0, 1, 2, 3]
-                    Usher encoding: [{Li+:0, Vac:1}, {Mn3+: 0, Mn4+: 1}]
-                        [Li+, Li+, Mn3+, Mn4+, Vac] -> [0, 0, 0, 1, 1]
-                    When you provide sub-divided sublattices to usher,
-                    add encoding=[0, 3] to Li-Vac sublattice and encoding=
-                    [1, 2] to Mn sublattice, so as to translate between
-                    Processor and Usher encodings.
+                    But when you do delithitation MC, you want to fix all
+                    Mn, so you divide Li/Vac and Mn into 2 sublattices.
+                    In this case you have to specify encoding=[0, 3] for
+                    initalizing Li/Vac sublattice, and encoding=[1, 2] for
+                    Mn sublattice, otherwise occupancy arrays can't be
+                    decoded and encoded correctly by other codes.
         """
         self.sites = sites
         self.site_space = site_space

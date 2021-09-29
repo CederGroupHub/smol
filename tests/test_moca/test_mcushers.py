@@ -17,6 +17,7 @@ from smol.moca.utils.occu_utils import (delta_ccoords_from_step,
                                         occu_to_species_stat,
                                         flip_weights_mask)
 from smol.moca.utils.math_utils import GCD_list
+from smol.moca.utils.occu_utils import *
 
 from tests.utils import gen_random_neutral_occupancy
 from itertools import permutations
@@ -139,30 +140,45 @@ def test_bad_propabilities(mcmcusher):
         mcmcusher.sublattice_probabilities = [0.5, 0.2, 0.3]
 
 
-def test_translate(deliflipper):
+def test_deli_decoding(all_sublattices_deli):
 
-    occu_pros = []
     occu_pro = np.array([0, 0, 1, 1, 0, 0, 2, 2])
-    occu_ush = deliflipper.translate_occu_to_usher_encoding(occu_pro,
-               deliflipper.all_sublattices)
-    print('occu_ush:', occu_ush)
-    assert np.all(occu_ush == np.array([0, 0, 0, 0, 0, 0, 0, 0]))
-    occu_pro2 = deliflipper.translate_occu_to_processor_encoding(occu_ush,
-               deliflipper.all_sublattices)
-    print('occu_pro2:', occu_pro2)
-    assert np.all(occu_pro == occu_pro2)
+    species_stat = occu_to_species_list(occu_pro, all_sublattices_deli)
 
-    occu_pro = np.array([4, 0, 1, 3, 0, 1, 2, 2])
-    occu_ush = deliflipper.translate_occu_to_usher_encoding(occu_pro,
-               deliflipper.all_sublattices)
-    print('occu_ush:', occu_ush)
-    assert np.all(occu_ush == np.array([1, 0, 0, 2, 0, 1, 0, 0]))
-    occu_pro2 = deliflipper.translate_occu_to_processor_encoding(occu_ush,
-               deliflipper.all_sublattices)
-    print('occu_pro2:', occu_pro2)
-    assert np.all(occu_pro == occu_pro2)
+    assert len(species_stat[0]) == 2
+    assert set(species_stat[0][0]) == set([0, 1])
+    assert set(species_stat[0][1]) == set([])
 
-    assert np.all(deliflipper._sublattice_ids == np.array([0, 0, 1, 1, 2, 2, 3, 3]))
+    assert len(species_stat[1]) == 3
+    assert set(species_stat[1][0]) == set([2, 3])
+    assert set(species_stat[1][1]) == set([])
+    assert set(species_stat[1][2]) == set([])
+
+    assert len(species_stat[2]) == 2
+    assert set(species_stat[2][0]) == set([4, 5])
+    assert set(species_stat[2][1]) == set([])
+
+    assert len(species_stat[3]) == 1
+    assert set(species_stat[3][0]) == set([6, 7])
+
+    occu_pro = np.array([0, 4, 2, 1, 1, 0, 2, 2])
+    species_stat = occu_to_species_list(occu_pro, all_sublattices_deli)
+
+    assert len(species_stat[0]) == 2
+    assert set(species_stat[0][0]) == set([0])
+    assert set(species_stat[0][1]) == set([1])
+
+    assert len(species_stat[1]) == 3
+    assert set(species_stat[1][0]) == set([3])
+    assert set(species_stat[1][1]) == set([2])
+    assert set(species_stat[1][2]) == set([])
+
+    assert len(species_stat[2]) == 2
+    assert set(species_stat[2][0]) == set([5])
+    assert set(species_stat[2][1]) == set([4])
+
+    assert len(species_stat[3]) == 1
+    assert set(species_stat[3][0]) == set([6, 7])
 
 
 def test_propose_step(mcmcusher, rand_occu):
@@ -235,7 +251,6 @@ def test_flip_neutral(tableflipper, rand_occu_neutral):
     occu = deepcopy(rand_occu_neutral)
     sl_list = [[0,1,2,3,4,5],[6,7,8,9,10,11]]
     bits = tableflipper.bits
-    assert not tableflipper._translate_encoding
 
     for i in range(10000):
         assert is_neutral(occu,bits,sl_list)
@@ -252,7 +267,6 @@ def test_flip_partial(partialflipper, rand_occu_partial):
     sl_list = [[0,1,2,3,4,5],[6,7,8,9,10,11]]
     bits = partialflipper.bits
     print("Bits:", bits)
-    assert not partialflipper._translate_encoding
 
     for i in range(10000):
         assert is_neutral(occu,bits,sl_list)
@@ -270,7 +284,6 @@ def test_flip_deli(deliflipper, rand_occu_deli):
     bits = [[Species('Li',1), Species('Mn',2), Species('Mn',3), Species('Mn', 4), Vacancy()],
             [Species('O', -2), Species('O', -1), Species('F', -1)]]
     print("Bits:", bits)
-    assert deliflipper._translate_encoding
 
     for i in range(20000):
         assert is_neutral(occu,bits,sl_list)
@@ -294,7 +307,6 @@ def test_flip_deli_auto(deliflipper_auto, rand_occu_deli):
     bits = [[Species('Li',1), Species('Mn',2), Species('Mn',3), Species('Mn', 4), Vacancy()],
             [Species('O', -2), Species('O', -1), Species('F', -1)]]
     print("Bits:", bits)
-    assert deliflipper._translate_encoding
     assert len(deliflipper.flip_table) == 3
 
     for i in range(20000):
@@ -456,7 +468,7 @@ def test_neutral_probabilities():
     # Test with zero hamiltonian, assert equal frequency.
     assert len(state_counter) <= 34  # Total 34 possible states.
     assert len(state_counter) > 31
-    assert (max(state_counter.values())-min(state_counter.values()))/np.average(list(state_counter.values())) < 0.1
+    assert (max(state_counter.values())-min(state_counter.values()))/np.average(list(state_counter.values())) < 0.2
 
 def test_partial_probabilities():
 
@@ -499,7 +511,7 @@ def test_partial_probabilities():
     # Test with zero hamiltonian, assert equal frequency.
     assert len(state_counter) <= 19  # Total 19 possible states.
     assert len(state_counter) > 17
-    assert (max(state_counter.values())-min(state_counter.values()))/np.average(list(state_counter.values())) < 0.1
+    assert (max(state_counter.values())-min(state_counter.values()))/np.average(list(state_counter.values())) < 0.2
 
 
 def test_deli_probabilities(deliflipper, rand_occu_deli):
@@ -537,7 +549,7 @@ def test_deli_probabilities(deliflipper, rand_occu_deli):
     # Test with zero hamiltonian, assert equal frequency.
     assert len(state_counter) <= 17  # Total 17 possible deLi states.
     assert len(state_counter) > 15
-    assert (max(state_counter.values())-min(state_counter.values()))/np.average(list(state_counter.values())) < 0.1
+    assert (max(state_counter.values())-min(state_counter.values()))/np.average(list(state_counter.values())) < 0.2
 
 def test_deli_auto_probabilities(deliflipper_auto, rand_occu_deli):
 
@@ -574,4 +586,4 @@ def test_deli_auto_probabilities(deliflipper_auto, rand_occu_deli):
     # Test with zero hamiltonian, assert equal frequency.
     assert len(state_counter) <= 17  # Total 17 possible deLi states.
     assert len(state_counter) > 15
-    assert (max(state_counter.values())-min(state_counter.values()))/np.average(list(state_counter.values())) < 0.1
+    assert (max(state_counter.values())-min(state_counter.values()))/np.average(list(state_counter.values())) < 0.2

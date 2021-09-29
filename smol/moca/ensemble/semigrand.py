@@ -38,7 +38,7 @@ class BaseSemiGrandEnsemble(Ensemble):
 
     valid_mcmc_steps = ('flip', 'table-flip', 'subchain-walk')
 
-    def __init__(self, processor, sublattices=None):
+    def __init__(self, processor, sublattices=None, all_sublattices=None):
         """Initialize BaseSemiGrandEnsemble.
 
         Args:
@@ -48,8 +48,13 @@ class BaseSemiGrandEnsemble(Ensemble):
             sublattices (list of Sublattice): optional
                 list of Lattice objects representing sites in the processor
                 supercell with same site spaces. Active sublattices only.
+            all_sublattices (list of Sublattice): optional
+                All sublattices, including inactive ones. Needed when in
+                some special cases when you want to sub-divide sublattices.
+                For example, topotactic delitiation.
         """
-        super().__init__(processor, sublattices=sublattices)
+        super().__init__(processor, sublattices=sublattices,
+                         all_sublattices=all_sublattices)
         self._params = np.append(self.processor.coefs, -1.0)
 
     @property
@@ -101,7 +106,7 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     """
 
     def __init__(self, processor, chemical_potentials,
-                 sublattices=None):
+                 sublattices=None, all_sublattices=None):
         """Initialize MuSemiGrandEnsemble.
 
         Args:
@@ -113,8 +118,12 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             sublattices (list of Sublattice): optional
                 List of Sublattice objects representing sites in the processor
                 supercell with same site spaces. Active sublattices only.
+            all_sublattices (list of Sublattice): optional
+                All sublattices, including inactive ones. Needed when in
+                some special cases when you want to sub-divide sublattices.
+                For example, topotactic delitiation.
         """
-        super().__init__(processor, sublattices)
+        super().__init__(processor, sublattices, all_sublattices)
 
         # check that species are valid
         chemical_potentials = {get_species(k): v for k, v
@@ -225,6 +234,9 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         sl_dicts = d.get('sublattices')
         sublattices = ([Sublattice.from_dict(s) for s in sl_dicts] if
                        sl_dicts is not None else None)
+        sl_dicts = d.get('all_sublattices')
+        all_sublattices = ([Sublattice.from_dict(s) for s in sl_dicts] if
+                           sl_dicts is not None else None)
 
         chemical_potentials = {}
         for sp, c in d['chemical_potentials']:
@@ -241,7 +253,8 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             chemical_potentials[sp] = c
         return cls(Processor.from_dict(d['processor']),
                    chemical_potentials=chemical_potentials,
-                   sublattices=sublattices)
+                   sublattices=sublattices,
+                   all_sublattices=all_sublattices)
 
 
 class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
@@ -261,7 +274,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     """
 
     def __init__(self, processor, fugacity_fractions=None,
-                 sublattices=None):
+                 sublattices=None, all_sublattices=None):
         """Initialize MuSemiGrandEnsemble.
 
         Args:
@@ -277,8 +290,12 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             sublattices (list of Sublattice): optional
                 list of Sublattice objects representing sites in the processor
                 supercell with same site spaces.
+            all_sublattices (list of Sublattice): optional
+                All sublattices, including inactive ones. Needed when in
+                some special cases when you want to sub-divide sublattices.
+                For example, topotactic delitiation.
         """
-        super().__init__(processor, sublattices)
+        super().__init__(processor, sublattices, all_sublattices)
 
         if fugacity_fractions is not None:
             # check that species are valid
@@ -398,6 +415,9 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         sl_dicts = d.get('sublattices')
         sublattices = ([Sublattice.from_dict(s) for s in sl_dicts] if
                        sl_dicts is not None else None)
+        sl_dicts = d.get('all_sublattices')
+        all_sublattices = ([Sublattice.from_dict(s) for s in sl_dicts] if
+                           sl_dicts is not None else None)
 
         fugacity_fractions = []
         for sublatt in d['fugacity_fractions']:
@@ -417,4 +437,5 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             fugacity_fractions.append(fus)
         return cls(Processor.from_dict(d['processor']),
                    fugacity_fractions=fugacity_fractions,
-                   sublattices=sublattices)
+                   sublattices=sublattices,
+                   all_sublattices=all_sublattices)

@@ -28,9 +28,10 @@ def occu_to_species_stat(occupancy, all_sublattices, active_only=False):
     """
     occu = np.array(occupancy)
 
+    # Encodings is not necessarily range(len)
     return [[int(round((occu[s.active_sites if active_only else s.sites]
                         == sp_id).sum()))
-            for sp_id in range(len(s.species))]
+            for sp_id in s.encoding]
             for s in all_sublattices]
 
 
@@ -57,13 +58,14 @@ def occu_to_species_list(occupancy, all_sublattices, active_only=False):
     """
     occu = np.array(occupancy)
 
+    # Encodings is not necessarily range(len)
     if active_only:
         species_list = [[s.active_sites[occu[s.active_sites] == sp_id].tolist()
-                         for sp_id in range(len(s.species))]
+                         for sp_id in s.encoding]
                         for s in all_sublattices]
     else:
         species_list = [[s.sites[occu[s.sites] == sp_id].tolist()
-                         for sp_id in range(len(s.species))]
+                         for sp_id in s.encoding]
                         for s in all_sublattices]
     return species_list
 
@@ -165,7 +167,8 @@ def flip_weights_mask(flip_table, comp_stat):
 
     Args:
         flip_table(list[dict]):
-            The flip table.
+            The flip table. (Unencoded, you can understand as plain
+            range(len) encoding.)
         comp_stat(list[list[int]]):
             Number of each specie on each sublattice. Generated
             by occu_to_species_stat.

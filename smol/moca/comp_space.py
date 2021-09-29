@@ -19,6 +19,10 @@ select a proper enumeration fold for your compositions(see enum_utils.py),
 or choose a proper supercell size.
 
 Case test in [[Li+,Mn3+,Ti4+],[P3-,O2-]] passed.
+
+Note: The flip table this class are not encoded, namely, specie_id
+      in flip table is NOT sublattice.encoding, but
+      sublattice.species.index()!
 """
 
 
@@ -93,6 +97,7 @@ def get_unit_excitations(bits):
     unit_n_excitations = []
     excitation_ids_by_sublat = []
     cur_exi_id = 0
+
     for sl_id, sl_sps in enumerate(bits):
         unit_excitations.extend([(sp, sl_sps[-1], sl_id)
                                 for sp in sl_sps[:-1]])
@@ -128,6 +133,9 @@ def flip_vecs_to_flip_table(unit_n_excitations, n_bits, flip_vecs):
            ...     number_of_this_specie_to_be_generated_on_this_sublat
            }
     }
+
+    Note: specie_index is NOT sublattice.encoding! It is index in
+          sublattice.species!
     Args:
         unit_n_excitations(List[Tuple(int)]):
             A flatten list of all possible, single site flips
@@ -358,6 +366,10 @@ class CompSpace(MSONable):
             sl_sizes(List[int]):
                 Sublattice sizes in a PRIMITIVE cell.
                 If None given, sl_sizes will be reset to [1,1,....]
+            encodings(List[List[int]]):
+                Number encoding of species. May not always be
+                range(len(site_space)), when you sub-divide a sublattice
+                by Species, as needed in delithation CEMC.
         """
         self.bits = bits
 
@@ -379,6 +391,7 @@ class CompSpace(MSONable):
         self.species = sorted(self.species)
 
         self.n_bits = [list(range(len(sl_bits))) for sl_bits in bits]
+
         if sl_sizes is None:
             self.sl_sizes = [1 for i in range(len(self.bits))]
         elif len(sl_sizes) == len(bits):

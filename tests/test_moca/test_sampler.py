@@ -12,7 +12,8 @@ from smol.moca.sampler.kernel import Metropolis
 from smol.moca.comp_space import CompSpace
 from smol.moca.ensemble.sublattice import get_all_sublattices, Sublattice
 from smol.cofe import ClusterSubspace, ClusterExpansion
-from smol.cofe.space.domain import SiteSpace
+from smol.cofe.space.domain import SiteSpace, Vacancy
+from smol.moca.utils.occu_utils import *
 
 from tests.utils import (gen_random_occupancy,
                          gen_random_neutral_occupancy)
@@ -192,3 +193,60 @@ def test_partial():
             if np.all(count_species(gc_occus[oid]) == count_species(gc_occus[oid-1])):
                 assert gc_accept[oid] == 0
             assert o[5] == 0
+
+def test_deli():
+    space1 = SiteSpace(Composition({'Li+':1/2}))
+    space2 = SiteSpace(Composition({'Mn2+':1/3, 'Mn3+':1/3, 'Mn4+':1/3}))
+    space3 = SiteSpace(Composition({'O2-':1/2, 'O-':1/2}))
+    space4 = SiteSpace(Composition({'F-':1}))
+    sl1 = Sublattice(space1, np.arange(2, dtype=int), encoding=[0, 4])
+    sl2 = Sublattice(space2, np.arange(2, 4, dtype=int), encoding=[1, 2, 3])
+    sl3 = Sublattice(space3, np.arange(4, 6, dtype=int), encoding=[0, 1])
+    sl4 = Sublattice(space4, np.arange(6, 8, dtype=int), encoding=[2])
+
+    lat = Lattice.from_parameters(1,1,1,60,60,60)
+    prim = Structure(lat, [{'Li+':0.2, 'Mn2+':0.2,'Mn3+':0.2, 'Mn4+':0.2}, {'O2-':1/3, 'O-':1/3, 'F-':1/3}], [[0,0,0],[0.5,0.5,0.5]])
+    cutoffs = {2: 2.0, 3: 1.2, 4:1.2}
+    cspace = ClusterSubspace.from_cutoffs(prim, cutoffs=cutoffs)
+    coefs = np.zeros(cspace.num_corr_functions)
+    ce = ClusterExpansion(cspace, coefs)
+
+    rand_occu = np.array([0, 0, 1, 1, 0, 0, 2, 2], dtype=int)
+
+    ca_ens = CanonicalEnsemble.from_cluster_expansion(ce, [[2,0,0],[0,2,0],[0,0,1]], optimize_indicator=True,
+                                                      sublattices=[sl1, sl2, sl3],
+                                                      all_sublattices=[sl1, sl2, sl3, sl4])
+    #print("Sublattices:", [sl1, sl2])
+    #print("Ensemble sublattices:", ca_ens.all_sublattices)
+
+    chempots = {'Li+':0, 'Mn2+':0, 'Mn3+':0, 'Mn4+':0, Vacancy():0, 'O2-':0, 'O-':0, 'F-':0}
+    gc_ens = MuSemiGrandEnsemble.from_cluster_expansion(ce, [[2,0,0],[0,2,0],[0,0,1]], optimize_indicator=True,
+                                                        chemical_potentials=chempots, 
+                                                        sublattices=[sl1, sl2, sl3],
+                                                        all_sublattices=[sl1, sl2, sl3, sl4])
+
+    ca_sampler = Sampler.from_ensemble(ca_ens, temperature=4000)
+    gc_sampler = Sampler.from_ensemble(gc_ens, temperature=4000, step_type='table-flip', swap_weight=0)
+
+    def count_species(o, all_sublattices):
+        compstat = occu_to_species_stat(o, all_sublattices)
+        return np.concatenate([sl[:-1] for sl in compstat])
+
+    ca_sampler.run(1000, initial_occupancies=np.array([rand_occu.copy()]))
+    gc_sampler.run(1000, initial_occupancies=np.array([rand_occu.copy()]))
+
+    ca_occus = np.array(ca_sampler.samples.get_occupancies(), dtype=int)
+    gc_occus = np.array(gc_sampler.samples.get_occupancies(), dtype=int)
+
+    gc_accept = gc_sampler.samples._accepted[:,0]
+    for o in ca_occus:
+        assert np.all(ca_occus[0] == o)
+
+    all_sublattices = [sl1, sl2, sl3, sl4]
+    #print('gc_accept:', gc_accept)
+    #print('gc_occus:', gc_occus)
+    assert np.sum(gc_accept) > 0
+    for oid, o in enumerate(gc_occus):
+        if oid>0:
+            if np.all(count_species(gc_occus[oid], all_sublattices) == count_species(gc_occus[oid-1], all_sublattices)):
+                assert gc_accept[oid] == 0
