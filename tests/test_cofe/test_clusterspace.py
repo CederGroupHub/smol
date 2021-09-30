@@ -9,7 +9,7 @@ from pymatgen.core import Lattice, Structure, Species
 from pymatgen.util.coord import is_coord_subset_pbc
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe import ClusterSubspace
-from smol.cofe.space.clusterspace import invert_mapping_table,\
+from smol.cofe.space.clusterspace import invert_mapping,\
                                          get_complete_mapping
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.constants import SITE_TOL
@@ -23,8 +23,8 @@ def test_invert_mapping_table():
     forward = [[],[],[1],[1],[1],[2,4],[3,4],[2,3],[5,6,7]]
     backward = [[],[2,3,4],[5,7],[6,7],[5,6],[8],[8],[8],[]]
 
-    forward_invert = [sorted(sub) for sub in invert_mapping_table(forward)]
-    backward_invert = [sorted(sub) for sub in invert_mapping_table(backward)]
+    forward_invert = [sorted(sub) for sub in invert_mapping(forward)]
+    backward_invert = [sorted(sub) for sub in invert_mapping(backward)]
 
     assert forward_invert == backward
     assert backward_invert == forward

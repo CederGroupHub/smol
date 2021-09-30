@@ -4,7 +4,6 @@ from copy import deepcopy
 from importlib import import_module
 import warnings
 import numpy as np
-from itertools import combinations
 from monty.json import MSONable
 from pymatgen.core import Structure, PeriodicSite
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
@@ -14,7 +13,7 @@ from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc, \
     lattice_points_in_supercell, coord_list_mapping_pbc
 from src.mc_utils import corr_from_occupancy
 from smol.cofe.space import Orbit, basis_factory, get_site_spaces, \
-    get_allowed_species, Vacancy, Cluster
+    get_allowed_species, Vacancy
 from smol.exceptions import SymmetryError, StructureMatchError, \
     SYMMETRY_ERROR_MESSAGE
 from smol.cofe.space.constants import SITE_TOL
@@ -156,10 +155,6 @@ class ClusterSubspace(MSONable):
         # structure match with the _site_matcher for structures that have
         # already been matched
         self._supercell_orb_inds = {}
-
-        # 2D lists to store 1-level-down hierarchy info. (One level only!)
-        # Will be cleaned after any change of orbits!
-        self._bit_combo_hierarchy = None
 
         # assign the cluster ids
         self._assign_orbit_ids()
@@ -351,6 +346,25 @@ class ClusterSubspace(MSONable):
         return self.orbit_multiplicities[self.function_orbit_ids] * \
             self.function_ordering_multiplicities
 
+    @property
+    def basis_orthogonal(self):
+        """Check if the orbit basis defined is orthogonal."""
+        return all(orb.basis_orthogonal for orb in self.iterorbits())
+
+    @property
+    def basis_orthonormal(self):
+        """Check if the orbit basis is orthonormal."""
+        return all(orb.basis_orthonormal for orb in self.iterorbits())
+
+    @property
+    def external_terms(self):
+        """Get external terms to be fitted together with the correlations.
+
+        External terms are those represented by pair interaction Hamiltonians
+        (i.e. Ewald electrostatics)
+        """
+        return self._external_terms
+
     def orbit_hierarchy(self, level=1, min_size=1):
         """Get orbit hierarchy by ids.
 
@@ -367,12 +381,12 @@ class ClusterSubspace(MSONable):
             index.
         """
         sub_ids = [
-            [suborb.id for suborb in self.get_sub_orbits(orb.id,
-                                                         level=level,
-                                                         min_size=min_size)]
-             for orb in self.orbits]
-        return [[], ] + sub_ids
+            [suborb.id for suborb in self.get_sub_orbits(
+                orb.id, level=level, min_size=min_size)]
+            for orb in self.orbits
+        ]
 
+        return [[], ] + sub_ids
 
     def function_hierarchy(self, level=1, min_size=2, invert=False):
         """Get the correlation function hierarchy.
@@ -399,75 +413,9 @@ class ClusterSubspace(MSONable):
         ]
 
         if invert:
-            hierarchy = invert_mapping_table(hierarchy)
+            hierarchy = invert_mapping(hierarchy)
 
         return hierarchy
-
-    def bit_combo_hierarchy(self, min_size=2, invert=False):
-        """Get 1-level-down hierarchy of correlation functions.
-
-        The size difference between the current corr function and its
-        sub-clusters is only 1! We only give one-level down hierarchy. Because
-        that is enough to contrain hierarchy!
-
-        Note: Since complete, all level hierarchy table is not practical
-              for CE fit, we will not include it as an attribute of this class.
-              If you still want to see it, call function get_complete_mapping
-              in this module.
-
-        Args:
-            min_size (int): optional
-                Minimum size required for the correlation function. If the size
-                of the correlation function is smaller or equals to min_size,
-                will not search for its sub-clusters. For hierarchy
-                constraints, the recommended setting is 2.
-            invert (bool): optional
-                Default is invert=False which gives the high to low bit combo
-                hierarchy. Invert= True will invert the hierarchy into low to
-                high
-
-        Returns:
-            list of lists: Each sublist is of of length self.num_corr_function
-            and contains integer indices of correlation functions that are
-            contained by the correlation function with the current index.
-        """
-        if self._bit_combo_hierarchy is None:
-            self._bit_combo_hierarchy = self._get_hierarchy_up_to_low()
-
-        # array of orbit sizes for each bit id.
-        all_sizes = np.array([0] + [self.orbits[i - 1].base_cluster.size
-                                    for i in self.function_orbit_ids[1:]])
-
-        # Stores a hierarchy from cluster size 1, then retrieves from min_size.
-        hierarchy = []
-        for vals, size in zip(self._bit_combo_hierarchy, all_sizes):
-            if size <= min_size:
-                hierarchy.append([])
-            else:
-                hierarchy.append(vals)
-        if invert:
-            return invert_mapping_table(hierarchy)
-        else:
-            return hierarchy
-
-    @property
-    def basis_orthogonal(self):
-        """Check if the orbit basis defined is orthogonal."""
-        return all(orb.basis_orthogonal for orb in self.iterorbits())
-
-    @property
-    def basis_orthonormal(self):
-        """Check if the orbit basis is orthonormal."""
-        return all(orb.basis_orthonormal for orb in self.iterorbits())
-
-    @property
-    def external_terms(self):
-        """Get external terms to be fitted together with the correlations.
-
-        External terms are those represented by pair interaction Hamiltonians
-        (i.e. Ewald electrostatics)
-        """
-        return self._external_terms
 
     def orbits_from_cutoffs(self, upper, lower=0):
         """Get orbits with clusters within given diameter cutoffs (inclusive).
@@ -812,9 +760,8 @@ class ClusterSubspace(MSONable):
                                   if orbit.id not in orbit_ids]
 
         self._assign_orbit_ids()  # Re-assign ids
-        # Clear the cached supercell orbit mappings and hierarchy
+        # Clear the cached supercell orbit mappings
         self._supercell_orb_inds = {}
-        self._bit_combo_hierarchy = None
 
     def remove_orbit_bit_combos(self, bit_ids):
         """Remove orbit bit combos by their ids.
@@ -859,9 +806,6 @@ class ClusterSubspace(MSONable):
         else:
             self._assign_orbit_ids()  # Re-assign ids
 
-        # clear hierarchy
-        self._bit_combo_hierarchy = None
-
     def copy(self):
         """Deep copy of instance."""
         return deepcopy(self)
@@ -885,6 +829,76 @@ class ClusterSubspace(MSONable):
             raise StructureMatchError('Mapping could not be found from '
                                       'structure.')
         return mapping.tolist()
+
+    def get_sub_orbits(self, orbit_id, level=1, min_size=1):
+        """Get sub orbits of the orbit for the corresponding orbit_id
+
+        Args:
+            orbit_id (int):
+                id of orbit to get sub orbit id for
+            level (int): optional
+                how many levels down to look for suborbits. If all suborbits
+                are needed make level large enough or set to None.
+            min_size (int): optional
+                minimum size of clusters in sub orbits to include
+
+        Returns:
+            list of ints: list containing ids of suborbits
+        """
+        if orbit_id == 0:
+            return []
+        size = self.orbits[orbit_id - 1].base_cluster.size
+        if level is None or level < 0 or size - level - 1 < 0:
+            stop = 0
+        elif min_size > size - level:
+            stop = min_size - 1
+        else:
+            stop = size - level - 1
+
+        search_sizes = range(size - 1, stop, -1)
+        return [orbit for s in search_sizes for orbit in self._orbits[s]
+                if self.orbits[orbit_id - 1].is_sub_orbit(orbit)]
+
+    def get_sub_function_ids(self, corr_id, level=1, min_size=1):
+        """Get the bit combo ids of all sub correlation functions.
+
+        A sub correlation function of a given correlation function means that
+        the sub correlation fucntion is a factor of the correlation function
+        (with the additional requirement of acting over the sites in sub
+        clusters of the clusters over which the given corr function acts on).
+
+        In other works think of it an orbit of function labeled subclusters
+        of a given orbit of function labeled clusters...a mouthful...
+
+        Args:
+            corr_id (int):
+                id of orbit to get sub orbit id for
+            level (int): optional
+                how many levels down to look for suborbits. If all suborbits
+                are needed make level large enough or set to None.
+            min_size (int): optional
+                minimum size of clusters in sub orbits to include
+
+        Returns:
+            list of ints: list containing ids of sub correlation functions
+        """
+        if corr_id == 0:
+            return []
+
+        orbit = self.orbits[self.function_orbit_ids[corr_id] - 1]
+        bit_combo = orbit.bit_combos[corr_id - orbit.bit_id]
+
+        sub_fun_ids = []
+        for sub_orbit in self.get_sub_orbits(orbit.id, level=level,
+                                             min_size=min_size):
+            inds = orbit.sub_orbit_mappings(sub_orbit)
+            for i, sub_bit_combo in enumerate(sub_orbit.bit_combos):
+                if np.any(
+                        np.all(
+                            sub_bit_combo[0] == bit_combo[:, inds], axis=2)):
+                    sub_fun_ids.append(sub_orbit.bit_id + i)
+
+        return sub_fun_ids
 
     def _assign_orbit_ids(self):
         """Assign unique id's to orbit.
@@ -1037,149 +1051,6 @@ class ClusterSubspace(MSONable):
 
         return orbit_indices
 
-    def get_sub_orbits(self, orbit_id, level=1, min_size=1):
-        """Get sub orbits of the orbit for the corresponding orbit_id
-
-        Args:
-            orbit_id (int):
-                id of orbit to get sub orbit id for
-            level (int): optional
-                how many levels down to look for suborbits. If all suborbits
-                are needed make level large enough or set to None.
-            min_size (int): optional
-                minimum size of clusters in sub orbits to include
-
-        Returns:
-            list of ints: list containing ids of suborbits
-        """
-        if orbit_id == 0:
-            return []
-        size = self.orbits[orbit_id - 1].base_cluster.size
-        if level is None or level < 0 or size - level - 1 < 0:
-            stop = 0
-        elif min_size > size - level:
-            stop = min_size - 1
-        else:
-            stop = size - level - 1
-
-        search_sizes = range(size - 1, stop, -1)
-        return [orbit for s in search_sizes for orbit in self._orbits[s]
-                if self.orbits[orbit_id - 1].is_sub_orbit(orbit)]
-
-    def get_sub_function_ids(self, corr_id, level=1, min_size=1):
-        """Get the bit combo ids of all sub corr functions.
-
-        Args:
-            corr_id (int):
-                id of orbit to get sub orbit id for
-            level (int): optional
-                how many levels down to look for suborbits. If all suborbits
-                are needed make level large enough or set to None.
-            min_size (int): optional
-                minimum size of clusters in sub orbits to include
-
-        Returns:
-            list of ints: list containing ids of sub correlation functions
-        """
-        if corr_id == 0:
-            return []
-
-        orbit = self.orbits[self.function_orbit_ids[corr_id] - 1]
-        bit_combo = orbit.bit_combos[corr_id - orbit.bit_id]
-
-        sub_fun_ids = []
-        for sub_orbit in self.get_sub_orbits(orbit.id, level=level,
-                                             min_size=min_size):
-            inds = orbit.sub_orbit_mappings(sub_orbit)
-            for i, sub_bit_combo in enumerate(sub_orbit.bit_combos):
-                if np.any(
-                        np.all(
-                            sub_bit_combo[0] == bit_combo[:, inds], axis=2)):
-                    sub_fun_ids.append(sub_orbit.bit_id + i)
-
-        return sub_fun_ids
-
-    def _find_sub_cluster(self, bit_id, min_size=1):
-        """Find 1-level-down subclusters of a given correlation function.
-
-        Args:
-            bit_id (int):
-                Index of the correlation function to find subclusters with.
-            min_size (int): optional
-                Minimum size required for the correlation function. If  the
-                size of the correlation function is smaller or equals to
-                min_size, will not search for its sub-clusters.
-
-        Returns:
-            list: A list of integer indices specifying which correlation
-            functions are 1-level-down subclusters of the given correlation
-            function.
-        """
-        if bit_id == 0:  # Constant term
-            return []
-
-        # Separate the zero term out.
-        all_sizes = np.array([0] + [self.orbits[i - 1].base_cluster.size
-                             for i in self.function_orbit_ids[1:]])
-
-        bit_combos = self.all_bit_combos[bit_id]
-        orbit = self.orbits[self.function_orbit_ids[bit_id] - 1]
-        sites = orbit.base_cluster.sites
-
-        size = all_sizes[bit_id]
-        if size <= min_size:
-            return []
-
-        possible_sub_ids = np.where(all_sizes == (size - 1))[0]
-        lattice = self._exp_structure.lattice
-        sub_indices = []
-        for comb in combinations(np.arange(size), size - 1):
-            sub_sites = sites[comb, :]
-            sub_bit_combos = np.array(bit_combos[:, np.array(comb)])
-            sub_cluster = Cluster(sub_sites, lattice)
-
-            for sub_id in possible_sub_ids:
-                sub_bit_combo = self.all_bit_combos[sub_id]
-                sub_orbit = self.orbits[self.function_orbit_ids[sub_id] - 1]
-                cluster_match = sub_cluster in sub_orbit.clusters
-                #print(sub_id, sub_bit_combo[0], sub_bit_combos)
-                bit_match = np.any(
-                    np.all(sub_bit_combo[0] == sub_bit_combos, axis=1))
-
-                if cluster_match and bit_match:
-                    if sub_id in sub_indices:
-                        continue
-                    else:
-                        sub_indices.append(sub_id)
-
-        return sub_indices
-
-    def _get_hierarchy_up_to_low(self, min_size=1):
-        """Generate high-to-low hierarchy.
-
-        The size difference between the current corr function and its
-        sub clusters is only 1! We only give one-level down hierarchy
-        Because it would be enough to contrain hierarchy!
-
-        Args:
-            min_size:
-                Minimum size required for the correlation function. If  the
-                size of the correlation function is smaller or equals to
-                min_size, will not search for its sub-clusters.
-
-        Returns:
-            list of lists: Each sublist of length self.num_corr_function
-            contains integer indices of correlation functions that are
-            contained by the correlation function with the current index.
-        """
-        up_low_hierarchy = [[] for i in range(self.num_corr_functions)]
-
-        for ii in np.flip(np.arange(self.num_corr_functions)):
-            sub_indices = self._find_sub_cluster(ii, min_size=min_size)
-            up_low_hierarchy[ii] = sub_indices
-
-        return up_low_hierarchy
-
     def __eq__(self, other):
         """Check equality between cluster subspaces."""
         if not isinstance(other, ClusterSubspace):
@@ -1252,7 +1123,6 @@ class ClusterSubspace(MSONable):
                                         np.array(ind)) for o_id, ind
                                         in orb_inds]
         cs._supercell_orb_inds = _supercell_orb_inds
-        cs._bit_combo_hierarchy = d.get('_bc_hierarchy')
         return cs
 
     def as_dict(self):
@@ -1276,12 +1146,11 @@ class ClusterSubspace(MSONable):
              'sc_matcher': self._sc_matcher.as_dict(),
              'site_matcher': self._site_matcher.as_dict(),
              'external_terms': [et.as_dict() for et in self.external_terms],
-             '_supercell_orb_inds': _supercell_orb_inds,
-             '_bc_hierarchy': self._bit_combo_hierarchy}
+             '_supercell_orb_inds': _supercell_orb_inds}
         return d
 
 
-def invert_mapping_table(mapping):
+def invert_mapping(mapping):
     """Invert a mapping table from forward to backward, vice versa.
 
     Args:

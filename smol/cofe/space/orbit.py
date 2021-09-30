@@ -357,6 +357,7 @@ class Orbit(MSONable):
             in orbit.clusters
             for inds in combinations(
                 range(self.base_cluster.size), orbit.base_cluster.size))
+
         return match
 
     def sub_orbit_mappings(self, orbit):
@@ -380,8 +381,8 @@ class Orbit(MSONable):
 
         mappings = []
         for cluster in self.clusters:
-            # need to take the centroid of subset not base_cluster
             for inds in indsets:
+                # take the centroid of subset of sites, not all cluster sites
                 centroid = np.average(cluster.sites[inds], axis=0)
                 recenter = np.round(centroid - orbit.base_cluster.centroid)
                 c_sites = orbit.base_cluster.sites + recenter
