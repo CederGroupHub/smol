@@ -361,7 +361,7 @@ class Orbit(MSONable):
         return match
 
     def sub_orbit_mappings(self, orbit):
-        """Return a mapping of the sites in the orbit to a sub orbit
+        """Return a mapping of the sites in the orbit to a sub orbit.
 
         If the given orbit is not a sub-orbit will return an empty list.
         Note this works for mapping between sites, sites spaces, and basis
@@ -374,7 +374,6 @@ class Orbit(MSONable):
             list: of indices sucht that
                 self.base_cluster.sites[indices] = orbit.base_cluster.sites
         """
-
         indsets = np.array(list(combinations(
             (i for i, space in enumerate(self.site_spaces)
              if space in orbit.site_spaces), len(orbit.site_spaces))))

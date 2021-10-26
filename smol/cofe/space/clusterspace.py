@@ -406,7 +406,6 @@ class ClusterSubspace(MSONable):
             all corr functions corresponding to the corr function at the given
             outer list index.
         """
-
         hierarchy = [
             self.get_sub_function_ids(i, level=level, min_size=min_size)
             for i in range(self.num_corr_functions)
@@ -831,7 +830,7 @@ class ClusterSubspace(MSONable):
         return mapping.tolist()
 
     def get_sub_orbits(self, orbit_id, level=1, min_size=1):
-        """Get sub orbits of the orbit for the corresponding orbit_id
+        """Get sub orbits of the orbit for the corresponding orbit_id.
 
         Args:
             orbit_id (int):
