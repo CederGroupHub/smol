@@ -392,9 +392,9 @@ class Orbit(MSONable):
                             c_sites, cluster.sites, atol=SITE_TOL))
 
         if len(mappings) == 0 and self.is_sub_orbit(orbit):
-            raise RuntimeError("The given orbit is a suborbit, but no site "
-                               "mappings were found!\n"
-                               "Somethings is very wrong here!")
+            raise RuntimeError(
+                "The given orbit is a suborbit, but no site mappings were "
+                "found!\n Something is very wrong here!")
         return np.unique(mappings, axis=0)
 
     def __len__(self):
