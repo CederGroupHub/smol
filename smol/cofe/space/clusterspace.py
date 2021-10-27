@@ -21,6 +21,7 @@ from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc, \
 from src.mc_utils import corr_from_occupancy
 from smol.cofe.space import Orbit, basis_factory, get_site_spaces, \
     get_allowed_species, Vacancy
+from smol.cofe.space.basis import IndicatorBasis
 from smol.exceptions import SymmetryError, StructureMatchError, \
     SYMMETRY_ERROR_MESSAGE
 from smol.cofe.space.constants import SITE_TOL
@@ -955,8 +956,8 @@ class ClusterSubspace(MSONable):
             dict: {size: list of Orbits within diameter cutoff}
         """
         site_spaces = get_site_spaces(exp_struct, include_measure=use_conc)
-        site_bases = tuple(basis_factory(basis, site_space)
-                           for site_space in site_spaces)
+        site_bases = tuple(
+            basis_factory(basis, site_space) for site_space in site_spaces)
         if orthonorm:
             for basis in site_bases:
                 basis.orthonormalize()
@@ -1384,8 +1385,8 @@ class PottsSubspace(ClusterSubspace):
             dict: {size: list of Orbits within diameter cutoff}
         """
         site_spaces = get_site_spaces(exp_struct)
-        site_bases = tuple(IndicatorBasis(site_space)
-                           for site_space in site_spaces)
+        site_bases = tuple(
+            IndicatorBasis(site_space) for site_space in site_spaces)
         orbits = {}
         new_orbits = []
         nbits = np.array([len(b) for b in site_spaces])
