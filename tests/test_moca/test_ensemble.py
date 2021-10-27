@@ -62,7 +62,7 @@ def test_from_cluster_expansion(cluster_subspace, ensemble_cls):
                        cluster_subspace.external_terms[0],
                                       coefficient=coefs[-1]))
     reg_data = RegressionData(
-        module='fake.module', class_name='Estimator',
+        module='fake.module', estimator_name='Estimator',
         feature_matrix=np.random.random((5, len(coefs))),
         property_vector=np.random.random(len(coefs)),
         parameters={'foo': 'bar'})

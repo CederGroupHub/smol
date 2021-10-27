@@ -1,4 +1,6 @@
+import pytest
 import unittest
+import numpy.testing as npt
 import random
 import numpy as np
 from itertools import combinations
@@ -7,7 +9,7 @@ from pymatgen.core import Lattice, Structure, Species
 from pymatgen.util.coord import is_coord_subset_pbc
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe import ClusterSubspace
-from smol.cofe.space.clusterspace import invert_mapping_table,\
+from smol.cofe.space.clusterspace import invert_mapping,\
                                          get_complete_mapping
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.constants import SITE_TOL
@@ -18,29 +20,48 @@ from src.mc_utils import corr_from_occupancy
 
 
 # TODO test correlations for ternary and for applications of symops to structure
-def test_invert_mapping_table():
-    forward = [[],[],[1],[1],[1],[2,4],[3,4],[2,3],[5,6,7]]
-    backward = [[],[2,3,4],[5,7],[6,7],[5,6],[8],[8],[8],[]]
 
-    forward_invert = [sorted(sub) for sub in invert_mapping_table(forward)]
-    backward_invert = [sorted(sub) for sub in invert_mapping_table(backward)]
+
+def test_invert_mapping_table():
+    forward = [[], [], [1], [1], [1], [2, 4], [3, 4], [2, 3], [5, 6, 7]]
+    backward = [[], [2, 3, 4], [5, 7], [6, 7], [5, 6], [8], [8], [8], []]
+
+    forward_invert = [sorted(sub) for sub in invert_mapping(forward)]
+    backward_invert = [sorted(sub) for sub in invert_mapping(backward)]
 
     assert forward_invert == backward
     assert backward_invert == forward
 
 
 def test_get_complete_mapping():
-    forward = [[],[],[1],[1],[1],[2,4],[3,4],[2,3],[5,6,7]]
-    backward = [[],[2,3,4],[5,7],[6,7],[5,6],[8],[8],[8],[]]
+    forward = [[], [], [1], [1], [1], [2, 4], [3, 4], [2, 3], [5, 6, 7]]
+    backward = [[], [2, 3, 4], [5, 7], [6, 7],[5, 6], [8], [8], [8], []]
 
-    forward_full = [[],[],[1],[1],[1],[1,2,4],[1,3,4],[1,2,3],[1,2,3,4,5,6,7]]
-    backward_full = [[],[2,3,4,5,6,7,8],[5,7,8],[6,7,8],[5,6,8],[8],[8],[8],[]]
+    forward_full = [[], [], [1], [1], [1], [1, 2, 4], [1, 3, 4], [1, 2, 3],
+                    [1, 2, 3, 4, 5, 6, 7]]
+    backward_full = [[], [2, 3, 4, 5, 6, 7, 8], [5, 7, 8], [6, 7, 8],
+                     [5, 6, 8], [8], [8], [8], []]
 
     forward_comp = [sorted(sub) for sub in get_complete_mapping(forward)]
     backward_comp = [sorted(sub) for sub in get_complete_mapping(backward)]
 
     assert forward_comp == forward_full
     assert backward_comp == backward_full
+
+
+def test_from_cutoffs(structure):
+    cutoffs = {2: 5, 3: 4, 4: 4}
+    for increment in np.arange(0, 3, 1):
+        cutoffs.update(
+            {k: v + increment/(n + 1)
+             for n, (k, v) in enumerate(cutoffs.items())})
+        subspace = ClusterSubspace.from_cutoffs(structure, cutoffs)
+        tight_subspace = ClusterSubspace.from_cutoffs(
+            structure, subspace.cutoffs)
+        assert len(subspace) == len(tight_subspace)
+        npt.assert_allclose(
+            np.array(list(subspace.cutoffs.values())),
+            np.array(list(tight_subspace.cutoffs.values())))
 
 
 class TestClusterSubSpace(unittest.TestCase):
@@ -60,16 +81,25 @@ class TestClusterSubSpace(unittest.TestCase):
                                                supercell_size='volume')
         self.domains = get_allowed_species(self.structure)
 
-    def test_hierarchy(self):
-        hierarchy_uplow = self.cs.bit_combo_hierarchy()
-        self.assertEqual(sorted(hierarchy_uplow[0]), [])
-        self.assertEqual(sorted(hierarchy_uplow[-1]), [17,21])
-        self.assertEqual(sorted(hierarchy_uplow[15]), [])
-        self.assertEqual(sorted(hierarchy_uplow[35]), [5, 6, 7, 10])
-        self.assertEqual(sorted(hierarchy_uplow[55]), [6, 7, 8, 13])
-        self.assertEqual(sorted(hierarchy_uplow[75]), [7, 16, 21])
-        self.assertEqual(sorted(hierarchy_uplow[95]), [9, 19])
-        self.assertEqual(sorted(hierarchy_uplow[115]), [13, 19, 21])
+    def test_function_hierarchy(self):
+        hierarchy = self.cs.function_hierarchy()
+        self.assertEqual(sorted(hierarchy[0]), [])
+        self.assertEqual(sorted(hierarchy[-1]), [17, 21])
+        self.assertEqual(sorted(hierarchy[15]), [])
+        self.assertEqual(sorted(hierarchy[35]), [5, 7, 10])
+        self.assertEqual(sorted(hierarchy[55]), [6, 8, 13])
+        self.assertEqual(sorted(hierarchy[75]), [7, 16, 21])
+        self.assertEqual(sorted(hierarchy[95]), [9, 19])
+        self.assertEqual(sorted(hierarchy[115]), [13, 19, 21])
+
+    def test_orbit_hierarchy(self):
+        hierarchy = self.cs.orbit_hierarchy()
+        self.assertEqual(sorted(hierarchy[0]), [])  # empty
+        self.assertEqual(sorted(hierarchy[1]), [])  # point
+        self.assertEqual(sorted(hierarchy[3]), [1, 2])  # distinct site pair
+        self.assertEqual(sorted(hierarchy[4]), [1])  # same site pair
+        self.assertEqual(sorted(hierarchy[15]), [3, 5])  # triplet
+        self.assertEqual(sorted(hierarchy[-1]), [6, 7])
 
     def test_numbers(self):
         # Test the total generated orbits, orderings and clusters are
@@ -96,19 +126,45 @@ class TestClusterSubSpace(unittest.TestCase):
         for s, c in self.cs.cutoffs.items():
             self.assertTrue(self.cutoffs[s] >= c)
 
-    def test_orbits_by_cutoffs(self):
+    def test_orbits_from_cutoffs(self):
         # Get all of them
         self.assertTrue(
             all(o1 == o2 for o1, o2 in
-                zip(self.cs.orbits, self.cs.orbits_by_cutoffs(6))))
+                zip(self.cs.orbits, self.cs.orbits_from_cutoffs(6))))
         for upper, lower in ((5, 0), (6, 3), (5, 2)):
-            orbs = self.cs.orbits_by_cutoffs(upper, lower)
+            orbs = self.cs.orbits_from_cutoffs(upper, lower)
             self.assertTrue(len(orbs) < len(self.cs.orbits))
             self.assertTrue(
                 all(lower <= o.base_cluster.diameter <= upper for o in orbs)
             )
+
+        # Test with dict
+        upper = {2: 4.5, 3: 3.5}
+        orbs = self.cs.orbits_from_cutoffs(upper)
+        self.assertTrue(len(orbs) < len(self.cs.orbits))
+        self.assertTrue(
+            all(o.base_cluster.diameter <= upper[2] for o in orbs
+                if len(o.base_cluster) == 2)
+        )
+        self.assertTrue(
+            all(o.base_cluster.diameter <= upper[3] for o in orbs
+                if len(o.base_cluster) == 3)
+        )
+
+        # Test for only pairs
+        upper = {2: 4.5}
+        orbs = self.cs.orbits_from_cutoffs(upper)
+        self.assertTrue(len(orbs) < len(self.cs.orbits))
+        self.assertTrue(
+            all(o.base_cluster.diameter <= upper[2] for o in orbs
+                if len(o.base_cluster) == 2)
+        )
+        self.assertTrue(
+            all(len(o.base_cluster) == 2 for o in orbs)
+        )
+
         # bad cuttoffs
-        self.assertTrue(len(self.cs.orbits_by_cutoffs(2, 4)) == 0)
+        self.assertTrue(len(self.cs.orbits_from_cutoffs(2, 4)) == 0)
 
     def test_functions_inds_by_size(self):
         indices = self.cs.function_inds_by_size
@@ -123,12 +179,12 @@ class TestClusterSubSpace(unittest.TestCase):
                     for i in inds))
 
     def test_functions_inds_by_cutoffs(self):
-        indices = self.cs.function_inds_by_cutoffs(6)
+        indices = self.cs.function_inds_from_cutoffs(6)
         # check that all of them are in there.
         self.assertTrue(len(indices) == len(self.cs) - 1)
         fun_orb_ids = self.cs.function_orbit_ids
         for upper, lower in ((4, 0), (5, 3), (3, 1)):
-            indices = self.cs.function_inds_by_cutoffs(upper, lower)
+            indices = self.cs.function_inds_from_cutoffs(upper, lower)
             self.assertTrue(len(indices) < len(self.cs))
             self.assertTrue(
                 all(lower <= self.cs.orbits[fun_orb_ids[i] - 1].base_cluster.diameter <= upper

@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>API &#8212; smol 1.0.0 documentation</title>
+    <title>API &#8212; smol 1.0.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
@@ -187,7 +187,7 @@ which will auto-generate the orbits from diameter cutoffs.</p>
 included in the subspace.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -199,7 +199,7 @@ included in the subspace.</p>
 This includes the empty orbit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -211,7 +211,7 @@ This includes the empty orbit.</p>
 in the subspace.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -229,7 +229,7 @@ cell. Includes all species regardless of partial occupation.</p></li>
 <li><p><strong>expansion_structure</strong> (<em>Structure</em>) – Structure including only sites that will be included in the
 Cluster space. (only those with partial occupancy)</p></li>
 <li><p><strong>symops</strong> (<em>list of Symmop</em>) – list of Symmops for the given structure.</p></li>
-<li><p><strong>orbits</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – {size: list of Orbits}
+<li><p><strong>orbits</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – {size: list of Orbits}
 Dictionary with size (number of sites) as keys and list of
 Orbits as values.</p></li>
 <li><p><strong>supercell_matcher</strong> (<em>StructureMatcher</em>) – optional
@@ -306,52 +306,14 @@ This allows to obtain a bit combo by bit id (empty cluster has None)</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.bit_combo_hierarchy">
-<span class="sig-name descname"><span class="pre">bit_combo_hierarchy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.bit_combo_hierarchy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get 1-level-down hierarchy of correlation functions.</p>
-<p>The size difference between the current corr function and its
-sub-clusters is only 1! We only give one-level down hierarchy. Because
-that is enough to contrain hierarchy!</p>
-<dl class="simple">
-<dt>Note: Since complete, all level hierarchy table is not practical</dt><dd><p>for CE fit, we will not include it as an attribute of this class.
-If you still want to see it, call function get_complete_mapping
-in this module.</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>min_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
-Minimum size required for the correlation function. If the size
-of the correlation function is smaller or equals to min_size,
-will not search for its sub-clusters. For hierarchy
-constraints, the recommended setting is 2.</p></li>
-<li><p><strong>invert</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
-Default is invert=False which gives the high to low bit combo
-hierarchy. Invert= True will invert the hierarchy into low to
-high</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Each sublist is of of length self.num_corr_function
-and contains integer indices of correlation functions that are
-contained by the correlation function with the current index.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list of lists</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.change_site_bases">
 <span class="sig-name descname"><span class="pre">change_site_bases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_basis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthonormal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.change_site_bases" title="Permalink to this definition">¶</a></dt>
 <dd><p>Change the type of site basis used in the site basis functions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>new_basis</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – name of new basis for all site bases</p></li>
-<li><p><strong>orthonormal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – option to orthonormalize all new site basis sets</p></li>
+<li><p><strong>new_basis</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – name of new basis for all site bases</p></li>
+<li><p><strong>orthonormal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – option to orthonormalize all new site basis sets</p></li>
 </ul>
 </dd>
 </dl>
@@ -376,7 +338,7 @@ corresponding cluster functions.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>structure</strong> (<em>Structure</em>) – structure to compute correlation from</p></li>
-<li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – return the correlation vector normalized by the prim cell size.
+<li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – return the correlation vector normalized by the prim cell size.
 In theory correlation vectors are always normalized, but
 getting them without normalization allows to compute the
 “extensive” values.</p></li>
@@ -385,7 +347,7 @@ supercell matrix relating the prim structure to the given
 structure. Passing this if it has already been matched will
 make things much quicker. You are responsible that it is
 correct.</p></li>
-<li><p><strong>site_mapping</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – optional
+<li><p><strong>site_mapping</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – optional
 Site mapping as obtained by
 <code class="code docutils literal notranslate"><span class="pre">StructureMatcher.get_mapping</span></code>
 such that the elements of site_mapping represent the indices
@@ -441,16 +403,16 @@ sites in the cluster.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>structure</strong> (<em>Structure</em>) – Disordered structure to build a cluster expansion for.
 Typically the primitive cell</p></li>
-<li><p><strong>cutoffs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – dict of {cluster_size: diameter cutoff}. Cutoffs should be
+<li><p><strong>cutoffs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – dict of {cluster_size: diameter cutoff}. Cutoffs should be
 strictly decreasing. Typically something like {2:5, 3:4}.
 Empty and singlet orbits are always included.
 To obtain a subspace with only an empty and singlet terms use
 an empty dict {}</p></li>
-<li><p><strong>basis</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – A string specifying the site basis functions</p></li>
-<li><p><strong>orthonormal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether to enforce an orthonormal basis. From the current
+<li><p><strong>basis</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – A string specifying the site basis functions</p></li>
+<li><p><strong>orthonormal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – Whether to enforce an orthonormal basis. From the current
 available bases only the indicator basis is not orthogonal out
 of the box</p></li>
-<li><p><strong>use_concentration</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – If true the concentrations in the prim structure sites will be
+<li><p><strong>use_concentration</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – If true the concentrations in the prim structure sites will be
 used to orthormalize site bases. This gives gives a cluster
 subspace centered about the prim composition.</p></li>
 <li><p><strong>supercell_matcher</strong> (<em>StructureMatcher</em>) – optional
@@ -484,22 +446,28 @@ to use a species that has a constant amount per formula unit.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.function_inds_by_cutoffs">
-<span class="sig-name descname"><span class="pre">function_inds_by_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_inds_by_cutoffs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get indices of corr functions by cluster cutoffs.</p>
+<dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.function_hierarchy">
+<span class="sig-name descname"><span class="pre">function_hierarchy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_hierarchy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the correlation function hierarchy.</p>
+<p>The function hierarchy is t</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – upper diameter for clusters to include.</p></li>
-<li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – optional
-lower diameter for clusters to include.</p></li>
+<li><p><strong>level</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – </p></li>
+<li><p><strong>min_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – </p></li>
+<li><p><strong>invert</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
+Default is invert=False which gives the high to low bit combo
+hierarchy. Invert= True will invert the hierarchy into low to
+high</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>of corr function indices for clusters within cutoffs</p>
+<dd class="field-even"><p>each element of the inner lists is the bit id for
+all corr functions corresponding to the corr function at the given
+outer list index.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
+<dd class="field-odd"><p>list of list</p>
 </dd>
 </dl>
 </dd></dl>
@@ -508,6 +476,35 @@ lower diameter for clusters to include.</p></li>
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.function_inds_by_size">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">function_inds_by_size</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_inds_by_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get correlation function indices by cluster sizes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.function_inds_from_cutoffs">
+<span class="sig-name descname"><span class="pre">function_inds_from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_inds_from_cutoffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get indices of corr functions by cluster cutoffs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – upper diameter for clusters to include. If a single float
+is given then that cutoff is used for all orbit sizes.
+Otherwise a dict can be used to specify the cutoff for the
+orbit cluster sizes,
+i.e. {2: cutoff_pairs, 3: cutoff_trips, …}</p></li>
+<li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – optional
+lower diameter for clusters to include. If a single float
+is given then that cutoff is used for all orbit sizes.
+Otherwise a dict can be used to specify the cutoff for the
+orbit cluster sizes,
+i.e. {2: cutoff_pairs, 3: cutoff_trips, …}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>of corr function indices for clusters within cutoffs</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
@@ -537,6 +534,60 @@ functions in the subspace for all orbits. The total multiplicity of a
 correlation function is the number of symmetrically equivalent bit
 orderings the result in the product of the same single site functions
 times the (crystallographic) multiplicity of the orbit.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.get_sub_function_ids">
+<span class="sig-name descname"><span class="pre">get_sub_function_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">corr_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.get_sub_function_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the bit combo ids of all sub correlation functions.</p>
+<p>A sub correlation function of a given correlation function means that
+the sub correlation fucntion is a factor of the correlation function
+(with the additional requirement of acting over the sites in sub
+clusters of the clusters over which the given corr function acts on).</p>
+<p>In other works think of it an orbit of function labeled subclusters
+of a given orbit of function labeled clusters…a mouthful…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>corr_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – id of orbit to get sub orbit id for</p></li>
+<li><p><strong>level</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
+how many levels down to look for suborbits. If all suborbits
+are needed make level large enough or set to None.</p></li>
+<li><p><strong>min_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
+minimum size of clusters in sub orbits to include</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list containing ids of sub correlation functions</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of ints</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.get_sub_orbits">
+<span class="sig-name descname"><span class="pre">get_sub_orbits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.get_sub_orbits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get sub orbits of the orbit for the corresponding orbit_id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>orbit_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – id of orbit to get sub orbit id for</p></li>
+<li><p><strong>level</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
+how many levels down to look for suborbits. If all suborbits
+are needed make level large enough or set to None.</p></li>
+<li><p><strong>min_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
+minimum size of clusters in sub orbits to include</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list containing ids of suborbits</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of ints</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -581,13 +632,13 @@ Super cell matrix relating the given structure and the
 primitive structure. I you pass the supercell you fully are
 responsible that it is the correct one! This prevents running
 the _scmatcher (supercell structure matcher)</p></li>
-<li><p><strong>site_mapping</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – optional
+<li><p><strong>site_mapping</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – optional
 Site mapping as obtained by StructureMatcher.get_mapping
 such that the elements of site_mapping represent the indices
 of the matching sites to the prim structure. I you pass this
 option you are fully responsible that the mappings are correct!
 This prevents running _site_matcher to get the mappings.</p></li>
-<li><p><strong>encode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>encode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 If true the occupancy string will have the index of the species
 in the expansion structure site spaces, rather than the
 species itself.</p></li>
@@ -597,7 +648,31 @@ species itself.</p></li>
 <dd class="field-even"><p>occupancy string for structure.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.orbit_hierarchy">
+<span class="sig-name descname"><span class="pre">orbit_hierarchy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbit_hierarchy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get orbit hierarchy by ids.</p>
+<p>The empty/constant cluster index 0 is technically a suborbit of all
+orbits, but is not added to the hierarchy entries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>level</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – </p></li>
+<li><p><strong>min_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>each element of the inner lists is the orbit id for
+all suborbits corresponding to the orbit at the given outer list
+index.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of list</p>
 </dd>
 </dl>
 </dd></dl>
@@ -614,28 +689,36 @@ species itself.</p></li>
 <dd><p>Return a list of all orbits sorted by size.</p>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.orbits_by_size">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">orbits_by_size</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbits_by_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get dictionary of orbits with key being the orbit size.</p>
+</dd></dl>
+
 <dl class="py method">
-<dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.orbits_by_cutoffs">
-<span class="sig-name descname"><span class="pre">orbits_by_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbits_by_cutoffs" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.orbits_from_cutoffs">
+<span class="sig-name descname"><span class="pre">orbits_from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbits_from_cutoffs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get orbits with clusters within given diameter cutoffs (inclusive).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – upper diameter for clusters to include.</p></li>
-<li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – optional
-lower diameter for clusters to include.</p></li>
+<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – upper diameter for clusters to include. If a single float
+is given then that cutoff is used for all orbit sizes.
+Otherwise a dict can be used to specify the cutoff for the
+orbit cluster sizes,
+i.e. {2: cutoff_pairs, 3: cutoff_trips, …}</p></li>
+<li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – optional
+lower diameter for clusters to include. If a single float
+is given then that cutoff is used for all orbit sizes.
+Otherwise a dict can be used to specify the cutoff for the
+orbit cluster sizes,
+i.e. {2: cutoff_pairs, 3: cutoff_trips, …}</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>list of Orbits</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.orbits_by_size">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">orbits_by_size</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbits_by_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get dictionary of orbits with key being the orbit size.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -652,7 +735,7 @@ the prim structure (aka the corresponding “unrelaxed” structure).</p>
 supercell matrix relating the prim structure to the given
 structure. Passing this if it has already been matched will
 make things much quicker. You are responsible for correctness.</p></li>
-<li><p><strong>site_mapping</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – optional
+<li><p><strong>site_mapping</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – optional
 Site mapping as obtained by StructureMatcher.get_mapping
 such that the elements of site_mapping represent the indices
 of the matching sites to the prim structure. Again you are
@@ -686,7 +769,7 @@ if we allow “in group” orbit eci sparsity…which everyone in the field
 does anyway…</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>bit_ids</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of orbit bit ids to remove</p>
+<dd class="field-odd"><p><strong>bit_ids</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – list of orbit bit ids to remove</p>
 </dd>
 </dl>
 </dd></dl>
@@ -708,7 +791,7 @@ removing an orbit will remove more than one element in the correlation
 vector.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>orbit_ids</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of orbit ids to be removed</p>
+<dd class="field-odd"><p><strong>orbit_ids</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – list of orbit ids to be removed</p>
 </dd>
 </dl>
 </dd></dl>
@@ -755,7 +838,7 @@ supercell of the corresponding size.</p>
 <dd class="field-even"><p>site mappings of structure to supercell</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -831,14 +914,14 @@ ClusterSubspace failing to match structures to the primitive structure.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>structure</strong> (<em>Structure</em>) – A fit structure</p></li>
-<li><p><strong>properties</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – A dictionary with a key describing the property and the target
+<li><p><strong>properties</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – A dictionary with a key describing the property and the target
 value for the corresponding structure. For example if only a
 single property {‘energy’: value} but can also add more than
 one i.e. {‘total_energy’: value1, ‘formation_energy’: value2}.
 You are free to make up the keys for each property but make
 sure you are consistent for all structures that you add.</p></li>
-<li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether the given properties have already been normalized.</p></li>
-<li><p><strong>weights</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – The weight given to the structure when doing the fit. The key
+<li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – Whether the given properties have already been normalized.</p></li>
+<li><p><strong>weights</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – The weight given to the structure when doing the fit. The key
 must match at least one of the given properties.</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – optional
 If the corresponding structure has already been matched to the
@@ -846,15 +929,15 @@ clustersubspace prim structure, passing the supercell_matrix
 will use that instead of trying to re-match. If using this
 the user is responsible to have the correct supercell_matrix,
 Here you are the cause of your own bugs.</p></li>
-<li><p><strong>site_mapping</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – optional
+<li><p><strong>site_mapping</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – optional
 Site mapping as obtained by StructureMatcher.get_mapping
 such that the elements of site_mapping represent the indices
 of the matching sites to the prim structure. I you pass this
 option you are fully responsible that the mappings are correct!</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 if True then warn structures that fail in StructureMatcher, and
 structures that have duplicate corr vectors.</p></li>
-<li><p><strong>raise_failed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>raise_failed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 If true will raise the thrown error when adding a structure
 fails. This can be helpful to keep a list of structures that
 fail for further inspection.</p></li>
@@ -881,9 +964,9 @@ corresponds to the correct structure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name of property</p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Name of property</p></li>
 <li><p><strong>property_vector</strong> (<em>ndarray</em>) – Array with the property for each structure</p></li>
-<li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – (optional)
+<li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – (optional)
 Wether the given properties have already been normalized.</p></li>
 </ul>
 </dd>
@@ -899,7 +982,7 @@ contained, and should be in the same order.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name describing weights</p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Name describing weights</p></li>
 <li><p><strong>weights</strong> (<em>ndarray</em>) – Array with the weight for each structure</p></li>
 </ul>
 </dd>
@@ -1003,8 +1086,8 @@ the condition number the more ill-conditioned the linear problem is.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rows</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – indices of structures to include in feature matrix.</p></li>
-<li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – indices of features (correlations) to include in feature matrix</p></li>
+<li><p><strong>rows</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – indices of structures to include in feature matrix.</p></li>
+<li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – indices of features (correlations) to include in feature matrix</p></li>
 <li><p><strong>p</strong> – (optional)
 the type of norm to use when computing condition number.
 see the numpy docs for np.linalg.cond for options.</p></li>
@@ -1014,7 +1097,7 @@ see the numpy docs for np.linalg.cond for options.</p></li>
 <dd class="field-even"><p>matrix condition number</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1045,13 +1128,13 @@ vectors may be a sign of insufficient sampling of configuration space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>decimals</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>decimals</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 number of decimals to round correlations in order to allow
 some numerical tolerance for finding duplicates. If None is
 given no rounding will be done. Beware that orthogonal basis
 will likeley be off by some numerical tolerance so rounding is
 recommended.</p></li>
-<li><p><strong>rm_external_terms</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>rm_external_terms</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 If true will not consider external terms and only consider
 correlations proper when looking for duplicates.</p></li>
 </ul>
@@ -1061,7 +1144,7 @@ correlations proper when looking for duplicates.</p></li>
 where duplicates occur</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1073,8 +1156,8 @@ where duplicates occur</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>orbit_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Orbit id to obtain sub feature matrix rank of.</p></li>
-<li><p><strong>rows</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – optional
+<li><p><strong>orbit_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Orbit id to obtain sub feature matrix rank of.</p></li>
+<li><p><strong>rows</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – optional
 List of row indices corresponding to structures to include.</p></li>
 </ul>
 </dd>
@@ -1082,7 +1165,7 @@ List of row indices corresponding to structures to include.</p></li>
 <dd class="field-even"><p>rank of orbit sub feature matrix</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1094,15 +1177,15 @@ List of row indices corresponding to structures to include.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rows</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – indices of structures to include in feature matrix.</p></li>
-<li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – indices of features (correlations) to include in feature matrix</p></li>
+<li><p><strong>rows</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – indices of structures to include in feature matrix.</p></li>
+<li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – indices of features (correlations) to include in feature matrix</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>the rank of the matrix</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1119,8 +1202,8 @@ sets. This ensures every entry: :math:<a href="#id4"><span class="problematic" i
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rows</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – indices of structures to include in feature matrix.</p></li>
-<li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – indices of features (correlations) to include in feature matrix</p></li>
+<li><p><strong>rows</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – indices of structures to include in feature matrix.</p></li>
+<li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – indices of features (correlations) to include in feature matrix</p></li>
 <li><p><strong>normalize</strong> – If true (default) will normalize each feature vector in the
 feature matrix.</p></li>
 </ul>
@@ -1141,7 +1224,7 @@ feature matrix.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>decimals</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>decimals</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 number of decimals to round correlations in order to allow
 some numerical tolerance for finding duplicates.</p></li>
 <li><p><strong>structure_matcher</strong> (<em>StructureMatcher</em>) – optional
@@ -1158,7 +1241,7 @@ if not given</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1174,8 +1257,8 @@ used for a fit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name of the property</p></li>
-<li><p><strong>normalize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Name of the property</p></li>
+<li><p><strong>normalize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 To normalize by prim size. If the property sought is not
 already normalized, you need to normalize before fitting a CE.</p></li>
 </ul>
@@ -1189,7 +1272,7 @@ already normalized, you need to normalize before fitting a CE.</p></li>
 <dd><p>Get the weights specified by the given key.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name of corresponding weights</p>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Name of corresponding weights</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1229,14 +1312,14 @@ correlation, and refined structure.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>structure</strong> (<em>Structure</em>) – A structure corresponding to the given properties</p></li>
-<li><p><strong>properties</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – A dictionary with a key describing the property and the target
+<li><p><strong>properties</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – A dictionary with a key describing the property and the target
 value for the corresponding structure. For example if only a
 single property {‘energy’: value} but can also add more than
 one i.e. {‘total_energy’: value1, ‘formation_energy’: value2}.
 You are free to make up the keys for each property but make
 sure you are consistent for all structures that you add.</p></li>
-<li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Wether the given properties have already been normalized.</p></li>
-<li><p><strong>weights</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – The weight given to the structure when doing the fit. The key
+<li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – Wether the given properties have already been normalized.</p></li>
+<li><p><strong>weights</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – The weight given to the structure when doing the fit. The key
 must match at least one of the given properties.</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – optional
 If the corresponding structure has already been matched to the
@@ -1244,15 +1327,15 @@ clustersubspace prim structure, passing the supercell_matrix
 will use that instead of trying to re-match. If using this
 the user is responsible to have the correct supercell_matrix,
 Here you are the cause of your own bugs.</p></li>
-<li><p><strong>site_mapping</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – optional
+<li><p><strong>site_mapping</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – optional
 Site mapping as obtained by
 <code class="code docutils literal notranslate"><span class="pre">StructureMatcher.get_mapping</span></code>
 such that the elements of site_mapping represent the indices
 of the matching sites to the prim structure. If you pass this
 option you are fully responsible that the mappings are correct!</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – if True then warn structures that fail in StructureMatcher, and
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – if True then warn structures that fail in StructureMatcher, and
 structures that have duplicate corr vectors.</p></li>
-<li><p><strong>raise_failed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>raise_failed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 If true will raise the thrown error when adding a structure
 fails. This can be helpful to keep a list of structures that
 fail for further inspection.</p></li>
@@ -1262,7 +1345,7 @@ fail for further inspection.</p></li>
 <dd class="field-even"><p>data item dict for structure</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1285,7 +1368,7 @@ fail for further inspection.</p></li>
 <dd><p>Remove properties from given keys.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>*property_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – names of properties to remove</p>
+<dd class="field-odd"><p><strong>*property_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – names of properties to remove</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1371,7 +1454,7 @@ the correlation/orbit functions with small coefficients or eci.</p>
 expansion. i.e. if it was pruned, any error metrics etc.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1419,11 +1502,11 @@ for different bases.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>new_basis</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – name of basis to convert coefficients into.</p></li>
-<li><p><strong>fit_structures</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of pymatgen.Structure used to fit the eci</p></li>
-<li><p><strong>supercell_matrices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of supercell matrices for the corresponding fit structures</p></li>
+<li><p><strong>new_basis</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – name of basis to convert coefficients into.</p></li>
+<li><p><strong>fit_structures</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – list of pymatgen.Structure used to fit the eci</p></li>
+<li><p><strong>supercell_matrices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – list of supercell matrices for the corresponding fit structures</p></li>
 <li><p><strong>feature_matrix</strong> (<em>ndarray</em>) – feature matrix if not passed in the constructor.</p></li>
-<li><p><strong>orthonormal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – option to make new basis orthonormal</p></li>
+<li><p><strong>orthonormal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – option to make new basis orthonormal</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1480,7 +1563,7 @@ in the list since they are not associated with any orbit.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>structure</strong> (<em>Structure</em>) – Structures to predict from</p></li>
-<li><p><strong>normalize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether to return the predicted property normalized by
+<li><p><strong>normalize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – Whether to return the predicted property normalized by
 the prim cell size.</p></li>
 </ul>
 </dd>
@@ -1511,8 +1594,8 @@ performance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – threshold below which to remove.</p></li>
-<li><p><strong>with_multiplicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – if true threshold is applied to the ECI proper, otherwise to
+<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – threshold below which to remove.</p></li>
+<li><p><strong>with_multiplicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – if true threshold is applied to the ECI proper, otherwise to
 the fit coefficients</p></li>
 </ul>
 </dd>
@@ -1563,7 +1646,7 @@ the specific temperature to generate samples at, is set in a <code class="xref p
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.ensemble.base.Ensemble">
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
 <p>Abstract Base Class for Monte Carlo Ensembles.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.ensemble.base.Ensemble.num_energy_coefs">
@@ -1572,7 +1655,7 @@ the specific temperature to generate samples at, is set in a <code class="xref p
 correspond to energy only.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1585,7 +1668,7 @@ chemical potentials or fugacity fractions. This is kept only for
 descriptive purposes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1680,7 +1763,7 @@ ClusterExpansion.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>cluster_expansion</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterExpansion" title="smol.cofe.ClusterExpansion"><em>ClusterExpansion</em></a>) – A cluster expansion object.</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – Supercell matrix defining the system size.</p></li>
-<li><p><strong>optimize_indicator</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>optimize_indicator</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 Wether to optimize calculations for indicator basis.</p></li>
 <li><p><strong>**kwargs</strong> – Keyword arguments to pass to ensemble constructor. Such as
 sublattices, sublattice_probabilities, chemical_potentials,
@@ -1762,7 +1845,7 @@ be no effect.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.CanonicalEnsemble">
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">CanonicalEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CanonicalEnsemble" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.base.Ensemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.base.Ensemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Canonical Ensemble class to run Monte Carlo Simulations.</p>
 <p>Initialize CanonicalEnemble.</p>
 <dl class="field-list simple">
@@ -1821,7 +1904,7 @@ processor.</p>
 <dd><p>Instantiate a CanonicalEnsemble from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – dictionary representation.</p>
+<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – dictionary representation.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>CanonicalEnsemble</p>
@@ -1845,7 +1928,7 @@ processor.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble">
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">BaseSemiGrandEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.base.Ensemble</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.base.Ensemble</span></code></a></p>
 <p>Abstract Semi-Grand Canonical Base Ensemble.</p>
 <p>Total number of species are fixed but composition of “active” (with partial
 occupancies) sublattices is allowed to change.</p>
@@ -1905,7 +1988,7 @@ term.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.MuSemiGrandEnsemble">
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MuSemiGrandEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chemical_potentials</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.MuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Relative chemical potential based SemiGrand Ensemble.</p>
 <p>A Semi-Grand Canonical Ensemble for Monte Carlo Simulations where species
 relative chemical potentials are predefined. Note that in the SGC Ensemble
@@ -1920,7 +2003,7 @@ values.</p>
 <dd><p>dict of chemical potentials.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1931,7 +2014,7 @@ values.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>processor</strong> (<a class="reference internal" href="smol.moca.processor.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><em>Processor</em></a>) – A processor that can compute the change in a property given
 a set of flips.</p></li>
-<li><p><strong>chemical_potentials</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – Dictionary with species and chemical potentials.</p></li>
+<li><p><strong>chemical_potentials</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – Dictionary with species and chemical potentials.</p></li>
 <li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – optional
 List of Sublattice objects representing sites in the processor
 supercell with same site spaces.</p></li>
@@ -1997,7 +2080,7 @@ supercell with same site spaces.</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.FuSemiGrandEnsemble">
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">FuSemiGrandEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fugacity_fractions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.FuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Fugacity fraction SemiGrandEnsemble.</p>
 <p>A Semi-Grand Canonical Ensemble for Monte Carlo simulations where the
 species fugacity ratios are set constant. This implicitly sets the chemical
@@ -2012,7 +2095,7 @@ temperature the corresponding chemical potentials can then be calculated.</p>
 <dd><p>dictionary of fugacity fractions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2118,7 +2201,7 @@ size/supercell.</p>
 <dd><p>Tuple of all the distinct site spaces.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)">tuple</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)">tuple</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2129,7 +2212,7 @@ size/supercell.</p>
 <dd><p>A list of tuples of the allowed species at each site.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2140,7 +2223,7 @@ size/supercell.</p>
 <dd><p>Number of prims in the supercell structure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2158,7 +2241,7 @@ ClusterExpansion prim structure.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.base.Processor.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.processor.base.Processor.as_dict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.processor.base.Processor.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -2185,14 +2268,14 @@ change in that property from explicitly calculating it fully for the
 initial state and the flipped state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>iterations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<dd class="field-odd"><p><strong>iterations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 number of iterations/flips to compute.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>(float, float) forward and reverse average property drift</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)">tuple</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)">tuple</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2251,7 +2334,7 @@ for the new species to place at that site.</p></li>
 <dd class="field-even"><p>predicted property</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2264,14 +2347,14 @@ for the new species to place at that site.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
-<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
+<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>property difference between inital and final states</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2366,7 +2449,7 @@ expansion was fit with an indicator basis and no additional
 normalization.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2390,7 +2473,7 @@ This includes all possible labellings/orderings for all orbits.
 Same as <code class="code docutils literal notranslate"><span class="pre">ClusterSubspace.n_bit_orderings</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2403,7 +2486,7 @@ Same as <code class="code docutils literal notranslate"><span class="pre">Cluste
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 <li><p><strong>coefficients</strong> (<em>ndarray</em>) – Fit coefficients for the represented cluster expansion.</p></li>
-<li><p><strong>optimize_indicator</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – When using an indicator basis, sets the function to compute
+<li><p><strong>optimize_indicator</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – When using an indicator basis, sets the function to compute
 correlation differences to the indicator optimized function.
 This can make MC steps faster.
 Make sure your cluster expansion was indeed fit with an
@@ -2413,7 +2496,7 @@ indicator basis set, otherwise your MC results are no good.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.CEProcessor.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.CEProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.CEProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -2489,7 +2572,7 @@ energy using an Ewald Summation term.</p>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 <li><p><strong>ewald_term</strong> (<a class="reference internal" href="smol.cofe.extern.html#smol.cofe.extern.ewald.EwaldTerm" title="smol.cofe.extern.ewald.EwaldTerm"><em>EwaldTerm</em></a>) – An instance of EwaldTerm to compute electrostatic energies.</p></li>
-<li><p><strong>coefficient</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Fitting coeficient to scale Ewald energy by.</p></li>
+<li><p><strong>coefficient</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Fitting coeficient to scale Ewald energy by.</p></li>
 <li><p><strong>ewald_summation</strong> (<em>EwaldSummation</em>) – optional
 pymatgen EwaldSummation instance, make sure this uses the exact
 same parameters as those used in the EwaldTerm in the cluster
@@ -2499,7 +2582,7 @@ Expansion (i.e. same eta, real and recip cuts).</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.EwaldProcessor.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.EwaldProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.EwaldProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -2562,7 +2645,7 @@ for the new species to place at that site.</p></li>
 <dd class="field-even"><p>Ewald electrostatic energy</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2575,14 +2658,14 @@ for the new species to place at that site.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
-<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
+<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>electrostatic energy change</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2625,7 +2708,7 @@ composite processor.</p>
 <p>It is recommended to use the <code class="code docutils literal notranslate"><span class="pre">from_cluster_expansion</span></code> to create an
 ensemble and the underlying processor automatically rather than directly
 creating a processor. This will take care of creating the correct
-<a class="reference internal" href="#smol.moca.CompositeProcessor" title="smol.moca.CompositeProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CompositeProcessor</span></code></a> or <a class="reference internal" href="#smol.moca.CEProcessor" title="smol.moca.CEProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CEProcessor</span></code></a> for you.</p>
+<a class="reference internal" href="smol.moca.html#smol.moca.CompositeProcessor" title="smol.moca.CompositeProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CompositeProcessor</span></code></a> or <a class="reference internal" href="smol.moca.html#smol.moca.CEProcessor" title="smol.moca.CEProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CEProcessor</span></code></a> for you.</p>
 <p>Initialize a CompositeProcessor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2650,7 +2733,7 @@ supercell matrix.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.CompositeProcessor.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.CompositeProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.CompositeProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -2713,7 +2796,7 @@ for the new species to place at that site.</p></li>
 <dd class="field-even"><p>predicted property</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2726,14 +2809,14 @@ for the new species to place at that site.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
-<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
+<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>property difference between inital and final states</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2762,7 +2845,7 @@ elaborate MCMC sampling more knowledge of the underlying classes is necessary.</
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.Sampler">
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">container</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.Sampler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A sampler is used to run MCMC sampling simulations.</p>
 <p>The specific MCMC algorithm is defined by the given MCKernel.
 The default will use a a simple Metropolis random walk kernel.</p>
@@ -2772,10 +2855,10 @@ method, unless you need more control.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>kernel</strong> (<a class="reference internal" href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCMCKernel" title="smol.moca.sampler.kernel.MCKernel"><em>MCKernel</em></a>) – An MCKernel instance.</p></li>
-<li><p><strong>container</strong> (<a class="reference internal" href="#smol.moca.SampleContainer" title="smol.moca.SampleContainer"><em>SampleContainer</em></a>) – A sampler containter to store samples. If given num_walkers is
+<li><p><strong>kernel</strong> (<a class="reference internal" href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCKernel" title="smol.moca.sampler.kernel.MCKernel"><em>MCKernel</em></a>) – An MCKernel instance.</p></li>
+<li><p><strong>container</strong> (<a class="reference internal" href="smol.moca.html#smol.moca.SampleContainer" title="smol.moca.SampleContainer"><em>SampleContainer</em></a>) – A sampler containter to store samples. If given num_walkers is
 taken from the container.</p></li>
-<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 seed for random number generator.</p></li>
 </ul>
 </dd>
@@ -2792,12 +2875,12 @@ The start temperature is the temperature set for the ensemble.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>temperatures</strong> (<em>Sequence</em>) – Sequence of temperatures to anneal, should be strictly
 decreasing.</p></li>
-<li><p><strong>mcmc_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – number of Monte Carlo steps to run at each temperature.</p></li>
+<li><p><strong>mcmc_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – number of Monte Carlo steps to run at each temperature.</p></li>
 <li><p><strong>initial_occupancies</strong> (<em>ndarray</em>) – array of occupancies. If None, the last sample will be taken.
 You should only provide this the first time you call run.</p></li>
-<li><p><strong>thin_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>thin_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 the amount to thin by for saving samples.</p></li>
-<li><p><strong>progress</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – If true will show a progress bar.</p></li>
+<li><p><strong>progress</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – If true will show a progress bar.</p></li>
 </ul>
 </dd>
 </dl>
@@ -2817,29 +2900,30 @@ the amount to thin by for saving samples.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.Sampler.from_ensemble">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.Sampler.from_ensemble" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.Sampler.from_ensemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a sampler based on an Ensemble instances.</p>
 <p>This is the easier way to spin up a Sampler. This will
 automatically populate and create an appropriate SampleContainer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ensemble</strong> (<a class="reference internal" href="#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble class to obtain sample probabilities from.</p></li>
-<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Temperature to run Monte Carlo at.</p></li>
-<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – optional
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble class to obtain sample probabilities from.</p></li>
+<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – optional
 type of step to run MCMC with. If not given the default is the
 first entry in the Ensemble.valid_mcmc_steps.</p></li>
-<li><p><strong>kernel_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – optional
+<li><p><strong>*args</strong> – Positional arguments to pass to the MCKernel constructor.
+More often than not you want to specify the temperature!</p></li>
+<li><p><strong>kernel_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – optional
 string specifying the specific MCMC transition kernel. This
 represents the underlying MC algorithm. Currently only
 Metropolis is supported.</p></li>
-<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 Seed for the PRNG.</p></li>
-<li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 Number of walkers/chains to sampler. Default is 1. More than 1
 is still experimental…</p></li>
-<li><p><strong>*args</strong> – Positional arguments to pass to the MCKernel constructor</p></li>
-<li><p><strong>**kwargs</strong> – Keyword arguments to pass to the MCKernel constructor</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments to pass to the MCKernel constructor.
+More often than not you want to specify the temperature!</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2849,8 +2933,8 @@ is still experimental…</p></li>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.Sampler.mcmckernel">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">mcmckernel</span></span><a class="headerlink" href="#smol.moca.Sampler.mcmckernel" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="smol.moca.Sampler.mckernel">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">mckernel</span></span><a class="headerlink" href="#smol.moca.Sampler.mckernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the underlying ensemble.</p>
 </dd></dl>
 
@@ -2863,22 +2947,22 @@ SampleContainer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>nsteps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – number of total MC steps.</p></li>
+<li><p><strong>nsteps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – number of total MC steps.</p></li>
 <li><p><strong>initial_occupancies</strong> (<em>ndarray</em>) – array of occupancies. If None, the last sampler will be taken.
 You should only provide this the first time you call run. If
 you want to reset then you should call reset before to start
 a fresh run.</p></li>
-<li><p><strong>thin_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>thin_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 the amount to thin by for saving samples.</p></li>
-<li><p><strong>progress</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>progress</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 If true will show a progress bar.</p></li>
-<li><p><strong>stream_chunk</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>stream_chunk</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 Chunk of samples to stream into a file. If &gt; 0 samples will
 be flushed to backend file in stream_chucks</p></li>
-<li><p><strong>stream_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – optional
+<li><p><strong>stream_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – optional
 file name to use as backend. If file already exists will try
 to append to datasets. If not given will create a new file.</p></li>
-<li><p><strong>swmr_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>swmr_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 If true allows to read file from other processes. Single Writer
 Multiple Readers.</p></li>
 </ul>
@@ -2895,11 +2979,11 @@ a tuple of (occupancies, features, enthalpy)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>nsteps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of iterations to run.</p></li>
+<li><p><strong>nsteps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Number of iterations to run.</p></li>
 <li><p><strong>initial_occupancies</strong> (<em>ndarray</em>) – array of occupancies</p></li>
-<li><p><strong>thin_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>thin_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 Number to thin iterations by and provide samples.</p></li>
-<li><p><strong>progress</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – If true will show a progress bar.</p></li>
+<li><p><strong>progress</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – If true will show a progress bar.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Yields</dt>
@@ -2954,7 +3038,7 @@ chains into one. Defaults to True.</p>
 can be anything representative i.e. number of sites)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2987,7 +3071,7 @@ can be anything representative i.e. number of sites)</p>
 <dd><p>Number of iterations used in sampling</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2998,7 +3082,7 @@ can be anything representative i.e. number of sites)</p>
 <dd><p>Dictionary of metadata from the MC run that generated the samples.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -3011,7 +3095,7 @@ sampling from the last state of a previous MCMC run.
 (not implemented yet)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -3020,13 +3104,13 @@ sampling from the last state of a previous MCMC run.
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>num_sites</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Total number of sites in supercell of the ensemble.</p></li>
+<li><p><strong>num_sites</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Total number of sites in supercell of the ensemble.</p></li>
 <li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – Sublattices of the ensemble sampled.</p></li>
 <li><p><strong>natural_parameters</strong> (<em>ndarray</em>) – array of natural parameters used in the ensemble.</p></li>
-<li><p><strong>num_energy_coefs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the number of coeficients in the natural parameters that
+<li><p><strong>num_energy_coefs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – the number of coeficients in the natural parameters that
 correspond to the energy only.</p></li>
-<li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – Sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
-<li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of walkers used to generate chain. Default is 1</p></li>
+<li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – Sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
+<li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Number of walkers used to generate chain. Default is 1</p></li>
 </ul>
 </dd>
 </dl>
@@ -3089,7 +3173,7 @@ correspond to the energy only.</p></li>
 <dd><p>Instantiate a SampleContainer from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – dictionary representation.</p>
+<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – dictionary representation.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Sublattice</p>
@@ -3104,8 +3188,8 @@ correspond to the energy only.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to file</p></li>
-<li><p><strong>swmr_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – path to file</p></li>
+<li><p><strong>swmr_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 If true allows to read file from other processes. Single Writer
 Multiple Readers.</p></li>
 </ul>
@@ -3124,12 +3208,12 @@ Multiple Readers.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to backend file.</p></li>
-<li><p><strong>alloc_nsamples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – path to backend file.</p></li>
+<li><p><strong>alloc_nsamples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 number of new samples to allocate. Will only extend datasets
 if number given is larger than space left to write samples
 into.</p></li>
-<li><p><strong>swmr_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>swmr_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 If true allows to read file from other processes. Single Writer
 Multiple Readers.</p></li>
 </ul>
@@ -3284,7 +3368,7 @@ Multiple Readers.</p></li>
 <li><p><strong>occupancies</strong> (<em>ndarray</em>) – array of occupancies</p></li>
 <li><p><strong>enthalpy</strong> (<em>ndarray</em>) – array of generalized enthalpy changes</p></li>
 <li><p><strong>features</strong> (<em>ndarray</em>) – array of feature vector changes</p></li>
-<li><p><strong>thinned_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the amount that the sampling was thinned by. Used to update
+<li><p><strong>thinned_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – the amount that the sampling was thinned by. Used to update
 the total mc iterations.</p></li>
 </ul>
 </dd>

@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; smol 1.0.0 documentation</title>
+    <title>Index &#8212; smol 1.0.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="_static/_static/default.css" />
@@ -241,8 +241,6 @@
 </li>
       <li><a href="smol.cofe.space.html#smol.cofe.space.Orbit.bit_combo_array">bit_combo_array (Orbit property)</a>, <a href="smol.cofe.space.html#smol.cofe.space.orbit.Orbit.bit_combo_array">[1]</a>
 </li>
-      <li><a href="api.html#smol.cofe.ClusterSubspace.bit_combo_hierarchy">bit_combo_hierarchy() (ClusterSubspace method)</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.bit_combo_hierarchy">[1]</a>, <a href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace.bit_combo_hierarchy">[2]</a>
-</li>
       <li><a href="smol.cofe.space.html#smol.cofe.space.Orbit.bit_combo_inds">bit_combo_inds (Orbit property)</a>, <a href="smol.cofe.space.html#smol.cofe.space.orbit.Orbit.bit_combo_inds">[1]</a>
 </li>
       <li><a href="smol.cofe.space.html#smol.cofe.space.Orbit.bit_combo_multiplicities">bit_combo_multiplicities (Orbit property)</a>, <a href="smol.cofe.space.html#smol.cofe.space.orbit.Orbit.bit_combo_multiplicities">[1]</a>
@@ -281,7 +279,7 @@
 </li>
       <li><a href="api.html#smol.moca.MuSemiGrandEnsemble.chemical_potentials">chemical_potentials (MuSemiGrandEnsemble property)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.MuSemiGrandEnsemble.chemical_potentials">[1]</a>, <a href="smol.moca.html#smol.moca.MuSemiGrandEnsemble.chemical_potentials">[2]</a>
 </li>
-      <li><a href="smol.cofe.html#smol.cofe.RegressionData.class_name">class_name (RegressionData attribute)</a>, <a href="smol.cofe.html#smol.cofe.expansion.RegressionData.class_name">[1]</a>
+      <li><a href="smol.html#smol.utils.class_name_from_str">class_name_from_str() (in module smol.utils)</a>
 </li>
       <li><a href="api.html#smol.moca.SampleContainer.clear">clear() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.clear">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.clear">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.clear">[3]</a>
 </li>
@@ -451,6 +449,8 @@
 </li>
       <li><a href="api.html#smol.moca.SampleContainer.enthalpy_variance">enthalpy_variance() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.enthalpy_variance">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.enthalpy_variance">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.enthalpy_variance">[3]</a>
 </li>
+      <li><a href="smol.cofe.html#smol.cofe.RegressionData.estimator_name">estimator_name (RegressionData attribute)</a>, <a href="smol.cofe.html#smol.cofe.expansion.RegressionData.estimator_name">[1]</a>
+</li>
       <li><a href="smol.cofe.space.html#smol.cofe.space.Orbit.eval">eval() (Orbit method)</a>, <a href="smol.cofe.space.html#smol.cofe.space.orbit.Orbit.eval">[1]</a>
 </li>
   </ul></td>
@@ -565,6 +565,8 @@
 </li>
       <li><a href="api.html#smol.moca.SampleContainer.from_hdf5">from_hdf5() (SampleContainer class method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.from_hdf5">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.from_hdf5">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.from_hdf5">[3]</a>
 </li>
+      <li><a href="smol.cofe.html#smol.cofe.RegressionData.from_object">from_object() (RegressionData class method)</a>, <a href="smol.cofe.html#smol.cofe.expansion.RegressionData.from_object">[1]</a>
+</li>
       <li><a href="smol.cofe.space.html#smol.cofe.space.Cluster.from_sites">from_sites() (Cluster class method)</a>, <a href="smol.cofe.space.html#smol.cofe.space.cluster.Cluster.from_sites">[1]</a>
 </li>
       <li><a href="smol.cofe.html#smol.cofe.RegressionData.from_sklearn">from_sklearn() (RegressionData class method)</a>, <a href="smol.cofe.html#smol.cofe.expansion.RegressionData.from_sklearn">[1]</a>
@@ -575,9 +577,11 @@
 </li>
       <li><a href="smol.cofe.space.html#smol.cofe.space.basis.SiteBasis.function_array">function_array (SiteBasis property)</a>
 </li>
-      <li><a href="api.html#smol.cofe.ClusterSubspace.function_inds_by_cutoffs">function_inds_by_cutoffs() (ClusterSubspace method)</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.function_inds_by_cutoffs">[1]</a>, <a href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_cutoffs">[2]</a>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.function_hierarchy">function_hierarchy() (ClusterSubspace method)</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.function_hierarchy">[1]</a>, <a href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace.function_hierarchy">[2]</a>
 </li>
       <li><a href="api.html#smol.cofe.ClusterSubspace.function_inds_by_size">function_inds_by_size (ClusterSubspace property)</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.function_inds_by_size">[1]</a>, <a href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_size">[2]</a>
+</li>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.function_inds_from_cutoffs">function_inds_from_cutoffs() (ClusterSubspace method)</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.function_inds_from_cutoffs">[1]</a>, <a href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_from_cutoffs">[2]</a>
 </li>
       <li><a href="api.html#smol.cofe.ClusterSubspace.function_orbit_ids">function_orbit_ids (ClusterSubspace property)</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.function_orbit_ids">[1]</a>, <a href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace.function_orbit_ids">[2]</a>
 </li>
@@ -635,10 +639,10 @@
 </li>
       <li><a href="api.html#smol.cofe.StructureWrangler.get_gram_matrix">get_gram_matrix() (StructureWrangler method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.get_gram_matrix">[1]</a>, <a href="smol.cofe.wrangling.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_gram_matrix">[2]</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#smol.cofe.StructureWrangler.get_matching_corr_duplicate_indices">get_matching_corr_duplicate_indices() (StructureWrangler method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.get_matching_corr_duplicate_indices">[1]</a>, <a href="smol.cofe.wrangling.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_matching_corr_duplicate_indices">[2]</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#smol.moca.SampleContainer.get_minimum_energy">get_minimum_energy() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.get_minimum_energy">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_minimum_energy">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.get_minimum_energy">[3]</a>
 </li>
       <li><a href="api.html#smol.moca.SampleContainer.get_minimum_energy_occupancy">get_minimum_energy_occupancy() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.get_minimum_energy_occupancy">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_minimum_energy_occupancy">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.get_minimum_energy_occupancy">[3]</a>
@@ -651,7 +655,7 @@
 </li>
       <li><a href="api.html#smol.cofe.StructureWrangler.get_property_vector">get_property_vector() (StructureWrangler method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.get_property_vector">[1]</a>, <a href="smol.cofe.wrangling.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_property_vector">[2]</a>
 </li>
-      <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.MCMCUsher.get_random_sublattice">get_random_sublattice() (MCUsher method)</a>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.MCUsher.get_random_sublattice">get_random_sublattice() (MCUsher method)</a>
 </li>
       <li><a href="smol.cofe.space.html#smol.cofe.space.get_site_spaces">get_site_spaces() (in module smol.cofe.space)</a>
 
@@ -666,6 +670,10 @@
 </li>
       </ul></li>
       <li><a href="api.html#smol.moca.SampleContainer.get_species_counts">get_species_counts() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.get_species_counts">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.get_species_counts">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.get_species_counts">[3]</a>
+</li>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.get_sub_function_ids">get_sub_function_ids() (ClusterSubspace method)</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.get_sub_function_ids">[1]</a>, <a href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace.get_sub_function_ids">[2]</a>
+</li>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.get_sub_orbits">get_sub_orbits() (ClusterSubspace method)</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.get_sub_orbits">[1]</a>, <a href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace.get_sub_orbits">[2]</a>
 </li>
       <li><a href="smol.html#smol.utils.get_subclasses">get_subclasses() (in module smol.utils)</a>
 </li>
@@ -691,13 +699,15 @@
 </li>
       <li><a href="smol.cofe.space.html#smol.cofe.space.basis.IndicatorIterator">IndicatorIterator (class in smol.cofe.space.basis)</a>
 </li>
+      <li><a href="smol.cofe.space.html#smol.cofe.space.clusterspace.invert_mapping">invert_mapping() (in module smol.cofe.space.clusterspace)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.cofe.space.html#smol.cofe.space.clusterspace.invert_mapping_table">invert_mapping_table() (in module smol.cofe.space.clusterspace)</a>
-</li>
       <li><a href="smol.cofe.space.html#smol.cofe.space.basis.SiteBasis.is_orthogonal">is_orthogonal (SiteBasis property)</a>
 </li>
       <li><a href="smol.cofe.space.html#smol.cofe.space.basis.SiteBasis.is_orthonormal">is_orthonormal (SiteBasis property)</a>
+</li>
+      <li><a href="smol.cofe.space.html#smol.cofe.space.Orbit.is_sub_orbit">is_sub_orbit() (Orbit method)</a>, <a href="smol.cofe.space.html#smol.cofe.space.orbit.Orbit.is_sub_orbit">[1]</a>
 </li>
       <li><a href="api.html#smol.cofe.ClusterSubspace.iterorbits">iterorbits() (ClusterSubspace method)</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.iterorbits">[1]</a>, <a href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace.iterorbits">[2]</a>
 </li>
@@ -727,13 +737,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="smol.cofe.wrangling.html#smol.cofe.wrangling.max_ewald_energy_indices">max_ewald_energy_indices() (in module smol.cofe.wrangling)</a>
 </li>
-      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCMCKernel">MCKernel (class in smol.moca.sampler.kernel)</a>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCKernel">MCKernel (class in smol.moca.sampler.kernel)</a>
 </li>
-      <li><a href="api.html#smol.moca.Sampler.mcmckernel">mcmckernel (Sampler property)</a>, <a href="smol.moca.html#smol.moca.Sampler.mcmckernel">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.sampler.Sampler.mcmckernel">[2]</a>
+      <li><a href="api.html#smol.moca.Sampler.mckernel">mckernel (Sampler property)</a>, <a href="smol.moca.html#smol.moca.Sampler.mckernel">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.sampler.Sampler.mckernel">[2]</a>
 </li>
-      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.mcmckernel_factory">mcmckernel_factory() (in module smol.moca.sampler.kernel)</a>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.mckernel_factory">mckernel_factory() (in module smol.moca.sampler.kernel)</a>
 </li>
-      <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.MCMCUsher">MCUsher (class in smol.moca.sampler.mcusher)</a>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.MCUsher">MCUsher (class in smol.moca.sampler.mcusher)</a>
 </li>
       <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.mcusher_factory">mcusher_factory() (in module smol.moca.sampler.mcusher)</a>
 </li>
@@ -918,13 +928,15 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.orbit_hierarchy">orbit_hierarchy() (ClusterSubspace method)</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.orbit_hierarchy">[1]</a>, <a href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace.orbit_hierarchy">[2]</a>
+</li>
       <li><a href="api.html#smol.cofe.ClusterSubspace.orbit_multiplicities">orbit_multiplicities (ClusterSubspace property)</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.orbit_multiplicities">[1]</a>, <a href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace.orbit_multiplicities">[2]</a>
 </li>
       <li><a href="api.html#smol.cofe.ClusterSubspace.orbits">orbits (ClusterSubspace property)</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.orbits">[1]</a>, <a href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace.orbits">[2]</a>
 </li>
-      <li><a href="api.html#smol.cofe.ClusterSubspace.orbits_by_cutoffs">orbits_by_cutoffs() (ClusterSubspace method)</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.orbits_by_cutoffs">[1]</a>, <a href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_cutoffs">[2]</a>
-</li>
       <li><a href="api.html#smol.cofe.ClusterSubspace.orbits_by_size">orbits_by_size (ClusterSubspace property)</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.orbits_by_size">[1]</a>, <a href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_size">[2]</a>
+</li>
+      <li><a href="api.html#smol.cofe.ClusterSubspace.orbits_from_cutoffs">orbits_from_cutoffs() (ClusterSubspace method)</a>, <a href="smol.cofe.html#smol.cofe.ClusterSubspace.orbits_from_cutoffs">[1]</a>, <a href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace.orbits_from_cutoffs">[2]</a>
 </li>
       <li><a href="smol.cofe.space.html#smol.cofe.space.basis.SiteBasis.orthonormalization_array">orthonormalization_array (SiteBasis property)</a>
 </li>
@@ -971,7 +983,7 @@
       <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.Flipper.propose_step">propose_step() (Flipper method)</a>
 
       <ul>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.MCMCUsher.propose_step">(MCUsher method)</a>
+        <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.MCUsher.propose_step">(MCUsher method)</a>
 </li>
         <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.Swapper.propose_step">(Swapper method)</a>
 </li>
@@ -1070,20 +1082,22 @@
 </li>
       <li><a href="api.html#smol.moca.Sampler.seed">seed (Sampler property)</a>, <a href="smol.moca.html#smol.moca.Sampler.seed">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.sampler.Sampler.seed">[2]</a>
 </li>
-      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCMCKernel.set_aux_state">set_aux_state() (MCKernel method)</a>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCKernel.set_aux_state">set_aux_state() (MCKernel method)</a>
 
       <ul>
-        <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.MCMCUsher.set_aux_state">(MCUsher method)</a>
+        <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.MCUsher.set_aux_state">(MCUsher method)</a>
 </li>
       </ul></li>
       <li><a href="api.html#smol.moca.SampleContainer.shape">shape (SampleContainer property)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.shape">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.shape">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.shape">[3]</a>
 </li>
       <li><a href="smol.cofe.space.html#smol.cofe.space.basis.sin_f">sin_f() (in module smol.cofe.space.basis)</a>
 </li>
-      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCMCKernel.single_step">single_step() (MCKernel method)</a>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCKernel.single_step">single_step() (MCKernel method)</a>
 
       <ul>
         <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.Metropolis.single_step">(Metropolis method)</a>
+</li>
+        <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.UniformlyRandom.single_step">(UniformlyRandom method)</a>
 </li>
       </ul></li>
       <li><a href="smol.cofe.space.html#smol.cofe.space.basis.sinusoid_factory">sinusoid_factory() (in module smol.cofe.space.basis)</a>
@@ -1098,6 +1112,8 @@
         <li><a href="smol.moca.ensemble.html#smol.moca.ensemble.sublattice.Sublattice.site_space">(Sublattice attribute)</a>
 </li>
       </ul></li>
+      <li><a href="smol.cofe.space.html#smol.cofe.space.Orbit.site_spaces">site_spaces (Orbit property)</a>, <a href="smol.cofe.space.html#smol.cofe.space.orbit.Orbit.site_spaces">[1]</a>
+</li>
       <li><a href="smol.cofe.space.html#smol.cofe.space.basis.SiteBasis">SiteBasis (class in smol.cofe.space.basis)</a>
 </li>
       <li><a href="smol.cofe.space.html#smol.cofe.space.Cluster.sites">sites (Cluster attribute)</a>, <a href="smol.cofe.space.html#smol.cofe.space.cluster.Cluster.sites">[1]</a>
@@ -1221,6 +1237,8 @@
         <li><a href="smol.html#module-smol.constants">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     smol.exceptions
 
@@ -1228,8 +1246,6 @@
         <li><a href="smol.html#module-smol.exceptions">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     smol.io
 
@@ -1386,11 +1402,13 @@
         <li><a href="smol.cofe.wrangling.html#smol.cofe.wrangling.wrangler.StructureWrangler">(class in smol.cofe.wrangling.wrangler)</a>
 </li>
       </ul></li>
+      <li><a href="smol.cofe.space.html#smol.cofe.space.Orbit.sub_orbit_mappings">sub_orbit_mappings() (Orbit method)</a>, <a href="smol.cofe.space.html#smol.cofe.space.orbit.Orbit.sub_orbit_mappings">[1]</a>
+</li>
       <li><a href="smol.moca.ensemble.html#smol.moca.ensemble.sublattice.Sublattice">Sublattice (class in smol.moca.ensemble.sublattice)</a>
 </li>
       <li><a href="api.html#smol.moca.SampleContainer.sublattice_composition_variance">sublattice_composition_variance() (SampleContainer method)</a>, <a href="smol.moca.html#smol.moca.SampleContainer.sublattice_composition_variance">[1]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.SampleContainer.sublattice_composition_variance">[2]</a>, <a href="smol.moca.sampler.html#smol.moca.sampler.container.SampleContainer.sublattice_composition_variance">[3]</a>
 </li>
-      <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.MCMCUsher.sublattice_probabilities">sublattice_probabilities (MCUsher property)</a>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.MCUsher.sublattice_probabilities">sublattice_probabilities (MCUsher property)</a>
 </li>
       <li><a href="api.html#smol.moca.ensemble.base.Ensemble.sublattices">sublattices (Ensemble property)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.sublattices">[1]</a>
 
@@ -1418,7 +1436,9 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCMCKernel.temperature">temperature (MCKernel property)</a>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.ThermalKernel.temperature">temperature (ThermalKernel property)</a>
+</li>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.ThermalKernel">ThermalKernel (class in smol.moca.sampler.kernel)</a>
 </li>
       <li><a href="api.html#smol.moca.ensemble.base.Ensemble.thermo_boundaries">thermo_boundaries (Ensemble attribute)</a>, <a href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble.thermo_boundaries">[1]</a>
 
@@ -1440,13 +1460,15 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.cofe.wrangling.html#smol.cofe.wrangling.unique_corr_vector_indices">unique_corr_vector_indices() (in module smol.cofe.wrangling)</a>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.UniformlyRandom">UniformlyRandom (class in smol.moca.sampler.kernel)</a>
 </li>
-      <li><a href="api.html#smol.moca.processor.base.Processor.unique_site_spaces">unique_site_spaces (Processor attribute)</a>, <a href="smol.moca.processor.html#smol.moca.processor.base.Processor.unique_site_spaces">[1]</a>
+      <li><a href="smol.cofe.wrangling.html#smol.cofe.wrangling.unique_corr_vector_indices">unique_corr_vector_indices() (in module smol.cofe.wrangling)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.MCMCUsher.update_aux_state">update_aux_state() (MCUsher method)</a>
+      <li><a href="api.html#smol.moca.processor.base.Processor.unique_site_spaces">unique_site_spaces (Processor attribute)</a>, <a href="smol.moca.processor.html#smol.moca.processor.base.Processor.unique_site_spaces">[1]</a>
+</li>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.mcusher.MCUsher.update_aux_state">update_aux_state() (MCUsher method)</a>
 </li>
       <li><a href="api.html#smol.cofe.StructureWrangler.update_features">update_features() (StructureWrangler method)</a>, <a href="smol.cofe.html#smol.cofe.StructureWrangler.update_features">[1]</a>, <a href="smol.cofe.wrangling.html#smol.cofe.wrangling.wrangler.StructureWrangler.update_features">[2]</a>
 </li>
@@ -1472,10 +1494,12 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCMCKernel.valid_mcushers">valid_mcushers (MCKernel attribute)</a>
+      <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.MCKernel.valid_mcushers">valid_mcushers (MCKernel attribute)</a>
 
       <ul>
         <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.Metropolis.valid_mcushers">(Metropolis attribute)</a>
+</li>
+        <li><a href="smol.moca.sampler.html#smol.moca.sampler.kernel.UniformlyRandom.valid_mcushers">(UniformlyRandom attribute)</a>
 </li>
       </ul></li>
       <li><a href="smol.cofe.extern.html#smol.cofe.extern.EwaldTerm.value_from_occupancy">value_from_occupancy() (EwaldTerm method)</a>, <a href="smol.cofe.extern.html#smol.cofe.extern.ewald.EwaldTerm.value_from_occupancy">[1]</a>

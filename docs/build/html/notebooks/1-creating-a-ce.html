@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Creating a basic Cluster Expansion &#8212; smol 1.0.0 documentation</title>
+    <title>Creating a basic Cluster Expansion &#8212; smol 1.0.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/_static/default.css" />
@@ -626,7 +626,7 @@ MAX 0.022826186581745844 eV/prim
 <h2>4) The cluster expansion<a class="headerlink" href="#4)-The-cluster-expansion" title="Permalink to this headline">¶</a></h2>
 <p>Now we can use the above work to create the <code class="docutils literal notranslate"><span class="pre">ClusterExpansion</span></code>. The cluster expansion can be used to predict the fitted property for new structures, either for testing quality or for simulations such as in Monte Carlo. Note that when using the <code class="docutils literal notranslate"><span class="pre">predict</span></code> function, the cluster expansion will have to match the given structure if it has not seen it before. We will also store the details of the regression model used to fit the cluster expansion by using a <code class="docutils literal notranslate"><span class="pre">RegressionData</span></code> object.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -655,7 +655,7 @@ MAX 0.022826186581745844 eV/prim
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-The predicted energy for a structure with composition Li+5 Ni4+1 Ni3+5 O2-12 is -36.46654400197699 eV/prim.
+The predicted energy for a structure with composition Li+2 Ni4+4 Ni3+2 O2-12 is -33.42762309783674 eV/prim.
 
 The fitted coefficients are:
 [-3.44424307e+01  1.52944807e+00  1.52944807e+00 -7.11937730e-02
@@ -711,7 +711,7 @@ Num corr functions: 11
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-/tmp/ipykernel_70367/663351370.py:10: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify &#39;dtype=object&#39; when creating the ndarray.
+/tmp/ipykernel_302279/663351370.py:10: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify &#39;dtype=object&#39; when creating the ndarray.
   structure = np.random.choice(wrangler.structures)
 </pre></div></div>
 </div>
@@ -721,7 +721,7 @@ Num corr functions: 11
 <p>All core classes in <code class="docutils literal notranslate"><span class="pre">smol</span></code> are <code class="docutils literal notranslate"><span class="pre">MSONables</span></code> and so can be saved using their <code class="docutils literal notranslate"><span class="pre">as_dict</span></code> methods or better yet with <code class="docutils literal notranslate"><span class="pre">monty.serialization.dumpfn</span></code>.</p>
 <p>Currently there is also a convenience function in <code class="docutils literal notranslate"><span class="pre">smol</span></code> that will nicely save all of your work for you in a standardized way. Work saved with the <code class="docutils literal notranslate"><span class="pre">save_work</span></code> function is saved as a dictionary with standardized names for the classes. Since a work flow should only contain 1 of each core classes the function will complain if you give it two of the same class (i.e. two wranglers)</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -737,7 +737,7 @@ Num corr functions: 11
 <section id="5.1)-Loading-previously-saved-work">
 <h3>5.1) Loading previously saved work<a class="headerlink" href="#5.1)-Loading-previously-saved-work" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -759,15 +759,6 @@ StructureWrangler: &lt;class &#39;smol.cofe.wrangling.wrangler.StructureWrangler
 ClusterExpansion: &lt;class &#39;smol.cofe.expansion.ClusterExpansion&#39;&gt;
 
 </pre></div></div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>
-</pre></div>
-</div>
 </div>
 </section>
 </section>
