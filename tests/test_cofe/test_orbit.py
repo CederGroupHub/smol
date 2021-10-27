@@ -18,11 +18,14 @@ class TestOrbit(unittest.TestCase):
         self.structure = Structure(self.lattice, species, self.coords)
         sf = SpacegroupAnalyzer(self.structure)
         self.symops = sf.get_symmetry_operations()
-        self.spaces = [SiteSpace(Composition({'Li': 1.0 / 3.0, 'Ca': 1.0 / 3.0})),
-                       SiteSpace(Composition({'Li': 1.0 / 3.0, 'Ca': 1.0 / 3.0}))]
+        self.spaces = [
+            SiteSpace(Composition({'Li': 1.0 / 3.0, 'Ca': 1.0 / 3.0})),
+            SiteSpace(Composition({'Li': 1.0 / 3.0, 'Ca': 1.0 / 3.0})),
+            SiteSpace(Composition({'Li': 1.0 / 3.0, 'Ca': 1.0 / 3.0}))]
         self.bases = [basis_factory('indicator', bit) for bit in self.spaces]
-        self.basecluster = Cluster(self.coords[:2], self.lattice)
-        self.orbit = Orbit(self.coords[:2], self.lattice, [[0, 1], [0, 1]],
+        self.basecluster = Cluster(self.coords[:3], self.lattice)
+        self.orbit = Orbit(self.coords[:3], self.lattice,
+                           [[0, 1], [0, 1], [0, 1]],
                            self.bases, self.symops)
         self.orbit.assign_ids(1, 1, 1)
 
@@ -48,25 +51,20 @@ class TestOrbit(unittest.TestCase):
         self.assertEqual(len(self.orbit.cluster_symops), 12)
 
     def test_eq(self):
-        orbit1 = Orbit(self.coords[:2], self.lattice, [[0, 1], [0, 1]],
+        orbit1 = Orbit(self.coords[:3], self.lattice, [[0, 1], [0, 1], [0, 1]],
                        self.bases, self.symops)
-        orbit2 = Orbit(self.coords[:3], self.lattice, [[0, 1], [0, 1], [0, 1]],
-                       self.bases + [None], self.symops)
+        orbit2 = Orbit(self.coords[:2], self.lattice, [[0, 1], [0, 1]],
+                       self.bases[:2], self.symops)
         self.assertEqual(orbit1, self.orbit)
         self.assertNotEqual(orbit2, self.orbit)
 
     def test_is_sub_orbit(self):
         orbit = Orbit(self.coords[:3], self.lattice, [[0, 1], [0, 1], [0, 1]],
-                       self.bases + [None], self.symops)
+                       self.bases, self.symops)
         self.assertFalse(self.orbit.is_sub_orbit(orbit))
-        orbit = Orbit(self.coords[:3], self.lattice, [[0, 1], [0, 1], [0, 1]],
-                      self.bases + [self.bases[0]], self.symops)
-        self.assertFalse(self.orbit.is_sub_orbit(orbit))
-        orbit = Orbit(self.coords[:2], self.lattice, [[0, 1], [0, 1]],
-                      self.bases, self.symops)
-        self.assertFalse(self.orbit.is_sub_orbit(orbit))
-        orbit = Orbit([self.coords[0], self.coords[2]], self.lattice, [[0, 1], [0, 1]],
-                      self.bases, self.symops)
+        orbit = Orbit([self.coords[0], self.coords[3]], self.lattice,
+                      [[0, 1], [0, 1]],
+                      self.bases[:2], self.symops)
         self.assertFalse(self.orbit.is_sub_orbit(orbit))
         orbit = Orbit([self.coords[0]], self.lattice, [[0, 1]],
                       [self.bases[0]], self.symops)
@@ -74,15 +72,33 @@ class TestOrbit(unittest.TestCase):
         orbit = Orbit([self.coords[1]], self.lattice, [[0, 1]],
                       [self.bases[1]], self.symops)
         self.assertTrue(self.orbit.is_sub_orbit(orbit))
-        orbit = Orbit([self.coords[2]], self.lattice, [[0, 1]],
+        orbit = Orbit(self.coords[:2], self.lattice, [[0, 1], [0, 1]],
+                      self.bases[:2], self.symops)
+        self.assertTrue(self.orbit.is_sub_orbit(orbit))
+        orbit = Orbit([self.coords[3]], self.lattice, [[0, 1]],
                       [self.bases[0]], self.symops)
         self.assertFalse(self.orbit.is_sub_orbit(orbit))
 
+    def test_sub_orbit_mappings(self):
+        orbit = Orbit(self.coords[1:],
+                      self.lattice, [[0, 1], [0, 1], [0, 1]],
+                      self.bases, self.symops)
+        self.assertEqual(len(self.orbit.sub_orbit_mappings(orbit)), 0)
+        orbit = Orbit(self.coords[:2],
+                      self.lattice, [[0, 1], [0, 1]],
+                      self.bases[:2], self.symops)
+        self.assertTrue(
+            np.array_equal(self.orbit.sub_orbit_mappings(orbit), [[0, 1]]))
+        orbit = Orbit([self.coords[2]], self.lattice, [[0, 1]],
+                      [self.bases[2]], self.symops)
+        self.assertTrue(
+            np.array_equal(self.orbit.sub_orbit_mappings(orbit), [[2]]))
+
     def test_bit_combos(self):
         # orbit with two symmetrically equivalent sites
-        self.assertEqual(len(self.orbit), 3)
+        self.assertEqual(len(self.orbit), 6)
         orbit = Orbit(self.coords[1:3], self.lattice, [[0, 1], [0, 1]],
-                      self.bases, self.symops)
+                      self.bases[:2], self.symops)
         # orbit with two symmetrically distinct sites
         self.assertEqual(len(orbit), 4)
 
@@ -93,7 +109,7 @@ class TestOrbit(unittest.TestCase):
             b.orthonormalize()
             self.assertTrue(b.is_orthogonal)
         orbit1 = Orbit(self.coords[:2], self.lattice, [[0, 1], [0, 1]],
-                       self.bases, self.symops)
+                       self.bases[:2], self.symops)
         self.assertTrue(orbit1.basis_orthogonal)
         self.assertTrue(orbit1.basis_orthonormal)
 
@@ -115,15 +131,12 @@ class TestOrbit(unittest.TestCase):
         self.assertFalse(any(any(np.array_equal(equiv_bits, b) for b in b_c)
                              for b_c in self.orbit.bit_combos))
 
-        # check that it complains if we remove the last remaining combo
-        self.assertRaises(RuntimeError, self.orbit.remove_bit_combo, [1, 1])
-
     def test_remove_bit_combo_by_inds(self):
         orb1 = Orbit(self.coords[:2], self.lattice, [[0, 1], [0, 1]],
-              self.bases, self.symops)
+                     self.bases[:2], self.symops)
         orb1.assign_ids(1, 1, 1)
         orb2 = Orbit(self.coords[:2], self.lattice, [[0, 1], [0, 1]],
-                     self.bases, self.symops)
+                     self.bases[:2], self.symops)
         orb2.assign_ids(1, 1, 1)
 
         bit = orb1.bit_combos[1][0]
@@ -131,7 +144,8 @@ class TestOrbit(unittest.TestCase):
         orb2.remove_bit_combo(bit)
         self.assertTrue(all(np.array_equal(bc1, bc2) for bc1, bc2 in
                              zip(orb1.bit_combos, orb2.bit_combos)))
-        self.assertRaises(RuntimeError, orb1.remove_bit_combos_by_inds, [0,1])
+        self.assertRaises(
+            RuntimeError, orb1.remove_bit_combos_by_inds, [0, 1])
 
     def test_eval(self):
         # Test cluster function evaluation with indicator basis
@@ -149,7 +163,7 @@ class TestOrbit(unittest.TestCase):
                           self.lattice, [[0, 1], [0, 1]], self.bases,
                           self.symops)
         self.assertRaises(RuntimeError, self.orbit.remove_bit_combos_by_inds,
-                          [4])
+                          [6])
 
     def test_repr(self):
         repr(self.orbit)
