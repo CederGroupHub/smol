@@ -151,7 +151,7 @@ it to save any other pertinent information that will be saved with using
 <p>Initialize a StructureWrangler.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A ClusterSubspace object that will be used to fit a
+<dd class="field-odd"><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A ClusterSubspace object that will be used to fit a
 ClusterExpansion with the provided data.</p>
 </dd>
 </dl>
@@ -172,14 +172,14 @@ ClusterSubspace failing to match structures to the primitive structure.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>structure</strong> (<em>Structure</em>) – A fit structure</p></li>
-<li><p><strong>properties</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – A dictionary with a key describing the property and the target
+<li><p><strong>properties</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – A dictionary with a key describing the property and the target
 value for the corresponding structure. For example if only a
 single property {‘energy’: value} but can also add more than
 one i.e. {‘total_energy’: value1, ‘formation_energy’: value2}.
 You are free to make up the keys for each property but make
 sure you are consistent for all structures that you add.</p></li>
-<li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether the given properties have already been normalized.</p></li>
-<li><p><strong>weights</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – The weight given to the structure when doing the fit. The key
+<li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – Whether the given properties have already been normalized.</p></li>
+<li><p><strong>weights</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – The weight given to the structure when doing the fit. The key
 must match at least one of the given properties.</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – optional
 If the corresponding structure has already been matched to the
@@ -187,15 +187,15 @@ clustersubspace prim structure, passing the supercell_matrix
 will use that instead of trying to re-match. If using this
 the user is responsible to have the correct supercell_matrix,
 Here you are the cause of your own bugs.</p></li>
-<li><p><strong>site_mapping</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – optional
+<li><p><strong>site_mapping</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – optional
 Site mapping as obtained by StructureMatcher.get_mapping
 such that the elements of site_mapping represent the indices
 of the matching sites to the prim structure. I you pass this
 option you are fully responsible that the mappings are correct!</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 if True then warn structures that fail in StructureMatcher, and
 structures that have duplicate corr vectors.</p></li>
-<li><p><strong>raise_failed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>raise_failed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 If true will raise the thrown error when adding a structure
 fails. This can be helpful to keep a list of structures that
 fail for further inspection.</p></li>
@@ -222,9 +222,9 @@ corresponds to the correct structure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name of property</p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Name of property</p></li>
 <li><p><strong>property_vector</strong> (<em>ndarray</em>) – Array with the property for each structure</p></li>
-<li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – (optional)
+<li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – (optional)
 Wether the given properties have already been normalized.</p></li>
 </ul>
 </dd>
@@ -240,7 +240,7 @@ contained, and should be in the same order.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name describing weights</p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Name describing weights</p></li>
 <li><p><strong>weights</strong> (<em>ndarray</em>) – Array with the weight for each structure</p></li>
 </ul>
 </dd>
@@ -344,8 +344,8 @@ the condition number the more ill-conditioned the linear problem is.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rows</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – indices of structures to include in feature matrix.</p></li>
-<li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – indices of features (correlations) to include in feature matrix</p></li>
+<li><p><strong>rows</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – indices of structures to include in feature matrix.</p></li>
+<li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – indices of features (correlations) to include in feature matrix</p></li>
 <li><p><strong>p</strong> – (optional)
 the type of norm to use when computing condition number.
 see the numpy docs for np.linalg.cond for options.</p></li>
@@ -355,7 +355,7 @@ see the numpy docs for np.linalg.cond for options.</p></li>
 <dd class="field-even"><p>matrix condition number</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -386,13 +386,13 @@ vectors may be a sign of insufficient sampling of configuration space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>decimals</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>decimals</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 number of decimals to round correlations in order to allow
 some numerical tolerance for finding duplicates. If None is
 given no rounding will be done. Beware that orthogonal basis
 will likeley be off by some numerical tolerance so rounding is
 recommended.</p></li>
-<li><p><strong>rm_external_terms</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>rm_external_terms</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 If true will not consider external terms and only consider
 correlations proper when looking for duplicates.</p></li>
 </ul>
@@ -402,7 +402,7 @@ correlations proper when looking for duplicates.</p></li>
 where duplicates occur</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -414,8 +414,8 @@ where duplicates occur</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>orbit_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Orbit id to obtain sub feature matrix rank of.</p></li>
-<li><p><strong>rows</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – optional
+<li><p><strong>orbit_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Orbit id to obtain sub feature matrix rank of.</p></li>
+<li><p><strong>rows</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – optional
 List of row indices corresponding to structures to include.</p></li>
 </ul>
 </dd>
@@ -423,7 +423,7 @@ List of row indices corresponding to structures to include.</p></li>
 <dd class="field-even"><p>rank of orbit sub feature matrix</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -435,15 +435,15 @@ List of row indices corresponding to structures to include.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rows</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – indices of structures to include in feature matrix.</p></li>
-<li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – indices of features (correlations) to include in feature matrix</p></li>
+<li><p><strong>rows</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – indices of structures to include in feature matrix.</p></li>
+<li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – indices of features (correlations) to include in feature matrix</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>the rank of the matrix</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -460,8 +460,8 @@ sets. This ensures every entry: :math:<a href="#id1"><span class="problematic" i
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rows</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – indices of structures to include in feature matrix.</p></li>
-<li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – indices of features (correlations) to include in feature matrix</p></li>
+<li><p><strong>rows</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – indices of structures to include in feature matrix.</p></li>
+<li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – indices of features (correlations) to include in feature matrix</p></li>
 <li><p><strong>normalize</strong> – If true (default) will normalize each feature vector in the
 feature matrix.</p></li>
 </ul>
@@ -482,7 +482,7 @@ feature matrix.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>decimals</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>decimals</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 number of decimals to round correlations in order to allow
 some numerical tolerance for finding duplicates.</p></li>
 <li><p><strong>structure_matcher</strong> (<em>StructureMatcher</em>) – optional
@@ -499,7 +499,7 @@ if not given</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -515,8 +515,8 @@ used for a fit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name of the property</p></li>
-<li><p><strong>normalize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Name of the property</p></li>
+<li><p><strong>normalize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 To normalize by prim size. If the property sought is not
 already normalized, you need to normalize before fitting a CE.</p></li>
 </ul>
@@ -530,7 +530,7 @@ already normalized, you need to normalize before fitting a CE.</p></li>
 <dd><p>Get the weights specified by the given key.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name of corresponding weights</p>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Name of corresponding weights</p>
 </dd>
 </dl>
 </dd></dl>
@@ -570,14 +570,14 @@ correlation, and refined structure.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>structure</strong> (<em>Structure</em>) – A structure corresponding to the given properties</p></li>
-<li><p><strong>properties</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – A dictionary with a key describing the property and the target
+<li><p><strong>properties</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – A dictionary with a key describing the property and the target
 value for the corresponding structure. For example if only a
 single property {‘energy’: value} but can also add more than
 one i.e. {‘total_energy’: value1, ‘formation_energy’: value2}.
 You are free to make up the keys for each property but make
 sure you are consistent for all structures that you add.</p></li>
-<li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Wether the given properties have already been normalized.</p></li>
-<li><p><strong>weights</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – The weight given to the structure when doing the fit. The key
+<li><p><strong>normalized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – Wether the given properties have already been normalized.</p></li>
+<li><p><strong>weights</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – The weight given to the structure when doing the fit. The key
 must match at least one of the given properties.</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – optional
 If the corresponding structure has already been matched to the
@@ -585,15 +585,15 @@ clustersubspace prim structure, passing the supercell_matrix
 will use that instead of trying to re-match. If using this
 the user is responsible to have the correct supercell_matrix,
 Here you are the cause of your own bugs.</p></li>
-<li><p><strong>site_mapping</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – optional
+<li><p><strong>site_mapping</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – optional
 Site mapping as obtained by
 <code class="code docutils literal notranslate"><span class="pre">StructureMatcher.get_mapping</span></code>
 such that the elements of site_mapping represent the indices
 of the matching sites to the prim structure. If you pass this
 option you are fully responsible that the mappings are correct!</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – if True then warn structures that fail in StructureMatcher, and
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – if True then warn structures that fail in StructureMatcher, and
 structures that have duplicate corr vectors.</p></li>
-<li><p><strong>raise_failed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>raise_failed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 If true will raise the thrown error when adding a structure
 fails. This can be helpful to keep a list of structures that
 fail for further inspection.</p></li>
@@ -603,7 +603,7 @@ fail for further inspection.</p></li>
 <dd class="field-even"><p>data item dict for structure</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -626,7 +626,7 @@ fail for further inspection.</p></li>
 <dd><p>Remove properties from given keys.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>*property_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – names of properties to remove</p>
+<dd class="field-odd"><p><strong>*property_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – names of properties to remove</p>
 </dd>
 </dl>
 </dd></dl>
@@ -688,9 +688,9 @@ the Wrangler. This will prevent having to match structures and such.</p>
 <li><p><strong>composition_vector</strong> (<em>ndarray</em>) – N (samples) by n (components) with the composition of the samples
 to select from.</p></li>
 <li><p><strong>composition</strong> (<em>ndarray</em>) – array for the center composition to sample around.</p></li>
-<li><p><strong>cell_sizes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>Sequence</em>) – size of unit cell sizes or size of supercells used to set the
+<li><p><strong>cell_sizes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> or </em><em>Sequence</em>) – size of unit cell sizes or size of supercells used to set the
 number of variables in the multinomial distribution.</p></li>
-<li><p><strong>num_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – number of samples to return. Note that if the number is too high
+<li><p><strong>num_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – number of samples to return. Note that if the number is too high
 compared to the total number of samples (or coverage of the space)
 it may take very long to return if at all, and the samples will not
 be very representative of the multinomial distributions.</p></li>
@@ -719,10 +719,10 @@ columns/features &gt; rows/structures</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>feature_matrix</strong> (<em>ndarray</em>) – feature matrix to select rows/structure from.</p></li>
-<li><p><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – optional
+<li><p><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – optional
 tolerance to use to determine the pivots in upper triangular matrix
 of the LU decomposition.</p></li>
-<li><p><strong>nrows</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>nrows</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 Number of rows to include. If None given, will include the maximum
 possible number of rows.</p></li>
 </ul>
@@ -748,7 +748,7 @@ with a sampled random gaussian vector on the unit sphere.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>feature_matrix</strong> (<em>ndarray</em>) – feature matrix to select rows/structure from.</p></li>
-<li><p><strong>num_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – number of samples/rows/structures to select.</p></li>
+<li><p><strong>num_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – number of samples/rows/structures to select.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -774,9 +774,9 @@ reasonable value for dielectric constants around 10.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>wrangler</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.StructureWrangler" title="smol.cofe.StructureWrangler"><em>StructureWrangler</em></a>) – A StructureWrangler containing data to be filtered.</p></li>
-<li><p><strong>max_relative_energy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Ewald threshold. The maximum Ewald energy relative to minumum
+<li><p><strong>max_relative_energy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Ewald threshold. The maximum Ewald energy relative to minumum
 energy at composition of structure (normalized by prim).</p></li>
-<li><p><strong>return_compliment</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>return_compliment</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 If True will return the compliment of the unique indices</p></li>
 </ul>
 </dd>
@@ -795,11 +795,11 @@ the same the structures will be considered duplicates.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>wrangler</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.StructureWrangler" title="smol.cofe.StructureWrangler"><em>StructureWrangler</em></a>) – A StructureWrangler containing data to be filtered.</p></li>
-<li><p><strong>property_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name of property to consider when returning structure indices
+<li><p><strong>property_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Name of property to consider when returning structure indices
 for the feature matrix with duplicate corr vectors removed.</p></li>
-<li><p><strong>filter_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The criteria for the property value to keep. Options are min
+<li><p><strong>filter_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The criteria for the property value to keep. Options are min
 or max.</p></li>
-<li><p><strong>return_compliment</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>return_compliment</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 If True will return the compliment of the unique indices</p></li>
 </ul>
 </dd>
@@ -816,9 +816,9 @@ If True will return the compliment of the unique indices</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>structures</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of pymatgen.Structures</p></li>
+<li><p><strong>structures</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – list of pymatgen.Structures</p></li>
 <li><p><strong>energies</strong> (<em>ndarray</em>) – energies of corresponding structures.</p></li>
-<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – temperature to used in boltzmann weight</p></li>
+<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – temperature to used in boltzmann weight</p></li>
 </ul>
 </dd>
 </dl>
@@ -835,10 +835,10 @@ If True will return the compliment of the unique indices</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>structures</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of pymatgen.Structures</p></li>
+<li><p><strong>structures</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – list of pymatgen.Structures</p></li>
 <li><p><strong>energies</strong> (<em>ndarray</em>) – energies of corresponding structures.</p></li>
 <li><p><strong>cs_structure</strong> (<em>Structure</em>) – The pymatgen.Structure used to define the cluster subspace</p></li>
-<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – temperature to used in boltzmann weight.</p></li>
+<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – temperature to used in boltzmann weight.</p></li>
 </ul>
 </dd>
 </dl>

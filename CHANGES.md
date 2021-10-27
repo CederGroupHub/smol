@@ -7,28 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
-* `rotate` method in SiteBasis class.
-[\#130](https://github.com/CederGroupHub/smol/pull/130)
-  ([lbluque](https://github.com/lbluque))
-* `RegressionData` dataclass to save regression details in `ClusterExpansions`
-[\#132](https://github.com/CederGroupHub/smol/pull/132)
-  ([lbluque](https://github.com/lbluque))
-* `cofe.wrangling.select` structure selection functions.
-[\#133](https://github.com/CederGroupHub/smol/pull/133)
+* Methods `is_suborbit` and `sub_orbit_mappings` in `Orbit` and related
+`function_hierarchy` and `orbit_hierarchy` in `ClusterSubspace`.
+  [\#141](https://github.com/CederGroupHub/smol/pull/141)
   ([lbluque](https://github.com/lbluque))
 * `UniformlyRandomKernel` for high temperature/random limit sampling.
 `ThermalKernel` ABC class for all temperature based MC Kernels.
   [\#134](https://github.com/CederGroupHub/smol/pull/134)
   ([lbluque](https://github.com/lbluque))
+* `cofe.wrangling.select` structure selection functions.
+[\#133](https://github.com/CederGroupHub/smol/pull/133)
+  ([lbluque](https://github.com/lbluque))
+* `RegressionData` dataclass to save regression details in `ClusterExpansions`
+[\#132](https://github.com/CederGroupHub/smol/pull/132)
+  ([lbluque](https://github.com/lbluque))
+* `rotate` method in SiteBasis class.
+[\#130](https://github.com/CederGroupHub/smol/pull/130)
+  ([lbluque](https://github.com/lbluque))
+
+### Changed
+* Methods `orbits_from_cutoffs` and `function_inds_from_cutoffs` now allow a
+  dictionary as input to pick out orbits with different cluster diameter
+  cutoffs.
+  [\#135](https://github.com/CederGroupHub/smol/pull/135)
+  ([lbluque](https://github.com/lbluque))
 
 ### Fixed
+* Fix [140](https://github.com/CederGroupHub/smol/issues/140) corrected
+  implementation of correlation function hierarchy.
+  [\#141](https://github.com/CederGroupHub/smol/pull/141)
+  ([lbluque](https://github.com/lbluque))
+* Fix [129](https://github.com/CederGroupHub/smol/issues/129)
+  saving bit_combos in `Orbit.as_dict` when pruning has been done.
+  [\#130](https://github.com/CederGroupHub/smol/pull/130)
+  ([qchempku2017](https://github.com/qchempku2017))
 * Fix orbit generation to play nicely with changes in pymatgen
   `Structure.sites_in_sphere` return value.
   [\#125](https://github.com/CederGroupHub/smol/pull/125)
   ([lbluque](https://github.com/lbluque))
-* Fix saving bit_combos in `Orbit.as_dict` when pruning has been done.
-[\#130](https://github.com/CederGroupHub/smol/pull/130)
- ([qchempku2017](https://github.com/qchempku2017))
+* Fix cluster searching issue
+  [#104](https://github.com/CederGroupHub/smol/issues/104) when generating
+  orbits from cutoffs. [#138](https://github.com/CederGroupHub/smol/pull/125)
+  ([qchempku2017](https://github.com/qchempku2017))
 
 ## [v1.0.1](https://github.com/CederGroupHub/smol/tree/v1.0.1) (2021-03-03)
 #### [Full Changelog](https://github.com/CederGroupHub/smol/compare/v1.0.0...v1.0.1)
