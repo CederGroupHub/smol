@@ -26,8 +26,7 @@ from smol.exceptions import SymmetryError, StructureMatchError, \
 from smol.cofe.space.constants import SITE_TOL
 
 
-__author__ = "Luis Barroso-Luque, William Davidson Richards, Fengyu Xie," \
-             " Peichen Zhong"
+__author__ = "Luis Barroso-Luque, William Davidson Richards"
 
 
 class ClusterSubspace(MSONable):
