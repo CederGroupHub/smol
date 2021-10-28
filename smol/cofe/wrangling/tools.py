@@ -13,7 +13,7 @@ from smol.constants import kB
 
 
 def unique_corr_vector_indices(wrangler, property_key, filter_by='min',
-                               return_compliment=False):
+                               cutoffs=None, return_compliment=False):
     """Return index set of structures with unique correlation vectors.
 
     Keep structures with the min or max value of the given property.
@@ -30,6 +30,9 @@ def unique_corr_vector_indices(wrangler, property_key, filter_by='min',
         filter_by (str)
             The criteria for the property value to keep. Options are min
             or max.
+        cutoffs (dict): optional
+            dictionary with cluster diameter cutoffs for correlation
+            functions to consider in correlation vectors.
         return_compliment (bool): optional
             If True will return the compliment of the unique indices
     Returns:
@@ -41,7 +44,7 @@ def unique_corr_vector_indices(wrangler, property_key, filter_by='min',
     choose_val = np.argmin if filter_by == 'min' else np.argmax
 
     property_vector = wrangler.get_property_vector(property_key)
-    dupe_inds = wrangler.get_duplicate_corr_indices()
+    dupe_inds = wrangler.get_duplicate_corr_indices(cutoffs=cutoffs)
     indices = {inds[choose_val(property_vector[inds])]
                for inds in dupe_inds}
     duplicates = set(i for inds in dupe_inds for i in inds) - indices
