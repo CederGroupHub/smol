@@ -25,6 +25,7 @@ def test_gaussian_select():
     matrix = 10 * np.random.random((3000, 1000)) - 2
     inds = gaussian_select(matrix, 300)
     std = matrix[inds].std(axis=0)
+    assert len(np.unique(inds)) == 300
     assert np.all(abs(matrix[inds].mean(axis=0)) <= 1.5 * std)
     assert matrix[inds].mean() <= matrix.mean()
 
