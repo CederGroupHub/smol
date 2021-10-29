@@ -27,6 +27,20 @@ from smol.cofe.space.clusterspace import ClusterSubspace
 from smol.exceptions import StructureMatchError
 
 
+def remove_duplicate(duplicate_indices, properties):
+    to_remove = []
+    for dup_list in duplicate_indices:
+        idx_toSave = dup_list[0]
+
+        for ii, idx in enumerate(dup_list):
+            if properties[ii] <= properties[idx_toSave]:
+                idx_toSave = idx
+
+        dup_list.remove(idx_toSave)
+        to_remove.extend(dup_list)
+
+    return to_remove
+
 class StructureWrangler(MSONable):
     """Class to create fitting data to fit a cluster expansion.
 
@@ -307,6 +321,10 @@ class StructureWrangler(MSONable):
                     filter(lambda s: s[0] & s[1], combinations(matches, 2)))
             matching_inds += [list(sorted(m)) for m in matches]
         return matching_inds
+
+    def get_nonduplicate_indices(self):
+        duplicate_indices = self.get_duplicate_corr_indices()
+
 
     def get_constant_features(self):
         """Find indices of constant feature vectors (columns).
@@ -654,6 +672,35 @@ class StructureWrangler(MSONable):
                     f"vectors:\n {duplicates} Consider adding more terms to "
                     "the clustersubspace or filtering duplicates.",
                     UserWarning)
+
+
+    def get_nonduplicate_feature_matrix_and_properties(self, property_string = 'total_energy'):
+        """
+        Remove the duplicated correlation vector and property and keep the lowest one (valid for energy\)
+
+        return
+
+        A_valid :  the nonduplicate_feature_matrix
+        f_valid :  the nonduplicate_energies (properties)
+
+        
+        """
+
+        total_indices = np.arange(len(f_valid))
+        indices_to_remove = remove_duplicate(self.get_duplicate_corr_indices(),
+                                             properties = self.get_property_vector(property_string))
+
+        indices_kept = np.array([index for index in total_indices if index not in indices_to_remove])
+
+        A_valid = self.feature_matrix[indices_kept, :]
+        f_valid = self.get_property_vector(property_string)[indices_kept]
+
+        return A_valid, f_valid
+
+        # self.nonduplicate_feature_matrix = A_valid
+        # self.nonduplicate_energies = f_valid
+
+
 
     @classmethod
     def from_dict(cls, d):
