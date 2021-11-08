@@ -26,6 +26,9 @@ Use this section to keep track of changes in the works.
   ([lbluque](https://github.com/lbluque))
 
 ### Changed
+* Enable setting cluster cutoffs for duplicate searching.
+[#142](https://github.com/CederGroupHub/smol/pull/142)
+([lbluque](https://github.com/lbluque))
 * Methods `orbits_from_cutoffs` and `function_inds_from_cutoffs` now allow a
   dictionary as input to pick out orbits with different cluster diameter
   cutoffs.

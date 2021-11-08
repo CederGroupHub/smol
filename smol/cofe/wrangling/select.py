@@ -43,6 +43,9 @@ def gaussian_select(feature_matrix, num_samples):
     Sequentially pick samples with feature vector that most closely aligns
     with a sampled random gaussian vector on the unit sphere.
 
+    This works much better when the number of rows in the feature matrix
+    is much larger than the number of samples requested.
+
     Args:
         feature_matrix (ndarray):
             feature matrix to select rows/structure from.
@@ -57,8 +60,12 @@ def gaussian_select(feature_matrix, num_samples):
     M /= np.linalg.norm(M, axis=1).reshape(m, 1)
     gauss = multivariate_normal(mean=np.zeros(n)).rvs(size=num_samples)
     gauss /= np.linalg.norm(gauss, axis=1).reshape(num_samples, 1)
-    sample_ids = map(lambda v: np.argmin(np.linalg.norm(M - v, axis=1)), gauss)
-    return list(sample_ids)
+    sample_ids, compliment = [], list(range(m))
+    for vec in gauss:
+        sample_ids.append(
+            compliment[np.argmin(np.linalg.norm(M[compliment] - vec, axis=1))])
+        compliment.remove(sample_ids[-1])
+    return sample_ids
 
 
 def composition_select(composition_vector, composition, cell_sizes,
