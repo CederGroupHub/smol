@@ -195,21 +195,20 @@ class ClusterExpansion(MSONable):
         return self._subspace.function_orbit_ids
 
     @property
-    def eci_orbit_norms(self):
-        """Calculate the norms of eci per orbit.
+    def effective_orbit_weights(self):
+        """Calculate the orbit weights.
 
-        The value returned is a vector of length equal to the number of orbits
-        in subspaces. Note the elements of each orbit "vector" are weighted
-        by their total function multiplicity.
+        The orbit weights are defined as the weighted sum of ECI squared, where
+        the weights are the multiplicities.
         """
-        norms = np.sqrt(
+        weights = np.array(
             [np.sum(
-                self._subspace.function_total_multiplicities[
-                    np.array(self._subspace.function_orbit_ids) == i]
+                self._subspace.function_ordering_multiplicities[
+                    self._subspace.function_orbit_ids == i]
                 * self.eci[self.eci_orbit_ids == i] ** 2)
                 for i in range(len(self._subspace.orbits) + 1)]
         )
-        return norms
+        return weights
 
     @property
     def feature_matrix(self):
@@ -236,11 +235,11 @@ class ClusterExpansion(MSONable):
             structure, normalized=normalize)
         return np.dot(corrs, self.coefs)
 
-    def orbit_function_vector(self, structure, normalize=True):
-        """Compute the vector of orbit function values.
+    def compute_orbit_factors(self, structure, normalize=True):
+        """Compute the vector of orbit factor values for given structure.
 
         The orbit function vector is simply a vector made up of the sum of
-        all orbit functions for each orbit evaluated for the given structure.
+        all cluster expansion terms over the same orbit.
 
         Args:
             structure (Structure):
@@ -250,16 +249,16 @@ class ClusterExpansion(MSONable):
                 the prim cell size.
 
         Returns: ndarray
-            vector of orbit function values
+            vector of orbit factor values
         """
         corrs = self.cluster_subspace.corr_from_structure(
             structure, normalized=normalize)
-        vals = self._eci * corrs
-        orbit_vector = np.array(
+        vals = self.coefs * corrs
+        orbit_factors = np.array(
             [np.sum(vals[self.eci_orbit_ids == i])
                 for i in range(len(self._subspace.orbits) + 1)]
         )
-        return orbit_vector
+        return orbit_factors
 
     def prune(self, threshold=0, with_multiplicity=False):
         """Remove fit coefficients or ECI's with small values.
