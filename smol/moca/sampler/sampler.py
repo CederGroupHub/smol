@@ -168,7 +168,8 @@ class Sampler:
         # allocate arrays for states
         occupancies = np.ascontiguousarray(occupancies, dtype=int)
         accepted = np.zeros(occupancies.shape[0], dtype=int)
-        features = list(map(self._kernel.feature_fun, occupancies))
+        features = list(
+            map(self._kernel.ensemble.compute_feature_vector, occupancies))
         features = np.ascontiguousarray(features)
         enthalpy = np.dot(self._kernel.natural_params, features.T)
 

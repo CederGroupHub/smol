@@ -19,6 +19,7 @@ from monty.json import MSONable
 from pymatgen.core import Species, DummySpecies, Element
 from smol.cofe.space.domain import get_species, Vacancy
 from smol.moca.processor.base import Processor
+from smol.constants import kB
 from .base import Ensemble
 from .sublattice import Sublattice
 
@@ -238,6 +239,8 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
                                 for s in d['sublattices']])
 
 
+# TODO make this simply a bias once FX's interface is merged...
+#  so temperatures are not needed!
 class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
     """Fugacity fraction SemiGrandEnsemble.
 
@@ -254,7 +257,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             dictionary of fugacity fractions.
     """
 
-    def __init__(self, processor, fugacity_fractions=None,
+    def __init__(self, processor, temperature, fugacity_fractions=None,
                  sublattices=None):
         """Initialize MuSemiGrandEnsemble.
 
@@ -294,6 +297,7 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         self.thermo_boundaries = {'fugacity-fractions':
                                   [{str(k): v for k, v in sub.items()}
                                    for sub in fugacity_fractions]}
+        self.temperature = temperature
 
     @property
     def fugacity_fractions(self):
@@ -343,6 +347,8 @@ class FuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         delta_log_fu = sum(log(self._fu_table[f[0]][f[1]] /
                                self._fu_table[f[0]][occupancy[f[0]]])
                            for f in step)
+        delta_log_fu *= kB * self.temperature
+
         # prellocate to improve speed
         return np.append(delta_feature, delta_log_fu)
 
