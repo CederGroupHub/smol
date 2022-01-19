@@ -1296,7 +1296,7 @@ class PottsSubspace(ClusterSubspace):
                          supercell_matcher, site_matcher, **matcher_kwargs)
 
     @classmethod
-    def from_cutoffs(cls, structure, cutoffs, remove_last_cluster=True,
+    def from_cutoffs(cls, structure, cutoffs, remove_last_cluster=False,
                      supercell_matcher=None, site_matcher=None,
                      **matcher_kwargs):
         """Create a PottsSubspace from diameter cutoffs.
@@ -1393,8 +1393,11 @@ class PottsSubspace(ClusterSubspace):
 
         # Generate singlet/point orbits
         for nbit, site, sbasis in zip(nbits, exp_struct, site_bases):
-            new_orbit = Orbit([site.frac_coords], exp_struct.lattice,
-                              [list(range(nbit))], [sbasis], symops)
+            # Coordinates of point terms must stay in [0, 1] to guarantee
+            # correct math of the following algorithm.
+            new_orbit = Orbit(
+                [np.mod(site.frac_coords, 1)], exp_struct.lattice,
+                [list(range(nbit))], [sbasis], symops)
             if remove_last:
                 new_orbit.remove_bit_combos_by_inds(
                     [len(new_orbit.bit_combos) - 1])
@@ -1409,7 +1412,8 @@ class PottsSubspace(ClusterSubspace):
         if len(cutoffs) == 0:  # return singlets only if no cutoffs provided
             return orbits
 
-        max_lp = max(exp_struct.lattice.abc) / 2
+        max_lp = np.linalg.norm(exp_struct.lattice.matrix.sum(axis=0)) / 2
+        max_lp += SITE_TOL
         for size, diameter in sorted(cutoffs.items()):
             new_orbits = []
             neighbors = exp_struct.get_sites_in_sphere(
@@ -1417,17 +1421,17 @@ class PottsSubspace(ClusterSubspace):
             for orbit in orbits[size-1]:
                 if orbit.base_cluster.diameter > diameter:
                     continue
-                for site, _, index in neighbors:
+                for neighbor in neighbors:
                     if is_coord_subset(
-                            [site.frac_coords], orbit.base_cluster.sites,
+                            [neighbor.frac_coords], orbit.base_cluster.sites,
                             atol=SITE_TOL):
                         continue
                     new_sites = np.concatenate(
-                        [orbit.base_cluster.sites, [site.frac_coords]])
+                        [orbit.base_cluster.sites, [neighbor.frac_coords]])
                     new_orbit = Orbit(
                         new_sites, exp_struct.lattice,
-                        orbit.bits + [list(range(nbits[index]))],
-                        orbit.site_bases + [site_bases[index]],
+                        orbit.bits + [list(range(nbits[neighbor.index]))],
+                        orbit.site_bases + [site_bases[neighbor.index]],
                         symops)
 
                     if remove_last:
@@ -1438,10 +1442,11 @@ class PottsSubspace(ClusterSubspace):
                     elif new_orbit not in new_orbits:
                         new_orbits.append(new_orbit)
 
-            orbits[size] = sorted(
-                new_orbits,
-                key=lambda x: (np.round(x.base_cluster.diameter, 6),
-                               -x.multiplicity))
+            if len(new_orbits) > 0:
+                orbits[size] = sorted(
+                    new_orbits,
+                    key=lambda x: (np.round(x.base_cluster.diameter, 6),
+                                   -x.multiplicity))
         return orbits
 
     def get_orbit_function_decoration(self, index):
