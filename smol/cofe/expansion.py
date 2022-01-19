@@ -195,6 +195,22 @@ class ClusterExpansion(MSONable):
         return self._subspace.function_orbit_ids
 
     @property
+    def effective_orbit_weights(self):
+        """Calculate the orbit weights.
+
+        The orbit weights are defined as the weighted sum of ECI squared, where
+        the weights are the multiplicities.
+        """
+        weights = np.array(
+            [np.sum(
+                self._subspace.function_ordering_multiplicities[
+                    self._subspace.function_orbit_ids == i]
+                * self.eci[self.eci_orbit_ids == i] ** 2)
+                for i in range(len(self._subspace.orbits) + 1)]
+        )
+        return weights
+
+    @property
     def feature_matrix(self):
         """Get the feature matrix used in fit.
 
@@ -218,6 +234,31 @@ class ClusterExpansion(MSONable):
         corrs = self.cluster_subspace.corr_from_structure(
             structure, normalized=normalize)
         return np.dot(corrs, self.coefs)
+
+    def compute_orbit_factors(self, structure, normalize=True):
+        """Compute the vector of orbit factor values for given structure.
+
+        The orbit function vector is simply a vector made up of the sum of
+        all cluster expansion terms over the same orbit.
+
+        Args:
+            structure (Structure):
+                Structures to predict from
+            normalize (bool):
+                Whether to return the predicted property normalized by
+                the prim cell size.
+
+        Returns: ndarray
+            vector of orbit factor values
+        """
+        corrs = self.cluster_subspace.corr_from_structure(
+            structure, normalized=normalize)
+        vals = self.coefs * corrs
+        orbit_factors = np.array(
+            [np.sum(vals[self.eci_orbit_ids == i])
+                for i in range(len(self._subspace.orbits) + 1)]
+        )
+        return orbit_factors
 
     def prune(self, threshold=0, with_multiplicity=False):
         """Remove fit coefficients or ECI's with small values.

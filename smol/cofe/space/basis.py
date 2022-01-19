@@ -20,7 +20,7 @@ from monty.json import MSONable
 from .domain import SiteSpace
 from smol.utils import derived_class_factory, get_subclasses
 
-ATOL, RTOL = 1E-12, 1E-8
+EPS_MULT = 10  # eps precision multiplier
 
 
 __author__ = "Luis Barroso-Luque"
@@ -181,6 +181,8 @@ class StandardBasis(DiscreteBasis):
         """
         super().__init__(site_space, basis_functions)
         self._r_array = None  # array from QR in basis orthonormalization
+        # rotation arrray
+        self._rot_array = np.eye(self.function_array.shape[1])
 
     def _construct_function_array(self, basis_functions):
         """Construct function array with basis functions as rows."""
@@ -202,6 +204,11 @@ class StandardBasis(DiscreteBasis):
         """Get R array from QR factorization."""
         return self._r_array
 
+    @property
+    def rotation_array(self):
+        """Get the rotation array."""
+        return self._rot_array
+
     def orthonormalize(self):
         """Orthonormalizes basis function set based on initial basis set.
 
@@ -217,8 +224,8 @@ class StandardBasis(DiscreteBasis):
             (np.sqrt(self.measure_vector) * self._f_array).T, mode='complete')
 
         # make zeros actually zeros
-        r[abs(r) < 2 * np.finfo(np.float64).eps] = 0.0
-        q[abs(q) < 2 * np.finfo(np.float64).eps] = 0.0
+        # r[abs(r) < EPS_MULT * np.finfo(np.float64).eps] = 0.0
+        # q[abs(q) < EPS_MULT * np.finfo(np.float64).eps] = 0.0
 
         self._r_array = q[:, 0] / np.sqrt(self.measure_vector) * r.T
         self._f_array = q.T/q[:, 0]  # make first row constant = 1
@@ -258,6 +265,7 @@ class StandardBasis(DiscreteBasis):
 
         if len(self.site_space) == 2:
             self._f_array[1] *= -1
+            self._rot_array *= -1
         else:
             if index1 == index2:
                 raise ValueError("Basis function indices cannot be the same!")
@@ -277,7 +285,8 @@ class StandardBasis(DiscreteBasis):
                 + (np.outer(v1, v1) + np.outer(v2, v2)) * (np.cos(angle) - 1)
             self._f_array[1:] = self._f_array[1:] @ R.T
             # make really small numbers zero
-            self._f_array[abs(self._f_array) < 2 * np.finfo(np.float64).eps] = 0.0  # noqa
+            self._f_array[abs(self._f_array) < EPS_MULT * np.finfo(np.float64).eps] = 0.0  # noqa
+            self._rot_array = R @ self._rot_array
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation."""
@@ -285,6 +294,7 @@ class StandardBasis(DiscreteBasis):
         d["func_array"] = self._f_array.tolist()
         d["orthonorm_array"] = None if self._r_array is None \
             else self._r_array.tolist()
+        d["rot_array"] = self._rot_array.tolist()
         return d
 
     @classmethod
@@ -302,6 +312,9 @@ class StandardBasis(DiscreteBasis):
         # restore arrays
         site_basis._f_array = np.array(d['func_array'])
         site_basis._r_array = np.array(d['orthonorm_array'])
+        rot_array = d.get('rot_array')
+        if rot_array is not None:
+            site_basis._rot_array = np.array(rot_array)
         return site_basis
 
 

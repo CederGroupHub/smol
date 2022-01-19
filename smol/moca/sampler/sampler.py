@@ -168,7 +168,8 @@ class Sampler:
         # allocate arrays for states
         occupancies = np.ascontiguousarray(occupancies, dtype=int)
         accepted = np.zeros(occupancies.shape[0], dtype=int)
-        features = list(map(self._kernel.feature_fun, occupancies))
+        features = list(
+            map(self._kernel.ensemble.compute_feature_vector, occupancies))
         features = np.ascontiguousarray(features)
         enthalpy = np.dot(self._kernel.natural_params, features.T)
 
@@ -301,6 +302,9 @@ class Sampler:
                  thin_by=thin_by, progress=progress)
         for temperature in temperatures[1:]:
             self._kernel.temperature = temperature
+            # TODO remove this when removing fuSGC! hacky stuffs add bias instead
+            if hasattr(self._kernel.ensemble, 'temperature'):
+                self._kernel.ensemble.temperature = temperature
             self.run(mcmc_steps, thin_by=thin_by, progress=progress)
 
     def _reshape_occu(self, occupancies):

@@ -45,8 +45,7 @@ class MCKernel(ABC):
                 corresponding step size.
         """
         self.natural_params = ensemble.natural_parameters
-        self.feature_fun = ensemble.compute_feature_vector
-        self._feature_change = ensemble.compute_feature_vector_change
+        self.ensemble = ensemble
 
         try:
             self._usher = mcusher_factory(self.valid_mcushers[step_type],
@@ -140,7 +139,8 @@ class UniformlyRandom(MCKernel):
             tuple: (acceptance, occupancy, enthalpy change, features change)
         """
         step = self._usher.propose_step(occupancy)
-        delta_features = self._feature_change(occupancy, step)
+        delta_features = self.ensemble.compute_feature_vector_change(occupancy,
+                                                                     step)
         delta_enthalpy = np.dot(self.natural_params, delta_features)
         self._usher.update_aux_state(step)
         for f in step:
@@ -171,7 +171,8 @@ class Metropolis(ThermalKernel):
             tuple: (acceptance, occupancy, features change, enthalpy change)
         """
         step = self._usher.propose_step(occupancy)
-        delta_features = self._feature_change(occupancy, step)
+        delta_features = self.ensemble.compute_feature_vector_change(occupancy,
+                                                                     step)
         delta_enthalpy = np.dot(self.natural_params, delta_features)
         accept = (True if delta_enthalpy <= 0
                   else -self.beta * delta_enthalpy > log(random()))

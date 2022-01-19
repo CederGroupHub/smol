@@ -4,6 +4,8 @@ A set of symmetrically equivalent (with respect to the given random structure
 symmetry) clusters.
 """
 
+import operator
+from functools import reduce
 from itertools import chain, product, accumulate, combinations
 import numpy as np
 
@@ -235,6 +237,29 @@ class Orbit(MSONable):
                 j, k = fa.shape
                 self._bases_arr[i, :j, :k] = fa
         return self._bases_arr
+
+    @property
+    def rotation_array(self):
+        """Get the rotation array.
+
+        The rotation array is of size len(bit combos) x len(bit combos)
+        """
+        R = np.empty(2 * (len(self._bit_combos),))
+        for (i, j), (bcombos_i, bcombos_j) in zip(
+                product(range(len(self._bit_combos)), repeat=2),
+                product(self._bit_combos, repeat=2)):
+            R[i, j] = sum(
+                reduce(
+                    operator.mul,
+                    (np.dot(
+                        self.site_bases[k].rotation_array.T @ self.basis_arrays[k][bj],  # noqa
+                        self.site_bases[k].measure_vector * self.basis_arrays[k][bi]  # noqa
+                    )
+                        for k, (bi, bj) in enumerate(zip(bcombo_i, bcombo_j))))
+                for bcombo_i, bcombo_j in product(bcombos_i, bcombos_j)) \
+                       / len(bcombos_i)
+            # \ (len(bcombos_i) * len(bcombos_j))**0.5 is unitary
+        return R
 
     @property
     def basis_orthogonal(self):

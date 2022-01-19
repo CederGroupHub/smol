@@ -106,6 +106,7 @@ class SampleContainer(MSONable):
     def sampling_efficiency(self, discard=0, flat=True):
         """Return the sampling efficiency for chains."""
         total_accepted = self._accepted[discard:].sum(axis=0)
+        # TODO bug here discard need multiplier thin_by
         efficiency = total_accepted/(self.total_mc_steps - discard)
         if flat:
             efficiency = efficiency.mean()
@@ -184,6 +185,17 @@ class SampleContainer(MSONable):
     def feature_vector_variance(self, discard=0, thin_by=1, flat=True):
         """Get the variance of feature vector elements."""
         return self.get_feature_vectors(discard, thin_by, flat).var(axis=0)
+
+    def get_orbit_factors(self, function_orbit_ids, discard=0,
+                          thin_by=1, flat=True):
+        """Get the orbit factor vectors for samples."""
+        vals = self.natural_parameters * self.get_feature_vectors(
+            discard=discard, thin_by=thin_by, flat=flat)
+        orbit_factors = np.array(
+            [np.sum(vals[function_orbit_ids == i])
+                for i in range(len(self.natural_parameters))]
+        )
+        return orbit_factors
 
     def mean_composition(self, discard=0, thin_by=1, flat=True):
         """Get mean composition for all species regardless of sublattice."""
