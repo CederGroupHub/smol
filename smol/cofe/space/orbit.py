@@ -228,9 +228,10 @@ class Orbit(MSONable):
         fancy indexing which can be faster than for loops.
         """
         if self._bases_arr is None or self._basis_arrs is None:
-            max_dim = max(len(fa) for fa in self.basis_arrays)
+            max_f = max(fa.shape[0] for fa in self.basis_arrays)
+            max_s = max(fa.shape[1] for fa in self.basis_arrays)
             self._bases_arr = np.ones(
-                (len(self.basis_arrays), max_dim, max_dim + 1))
+                (len(self.basis_arrays), max_f, max_s))
             for i, fa in enumerate(self.basis_arrays):
                 j, k = fa.shape
                 self._bases_arr[i, :j, :k] = fa
