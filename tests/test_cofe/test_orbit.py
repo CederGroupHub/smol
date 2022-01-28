@@ -113,13 +113,6 @@ class TestOrbit(unittest.TestCase):
         self.assertTrue(orbit1.basis_orthogonal)
         self.assertTrue(orbit1.basis_orthonormal)
 
-    def _test_eval(self, bases):
-        occu = list(range(len(self.spaces[0])))
-        for s1, s2 in combinations_with_replacement(occu, 2):
-            for i, j in combinations_with_replacement([0, 1], 2):
-                self.assertEqual(bases[0].function_array[i, s1]*bases[1].function_array[j, s2],
-                                 self.orbit.eval([i,j], [s1, s2]))
-
     def test_remove_bit_combo(self):
         bits = [0, 0]
         self.orbit.remove_bit_combo(bits)
