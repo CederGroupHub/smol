@@ -308,26 +308,6 @@ class Orbit(MSONable):
                 "All bit_combos have been removed from orbit with id "
                 f"{self.id}")
 
-    def eval(self, bits, species_encoding):   # TODO remove this?
-        """Evaluate a cluster function defined for this orbit.
-
-        Args:
-            bits (list):
-                list of the cluster bits specifying which site basis function
-                to evaluate for the corresponding site.
-            species_encoding (list):
-                list of lists of species encoding for each site. (index of
-                species in species bits)
-
-        Returns: orbit function evaluated for the corresponding structure
-            float
-        """
-        p = 1
-        for i, (b, sp) in enumerate(zip(bits, species_encoding)):
-            p *= self.basis_arrays[i][b, sp]
-
-        return p
-
     def transform_site_bases(self, basis_name, orthonormal=False):
         """Transform the Orbits site bases to new basis set.
 
