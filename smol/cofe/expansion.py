@@ -151,6 +151,7 @@ class ClusterExpansion(MSONable):
         self._feat_matrix = regression_data.feature_matrix.copy() \
             if regression_data is not None else None
         self._eci = None
+        self._fac_tensors = None
 
     @property
     def eci(self):
@@ -209,6 +210,23 @@ class ClusterExpansion(MSONable):
                 for i in range(len(self._subspace.orbits) + 1)]
         )
         return weights
+
+    @property
+    def orbit_factor_tensors(self):
+        """Tuple of orbit factor tensors
+
+        Tuple of ndarrays where each array is the factor tensor for the
+        corresponding orbit.
+        """
+        if self._fac_tensors is None:
+            self._fac_tensors = tuple(
+                sum(m * self.eci[orbit.bit_id + i] * tensor for i, (m, tensor)
+                    in enumerate(
+                        zip(orbit.bit_combo_multiplicities,
+                            orbit.correlation_tensors)))
+                for orbit in self._subspace.orbits
+            )
+        return self._fac_tensors
 
     @property
     def feature_matrix(self):
@@ -292,6 +310,7 @@ class ClusterExpansion(MSONable):
         if self._feat_matrix is not None:
             self._feat_matrix = self._feat_matrix[:, ids_complement]
         self._eci = None  # Reset
+        self._fac_tensors = None
 
     # This needs further testing. For out-of-training structures
     # the predictions do not always match with those using the original eci
