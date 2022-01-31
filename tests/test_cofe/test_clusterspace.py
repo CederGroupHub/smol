@@ -370,13 +370,15 @@ class TestClusterSubSpace(unittest.TestCase):
         supercell_struct.make_supercell(m)
         fcoords = np.array(supercell_struct.frac_coords)
 
-        for orb, inds in self.cs.supercell_orbit_mappings(m):
+        for orb, inds in zip(
+                self.cs.orbits, self.cs.supercell_orbit_mappings(m)):
             for x in inds:
                 pbc_radius = np.max(supercell_struct.lattice.get_all_distances(
                     fcoords[x], fcoords[x]))
                 # primitive cell fractional coordinates
                 new_fc = np.dot(fcoords[x], m)
-                self.assertGreater(orb.base_cluster.diameter + 1e-7, pbc_radius)
+                self.assertGreater(
+                    orb.base_cluster.diameter + 1e-7, pbc_radius)
                 found = False
                 for equiv in orb.clusters:
                     if is_coord_subset_pbc(equiv.sites, new_fc, atol=SITE_TOL):
@@ -423,7 +425,7 @@ class TestClusterSubSpace(unittest.TestCase):
         orbit_list = [
             (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
              orb.bases_array, inds)
-            for orb, inds in cs.supercell_orbit_mappings(m)]
+            for orb, inds in zip(cs.orbits, cs.supercell_orbit_mappings(m))]
 
         # last two clusters are switched from CASM output (occupancy basis)
         # all_li (ignore casm point term)
@@ -481,7 +483,7 @@ class TestClusterSubSpace(unittest.TestCase):
         orbit_list = [
             (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
              orb.bases_array, inds)
-            for orb, inds in cs.supercell_orbit_mappings(m)]
+            for orb, inds in zip(cs.orbits, cs.supercell_orbit_mappings(m))]
         # last two pair terms are switched from CASM output (occupancy basis)
         # all_vacancy (ignore casm point term)
         occu = self._encode_occu([Vacancy(),
@@ -533,7 +535,7 @@ class TestClusterSubSpace(unittest.TestCase):
         orbit_list = [
             (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
              orb.bases_array, inds)
-            for orb, inds in cs.supercell_orbit_mappings(m)]
+            for orb, inds in zip(cs.orbits, cs.supercell_orbit_mappings(m))]
         # mixed
         occu = self._encode_occu([Vacancy(), Species('Li', 1),
                                   Species('Li', 1)], self.domains)
@@ -630,12 +632,9 @@ class TestClusterSubSpace(unittest.TestCase):
         # checked that the cached orbit index mappings where properly kept
         for scm, orb_inds in cs._supercell_orb_inds.items():
             self.assertTrue(scm in self.cs._supercell_orb_inds)
-            for orb_inds1, orb_inds2 in zip(orb_inds,
-                                            self.cs._supercell_orb_inds[scm]):
-                self.assertEqual(orb_inds1[0].id, orb_inds1[0].id)
-                self.assertEqual(orb_inds1[0].base_cluster.diameter,
-                                 orb_inds1[0].base_cluster.diameter)
-                self.assertTrue(np.array_equal(orb_inds1[1], orb_inds2[1]))
+            for orb_inds1, orb_inds2 in zip(
+                    orb_inds, self.cs._supercell_orb_inds[scm]):
+                self.assertTrue(np.array_equal(orb_inds1, orb_inds2))
         self.assertTrue(np.array_equal(self.cs.corr_from_structure(struct2),
                                        cs.corr_from_structure(struct2)))
         # Check orthonormalization is kept
