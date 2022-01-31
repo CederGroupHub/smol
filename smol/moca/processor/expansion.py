@@ -75,8 +75,6 @@ class CEProcessor(Processor):
             if optimize_indicator \
             else general_delta_corr_single_flip
 
-        # Prepare necssary information for local updates
-        self._orbit_inds = self._subspace.supercell_orbit_mappings(supercell_matrix)  # noqa
         # List of orbit information and supercell site indices to compute corr
         self._orbit_list = []
         # Dictionary of orbits by site index and information
@@ -87,17 +85,20 @@ class CEProcessor(Processor):
         # where only the rows with the site index are stored. The ratio is
         # needed because the correlations are averages over the full inds
         # array.
-        for orbit, inds in self._orbit_inds:
+        # Prepare necssary information for local updates
+        indices = self._subspace.supercell_orbit_mappings(supercell_matrix)
+        for indices, orbit in zip(indices, self._subspace.orbits):
             self._orbit_list.append((
                 orbit.bit_id, orbit.bit_combo_array, orbit.bit_combo_inds,
-                orbit.bases_array, inds))
+                orbit.bases_array, indices))
 
-            for site_ind in np.unique(inds):
-                in_inds = np.any(inds == site_ind, axis=-1)
-                ratio = len(inds) / np.sum(in_inds)
+            for site_ind in np.unique(indices):
+                in_inds = np.any(indices == site_ind, axis=-1)
+                ratio = len(indices) / np.sum(in_inds)
                 self._orbits_by_sites[site_ind].append(
                     (orbit.bit_id, ratio, orbit.bit_combo_array,
-                     orbit.bit_combo_inds, orbit.bases_array, inds[in_inds]))
+                     orbit.bit_combo_inds, orbit.bases_array,
+                     indices[in_inds]))
 
     def compute_feature_vector(self, occupancy):
         """Compute the correlation vector for a given occupancy string.
