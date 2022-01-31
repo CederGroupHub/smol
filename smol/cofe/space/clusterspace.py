@@ -1456,18 +1456,26 @@ class PottsSubspace(ClusterSubspace):
                                    -x.multiplicity))
         return orbits
 
-    def get_orbit_function_decoration(self, index):
+    def get_function_decoration(self, index):
         """Get the decoration/labeling of a specific orbit function.
+
+        When using an indicator site basis there is 1 to 1 equivalence between
+        correlation functions and species decorations.
 
         Args:
             index (int):
                 index of orbit function in correlation vector
 
         Returns:
-            list of list: list of lists of symmetrically equivalent
+            list of tuples: list of tuples of symmetrically equivalent
             Species/Elements.
         """
-        pass
+        orbit = self.orbits[self.function_orbit_ids[index] - 1]
+        decorations = [
+            tuple(list(orbit.site_spaces[i])[b] for i, b in enumerate(bits))
+            for bits in orbit.bit_combos[index - orbit.bit_id]
+        ]
+        return decorations
 
     def get_orbit_decorations(self, orbit_id):
         """Get all decorations/labellings of species in an orbit.
@@ -1477,9 +1485,13 @@ class PottsSubspace(ClusterSubspace):
                 if of orbit
 
         Returns:
-            list: list of lists each list has equivalent decorations.
+            list of list: list of lists of symmetrically equivalent
+            Species/Elements.
         """
-        pass
+        bit_id = self.orbits[orbit_id - 1].bit_id
+        num_combos = len(self.orbits[orbit_id - 1].bit_combos)
+        return [self.get_function_decoration(bid)
+                for bid in range(bit_id, bit_id + num_combos)]
 
     def as_dict(self):
         """
