@@ -44,6 +44,12 @@ ClusterSubspace
    :undoc-members:
    :show-inheritance:
 
+.. autoclass:: smol.cofe.PottsSubspace
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 .. _structurewrangler:
 
 StructureWrangler
