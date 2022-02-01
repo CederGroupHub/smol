@@ -24,7 +24,6 @@ import numpy as np
 from monty.json import MSONable, jsanitize
 from pymatgen.core.structure import Structure
 from pymatgen.analysis.structure_matcher import StructureMatcher
-from smol.cofe.space.clusterspace import ClusterSubspace
 from smol.exceptions import StructureMatchError
 
 
