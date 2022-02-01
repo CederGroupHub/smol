@@ -3,7 +3,7 @@
 from warnings import warn
 import random
 import numpy as np
-from scipy.linalg import lu
+from scipy.linalg import lu, orth
 from scipy.stats import multivariate_normal, multinomial
 
 __author__ = "Luis Barroso-Luque"
@@ -34,31 +34,42 @@ def full_row_rank_select(feature_matrix, tol=1E-15, nrows=None):
         warn("More samples than the matrix rank where selected.\n"
              "The selection will not actually be full rank.\n"
              "Decrease tolerance to ensure full rank indices are selected.\n")
-    return list(sample_ids)
+    return np.sort(sample_ids)
 
 
-def gaussian_select(feature_matrix, num_samples):
+def gaussian_select(feature_matrix, num_samples, orthogonalize=False):
     """V. Vanilla structure selection to increase incoherence.
 
     Sequentially pick samples with feature vector that most closely aligns
     with a sampled random gaussian vector on the unit sphere.
+
+    This works much better when the number of rows in the feature matrix
+    is much larger than the number of samples requested.
 
     Args:
         feature_matrix (ndarray):
             feature matrix to select rows/structure from.
         num_samples (int):
             number of samples/rows/structures to select.
-
+        orthogonalize (bool):
+            If true will orthogonalize the generated random vectors
     Returns:
         list of int: list with indices of rows that align with Gaussian samples
     """
-    M = feature_matrix[:, 1:].copy()  # exclude first column (empty cluster)
+    M = feature_matrix.copy()
     m, n = M.shape
     M /= np.linalg.norm(M, axis=1).reshape(m, 1)
     gauss = multivariate_normal(mean=np.zeros(n)).rvs(size=num_samples)
+    if orthogonalize:
+        gauss = orth(gauss.T).T  # orthogonalize rows of gauss
+
     gauss /= np.linalg.norm(gauss, axis=1).reshape(num_samples, 1)
-    sample_ids = map(lambda v: np.argmin(np.linalg.norm(M - v, axis=1)), gauss)
-    return list(sample_ids)
+    sample_ids, compliment = [], list(range(m))
+    for vec in gauss:
+        sample_ids.append(
+            compliment[np.argmax(M[compliment] @ vec)])
+        compliment.remove(sample_ids[-1])
+    return np.sort(sample_ids)
 
 
 def composition_select(composition_vector, composition, cell_sizes,
@@ -105,4 +116,4 @@ def composition_select(composition_vector, composition, cell_sizes,
                 zip(cell_sizes, composition_vector))
             if dists[size].pmf(size*comp) >= max_probs[size]*random.random()
             and i not in sample_ids]
-    return sample_ids[:num_samples]
+    return np.sort(sample_ids[:num_samples])

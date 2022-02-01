@@ -147,7 +147,7 @@ chains into one. Defaults to True.</p>
 can be anything representative i.e. number of sites)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -180,7 +180,7 @@ can be anything representative i.e. number of sites)</p>
 <dd><p>Number of iterations used in sampling</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -191,7 +191,7 @@ can be anything representative i.e. number of sites)</p>
 <dd><p>Dictionary of metadata from the MC run that generated the samples.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -204,7 +204,7 @@ sampling from the last state of a previous MCMC run.
 (not implemented yet)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -213,13 +213,13 @@ sampling from the last state of a previous MCMC run.
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>num_sites</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Total number of sites in supercell of the ensemble.</p></li>
+<li><p><strong>num_sites</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Total number of sites in supercell of the ensemble.</p></li>
 <li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – Sublattices of the ensemble sampled.</p></li>
 <li><p><strong>natural_parameters</strong> (<em>ndarray</em>) – array of natural parameters used in the ensemble.</p></li>
-<li><p><strong>num_energy_coefs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the number of coeficients in the natural parameters that
+<li><p><strong>num_energy_coefs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – the number of coeficients in the natural parameters that
 correspond to the energy only.</p></li>
 <li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – Sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
-<li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of walkers used to generate chain. Default is 1</p></li>
+<li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Number of walkers used to generate chain. Default is 1</p></li>
 </ul>
 </dd>
 </dl>
@@ -282,7 +282,7 @@ correspond to the energy only.</p></li>
 <dd><p>Instantiate a SampleContainer from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – dictionary representation.</p>
+<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – dictionary representation.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Sublattice</p>
@@ -297,8 +297,8 @@ correspond to the energy only.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to file</p></li>
-<li><p><strong>swmr_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – path to file</p></li>
+<li><p><strong>swmr_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 If true allows to read file from other processes. Single Writer
 Multiple Readers.</p></li>
 </ul>
@@ -317,12 +317,12 @@ Multiple Readers.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to backend file.</p></li>
-<li><p><strong>alloc_nsamples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – path to backend file.</p></li>
+<li><p><strong>alloc_nsamples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 number of new samples to allocate. Will only extend datasets
 if number given is larger than space left to write samples
 into.</p></li>
-<li><p><strong>swmr_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>swmr_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 If true allows to read file from other processes. Single Writer
 Multiple Readers.</p></li>
 </ul>
@@ -477,7 +477,7 @@ Multiple Readers.</p></li>
 <li><p><strong>occupancies</strong> (<em>ndarray</em>) – array of occupancies</p></li>
 <li><p><strong>enthalpy</strong> (<em>ndarray</em>) – array of generalized enthalpy changes</p></li>
 <li><p><strong>features</strong> (<em>ndarray</em>) – array of feature vector changes</p></li>
-<li><p><strong>thinned_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the amount that the sampling was thinned by. Used to update
+<li><p><strong>thinned_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – the amount that the sampling was thinned by. Used to update
 the total mc iterations.</p></li>
 </ul>
 </dd>
@@ -507,7 +507,7 @@ to generate states for sampling an MCMC chain.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.kernel.MCKernel">
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MCKernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.MCKernel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
 <p>Abtract base class for transition kernels.</p>
 <p>A kernel is used to implement a specific MC algorithm used to sampler
 the ensemble classes. For an illustrtive example of how to derive from this
@@ -518,7 +518,7 @@ and write a specific sampler see the MetropolisSampler.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble instance to obtain the feautures and parameters
 used in computing log probabilities.</p></li>
-<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – String specifying the MCMC step type.</p></li>
+<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – String specifying the MCMC step type.</p></li>
 <li><p><strong>args</strong> – positional arguments to instantiate the mcusher for the
 corresponding step size.</p></li>
 <li><p><strong>kwargs</strong> – Keyword arguments to instantiate the mcusher for the
@@ -546,7 +546,7 @@ successful.</p>
 <dd class="field-even"><p>(acceptance, occupancy, enthalpy change, features change)</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)">tuple</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)">tuple</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -570,8 +570,8 @@ successful.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble instance to obtain the feautures and parameters
 used in computing log probabilities.</p></li>
-<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – String specifying the MCMC step type.</p></li>
-<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Temperature at which the MCMC sampling will be carried out.</p></li>
+<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – String specifying the MCMC step type.</p></li>
+<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Temperature at which the MCMC sampling will be carried out.</p></li>
 <li><p><strong>args</strong> – positional arguments to instantiate the mcusher for the
 corresponding step size.</p></li>
 <li><p><strong>kwargs</strong> – Keyword arguments to instantiate the mcusher for the
@@ -593,7 +593,7 @@ successful.</p>
 <dd class="field-even"><p>(acceptance, occupancy, features change, enthalpy change)</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)">tuple</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)">tuple</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -618,8 +618,8 @@ for multicanonical sampling and related methods</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble instance to obtain the feautures and parameters
 used in computing log probabilities.</p></li>
-<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – String specifying the MCMC step type.</p></li>
-<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Temperature at which the MCMC sampling will be carried out.</p></li>
+<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – String specifying the MCMC step type.</p></li>
+<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Temperature at which the MCMC sampling will be carried out.</p></li>
 <li><p><strong>args</strong> – positional arguments to instantiate the mcusher for the
 corresponding step size.</p></li>
 <li><p><strong>kwargs</strong> – Keyword arguments to instantiate the mcusher for the
@@ -648,7 +648,7 @@ same probability (corresponds to an infinite temperature).</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble instance to obtain the feautures and parameters
 used in computing log probabilities.</p></li>
-<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – String specifying the MCMC step type.</p></li>
+<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – String specifying the MCMC step type.</p></li>
 <li><p><strong>args</strong> – positional arguments to instantiate the mcusher for the
 corresponding step size.</p></li>
 <li><p><strong>kwargs</strong> – Keyword arguments to instantiate the mcusher for the
@@ -670,7 +670,7 @@ successful.</p>
 <dd class="field-even"><p>(acceptance, occupancy, enthalpy change, features change)</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)">tuple</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)">tuple</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -689,9 +689,9 @@ successful.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>kernel_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – String specifying step to instantiate.</p></li>
+<li><p><strong>kernel_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – String specifying step to instantiate.</p></li>
 <li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble object to create the MCMC kernel from.</p></li>
-<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – String specifying the step type (ie key to mcusher type)</p></li>
+<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – String specifying the step type (ie key to mcusher type)</p></li>
 <li><p><strong>*args</strong> – Positional arguments passed to class constructor</p></li>
 <li><p><strong>**kwargs</strong> – Keyword arguments passed to class constructor</p></li>
 </ul>
@@ -748,7 +748,7 @@ form (site index, species code to set)</p>
 <dd class="field-even"><p>list of tuples each with (index, code)</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a>(<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)">tuple</a>)</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a>(<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)">tuple</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -758,7 +758,7 @@ form (site index, species code to set)</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.mcusher.MCUsher">
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MCUsher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCUsher" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
 <p>Abstract base class for MC usher classes.</p>
 <p>Initialize MCMCStep.</p>
 <dl class="field-list simple">
@@ -790,7 +790,7 @@ form (site index, species code to set)</p>
 <dd class="field-even"><p>tuple of tuples each with (idex, code)</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a>(<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)">tuple</a>)</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a>(<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)">tuple</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -844,7 +844,7 @@ form (site index, species code to set)</p>
 <dd class="field-even"><p>list of tuples each with (idex, code)</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a>(<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)">tuple</a>)</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a>(<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)">tuple</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -858,7 +858,7 @@ form (site index, species code to set)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>usher_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – string specifying step to instantiate.</p></li>
+<li><p><strong>usher_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – string specifying step to instantiate.</p></li>
 <li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – list of Sublattices to propose steps for.</p></li>
 <li><p><strong>*args</strong> – positional arguments passed to class constructor</p></li>
 <li><p><strong>**kwargs</strong> – Keyword arguments passed to class constructor</p></li>
@@ -882,7 +882,7 @@ by the corresponding ensemble to generate Monte Carlo samples.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.sampler.Sampler">
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">container</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.sampler.Sampler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A sampler is used to run MCMC sampling simulations.</p>
 <p>The specific MCMC algorithm is defined by the given MCKernel.
 The default will use a a simple Metropolis random walk kernel.</p>
@@ -895,7 +895,7 @@ method, unless you need more control.</p>
 <li><p><strong>kernel</strong> (<a class="reference internal" href="#smol.moca.sampler.kernel.MCKernel" title="smol.moca.sampler.kernel.MCKernel"><em>MCKernel</em></a>) – An MCKernel instance.</p></li>
 <li><p><strong>container</strong> (<a class="reference internal" href="smol.moca.html#smol.moca.SampleContainer" title="smol.moca.SampleContainer"><em>SampleContainer</em></a>) – A sampler containter to store samples. If given num_walkers is
 taken from the container.</p></li>
-<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 seed for random number generator.</p></li>
 </ul>
 </dd>
@@ -912,12 +912,12 @@ The start temperature is the temperature set for the ensemble.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>temperatures</strong> (<em>Sequence</em>) – Sequence of temperatures to anneal, should be strictly
 decreasing.</p></li>
-<li><p><strong>mcmc_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – number of Monte Carlo steps to run at each temperature.</p></li>
+<li><p><strong>mcmc_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – number of Monte Carlo steps to run at each temperature.</p></li>
 <li><p><strong>initial_occupancies</strong> (<em>ndarray</em>) – array of occupancies. If None, the last sample will be taken.
 You should only provide this the first time you call run.</p></li>
-<li><p><strong>thin_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>thin_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 the amount to thin by for saving samples.</p></li>
-<li><p><strong>progress</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – If true will show a progress bar.</p></li>
+<li><p><strong>progress</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – If true will show a progress bar.</p></li>
 </ul>
 </dd>
 </dl>
@@ -945,18 +945,18 @@ automatically populate and create an appropriate SampleContainer.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ensemble</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – An Ensemble class to obtain sample probabilities from.</p></li>
-<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – optional
+<li><p><strong>step_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – optional
 type of step to run MCMC with. If not given the default is the
 first entry in the Ensemble.valid_mcmc_steps.</p></li>
 <li><p><strong>*args</strong> – Positional arguments to pass to the MCKernel constructor.
 More often than not you want to specify the temperature!</p></li>
-<li><p><strong>kernel_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – optional
+<li><p><strong>kernel_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – optional
 string specifying the specific MCMC transition kernel. This
 represents the underlying MC algorithm. Currently only
 Metropolis is supported.</p></li>
-<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 Seed for the PRNG.</p></li>
-<li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 Number of walkers/chains to sampler. Default is 1. More than 1
 is still experimental…</p></li>
 <li><p><strong>**kwargs</strong> – Keyword arguments to pass to the MCKernel constructor.
@@ -984,22 +984,22 @@ SampleContainer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>nsteps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – number of total MC steps.</p></li>
+<li><p><strong>nsteps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – number of total MC steps.</p></li>
 <li><p><strong>initial_occupancies</strong> (<em>ndarray</em>) – array of occupancies. If None, the last sampler will be taken.
 You should only provide this the first time you call run. If
 you want to reset then you should call reset before to start
 a fresh run.</p></li>
-<li><p><strong>thin_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>thin_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 the amount to thin by for saving samples.</p></li>
-<li><p><strong>progress</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>progress</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 If true will show a progress bar.</p></li>
-<li><p><strong>stream_chunk</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>stream_chunk</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 Chunk of samples to stream into a file. If &gt; 0 samples will
 be flushed to backend file in stream_chucks</p></li>
-<li><p><strong>stream_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – optional
+<li><p><strong>stream_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – optional
 file name to use as backend. If file already exists will try
 to append to datasets. If not given will create a new file.</p></li>
-<li><p><strong>swmr_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>swmr_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 If true allows to read file from other processes. Single Writer
 Multiple Readers.</p></li>
 </ul>
@@ -1016,11 +1016,11 @@ a tuple of (occupancies, features, enthalpy)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>nsteps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of iterations to run.</p></li>
+<li><p><strong>nsteps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Number of iterations to run.</p></li>
 <li><p><strong>initial_occupancies</strong> (<em>ndarray</em>) – array of occupancies</p></li>
-<li><p><strong>thin_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>thin_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 Number to thin iterations by and provide samples.</p></li>
-<li><p><strong>progress</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – If true will show a progress bar.</p></li>
+<li><p><strong>progress</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – If true will show a progress bar.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Yields</dt>
@@ -1080,7 +1080,7 @@ chains into one. Defaults to True.</p>
 can be anything representative i.e. number of sites)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1113,7 +1113,7 @@ can be anything representative i.e. number of sites)</p>
 <dd><p>Number of iterations used in sampling</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1124,7 +1124,7 @@ can be anything representative i.e. number of sites)</p>
 <dd><p>Dictionary of metadata from the MC run that generated the samples.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1137,7 +1137,7 @@ sampling from the last state of a previous MCMC run.
 (not implemented yet)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1146,13 +1146,13 @@ sampling from the last state of a previous MCMC run.
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>num_sites</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Total number of sites in supercell of the ensemble.</p></li>
+<li><p><strong>num_sites</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Total number of sites in supercell of the ensemble.</p></li>
 <li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – Sublattices of the ensemble sampled.</p></li>
 <li><p><strong>natural_parameters</strong> (<em>ndarray</em>) – array of natural parameters used in the ensemble.</p></li>
-<li><p><strong>num_energy_coefs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the number of coeficients in the natural parameters that
+<li><p><strong>num_energy_coefs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – the number of coeficients in the natural parameters that
 correspond to the energy only.</p></li>
 <li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – Sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
-<li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of walkers used to generate chain. Default is 1</p></li>
+<li><p><strong>nwalkers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Number of walkers used to generate chain. Default is 1</p></li>
 </ul>
 </dd>
 </dl>
@@ -1215,7 +1215,7 @@ correspond to the energy only.</p></li>
 <dd><p>Instantiate a SampleContainer from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – dictionary representation.</p>
+<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – dictionary representation.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Sublattice</p>
@@ -1230,8 +1230,8 @@ correspond to the energy only.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to file</p></li>
-<li><p><strong>swmr_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – path to file</p></li>
+<li><p><strong>swmr_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 If true allows to read file from other processes. Single Writer
 Multiple Readers.</p></li>
 </ul>
@@ -1250,12 +1250,12 @@ Multiple Readers.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to backend file.</p></li>
-<li><p><strong>alloc_nsamples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<li><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – path to backend file.</p></li>
+<li><p><strong>alloc_nsamples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 number of new samples to allocate. Will only extend datasets
 if number given is larger than space left to write samples
 into.</p></li>
-<li><p><strong>swmr_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – optional
+<li><p><strong>swmr_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 If true allows to read file from other processes. Single Writer
 Multiple Readers.</p></li>
 </ul>
@@ -1410,7 +1410,7 @@ Multiple Readers.</p></li>
 <li><p><strong>occupancies</strong> (<em>ndarray</em>) – array of occupancies</p></li>
 <li><p><strong>enthalpy</strong> (<em>ndarray</em>) – array of generalized enthalpy changes</p></li>
 <li><p><strong>features</strong> (<em>ndarray</em>) – array of feature vector changes</p></li>
-<li><p><strong>thinned_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the amount that the sampling was thinned by. Used to update
+<li><p><strong>thinned_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – the amount that the sampling was thinned by. Used to update
 the total mc iterations.</p></li>
 </ul>
 </dd>
