@@ -135,7 +135,7 @@ size/supercell.</p>
 <dd><p>Tuple of all the distinct site spaces.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)">tuple</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)">tuple</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -146,7 +146,7 @@ size/supercell.</p>
 <dd><p>A list of tuples of the allowed species at each site.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -157,7 +157,7 @@ size/supercell.</p>
 <dd><p>Number of prims in the supercell structure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -175,7 +175,7 @@ ClusterExpansion prim structure.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.base.Processor.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.processor.base.Processor.as_dict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.processor.base.Processor.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -202,14 +202,14 @@ change in that property from explicitly calculating it fully for the
 initial state and the flipped state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>iterations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – optional
+<dd class="field-odd"><p><strong>iterations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 number of iterations/flips to compute.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>(float, float) forward and reverse average property drift</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)">tuple</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)">tuple</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -268,7 +268,7 @@ for the new species to place at that site.</p></li>
 <dd class="field-even"><p>predicted property</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -281,14 +281,14 @@ for the new species to place at that site.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
-<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
+<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>property difference between inital and final states</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -413,7 +413,7 @@ supercell matrix.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.composite.CompositeProcessor.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.processor.composite.CompositeProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.processor.composite.CompositeProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -476,7 +476,7 @@ for the new species to place at that site.</p></li>
 <dd class="field-even"><p>predicted property</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -489,14 +489,14 @@ for the new species to place at that site.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
-<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
+<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>property difference between inital and final states</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -540,7 +540,7 @@ energy using an Ewald Summation term.</p>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 <li><p><strong>ewald_term</strong> (<a class="reference internal" href="smol.cofe.extern.html#smol.cofe.extern.ewald.EwaldTerm" title="smol.cofe.extern.ewald.EwaldTerm"><em>EwaldTerm</em></a>) – An instance of EwaldTerm to compute electrostatic energies.</p></li>
-<li><p><strong>coefficient</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Fitting coeficient to scale Ewald energy by.</p></li>
+<li><p><strong>coefficient</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Fitting coeficient to scale Ewald energy by.</p></li>
 <li><p><strong>ewald_summation</strong> (<em>EwaldSummation</em>) – optional
 pymatgen EwaldSummation instance, make sure this uses the exact
 same parameters as those used in the EwaldTerm in the cluster
@@ -550,7 +550,7 @@ Expansion (i.e. same eta, real and recip cuts).</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.ewald.EwaldProcessor.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.processor.ewald.EwaldProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.processor.ewald.EwaldProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -613,7 +613,7 @@ for the new species to place at that site.</p></li>
 <dd class="field-even"><p>Ewald electrostatic energy</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -626,14 +626,14 @@ for the new species to place at that site.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
-<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
+<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>electrostatic energy change</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -687,7 +687,7 @@ expansion was fit with an indicator basis and no additional
 normalization.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -711,7 +711,7 @@ This includes all possible labellings/orderings for all orbits.
 Same as <code class="code docutils literal notranslate"><span class="pre">ClusterSubspace.n_bit_orderings</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -724,7 +724,7 @@ Same as <code class="code docutils literal notranslate"><span class="pre">Cluste
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 <li><p><strong>coefficients</strong> (<em>ndarray</em>) – Fit coefficients for the represented cluster expansion.</p></li>
-<li><p><strong>optimize_indicator</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – When using an indicator basis, sets the function to compute
+<li><p><strong>optimize_indicator</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – When using an indicator basis, sets the function to compute
 correlation differences to the indicator optimized function.
 This can make MC steps faster.
 Make sure your cluster expansion was indeed fit with an
@@ -734,7 +734,7 @@ indicator basis set, otherwise your MC results are no good.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.CEProcessor.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.processor.expansion.CEProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.processor.expansion.CEProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -823,7 +823,7 @@ expansion was fit with an indicator basis and no additional
 normalization.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -847,7 +847,7 @@ This includes all possible labellings/orderings for all orbits.
 Same as <code class="code docutils literal notranslate"><span class="pre">ClusterSubspace.n_bit_orderings</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -860,7 +860,7 @@ Same as <code class="code docutils literal notranslate"><span class="pre">Cluste
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 <li><p><strong>coefficients</strong> (<em>ndarray</em>) – Fit coefficients for the represented cluster expansion.</p></li>
-<li><p><strong>optimize_indicator</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – When using an indicator basis, sets the function to compute
+<li><p><strong>optimize_indicator</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – When using an indicator basis, sets the function to compute
 correlation differences to the indicator optimized function.
 This can make MC steps faster.
 Make sure your cluster expansion was indeed fit with an
@@ -870,7 +870,7 @@ indicator basis set, otherwise your MC results are no good.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.CEProcessor.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.processor.CEProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.processor.CEProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -972,7 +972,7 @@ supercell matrix.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.CompositeProcessor.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.processor.CompositeProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.processor.CompositeProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1035,7 +1035,7 @@ for the new species to place at that site.</p></li>
 <dd class="field-even"><p>predicted property</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1048,14 +1048,14 @@ for the new species to place at that site.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
-<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
+<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>property difference between inital and final states</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1089,7 +1089,7 @@ energy using an Ewald Summation term.</p>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 <li><p><strong>ewald_term</strong> (<a class="reference internal" href="smol.cofe.extern.html#smol.cofe.extern.ewald.EwaldTerm" title="smol.cofe.extern.ewald.EwaldTerm"><em>EwaldTerm</em></a>) – An instance of EwaldTerm to compute electrostatic energies.</p></li>
-<li><p><strong>coefficient</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Fitting coeficient to scale Ewald energy by.</p></li>
+<li><p><strong>coefficient</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Fitting coeficient to scale Ewald energy by.</p></li>
 <li><p><strong>ewald_summation</strong> (<em>EwaldSummation</em>) – optional
 pymatgen EwaldSummation instance, make sure this uses the exact
 same parameters as those used in the EwaldTerm in the cluster
@@ -1099,7 +1099,7 @@ Expansion (i.e. same eta, real and recip cuts).</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.EwaldProcessor.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.processor.EwaldProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#smol.moca.processor.EwaldProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1162,7 +1162,7 @@ for the new species to place at that site.</p></li>
 <dd class="field-even"><p>Ewald electrostatic energy</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1175,14 +1175,14 @@ for the new species to place at that site.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy array</p></li>
-<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
+<li><p><strong>flips</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – list of tuples for (index of site, specie code to set)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>electrostatic energy change</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
