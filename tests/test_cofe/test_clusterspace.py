@@ -8,7 +8,7 @@ import json
 from pymatgen.core import Lattice, Structure, Species
 from pymatgen.util.coord import is_coord_subset_pbc
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-from smol.cofe import ClusterSubspace
+from smol.cofe import ClusterSubspace, PottsSubspace
 from smol.cofe.space.clusterspace import invert_mapping,\
                                          get_complete_mapping
 from smol.cofe.extern import EwaldTerm
@@ -16,11 +16,10 @@ from smol.cofe.space.constants import SITE_TOL
 from smol.cofe.space.domain import get_allowed_species, Vacancy
 from smol.exceptions import StructureMatchError
 from src.mc_utils import corr_from_occupancy
+from tests.utils import assert_msonable
 
 
 # TODO test correlations for ternary and for applications of symops to structure
-
-
 def test_invert_mapping_table():
     forward = [[], [], [1], [1], [1], [2, 4], [3, 4], [2, 3], [5, 6, 7]]
     backward = [[], [2, 3, 4], [5, 7], [6, 7], [5, 6], [8], [8], [8], []]
@@ -61,6 +60,36 @@ def test_from_cutoffs(structure):
         npt.assert_allclose(
             np.array(list(subspace.cutoffs.values())),
             np.array(list(tight_subspace.cutoffs.values())))
+
+
+def test_potts_subspace(cluster_subspace):
+    potts_subspace = PottsSubspace.from_cutoffs(cluster_subspace.structure,
+                                                cluster_subspace.cutoffs)
+    assert len(potts_subspace.orbits) == len(cluster_subspace.orbits)
+
+    # check sizes and bits included in each orbit
+    for porbit, corbit in zip(potts_subspace.orbits, cluster_subspace.orbits):
+        assert len(porbit.site_spaces) == len(corbit.site_spaces)
+        assert len(porbit.site_bases) == len(corbit.site_bases)
+        assert len(porbit.bit_combos) > len(corbit.bit_combos)
+
+        for i, site_space in enumerate(porbit.site_spaces):
+            bits_i = np.concatenate([b[:, i] for b in porbit.bit_combos])
+            assert all(j in bits_i for j in site_space.codes)
+
+    # check decorations
+    for _ in range(10):
+        i = random.choice(range(1, potts_subspace.num_corr_functions))
+        o_id = potts_subspace.function_orbit_ids[i]
+        orbit = potts_subspace.orbits[o_id - 1]
+        fdeco = potts_subspace.get_function_decoration(i)
+        odeco = potts_subspace.get_orbit_decorations(o_id)
+        assert fdeco == odeco[i - orbit.bit_id]
+        assert all(  # all decorations include valid species
+            deco[i] in species for deco in fdeco
+            for i, species in enumerate(orbit.site_spaces))
+
+    assert_msonable(potts_subspace)
 
 
 class TestClusterSubSpace(unittest.TestCase):
