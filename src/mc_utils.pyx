@@ -41,19 +41,47 @@ cpdef corr_from_occupancy(const long[::1] occu,
     cdef double[:] o_view = out
     o_view[0] = 1  # empty cluster
 
-    for n, bit_combos, bit_inds, bases, inds in orbit_list:
-        M = bit_inds.shape[0] # index of bit combos
-        I = inds.shape[0] # cluster index
-        K = inds.shape[1] # index within cluster
+    for n, bit_combos, bit_indices, bases, indices in orbit_list:
+        M = bit_indices.shape[0] # index of bit combos
+        I = indices.shape[0] # cluster index
+        K = indices.shape[1] # index within cluster
         for m in range(M - 1):
             p = 0
             for i in range(I):
-                for j in range(bit_inds[m], bit_inds[m + 1]):
+                for j in range(bit_indices[m], bit_indices[m + 1]):
                     pi = 1
                     for k in range(K):
-                        pi *= bases[k, bit_combos[j, k], occu[inds[i, k]]]
+                        pi *= bases[k, bit_combos[j, k], occu[indices[i, k]]]
                     p += pi
-            o_view[n] = p / (I * (bit_inds[m + 1] - bit_inds[m]))
+            o_view[n] = p / (I * (bit_indices[m + 1] - bit_indices[m]))
+            n += 1
+    return out
+
+
+cpdef corr_from_occupancy_(const long[::1] occu,
+                           const int n_bit_orderings,
+                           list orbit_list):
+    cdef int i, j, n, m, I, J, M, index
+    cdef double p
+    cdef const long[:, ::1] indices
+    cdef const long[::1] tensor_indices
+    cdef const double[:, ::1] tensors
+    out = np.zeros(n_bit_orderings)
+    cdef double[:] o_view = out
+    o_view[0] = 1  # empty cluster
+
+    for n, tensor_indices, tensors, indices in orbit_list:
+        M = tensors.shape[0]  # index of bit combos
+        I = indices.shape[0] # cluster index
+        J = indices.shape[1] # index within cluster
+        for m in range(M):
+            p = 0
+            for i in range(I):
+                index = 0
+                for j in range(J):
+                    index += tensor_indices[j] * occu[indices[i, j]]
+                p += tensors[m, index]
+            o_view[n] = p / I
             n += 1
     return out
 
@@ -82,27 +110,27 @@ cpdef general_delta_corr_single_flip(const long[::1] occu_f,
     """
     cdef int i, j, k, n, m, I, K, M
     cdef double p, pi, pf, r
-    cdef const long[:, ::1] inds, bit_combos
-    cdef const long[::1] bit_inds
+    cdef const long[:, ::1] indices, bit_combos
+    cdef const long[::1] bit_indices
     cdef const double[:, :, ::1] bases
     out = np.zeros(n_bit_orderings)
     cdef double[::1] o_view = out
 
-    for n, r, bit_combos, bit_inds, bases, inds in site_orbit_list:
-        M = bit_inds.shape[0] # index of bit combos
-        I = inds.shape[0] # cluster index
-        K = inds.shape[1] # index within cluster
+    for n, r, bit_combos, bit_indices, bases, indices in site_orbit_list:
+        M = bit_indices.shape[0] # index of bit combos
+        I = indices.shape[0] # cluster index
+        K = indices.shape[1] # index within cluster
         for m in range(M - 1):
             p = 0
             for i in range(I):
-                for j in range(bit_inds[m], bit_inds[m + 1]):
+                for j in range(bit_indices[m], bit_indices[m + 1]):
                     pf = 1
                     pi = 1
                     for k in range(K):
-                        pf *= bases[k, bit_combos[j, k], occu_f[inds[i, k]]]
-                        pi *= bases[k, bit_combos[j, k], occu_i[inds[i, k]]]
+                        pf *= bases[k, bit_combos[j, k], occu_f[indices[i, k]]]
+                        pi *= bases[k, bit_combos[j, k], occu_i[indices[i, k]]]
                     p += (pf - pi)
-            o_view[n] = p / r / (I * (bit_inds[m + 1] - bit_inds[m]))
+            o_view[n] = p / r / (I * (bit_indices[m + 1] - bit_indices[m]))
             n += 1
     return out
 
@@ -130,23 +158,23 @@ cpdef indicator_delta_corr_single_flip(const long[::1] occu_f,
     """
     cdef int i, j, k, n, m, I, K, M
     cdef bint ok
-    cdef const long[:, ::1] bit_combos, inds
-    cdef const long[::1] bit_inds
+    cdef const long[:, ::1] bit_combos, indices
+    cdef const long[::1] bit_indices
     out = np.zeros(n_bit_orderings)
     cdef double[::1] o_view = out
     cdef double r, o
 
-    for n, r, bit_combos, bit_inds, _, inds in site_orbit_list:
-        M = bit_inds.shape[0] # index of bit combos
-        I = inds.shape[0] # cluster index
-        K = inds.shape[1] # index within cluster
+    for n, r, bit_combos, bit_indices, _, indices in site_orbit_list:
+        M = bit_indices.shape[0] # index of bit combos
+        I = indices.shape[0] # cluster index
+        K = indices.shape[1] # index within cluster
         for m in range(M - 1):
             o = 0
             for i in range(I):
-                for j in range(bit_inds[m], bit_inds[m + 1]):
+                for j in range(bit_indices[m], bit_indices[m + 1]):
                     ok = True
                     for k in range(K):
-                        if occu_f[inds[i, k]] != bit_combos[j, k]:
+                        if occu_f[indices[i, k]] != bit_combos[j, k]:
                             ok = False
                             break
                     if ok:
@@ -154,13 +182,13 @@ cpdef indicator_delta_corr_single_flip(const long[::1] occu_f,
 
                     ok = True
                     for k in range(K):
-                        if occu_i[inds[i, k]] != bit_combos[j, k]:
+                        if occu_i[indices[i, k]] != bit_combos[j, k]:
                             ok = False
                             break
                     if ok:
                         o -= 1
 
-            o_view[n] = o / r / (I * (bit_inds[m + 1] - bit_inds[m]))
+            o_view[n] = o / r / (I * (bit_indices[m + 1] - bit_indices[m]))
             n += 1
     return out
 
@@ -168,7 +196,7 @@ cpdef indicator_delta_corr_single_flip(const long[::1] occu_f,
 cpdef delta_ewald_single_flip(const long[::1] occu_f,
                               const long[::1] occu_i,
                               const double[:, ::1] ewald_matrix,
-                              const long[:, ::1] ewald_inds,
+                              const long[:, ::1] ewald_indices,
                               const int site_ind):
     """Compute the change in electrostatic interaction energy from a flip.
 
@@ -179,7 +207,7 @@ cpdef delta_ewald_single_flip(const long[::1] occu_f,
             encoded occupancy vector without flip
         ewald_matrix (ndarray):
             Ewald matrix for electrostatic interactions
-        ewald_inds (ndarray):
+        ewald_indices (ndarray):
             2D array of indices corresponding to a specific site occupation
             in the ewald matrix
         site_ind (int):
@@ -194,11 +222,11 @@ cpdef delta_ewald_single_flip(const long[::1] occu_f,
     cdef double out_k
 
     # values of -1 are vacancies and hence don't have ewald indices
-    add = ewald_inds[site_ind, occu_f[site_ind]]
-    sub = ewald_inds[site_ind, occu_i[site_ind]]
+    add = ewald_indices[site_ind, occu_f[site_ind]]
+    sub = ewald_indices[site_ind, occu_i[site_ind]]
 
     for k in range(occu_f.shape[0]):
-        i = ewald_inds[k, occu_f[k]]
+        i = ewald_indices[k, occu_f[k]]
         out_k = 0
         if i != -1 and add != -1:
             if i != add:
@@ -206,7 +234,7 @@ cpdef delta_ewald_single_flip(const long[::1] occu_f,
             else:
                 out_k = out_k + ewald_matrix[i, add]
 
-        j = ewald_inds[k, occu_i[k]]
+        j = ewald_indices[k, occu_i[k]]
         if j != -1 and sub != -1:
             if j != sub:
                 out_k = out_k - 2 * ewald_matrix[j, sub]

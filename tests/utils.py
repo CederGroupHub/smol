@@ -9,6 +9,7 @@ import numpy as np
 from monty.json import MontyDecoder, MSONable
 from pymatgen.core import Composition
 
+
 def assert_msonable(obj, test_if_subclass=True):
     """
     Tests if obj is MSONable and tries to verify whether the contract is
