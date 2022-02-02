@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+* `PottsSubspace` class to generate redundant frame expansions.
+[\#146](https://github.com/CederGroupHub/smol/pull/146)
+  ([lbluque](https://github.com/lbluque))
 * Methods `is_suborbit` and `sub_orbit_mappings` in `Orbit` and related
 `function_hierarchy` and `orbit_hierarchy` in `ClusterSubspace`.
   [\#141](https://github.com/CederGroupHub/smol/pull/141)
@@ -26,6 +29,10 @@ Use this section to keep track of changes in the works.
   ([lbluque](https://github.com/lbluque))
 
 ### Changed
+* Changed `ClusterSubspace.supercell_orbit_mappings` to only include cluster
+  site indices.
+  [#145](https://github.com/CederGroupHub/smol/pull/145)
+([lbluque](https://github.com/lbluque))
 * Enable setting cluster cutoffs for duplicate searching.
 [#142](https://github.com/CederGroupHub/smol/pull/142)
 ([lbluque](https://github.com/lbluque))
@@ -36,7 +43,7 @@ Use this section to keep track of changes in the works.
   ([lbluque](https://github.com/lbluque))
 
 ### Fixed
-* Fix [140](https://github.com/CederGroupHub/smol/issues/140) corrected
+* Fix [141](https://github.com/CederGroupHub/smol/issues/140) corrected
   implementation of correlation function hierarchy.
   [\#141](https://github.com/CederGroupHub/smol/pull/141)
   ([lbluque](https://github.com/lbluque))

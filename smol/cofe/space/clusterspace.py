@@ -568,14 +568,15 @@ class ClusterSubspace(MSONable):
                                              encode=True)
         occu = np.array(occu, dtype=int)
 
-        orb_inds = self.supercell_orbit_mappings(scmatrix)
         # Create a list of tuples with necessary information to compute corr
+        indices = self.supercell_orbit_mappings(scmatrix)
         orbit_list = [
-            (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
-             orb.bases_array, inds) for orb, inds in orb_inds
+            (orbit.bit_id, orbit.bit_combo_array, orbit.bit_combo_inds,
+             orbit.bases_array, inds)
+            for inds, orbit in zip(indices, self.orbits)
         ]
-        corr = corr_from_occupancy(occu, self.num_corr_functions, orbit_list)
 
+        corr = corr_from_occupancy(occu, self.num_corr_functions, orbit_list)
         size = self.num_prims_from_matrix(scmatrix)
 
         if self.external_terms:
@@ -1087,7 +1088,7 @@ class ClusterSubspace(MSONable):
         return orbits
 
     def _gen_orbit_indices(self, scmatrix):
-        """Find all the indices associated with each orbit in structure.
+        """Find all the site indices associated with each orbit in structure.
 
         The structure corresponding to the given supercell matrix w.r.t prim.
         """
@@ -1117,7 +1118,7 @@ class ClusterSubspace(MSONable):
             # (eg in simply cubic all 6 nn interactions will all be [0, 0]
             # indices. This multiplicity disappears as supercell_structure size
             # increases, so I haven't implemented a more efficient method
-            orbit_indices.append((orbit, inds))
+            orbit_indices.append(inds)
 
         return orbit_indices
 
@@ -1176,23 +1177,28 @@ class ClusterSubspace(MSONable):
                 term_class = getattr(module, term['@class'])
                 cs.add_external_term(term_class.from_dict(term))
             except AttributeError:
-                warnings.warn(f"{term['@class']} was not found in "
-                              f"{term['@module']}. You will need to add this "
-                              " yourself. ", RuntimeWarning)
+                warnings.warn(
+                    f"{term['@class']} was not found in {term['@module']}. You"
+                    f" will need to add this yourself.", RuntimeWarning)
             except ImportError:
-                warnings.warn(f"Module {term['@module']} for class "
-                              f"{term['@class']} was not found. "
-                              "You will have to add this yourself.",
-                              ImportWarning)
+                warnings.warn(
+                    f"Module {term['@module']} for class {term['@class']} was "
+                    f"not found. You will have to add this yourself.",
+                    ImportWarning)
         # re-create supercell orb inds cache
-        # just in case orbits are not in order
-        orb_ids = [o.id for o in cs.orbits]
         _supercell_orb_inds = {}
-        for scm, orb_inds in d['_supercell_orb_inds']:
+        for scm, indices in d['_supercell_orb_inds']:
             scm = tuple(tuple(s) for s in scm)
-            _supercell_orb_inds[scm] = [(cs.orbits[orb_ids.index(o_id)],
-                                        np.array(ind)) for o_id, ind
-                                        in orb_inds]
+            if isinstance(indices, tuple):
+                warnings.warn(
+                    "This ClusterSubspace was created with a previous version "
+                    "of smol. Please resave it to avoid this warning.",
+                    FutureWarning)
+                _supercell_orb_inds[scm] = [
+                    np.array(ind) for o_id, ind in indices]
+            else:
+                _supercell_orb_inds[scm] = [
+                    np.array(ind) for ind in indices]
         cs._supercell_orb_inds = _supercell_orb_inds
         return cs
 
@@ -1204,9 +1210,10 @@ class ClusterSubspace(MSONable):
             MSONable dict
         """
         # modify cached sc orb inds so it can be serialized
-        _supercell_orb_inds = [(scm, [(orb.id, ind.tolist()) for orb, ind
+        _supercell_orb_inds = [(scm, [ind.tolist() for ind
                                in orb_inds]) for scm, orb_inds
                                in self._supercell_orb_inds.items()]
+
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
              'structure': self.structure.as_dict(),
@@ -1513,18 +1520,26 @@ class PottsSubspace(ClusterSubspace):
                                    -x.multiplicity))
         return orbits
 
-    def get_orbit_function_decoration(self, index):
+    def get_function_decoration(self, index):
         """Get the decoration/labeling of a specific orbit function.
+
+        When using an indicator site basis there is 1 to 1 equivalence between
+        correlation functions and species decorations.
 
         Args:
             index (int):
                 index of orbit function in correlation vector
 
         Returns:
-            list of list: list of lists of symmetrically equivalent
+            list of tuples: list of tuples of symmetrically equivalent
             Species/Elements.
         """
-        pass
+        orbit = self.orbits[self.function_orbit_ids[index] - 1]
+        decorations = [
+            tuple(list(orbit.site_spaces[i])[b] for i, b in enumerate(bits))
+            for bits in orbit.bit_combos[index - orbit.bit_id]
+        ]
+        return decorations
 
     def get_orbit_decorations(self, orbit_id):
         """Get all decorations/labellings of species in an orbit.
@@ -1534,9 +1549,13 @@ class PottsSubspace(ClusterSubspace):
                 if of orbit
 
         Returns:
-            list: list of lists each list has equivalent decorations.
+            list of list: list of lists of symmetrically equivalent
+            Species/Elements.
         """
-        pass
+        bit_id = self.orbits[orbit_id - 1].bit_id
+        num_combos = len(self.orbits[orbit_id - 1].bit_combos)
+        return [self.get_function_decoration(bid)
+                for bid in range(bit_id, bit_id + num_combos)]
 
     def as_dict(self):
         """
