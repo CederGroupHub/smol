@@ -841,7 +841,7 @@ static PyObject *__pyx_f_3src_8mc_utils_corr_from_occupancy_(__Pyx_memviewslice 
   double __pyx_v_p;
   __Pyx_memviewslice __pyx_v_indices = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_tensor_indices = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_v_tensors = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_corr_tensors = { 0, 0, { 0 }, { 0 }, { 0 } };
   PyObject *__pyx_v_out = NULL;
   __Pyx_memviewslice __pyx_v_o_view = { 0, 0, { 0 }, { 0 }, { 0 } };
   PyObject *__pyx_r = NULL;
@@ -866,7 +866,7 @@ static PyObject *__pyx_f_3src_8mc_utils_corr_from_occupancy_(__Pyx_memviewslice 
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&amp;__pyx_v_indices, 1);
   __PYX_XDEC_MEMVIEW(&amp;__pyx_v_tensor_indices, 1);
-  __PYX_XDEC_MEMVIEW(&amp;__pyx_v_tensors, 1);
+  __PYX_XDEC_MEMVIEW(&amp;__pyx_v_corr_tensors, 1);
   <span class='pyx_macro_api'>__Pyx_XDECREF</span>(__pyx_v_out);
   __PYX_XDEC_MEMVIEW(&amp;__pyx_v_o_view, 1);
   <span class='refnanny'>__Pyx_XGIVEREF</span>(__pyx_r);
@@ -982,7 +982,7 @@ static PyObject *__pyx_pf_3src_8mc_utils_2corr_from_occupancy_(CYTHON_UNUSED PyO
 <pre class="cython line score-0">&#xA0;<span class="">065</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">p</span></pre>
 <pre class="cython line score-0">&#xA0;<span class="">066</span>:     <span class="k">cdef</span> <span class="kt">const</span> <span class="kt">long</span>[<span class="p">:,</span> <span class="p">::</span><span class="mf">1</span><span class="p">]</span> <span class="n">indices</span></pre>
 <pre class="cython line score-0">&#xA0;<span class="">067</span>:     <span class="k">cdef</span> <span class="kt">const</span> <span class="kt">long</span>[<span class="p">::</span><span class="mf">1</span><span class="p">]</span> <span class="n">tensor_indices</span></pre>
-<pre class="cython line score-0">&#xA0;<span class="">068</span>:     <span class="k">cdef</span> <span class="kt">const</span> <span class="kt">double</span>[<span class="p">:,</span> <span class="p">::</span><span class="mf">1</span><span class="p">]</span> <span class="n">tensors</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">068</span>:     <span class="k">cdef</span> <span class="kt">const</span> <span class="kt">double</span>[<span class="p">:,</span> <span class="p">::</span><span class="mf">1</span><span class="p">]</span> <span class="n">corr_tensors</span></pre>
 <pre class="cython line score-22" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">069</span>:     <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_bit_orderings</span><span class="p">)</span></pre>
 <pre class='cython code score-22 '>  <span class='pyx_c_api'>__Pyx_GetModuleGlobalName</span>(__pyx_t_2, __pyx_n_s_np);<span class='error_goto'> if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 69, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_2);
@@ -1018,7 +1018,7 @@ static PyObject *__pyx_pf_3src_8mc_utils_2corr_from_occupancy_(CYTHON_UNUSED PyO
 <pre class='cython code score-0 '>  __pyx_t_6 = 0;
   *((double *) ( /* dim=0 */ (__pyx_v_o_view.data + __pyx_t_6 * __pyx_v_o_view.strides[0]) )) = 1.0;
 </pre><pre class="cython line score-0">&#xA0;<span class="">072</span>: </pre>
-<pre class="cython line score-77" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">073</span>:     <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">tensor_indices</span><span class="p">,</span> <span class="n">tensors</span><span class="p">,</span> <span class="n">indices</span> <span class="ow">in</span> <span class="n">orbit_list</span><span class="p">:</span></pre>
+<pre class="cython line score-77" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">073</span>:     <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">tensor_indices</span><span class="p">,</span> <span class="n">corr_tensors</span><span class="p">,</span> <span class="n">indices</span> <span class="ow">in</span> <span class="n">orbit_list</span><span class="p">:</span></pre>
 <pre class='cython code score-77 '>  if (unlikely(__pyx_v_orbit_list == Py_None)) {
     <span class='py_c_api'>PyErr_SetString</span>(PyExc_TypeError, "'NoneType' object is not iterable");
     <span class='error_goto'>__PYX_ERR(0, 73, __pyx_L1_error)</span>
@@ -1104,8 +1104,8 @@ static PyObject *__pyx_pf_3src_8mc_utils_2corr_from_occupancy_(CYTHON_UNUSED PyO
     __pyx_v_tensor_indices = __pyx_t_13;
     __pyx_t_13.memview = NULL;
     __pyx_t_13.data = NULL;
-    __PYX_XDEC_MEMVIEW(&amp;__pyx_v_tensors, 1);
-    __pyx_v_tensors = __pyx_t_14;
+    __PYX_XDEC_MEMVIEW(&amp;__pyx_v_corr_tensors, 1);
+    __pyx_v_corr_tensors = __pyx_t_14;
     __pyx_t_14.memview = NULL;
     __pyx_t_14.data = NULL;
     __PYX_XDEC_MEMVIEW(&amp;__pyx_v_indices, 1);
@@ -1115,8 +1115,8 @@ static PyObject *__pyx_pf_3src_8mc_utils_2corr_from_occupancy_(CYTHON_UNUSED PyO
 /* … */
   }
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_1); __pyx_t_1 = 0;
-</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">074</span>:         <span class="n">M</span> <span class="o">=</span> <span class="n">tensors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>  <span class="c"># index of bit combos</span></pre>
-<pre class='cython code score-0 '>    __pyx_v_M = (__pyx_v_tensors.shape[0]);
+</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">074</span>:         <span class="n">M</span> <span class="o">=</span> <span class="n">corr_tensors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>  <span class="c"># index of bit combos</span></pre>
+<pre class='cython code score-0 '>    __pyx_v_M = (__pyx_v_corr_tensors.shape[0]);
 </pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">075</span>:         <span class="n">I</span> <span class="o">=</span> <span class="n">indices</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span> <span class="c"># cluster index</span></pre>
 <pre class='cython code score-0 '>    __pyx_v_I = (__pyx_v_indices.shape[0]);
 </pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">076</span>:         <span class="n">J</span> <span class="o">=</span> <span class="n">indices</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mf">1</span><span class="p">]</span> <span class="c"># index within cluster</span></pre>
@@ -1147,10 +1147,10 @@ static PyObject *__pyx_pf_3src_8mc_utils_2corr_from_occupancy_(CYTHON_UNUSED PyO
           __pyx_t_26 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_indices.data + __pyx_t_24 * __pyx_v_indices.strides[0]) )) + __pyx_t_25)) )));
           __pyx_v_index = (__pyx_v_index + ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_tensor_indices.data) + __pyx_t_6)) ))) * (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu.data) + __pyx_t_26)) )))));
         }
-</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">083</span>:                 <span class="n">p</span> <span class="o">+=</span> <span class="n">tensors</span><span class="p">[</span><span class="n">m</span><span class="p">,</span> <span class="n">index</span><span class="p">]</span></pre>
+</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">083</span>:                 <span class="n">p</span> <span class="o">+=</span> <span class="n">corr_tensors</span><span class="p">[</span><span class="n">m</span><span class="p">,</span> <span class="n">index</span><span class="p">]</span></pre>
 <pre class='cython code score-0 '>        __pyx_t_25 = __pyx_v_m;
         __pyx_t_24 = __pyx_v_index;
-        __pyx_v_p = (__pyx_v_p + (*((double const  *) ( /* dim=1 */ ((char *) (((double const  *) ( /* dim=0 */ (__pyx_v_tensors.data + __pyx_t_25 * __pyx_v_tensors.strides[0]) )) + __pyx_t_24)) ))));
+        __pyx_v_p = (__pyx_v_p + (*((double const  *) ( /* dim=1 */ ((char *) (((double const  *) ( /* dim=0 */ (__pyx_v_corr_tensors.data + __pyx_t_25 * __pyx_v_corr_tensors.strides[0]) )) + __pyx_t_24)) ))));
       }
 </pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">084</span>:             <span class="n">o_view</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span> <span class="o">/</span> <span class="n">I</span></pre>
 <pre class='cython code score-0 '>      __pyx_t_24 = __pyx_v_n;

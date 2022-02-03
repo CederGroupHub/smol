@@ -65,13 +65,13 @@ cpdef corr_from_occupancy_(const long[::1] occu,
     cdef double p
     cdef const long[:, ::1] indices
     cdef const long[::1] tensor_indices
-    cdef const double[:, ::1] tensors
+    cdef const double[:, ::1] corr_tensors
     out = np.zeros(n_bit_orderings)
     cdef double[:] o_view = out
     o_view[0] = 1  # empty cluster
 
-    for n, tensor_indices, tensors, indices in orbit_list:
-        M = tensors.shape[0]  # index of bit combos
+    for n, tensor_indices, corr_tensors, indices in orbit_list:
+        M = corr_tensors.shape[0]  # index of bit combos
         I = indices.shape[0] # cluster index
         J = indices.shape[1] # index within cluster
         for m in range(M):
@@ -80,7 +80,7 @@ cpdef corr_from_occupancy_(const long[::1] occu,
                 index = 0
                 for j in range(J):
                     index += tensor_indices[j] * occu[indices[i, j]]
-                p += tensors[m, index]
+                p += corr_tensors[m, index]
             o_view[n] = p / I
             n += 1
     return out
