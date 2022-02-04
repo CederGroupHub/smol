@@ -98,6 +98,7 @@ class Orbit(MSONable):
         self._basis_arrs = None
         self._bases_arr = None
         self._corr_tensors = None
+        self._flat_corr_tensors = None
         self._combo_arr = None
         self._combo_inds = None
 
@@ -108,6 +109,16 @@ class Orbit(MSONable):
     def basis_type(self):
         """Return the name of basis set used."""
         return self.site_bases[0].flavor
+
+    @property
+    def basis_orthogonal(self):
+        """Test if the Orbit bases are orthogonal."""
+        return all(basis.is_orthogonal for basis in self.site_bases)
+
+    @property
+    def basis_orthonormal(self):
+        """Test if the orbit bases are orthonormal."""
+        return all(basis.is_orthonormal for basis in self.site_bases)
 
     @property
     def multiplicity(self):
@@ -147,14 +158,14 @@ class Orbit(MSONable):
         """Get the site spaces for the site basis associate with each site."""
         return [site_basis.site_space for site_basis in self.site_bases]
 
-    @property
+    @property  # TODO deprecate when new corr_from_occu is ready
     def bit_combo_array(self):
         """Single array of all bit combos."""
         if self._combo_arr is None:
             self._combo_arr = np.vstack([combos for combos in self.bit_combos])
         return self._combo_arr
 
-    @property
+    @property  # TODO deprecate when new corr_from_occu is ready
     def bit_combo_inds(self):
         """Get indices to symmetrically equivalent bits in bit combo array."""
         if self._combo_inds is None or self._combo_arr is None:
@@ -214,7 +225,7 @@ class Orbit(MSONable):
         return self._symops
 
     @property
-    def basis_arrays(self):  # TODO remove this?
+    def basis_arrays(self):
         """Get a tuple of all site function arrays for each site in orbit."""
         if self._basis_arrs is None:
             self._basis_arrs = tuple(
@@ -222,7 +233,7 @@ class Orbit(MSONable):
         return self._basis_arrs
 
     @property
-    def bases_array(self):
+    def bases_array(self):  # TODO eventually should deprecated this
         """Get bases array.
 
         3D array with all basis arrays. Since each basis array can be of
@@ -242,7 +253,7 @@ class Orbit(MSONable):
 
     @property
     def correlation_tensors(self):
-        """Get the array of correlation functions for all possible configs
+        """Get the array of correlation functions for all possible configs.
 
         Array of stacked correlation arrays for each symetrically distinct
         set of bit combos.
@@ -252,6 +263,10 @@ class Orbit(MSONable):
 
         First dimension is for bit combos, the remainding dimensions correspond
         to site spaces.
+
+        i.e. correlation_tensors[0, 1, 0, 2] gives the value of the
+        correlation function for bit_combo 0 evaluated for a cluster with
+        occupancy [1, 0, 2]
         """
         if self._corr_tensors is None:
             corr_tensors = np.zeros(
@@ -268,6 +283,28 @@ class Orbit(MSONable):
 
             self._corr_tensors = corr_tensors
         return self._corr_tensors
+
+    @property
+    def flat_correlation_tensors(self):
+        """Get correlation_tensors flattened to 2D for fast cython."""
+        if self._corr_tensors is None or self._flat_corr_tensors is None:
+            self._flat_corr_tensors = np.ascontiguousarray(
+                np.reshape(
+                    self.correlation_tensors,
+                    (
+                        self.correlation_tensors.shape[0],
+                        np.prod(self.correlation_tensors.shape[1:])
+                    ),
+                    order='C')
+            )
+        return self._flat_corr_tensors
+
+    @property
+    def flat_tensor_indices(self):
+        """Index multipliers to read data easier from flat corr tensors."""
+        indices = np.cumprod(
+            np.append(self.correlation_tensors.shape[2:], 1)[::-1])[::-1]
+        return np.ascontiguousarray(indices, dtype=int)
 
     @property
     def rotation_array(self):
@@ -291,16 +328,6 @@ class Orbit(MSONable):
                        / len(bcombos_i)
             # \ (len(bcombos_i) * len(bcombos_j))**0.5 is unitary
         return R
-
-    @property
-    def basis_orthogonal(self):
-        """Test if the Orbit bases are orthogonal."""
-        return all(basis.is_orthogonal for basis in self.site_bases)
-
-    @property
-    def basis_orthonormal(self):
-        """Test if the orbit bases are orthonormal."""
-        return all(basis.is_orthonormal for basis in self.site_bases)
 
     def remove_bit_combo(self, bits):  # seems like this is no longer used?
         """Remove bit_combos from orbit.
@@ -355,6 +382,8 @@ class Orbit(MSONable):
             new_bases.append(new_basis)
 
         self.site_bases = tuple(new_bases)
+        self._corr_tensors, self._flat_corr_tensors = None, None
+        # TODO remove if/when deprecating
         self._basis_arrs, self._bases_arr = None, None
 
     def assign_ids(self, orbit_id, orbit_bit_id, start_cluster_id):

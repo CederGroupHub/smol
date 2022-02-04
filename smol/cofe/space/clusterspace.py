@@ -307,7 +307,7 @@ class ClusterSubspace(MSONable):
         The list returned is of length total number of orbits, each entry is
         the total number of correlation functions assocaited with that orbit.
         """
-        return [len(orbit) for orbit in self.iterorbits()]
+        return np.array([len(orbit) for orbit in self.iterorbits()])
 
     @property
     def function_orbit_ids(self):
@@ -319,7 +319,7 @@ class ClusterSubspace(MSONable):
         func_orb_ids = [0]
         for orbit in self.iterorbits():
             func_orb_ids += len(orbit) * [orbit.id, ]
-        return func_orb_ids
+        return np.array(func_orb_ids)
 
     @property
     def function_inds_by_size(self):
@@ -544,11 +544,10 @@ class ClusterSubspace(MSONable):
         # Create a list of tuples with necessary information to compute corr
         indices = self.supercell_orbit_mappings(scmatrix)
         orbit_list = [
-            (orbit.bit_id, orbit.bit_combo_array, orbit.bit_combo_inds,
-             orbit.bases_array, inds)
+            (orbit.bit_id, orbit.flat_tensor_indices,
+             orbit.flat_correlation_tensors, inds)
             for inds, orbit in zip(indices, self.orbits)
         ]
-
         corr = corr_from_occupancy(occu, self.num_corr_functions, orbit_list)
         size = self.num_prims_from_matrix(scmatrix)
 
