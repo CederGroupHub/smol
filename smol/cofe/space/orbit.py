@@ -4,6 +4,8 @@ A set of symmetrically equivalent (with respect to the given random structure
 symmetry) clusters.
 """
 
+import operator
+from functools import reduce
 from itertools import chain, product, accumulate, combinations
 import numpy as np
 
@@ -95,6 +97,7 @@ class Orbit(MSONable):
         self._bit_combos = None
         self._basis_arrs = None
         self._bases_arr = None
+        self._corr_tensors = None
         self._combo_arr = None
         self._combo_inds = None
 
@@ -236,6 +239,77 @@ class Orbit(MSONable):
                 j, k = fa.shape
                 self._bases_arr[i, :j, :k] = fa
         return self._bases_arr
+
+    @property
+    def correlation_tensors(self):
+        """Get the array of correlation functions for all possible configs
+
+        Array of stacked correlation arrays for each symetrically distinct
+        set of bit combos.
+
+        The correlations array is a multidimensional array with each dimension
+        corresponding to each site space.
+
+        First dimension is for bit combos, the remainding dimensions correspond
+        to site spaces.
+        """
+        if self._corr_tensors is None:
+            corr_tensors = np.zeros(
+                (len(self.bit_combos),
+                 *(basis.shape[1] for basis in self.basis_arrays))
+            )
+
+            for i, combos in enumerate(self.bit_combos):
+                for bits in combos:
+                    corr_tensors[i] += reduce(
+                        lambda a, b: np.tensordot(a, b, axes=0),
+                        (self.basis_arrays[i][b] for i, b in enumerate(bits)))
+                corr_tensors[i] /= len(combos)
+
+            self._corr_tensors = corr_tensors
+        return self._corr_tensors
+
+    def eval(self, bits, occu):
+        p = 1
+        for i, (bit, sp) in enumerate(zip(bits, occu)):
+            p *= self.basis_arrays[i][bit, sp]
+        return p
+
+    @property
+    def correlation_tensors_(self):
+        corr_tensors = np.zeros(
+            (len(self.bit_combos),
+             *(basis.shape[1] for basis in self.basis_arrays))
+        )
+
+        for i, combos in enumerate(self.bit_combos):
+            for occu in product(*[np.arange(len(ssp)) for ssp in self.site_spaces]):
+                corr_tensors[i][occu] = sum(self.eval(bits, occu) for bits in combos)/len(combos)
+
+        return corr_tensors
+
+    @property
+    def rotation_array(self):
+        """Get the rotation array.
+
+        The rotation array is of size len(bit combos) x len(bit combos)
+        """
+        R = np.empty(2 * (len(self._bit_combos),))
+        for (i, j), (bcombos_i, bcombos_j) in zip(
+                product(range(len(self._bit_combos)), repeat=2),
+                product(self._bit_combos, repeat=2)):
+            R[i, j] = sum(
+                reduce(
+                    operator.mul,
+                    (np.dot(
+                        self.site_bases[k].rotation_array.T @ self.basis_arrays[k][bj],  # noqa
+                        self.site_bases[k].measure_vector * self.basis_arrays[k][bi]  # noqa
+                    )
+                        for k, (bi, bj) in enumerate(zip(bcombo_i, bcombo_j))))
+                for bcombo_i, bcombo_j in product(bcombos_i, bcombos_j)) \
+                       / len(bcombos_i)
+            # \ (len(bcombos_i) * len(bcombos_j))**0.5 is unitary
+        return R
 
     @property
     def basis_orthogonal(self):
