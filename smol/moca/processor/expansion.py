@@ -10,10 +10,9 @@ __author__ = "Luis Barroso-Luque"
 import numpy as np
 from collections import defaultdict
 from smol.cofe import ClusterSubspace
-from src.mc_utils import (corr_from_occupancy, general_delta_corr_single_flip,
-                          indicator_delta_corr_single_flip)
-
 from smol.moca.processor.base import Processor
+from src.mc_utils import (corr_from_occupancy, delta_corr_single_flip,
+                          indicator_delta_corr_single_flip)
 
 
 class CEProcessor(Processor):
@@ -73,7 +72,7 @@ class CEProcessor(Processor):
         self.optimize_indicator = optimize_indicator
         self._dcorr_single_flip = indicator_delta_corr_single_flip \
             if optimize_indicator \
-            else general_delta_corr_single_flip
+            else delta_corr_single_flip
 
         # List of orbit information and supercell site indices to compute corr
         self._orbit_list = []
@@ -92,14 +91,23 @@ class CEProcessor(Processor):
                 (orbit.bit_id, orbit.flat_tensor_indices,
                  orbit.flat_correlation_tensors, cluster_indices)
             )
-
             for site_ind in np.unique(cluster_indices):
                 in_inds = np.any(cluster_indices == site_ind, axis=-1)
                 ratio = len(cluster_indices) / np.sum(in_inds)
-                self._orbits_by_sites[site_ind].append(
-                    (orbit.bit_id, ratio, orbit.bit_combo_array,
-                     orbit.bit_combo_inds, orbit.bases_array,
-                     cluster_indices[in_inds]))
+                # TODO check runtime and scaling vs new implementations
+                #  and if not worth it just deprecate optimize_indicator
+                if optimize_indicator:
+                    self._orbits_by_sites[site_ind].append(
+                        (orbit.bit_id, ratio, orbit.bit_combo_array,
+                         orbit.bit_combo_inds, orbit.bases_array,
+                         cluster_indices[in_inds])
+                    )
+                else:
+                    self._orbits_by_sites[site_ind].append(
+                        (orbit.bit_id, ratio, orbit.flat_tensor_indices,
+                         orbit.flat_correlation_tensors,
+                         cluster_indices[in_inds])
+                    )
 
     def compute_feature_vector(self, occupancy):
         """Compute the correlation vector for a given occupancy string.
@@ -141,10 +149,10 @@ class CEProcessor(Processor):
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
-            orbits = self._orbits_by_sites[f[0]]
+            site_orbit_list = self._orbits_by_sites[f[0]]
             delta_corr += self._dcorr_single_flip(occu_f, occu_i,
                                                   self.n_orbit_functions,
-                                                  orbits)
+                                                  site_orbit_list)
             occu_i = occu_f
 
         return delta_corr * self.size
