@@ -269,25 +269,6 @@ class Orbit(MSONable):
             self._corr_tensors = corr_tensors
         return self._corr_tensors
 
-    def eval(self, bits, occu):
-        p = 1
-        for i, (bit, sp) in enumerate(zip(bits, occu)):
-            p *= self.basis_arrays[i][bit, sp]
-        return p
-
-    @property
-    def correlation_tensors_(self):
-        corr_tensors = np.zeros(
-            (len(self.bit_combos),
-             *(basis.shape[1] for basis in self.basis_arrays))
-        )
-
-        for i, combos in enumerate(self.bit_combos):
-            for occu in product(*[np.arange(len(ssp)) for ssp in self.site_spaces]):
-                corr_tensors[i][occu] = sum(self.eval(bits, occu) for bits in combos)/len(combos)
-
-        return corr_tensors
-
     @property
     def rotation_array(self):
         """Get the rotation array.
