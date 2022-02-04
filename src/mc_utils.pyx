@@ -16,8 +16,8 @@ cimport numpy as np
 
 
 cpdef corr_from_occupancy(const long[::1] occu,
-                           const int num_corr_functions,
-                           list orbit_list):
+                          const int num_corr_functions,
+                          list orbit_list):
     """Computes the correlation vector for a given encoded occupancy string.
 
     Args:
@@ -26,8 +26,8 @@ cpdef corr_from_occupancy(const long[::1] occu,
         num_corr_functions (int):
             total number of bit orderings in expansion.
         orbit_list:
-            Information of all orbits that include the flip site.
-            (orbit id, flat tensor index array, flat correlation array,
+            Information of all orbits.
+            (orbit id, flat tensor index array, flat correlation tensor,
              site indices of clusters)
 
     Returns: array
@@ -57,6 +57,50 @@ cpdef corr_from_occupancy(const long[::1] occu,
             n += 1
     return out
 
+cpdef factors_from_occupancy(const long[::1] occu,
+                             const int num_factors,
+                             const double constant_eci,
+                             list orbit_list):
+    """Computes the orbit factor vector for a given encoded occupancy string.
+
+    Args:
+        occu (ndarray):
+            encoded occupancy vector
+        num_factors (int):
+            total number of bit orderings in expansion.
+        constant_eci (float):
+            eci value for the constant term.
+        orbit_list:
+            Information of all orbits.
+            (flat tensor index array, flat factor tensor,
+            site indices of clusters)
+
+    Returns: array
+        orbit factor vector for given occupancy
+    """
+    cdef int n, i, j, I, J, index
+    cdef double p
+    cdef const long[:, ::1] indices
+    cdef const long[::1] tensor_indices
+    cdef const double[::1] factor_tensors
+    out = np.zeros(num_factors)
+    cdef double[:] o_view = out
+    o_view[0] = constant_eci  # empty cluster
+
+    n = 1
+    for tensor_indices, factor_tensors, indices in orbit_list:
+        I = indices.shape[0] # cluster index
+        J = indices.shape[1] # index within cluster
+        p = 0
+        for i in range(I):
+            index = 0
+            for j in range(J):
+                index += tensor_indices[j] * occu[indices[i, j]]
+            p += factor_tensors[index]
+        o_view[n] = p / I
+        n += 1
+
+    return out
 
 cpdef general_delta_corr_single_flip(const long[::1] occu_f,
                                      const long[::1] occu_i,
@@ -227,7 +271,7 @@ cpdef corr_from_occupancy_low_mem(const long[::1] occu,
         num_corr_functions (int):
             total number of bit orderings in expansion.
         orbit_list:
-            Information of all orbits that include the flip site.
+            Information of all orbits.
             (orbit id, bit_combos, bit_combo_indices site indices, bases array)
 
     Returns: array
