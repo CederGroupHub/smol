@@ -86,19 +86,20 @@ class CEProcessor(Processor):
         # needed because the correlations are averages over the full inds
         # array.
         # Prepare necssary information for local updates
-        indices = self._subspace.supercell_orbit_mappings(supercell_matrix)
-        for indices, orbit in zip(indices, self._subspace.orbits):
-            self._orbit_list.append((
-                orbit.bit_id, orbit.bit_combo_array, orbit.bit_combo_inds,
-                orbit.bases_array, indices))
+        mappings = self._subspace.supercell_orbit_mappings(supercell_matrix)
+        for cluster_indices, orbit in zip(mappings, self._subspace.orbits):
+            self._orbit_list.append(
+                (orbit.bit_id, orbit.flat_tensor_indices,
+                 orbit.flat_correlation_tensors, cluster_indices)
+            )
 
-            for site_ind in np.unique(indices):
-                in_inds = np.any(indices == site_ind, axis=-1)
-                ratio = len(indices) / np.sum(in_inds)
+            for site_ind in np.unique(cluster_indices):
+                in_inds = np.any(cluster_indices == site_ind, axis=-1)
+                ratio = len(cluster_indices) / np.sum(in_inds)
                 self._orbits_by_sites[site_ind].append(
                     (orbit.bit_id, ratio, orbit.bit_combo_array,
                      orbit.bit_combo_inds, orbit.bases_array,
-                     indices[in_inds]))
+                     cluster_indices[in_inds]))
 
     def compute_feature_vector(self, occupancy):
         """Compute the correlation vector for a given occupancy string.

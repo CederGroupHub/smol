@@ -31,7 +31,7 @@ cpdef corr_from_occupancy(const long[::1] occu,
              site indices of clusters)
 
     Returns: array
-        correlation vector difference
+        correlation vector for given occupancy
     """
     cdef int i, j, n, m, I, J, M, index
     cdef double p
@@ -231,7 +231,7 @@ cpdef corr_from_occupancy_low_mem(const long[::1] occu,
             (orbit id, bit_combos, bit_combo_indices site indices, bases array)
 
     Returns: array
-        correlation vector difference
+        correlation vector for given occupancy
     """
     cdef int i, j, k, n, m, I, K, M
     cdef double p, pi

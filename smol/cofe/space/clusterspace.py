@@ -542,11 +542,11 @@ class ClusterSubspace(MSONable):
         occu = np.array(occu, dtype=int)
 
         # Create a list of tuples with necessary information to compute corr
-        indices = self.supercell_orbit_mappings(scmatrix)
+        mappings = self.supercell_orbit_mappings(scmatrix)
         orbit_list = [
             (orbit.bit_id, orbit.flat_tensor_indices,
-             orbit.flat_correlation_tensors, inds)
-            for inds, orbit in zip(indices, self.orbits)
+             orbit.flat_correlation_tensors, cluster_indices)
+            for cluster_indices, orbit in zip(mappings, self.orbits)
         ]
         corr = corr_from_occupancy(occu, self.num_corr_functions, orbit_list)
         size = self.num_prims_from_matrix(scmatrix)
