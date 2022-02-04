@@ -16,8 +16,8 @@ cimport numpy as np
 
 
 cpdef corr_from_occupancy(const long[::1] occu,
-                           const int num_corr_functions,
-                           list orbit_list):
+                          const int num_corr_functions,
+                          list orbit_list):
     """Computes the correlation vector for a given encoded occupancy string.
 
     Args:
@@ -26,8 +26,8 @@ cpdef corr_from_occupancy(const long[::1] occu,
         num_corr_functions (int):
             total number of bit orderings in expansion.
         orbit_list:
-            Information of all orbits that include the flip site.
-            (orbit id, flat tensor index array, flat correlation array,
+            Information of all orbits.
+            (orbit id, flat tensor index array, flat correlation tensor,
              site indices of clusters)
 
     Returns: array
@@ -58,10 +58,10 @@ cpdef corr_from_occupancy(const long[::1] occu,
     return out
 
 
-cpdef general_delta_corr_single_flip(const long[::1] occu_f,
-                                     const long[::1] occu_i,
-                                     const int num_corr_functions,
-                                     list site_orbit_list):
+cpdef delta_corr_single_flip(const long[::1] occu_f,
+                             const long[::1] occu_i,
+                             const int num_corr_functions,
+                             list site_orbit_list):
     """Computes the correlation difference between two occupancy vectors.
 
     Args:
@@ -74,35 +74,34 @@ cpdef general_delta_corr_single_flip(const long[::1] occu_f,
         site_orbit_list:
             Information of all orbits that include the flip site.
             List of tuples each with
-            (orbit id, bit_combos, bit_combo_indices site indices, bases array)
+            (orbit id, cluster ratio, flat tensor index array,
+             flat correlation tensor, site indices of clusters)
 
 
     Returns:
         ndarray: correlation vector difference
     """
-    cdef int i, j, k, n, m, I, K, M
-    cdef double p, pi, pf, r
-    cdef const long[:, ::1] indices, bit_combos
-    cdef const long[::1] bit_indices
-    cdef const double[:, :, ::1] bases
+    cdef int i, j, n, m, I, J, M, ind_i, ind_f
+    cdef double p, ratio
+    cdef const long[:, ::1] indices
+    cdef const long[::1] tensor_indices
+    cdef const double[:, ::1] corr_tensors
     out = np.zeros(num_corr_functions)
     cdef double[::1] o_view = out
 
-    for n, r, bit_combos, bit_indices, bases, indices in site_orbit_list:
-        M = bit_indices.shape[0] # index of bit combos
+    for n, ratio, tensor_indices, corr_tensors, indices in site_orbit_list:
+        M = corr_tensors.shape[0] # index of bit combos
         I = indices.shape[0] # cluster index
-        K = indices.shape[1] # index within cluster
-        for m in range(M - 1):
+        J = indices.shape[1] # index within cluster
+        for m in range(M):
             p = 0
             for i in range(I):
-                for j in range(bit_indices[m], bit_indices[m + 1]):
-                    pf = 1
-                    pi = 1
-                    for k in range(K):
-                        pf *= bases[k, bit_combos[j, k], occu_f[indices[i, k]]]
-                        pi *= bases[k, bit_combos[j, k], occu_i[indices[i, k]]]
-                    p += (pf - pi)
-            o_view[n] = p / r / (I * (bit_indices[m + 1] - bit_indices[m]))
+                ind_i, ind_f = 0, 0
+                for j in range(J):
+                    ind_i += tensor_indices[j] * occu_i[indices[i, j]]
+                    ind_f += tensor_indices[j] * occu_f[indices[i, j]]
+                p += (corr_tensors[m, ind_f] - corr_tensors[m, ind_i])
+            o_view[n] = p / ratio / I
             n += 1
     return out
 
@@ -123,7 +122,8 @@ cpdef indicator_delta_corr_single_flip(const long[::1] occu_f,
         site_orbit_list:
             Information of all orbits that include the flip site.
             List of tuples each with
-            (orbit id, bit_combos, bit_combo_indices site indices, bases array)
+            (orbit id, cluster ratio, bit_combos,
+             bit_combo_indices site indices, bases array)
 
     Returns:
         ndarray: correlation vector difference
@@ -221,13 +221,15 @@ cpdef corr_from_occupancy_low_mem(const long[::1] occu,
                                   list orbit_list):
     """Computes the correlation vector for a given encoded occupancy string.
 
+    Lower memory usage but slightly slower and worse scaling
+
     Args:
         occu (ndarray):
             encoded occupancy vector
         num_corr_functions (int):
             total number of bit orderings in expansion.
         orbit_list:
-            Information of all orbits that include the flip site.
+            Information of all orbits.
             (orbit id, bit_combos, bit_combo_indices site indices, bases array)
 
     Returns: array
@@ -235,8 +237,8 @@ cpdef corr_from_occupancy_low_mem(const long[::1] occu,
     """
     cdef int i, j, k, n, m, I, K, M
     cdef double p, pi
-    cdef const long[:, ::1] inds, bit_combos
-    cdef const long[::1] bit_inds
+    cdef const long[:, ::1] indices, bit_combos
+    cdef const long[::1] bit_indices
     cdef const double[:, :, ::1] bases
     out = np.zeros(num_corr_functions)
     cdef double[:] o_view = out
@@ -255,5 +257,57 @@ cpdef corr_from_occupancy_low_mem(const long[::1] occu,
                         pi *= bases[k, bit_combos[j, k], occu[indices[i, k]]]
                     p += pi
             o_view[n] = p / (I * (bit_indices[m + 1] - bit_indices[m]))
+            n += 1
+    return out
+
+
+cpdef delta_corr_single_flip_lm(const long[::1] occu_f,
+                                     const long[::1] occu_i,
+                                     const int num_corr_functions,
+                                     list site_orbit_list):
+    """Computes the correlation difference between two occupancy vectors.
+
+    Lower memory usage but slightly slower and worse scaling
+
+    Args:
+        occu_f (ndarray):
+            encoded occupancy vector with flip
+        occu_i (ndarray):
+            encoded occupancy vector without flip
+        num_corr_functions (int):
+            total number of bit orderings in expansion.
+        site_orbit_list:
+            Information of all orbits that include the flip site.
+            List of tuples each with
+            (orbit id, clustar ratio, bit_combos,
+            bit_combo_indices site indices, bases array)
+
+
+    Returns:
+        ndarray: correlation vector difference
+    """
+    cdef int i, j, k, n, m, I, K, M
+    cdef double p, pi, pf, r
+    cdef const long[:, ::1] indices, bit_combos
+    cdef const long[::1] bit_indices
+    cdef const double[:, :, ::1] bases
+    out = np.zeros(num_corr_functions)
+    cdef double[::1] o_view = out
+
+    for n, r, bit_combos, bit_indices, bases, indices in site_orbit_list:
+        M = bit_indices.shape[0] # index of bit combos
+        I = indices.shape[0] # cluster index
+        K = indices.shape[1] # index within cluster
+        for m in range(M - 1):
+            p = 0
+            for i in range(I):
+                for j in range(bit_indices[m], bit_indices[m + 1]):
+                    pf = 1
+                    pi = 1
+                    for k in range(K):
+                        pf *= bases[k, bit_combos[j, k], occu_f[indices[i, k]]]
+                        pi *= bases[k, bit_combos[j, k], occu_i[indices[i, k]]]
+                    p += (pf - pi)
+            o_view[n] = p / r / (I * (bit_indices[m + 1] - bit_indices[m]))
             n += 1
     return out
