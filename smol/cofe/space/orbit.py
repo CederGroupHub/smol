@@ -260,23 +260,37 @@ class Orbit(MSONable):
         if self._corr_tensors is None:
             corr_tensors = np.zeros(
                 (len(self.bit_combos),
-                 *(self.bases_array.shape[0] * (self.bases_array.shape[2],)))
+                 *(basis.shape[1] for basis in self.basis_arrays))
             )
 
             for i, combos in enumerate(self.bit_combos):
                 for bits in combos:
                     corr_tensors[i] += reduce(
                         lambda a, b: np.tensordot(a, b, axes=0),
-                        self.bases_array[:, bits, :][0])
+                        (self.basis_arrays[i][b] for i, b in enumerate(bits)))
                 corr_tensors[i] /= len(combos)
 
-            # remove out-of-bounds dimensions (is there a cleaner way?)
-            sl = [slice(None, None, None)]
-            sl += list(map(
-                lambda comp: slice(None, len(comp), None), self.site_spaces))
-            self._corr_tensors = corr_tensors[tuple(sl)]
-
+            self._corr_tensors = corr_tensors
         return self._corr_tensors
+
+    def eval(self, bits, occu):
+        p = 1
+        for i, (bit, sp) in enumerate(zip(bits, occu)):
+            p *= self.basis_arrays[i][bit, sp]
+        return p
+
+    @property
+    def correlation_tensors_(self):
+        corr_tensors = np.zeros(
+            (len(self.bit_combos),
+             *(basis.shape[1] for basis in self.basis_arrays))
+        )
+
+        for i, combos in enumerate(self.bit_combos):
+            for occu in product(*[np.arange(len(ssp)) for ssp in self.site_spaces]):
+                corr_tensors[i][occu] = sum(self.eval(bits, occu) for bits in combos)/len(combos)
+
+        return corr_tensors
 
     @property
     def rotation_array(self):
