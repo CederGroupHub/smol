@@ -16,57 +16,29 @@ cimport numpy as np
 
 
 cpdef corr_from_occupancy(const long[::1] occu,
-                          const int n_bit_orderings,
-                          list orbit_list):
+                           const int num_corr_functions,
+                           list orbit_list):
     """Computes the correlation vector for a given encoded occupancy string.
 
     Args:
         occu (ndarray):
             encoded occupancy vector
-        n_bit_orderings (int):
+        num_corr_functions (int):
             total number of bit orderings in expansion.
         orbit_list:
             Information of all orbits that include the flip site.
-            (orbit id, bit_combos, bit_combo_indices site indices, bases array)
+            (orbit id, flat tensor index array, flat correlation array,
+             site indices of clusters)
 
     Returns: array
         correlation vector difference
     """
-    cdef int i, j, k, n, m, I, K, M
-    cdef double p, pi
-    cdef const long[:, ::1] inds, bit_combos
-    cdef const long[::1] bit_inds
-    cdef const double[:, :, ::1] bases
-    out = np.zeros(n_bit_orderings)
-    cdef double[:] o_view = out
-    o_view[0] = 1  # empty cluster
-
-    for n, bit_combos, bit_indices, bases, indices in orbit_list:
-        M = bit_indices.shape[0] # index of bit combos
-        I = indices.shape[0] # cluster index
-        K = indices.shape[1] # index within cluster
-        for m in range(M - 1):
-            p = 0
-            for i in range(I):
-                for j in range(bit_indices[m], bit_indices[m + 1]):
-                    pi = 1
-                    for k in range(K):
-                        pi *= bases[k, bit_combos[j, k], occu[indices[i, k]]]
-                    p += pi
-            o_view[n] = p / (I * (bit_indices[m + 1] - bit_indices[m]))
-            n += 1
-    return out
-
-
-cpdef corr_from_occupancy_(const long[::1] occu,
-                           const int n_bit_orderings,
-                           list orbit_list):
     cdef int i, j, n, m, I, J, M, index
     cdef double p
     cdef const long[:, ::1] indices
     cdef const long[::1] tensor_indices
     cdef const double[:, ::1] corr_tensors
-    out = np.zeros(n_bit_orderings)
+    out = np.zeros(num_corr_functions)
     cdef double[:] o_view = out
     o_view[0] = 1  # empty cluster
 
@@ -88,7 +60,7 @@ cpdef corr_from_occupancy_(const long[::1] occu,
 
 cpdef general_delta_corr_single_flip(const long[::1] occu_f,
                                      const long[::1] occu_i,
-                                     const int n_bit_orderings,
+                                     const int num_corr_functions,
                                      list site_orbit_list):
     """Computes the correlation difference between two occupancy vectors.
 
@@ -97,7 +69,7 @@ cpdef general_delta_corr_single_flip(const long[::1] occu_f,
             encoded occupancy vector with flip
         occu_i (ndarray):
             encoded occupancy vector without flip
-        n_bit_orderings (int):
+        num_corr_functions (int):
             total number of bit orderings in expansion.
         site_orbit_list:
             Information of all orbits that include the flip site.
@@ -113,7 +85,7 @@ cpdef general_delta_corr_single_flip(const long[::1] occu_f,
     cdef const long[:, ::1] indices, bit_combos
     cdef const long[::1] bit_indices
     cdef const double[:, :, ::1] bases
-    out = np.zeros(n_bit_orderings)
+    out = np.zeros(num_corr_functions)
     cdef double[::1] o_view = out
 
     for n, r, bit_combos, bit_indices, bases, indices in site_orbit_list:
@@ -137,7 +109,7 @@ cpdef general_delta_corr_single_flip(const long[::1] occu_f,
 
 cpdef indicator_delta_corr_single_flip(const long[::1] occu_f,
                                        const long[::1] occu_i,
-                                       const int n_bit_orderings,
+                                       const int num_corr_functions,
                                        list site_orbit_list):
     """Local change in indicator basis correlation vector from single flip.
 
@@ -146,7 +118,7 @@ cpdef indicator_delta_corr_single_flip(const long[::1] occu_f,
             encoded occupancy vector with flip
         occu_i (ndarray):
             encoded occupancy vector without flip
-        n_bit_orderings (int):
+        num_corr_functions (int):
             total number of bit orderings in expansion.
         site_orbit_list:
             Information of all orbits that include the flip site.
@@ -160,7 +132,7 @@ cpdef indicator_delta_corr_single_flip(const long[::1] occu_f,
     cdef bint ok
     cdef const long[:, ::1] bit_combos, indices
     cdef const long[::1] bit_indices
-    out = np.zeros(n_bit_orderings)
+    out = np.zeros(num_corr_functions)
     cdef double[::1] o_view = out
     cdef double r, o
 
@@ -241,4 +213,47 @@ cpdef delta_ewald_single_flip(const long[::1] occu_f,
             else:
                 out_k = out_k - ewald_matrix[j, sub]
         out += out_k
+    return out
+
+
+cpdef corr_from_occupancy_low_mem(const long[::1] occu,
+                                  const int num_corr_functions,
+                                  list orbit_list):
+    """Computes the correlation vector for a given encoded occupancy string.
+
+    Args:
+        occu (ndarray):
+            encoded occupancy vector
+        num_corr_functions (int):
+            total number of bit orderings in expansion.
+        orbit_list:
+            Information of all orbits that include the flip site.
+            (orbit id, bit_combos, bit_combo_indices site indices, bases array)
+
+    Returns: array
+        correlation vector difference
+    """
+    cdef int i, j, k, n, m, I, K, M
+    cdef double p, pi
+    cdef const long[:, ::1] inds, bit_combos
+    cdef const long[::1] bit_inds
+    cdef const double[:, :, ::1] bases
+    out = np.zeros(num_corr_functions)
+    cdef double[:] o_view = out
+    o_view[0] = 1  # empty cluster
+
+    for n, bit_combos, bit_indices, bases, indices in orbit_list:
+        M = bit_indices.shape[0] # index of bit combos
+        I = indices.shape[0] # cluster index
+        K = indices.shape[1] # index within cluster
+        for m in range(M - 1):
+            p = 0
+            for i in range(I):
+                for j in range(bit_indices[m], bit_indices[m + 1]):
+                    pi = 1
+                    for k in range(K):
+                        pi *= bases[k, bit_combos[j, k], occu[indices[i, k]]]
+                    p += pi
+            o_view[n] = p / (I * (bit_indices[m + 1] - bit_indices[m]))
+            n += 1
     return out

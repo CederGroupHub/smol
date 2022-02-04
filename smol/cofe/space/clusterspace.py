@@ -10,7 +10,6 @@ diverges from the CE mathematic formalism.
 from copy import deepcopy
 from importlib import import_module
 import warnings
-from itertools import combinations
 import numpy as np
 from scipy.linalg import block_diag
 
@@ -387,15 +386,15 @@ class ClusterSubspace(MSONable):
     def orbits_by_cutoffs(self, upper, lower=0):
         """Get orbits with clusters within given diameter cutoffs (inclusive).
 
-               Args:
-                   upper (float):
-                       upper diameter for clusters to include.
-                   lower (float): optional
-                       lower diameter for clusters to include.
+        Args:
+           upper (float):
+               upper diameter for clusters to include.
+           lower (float): optional
+               lower diameter for clusters to include.
 
-               Returns:
-                   list of Orbits
-               """
+        Returns:
+           list of Orbits
+        """
         return [orbit for orbit in self.iterorbits()
                 if lower <= orbit.base_cluster.diameter <= upper]
 
@@ -571,11 +570,10 @@ class ClusterSubspace(MSONable):
         # Create a list of tuples with necessary information to compute corr
         indices = self.supercell_orbit_mappings(scmatrix)
         orbit_list = [
-            (orbit.bit_id, orbit.bit_combo_array, orbit.bit_combo_inds,
-             orbit.bases_array, inds)
+            (orbit.bit_id, orbit.flat_tensor_indices,
+             orbit.flat_correlation_tensors, inds)
             for inds, orbit in zip(indices, self.orbits)
         ]
-
         corr = corr_from_occupancy(occu, self.num_corr_functions, orbit_list)
         size = self.num_prims_from_matrix(scmatrix)
 
