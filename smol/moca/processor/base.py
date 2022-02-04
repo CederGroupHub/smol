@@ -140,8 +140,8 @@ class Processor(MSONable, metaclass=ABCMeta):
         Returns:
             float:  property difference between inital and final states
         """
-        return np.dot(self.coefs,
-                      self.compute_feature_vector_change(occupancy, flips))
+        return np.dot(
+            self.coefs, self.compute_feature_vector_change(occupancy, flips))
 
     def occupancy_from_structure(self, structure):
         """Get the occupancy array for a given structure.
@@ -156,8 +156,8 @@ class Processor(MSONable, metaclass=ABCMeta):
         Returns: encoded occupancy string
             list
         """
-        occu = self._subspace.occupancy_from_structure(structure,
-                                                       scmatrix=self.supercell_matrix)  # noqa
+        occu = self._subspace.occupancy_from_structure(
+            structure, scmatrix=self.supercell_matrix)
         return self.encode_occupancy(occu)
 
     def structure_from_occupancy(self, occupancy):
@@ -180,7 +180,6 @@ class Processor(MSONable, metaclass=ABCMeta):
 
     def encode_occupancy(self, occupancy):
         """Encode occupancy string of species str to ints."""
-        # TODO check if setting to np.intc improves speed
         return np.array([species.index(sp) for species, sp
                          in zip(self.allowed_species, occupancy)],
                         dtype=int)
