@@ -11,9 +11,9 @@ import numpy as np
 from collections import defaultdict
 from smol.cofe import ClusterSubspace
 from smol.moca.processor.base import Processor
-from src.mc_utils import (corr_from_occupancy, factors_from_occupancy,
-                          delta_corr_single_flip, delta_factors_single_flip,
-                          indicator_delta_corr_single_flip)
+from src.cemc_utils import (corr_from_occupancy, factors_from_occupancy,
+                            delta_corr_single_flip, delta_factors_single_flip,
+                            indicator_delta_corr_single_flip)
 
 
 class CEProcessor(Processor):
@@ -245,8 +245,8 @@ class OrbitDecompositionProcessor(Processor):
                 in_inds = np.any(cluster_indices == site_ind, axis=-1)
                 ratio = len(cluster_indices) / np.sum(in_inds)
                 self._orbits_by_sites[site_ind].append(
-                    (orbit.id, ratio, orbit.flat_tensor_indices, flat_factor_tensor,
-                     np.ascontiguousarray(cluster_indices[in_inds]))
+                    (orbit.id, ratio, orbit.flat_tensor_indices,
+                     flat_factor_tensor, cluster_indices[in_inds])
                 )
 
     def compute_feature_vector(self, occupancy):

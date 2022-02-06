@@ -302,7 +302,8 @@ class Sampler:
                  thin_by=thin_by, progress=progress)
         for temperature in temperatures[1:]:
             self._kernel.temperature = temperature
-            # TODO remove this when removing fuSGC! hacky stuffs add bias instead
+            # TODO remove this when removing fuSGC!
+            #  hacky stuffs add bias instead
             if hasattr(self._kernel.ensemble, 'temperature'):
                 self._kernel.ensemble.temperature = temperature
             self.run(mcmc_steps, thin_by=thin_by, progress=progress)

@@ -13,7 +13,7 @@ __author__ = "Luis Barroso-Luque"
 
 import numpy as np
 from pymatgen.analysis.ewald import EwaldSummation
-from src.mc_utils import delta_ewald_single_flip
+from src.cemc_utils import delta_ewald_single_flip
 from smol.cofe import ClusterSubspace
 from smol.cofe.extern import EwaldTerm
 from smol.moca.processor.base import Processor

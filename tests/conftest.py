@@ -4,7 +4,8 @@ import numpy as np
 from monty.serialization import loadfn
 from smol.cofe import ClusterSubspace
 from smol.moca import CanonicalEnsemble, MuSemiGrandEnsemble, \
-    FuSemiGrandEnsemble, CEProcessor
+    FuSemiGrandEnsemble
+from smol.moca.processor import CEProcessor
 
 # load test data files and set them up as fixtures
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')

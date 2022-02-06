@@ -3,7 +3,7 @@ import numpy as np
 import numpy.testing as npt
 from tests.utils import assert_msonable, gen_random_occupancy
 from smol.cofe.extern import EwaldTerm
-from smol.moca import CEProcessor, EwaldProcessor, CompositeProcessor
+from smol.moca.processor import CEProcessor, EwaldProcessor, CompositeProcessor
 from smol.moca.processor.base import Processor
 from smol.moca.ensemble.sublattice import get_sublattices
 

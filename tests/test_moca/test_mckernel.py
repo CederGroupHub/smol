@@ -3,7 +3,6 @@ from itertools import product
 import numpy as np
 import numpy.testing as npt
 from smol.constants import kB
-from smol.moca import CEProcessor, CanonicalEnsemble
 from smol.moca.sampler.mcusher import Swapper, Flipper
 from smol.moca.sampler.kernel import Metropolis, UniformlyRandom, ThermalKernel
 from tests.utils import gen_random_occupancy

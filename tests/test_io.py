@@ -3,7 +3,8 @@ import os
 import numpy as np
 from smol.io import save_work, load_work
 from smol.cofe import ClusterSubspace, ClusterExpansion, StructureWrangler
-from smol.moca import CEProcessor, CanonicalEnsemble
+from smol.moca import CanonicalEnsemble
+from smol.moca.processor import CEProcessor
 from tests.data import lno_prim, lno_data
 
 

@@ -16,7 +16,7 @@ from smol.cofe.space.constants import SITE_TOL
 from smol.cofe.space.domain import get_allowed_species, Vacancy
 from smol.exceptions import StructureMatchError
 from tests.utils import gen_random_structure
-from src.mc_utils import corr_from_occupancy
+from src.cemc_utils import corr_from_occupancy
 from tests.utils import assert_msonable
 
 

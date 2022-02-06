@@ -6,8 +6,8 @@ import numpy as np
 from smol.cofe import ClusterExpansion, RegressionData
 from smol.cofe.extern import EwaldTerm
 from smol.moca import (CanonicalEnsemble, MuSemiGrandEnsemble,
-                       FuSemiGrandEnsemble, CompositeProcessor,
-                       CEProcessor, EwaldProcessor)
+                       FuSemiGrandEnsemble)
+from smol.moca.processor import (CompositeProcessor, CEProcessor, EwaldProcessor)
 from tests.utils import assert_msonable, gen_random_occupancy
 
 ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble]

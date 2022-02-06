@@ -213,7 +213,7 @@ class ClusterExpansion(MSONable):
 
     @property
     def orbit_factor_tensors(self):
-        """Tuple of orbit factor tensors
+        """Get tuple of orbit factor tensors.
 
         Tuple of ndarrays where each array is the factor tensor for the
         corresponding orbit.

@@ -56,8 +56,8 @@ else:
 
 ext = '.pyx' if USE_CYTHON else '.c'
 ext_modules = [
-    Extension("src.mc_utils",
-              ["src/mc_utils"+ext],
+    Extension("src.cemc_utils",
+              ["src/cemc_utils"+ext],
               language="c",
               include_dirs=["src/"],
               extra_compile_args=["-O3", "-ffast-math"]
