@@ -271,9 +271,11 @@ class ClusterExpansion(MSONable):
         """
         corrs = self.cluster_subspace.corr_from_structure(
             structure, normalized=normalize)
-        vals = self.coefs * corrs
+        vals = self.eci * corrs
         orbit_factors = np.array(
-            [np.sum(vals[self.eci_orbit_ids == i])
+            [np.sum(
+                vals[self.eci_orbit_ids == i] *
+                self._subspace.function_ordering_multiplicities[self.eci_orbit_ids == i])  # noqa
                 for i in range(len(self._subspace.orbits) + 1)]
         )
         return orbit_factors

@@ -29,7 +29,7 @@ def cluster_subspace(request):
     return subspace
 
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def single_subspace():
     subspace = ClusterSubspace.from_cutoffs(
         test_structures[2], cutoffs={2: 6, 3: 5, 4: 4}, supercell_size='volume')

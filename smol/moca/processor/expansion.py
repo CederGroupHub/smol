@@ -64,10 +64,11 @@ class CEProcessor(Processor):
 
         self.n_corr_functions = self.cluster_subspace.num_corr_functions
         if len(coefficients) != self.n_corr_functions:
-            raise ValueError('The provided coeffiecients are not the right '
-                             f'length. Got {len(coefficients)} coefficients, '
-                             f'the length must be {self.n_corr_functions} '
-                             'based on the provided cluster subspace.')
+            raise ValueError(
+                f'The provided coeffiecients are not the right length. '
+                f'Got {len(coefficients)} coefficients, the length must be '
+                f'{self.n_corr_functions} based on the provided cluster '
+                f'subspace.')
 
         # set the dcorr_single_flip function
         self.optimize_indicator = optimize_indicator
@@ -219,6 +220,13 @@ class OrbitDecompositionProcessor(Processor):
                 coefficient/ECI for empty term or equivalently factor for
                 empty term
         """
+        if len(orbit_factor_tensors) != cluster_subspace.num_orbits - 1:
+            raise ValueError(
+                f'The number of orbit factor tensors must match the number '
+                f' of orbits in the subspace. Got {len(orbit_factor_tensors)} '
+                f'orbit factors, but need {cluster_subspace.num_orbits - 1} '
+                f' for the given cluster_subspace.')
+
         #  the orbit multiplicities play the role of coefficients here.
         super().__init__(cluster_subspace, supercell_matrix,
                          coefficients=cluster_subspace.orbit_multiplicities)
@@ -311,7 +319,7 @@ class OrbitDecompositionProcessor(Processor):
     def from_dict(cls, d):
         """Create a CEProcessor from serialized MSONable dict."""
         factor_tensors = tuple(
-            np.array(factor) for factor in d['orbit_factors']
+            np.array(factor) for factor in d['orbit_factor_tensors']
         )
         return cls(ClusterSubspace.from_dict(d['cluster_subspace']),
                    np.array(d['supercell_matrix']), factor_tensors,
