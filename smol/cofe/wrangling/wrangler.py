@@ -17,13 +17,13 @@ __author__ = "Luis Barroso-Luque"
 __credits__ = "William Davidson Richard"
 
 from typing import Sequence
+from importlib import import_module
 import warnings
 from itertools import combinations
 import numpy as np
 from monty.json import MSONable, jsanitize
 from pymatgen.core.structure import Structure
 from pymatgen.analysis.structure_matcher import StructureMatcher
-from smol.cofe.space.clusterspace import ClusterSubspace
 from smol.exceptions import StructureMatchError
 
 
@@ -667,7 +667,9 @@ class StructureWrangler(MSONable):
     @classmethod
     def from_dict(cls, d):
         """Create Structure Wrangler from an MSONable dict."""
-        sw = cls(cluster_subspace=ClusterSubspace.from_dict(d['_subspace']))
+        module = import_module(d['_subspace']['@module'])
+        subspace_cls = getattr(module, d['_subspace']['@class'])
+        sw = cls(cluster_subspace=subspace_cls.from_dict(d['_subspace']))
         items = []
         for item in d['_items']:
             items.append({'properties': item['properties'],

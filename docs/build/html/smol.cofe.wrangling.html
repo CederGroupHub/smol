@@ -151,7 +151,7 @@ it to save any other pertinent information that will be saved with using
 <p>Initialize a StructureWrangler.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A ClusterSubspace object that will be used to fit a
+<dd class="field-odd"><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A ClusterSubspace object that will be used to fit a
 ClusterExpansion with the provided data.</p>
 </dd>
 </dl>
@@ -381,11 +381,14 @@ vectors may be a sign of insufficient sampling of configuration space.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.wrangler.StructureWrangler.get_duplicate_corr_indices">
-<span class="sig-name descname"><span class="pre">get_duplicate_corr_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rm_external_terms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.get_duplicate_corr_indices" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_duplicate_corr_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rm_external_terms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.get_duplicate_corr_indices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find indices of rows with duplicate corr vectors in feature matrix.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>cutoffs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – optional
+dictionary with cluster diameter cutoffs for correlation
+functions to consider in correlation vectors.</p></li>
 <li><p><strong>decimals</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 number of decimals to round correlations in order to allow
 some numerical tolerance for finding duplicates. If None is
@@ -738,17 +741,20 @@ possible number of rows.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.gaussian_select">
-<span class="sig-name descname"><span class="pre">gaussian_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.gaussian_select" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">gaussian_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthogonalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.gaussian_select" title="Permalink to this definition">¶</a></dt>
 <dd><ol class="upperalpha simple" start="22">
 <li><p>Vanilla structure selection to increase incoherence.</p></li>
 </ol>
 <p>Sequentially pick samples with feature vector that most closely aligns
 with a sampled random gaussian vector on the unit sphere.</p>
+<p>This works much better when the number of rows in the feature matrix
+is much larger than the number of samples requested.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>feature_matrix</strong> (<em>ndarray</em>) – feature matrix to select rows/structure from.</p></li>
 <li><p><strong>num_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – number of samples/rows/structures to select.</p></li>
+<li><p><strong>orthogonalize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – If true will orthogonalize the generated random vectors</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -785,7 +791,7 @@ If True will return the compliment of the unique indices</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.unique_corr_vector_indices">
-<span class="sig-name descname"><span class="pre">unique_corr_vector_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrangler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'min'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_compliment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.unique_corr_vector_indices" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">unique_corr_vector_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrangler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'min'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_compliment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.unique_corr_vector_indices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return index set of structures with unique correlation vectors.</p>
 <p>Keep structures with the min or max value of the given property.
 Note correlation vectors exclude external terms such that even if the
@@ -799,6 +805,9 @@ the same the structures will be considered duplicates.</p>
 for the feature matrix with duplicate corr vectors removed.</p></li>
 <li><p><strong>filter_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The criteria for the property value to keep. Options are min
 or max.</p></li>
+<li><p><strong>cutoffs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – optional
+dictionary with cluster diameter cutoffs for correlation
+functions to consider in correlation vectors.</p></li>
 <li><p><strong>return_compliment</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 If True will return the compliment of the unique indices</p></li>
 </ul>
