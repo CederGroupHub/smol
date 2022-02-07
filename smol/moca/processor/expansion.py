@@ -203,7 +203,7 @@ class OrbitDecompositionProcessor(Processor):
     """
 
     def __init__(self, cluster_subspace, supercell_matrix,
-                 orbit_factor_tensors, offset):
+                 orbit_factor_tensors):
         """Initialize an OrbitDecompositionProcessor.
 
         Args:
@@ -216,15 +216,12 @@ class OrbitDecompositionProcessor(Processor):
                 Sequence of ndarray where each array corresponds to the
                 orbit factor tensor. These should be in the same order as their
                 corresponding orbits in the given cluster_subspace
-            offset (float):
-                coefficient/ECI for empty term or equivalently factor for
-                empty term
         """
-        if len(orbit_factor_tensors) != cluster_subspace.num_orbits - 1:
+        if len(orbit_factor_tensors) != cluster_subspace.num_orbits:
             raise ValueError(
                 f'The number of orbit factor tensors must match the number '
                 f' of orbits in the subspace. Got {len(orbit_factor_tensors)} '
-                f'orbit factors, but need {cluster_subspace.num_orbits - 1} '
+                f'orbit factors, but need {cluster_subspace.num_orbits} '
                 f' for the given cluster_subspace.')
 
         #  the orbit multiplicities play the role of coefficients here.
@@ -232,7 +229,6 @@ class OrbitDecompositionProcessor(Processor):
                          coefficients=cluster_subspace.orbit_multiplicities)
 
         self.n_orbits = self.cluster_subspace.num_orbits
-        self.offset = offset
         self._fac_tensors = orbit_factor_tensors
 
         # List of orbit information and supercell site indices to compute corr
@@ -243,7 +239,7 @@ class OrbitDecompositionProcessor(Processor):
         # Prepare necssary information for local updates
         mappings = self._subspace.supercell_orbit_mappings(supercell_matrix)
         for cluster_indices, orbit_factor, orbit in zip(
-                mappings, orbit_factor_tensors, self._subspace.orbits):
+                mappings, self._fac_tensors[1:], self._subspace.orbits):
             flat_factor_tensor = np.ravel(orbit_factor, order='C')
             self._orbit_list.append(
                 (orbit.flat_tensor_indices, flat_factor_tensor,
@@ -269,8 +265,9 @@ class OrbitDecompositionProcessor(Processor):
         Returns:
             array: correlation vector
         """
-        return factors_from_occupancy(occupancy, self.n_orbits, self.offset,
-                                      self._orbit_list) * self.size
+        return factors_from_occupancy(
+            occupancy, self.n_orbits, self._fac_tensors[0], self._orbit_list) \
+            * self.size
 
     def compute_feature_vector_change(self, occupancy, flips):
         """
@@ -310,7 +307,6 @@ class OrbitDecompositionProcessor(Processor):
             MSONable dict
         """
         d = super().as_dict()
-        d['offset'] = self.offset
         d['orbit_factor_tensors'] = [factor.tolist() for factor
                                      in self._fac_tensors]
         return d
@@ -322,5 +318,4 @@ class OrbitDecompositionProcessor(Processor):
             np.array(factor) for factor in d['orbit_factor_tensors']
         )
         return cls(ClusterSubspace.from_dict(d['cluster_subspace']),
-                   np.array(d['supercell_matrix']), factor_tensors,
-                   d['offset'])
+                   np.array(d['supercell_matrix']), factor_tensors)

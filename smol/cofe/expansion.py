@@ -219,7 +219,7 @@ class ClusterExpansion(MSONable):
         corresponding orbit.
         """
         if self._fac_tensors is None:
-            self._fac_tensors = tuple(
+            self._fac_tensors = (self.coefs[0], ) + tuple(
                 sum(m * self.eci[orbit.bit_id + i] * tensor for i, (m, tensor)
                     in enumerate(
                         zip(orbit.bit_combo_multiplicities,

@@ -48,8 +48,7 @@ def composite_processor(cluster_subspace, request):
         expansion = ClusterExpansion(cluster_subspace, coefs)
         proc.add_processor(
             OrbitDecompositionProcessor(cluster_subspace, scmatrix,
-                                        expansion.orbit_factor_tensors,
-                                        coefs[0])
+                                        expansion.orbit_factor_tensors)
         )
     proc.add_processor(EwaldProcessor(cluster_subspace, scmatrix, ewald_term,
                                       coefficient=coefs[-1]))
@@ -189,7 +188,7 @@ def test_compute_orbit_factors(cluster_subspace):
     scmatrix = 3 * np.eye(3)
     expansion = ClusterExpansion(cluster_subspace, coefs)
     processor = OrbitDecompositionProcessor(
-        cluster_subspace, scmatrix, expansion.orbit_factor_tensors, coefs[0])
+        cluster_subspace, scmatrix, expansion.orbit_factor_tensors)
     occu = gen_random_occupancy(get_sublattices(processor),
                                 processor.num_sites)
     struct = processor.structure_from_occupancy(occu)
