@@ -4,6 +4,7 @@ from tests.utils import assert_msonable
 from pymatgen.core import Composition, Element, Species, DummySpecies
 from smol.cofe.space.domain import (get_species, get_allowed_species,
                                     get_site_spaces, Vacancy)
+from copy import copy, deepcopy
 
 
 @pytest.mark.parametrize('measure', [True, False])
@@ -56,6 +57,8 @@ def test_vacancy():
     assert vacancy != Species('Li')
     _ = str(vacancy)
     _ = repr(vacancy)
+    assert deepcopy(vacancy).as_dict() == vacancy.as_dict()
+    assert copy(vacancy).as_dict() == vacancy.as_dict()
 
 
 def test_site_space(structure):

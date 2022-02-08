@@ -4,8 +4,6 @@ A set of symmetrically equivalent (with respect to the given random structure
 symmetry) clusters.
 """
 
-__author__ = "Luis Barroso-Luque, William Davidson Richard"
-
 from itertools import chain, product, accumulate, combinations
 import numpy as np
 
@@ -18,7 +16,9 @@ from smol.utils import _repr
 from smol.exceptions import SymmetryError, SYMMETRY_ERROR_MESSAGE
 from .constants import SITE_TOL
 from .cluster import Cluster
-from .basis import basis_factory, SiteBasis
+from .basis import basis_factory, DiscreteBasis
+
+__author__ = "Luis Barroso-Luque, William Davidson Richard"
 
 
 class Orbit(MSONable):
@@ -42,7 +42,7 @@ class Orbit(MSONable):
         bits (list of list):
             list of lists describing the posible non-constant site function
             indices at each site of a cluster in the orbit.
-        site_bases (list of SiteBasis):
+        site_bases (list of DiscreteBasis):
             list of the SiteBasis for each site.
         structure_symops (list of Symmops):
             list of underlying structure symmetry operations.
@@ -66,17 +66,20 @@ class Orbit(MSONable):
                 This is ensures the expansion is not "over-complete" by
                 implicitly enforcing that all sites have a site basis function
                 phi_0 = 1.
-            site_bases (list of SiteBasis):
+            site_bases (list of DiscreteBasis):
                 list of SiteBasis objects for each site in the given sites.
             structure_symops (list of SymmOp):
                 list of symmetry operations for the base structure
         """
         if len(sites) != len(bits):
-            raise AttributeError(f'Number of sites {len(sites)} must be equal '
-                                 f'to number of bits {len(bits)}')
+            raise AttributeError(
+                f"Number of sites {len(sites)} must be equal to number of "
+                f"bits {len(bits)}")
         elif len(sites) != len(site_bases):
-            raise AttributeError(f'Number of sites {len(sites)} must be equal '
-                                 f'to number of site bases {len(site_bases)}')
+            raise AttributeError(
+                f"Number of sites {len(sites)} must be equal to number of "
+                f"site bases {len(site_bases)}")
+
         self.bits = bits
         self.site_bases = site_bases
         self.structure_symops = structure_symops
@@ -122,14 +125,15 @@ class Orbit(MSONable):
         """
         if self._bit_combos is not None:
             return self._bit_combos
+
         # get all the bit symmetry operations
         bit_ops = tuple(set(bit_op for _, bit_op in self.cluster_symops))
         all_combos = []
         for bit_combo in product(*self.bits):
             if bit_combo not in chain(*all_combos):
                 bit_combo = np.array(bit_combo)
-                new_bits = list(set(tuple(bit_combo[np.array(bit_op)])
-                                    for bit_op in bit_ops))
+                new_bits = list(set(
+                    tuple(bit_combo[np.array(bit_op)]) for bit_op in bit_ops))
                 all_combos.append(new_bits)
         self._bit_combos = tuple(
             np.array(c, dtype=np.int_) for c in all_combos)
@@ -210,8 +214,8 @@ class Orbit(MSONable):
     def basis_arrays(self):  # TODO remove this?
         """Get a tuple of all site function arrays for each site in orbit."""
         if self._basis_arrs is None:
-            self._basis_arrs = tuple(sb.function_array
-                                     for sb in self.site_bases)
+            self._basis_arrs = tuple(
+                sb.function_array for sb in self.site_bases)
         return self._basis_arrs
 
     @property
@@ -224,9 +228,10 @@ class Orbit(MSONable):
         fancy indexing which can be faster than for loops.
         """
         if self._bases_arr is None or self._basis_arrs is None:
-            max_dim = max(len(fa) for fa in self.basis_arrays)
-            self._bases_arr = np.ones((len(self.basis_arrays),
-                                       max_dim, max_dim + 1))
+            max_f = max(fa.shape[0] for fa in self.basis_arrays)
+            max_s = max(fa.shape[1] for fa in self.basis_arrays)
+            self._bases_arr = np.ones(
+                (len(self.basis_arrays), max_f, max_s))
             for i, fa in enumerate(self.basis_arrays):
                 j, k = fa.shape
                 self._bases_arr[i, :j, :k] = fa
@@ -255,8 +260,9 @@ class Orbit(MSONable):
                 bit_combos.append(bit_combo)
 
         if not bit_combos:
-            raise RuntimeError('All bit_combos have been removed from orbit '
-                               f'with id {self.id}')
+            raise RuntimeError(
+                "All bit_combos have been removed from orbit with id "
+                f"{self.id}")
 
         self._bit_combos = tuple(bit_combos)
         self._combo_arr = None  # reset
@@ -264,16 +270,18 @@ class Orbit(MSONable):
     def remove_bit_combos_by_inds(self, inds):
         """Remove bit combos by their indices in the bit_combo list."""
         if max(inds) > len(self.bit_combos) - 1:
-            raise RuntimeError(f'Some indices {inds} out of ranges for total '
-                               f'{len(self._bit_combos)} bit combos')
+            raise RuntimeError(
+                f"Some indices {inds} out of ranges for total "
+                f"{len(self._bit_combos)} bit combos")
 
-        self._bit_combos = tuple(b_c for i, b_c in enumerate(self._bit_combos)
-                                 if i not in inds)
+        self._bit_combos = tuple(
+            b_c for i, b_c in enumerate(self._bit_combos) if i not in inds)
         self._combo_arr = None  # reset
 
         if not self.bit_combos:
-            raise RuntimeError('All bit_combos have been removed from orbit '
-                               f'with id {self.id}')
+            raise RuntimeError(
+                "All bit_combos have been removed from orbit with id "
+                f"{self.id}")
 
     def eval(self, bits, species_encoding):   # TODO remove this?
         """Evaluate a cluster function defined for this orbit.
@@ -436,7 +444,7 @@ class Orbit(MSONable):
         """Create Orbit from serialized MSONable dict."""
         structure_symops = [SymmOp.from_dict(so_d)
                             for so_d in d['structure_symops']]
-        site_bases = [SiteBasis.from_dict(sd) for sd in d['site_bases']]
+        site_bases = [DiscreteBasis.from_dict(sd) for sd in d['site_bases']]
         o = cls(d['sites'], Lattice.from_dict(d['lattice']),
                 d['bits'], site_bases, structure_symops)
 

@@ -14,18 +14,18 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
-<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
-<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
-<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+<script type="text/javascript" src="_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
 
   </head><body>
 
@@ -40,7 +40,7 @@
         </button>
         <a class="navbar-brand" href="index.html">
           smol</a>
-        <span class="navbar-text navbar-version pull-left"><b></b></span>
+        <span class="navbar-text navbar-version pull-left"><b>1.0.1</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -129,7 +129,7 @@ structures and properties.</p>
 composition for a given set of structures.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.wrangler.StructureWrangler">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">StructureWrangler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">StructureWrangler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Class to create fitting data to fit a cluster expansion.</p>
 <p>A StructureWrangler handles (wrangles) input data structures and properties
@@ -273,19 +273,19 @@ obtained using the process_structure method.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.wrangler.StructureWrangler.available_indices">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">available_indices</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.available_indices" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">available_indices</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.available_indices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of available data index sets.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.wrangler.StructureWrangler.available_properties">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">available_properties</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.available_properties" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">available_properties</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.available_properties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of properties that have been added.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.wrangler.StructureWrangler.available_weights">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">available_weights</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.available_weights" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">available_weights</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.available_weights" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of weights that have been added.</p>
 </dd></dl>
 
@@ -305,7 +305,7 @@ to create a copy and the change the subspace.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.wrangler.StructureWrangler.cluster_subspace">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cluster_subspace</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.cluster_subspace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cluster_subspace</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.cluster_subspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the underlying ClusterSubspace used to compute features.</p>
 </dd></dl>
 
@@ -317,20 +317,20 @@ to create a copy and the change the subspace.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.wrangler.StructureWrangler.data_items">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">data_items</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.data_items" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_items</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.data_items" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of the data item dictionaries.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.wrangler.StructureWrangler.feature_matrix">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">feature_matrix</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.feature_matrix" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">feature_matrix</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.feature_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get feature matrix.</p>
 <p>Rows are structures, Columns are correlations.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.wrangler.StructureWrangler.from_dict">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create Structure Wrangler from an MSONable dict.</p>
 </dd></dl>
 
@@ -381,11 +381,14 @@ vectors may be a sign of insufficient sampling of configuration space.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.wrangler.StructureWrangler.get_duplicate_corr_indices">
-<span class="sig-name descname"><span class="pre">get_duplicate_corr_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rm_external_terms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.get_duplicate_corr_indices" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_duplicate_corr_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rm_external_terms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.get_duplicate_corr_indices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find indices of rows with duplicate corr vectors in feature matrix.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>cutoffs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – optional
+dictionary with cluster diameter cutoffs for correlation
+functions to consider in correlation vectors.</p></li>
 <li><p><strong>decimals</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – optional
 number of decimals to round correlations in order to allow
 some numerical tolerance for finding duplicates. If None is
@@ -537,25 +540,25 @@ already normalized, you need to normalize before fitting a CE.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.wrangler.StructureWrangler.metadata">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.metadata" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get dictionary to save applied filters, etc.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.wrangler.StructureWrangler.num_features">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">num_features</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.num_features" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_features</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.num_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get number of features for each added structure.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.wrangler.StructureWrangler.num_structures">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">num_structures</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.num_structures" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_structures</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.num_structures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get number of structures added (correctly matched to prim).</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.wrangler.StructureWrangler.occupancy_strings">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">occupancy_strings</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.occupancy_strings" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">occupancy_strings</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.occupancy_strings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get occupancy strings for each of the structures in the wrangler.</p>
 </dd></dl>
 
@@ -610,7 +613,7 @@ fail for further inspection.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.wrangler.StructureWrangler.refined_structures">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">refined_structures</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.refined_structures" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">refined_structures</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.refined_structures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of refined structures.</p>
 </dd></dl>
 
@@ -639,25 +642,25 @@ fail for further inspection.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.wrangler.StructureWrangler.sizes">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">sizes</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.sizes" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sizes</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.sizes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get sizes of each structure in terms of number of prims.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.wrangler.StructureWrangler.structure_site_mappings">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">structure_site_mappings</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.structure_site_mappings" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">structure_site_mappings</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.structure_site_mappings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of site mappings for each structure to prim.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.wrangler.StructureWrangler.structures">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">structures</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.structures" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">structures</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.structures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of included structures.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.wrangler.StructureWrangler.supercell_matrices">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">supercell_matrices</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.supercell_matrices" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">supercell_matrices</span></span><a class="headerlink" href="#smol.cofe.wrangling.wrangler.StructureWrangler.supercell_matrices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of supercell matrices relating each structure to prim.</p>
 </dd></dl>
 
@@ -738,17 +741,20 @@ possible number of rows.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.gaussian_select">
-<span class="sig-name descname"><span class="pre">gaussian_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.gaussian_select" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">gaussian_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthogonalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.gaussian_select" title="Permalink to this definition">¶</a></dt>
 <dd><ol class="upperalpha simple" start="22">
 <li><p>Vanilla structure selection to increase incoherence.</p></li>
 </ol>
 <p>Sequentially pick samples with feature vector that most closely aligns
 with a sampled random gaussian vector on the unit sphere.</p>
+<p>This works much better when the number of rows in the feature matrix
+is much larger than the number of samples requested.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>feature_matrix</strong> (<em>ndarray</em>) – feature matrix to select rows/structure from.</p></li>
 <li><p><strong>num_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – number of samples/rows/structures to select.</p></li>
+<li><p><strong>orthogonalize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – If true will orthogonalize the generated random vectors</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -785,7 +791,7 @@ If True will return the compliment of the unique indices</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.unique_corr_vector_indices">
-<span class="sig-name descname"><span class="pre">unique_corr_vector_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrangler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'min'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_compliment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.unique_corr_vector_indices" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">unique_corr_vector_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrangler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'min'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_compliment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.unique_corr_vector_indices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return index set of structures with unique correlation vectors.</p>
 <p>Keep structures with the min or max value of the given property.
 Note correlation vectors exclude external terms such that even if the
@@ -799,6 +805,9 @@ the same the structures will be considered duplicates.</p>
 for the feature matrix with duplicate corr vectors removed.</p></li>
 <li><p><strong>filter_by</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The criteria for the property value to keep. Options are min
 or max.</p></li>
+<li><p><strong>cutoffs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – optional
+dictionary with cluster diameter cutoffs for correlation
+functions to consider in correlation vectors.</p></li>
 <li><p><strong>return_compliment</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 If True will return the compliment of the unique indices</p></li>
 </ul>
@@ -866,8 +875,8 @@ If True will return the compliment of the unique indices</p></li>
       
     </p>
     <p>
-        &copy; Copyright 2020, Ceder Group.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br/>
+        &copy; Copyright 2022, Ceder Group.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br/>
     </p>
   </div>
 </footer>

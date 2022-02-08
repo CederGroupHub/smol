@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+* `PottsSubspace` class to generate redundant frame expansions.
+[\#146](https://github.com/CederGroupHub/smol/pull/146)
+  ([lbluque](https://github.com/lbluque))
 * Methods `is_suborbit` and `sub_orbit_mappings` in `Orbit` and related
 `function_hierarchy` and `orbit_hierarchy` in `ClusterSubspace`.
   [\#141](https://github.com/CederGroupHub/smol/pull/141)
@@ -26,6 +29,13 @@ Use this section to keep track of changes in the works.
   ([lbluque](https://github.com/lbluque))
 
 ### Changed
+* Changed `ClusterSubspace.supercell_orbit_mappings` to only include cluster
+  site indices.
+  [#145](https://github.com/CederGroupHub/smol/pull/145)
+([lbluque](https://github.com/lbluque))
+* Enable setting cluster cutoffs for duplicate searching.
+[#142](https://github.com/CederGroupHub/smol/pull/142)
+([lbluque](https://github.com/lbluque))
 * Methods `orbits_from_cutoffs` and `function_inds_from_cutoffs` now allow a
   dictionary as input to pick out orbits with different cluster diameter
   cutoffs.
@@ -33,7 +43,7 @@ Use this section to keep track of changes in the works.
   ([lbluque](https://github.com/lbluque))
 
 ### Fixed
-* Fix [140](https://github.com/CederGroupHub/smol/issues/140) corrected
+* Fix [141](https://github.com/CederGroupHub/smol/issues/140) corrected
   implementation of correlation function hierarchy.
   [\#141](https://github.com/CederGroupHub/smol/pull/141)
   ([lbluque](https://github.com/lbluque))
@@ -49,6 +59,13 @@ Use this section to keep track of changes in the works.
   [#104](https://github.com/CederGroupHub/smol/issues/104) when generating
   orbits from cutoffs. [#138](https://github.com/CederGroupHub/smol/pull/125)
   ([qchempku2017](https://github.com/qchempku2017))
+
+
+### Deprecated
+* Numerical conversion of coefficients between bases
+  `ClusterExpansion.convert_coefs`
+  [\#149](https://github.com/CederGroupHub/smol/pull/149)
+  ([lbluque](https://github.com/lbluque))
 
 ## [v1.0.1](https://github.com/CederGroupHub/smol/tree/v1.0.1) (2021-03-03)
 #### [Full Changelog](https://github.com/CederGroupHub/smol/compare/v1.0.0...v1.0.1)
@@ -196,11 +213,9 @@ as functions in `cofe.wrangling.filter`.
 inherited classes instead of string names. (This is to allow keeping additional
 properties for species, such as oxidation state, magnetization, the sky is the
 limit.)
-* Single `SiteBasis` site basis class that is constructed using a basis
+* Single `StandardBasis` site basis class that is constructed using a basis
 function iterator for specific basis sets.
 * Example notebooks updated accordingly.
-
-### Deprecated
 
 ### Removed
 * `smol.learn` and all regression estimators have been removed.
@@ -211,7 +226,7 @@ crystallographic symmetry multiplicity and function decoration multiplicity.
 (credits to [qchempku2017](https://github.com/qchempku2017) for pointing this
 out.)
 * Fixed MSONable serialization of cluster subspaces with orthonormal basis sets
-by making `SiteBasis` MSONable and saving corresponding arrays.
+by making `StandardBasis` MSONable and saving corresponding arrays.
 [\#90](https://github.com/CederGroupHub/smol/pull/90)
 
 
