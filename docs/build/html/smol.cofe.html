@@ -14,18 +14,18 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
-<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
-<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
-<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+<script type="text/javascript" src="_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
 
   </head><body>
 
@@ -40,7 +40,7 @@
         </button>
         <a class="navbar-brand" href="index.html">
           smol</a>
-        <span class="navbar-text navbar-version pull-left"><b></b></span>
+        <span class="navbar-text navbar-version pull-left"><b>1.0.1</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -155,7 +155,7 @@ terms and speed up Monte Carlo runs.</p>
 strongly tested.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.expansion.ClusterExpansion">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ClusterExpansion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regression_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ClusterExpansion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regression_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Class for the ClusterExpansion proper.</p>
 <p>This needs a <code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code> and a corresponding set of
@@ -199,7 +199,7 @@ expansion. i.e. if it was pruned, any error metrics etc.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A clustersubspace representing the subspace over which the
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A clustersubspace representing the subspace over which the
 Cluster Expansion was fit. Must be the same used to create
 the feature matrix.</p></li>
 <li><p><strong>coefficients</strong> (<em>ndarray</em>) – coefficients for cluster expansion. Make sure the supplied
@@ -227,36 +227,13 @@ for different bases.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.expansion.ClusterExpansion.cluster_subspace">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cluster_subspace</span></span><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion.cluster_subspace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cluster_subspace</span></span><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion.cluster_subspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get cluster subspace.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="smol.cofe.expansion.ClusterExpansion.convert_coefs">
-<span class="sig-name descname"><span class="pre">convert_coefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_basis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_structures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthonormal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion.convert_coefs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Numerically convert expansion coeficients to a given new basis.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>new_basis</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – name of basis to convert coefficients into.</p></li>
-<li><p><strong>fit_structures</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – list of pymatgen.Structure used to fit the eci</p></li>
-<li><p><strong>supercell_matrices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – list of supercell matrices for the corresponding fit structures</p></li>
-<li><p><strong>feature_matrix</strong> (<em>ndarray</em>) – feature matrix if not passed in the constructor.</p></li>
-<li><p><strong>orthonormal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – option to make new basis orthonormal</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>coefficients converted into new_basis</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>array</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.expansion.ClusterExpansion.eci">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">eci</span></span><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion.eci" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">eci</span></span><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion.eci" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the eci for the cluster expansion.</p>
 <p>This just divides by the corresponding multiplicities. External terms
 will are dropped since their fitted coefficients do not represent ECI.</p>
@@ -264,7 +241,7 @@ will are dropped since their fitted coefficients do not represent ECI.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.expansion.ClusterExpansion.eci_orbit_ids">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">eci_orbit_ids</span></span><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion.eci_orbit_ids" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">eci_orbit_ids</span></span><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion.eci_orbit_ids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get Orbit ids corresponding to each ECI in the Cluster Expansion.</p>
 <p>If the Cluster Expansion includes external terms these are not included
 in the list since they are not associated with any orbit.</p>
@@ -272,7 +249,7 @@ in the list since they are not associated with any orbit.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.expansion.ClusterExpansion.expansion_structure">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">expansion_structure</span></span><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion.expansion_structure" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expansion_structure</span></span><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion.expansion_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get expansion structure.</p>
 <p>Prim structure with only sites included in the expansion.
 (i.e. sites with partial occupancies)</p>
@@ -280,14 +257,14 @@ in the list since they are not associated with any orbit.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.expansion.ClusterExpansion.feature_matrix">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">feature_matrix</span></span><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion.feature_matrix" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">feature_matrix</span></span><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion.feature_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the feature matrix used in fit.</p>
 <p>If not given returns an identity matrix of len num_corrs</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.expansion.ClusterExpansion.from_dict">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create ClusterExpansion from serialized MSONable dict.</p>
 </dd></dl>
 
@@ -311,7 +288,7 @@ the prim cell size.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.expansion.ClusterExpansion.prim_structure">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">prim_structure</span></span><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion.prim_structure" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prim_structure</span></span><a class="headerlink" href="#smol.cofe.expansion.ClusterExpansion.prim_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get primitive structure which the expansion is based on.</p>
 </dd></dl>
 
@@ -342,7 +319,7 @@ the fit coefficients</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.expansion.RegressionData">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">RegressionData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">estimator_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><span class="pre">numpy.ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_vector</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><span class="pre">numpy.ndarray</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.expansion.RegressionData" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RegressionData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">estimator_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_vector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.expansion.RegressionData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Dataclass used to store regression model details.</p>
 <p>This class is used to store the details used in fitting a cluster expansion
@@ -351,17 +328,17 @@ recommended to initialize <a class="reference internal" href="#smol.cofe.expansi
 class</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.cofe.expansion.RegressionData.estimator_name">
-<span class="sig-name descname"><span class="pre">estimator_name</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#smol.cofe.expansion.RegressionData.estimator_name" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">estimator_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#smol.cofe.expansion.RegressionData.estimator_name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.cofe.expansion.RegressionData.feature_matrix">
-<span class="sig-name descname"><span class="pre">feature_matrix</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><span class="pre">numpy.ndarray</span></a></em><a class="headerlink" href="#smol.cofe.expansion.RegressionData.feature_matrix" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">feature_matrix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#smol.cofe.expansion.RegressionData.feature_matrix" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.expansion.RegressionData.from_object">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">estimator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.expansion.RegressionData.from_object" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">estimator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.expansion.RegressionData.from_object" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a RegressionData object from an esimator class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -382,7 +359,7 @@ this out of good practice and to ensure reproducibility.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.expansion.RegressionData.from_sklearn">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_sklearn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">estimator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_vector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.expansion.RegressionData.from_sklearn" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_sklearn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">estimator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_vector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.expansion.RegressionData.from_sklearn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a RegressionData object from sklearn estimator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -400,17 +377,17 @@ this out of good practice and to ensure reproducibility.</p></li>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.cofe.expansion.RegressionData.module">
-<span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#smol.cofe.expansion.RegressionData.module" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#smol.cofe.expansion.RegressionData.module" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.cofe.expansion.RegressionData.parameters">
-<span class="sig-name descname"><span class="pre">parameters</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></em><a class="headerlink" href="#smol.cofe.expansion.RegressionData.parameters" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></em><a class="headerlink" href="#smol.cofe.expansion.RegressionData.parameters" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.cofe.expansion.RegressionData.property_vector">
-<span class="sig-name descname"><span class="pre">property_vector</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><span class="pre">numpy.ndarray</span></a></em><a class="headerlink" href="#smol.cofe.expansion.RegressionData.property_vector" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">property_vector</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#smol.cofe.expansion.RegressionData.property_vector" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -426,7 +403,7 @@ this out of good practice and to ensure reproducibility.</p></li>
 functions to define and fit cluster expansions for crystalline materials.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.ClusterExpansion">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ClusterExpansion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regression_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterExpansion" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ClusterExpansion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regression_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterExpansion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Class for the ClusterExpansion proper.</p>
 <p>This needs a <a class="reference internal" href="#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code></a> and a corresponding set of
@@ -498,36 +475,13 @@ for different bases.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterExpansion.cluster_subspace">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cluster_subspace</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.cluster_subspace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cluster_subspace</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.cluster_subspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get cluster subspace.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="smol.cofe.ClusterExpansion.convert_coefs">
-<span class="sig-name descname"><span class="pre">convert_coefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_basis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_structures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthonormal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterExpansion.convert_coefs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Numerically convert expansion coeficients to a given new basis.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>new_basis</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – name of basis to convert coefficients into.</p></li>
-<li><p><strong>fit_structures</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – list of pymatgen.Structure used to fit the eci</p></li>
-<li><p><strong>supercell_matrices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – list of supercell matrices for the corresponding fit structures</p></li>
-<li><p><strong>feature_matrix</strong> (<em>ndarray</em>) – feature matrix if not passed in the constructor.</p></li>
-<li><p><strong>orthonormal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – option to make new basis orthonormal</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>coefficients converted into new_basis</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>array</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterExpansion.eci">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">eci</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.eci" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">eci</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.eci" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the eci for the cluster expansion.</p>
 <p>This just divides by the corresponding multiplicities. External terms
 will are dropped since their fitted coefficients do not represent ECI.</p>
@@ -535,7 +489,7 @@ will are dropped since their fitted coefficients do not represent ECI.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterExpansion.eci_orbit_ids">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">eci_orbit_ids</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.eci_orbit_ids" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">eci_orbit_ids</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.eci_orbit_ids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get Orbit ids corresponding to each ECI in the Cluster Expansion.</p>
 <p>If the Cluster Expansion includes external terms these are not included
 in the list since they are not associated with any orbit.</p>
@@ -543,7 +497,7 @@ in the list since they are not associated with any orbit.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterExpansion.expansion_structure">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">expansion_structure</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.expansion_structure" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expansion_structure</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.expansion_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get expansion structure.</p>
 <p>Prim structure with only sites included in the expansion.
 (i.e. sites with partial occupancies)</p>
@@ -551,14 +505,14 @@ in the list since they are not associated with any orbit.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterExpansion.feature_matrix">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">feature_matrix</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.feature_matrix" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">feature_matrix</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.feature_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the feature matrix used in fit.</p>
 <p>If not given returns an identity matrix of len num_corrs</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.ClusterExpansion.from_dict">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterExpansion.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterExpansion.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create ClusterExpansion from serialized MSONable dict.</p>
 </dd></dl>
 
@@ -582,7 +536,7 @@ the prim cell size.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterExpansion.prim_structure">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">prim_structure</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.prim_structure" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prim_structure</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.prim_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get primitive structure which the expansion is based on.</p>
 </dd></dl>
 
@@ -613,7 +567,7 @@ the fit coefficients</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ClusterSubspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansion_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symops</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ClusterSubspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansion_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symops</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>ClusterSubspace represents a subspace of functions of configuration.</p>
 <p>A <a class="reference internal" href="#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code></a> is the main work horse used in constructing a
@@ -736,7 +690,7 @@ implemented.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.all_bit_combos">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">all_bit_combos</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.all_bit_combos" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">all_bit_combos</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.all_bit_combos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return flattened all bit_combos for each correlation function.</p>
 <p>A list of all bit_combos of length self.num_corr_functions.
 This allows to obtain a bit combo by bit id (empty cluster has None)</p>
@@ -755,19 +709,19 @@ This allows to obtain a bit combo by bit id (empty cluster has None)</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.basis_orthogonal">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">basis_orthogonal</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.basis_orthogonal" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">basis_orthogonal</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.basis_orthogonal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if the orbit basis defined is orthogonal.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.basis_orthonormal">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">basis_orthonormal</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.basis_orthonormal" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">basis_orthonormal</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.basis_orthonormal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if the orbit basis is orthonormal.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.basis_type">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">basis_type</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.basis_type" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">basis_type</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.basis_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the type of site basis set used.</p>
 </dd></dl>
 
@@ -832,7 +786,7 @@ option you are fully responsible that the mappings are correct!</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.cutoffs">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cutoffs</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.cutoffs" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cutoffs</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.cutoffs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return dict of orbit cluster cutoffs.</p>
 <p>These are “tight” cutoffs, as in the maximum diameter for each cluster
 size, which is &lt;= the input to from_cutoffs.</p>
@@ -840,13 +794,13 @@ size, which is &lt;= the input to from_cutoffs.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.expansion_structure">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">expansion_structure</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.expansion_structure" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expansion_structure</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.expansion_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the primitive expansion structure (excludes inactive sites).</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.external_terms">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">external_terms</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.external_terms" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">external_terms</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.external_terms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get external terms to be fitted together with the correlations.</p>
 <p>External terms are those represented by pair interaction Hamiltonians
 (i.e. Ewald electrostatics)</p>
@@ -854,7 +808,7 @@ size, which is &lt;= the input to from_cutoffs.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.from_cutoffs">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'indicator'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthonormal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_concentration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.from_cutoffs" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'indicator'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthonormal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_concentration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.from_cutoffs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a ClusterSubspace from diameter cutoffs.</p>
 <p>Creates a <a class="reference internal" href="#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code></a> with orbits of the given size and
 diameter smaller than or equal to the given value. The diameter of an
@@ -907,7 +861,7 @@ to use a species that has a constant amount per formula unit.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.from_dict">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create ClusterSubspace from an MSONable dict.</p>
 </dd></dl>
 
@@ -940,7 +894,7 @@ outer list index.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.function_inds_by_size">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">function_inds_by_size</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_inds_by_size" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">function_inds_by_size</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_inds_by_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get correlation function indices by cluster sizes.</p>
 </dd></dl>
 
@@ -975,7 +929,7 @@ i.e. {2: cutoff_pairs, 3: cutoff_trips, …}</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.function_orbit_ids">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">function_orbit_ids</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_orbit_ids" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">function_orbit_ids</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_orbit_ids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get Orbit IDs corresponding to each correlation function.</p>
 <p>If the Cluster Subspace includes external terms these are not included
 in the list since they are not associated with any orbit.</p>
@@ -983,7 +937,7 @@ in the list since they are not associated with any orbit.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.function_ordering_multiplicities">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">function_ordering_multiplicities</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_ordering_multiplicities" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">function_ordering_multiplicities</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_ordering_multiplicities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get array of ordering multiplicity of each correlation function.</p>
 <p>The length of the array returned is the total number of correlation
 functions in the subspace for all orbits. The ordering multiplicity of
@@ -993,7 +947,7 @@ orderings the result in the product of the same single site functions.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.function_total_multiplicities">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">function_total_multiplicities</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_total_multiplicities" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">function_total_multiplicities</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_total_multiplicities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get array of total multiplicity of each correlation function.</p>
 <p>The length of the array returned is the total number of correlation
 functions in the subspace for all orbits. The total multiplicity of a
@@ -1064,7 +1018,7 @@ minimum size of clusters in sub orbits to include</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.num_functions_per_orbit">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">num_functions_per_orbit</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.num_functions_per_orbit" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_functions_per_orbit</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.num_functions_per_orbit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the number of correlation functions for each orbit.</p>
 <p>The list returned is of length total number of orbits, each entry is
 the total number of correlation functions assocaited with that orbit.</p>
@@ -1072,7 +1026,7 @@ the total number of correlation functions assocaited with that orbit.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.num_prims_from_matrix">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">num_prims_from_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scmatrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.num_prims_from_matrix" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_prims_from_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scmatrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.num_prims_from_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get number of prim structures in a supercell for a given matrix.</p>
 </dd></dl>
 
@@ -1145,19 +1099,19 @@ index.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.orbit_multiplicities">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">orbit_multiplicities</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbit_multiplicities" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">orbit_multiplicities</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbit_multiplicities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the crystallographic multiplicities for each orbit.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.orbits">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">orbits</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbits" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">orbits</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a list of all orbits sorted by size.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.orbits_by_size">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">orbits_by_size</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbits_by_size" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">orbits_by_size</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbits_by_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get dictionary of orbits with key being the orbit size.</p>
 </dd></dl>
 
@@ -1283,7 +1237,7 @@ to a supercell equivalent to given structure.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.structure">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">structure</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.structure" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">structure</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the underlying primitive structure including inactive sites.</p>
 </dd></dl>
 
@@ -1334,7 +1288,7 @@ from the given matrix.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.PottsSubspace">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">PottsSubspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansion_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symops</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">without_last_cluster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.PottsSubspace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PottsSubspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansion_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symops</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">without_last_cluster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.PottsSubspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.space.clusterspace.ClusterSubspace</span></code></a></p>
 <p>PottsSubspace represents a subspace of functions using only indicators.</p>
 <p>A PottsSubspace is a related model to a ClusterSubspace. The only
@@ -1407,7 +1361,7 @@ more details.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.PottsSubspace.from_cutoffs">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_last_cluster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.PottsSubspace.from_cutoffs" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_last_cluster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.PottsSubspace.from_cutoffs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a PottsSubspace from diameter cutoffs.</p>
 <p>Creates a <a class="reference internal" href="#smol.cofe.PottsSubspace" title="smol.cofe.PottsSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">PottsSubspace</span></code></a> with orbits of the given size and
 diameter smaller than or equal to the given value. The diameter of an
@@ -1455,7 +1409,7 @@ to use a species that has a constant amount per formula unit.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.PottsSubspace.from_dict">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.PottsSubspace.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.PottsSubspace.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create ClusterSubspace from an MSONable dict.</p>
 </dd></dl>
 
@@ -1501,7 +1455,7 @@ Species/Elements.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.RegressionData">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">RegressionData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">estimator_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><span class="pre">numpy.ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_vector</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><span class="pre">numpy.ndarray</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.RegressionData" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RegressionData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">estimator_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_vector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.RegressionData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Dataclass used to store regression model details.</p>
 <p>This class is used to store the details used in fitting a cluster expansion
@@ -1510,17 +1464,17 @@ recommended to initialize <a class="reference internal" href="#smol.cofe.Cluster
 class</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.cofe.RegressionData.estimator_name">
-<span class="sig-name descname"><span class="pre">estimator_name</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#smol.cofe.RegressionData.estimator_name" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">estimator_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#smol.cofe.RegressionData.estimator_name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.cofe.RegressionData.feature_matrix">
-<span class="sig-name descname"><span class="pre">feature_matrix</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><span class="pre">numpy.ndarray</span></a></em><a class="headerlink" href="#smol.cofe.RegressionData.feature_matrix" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">feature_matrix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#smol.cofe.RegressionData.feature_matrix" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.RegressionData.from_object">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">estimator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.RegressionData.from_object" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">estimator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.RegressionData.from_object" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a RegressionData object from an esimator class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1541,7 +1495,7 @@ this out of good practice and to ensure reproducibility.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.RegressionData.from_sklearn">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_sklearn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">estimator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_vector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.RegressionData.from_sklearn" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_sklearn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">estimator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_vector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.RegressionData.from_sklearn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a RegressionData object from sklearn estimator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1559,24 +1513,24 @@ this out of good practice and to ensure reproducibility.</p></li>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.cofe.RegressionData.module">
-<span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#smol.cofe.RegressionData.module" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#smol.cofe.RegressionData.module" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.cofe.RegressionData.parameters">
-<span class="sig-name descname"><span class="pre">parameters</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></em><a class="headerlink" href="#smol.cofe.RegressionData.parameters" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></em><a class="headerlink" href="#smol.cofe.RegressionData.parameters" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.cofe.RegressionData.property_vector">
-<span class="sig-name descname"><span class="pre">property_vector</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><span class="pre">numpy.ndarray</span></a></em><a class="headerlink" href="#smol.cofe.RegressionData.property_vector" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">property_vector</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#smol.cofe.RegressionData.property_vector" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">StructureWrangler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">StructureWrangler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Class to create fitting data to fit a cluster expansion.</p>
 <p>A StructureWrangler handles (wrangles) input data structures and properties
@@ -1720,19 +1674,19 @@ obtained using the process_structure method.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.available_indices">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">available_indices</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.available_indices" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">available_indices</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.available_indices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of available data index sets.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.available_properties">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">available_properties</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.available_properties" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">available_properties</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.available_properties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of properties that have been added.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.available_weights">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">available_weights</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.available_weights" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">available_weights</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.available_weights" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of weights that have been added.</p>
 </dd></dl>
 
@@ -1752,7 +1706,7 @@ to create a copy and the change the subspace.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.cluster_subspace">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cluster_subspace</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.cluster_subspace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cluster_subspace</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.cluster_subspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the underlying ClusterSubspace used to compute features.</p>
 </dd></dl>
 
@@ -1764,20 +1718,20 @@ to create a copy and the change the subspace.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.data_items">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">data_items</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.data_items" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_items</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.data_items" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of the data item dictionaries.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.feature_matrix">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">feature_matrix</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.feature_matrix" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">feature_matrix</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.feature_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get feature matrix.</p>
 <p>Rows are structures, Columns are correlations.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.from_dict">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create Structure Wrangler from an MSONable dict.</p>
 </dd></dl>
 
@@ -1987,25 +1941,25 @@ already normalized, you need to normalize before fitting a CE.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.metadata">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.metadata" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get dictionary to save applied filters, etc.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.num_features">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">num_features</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.num_features" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_features</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.num_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get number of features for each added structure.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.num_structures">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">num_structures</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.num_structures" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_structures</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.num_structures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get number of structures added (correctly matched to prim).</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.occupancy_strings">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">occupancy_strings</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.occupancy_strings" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">occupancy_strings</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.occupancy_strings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get occupancy strings for each of the structures in the wrangler.</p>
 </dd></dl>
 
@@ -2060,7 +2014,7 @@ fail for further inspection.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.refined_structures">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">refined_structures</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.refined_structures" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">refined_structures</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.refined_structures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of refined structures.</p>
 </dd></dl>
 
@@ -2089,25 +2043,25 @@ fail for further inspection.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.sizes">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">sizes</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.sizes" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sizes</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.sizes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get sizes of each structure in terms of number of prims.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.structure_site_mappings">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">structure_site_mappings</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.structure_site_mappings" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">structure_site_mappings</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.structure_site_mappings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of site mappings for each structure to prim.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.structures">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">structures</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.structures" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">structures</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.structures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of included structures.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.supercell_matrices">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">supercell_matrices</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.supercell_matrices" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">supercell_matrices</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.supercell_matrices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of supercell matrices relating each structure to prim.</p>
 </dd></dl>
 
@@ -2140,8 +2094,8 @@ the Wrangler. This will prevent having to match structures and such.</p>
       
     </p>
     <p>
-        &copy; Copyright 2020, Ceder Group.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br/>
+        &copy; Copyright 2022, Ceder Group.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br/>
     </p>
   </div>
 </footer>
