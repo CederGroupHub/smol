@@ -252,3 +252,11 @@ class Vacancy(DummySpecie):
     def __repr__(self):
         """Get an explicit representation."""
         return "Vacancy " + self.__str__()
+
+    def __copy__(self):
+        """Copy the vacancy object."""
+        return Vacancy(self.symbol, self._oxi_state, self._properties)
+
+    def __deepcopy__(self, memo):
+        """Deepcopy the vacancy object."""
+        return Vacancy(self.symbol, self._oxi_state, self._properties)
