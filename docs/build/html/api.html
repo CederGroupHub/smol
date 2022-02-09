@@ -14,18 +14,18 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
-<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
-<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
-<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+<script type="text/javascript" src="_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
 
   </head><body>
 
@@ -40,7 +40,7 @@
         </button>
         <a class="navbar-brand" href="index.html">
           smol</a>
-        <span class="navbar-text navbar-version pull-left"><b></b></span>
+        <span class="navbar-text navbar-version pull-left"><b>1.0.1</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -147,7 +147,7 @@ cluster expansions refer to this document or any of following references [].</p>
 <span id="id2"></span><h2>ClusterSubspace<a class="headerlink" href="#clustersubspace" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ClusterSubspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansion_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symops</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ClusterSubspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansion_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symops</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>ClusterSubspace represents a subspace of functions of configuration.</p>
 <p>A <a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code></a> is the main work horse used in constructing a
@@ -270,7 +270,7 @@ implemented.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.all_bit_combos">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">all_bit_combos</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.all_bit_combos" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">all_bit_combos</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.all_bit_combos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return flattened all bit_combos for each correlation function.</p>
 <p>A list of all bit_combos of length self.num_corr_functions.
 This allows to obtain a bit combo by bit id (empty cluster has None)</p>
@@ -289,19 +289,19 @@ This allows to obtain a bit combo by bit id (empty cluster has None)</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.basis_orthogonal">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">basis_orthogonal</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.basis_orthogonal" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">basis_orthogonal</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.basis_orthogonal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if the orbit basis defined is orthogonal.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.basis_orthonormal">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">basis_orthonormal</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.basis_orthonormal" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">basis_orthonormal</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.basis_orthonormal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if the orbit basis is orthonormal.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.basis_type">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">basis_type</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.basis_type" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">basis_type</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.basis_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the type of site basis set used.</p>
 </dd></dl>
 
@@ -366,7 +366,7 @@ option you are fully responsible that the mappings are correct!</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.cutoffs">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cutoffs</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.cutoffs" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cutoffs</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.cutoffs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return dict of orbit cluster cutoffs.</p>
 <p>These are “tight” cutoffs, as in the maximum diameter for each cluster
 size, which is &lt;= the input to from_cutoffs.</p>
@@ -374,13 +374,13 @@ size, which is &lt;= the input to from_cutoffs.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.expansion_structure">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">expansion_structure</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.expansion_structure" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expansion_structure</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.expansion_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the primitive expansion structure (excludes inactive sites).</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.external_terms">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">external_terms</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.external_terms" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">external_terms</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.external_terms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get external terms to be fitted together with the correlations.</p>
 <p>External terms are those represented by pair interaction Hamiltonians
 (i.e. Ewald electrostatics)</p>
@@ -388,7 +388,7 @@ size, which is &lt;= the input to from_cutoffs.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.from_cutoffs">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'indicator'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthonormal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_concentration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.from_cutoffs" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'indicator'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthonormal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_concentration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.from_cutoffs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a ClusterSubspace from diameter cutoffs.</p>
 <p>Creates a <a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code></a> with orbits of the given size and
 diameter smaller than or equal to the given value. The diameter of an
@@ -441,7 +441,7 @@ to use a species that has a constant amount per formula unit.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.from_dict">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create ClusterSubspace from an MSONable dict.</p>
 </dd></dl>
 
@@ -474,7 +474,7 @@ outer list index.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.function_inds_by_size">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">function_inds_by_size</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_inds_by_size" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">function_inds_by_size</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_inds_by_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get correlation function indices by cluster sizes.</p>
 </dd></dl>
 
@@ -509,7 +509,7 @@ i.e. {2: cutoff_pairs, 3: cutoff_trips, …}</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.function_orbit_ids">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">function_orbit_ids</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_orbit_ids" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">function_orbit_ids</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_orbit_ids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get Orbit IDs corresponding to each correlation function.</p>
 <p>If the Cluster Subspace includes external terms these are not included
 in the list since they are not associated with any orbit.</p>
@@ -517,7 +517,7 @@ in the list since they are not associated with any orbit.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.function_ordering_multiplicities">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">function_ordering_multiplicities</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_ordering_multiplicities" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">function_ordering_multiplicities</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_ordering_multiplicities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get array of ordering multiplicity of each correlation function.</p>
 <p>The length of the array returned is the total number of correlation
 functions in the subspace for all orbits. The ordering multiplicity of
@@ -527,7 +527,7 @@ orderings the result in the product of the same single site functions.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.function_total_multiplicities">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">function_total_multiplicities</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_total_multiplicities" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">function_total_multiplicities</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.function_total_multiplicities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get array of total multiplicity of each correlation function.</p>
 <p>The length of the array returned is the total number of correlation
 functions in the subspace for all orbits. The total multiplicity of a
@@ -598,7 +598,7 @@ minimum size of clusters in sub orbits to include</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.num_functions_per_orbit">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">num_functions_per_orbit</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.num_functions_per_orbit" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_functions_per_orbit</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.num_functions_per_orbit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the number of correlation functions for each orbit.</p>
 <p>The list returned is of length total number of orbits, each entry is
 the total number of correlation functions assocaited with that orbit.</p>
@@ -606,7 +606,7 @@ the total number of correlation functions assocaited with that orbit.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.num_prims_from_matrix">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">num_prims_from_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scmatrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.num_prims_from_matrix" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_prims_from_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scmatrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterSubspace.num_prims_from_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get number of prim structures in a supercell for a given matrix.</p>
 </dd></dl>
 
@@ -679,19 +679,19 @@ index.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.orbit_multiplicities">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">orbit_multiplicities</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbit_multiplicities" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">orbit_multiplicities</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbit_multiplicities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the crystallographic multiplicities for each orbit.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.orbits">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">orbits</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbits" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">orbits</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a list of all orbits sorted by size.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.orbits_by_size">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">orbits_by_size</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbits_by_size" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">orbits_by_size</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.orbits_by_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get dictionary of orbits with key being the orbit size.</p>
 </dd></dl>
 
@@ -817,7 +817,7 @@ to a supercell equivalent to given structure.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterSubspace.structure">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">structure</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.structure" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">structure</span></span><a class="headerlink" href="#smol.cofe.ClusterSubspace.structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the underlying primitive structure including inactive sites.</p>
 </dd></dl>
 
@@ -868,7 +868,7 @@ from the given matrix.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.PottsSubspace">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">PottsSubspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansion_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symops</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">without_last_cluster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.PottsSubspace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PottsSubspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansion_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symops</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">without_last_cluster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.PottsSubspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.space.clusterspace.ClusterSubspace</span></code></a></p>
 <p>PottsSubspace represents a subspace of functions using only indicators.</p>
 <p>A PottsSubspace is a related model to a ClusterSubspace. The only
@@ -941,7 +941,7 @@ more details.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.PottsSubspace.from_cutoffs">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_last_cluster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.PottsSubspace.from_cutoffs" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_last_cluster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.PottsSubspace.from_cutoffs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a PottsSubspace from diameter cutoffs.</p>
 <p>Creates a <a class="reference internal" href="smol.cofe.html#smol.cofe.PottsSubspace" title="smol.cofe.PottsSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">PottsSubspace</span></code></a> with orbits of the given size and
 diameter smaller than or equal to the given value. The diameter of an
@@ -989,7 +989,7 @@ to use a species that has a constant amount per formula unit.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.PottsSubspace.from_dict">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.PottsSubspace.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.PottsSubspace.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create ClusterSubspace from an MSONable dict.</p>
 </dd></dl>
 
@@ -1038,7 +1038,7 @@ Species/Elements.</p>
 <span id="id3"></span><h2>StructureWrangler<a class="headerlink" href="#structurewrangler" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">StructureWrangler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">StructureWrangler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Class to create fitting data to fit a cluster expansion.</p>
 <p>A StructureWrangler handles (wrangles) input data structures and properties
@@ -1182,19 +1182,19 @@ obtained using the process_structure method.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.available_indices">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">available_indices</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.available_indices" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">available_indices</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.available_indices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of available data index sets.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.available_properties">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">available_properties</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.available_properties" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">available_properties</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.available_properties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of properties that have been added.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.available_weights">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">available_weights</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.available_weights" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">available_weights</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.available_weights" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of weights that have been added.</p>
 </dd></dl>
 
@@ -1214,7 +1214,7 @@ to create a copy and the change the subspace.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.cluster_subspace">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cluster_subspace</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.cluster_subspace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cluster_subspace</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.cluster_subspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the underlying ClusterSubspace used to compute features.</p>
 </dd></dl>
 
@@ -1226,20 +1226,20 @@ to create a copy and the change the subspace.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.data_items">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">data_items</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.data_items" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_items</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.data_items" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of the data item dictionaries.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.feature_matrix">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">feature_matrix</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.feature_matrix" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">feature_matrix</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.feature_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get feature matrix.</p>
 <p>Rows are structures, Columns are correlations.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.from_dict">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.StructureWrangler.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create Structure Wrangler from an MSONable dict.</p>
 </dd></dl>
 
@@ -1449,25 +1449,25 @@ already normalized, you need to normalize before fitting a CE.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.metadata">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.metadata" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get dictionary to save applied filters, etc.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.num_features">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">num_features</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.num_features" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_features</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.num_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get number of features for each added structure.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.num_structures">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">num_structures</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.num_structures" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_structures</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.num_structures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get number of structures added (correctly matched to prim).</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.occupancy_strings">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">occupancy_strings</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.occupancy_strings" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">occupancy_strings</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.occupancy_strings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get occupancy strings for each of the structures in the wrangler.</p>
 </dd></dl>
 
@@ -1522,7 +1522,7 @@ fail for further inspection.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.refined_structures">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">refined_structures</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.refined_structures" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">refined_structures</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.refined_structures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of refined structures.</p>
 </dd></dl>
 
@@ -1551,25 +1551,25 @@ fail for further inspection.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.sizes">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">sizes</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.sizes" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sizes</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.sizes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get sizes of each structure in terms of number of prims.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.structure_site_mappings">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">structure_site_mappings</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.structure_site_mappings" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">structure_site_mappings</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.structure_site_mappings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of site mappings for each structure to prim.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.structures">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">structures</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.structures" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">structures</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.structures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of included structures.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.StructureWrangler.supercell_matrices">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">supercell_matrices</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.supercell_matrices" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">supercell_matrices</span></span><a class="headerlink" href="#smol.cofe.StructureWrangler.supercell_matrices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of supercell matrices relating each structure to prim.</p>
 </dd></dl>
 
@@ -1589,7 +1589,7 @@ the Wrangler. This will prevent having to match structures and such.</p>
 <span id="id6"></span><h2>ClusterExpansion<a class="headerlink" href="#clusterexpansion" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.ClusterExpansion">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ClusterExpansion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regression_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterExpansion" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ClusterExpansion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regression_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterExpansion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Class for the ClusterExpansion proper.</p>
 <p>This needs a <a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code></a> and a corresponding set of
@@ -1661,36 +1661,13 @@ for different bases.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterExpansion.cluster_subspace">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cluster_subspace</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.cluster_subspace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cluster_subspace</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.cluster_subspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get cluster subspace.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="smol.cofe.ClusterExpansion.convert_coefs">
-<span class="sig-name descname"><span class="pre">convert_coefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_basis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_structures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthonormal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterExpansion.convert_coefs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Numerically convert expansion coeficients to a given new basis.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>new_basis</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – name of basis to convert coefficients into.</p></li>
-<li><p><strong>fit_structures</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – list of pymatgen.Structure used to fit the eci</p></li>
-<li><p><strong>supercell_matrices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – list of supercell matrices for the corresponding fit structures</p></li>
-<li><p><strong>feature_matrix</strong> (<em>ndarray</em>) – feature matrix if not passed in the constructor.</p></li>
-<li><p><strong>orthonormal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – option to make new basis orthonormal</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>coefficients converted into new_basis</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>array</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterExpansion.eci">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">eci</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.eci" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">eci</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.eci" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the eci for the cluster expansion.</p>
 <p>This just divides by the corresponding multiplicities. External terms
 will are dropped since their fitted coefficients do not represent ECI.</p>
@@ -1698,7 +1675,7 @@ will are dropped since their fitted coefficients do not represent ECI.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterExpansion.eci_orbit_ids">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">eci_orbit_ids</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.eci_orbit_ids" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">eci_orbit_ids</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.eci_orbit_ids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get Orbit ids corresponding to each ECI in the Cluster Expansion.</p>
 <p>If the Cluster Expansion includes external terms these are not included
 in the list since they are not associated with any orbit.</p>
@@ -1706,7 +1683,7 @@ in the list since they are not associated with any orbit.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterExpansion.expansion_structure">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">expansion_structure</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.expansion_structure" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expansion_structure</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.expansion_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get expansion structure.</p>
 <p>Prim structure with only sites included in the expansion.
 (i.e. sites with partial occupancies)</p>
@@ -1714,14 +1691,14 @@ in the list since they are not associated with any orbit.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterExpansion.feature_matrix">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">feature_matrix</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.feature_matrix" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">feature_matrix</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.feature_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the feature matrix used in fit.</p>
 <p>If not given returns an identity matrix of len num_corrs</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.ClusterExpansion.from_dict">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterExpansion.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.ClusterExpansion.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create ClusterExpansion from serialized MSONable dict.</p>
 </dd></dl>
 
@@ -1745,7 +1722,7 @@ the prim cell size.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.ClusterExpansion.prim_structure">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">prim_structure</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.prim_structure" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prim_structure</span></span><a class="headerlink" href="#smol.cofe.ClusterExpansion.prim_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get primitive structure which the expansion is based on.</p>
 </dd></dl>
 
@@ -1815,7 +1792,7 @@ sampled. Note that in as implemened an ensemble applies to any temperature,
 the specific temperature to generate samples at, is set in a <code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.ensemble.base.Ensemble">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
 <p>Abstract Base Class for Monte Carlo Ensembles.</p>
 <dl class="py attribute">
@@ -1880,7 +1857,7 @@ supercell with same site spaces.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.ensemble.base.Ensemble.compute_feature_vector">
-<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.compute_feature_vector" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.compute_feature_vector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the feature vector for a give occupancy.</p>
 <p>The feature vector is the necessary features required to compute
 the exponent determining in the relative probability for the given
@@ -1903,7 +1880,7 @@ correlation vector x system size</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.ensemble.base.Ensemble.compute_feature_vector_change">
-<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.compute_feature_vector_change" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.compute_feature_vector_change" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the change in the feature vector from a given step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1923,7 +1900,7 @@ correlation vector x system size</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.ensemble.base.Ensemble.from_cluster_expansion">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_cluster_expansion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_expansion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimize_indicator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.from_cluster_expansion" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_cluster_expansion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_expansion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimize_indicator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.from_cluster_expansion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize an ensemble from a cluster expansion.</p>
 <p>Convenience constructor to instantiate an ensemble. This will take
 care of initializing the correct processor based on the
@@ -1931,7 +1908,7 @@ ClusterExpansion.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_expansion</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterExpansion" title="smol.cofe.ClusterExpansion"><em>ClusterExpansion</em></a>) – A cluster expansion object.</p></li>
+<li><p><strong>cluster_expansion</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.expansion.ClusterExpansion" title="smol.cofe.expansion.ClusterExpansion"><em>ClusterExpansion</em></a>) – A cluster expansion object.</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – Supercell matrix defining the system size.</p></li>
 <li><p><strong>optimize_indicator</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional
 Wether to optimize calculations for indicator basis.</p></li>
@@ -1948,7 +1925,7 @@ fugacity_fractions.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.ensemble.base.Ensemble.natural_parameters">
-<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">natural_parameters</span></span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.natural_parameters" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">natural_parameters</span></span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.natural_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the vector of natural parameters.</p>
 <p>The natural parameters correspond to the fit coeficients of the
 underlying processor plus any additional terms involved in the Legendre
@@ -1957,13 +1934,13 @@ transformation corresponding to the ensemble.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.ensemble.base.Ensemble.num_sites">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">num_sites</span></span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.num_sites" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_sites</span></span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.num_sites" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the total number of sites in the supercell.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.ensemble.base.Ensemble.processor">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">processor</span></span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.processor" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">processor</span></span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.processor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the ensemble processor.</p>
 </dd></dl>
 
@@ -1989,32 +1966,32 @@ be no effect.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.ensemble.base.Ensemble.restricted_sites">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">restricted_sites</span></span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.restricted_sites" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">restricted_sites</span></span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.restricted_sites" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get indices of all restricted sites.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.ensemble.base.Ensemble.sublattices">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">sublattices</span></span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.sublattices" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sublattices</span></span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.sublattices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of sublattices included in ensemble.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.ensemble.base.Ensemble.system_size">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">system_size</span></span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.system_size" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">system_size</span></span><a class="headerlink" href="#smol.moca.ensemble.base.Ensemble.system_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get size of supercell in number of prims.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">valid_mcmc_steps</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">valid_mcmc_steps</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.CanonicalEnsemble">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">CanonicalEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CanonicalEnsemble" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CanonicalEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CanonicalEnsemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.base.Ensemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Canonical Ensemble class to run Monte Carlo Simulations.</p>
 <p>Initialize CanonicalEnemble.</p>
@@ -2070,7 +2047,7 @@ processor.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.CanonicalEnsemble.from_dict">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CanonicalEnsemble.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CanonicalEnsemble.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiate a CanonicalEnsemble from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2084,20 +2061,20 @@ processor.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.CanonicalEnsemble.natural_parameters">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">natural_parameters</span></span><a class="headerlink" href="#smol.moca.CanonicalEnsemble.natural_parameters" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">natural_parameters</span></span><a class="headerlink" href="#smol.moca.CanonicalEnsemble.natural_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the vector of exponential parameters.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.CanonicalEnsemble.valid_mcmc_steps">
-<span class="sig-name descname"><span class="pre">valid_mcmc_steps</span></span><em class="property"> <span class="pre">=</span> <span class="pre">('swap',)</span></em><a class="headerlink" href="#smol.moca.CanonicalEnsemble.valid_mcmc_steps" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">valid_mcmc_steps</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('swap',)</span></em><a class="headerlink" href="#smol.moca.CanonicalEnsemble.valid_mcmc_steps" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">BaseSemiGrandEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BaseSemiGrandEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.base.Ensemble</span></code></a></p>
 <p>Abstract Semi-Grand Canonical Base Ensemble.</p>
 <p>Total number of species are fixed but composition of “active” (with partial
@@ -2118,7 +2095,7 @@ supercell with same site spaces.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.compute_chemical_work">
-<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">compute_chemical_work</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.compute_chemical_work" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compute_chemical_work</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.compute_chemical_work" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the chemical work term.</p>
 </dd></dl>
 
@@ -2143,21 +2120,21 @@ term.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.natural_parameters">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">natural_parameters</span></span><a class="headerlink" href="#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.natural_parameters" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">natural_parameters</span></span><a class="headerlink" href="#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.natural_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the vector of natural parameters.</p>
 <p>For SGC an extra -1 is added for the chemical part of the LT.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.valid_mcmc_steps">
-<span class="sig-name descname"><span class="pre">valid_mcmc_steps</span></span><em class="property"> <span class="pre">=</span> <span class="pre">('flip',)</span></em><a class="headerlink" href="#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.valid_mcmc_steps" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">valid_mcmc_steps</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('flip',)</span></em><a class="headerlink" href="#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble.valid_mcmc_steps" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.MuSemiGrandEnsemble">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MuSemiGrandEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chemical_potentials</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.MuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MuSemiGrandEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chemical_potentials</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.MuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Relative chemical potential based SemiGrand Ensemble.</p>
 <p>A Semi-Grand Canonical Ensemble for Monte Carlo Simulations where species
@@ -2204,7 +2181,7 @@ supercell with same site spaces.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.MuSemiGrandEnsemble.chemical_potentials">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">chemical_potentials</span></span><a class="headerlink" href="#smol.moca.MuSemiGrandEnsemble.chemical_potentials" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">chemical_potentials</span></span><a class="headerlink" href="#smol.moca.MuSemiGrandEnsemble.chemical_potentials" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the chemical potentials for species in system.</p>
 </dd></dl>
 
@@ -2236,7 +2213,7 @@ supercell with same site spaces.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.MuSemiGrandEnsemble.from_dict">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.MuSemiGrandEnsemble.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.MuSemiGrandEnsemble.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiate a MuSemiGrandEnsemble from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -2249,7 +2226,7 @@ supercell with same site spaces.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.FuSemiGrandEnsemble">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">FuSemiGrandEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fugacity_fractions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.FuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FuSemiGrandEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fugacity_fractions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.FuSemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="smol.moca.ensemble.html#smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble" title="smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Fugacity fraction SemiGrandEnsemble.</p>
 <p>A Semi-Grand Canonical Ensemble for Monte Carlo simulations where the
@@ -2327,7 +2304,7 @@ supercell with same site spaces.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.FuSemiGrandEnsemble.from_dict">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.FuSemiGrandEnsemble.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.FuSemiGrandEnsemble.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiate a FuSemiGrandEnsemble from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -2338,7 +2315,7 @@ supercell with same site spaces.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.FuSemiGrandEnsemble.fugacity_fractions">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">fugacity_fractions</span></span><a class="headerlink" href="#smol.moca.FuSemiGrandEnsemble.fugacity_fractions" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fugacity_fractions</span></span><a class="headerlink" href="#smol.moca.FuSemiGrandEnsemble.fugacity_fractions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the fugacity fractions for species in system.</p>
 </dd></dl>
 
@@ -2359,7 +2336,7 @@ processor can be done simply by the corresponding attribute (i.e.
 very useful for seting up and analysing MCMC sampling runs.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.processor.base.Processor">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Processor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.base.Processor" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Processor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.base.Processor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Abstract base class for processors.</p>
 <p>A processor is used to provide a quick way to calculated energy differences
@@ -2402,7 +2379,7 @@ size/supercell.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 ClusterExpansion prim structure.</p></li>
 <li><p><strong>coefficients</strong> – single or array of fit coefficients.</p></li>
@@ -2422,7 +2399,7 @@ ClusterExpansion prim structure.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.processor.base.Processor.cluster_subspace">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cluster_subspace</span></span><a class="headerlink" href="#smol.moca.processor.base.Processor.cluster_subspace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cluster_subspace</span></span><a class="headerlink" href="#smol.moca.processor.base.Processor.cluster_subspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the underlying cluster subspace.</p>
 </dd></dl>
 
@@ -2452,7 +2429,7 @@ number of iterations/flips to compute.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.base.Processor.compute_feature_vector">
-<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.base.Processor.compute_feature_vector" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.base.Processor.compute_feature_vector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the feature vector for a given occupancy array.</p>
 <p>Each entry in the correlation vector corresponds to a particular
 symmetrically distinct bit ordering.</p>
@@ -2471,7 +2448,7 @@ symmetrically distinct bit ordering.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.base.Processor.compute_feature_vector_change">
-<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flips</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.base.Processor.compute_feature_vector_change" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flips</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.base.Processor.compute_feature_vector_change" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the change in the feature vector from a list of flips.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2543,13 +2520,13 @@ for the new species to place at that site.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.base.Processor.from_dict">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.base.Processor.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.base.Processor.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a processor from serialized MSONable dict.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.processor.base.Processor.num_sites">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">num_sites</span></span><a class="headerlink" href="#smol.moca.processor.base.Processor.num_sites" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_sites</span></span><a class="headerlink" href="#smol.moca.processor.base.Processor.num_sites" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get total number of sites in supercell.</p>
 </dd></dl>
 
@@ -2573,7 +2550,7 @@ by the supercell matrix passed to the processor)</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.processor.base.Processor.structure">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">structure</span></span><a class="headerlink" href="#smol.moca.processor.base.Processor.structure" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">structure</span></span><a class="headerlink" href="#smol.moca.processor.base.Processor.structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the underlying supercell disordered structure.</p>
 </dd></dl>
 
@@ -2593,7 +2570,7 @@ by the supercell matrix passed to the processor)</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.processor.base.Processor.supercell_matrix">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">supercell_matrix</span></span><a class="headerlink" href="#smol.moca.processor.base.Processor.supercell_matrix" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">supercell_matrix</span></span><a class="headerlink" href="#smol.moca.processor.base.Processor.supercell_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the give supercell matrix.</p>
 </dd></dl>
 
@@ -2601,7 +2578,7 @@ by the supercell matrix passed to the processor)</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.CEProcessor">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">CEProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimize_indicator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CEProcessor" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CEProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimize_indicator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CEProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="smol.moca.processor.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.processor.base.Processor</span></code></a></p>
 <p>CEProcessor class to use a ClusterExpansion in MC simulations.</p>
 <p>A CE processor is optimized to compute correlation vectors and local
@@ -2652,7 +2629,7 @@ Same as <code class="code docutils literal notranslate"><span class="pre">Cluste
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 <li><p><strong>coefficients</strong> (<em>ndarray</em>) – Fit coefficients for the represented cluster expansion.</p></li>
@@ -2721,7 +2698,7 @@ for the new species to place at that site.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.CEProcessor.from_dict">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CEProcessor.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CEProcessor.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a CEProcessor from serialized MSONable dict.</p>
 </dd></dl>
 
@@ -2729,7 +2706,7 @@ for the new species to place at that site.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.EwaldProcessor">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">EwaldProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ewald_term</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ewald_summation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.EwaldProcessor" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">EwaldProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ewald_term</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ewald_summation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.EwaldProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="smol.moca.processor.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.processor.base.Processor</span></code></a></p>
 <p>Processor for CE’s including an EwaldTerm.</p>
 <p>A Processor class that handles changes for the electrostatic interaction
@@ -2738,7 +2715,7 @@ energy using an Ewald Summation term.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace.</p></li>
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace.</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 <li><p><strong>ewald_term</strong> (<a class="reference internal" href="smol.cofe.extern.html#smol.cofe.extern.ewald.EwaldTerm" title="smol.cofe.extern.ewald.EwaldTerm"><em>EwaldTerm</em></a>) – An instance of EwaldTerm to compute electrostatic energies.</p></li>
@@ -2842,7 +2819,7 @@ for the new species to place at that site.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.EwaldProcessor.ewald_matrix">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">ewald_matrix</span></span><a class="headerlink" href="#smol.moca.EwaldProcessor.ewald_matrix" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ewald_matrix</span></span><a class="headerlink" href="#smol.moca.EwaldProcessor.ewald_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the electrostatic interaction matrix.</p>
 <p>The matrix used is the one set in the EwaldTerm of the given
 ClusterExpansion.</p>
@@ -2850,13 +2827,13 @@ ClusterExpansion.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.EwaldProcessor.ewald_summation">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">ewald_summation</span></span><a class="headerlink" href="#smol.moca.EwaldProcessor.ewald_summation" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ewald_summation</span></span><a class="headerlink" href="#smol.moca.EwaldProcessor.ewald_summation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the pymatgen EwaldSummation object.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.EwaldProcessor.from_dict">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.EwaldProcessor.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.EwaldProcessor.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a CEProcessor from serialized MSONable dict.</p>
 </dd></dl>
 
@@ -2864,7 +2841,7 @@ ClusterExpansion.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.CompositeProcessor">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">CompositeProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CompositeProcessor" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CompositeProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CompositeProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="smol.moca.processor.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.processor.base.Processor</span></code></a></p>
 <p>CompositeProcessor class used for mixed models.</p>
 <p>A Composite processor is merely a container for many different processors
@@ -2883,7 +2860,7 @@ creating a processor. This will take care of creating the correct
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.html#smol.cofe.ClusterSubspace" title="smol.cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="smol.cofe.space.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 </ul>
@@ -2993,13 +2970,13 @@ for the new species to place at that site.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.CompositeProcessor.from_dict">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CompositeProcessor.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.CompositeProcessor.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a Composite from serialized MSONable dict.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.CompositeProcessor.processors">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">processors</span></span><a class="headerlink" href="#smol.moca.CompositeProcessor.processors" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">processors</span></span><a class="headerlink" href="#smol.moca.CompositeProcessor.processors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the list of processor in composite.</p>
 </dd></dl>
 
@@ -3014,7 +2991,7 @@ use the <code class="xref py py-meth docutils literal notranslate"><span class="
 elaborate MCMC sampling more knowledge of the underlying classes is necessary.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.Sampler">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">container</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.Sampler" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">container</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.Sampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A sampler is used to run MCMC sampling simulations.</p>
 <p>The specific MCMC algorithm is defined by the given MCKernel.
@@ -3070,7 +3047,7 @@ the amount to thin by for saving samples.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.Sampler.from_ensemble">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.Sampler.from_ensemble" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.Sampler.from_ensemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a sampler based on an Ensemble instances.</p>
 <p>This is the easier way to spin up a Sampler. This will
 automatically populate and create an appropriate SampleContainer.</p>
@@ -3104,7 +3081,7 @@ More often than not you want to specify the temperature!</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.Sampler.mckernel">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">mckernel</span></span><a class="headerlink" href="#smol.moca.Sampler.mckernel" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mckernel</span></span><a class="headerlink" href="#smol.moca.Sampler.mckernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the underlying ensemble.</p>
 </dd></dl>
 
@@ -3164,13 +3141,13 @@ Number to thin iterations by and provide samples.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.Sampler.samples">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">samples</span></span><a class="headerlink" href="#smol.moca.Sampler.samples" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">samples</span></span><a class="headerlink" href="#smol.moca.Sampler.samples" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the SampleContainer.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.Sampler.seed">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">seed</span></span><a class="headerlink" href="#smol.moca.Sampler.seed" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">seed</span></span><a class="headerlink" href="#smol.moca.Sampler.seed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Seed for the random number generator.</p>
 </dd></dl>
 
@@ -3181,7 +3158,7 @@ Number to thin iterations by and provide samples.</p></li>
 <span id="id11"></span><h2>SampleContainer<a class="headerlink" href="#samplecontainer" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.SampleContainer">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">SampleContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">natural_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_energy_coefs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.SampleContainer" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SampleContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">natural_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_energy_coefs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.SampleContainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>A SampleContainter class stores Monte Carlo simulation samples.</p>
 <p>A SampleContainer holds samples and sampling information from an MCMC
@@ -3339,7 +3316,7 @@ correspond to the energy only.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.SampleContainer.from_dict">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.SampleContainer.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.SampleContainer.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiate a SampleContainer from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -3353,7 +3330,7 @@ correspond to the energy only.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.SampleContainer.from_hdf5">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.SampleContainer.from_hdf5" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.SampleContainer.from_hdf5" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiate a SampleContainer from an hdf5 file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -3516,7 +3493,7 @@ Multiple Readers.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.SampleContainer.num_samples">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">num_samples</span></span><a class="headerlink" href="#smol.moca.SampleContainer.num_samples" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_samples</span></span><a class="headerlink" href="#smol.moca.SampleContainer.num_samples" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the total number of samples.</p>
 </dd></dl>
 
@@ -3547,7 +3524,7 @@ the total mc iterations.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.SampleContainer.shape">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#smol.moca.SampleContainer.shape" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#smol.moca.SampleContainer.shape" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the shape of the samples in chain.</p>
 </dd></dl>
 
@@ -3589,8 +3566,8 @@ code.</p>
       
     </p>
     <p>
-        &copy; Copyright 2020, Ceder Group.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br/>
+        &copy; Copyright 2022, Ceder Group.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br/>
     </p>
   </div>
 </footer>

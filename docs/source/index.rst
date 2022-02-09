@@ -29,6 +29,8 @@ easily extend existing methods or implement and test new ones. Finally,
 although conceived mainly for method development, **smol** can (and is being)
 used in production for materials science reasearch applications.
 
+
+
 Installation
 ============
 1.  Clone the repository.
@@ -57,9 +59,8 @@ subsequently using it to run Monte Carlo sampling::
 
     # create a disordered primitice structure
     species = {"Au": 0.5, "Cu": 0.5}
-    prim = Structure.from_spacegroup("Fm-3m",
-                                     Lattice.cubic(3.6),
-                                     [species], [[0, 0, 0]])
+    prim = Structure.from_spacegroup(
+                "Fm-3m", Lattice.cubic(3.6), [species], [[0, 0, 0]])
 
     # create a clustersubspace
     cutoffs = {2: 6, 3: 5, 4: 4}
@@ -72,7 +73,8 @@ subsequently using it to run Monte Carlo sampling::
 
     # fit the expansion with OLS
     reg = LinearRegression(fit_intercept=False)
-    reg.fit(wrangler.feature_matrix, wrangler.get_property_vector("energy"))
+    reg.fit(wrangler.feature_matrix,
+            wrangler.get_property_vector("energy"))
 
     # save details of the regression model used
     reg_data = RegressionData.from_sklearn(
@@ -80,15 +82,16 @@ subsequently using it to run Monte Carlo sampling::
         feature_matrix=wrangler.feature_matrix,
         property_vector=wrangler.get_property_vector('energy'))
 
-    expansion = ClusterExpansion(subspace, coefficients=reg.coef_,
-                                 regression_data=reg_data)
+    expansion = ClusterExpansion(
+        subspace, coefficients=reg.coef_, regression_data=reg_data)
 
     # define a supercell and ensemble for MC sampling
     sc_matrix = [[5, 0, 0], [0, 5, 0], [0, 0, 5]]
-    ensemble.from_cluster_expansion(expansion, supercell_matrix=sc_matrix,
-                                    temperature=500)
+    ensemble = CanonicalEnsemble.from_cluster_expansion(
+        expansion, supercell_matrix=sc_matrix)
 
-    sampler = Sampler.from_ensemble(ensemble)
+    sampler = Sampler.from_ensemble(
+        ensemble, temperature=500)
 
     # Get an initial ordered structure for 5x5x5 supercell using pymatge
     transformation = OrderDisorderedStructureTransformation()

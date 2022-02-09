@@ -340,7 +340,12 @@ class SampleContainer(MSONable):
         self._accepted = np.append(self._accepted, arr, axis=0)
 
     def flush_to_backend(self, backend):
-        """Flush current samples and trace to backend file."""
+        """Flush current samples and trace to backend file.
+
+        Args:
+            backend (object):
+                backend file object, currently only hdf5 supported.
+        """
         start = backend["chain"].attrs["nsamples"]
         end = len(self._chain) + start
         backend["accepted"][start:end, :] = self._accepted
@@ -397,9 +402,9 @@ class SampleContainer(MSONable):
         if self.shape != backend["chain"].shape[1:]:
             shape = backend['chain'].shape[1:]
             backend.close()
-            raise RuntimeError(f"Backend file {file_path} has incompatible "
-                               f"dimensions {self.shape}, "
-                               f"{shape}.")
+            raise RuntimeError(
+                f"Backend file {file_path} has incompatible dimensions "
+                f"{self.shape}, {shape}.")
         return backend
 
     def _init_backed(self, backend, nsamples):
@@ -485,12 +490,27 @@ class SampleContainer(MSONable):
         container = cls(d['num_sites'], sublattices,
                         d['natural_parameters'], d['num_energy_coefs'],
                         d['metadata'])
-        container._nsamples = np.array(d['nsamples'])
-        container._chain = np.array(d['chain'], dtype=int)
-        container._features = np.array(d['features'])
-        container._enthalpy = np.array(d['enthalpy'])
-        container._accepted = np.array(d['accepted'], dtype=int)
+        if len(d['chain']) > 0:
+            container._nsamples = np.array(d['nsamples'])
+            container._chain = np.array(d['chain'], dtype=int)
+            container._features = np.array(d['features'])
+            container._enthalpy = np.array(d['enthalpy'])
+            container._accepted = np.array(d['accepted'], dtype=int)
         return container
+
+    def to_hdf5(self, file_path):
+        """Save a sample container as an HDF5 file.
+
+        Args:
+            file_path (str):
+                path to file save location. If file exists and dimensions
+                match samples will be appended.
+        """
+        # keep these to not reset writing
+        total_mc_steps, nsamples = self.total_mc_steps, self._nsamples
+        backend = self.get_backend(file_path, self.num_samples)
+        self.flush_to_backend(backend)
+        self.total_mc_steps, self._nsamples = total_mc_steps, nsamples
 
     @classmethod
     def from_hdf5(cls, file_path, swmr_mode=False):
