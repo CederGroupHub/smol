@@ -5,8 +5,8 @@ and changes in electrostatic energy from a list of local flips for use in
 Monte Carlo sampling.
 
 If you are using a Hamiltonian with a Cluster expansion and an Ewald summation
-electrostatic term, you should use the CompositeProcessor with a ClusterExpansionProcessor
-and an EwaldProcessor class.
+electrostatic term, you should use the CompositeProcessor with a
+ClusterExpansionProcessor and an EwaldProcessor class.
 """
 
 __author__ = "Luis Barroso-Luque"
@@ -60,10 +60,11 @@ class EwaldProcessor(Processor):
     def ewald_summation(self):
         """Get the pymatgen EwaldSummation object."""
         if self._ewald is None:
-            self._ewald = EwaldSummation(self._ewald_structure,
-                                         real_space_cut=self._ewald_term.real_space_cut,  # noqa
-                                         recip_space_cut=self._ewald_term.recip_space_cut,  # noqa
-                                         eta=self._ewald_term.eta)
+            self._ewald = EwaldSummation(
+                self._ewald_structure,
+                real_space_cut=self._ewald_term.real_space_cut,
+                recip_space_cut=self._ewald_term.recip_space_cut,
+                eta=self._ewald_term.eta)
         return self._ewald
 
     @property  # TODO use cached_property (only for python 3.8)

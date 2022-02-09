@@ -3,7 +3,8 @@
 __author__ = "Luis Barroso-Luque"
 
 from abc import ABC, abstractmethod
-from smol.moca.processor import CompositeProcessor, ClusterExpansionProcessor, EwaldProcessor
+from smol.moca.processor import CompositeProcessor, ClusterExpansionProcessor,\
+    EwaldProcessor
 from .sublattice import get_sublattices
 
 

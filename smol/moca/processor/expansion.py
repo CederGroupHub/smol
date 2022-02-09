@@ -1,8 +1,8 @@
 """Implementation of CE processor class for a fixed size super cell.
 
 If you are using a Hamiltonian with an Ewald summation electrostatic term, you
-should use the CompositeProcessor with a ClusterExpansionProcessor and an EwaldProcessor
-class to handle changes in the electrostatic interaction energy.
+should use the CompositeProcessor with a ClusterExpansionProcessor and an
+EwaldProcessor class to handle changes in the electrostatic interaction energy.
 """
 
 __author__ = "Luis Barroso-Luque"
@@ -11,13 +11,12 @@ import numpy as np
 from collections import defaultdict
 from smol.cofe import ClusterSubspace
 from smol.moca.processor.base import Processor
-from src.cemc_utils import (corr_from_occupancy, factors_from_occupancy,
-                            delta_corr_single_flip, delta_factors_single_flip,
-                            indicator_delta_corr_single_flip)
+from src.cemc_utils import corr_from_occupancy, factors_from_occupancy, \
+    delta_corr_single_flip, delta_factors_single_flip
 
 
 class ClusterExpansionProcessor(Processor):
-    """ClusterExpansionProcessor class to use a ClusterExpansion in MC simulations.
+    """ClusterExpansionProcessor class to use a CE in MC simulations.
 
     A CE processor is optimized to compute correlation vectors and local
     changes in correlation vectors. This class allows the use a cluster

@@ -6,7 +6,7 @@ symmetry) clusters.
 
 import operator
 from functools import reduce
-from itertools import chain, product, accumulate, combinations
+from itertools import chain, product, combinations
 import numpy as np
 
 from monty.json import MSONable
@@ -406,7 +406,7 @@ class Orbit(MSONable):
         return np.unique(mappings, axis=0)
 
     def reset_bases(self):
-        """Reset cached basis function array and correlation tensors"""
+        """Reset cached basis function array and correlation tensors."""
         self._basis_arrs = None
         self._corr_tensors = None
         self._flat_corr_tensors = None
