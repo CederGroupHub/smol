@@ -18,7 +18,7 @@ from pymatgen.analysis.structure_matcher import \
     StructureMatcher, OrderDisorderElementComparator
 from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc, \
     lattice_points_in_supercell, coord_list_mapping_pbc
-from src.mc_utils import corr_from_occupancy
+from src.cemc_utils import corr_from_occupancy
 from smol.cofe.space import Orbit, basis_factory, get_site_spaces, \
     get_allowed_species, Vacancy
 from smol.cofe.space.basis import IndicatorBasis
@@ -1068,10 +1068,8 @@ class ClusterSubspace(MSONable):
         if not all(isinstance(t1, type(t2)) for t1, t2 in
                    zip(other.external_terms, self.external_terms)):
             return False
-        # there may be a more robuse way to check the bases arrays are
-        # equivalent even if sites/functions are in different order
-        return all(o1 == o2 and np.array_equal(o1.bases_array, o2.bases_array)
-                   for o1, o2 in zip(other.orbits, self.orbits))
+        # does not check if basis functions are the same.
+        return all(o1 == o2 for o1, o2 in zip(other.orbits, self.orbits))
 
     def __len__(self):
         """Get number of correlation functions and ext terms in subspace."""
