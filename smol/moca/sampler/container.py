@@ -487,7 +487,7 @@ class SampleContainer(MSONable):
         return container
 
     def to_hdf5(self, file_path):
-        """Save a sample container as an HDF5 file
+        """Save a sample container as an HDF5 file.
 
         Args:
             file_path (str):
