@@ -3,7 +3,7 @@
 __author__ = "Luis Barroso-Luque"
 
 from abc import ABC, abstractmethod
-from smol.moca import CompositeProcessor, CEProcessor, EwaldProcessor
+from smol.moca.processor import CompositeProcessor, ClusterExpansionProcessor, EwaldProcessor
 
 
 class Ensemble(ABC):
@@ -75,10 +75,10 @@ class Ensemble(ABC):
         if len(cluster_expansion.cluster_subspace.external_terms) > 0:
             processor = CompositeProcessor(cluster_expansion.cluster_subspace,
                                            supercell_matrix)
-            ceprocessor = CEProcessor(cluster_expansion.cluster_subspace,
-                                      supercell_matrix,
+            ceprocessor = ClusterExpansionProcessor(cluster_expansion.cluster_subspace,
+                                                    supercell_matrix,
                                       cluster_expansion.coefs[:-1],
-                                      optimize_indicator=optimize_indicator)
+                                                    optimize_indicator=optimize_indicator)
             processor.add_processor(ceprocessor)
             # at some point determine term and spinup processor maybe with a
             # factory, if we ever implement more external terms.
@@ -89,9 +89,9 @@ class Ensemble(ABC):
                                          coefficient=cluster_expansion.coefs[-1])  # noqa
             processor.add_processor(ewprocessor)
         else:
-            processor = CEProcessor(cluster_expansion.cluster_subspace,
-                                    supercell_matrix, cluster_expansion.coefs,
-                                    optimize_indicator=optimize_indicator)
+            processor = ClusterExpansionProcessor(cluster_expansion.cluster_subspace,
+                                                  supercell_matrix, cluster_expansion.coefs,
+                                                  optimize_indicator=optimize_indicator)
         return cls(processor, **kwargs)
 
     @property

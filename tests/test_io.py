@@ -3,7 +3,8 @@ import os
 import numpy as np
 from smol.io import save_work, load_work
 from smol.cofe import ClusterSubspace, ClusterExpansion, StructureWrangler
-from smol.moca import CEProcessor, CanonicalEnsemble
+from smol.moca import CanonicalEnsemble
+from smol.moca.processor import ClusterExpansionProcessor
 from tests.data import lno_prim, lno_data
 
 
@@ -19,7 +20,7 @@ class TestSaveLoadWork(unittest.TestCase):
 
         coefs = np.ones(cls.cs.num_corr_functions)
         cls.ce = ClusterExpansion(cls.cs, coefs)
-        cls.pr = CEProcessor(cls.cs, 2 * np.eye(3), coefs)
+        cls.pr = ClusterExpansionProcessor(cls.cs, 2 * np.eye(3), coefs)
         cls.en = CanonicalEnsemble(cls.pr)
         cls.file_path = './test_save_work.mson'
 
@@ -33,7 +34,7 @@ class TestSaveLoadWork(unittest.TestCase):
         for name, obj in work_dict.items():
             self.assertEqual(name, obj.__class__.__name__)
             self.assertTrue(type(obj) in (ClusterSubspace, ClusterExpansion,
-                                          StructureWrangler, CEProcessor,
+                                          StructureWrangler, ClusterExpansionProcessor,
                                           CanonicalEnsemble))
 
     @classmethod

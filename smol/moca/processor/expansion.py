@@ -1,8 +1,8 @@
 """Implementation of CE processor class for a fixed size super cell.
 
 If you are using a Hamiltonian with an Ewald summation electrostatic term, you
-should use the CompositeProcessor with a CEProcessor and an EwaldProcessor
-class to handle changes in the electrostatic interaction energy.
+should use the CompositeProcessor with a ClusterExpansionProcessor and an
+EwaldProcessor class to handle changes in the electrostatic interaction energy.
 """
 
 __author__ = "Luis Barroso-Luque"
@@ -11,12 +11,13 @@ import numpy as np
 from collections import defaultdict
 from smol.cofe import ClusterSubspace
 from smol.moca.processor.base import Processor
-from src.mc_utils import (corr_from_occupancy, delta_corr_single_flip,
-                          indicator_delta_corr_single_flip)
+from src.cemc_utils import (corr_from_occupancy, factors_from_occupancy,
+                            delta_corr_single_flip, delta_factors_single_flip,
+                            indicator_delta_corr_single_flip)
 
 
-class CEProcessor(Processor):
-    """CEProcessor class to use a ClusterExpansion in MC simulations.
+class ClusterExpansionProcessor(Processor):
+    """ClusterExpansionProcessor class to use a ClusterExpansion in MC simulations.
 
     A CE processor is optimized to compute correlation vectors and local
     changes in correlation vectors. This class allows the use a cluster
@@ -34,7 +35,7 @@ class CEProcessor(Processor):
             normalization.
         coefs (ndarray):
             Fitted coefficients from the cluster expansion.
-        n_orbit_functions (int):
+        n_corr_functions (int):
             Total number of orbit basis functions (correlation functions).
             This includes all possible labellings/orderings for all orbits.
             Same as :code:`ClusterSubspace.n_bit_orderings`.
@@ -42,7 +43,7 @@ class CEProcessor(Processor):
 
     def __init__(self, cluster_subspace, supercell_matrix, coefficients,
                  optimize_indicator=False):
-        """Initialize a CEProcessor.
+        """Initialize a ClusterExpansionProcessor.
 
         Args:
             cluster_subspace (ClusterSubspace):
@@ -61,12 +62,14 @@ class CEProcessor(Processor):
         """
         super().__init__(cluster_subspace, supercell_matrix, coefficients)
 
-        self.n_orbit_functions = self.cluster_subspace.num_corr_functions
-        if len(coefficients) != self.n_orbit_functions:
-            raise ValueError('The provided coeffiecients are not the right '
-                             f'length. Got {len(coefficients)} coefficients, '
-                             f'the length must be {self.n_orbit_functions} '
-                             'based on the provided cluster subspace.')
+        self.n_corr_functions = self.cluster_subspace.num_corr_functions
+        if len(coefficients) != self.n_corr_functions:
+            raise ValueError(
+                f'The provided coeffiecients are not the right length. '
+                f'Got {len(coefficients)} coefficients, the length must be '
+                f'{self.n_corr_functions} based on the provided cluster '
+                f'subspace.'
+            )
 
         # set the dcorr_single_flip function
         self.optimize_indicator = optimize_indicator
@@ -122,7 +125,7 @@ class CEProcessor(Processor):
         Returns:
             array: correlation vector
         """
-        return corr_from_occupancy(occupancy, self.n_orbit_functions,
+        return corr_from_occupancy(occupancy, self.n_corr_functions,
                                    self._orbit_list) * self.size
 
     def compute_feature_vector_change(self, occupancy, flips):
@@ -145,14 +148,14 @@ class CEProcessor(Processor):
             array: change in correlation vector
         """
         occu_i = occupancy
-        delta_corr = np.zeros(self.n_orbit_functions)
+        delta_corr = np.zeros(self.n_corr_functions)
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
             site_orbit_list = self._orbits_by_sites[f[0]]
-            delta_corr += self._dcorr_single_flip(occu_f, occu_i,
-                                                  self.n_orbit_functions,
-                                                  site_orbit_list)
+            delta_corr += self._dcorr_single_flip(
+                occu_f, occu_i, self.n_corr_functions, site_orbit_list
+            )
             occu_i = occu_f
 
         return delta_corr * self.size
@@ -170,7 +173,7 @@ class CEProcessor(Processor):
 
     @classmethod
     def from_dict(cls, d):
-        """Create a CEProcessor from serialized MSONable dict."""
+        """Create a ClusterExpansionProcessor from serialized MSONable dict."""
         return cls(ClusterSubspace.from_dict(d['cluster_subspace']),
                    np.array(d['supercell_matrix']),
                    coefficients=np.array(d['coefficients']),
