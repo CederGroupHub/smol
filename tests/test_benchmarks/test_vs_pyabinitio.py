@@ -80,16 +80,14 @@ class TestvsPyabinitio(unittest.TestCase):
         iterations = 10000
         sample_interval = 100
         temp = lno_gc_run_10000['temperature']
-        for optim in (False, True):
-            ens = CanonicalEnsemble.from_cluster_expansion(
-                ce,
-                supercell_matrix=sc_matrix,
-                optimize_indicator=optim)
-            init_occu = ens.processor.occupancy_from_structure(test_struct)
-            sampler = Sampler.from_ensemble(ens, temperature=temp)
-            sampler.run(iterations, init_occu, thin_by=sample_interval)
-            self.assertAlmostEqual(lno_gc_run_10000['min_energy']/n_atoms,
-                                   sampler.samples.get_minimum_energy()/n_atoms,
-                                   places=1)
-            self.assertAlmostEqual(lno_gc_run_10000['average_energy']/n_atoms,
-                                   sampler.samples.mean_energy()/n_atoms, places=1)
+        ens = CanonicalEnsemble.from_cluster_expansion(
+            ce,
+            supercell_matrix=sc_matrix)
+        init_occu = ens.processor.occupancy_from_structure(test_struct)
+        sampler = Sampler.from_ensemble(ens, temperature=temp)
+        sampler.run(iterations, init_occu, thin_by=sample_interval)
+        self.assertAlmostEqual(lno_gc_run_10000['min_energy']/n_atoms,
+                               sampler.samples.get_minimum_energy()/n_atoms,
+                               places=1)
+        self.assertAlmostEqual(lno_gc_run_10000['average_energy']/n_atoms,
+                               sampler.samples.mean_energy()/n_atoms, places=1)

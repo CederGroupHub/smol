@@ -28,11 +28,6 @@ class ClusterExpansionProcessor(Processor):
     Hamiltonian.
 
     Attributes:
-        optimize_indicator (bool):
-            If true the local correlation update function specialized for
-            indicator bases is used. This should only be used when the
-            expansion was fit with an indicator basis and no additional
-            normalization.
         coefs (ndarray):
             Fitted coefficients from the cluster expansion.
         n_corr_functions (int):
@@ -41,8 +36,7 @@ class ClusterExpansionProcessor(Processor):
             Same as :code:`ClusterSubspace.n_bit_orderings`.
     """
 
-    def __init__(self, cluster_subspace, supercell_matrix, coefficients,
-                 optimize_indicator=False):
+    def __init__(self, cluster_subspace, supercell_matrix, coefficients):
         """Initialize a ClusterExpansionProcessor.
 
         Args:
@@ -53,12 +47,6 @@ class ClusterExpansionProcessor(Processor):
                 Cluster Expansion prim structure.
             coefficients (ndarray):
                 Fit coefficients for the represented cluster expansion.
-            optimize_indicator (bool):
-                When using an indicator basis, sets the function to compute
-                correlation differences to the indicator optimized function.
-                This can make MC steps faster.
-                Make sure your cluster expansion was indeed fit with an
-                indicator basis set, otherwise your MC results are no good.
         """
         super().__init__(cluster_subspace, supercell_matrix, coefficients)
 
@@ -70,12 +58,6 @@ class ClusterExpansionProcessor(Processor):
                 f'{self.n_corr_functions} based on the provided cluster '
                 f'subspace.'
             )
-
-        # set the dcorr_single_flip function
-        self.optimize_indicator = optimize_indicator
-        self._dcorr_single_flip = indicator_delta_corr_single_flip \
-            if optimize_indicator \
-            else delta_corr_single_flip
 
         # List of orbit information and supercell site indices to compute corr
         self._orbit_list = []
@@ -97,20 +79,11 @@ class ClusterExpansionProcessor(Processor):
             for site_ind in np.unique(cluster_indices):
                 in_inds = np.any(cluster_indices == site_ind, axis=-1)
                 ratio = len(cluster_indices) / np.sum(in_inds)
-                # TODO check runtime and scaling vs new implementations
-                #  and if not worth it just deprecate optimize_indicator
-                if optimize_indicator:
-                    self._orbits_by_sites[site_ind].append(
-                        (orbit.bit_id, ratio, orbit.bit_combo_array,
-                         orbit.bit_combo_inds, orbit.bases_array,
-                         cluster_indices[in_inds])
-                    )
-                else:
-                    self._orbits_by_sites[site_ind].append(
-                        (orbit.bit_id, ratio, orbit.flat_tensor_indices,
-                         orbit.flat_correlation_tensors,
-                         cluster_indices[in_inds])
-                    )
+                self._orbits_by_sites[site_ind].append(
+                    (orbit.bit_id, ratio, orbit.flat_tensor_indices,
+                     orbit.flat_correlation_tensors,
+                     cluster_indices[in_inds])
+                )
 
     def compute_feature_vector(self, occupancy):
         """Compute the correlation vector for a given occupancy string.
@@ -160,21 +133,9 @@ class ClusterExpansionProcessor(Processor):
 
         return delta_corr * self.size
 
-    def as_dict(self) -> dict:
-        """
-        Json-serialization dict representation.
-
-        Returns:
-            MSONable dict
-        """
-        d = super().as_dict()
-        d['optimize_indicator'] = self.optimize_indicator
-        return d
-
     @classmethod
     def from_dict(cls, d):
         """Create a ClusterExpansionProcessor from serialized MSONable dict."""
         return cls(ClusterSubspace.from_dict(d['cluster_subspace']),
                    np.array(d['supercell_matrix']),
-                   coefficients=np.array(d['coefficients']),
-                   optimize_indicator=d['optimize_indicator'])
+                   coefficients=np.array(d['coefficients']))

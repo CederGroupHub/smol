@@ -177,32 +177,6 @@ def test_compute_feature_vector(ce_processor):
     npt.assert_allclose(ce_processor.compute_feature_vector(occu) / ce_processor.size,
                         ce_processor.cluster_subspace.corr_from_structure(struct))
 
-
-def test_feature_change_indictator(cluster_subspace):
-    coefs = 2 * np.random.random(cluster_subspace.num_corr_functions)
-    scmatrix = 4 * np.eye(3)
-    cluster_subspace.change_site_bases('indicator')
-    proc = ClusterExpansionProcessor(cluster_subspace, supercell_matrix=scmatrix,
-                       coefficients=coefs)
-    sublattices = proc.get_sublattices()
-    occu = gen_random_occupancy(sublattices, proc.get_inactive_sublattices())
-    for _ in range(100):
-        sublatt = np.random.choice(sublattices)
-        site = np.random.choice(sublatt.sites)
-        new_sp = np.random.choice(sublatt.encoding)
-        new_occu = occu.copy()
-        new_occu[site] = new_sp
-        prop_f = proc.compute_property(new_occu)
-        prop_i = proc.compute_property(occu)
-        dprop = proc.compute_property_change(occu, [(site, new_sp)])
-        # Check with some tight tolerances.
-        npt.assert_allclose(dprop, prop_f - prop_i, rtol=RTOL, atol=ATOL)
-        # Test reverse matches forward
-        old_sp = occu[site]
-        rdprop = proc.compute_property_change(new_occu, [(site, old_sp)])
-        assert dprop == -1 * rdprop
-
-
 def test_bad_coef_length(cluster_subspace):
     coefs = np.random.random(cluster_subspace.num_corr_functions - 1)
     with pytest.raises(ValueError):
