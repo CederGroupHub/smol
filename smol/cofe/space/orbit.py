@@ -96,7 +96,6 @@ class Orbit(MSONable):
         self._symops = None
         self._bit_combos = None
         self._basis_arrs = None
-        self._bases_arr = None
         self._corr_tensors = None
         self._flat_corr_tensors = None
         self._combo_arr = None
@@ -158,25 +157,6 @@ class Orbit(MSONable):
         """Get the site spaces for the site basis associate with each site."""
         return [site_basis.site_space for site_basis in self.site_bases]
 
-    @property  # TODO deprecate when new corr_from_occu is ready
-    def bit_combo_array(self):
-        """Single array of all bit combos.
-
-        This is to speed up cython, for python code only you can just use
-        bit_combos directly
-        """
-        if self._combo_arr is None:
-            self._combo_arr = np.vstack([combos for combos in self.bit_combos])
-        return self._combo_arr
-
-    @property  # TODO deprecate when new corr_from_occu is ready
-    def bit_combo_inds(self):
-        """Get indices to symmetrically equivalent bits in bit combo array."""
-        if self._combo_inds is None or self._combo_arr is None:
-            self._combo_inds = np.array(
-                [0] + list(accumulate([len(bc) for bc in self.bit_combos])))
-        return self._combo_inds
-
     @property
     def bit_combo_multiplicities(self):
         """Get the multiplicites of the symmetrically distinct bit ordering."""
@@ -235,25 +215,6 @@ class Orbit(MSONable):
             self._basis_arrs = tuple(
                 sb.function_array for sb in self.site_bases)
         return self._basis_arrs
-
-    @property
-    def bases_array(self):  # TODO eventually should deprecated this
-        """Get bases array.
-
-        3D array with all basis arrays. Since each basis array can be of
-        different dimension the 3D array is the size of the largest array.
-        Smaller arrays are padded with ones. Doing this allows using numpy
-        fancy indexing which can be faster than for loops.
-        """
-        if self._bases_arr is None or self._basis_arrs is None:
-            max_f = max(fa.shape[0] for fa in self.basis_arrays)
-            max_s = max(fa.shape[1] for fa in self.basis_arrays)
-            self._bases_arr = np.ones(
-                (len(self.basis_arrays), max_f, max_s))
-            for i, fa in enumerate(self.basis_arrays):
-                j, k = fa.shape
-                self._bases_arr[i, :j, :k] = fa
-        return self._bases_arr
 
     @property
     def correlation_tensors(self):
@@ -387,8 +348,7 @@ class Orbit(MSONable):
 
         self.site_bases = tuple(new_bases)
         self._corr_tensors, self._flat_corr_tensors = None, None
-        # TODO remove if/when deprecating
-        self._basis_arrs, self._bases_arr = None, None
+        self._basis_arrs = None
 
     def assign_ids(self, orbit_id, orbit_bit_id, start_cluster_id):
         """Assign unique orbit and cluster ids.

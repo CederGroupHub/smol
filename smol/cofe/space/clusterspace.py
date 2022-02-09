@@ -792,7 +792,7 @@ class ClusterSubspace(MSONable):
                     site_basis.rotate(angle, index1, index2)
                     rotated.append(site_basis)
             # TODO clean up private attribute reset outside of class
-            orbit._basis_arrs, orbit._bases_arr = None, None
+            orbit._basis_arrs = None
 
     def remove_orbits(self, orbit_ids):
         """Remove whole orbits by their ids.
@@ -1131,10 +1131,8 @@ class ClusterSubspace(MSONable):
         if not all(isinstance(t1, type(t2)) for t1, t2 in
                    zip(other.external_terms, self.external_terms)):
             return False
-        # there may be a more robuse way to check the bases arrays are
-        # equivalent even if sites/functions are in different order
-        return all(o1 == o2 and np.array_equal(o1.bases_array, o2.bases_array)
-                   for o1, o2 in zip(other.orbits, self.orbits))
+        # does not check if basis functions are the same.
+        return all(o1 == o2 for o1, o2 in zip(other.orbits, self.orbits))
 
     def __len__(self):
         """Get number of correlation functions and ext terms in subspace."""
