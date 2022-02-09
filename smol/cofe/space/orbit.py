@@ -98,8 +98,6 @@ class Orbit(MSONable):
         self._basis_arrs = None
         self._corr_tensors = None
         self._flat_corr_tensors = None
-        self._combo_arr = None
-        self._combo_inds = None
 
         # Create basecluster
         self.base_cluster = Cluster(sites, lattice)
@@ -312,7 +310,6 @@ class Orbit(MSONable):
                 f"{self.id}")
 
         self._bit_combos = tuple(bit_combos)
-        self._combo_arr = None  # reset
 
     def remove_bit_combos_by_inds(self, inds):
         """Remove bit combos by their indices in the bit_combo list."""
@@ -323,7 +320,6 @@ class Orbit(MSONable):
 
         self._bit_combos = tuple(
             b_c for i, b_c in enumerate(self._bit_combos) if i not in inds)
-        self._combo_arr = None  # reset
 
         if not self.bit_combos:
             raise RuntimeError(
@@ -347,30 +343,7 @@ class Orbit(MSONable):
             new_bases.append(new_basis)
 
         self.site_bases = tuple(new_bases)
-        self._corr_tensors, self._flat_corr_tensors = None, None
-        self._basis_arrs = None
-
-    def assign_ids(self, orbit_id, orbit_bit_id, start_cluster_id):
-        """Assign unique orbit and cluster ids.
-
-        This should be called iteratively for a list of orbits to get a proper
-        set of unique id's for the orbits.
-
-        Args:
-            orbit_id (int): orbit id
-            orbit_bit_id (int): start bit ordering id
-            start_cluster_id (int): start cluster id
-
-        Returns:
-            (int, int, int):
-            next orbit id, next bit ordering id, next cluster id
-        """
-        self.id = orbit_id
-        self.bit_id = orbit_bit_id
-        c_id = start_cluster_id
-        for c in self.clusters:
-            c_id = c.assign_ids(c_id)
-        return orbit_id + 1, orbit_bit_id + len(self.bit_combos), c_id
+        self.reset_bases()
 
     def is_sub_orbit(self, orbit):
         """Check if given orbits clusters are subclusters.
@@ -431,6 +404,34 @@ class Orbit(MSONable):
                 "The given orbit is a suborbit, but no site mappings were "
                 "found!\n Something is very wrong here!")
         return np.unique(mappings, axis=0)
+
+    def reset_bases(self):
+        """Reset cached basis function array and correlation tensors"""
+        self._basis_arrs = None
+        self._corr_tensors = None
+        self._flat_corr_tensors = None
+
+    def assign_ids(self, orbit_id, orbit_bit_id, start_cluster_id):
+        """Assign unique orbit and cluster ids.
+
+        This should be called iteratively for a list of orbits to get a proper
+        set of unique id's for the orbits.
+
+        Args:
+            orbit_id (int): orbit id
+            orbit_bit_id (int): start bit ordering id
+            start_cluster_id (int): start cluster id
+
+        Returns:
+            (int, int, int):
+            next orbit id, next bit ordering id, next cluster id
+        """
+        self.id = orbit_id
+        self.bit_id = orbit_bit_id
+        c_id = start_cluster_id
+        for c in self.clusters:
+            c_id = c.assign_ids(c_id)
+        return orbit_id + 1, orbit_bit_id + len(self.bit_combos), c_id
 
     def __len__(self):
         """Get total number of orbit basis functions.

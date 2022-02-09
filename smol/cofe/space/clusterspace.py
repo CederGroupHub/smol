@@ -791,8 +791,7 @@ class ClusterSubspace(MSONable):
                         site_basis not in rotated:  # maybe clean this up?
                     site_basis.rotate(angle, index1, index2)
                     rotated.append(site_basis)
-            # TODO clean up private attribute reset outside of class
-            orbit._basis_arrs = None
+            orbit.reset_bases()
 
     def remove_orbits(self, orbit_ids):
         """Remove whole orbits by their ids.
