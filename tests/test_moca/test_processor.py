@@ -4,7 +4,7 @@ import numpy.testing as npt
 from tests.utils import assert_msonable, gen_random_occupancy
 from smol.cofe import ClusterExpansion
 from smol.cofe.extern import EwaldTerm
-from smol.moca.processor import CEProcessor, OrbitDecompositionProcessor, \
+from smol.moca.processor import ClusterExpansionProcessor, OrbitDecompositionProcessor, \
     EwaldProcessor, CompositeProcessor
 from smol.moca.processor.base import Processor
 from smol.moca.ensemble.sublattice import get_sublattices
@@ -19,7 +19,7 @@ DRIFT_TOL = 10 * np.finfo(float).eps  # tolerance of average drift
 def ce_processor(cluster_subspace):
     coefs = 2 * np.random.random(cluster_subspace.num_corr_functions)
     scmatrix = 3 * np.eye(3)
-    return CEProcessor(
+    return ClusterExpansionProcessor(
         cluster_subspace, supercell_matrix=scmatrix, coefficients=coefs)
 
 
@@ -42,7 +42,7 @@ def composite_processor(cluster_subspace, request):
     proc = CompositeProcessor(cluster_subspace, supercell_matrix=scmatrix)
     if request.param == 'CE':
         proc.add_processor(
-            CEProcessor(cluster_subspace, scmatrix, coefficients=coefs[:-1])
+            ClusterExpansionProcessor(cluster_subspace, scmatrix, coefficients=coefs[:-1])
         )
     else:
         expansion = ClusterExpansion(cluster_subspace, coefs)
@@ -147,7 +147,7 @@ def test_msonable(composite_processor):
     assert_msonable(pr)
 
 
-# CEProcessor only tests
+# ClusterExpansionProcessor only tests
 def test_compute_feature_vector(ce_processor):
     occu = gen_random_occupancy(get_sublattices(ce_processor),
                                 ce_processor.num_sites)
@@ -161,8 +161,8 @@ def test_feature_change_indictator(cluster_subspace):
     coefs = 2 * np.random.random(cluster_subspace.num_corr_functions)
     scmatrix = 4 * np.eye(3)
     cluster_subspace.change_site_bases('indicator')
-    proc = CEProcessor(cluster_subspace, supercell_matrix=scmatrix,
-                       coefficients=coefs)
+    proc = ClusterExpansionProcessor(cluster_subspace, supercell_matrix=scmatrix,
+                                     coefficients=coefs)
     sublattices = get_sublattices(proc)
     occu = gen_random_occupancy(sublattices, proc.num_sites)
     for _ in range(10):
@@ -200,7 +200,7 @@ def test_compute_orbit_factors(cluster_subspace):
 def test_bad_coef_length(cluster_subspace):
     coefs = np.random.random(cluster_subspace.num_corr_functions - 1)
     with pytest.raises(ValueError):
-        CEProcessor(cluster_subspace, 5*np.eye(3), coefficients=coefs)
+        ClusterExpansionProcessor(cluster_subspace, 5 * np.eye(3), coefficients=coefs)
 
 
 def test_bad_composite(cluster_subspace):
@@ -212,14 +212,14 @@ def test_bad_composite(cluster_subspace):
                                               supercell_matrix=scmatrix))
     with pytest.raises(ValueError):
         proc.add_processor(
-            CEProcessor(cluster_subspace, 2 * scmatrix, coefficients=coefs))
+            ClusterExpansionProcessor(cluster_subspace, 2 * scmatrix, coefficients=coefs))
     with pytest.raises(ValueError):
         new_cs = cluster_subspace.copy()
         new_cs.change_site_bases("chebyshev")
-        proc.add_processor(CEProcessor(new_cs, scmatrix, coefficients=coefs))
+        proc.add_processor(ClusterExpansionProcessor(new_cs, scmatrix, coefficients=coefs))
     with pytest.raises(ValueError):
         new_cs = cluster_subspace.copy()
         ids = range(1, new_cs.num_corr_functions)
         new_cs.remove_orbit_bit_combos(np.random.choice(ids, size=10))
-        proc.add_processor(CEProcessor(new_cs, scmatrix, coefficients=coefs))
+        proc.add_processor(ClusterExpansionProcessor(new_cs, scmatrix, coefficients=coefs))
 

@@ -7,7 +7,7 @@ from smol.cofe import ClusterExpansion, RegressionData
 from smol.cofe.extern import EwaldTerm
 from smol.moca import (CanonicalEnsemble, MuSemiGrandEnsemble,
                        FuSemiGrandEnsemble)
-from smol.moca.processor import (CompositeProcessor, CEProcessor, EwaldProcessor)
+from smol.moca.processor import (CompositeProcessor, ClusterExpansionProcessor, EwaldProcessor)
 from tests.utils import assert_msonable, gen_random_occupancy
 
 ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble]
@@ -17,7 +17,7 @@ ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble]
 def composite_processor(cluster_subspace):
     coefs = 2 * np.random.random(cluster_subspace.num_corr_functions)
     scmatrix = 4 * np.eye(3)
-    return CEProcessor(cluster_subspace, scmatrix, coefs)
+    return ClusterExpansionProcessor(cluster_subspace, scmatrix, coefs)
 
 
 @pytest.fixture(params=ensembles)
@@ -56,8 +56,8 @@ def test_from_cluster_expansion(cluster_subspace, ensemble_cls):
     coefs = np.random.random(cluster_subspace.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
     proc = CompositeProcessor(cluster_subspace, scmatrix)
-    proc.add_processor(CEProcessor(cluster_subspace, scmatrix,
-                                   coefficients=coefs[:-1]))
+    proc.add_processor(ClusterExpansionProcessor(cluster_subspace, scmatrix,
+                                                 coefficients=coefs[:-1]))
     proc.add_processor(EwaldProcessor(cluster_subspace, scmatrix,
                        cluster_subspace.external_terms[0],
                                       coefficient=coefs[-1]))

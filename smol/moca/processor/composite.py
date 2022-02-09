@@ -24,7 +24,7 @@ class CompositeProcessor(Processor):
     heart desires.
 
     The most common use case of them all is a CompositeProcessor of a
-    CEProcessor and an EwaldProcessor for use in ionic materials.
+    ClusterExpansionProcessor and an EwaldProcessor for use in ionic materials.
 
     You can add anyone of the other processor class implemented to build a
     composite processor.
@@ -32,7 +32,7 @@ class CompositeProcessor(Processor):
     It is recommended to use the :code:`from_cluster_expansion` to create an
     ensemble and the underlying processor automatically rather than directly
     creating a processor. This will take care of creating the correct
-    :class:`CompositeProcessor` or :class:`CEProcessor` for you.
+    :class:`CompositeProcessor` or :class:`ClusterExpansionProcessor` for you.
     """
 
     def __init__(self, cluster_subspace, supercell_matrix):

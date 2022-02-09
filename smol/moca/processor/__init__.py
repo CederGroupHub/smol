@@ -8,8 +8,8 @@ to run Monte Carlo sampling.
 """
 
 from .composite import CompositeProcessor
-from .expansion import CEProcessor, OrbitDecompositionProcessor
+from .expansion import ClusterExpansionProcessor, OrbitDecompositionProcessor
 from .ewald import EwaldProcessor
 
-__all__ = ['CompositeProcessor', 'CEProcessor', 'OrbitDecompositionProcessor',
+__all__ = ['CompositeProcessor', 'ClusterExpansionProcessor', 'OrbitDecompositionProcessor',
            'EwaldProcessor']

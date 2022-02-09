@@ -103,7 +103,7 @@ class ClusterExpansion(MSONable):
     :code:`sklearn.metrics` for many useful methods to get this quantities.
 
     This class is also used for Monte Carlo simulations to create a
-    :class:`CEProcessor` that calculates the CE for a fixed supercell size.
+    :class:`ClusterExpansionProcessor` that calculates the CE for a fixed supercell size.
     Before using a ClusterExpansion for Monte Carlo you should consider pruning
     the correlation/orbit functions with small coefficients or eci.
 

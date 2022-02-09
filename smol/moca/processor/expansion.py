@@ -1,7 +1,7 @@
 """Implementation of CE processor class for a fixed size super cell.
 
 If you are using a Hamiltonian with an Ewald summation electrostatic term, you
-should use the CompositeProcessor with a CEProcessor and an EwaldProcessor
+should use the CompositeProcessor with a ClusterExpansionProcessor and an EwaldProcessor
 class to handle changes in the electrostatic interaction energy.
 """
 
@@ -16,8 +16,8 @@ from src.cemc_utils import (corr_from_occupancy, factors_from_occupancy,
                             indicator_delta_corr_single_flip)
 
 
-class CEProcessor(Processor):
-    """CEProcessor class to use a ClusterExpansion in MC simulations.
+class ClusterExpansionProcessor(Processor):
+    """ClusterExpansionProcessor class to use a ClusterExpansion in MC simulations.
 
     A CE processor is optimized to compute correlation vectors and local
     changes in correlation vectors. This class allows the use a cluster
@@ -43,7 +43,7 @@ class CEProcessor(Processor):
 
     def __init__(self, cluster_subspace, supercell_matrix, coefficients,
                  optimize_indicator=False):
-        """Initialize a CEProcessor.
+        """Initialize a ClusterExpansionProcessor.
 
         Args:
             cluster_subspace (ClusterSubspace):
@@ -171,7 +171,7 @@ class CEProcessor(Processor):
 
     @classmethod
     def from_dict(cls, d):
-        """Create a CEProcessor from serialized MSONable dict."""
+        """Create a ClusterExpansionProcessor from serialized MSONable dict."""
         return cls(ClusterSubspace.from_dict(d['cluster_subspace']),
                    np.array(d['supercell_matrix']),
                    coefficients=np.array(d['coefficients']),
@@ -313,7 +313,7 @@ class OrbitDecompositionProcessor(Processor):
 
     @classmethod
     def from_dict(cls, d):
-        """Create a CEProcessor from serialized MSONable dict."""
+        """Create a ClusterExpansionProcessor from serialized MSONable dict."""
         factor_tensors = tuple(
             np.array(factor) for factor in d['orbit_factor_tensors']
         )

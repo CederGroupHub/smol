@@ -152,7 +152,7 @@ sets. [\#90](https://github.com/CederGroupHub/smol/pull/90)
 * Completely new `smol.moca` module. Design based generally up as follows:
   *  `Processor` classes used to compute features, properties and their local
   changes from site flips for fixed supercell sizes.
-     * `CEProcessor` to handle cluster expansions.
+     * `ClusterExpansionProcessor` to handle cluster expansions.
      * `EwaldProcessor` to handle Ewald electrostatic energy.
      * `CompositeProcessor` to mix energy models. Currently only the ones above.
   * `Ensemble` classes to represent the corresponding statistical ensemble
