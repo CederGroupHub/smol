@@ -1,5 +1,7 @@
 import pytest
+import os
 from itertools import product
+from copy import deepcopy
 import numpy as np
 import numpy.testing as npt
 
@@ -207,9 +209,62 @@ def test_get_mins(container, fake_states):
 
 
 def test_msonable(container, fake_states):
+    # fails for empty container with nwalkers > 1
+    # since the _chain.tolist turns the empty array to an empty list and so
+    # the shape is lost, but dont think anyone really cares about an emtpy
+    # container....
+    # d = container.as_dict()
+    # cntr = container.from_dict(d)
+    # assert cntr.shape == container.shape
+
     add_samples(container, fake_states)
     d = container.as_dict()
     cntr = container.from_dict(d)
+    assert cntr.shape == container.shape
     npt.assert_array_equal(container.get_occupancies(),
                            cntr.get_occupancies())
     assert_msonable(cntr)
+
+
+def test_hdf5(container, fake_states, tmpdir):
+    add_samples(container, fake_states)
+    file_path = os.path.join(tmpdir, 'test.h5')
+    container.to_hdf5(file_path)
+    cntr = SampleContainer.from_hdf5(file_path)
+    npt.assert_array_equal(container.get_occupancies(),
+                           cntr.get_occupancies())
+    npt.assert_array_equal(container.get_energies(),
+                           cntr.get_energies())
+    os.remove(file_path)
+
+
+@pytest.mark.parametrize('mode', [False, True])
+def test_flush_to_hdf5(container, fake_states, mode, tmpdir):
+    flushed_container = deepcopy(container)
+    add_samples(container, fake_states)
+    accepted, temps, occus, enths, feats = fake_states
+    file_path = os.path.join(tmpdir, 'test.h5')
+    chunk = len(accepted) // 4
+    flushed_container.allocate(chunk)
+    backend = flushed_container.get_backend(
+        file_path, len(accepted), swmr_mode=mode)
+    start = 0
+    for _ in range(4):
+        for i in range(start, start+chunk):
+            flushed_container.save_sample(accepted[i], temps[i], occus[i],
+                                          enths[i], feats[i], thinned_by=1)
+        assert flushed_container._chain.shape[0] == chunk
+        flushed_container.flush_to_backend(backend)
+        start += chunk
+
+    if mode is not True:
+        backend.close()
+
+    assert flushed_container._chain.shape[0] == chunk
+    assert flushed_container.num_samples == 0
+    cntr = SampleContainer.from_hdf5(file_path)
+    npt.assert_array_equal(container.get_occupancies(),
+                           cntr.get_occupancies())
+    npt.assert_array_equal(container.get_energies(),
+                           cntr.get_energies())
+    os.remove(file_path)
