@@ -262,6 +262,9 @@ class StandardBasis(DiscreteBasis):
                 "implemented to handle this.\n The operation will still be "
                 "carried out, but it is recommended to run orthonormalize "
                 "again if the basis was originally so.")
+        elif not self.is_orthogonal:
+            raise RuntimeError(
+                "Non-orthogonal site basis rotations are not allowed!")
 
         if len(self.site_space) == 2:
             self._f_array[1] *= -1
