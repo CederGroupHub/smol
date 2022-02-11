@@ -1,11 +1,6 @@
 
 .. title:: smol documentation
 
-.. figure:: ../images/logo.png
-   :alt: server
-   :align: left
-   :width: 600px
-
 Statistical Mechanics on Lattices
 =================================
 
