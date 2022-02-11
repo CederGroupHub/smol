@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 from pymatgen.core import Composition
 from smol.cofe.space.domain import SiteSpace
-from smol.moca.ensemble.sublattice import Sublattice
+from smol.moca.sublattice import Sublattice, InactiveSublattice
 from smol.moca.sampler.mcusher import Swapper, Flipper
 
 mcmcusher_classes = [Flipper, Swapper]
@@ -13,32 +13,37 @@ num_sites = 100
 def sublattices():
     # generate two tests sublattices
     sites = np.arange(num_sites)
-    sites1 = np.random.choice(sites, size=40)
-    sites2 = np.setdiff1d(sites, sites1)
+    sites1 = np.random.choice(sites, size=num_sites // 3)
+    sites2 = np.random.choice(np.setdiff1d(sites, sites1),
+                              size=num_sites // 4)
+    sites3 = np.setdiff1d(sites, np.concatenate((sites1, sites2)))
     site_space1 = SiteSpace(
         Composition({'A': 0.1, 'B': 0.4, 'C': 0.3, 'D': 0.2}))
     site_space2 = SiteSpace(
         Composition({'A': 0.1, 'B': 0.4, 'E': 0.5}))
+    site_space3 = SiteSpace(Composition({'G': 1}))
     sublattices = [Sublattice(site_space1, sites1),
                    Sublattice(site_space2, sites2)]
-    return sublattices
+    inactive_sublattices = [InactiveSublattice(site_space3, sites3), ]
+    return sublattices, inactive_sublattices
 
 
 @pytest.fixture
 def rand_occu(sublattices):
     # generate a random occupancy according to the sublattices
-    occu = np.zeros(sum(len(s.sites) for s in sublattices), dtype=int)
+    occu = np.zeros(
+        sum(len(s.sites) for sublat in sublattices for s in sublat), dtype=int)
     for site in range(len(occu)):
-        for sublattice in sublattices:
+        for sublattice in sublattices[0]:
             if site in sublattice.sites:
                 occu[site] = np.random.choice(range(len(sublattice.site_space)))
-    return occu
+    return occu, sublattices[1][0].sites  # return indices of fixed sites
 
 
 @pytest.fixture(params=mcmcusher_classes)
 def mcmcusher(request, sublattices):
     # instantiate mcmcushers to test
-    return request.param(sublattices)
+    return request.param(*sublattices)
 
 
 def test_bad_propabilities(mcmcusher):
@@ -49,13 +54,14 @@ def test_bad_propabilities(mcmcusher):
 
 
 def test_propose_step(mcmcusher, rand_occu):
+    occu, fixed_sites = rand_occu
     iterations = 50000
     # test with 50/50 probability
     flipped_sites = []
     count1, count2 = 0, 0
     total = 0
     for i in range(iterations):
-        step = mcmcusher.propose_step(rand_occu)
+        step = mcmcusher.propose_step(occu)
         for flip in step:
             if flip[0] in mcmcusher.sublattices[0].sites:
                 count1 += 1
@@ -75,7 +81,13 @@ def test_propose_step(mcmcusher, rand_occu):
     assert count2 / total == pytest.approx(0.5, abs=1E-2)
 
     # check that every site was flipped at least once
-    assert all(i in flipped_sites for i in np.arange(num_sites))
+    assert all(
+        i in flipped_sites for i in
+        np.setdiff1d(np.arange(num_sites), fixed_sites)
+    )
+
+    # make sure fixed sites remain the same
+    assert all(i not in fixed_sites for i in flipped_sites)
 
     # Now check with a sublattice bias
     mcmcusher.sublattice_probabilities = [0.8, 0.2]
@@ -83,7 +95,7 @@ def test_propose_step(mcmcusher, rand_occu):
     count1, count2 = 0, 0
     total = 0
     for i in range(iterations):
-        step = mcmcusher.propose_step(rand_occu)
+        step = mcmcusher.propose_step(occu)
         for flip in step:
             if flip[0] in mcmcusher.sublattices[0].sites:
                 count1 += 1

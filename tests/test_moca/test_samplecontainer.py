@@ -7,7 +7,7 @@ import numpy.testing as npt
 
 from pymatgen.core import Composition
 from smol.cofe.space.domain import SiteSpace
-from smol.moca.ensemble.sublattice import Sublattice
+from smol.moca.sublattice import Sublattice
 from smol.moca.sampler import SampleContainer
 from tests.utils import assert_msonable
 
