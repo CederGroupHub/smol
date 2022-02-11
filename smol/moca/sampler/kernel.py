@@ -51,6 +51,7 @@ class MCKernel(ABC):
         try:
             self._usher = mcusher_factory(self.valid_mcushers[step_type],
                                           ensemble.sublattices,
+                                          ensemble.inactive_sublattices,
                                           *args, **kwargs)
         except KeyError:
             raise ValueError(f"Step type {step_type} is not valid for a "

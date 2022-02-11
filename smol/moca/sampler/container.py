@@ -14,7 +14,7 @@ import json
 import numpy as np
 
 from monty.json import MSONable
-from smol.moca.ensemble.sublattice import Sublattice
+from smol.moca.sublattice import Sublattice
 
 try:
     import h5py
