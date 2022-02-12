@@ -1,9 +1,9 @@
 =================
-Example Notebooks
+Examples
 =================
 
 Basic Examples
-==============
+--------------
 
 - `Creating a basic cluster expansion`_
 - `Creating a cluster expansion with electrostatics`_
@@ -25,5 +25,5 @@ Basic Examples
 .. _Adding structures to a StructureWrangler in parallel: notebooks/4-adding-structures-in-parallel.ipynb
 
 Advanced Examples
-=================
+-----------------
 Soon to come...

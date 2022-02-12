@@ -96,21 +96,59 @@ html_theme = "pydata_sphinx_theme"
 html_logo = "../_static/banner.svg"
 
 html_theme_options = {
+    "github_url": "https://github.com/CederGroupHub/smol",
+    "icon_links": [ # additional links with favicons
+    #    {
+    #       "name": "PyPI",
+    #       "url": "https://pypi.org/project/pydata-sphinx-theme",
+    #       "icon": "fas fa-box",
+    #     },
+    ],
+    "use_edit_page_button": True,
+    "show_toc_level": 2,
+    # "navbar_align": "left",  # [left, content, right] For testing that the navbar items align properly
+    # "navbar_start": ["navbar-logo", "navbar-version"],
+    # "navbar_center": ["navbar-nav", "navbar-version"],  # Just for testing
     "collapse_navigation": True,
     "navigation_depth": 2,
+    "show_nav_level": 2,
     "show_prev_next": False,
-    "icon_links": [
-        {"name": "Home Page", "url": "https://amox.lbl.gov/smol",
-         "icon": "fas fa-home"},
-        {
-            "name": "GitHub",
-            "url": "https://github.com/CederGroupHub/smol",
-            "icon": "fab fa-github-square",
-        },
+    "navbar_end": ["navbar-icon-links"], # "version-switcher",
+    # "left_sidebar_end": ["custom-template.html", "sidebar-ethical-ads.html"],
+    # "footer_items": ["copyright", "sphinx-version", ""]
+    # "switcher": {
+        # "json_url": "/_static/switcher.json",
+        # "json_url": "https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json",
+        # "url_template": "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/",
+        # "version_match": version,
+    # },
+    "external_links": [
+        {"name": "Changes",
+         "url": "https://github.com/CederGroupHub/smol/blob/master/CHANGES.md"},
+        {"name": "Issues",
+         "url": "https://github.com/CederGroupHub/smol/issues"}
     ],
-    #"external_links": [{"name": "", "url": ""}],
-    "navbar_end": ["navbar-icon-links"],
-    "page_sidebar_items": ["search-field", "page-toc", "edit-this-page"],
+}
+
+html_context = {
+    "github_user": "CederGroupHub",
+    "github_repo": "smol",
+    "github_version": "master",
+    "doc_path": "doc",
+    "source_suffix": source_suffix,
+}
+
+# Custom sidebar templates, maps page names to templates.
+html_sidebars = {
+    "contribute/index": [
+        "search-field",
+        "sidebar-nav-bs",
+    ],  # This ensures we test for custom sidebars
+    # "demo/no-sidebar": [],  # Test what page looks like with no sidebar items
+}
+
+rediraffe_redirects = {
+    "contributing.rst": "contribute/index.rst",
 }
 
 # The style sheet to use for HTML and HTML Help pages. A file of that name
@@ -134,19 +172,6 @@ html_last_updated_fmt = "%b %d, %Y"
 # Content template for the index page.
 html_index = 'index.html'
 
-# Custom sidebar templates, maps page names to templates.
-html_sidebars = {
-    "**": ["sidebar-nav-bs", "sidebar-ethical-ads"],
-    "index": [],
-    #"install": [],
-    #"tutorial": [],
-    #"auto_examples/index": [],
-}
-
-# Additional templates that should be rendered to pages, maps page names to
-# templates.
-# html_additional_pages = {'': ''}
-
 # If true, the reST sources are included in the HTML build as _sources/<name>.
 html_copy_source = False
 
@@ -154,24 +179,3 @@ html_copy_source = False
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = "smol"
-
-#html_context = {
- #   "versions_dropdown": {
-  #      #"latest": "devel (latest)",
-   #     "stable": "current (stable)",
-    #},
-#}
-
-# Intersphinx mapping
-intersphinx_mapping = {
-    "python": ("https://docs.python.org/3/", None),
-    "numpy": ("https://numpy.org/doc/stable/", None),
-    "neps": ("https://numpy.org/neps", None),
-    "matplotlib": ("https://matplotlib.org/stable", None),
-    "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
-    "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
-    "geopandas": ("https://geopandas.org/", None),
-    "pygraphviz": ("https://pygraphviz.github.io/documentation/stable/", None),
-    "sphinx-gallery": ("https://sphinx-gallery.github.io/stable/", None),
-    "nx-guides": ("https://networkx.org/nx-guides/", None),
-}

@@ -1,6 +1,6 @@
-===
-API
-===
+=========
+Reference
+=========
 
 **smol** is organized into two main submodules:
 
