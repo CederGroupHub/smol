@@ -13,7 +13,7 @@ __author__ = "Luis Barroso-Luque"
 from abc import ABC, abstractmethod
 import random
 import numpy as np
-from smol.utils import derived_class_factory
+from smol.utils import derived_class_factory, class_name_from_str
 
 
 class MCUsher(ABC):
@@ -169,6 +169,7 @@ def mcusher_factory(usher_type, sublattices, inactive_sublattices, *args,
     Returns:
         MCUsher: instance of derived class.
     """
+    usher_name = class_name_from_str(usher_type)
     return derived_class_factory(
-        usher_type.capitalize(), MCUsher, sublattices, inactive_sublattices,
+        usher_name, MCUsher, sublattices, inactive_sublattices,
         *args, **kwargs)

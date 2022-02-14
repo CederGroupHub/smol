@@ -14,9 +14,10 @@ import numpy as np
 from smol.constants import kB
 from smol.utils import derived_class_factory, class_name_from_str
 from smol.moca.sampler.mcusher import mcusher_factory
+from smol.moca.sampler.bias import mcbias_factory
 
 ALL_MCUSHERS = {'flip': 'Flipper', 'swap': 'Swapper'}
-
+ALL_BIAS = {}
 
 class MCKernel(ABC):
     """Abtract base class for transition kernels.
@@ -27,8 +28,10 @@ class MCKernel(ABC):
     """
 
     valid_mcushers = None  # set this in derived kernels
+    valid_bias = None
 
-    def __init__(self, ensemble, step_type, *args, **kwargs):
+    def __init__(self, ensemble, step_type, *args, bias_type=None,
+                 bias_kwargs=None, **kwargs):
         """Initialize MCKernel.
 
         Args:
@@ -37,6 +40,11 @@ class MCKernel(ABC):
                 used in computing log probabilities.
             step_type (str):
                 String specifying the MCMC step type.
+            bias (MCBias):
+                A bias instance.
+            bias_kwargs (dict):
+                dictionary of keyword arguments to pass to the bias
+                constructor.
             args:
                 positional arguments to instantiate the mcusher for the
                 corresponding step size.
@@ -48,14 +56,50 @@ class MCKernel(ABC):
         self.feature_fun = ensemble.compute_feature_vector
         self._feature_change = ensemble.compute_feature_vector_change
 
+        # TODO change this to use class_name_from_str... and if instead of try
         try:
-            self._usher = mcusher_factory(self.valid_mcushers[step_type],
-                                          ensemble.sublattices,
-                                          ensemble.inactive_sublattices,
-                                          *args, **kwargs)
+            self._usher = mcusher_factory(
+                self.valid_mcushers[step_type], ensemble.sublattices,
+                ensemble.inactive_sublattices, *args, **kwargs)
         except KeyError:
-            raise ValueError(f"Step type {step_type} is not valid for a "
-                             f"{type(self)} MCKernel.")
+            raise ValueError(
+                f"Step type {step_type} is not valid for a "
+                f"{type(self)} MCKernel.")
+        
+        try:
+            self._bias = mcbias_factory(
+                self.valid_bias[bias_type], ensemble.sublattices,
+                ensemble.inactive_sublattices, **bias_kwargs)
+        except KeyError:
+            raise ValueError(
+                f"Bias type {bias_type} is not valid for a "
+                f"{type(self)} MCKernel.")
+
+    @property
+    def mcusher(self):
+        """Get the mcusher."""
+        return self._usher
+
+    @mcusher.setter
+    def mcusher(self, usher):
+        """Set the MCUsher."""
+        if usher.__name__ not in self.valid_mcushers:
+            raise ValueError(
+                f"{type(usher)} is not a valid MCUsher for this kernel.")
+        self._usher = usher
+
+    @property
+    def bias(self):
+        """Get the mcusher."""
+        return self._bias
+
+    @bias.setter
+    def bias(self, bias):
+        """Set the MCUsher."""
+        if bias.__name__ not in self.valid_bias:
+            raise ValueError(
+                f"{type(bias)} is not a valid MCBias for this kernel.")
+        self._usher = bias
 
     def set_aux_state(self, state, *args, **kwargs):
         """Set the auxiliary state from initial or checkpoint values."""
@@ -126,6 +170,7 @@ class UniformlyRandom(MCKernel):
     """
 
     valid_mcushers = ALL_MCUSHERS
+    valid_bias = ALL_BIAS
 
     def single_step(self, occupancy):
         """Attempt an MCMC step.
@@ -157,6 +202,7 @@ class Metropolis(ThermalKernel):
     """
 
     valid_mcushers = ALL_MCUSHERS
+    valid_bias = ALL_BIAS
 
     def single_step(self, occupancy):
         """Attempt an MC step.
@@ -174,8 +220,11 @@ class Metropolis(ThermalKernel):
         step = self._usher.propose_step(occupancy)
         delta_features = self._feature_change(occupancy, step)
         delta_enthalpy = np.dot(self.natural_params, delta_features)
-        accept = (True if delta_enthalpy <= 0
-                  else -self.beta * delta_enthalpy > log(random()))
+        delta_bias = 0 if self._bias is None \
+            else self._bias.compute_bias_change(occupancy, step)
+        exponent = -self.beta * delta_enthalpy + delta_bias
+        accept = True if exponent >= 0 else exponent > log(random())
+
         if accept:
             for f in step:
                 occupancy[f[0]] = f[1]
