@@ -3,11 +3,11 @@ import numpy.testing as npt
 import numpy as np
 
 from smol.cofe import ClusterExpansion, RegressionData
-from smol.moca import CanonicalEnsemble, MuSemiGrandEnsemble, \
+from smol.moca import CanonicalEnsemble, SemiGrandEnsemble, \
     CompositeProcessor, CEProcessor, EwaldProcessor
 from tests.utils import assert_msonable, gen_random_occupancy
 
-ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble]
+ensembles = [CanonicalEnsemble, SemiGrandEnsemble]
 
 
 @pytest.fixture
@@ -19,8 +19,8 @@ def canonical_ensemble(composite_processor):
 def mugrand_ensemble(composite_processor):
     chemical_potentials = {sp: 0.3 for space in composite_processor.unique_site_spaces
                            for sp in space.keys()}
-    return MuSemiGrandEnsemble(composite_processor,
-                               chemical_potentials=chemical_potentials)
+    return SemiGrandEnsemble(composite_processor,
+                             chemical_potentials=chemical_potentials)
 
 
 # Test with composite processors to cover more ground
@@ -41,7 +41,7 @@ def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_cls):
         parameters={'foo': 'bar'})
     expansion = ClusterExpansion(cluster_subspace_ewald, coefs, reg_data)
 
-    if ensemble_cls is MuSemiGrandEnsemble:
+    if ensemble_cls is SemiGrandEnsemble:
         kwargs = {'chemical_potentials':
                   {sp: 0.3 for space in proc.unique_site_spaces
                    for sp in space.keys()}}
@@ -133,11 +133,11 @@ def test_bad_chemical_potentials(mugrand_ensemble):
         mugrand_ensemble.chemical_potentials = {'A': 0.5, 'D': 0.6}
     with pytest.raises(ValueError):
         chem_pots['foo'] = 0.4
-        MuSemiGrandEnsemble(proc, chemical_potentials=chem_pots)
+        SemiGrandEnsemble(proc, chemical_potentials=chem_pots)
     with pytest.raises(ValueError):
         del chem_pots['foo']
         chem_pots.pop(items[0][0])
-        MuSemiGrandEnsemble(proc, chemical_potentials=chem_pots)
+        SemiGrandEnsemble(proc, chemical_potentials=chem_pots)
     with pytest.raises(ValueError):
         chem_pots[str(list(chem_pots.keys()))[0]] = 0.0
         mugrand_ensemble.chemical_potentials = chem_pots

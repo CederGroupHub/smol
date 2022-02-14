@@ -2,19 +2,13 @@
 
 These are used to run Monte Carlo sampling for fixed number of sites but
 variable concentration of species.
-
-Two classes are different SGC ensemble implemented:
-* MuSemiGrandEnsemble - for which relative chemical potentials are fixed
-* FuSemiGrandEnsemble - for which relative fugacity fractions are fixed.
 """
 
 __author__ = "Luis Barroso-Luque"
 
-from abc import abstractmethod
-from math import log
+
 from collections import Counter
 import numpy as np
-
 from monty.json import MSONable
 from pymatgen.core import Species, DummySpecies, Element
 from smol.cofe.space.domain import get_species, Vacancy
@@ -23,65 +17,7 @@ from .base import Ensemble
 from smol.moca.sublattice import Sublattice
 
 
-class BaseSemiGrandEnsemble(Ensemble):
-    """Abstract Semi-Grand Canonical Base Ensemble.
-
-    Total number of species are fixed but composition of "active" (with partial
-    occupancies) sublattices is allowed to change.
-
-    This class can not be instantiated. See :class:`MuSemiGrandEnsemble` and
-    :class:`FuSemiGrandEnsemble` below.
-    """
-
-    valid_mcmc_steps = ('flip',)
-
-    def __init__(self, processor, sublattices=None):
-        """Initialize BaseSemiGrandEnsemble.
-
-        Args:
-            processor (Processor):
-                A processor that can compute the change in a property given
-                a set of flips. See moca.processor
-            sublattices (list of Sublattice): optional
-                list of Lattice objects representing sites in the processor
-                supercell with same site spaces.
-        """
-        super().__init__(processor, sublattices=sublattices)
-        self._params = np.append(self.processor.coefs, -1.0)
-
-    @property
-    def natural_parameters(self):
-        """Get the vector of natural parameters.
-
-        For SGC an extra -1 is added for the chemical part of the LT.
-        """
-        return self._params
-
-    @abstractmethod
-    def compute_chemical_work(self, occupancy):
-        """Compute the chemical work term."""
-        return []
-
-    def compute_feature_vector(self, occupancy):
-        """Compute the feature vector for a given occupancy.
-
-        In the semigrand case it is the feature vector and the chemical work
-        term.
-
-        Args:
-            occupancy (ndarray):
-                encoded occupancy string
-
-        Returns:
-            ndarray: feature vector
-        """
-        feature_vector = self.processor.compute_feature_vector(occupancy)
-        chemical_work = self.compute_chemical_work(occupancy)
-        # prellocate to improve speed
-        return np.append(feature_vector, chemical_work)
-
-
-class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
+class SemiGrandEnsemble(Ensemble, MSONable):
     """Relative chemical potential based SemiGrand Ensemble.
 
     A Semi-Grand Canonical Ensemble for Monte Carlo Simulations where species
@@ -97,6 +33,8 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
             dict of chemical potentials.
     """
 
+    valid_mcmc_steps = ('flip',)
+
     def __init__(self, processor, chemical_potentials,
                  sublattices=None):
         """Initialize MuSemiGrandEnsemble.
@@ -111,8 +49,8 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
                 List of Sublattice objects representing sites in the processor
                 supercell with same site spaces.
         """
-        super().__init__(processor, sublattices)
-
+        super().__init__(processor, sublattices=sublattices)
+        self._params = np.append(self.processor.coefs, -1.0)
         # check that species are valid
         chemical_potentials = {get_species(k): v for k, v
                                in chemical_potentials.items()}
@@ -133,6 +71,14 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         self.thermo_boundaries = {'chemical-potentials':
                                   {str(k): v for k, v
                                    in chemical_potentials.items()}}
+
+    @property
+    def natural_parameters(self):
+        """Get the vector of natural parameters.
+
+        For SGC an extra -1 is added for the chemical part of the LT.
+        """
+        return self._params
 
     @property
     def chemical_potentials(self):
@@ -158,6 +104,24 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         self._mus = value
         self._mu_table = self._build_mu_table(value)
 
+    def compute_feature_vector(self, occupancy):
+        """Compute the feature vector for a given occupancy.
+
+        In the semigrand case it is the feature vector and the chemical work
+        term.
+
+        Args:
+            occupancy (ndarray):
+                encoded occupancy string
+
+        Returns:
+            ndarray: feature vector
+        """
+        feature_vector = self.processor.compute_feature_vector(occupancy)
+        chemical_work = self.compute_chemical_work(occupancy)
+        # prellocate to improve speed
+        return np.append(feature_vector, chemical_work)
+
     def compute_feature_vector_change(self, occupancy, step):
         """Return the change in the feature vector from a given step.
 
@@ -170,10 +134,11 @@ class MuSemiGrandEnsemble(BaseSemiGrandEnsemble, MSONable):
         Returns:
             ndarray: difference in feature vector
         """
-        delta_feature = self.processor.compute_feature_vector_change(occupancy,
-                                                                     step)
-        delta_mu = sum(self._mu_table[f[0]][f[1]]
-                       - self._mu_table[f[0]][occupancy[f[0]]] for f in step)
+        delta_feature = self.processor.compute_feature_vector_change(
+            occupancy, step)
+        delta_mu = sum(
+            self._mu_table[f[0]][f[1]] - self._mu_table[f[0]][occupancy[f[0]]]
+            for f in step)
         # prellocate to improve speed
         return np.append(delta_feature, delta_mu)
 

@@ -9,10 +9,10 @@ from .processor.expansion import CEProcessor
 from .processor.ewald import EwaldProcessor
 from .processor.composite import CompositeProcessor
 from .ensemble.canonical import CanonicalEnsemble
-from .ensemble.semigrand import MuSemiGrandEnsemble
+from .ensemble.semigrand import SemiGrandEnsemble
 from .sampler.sampler import Sampler
 from smol.moca.sampler.container import SampleContainer
 
 __all__ = ['CEProcessor', 'EwaldProcessor', 'CompositeProcessor',
-           'CanonicalEnsemble', 'MuSemiGrandEnsemble',
+           'CanonicalEnsemble', 'SemiGrandEnsemble',
            'Sampler', 'SampleContainer']
