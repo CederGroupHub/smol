@@ -12,7 +12,7 @@ kernels = [UniformlyRandom, Metropolis]
 ushers = ALL_MCUSHERS
 
 
-@pytest.fixture(params=product(kernels, ushers.keys()))
+@pytest.fixture(params=product(kernels, ushers))
 def mckernel(ensemble, request):
     kwargs = {}
     kernel_class, step_type = request.param
@@ -34,7 +34,7 @@ def test_constructor(ensemble, step_type, mcusher):
 
 def test_single_step(mckernel):
     occu_ = gen_random_occupancy(mckernel._usher.sublattices,
-                                 mckernel.num_sites)
+                                 mckernel._usher.inactive_sublattices)
     for _ in range(20):
         init_occu = occu_.copy()
         acc, occu, denth, dfeat = mckernel.single_step(init_occu)
