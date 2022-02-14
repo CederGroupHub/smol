@@ -1,5 +1,5 @@
 Citing
-------
+======
 
 For general usage of **smol** please cite the following publication,
 
@@ -7,15 +7,18 @@ For general usage of **smol** please cite the following publication,
     **smol**--- Yet another cluster expansion method python package.
     (in preparation)
 
-Please also cite this publication,
+Please also consider citing the **pymatgen** publication,
 
     Ong, S. P. et al. Python Materials Genomics (pymatgen):
     `A robust, open-source python library for materials analysis
     <https://doi.org/10.1016/j.commatsci.2012.10.028>`_.
     ComputationalMaterials Science 68, 314–319 (2013).
 
-If you use the `PottsSusbpace` class or related functionality in your work
-please cite this publication,
+Cluster expansions with redundant function sets
+-----------------------------------------------
+
+If you use the (:ref:`smol.cofe.PottsSubspace`) class or related functionality
+to include redundancy in cluster expansions please cite this publication,
 
     Barroso-Luque, L., Yang, J. H. & Ceder, G.
     `Sparse expansions of multicomponent oxide configuration energy using
@@ -23,9 +26,14 @@ please cite this publication,
     <https://link.aps.org/doi/10.1103/PhysRevB.104.224203>`_.
     Phys. Rev. B 104, 224203 (2021).`
 
+Orbit group wise regularized fits
+---------------------------------
 If you use **smol** or any of the other greate CE packages to fit an expansion
 using orbit group wise regularization with Group Lasso or related regression
 models, please cite the following,
 
+
+L2L0 MIQP fits with hierarchical constraints
+--------------------------------------------
 Similarly, if you use L0L2 mixed integer quadratic programming for hierarchical
 constrained expansion fits, please cite this publications,

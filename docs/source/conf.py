@@ -45,6 +45,7 @@ extensions = [
     "sphinx.ext.todo",
     "sphinx.ext.viewcode",
     "nbsphinx",
+    "nb2plots",
     "IPython.sphinxext.ipython_console_highlighting",
 ]
 
