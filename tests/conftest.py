@@ -53,11 +53,9 @@ def ce_processor(cluster_subspace):
 
 
 @pytest.fixture(scope='module')
-def composite_processor(cluster_subspace):
+def composite_processor(cluster_subspace_ewald):
     coefs = 2 * np.random.random(cluster_subspace.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
-    ewald_term = EwaldTerm()
-    cluster_subspace.add_external_term(ewald_term)
     proc = CompositeProcessor(cluster_subspace, supercell_matrix=scmatrix)
     proc.add_processor(CEProcessor(cluster_subspace, scmatrix,
                                    coefficients=coefs[:-1]))
