@@ -3,7 +3,7 @@ import pytest
 import numpy as np
 from monty.serialization import loadfn
 from smol.cofe import ClusterSubspace
-from smol.moca import CanonicalEnsemble, MuSemiGrandEnsemble, \
+from smol.moca import CanonicalEnsemble, SemiGrandEnsemble, \
     CEProcessor, EwaldProcessor, CompositeProcessor
 from smol.cofe.extern import EwaldTerm
 
@@ -14,7 +14,7 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 files = ['AuPd_prim.json', 'CrFeW_prim.json', 'LiCaBr_prim.json',
          'LiMOF_prim.json', 'LiMnTiVOF_prim.json']
 test_structures = [loadfn(os.path.join(DATA_DIR, file)) for file in files]
-ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble]
+ensembles = [CanonicalEnsemble, SemiGrandEnsemble]
 
 
 @pytest.fixture(params=test_structures, scope='package')
@@ -68,7 +68,7 @@ def composite_processor(cluster_subspace):
 
 @pytest.fixture(params=ensembles, scope='module')
 def ensemble(composite_processor, request):
-    if request.param is MuSemiGrandEnsemble:
+    if request.param is SemiGrandEnsemble:
         kwargs = {'chemical_potentials':
                   {sp: 0.3 for space in composite_processor.unique_site_spaces
                    for sp in space.keys()}}

@@ -91,7 +91,7 @@ The core classes are:
 - :ref:`ensembles`
 
   - :class:`CanonicalEnsemle`
-  - :class:`MuSemiGrandEnsemble`
+  - :class:`SemiGrandEnsemble`
   - :class:`FuSemiGrandEnsemble`
 
 - :ref:`processors`
@@ -129,7 +129,7 @@ the specific temperature to generate samples at, is set in a :class:`Sampler`.
    :undoc-members:
    :show-inheritance:
 
-.. autoclass:: smol.moca.MuSemiGrandEnsemble
+.. autoclass:: smol.moca.SemiGrandEnsemble
    :members:
    :undoc-members:
    :show-inheritance:
