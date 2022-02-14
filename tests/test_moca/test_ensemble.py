@@ -5,12 +5,11 @@ import numpy as np
 
 from smol.cofe import ClusterExpansion, RegressionData
 from smol.cofe.extern import EwaldTerm
-from smol.moca import (CanonicalEnsemble, MuSemiGrandEnsemble,
-                       FuSemiGrandEnsemble, CompositeProcessor,
-                       CEProcessor, EwaldProcessor)
+from smol.moca import CanonicalEnsemble, MuSemiGrandEnsemble, \
+    CompositeProcessor, CEProcessor, EwaldProcessor
 from tests.utils import assert_msonable, gen_random_occupancy
 
-ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble, FuSemiGrandEnsemble]
+ensembles = [CanonicalEnsemble, MuSemiGrandEnsemble]
 
 
 @pytest.fixture
@@ -42,11 +41,6 @@ def mugrand_ensemble(composite_processor):
                            for sp in space.keys()}
     return MuSemiGrandEnsemble(composite_processor,
                                chemical_potentials=chemical_potentials)
-
-
-@pytest.fixture
-def fugrand_ensemble(composite_processor):
-    return FuSemiGrandEnsemble(composite_processor)
 
 
 # Test with composite processors to cover more ground
