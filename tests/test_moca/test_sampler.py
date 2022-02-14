@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 import numpy.testing as npt
 from smol.moca import Sampler
-from smol.moca.sampler.mcusher import Swapper, Flipper
+from smol.moca.sampler.mcusher import Swap, Flip
 from smol.moca.sampler.kernel import Metropolis
 from tests.utils import gen_random_occupancy
 
@@ -20,9 +20,9 @@ def sampler(ensemble, request):
 
 def test_from_ensemble(sampler):
     if "Canonical" in sampler.samples.metadata["name"]:
-        assert isinstance(sampler.mckernel._usher, Swapper)
+        assert isinstance(sampler.mckernel._usher, Swap)
     else:
-        assert isinstance(sampler.mckernel._usher, Flipper)
+        assert isinstance(sampler.mckernel._usher, Flip)
     assert isinstance(sampler.mckernel, Metropolis)
 
 
