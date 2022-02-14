@@ -16,9 +16,9 @@ class MCBias(ABC):
 
     Attributes:
         sublattices (List[Sublattice]):
-            List of sublattices with active sites.
+            list of sublattices with active sites.
         inactive_sublattices (List[InactiveSublattice]):
-            List of inactive sublattices.
+            list of inactive sublattices.
     """
 
     def __init__(self, sublattices, inactive_sublattices, *args, **kwargs):
@@ -65,18 +65,18 @@ class MCBias(ABC):
         return
 
 
-def mcbias_factory(bias_type, all_sublattices, *args, **kwargs):
+def mcbias_factory(bias_type, sublattices, inactive_sublattices, *args,
+                   **kwargs):
     """Get a MCMC bias from string name.
 
     Args:
         bias_type (str):
             string specyting bias name to instantiate.
-        all_sublattices (list of Sublattice):
-            list of Sublattices to calculate bias for.
-            Must contain all sublattices, including active
-            and inactive, otherwise might be unable to
-            calculate some type of bias, for example,
-            charge bias.
+        sublattices (List[Sublattice]):
+            list of active sublattices, containing species information and
+            site indices in sublattice.
+        inactive_sublattices (List[InactiveSublattice]):
+            list of inactive sublattices
         *args:
             positional args to instatiate a bias term.
         *kwargs:
@@ -84,4 +84,4 @@ def mcbias_factory(bias_type, all_sublattices, *args, **kwargs):
     """
     bias_name = class_name_from_str(bias_type)
     return derived_class_factory(
-        bias_name, MCBias, all_sublattices, *args, **kwargs)
+        bias_name, MCBias, sublattices, inactive_sublattices, *args, **kwargs)

@@ -3,13 +3,13 @@ from itertools import product
 import numpy as np
 import numpy.testing as npt
 from smol.constants import kB
-from smol.moca import CEProcessor, CanonicalEnsemble
-from smol.moca.sampler.mcusher import Swapper, Flipper
-from smol.moca.sampler.kernel import Metropolis, UniformlyRandom, ThermalKernel
+from smol.moca.sampler.mcusher import Swap, Flip
+from smol.moca.sampler.kernel import Metropolis, UniformlyRandom, \
+    ThermalKernel, ALL_MCUSHERS
 from tests.utils import gen_random_occupancy
 
 kernels = [UniformlyRandom, Metropolis]
-ushers = {'swap': Swapper, 'flip': Flipper}
+ushers = ALL_MCUSHERS
 
 
 @pytest.fixture(params=product(kernels, ushers.keys()))
@@ -25,7 +25,7 @@ def mckernel(ensemble, request):
 
 
 @pytest.mark.parametrize(
-    "step_type, mcusher", [("swap", Swapper), ("flip", Flipper)])
+    "step_type, mcusher", [("swap", Swap), ("flip", Flip)])
 def test_constructor(ensemble, step_type, mcusher):
     assert isinstance(
         Metropolis(ensemble, step_type=step_type, temperature=500)._usher,

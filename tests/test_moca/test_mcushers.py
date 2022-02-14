@@ -3,9 +3,9 @@ import numpy as np
 from pymatgen.core import Composition
 from smol.cofe.space.domain import SiteSpace
 from smol.moca.sublattice import Sublattice, InactiveSublattice
-from smol.moca.sampler.mcusher import Swapper, Flipper
+from smol.moca.sampler.mcusher import Swap, Flip
 
-mcmcusher_classes = [Flipper, Swapper]
+mcmcusher_classes = [Flip, Swap]
 num_sites = 100
 
 

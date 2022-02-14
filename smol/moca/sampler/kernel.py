@@ -12,12 +12,14 @@ from random import random
 import numpy as np
 
 from smol.constants import kB
-from smol.utils import derived_class_factory, class_name_from_str
-from smol.moca.sampler.mcusher import mcusher_factory
-from smol.moca.sampler.bias import mcbias_factory
+from smol.utils import derived_class_factory, class_name_from_str, \
+    get_subclasses
+from smol.moca.sampler.mcusher import mcusher_factory, MCUsher
+from smol.moca.sampler.bias import mcbias_factory, MCBias
 
-ALL_MCUSHERS = {'flip': 'Flipper', 'swap': 'Swapper'}
-ALL_BIAS = {}
+ALL_MCUSHERS = list(get_subclasses(MCUsher).keys())
+ALL_BIAS = list(get_subclasses(MCBias).keys())
+
 
 class MCKernel(ABC):
     """Abtract base class for transition kernels.
@@ -27,7 +29,8 @@ class MCKernel(ABC):
     and write a specific sampler see the MetropolisSampler.
     """
 
-    valid_mcushers = None  # set this in derived kernels
+    # Lists of valid helper classes, set these in derived kernels
+    valid_mcushers = None
     valid_bias = None
 
     def __init__(self, ensemble, step_type, *args, bias_type=None,
@@ -56,24 +59,27 @@ class MCKernel(ABC):
         self.feature_fun = ensemble.compute_feature_vector
         self._feature_change = ensemble.compute_feature_vector_change
 
-        # TODO change this to use class_name_from_str... and if instead of try
-        try:
-            self._usher = mcusher_factory(
-                self.valid_mcushers[step_type], ensemble.sublattices,
-                ensemble.inactive_sublattices, *args, **kwargs)
-        except KeyError:
+        mcusher_name = class_name_from_str(step_type)
+        if mcusher_name not in self.valid_mcushers:
             raise ValueError(
                 f"Step type {step_type} is not valid for a "
                 f"{type(self)} MCKernel.")
-        
-        try:
+
+        self._usher = mcusher_factory(
+            mcusher_name, ensemble.sublattices, ensemble.inactive_sublattices,
+            *args, **kwargs)
+
+        if bias_type is not None:
+            bias_name = class_name_from_str(bias_type)
+            if bias_name not in self.valid_bias:
+                raise ValueError(
+                    f"Bias type {bias_type} is not valid for a "
+                    f"{type(self)} MCKernel.")
             self._bias = mcbias_factory(
-                self.valid_bias[bias_type], ensemble.sublattices,
-                ensemble.inactive_sublattices, **bias_kwargs)
-        except KeyError:
-            raise ValueError(
-                f"Bias type {bias_type} is not valid for a "
-                f"{type(self)} MCKernel.")
+                bias_name, ensemble.sublattices, ensemble.inactive_sublattices,
+                **bias_kwargs)
+        else:
+            self._bias = None
 
     @property
     def mcusher(self):
