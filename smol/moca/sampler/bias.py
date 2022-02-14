@@ -105,6 +105,8 @@ class FugacityBias(MCBias):
         super().__init__(sublattices, inactive_sublattices)
         self._fus = None
         self._fu_table = None
+        self._species = [
+            set(sublatt.site_space.keys()) for sublatt in sublattices]
 
         if fugacity_fractions is not None:
             # check that species are valid
@@ -129,19 +131,21 @@ class FugacityBias(MCBias):
                     raise ValueError(
                         f"{count} values of the fugacity for the same "
                         f"species {sp} were provided.\n Make sure the "
-                        "dictionaries you are using have only "
-                        "string keys or only Species objects as keys."
+                        f"dictionaries you are using have only "
+                        f"string keys or only Species objects as keys."
                     )
 
         value = [{get_species(k): v for k, v in sub.items()} for sub in value]
         if not all(sum(fus.values()) == 1 for fus in value):
             raise ValueError('Fugacity ratios must add to one.')
-        for (fus, vals) in zip(self._fus, value):
-            if set(fus.keys()) != set(vals.keys()):
-                raise ValueError('Fugacity fractions given are missing or not '
-                                 'valid species. Values must be given for each'
-                                 ' of the following: '
-                                 f'{[f.keys() for f in self._fus]}')
+        for (sp, vals) in zip(self._species, value):
+            if sp != set(vals.keys()):
+                raise ValueError(
+                    f'Fugacity fractions given are missing or not valid '
+                    f'species.\n'
+                    f'Values must be given for each  of the following: '
+                    f'{self._species}'
+                )
         self._fus = value
         self._fu_table = self._build_fu_table(value)
 
@@ -187,10 +191,11 @@ class FugacityBias(MCBias):
         be given values of 1. Also rows representing sites with not partial
         occupancy will have all 1 values and should never be used.
         """
-        num_cols = max(len(sl.site_space) for sl in self.sublattices)
-        num_rows = sum(len(sl.sites) for sl in self.sublattices)
+        sublattices = self.sublattices + self.inactive_sublattices
+        num_cols = max(len(sl.site_space) for sl in sublattices)
+        num_rows = sum(len(sl.sites) for sl in sublattices)
         table = np.ones((num_rows, num_cols))
-        for fus, sublatt in zip(fugacity_fractions, self.sublattices):
+        for fus, sublatt in zip(fugacity_fractions, sublattices):
             ordered_fus = [fus[sp] for sp in sublatt.site_space]
             table[sublatt.sites, :len(ordered_fus)] = ordered_fus
         return table
