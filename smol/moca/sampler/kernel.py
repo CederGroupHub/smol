@@ -7,6 +7,7 @@ to generate states for sampling an MCMC chain.
 __author__ = "Luis Barroso-Luque"
 
 from abc import ABC, abstractmethod
+from types import SimpleNamespace
 from math import log
 from random import random
 import numpy as np
@@ -19,6 +20,49 @@ from smol.moca.sampler.bias import mcbias_factory, MCBias
 
 ALL_MCUSHERS = list(get_subclasses(MCUsher).keys())
 ALL_BIAS = list(get_subclasses(MCBias).keys())
+
+
+class Trace(SimpleNamespace):
+    """Simple Trace class.
+
+    A Trace is a simple (nested) namespace to hold additional values to be
+    recorded during MC sampling.
+    """
+    def __init__(self, /, **kwargs):
+        if not all(isinstance(val, np.ndarray) or isinstance(val, Trace)
+                   for val in kwargs.values()):
+            raise TypeError(
+                'Trace only supports attributes of type ndarray or other '
+                'Trace instances')
+        super().__init__(**kwargs)
+
+    @property
+    def field_names(self):
+        """Get all field names"""
+        return tuple(self.__dict__.keys())
+
+    def __setattr__(self, key, value):
+        if not (isinstance(value, np.ndarray) or isinstance(value, Trace)):
+            raise TypeError(
+                'Trace only supports attributes of type ndarray or other '
+                'Trace instances')
+        super().__setattr__(key, value)
+
+
+class StepTrace(Trace):
+    """StepTrace class.
+
+    Same as the above but holds a default "delta" inner trace to hold trace
+    values that represent changes from previous values, to be handled similarly
+    to delta_features and delta_energy.
+
+    An StepTrace object is set as an MCKernels attribute to record
+    kernel specific values during sampling.
+    """
+
+    def __init__(self, /, **kwargs):
+        delta = Trace()
+        super().__init__(delta=delta, **kwargs)
 
 
 class MCKernel(ABC):
@@ -57,29 +101,20 @@ class MCKernel(ABC):
         """
         self.natural_params = ensemble.natural_parameters
         self.feature_fun = ensemble.compute_feature_vector
+        self.trace = StepTrace()
         self._feature_change = ensemble.compute_feature_vector_change
+        self._usher, self._bias = None, None
 
         mcusher_name = class_name_from_str(step_type)
-        if mcusher_name not in self.valid_mcushers:
-            raise ValueError(
-                f"Step type {step_type} is not valid for a "
-                f"{type(self)} MCKernel.")
-
-        self._usher = mcusher_factory(
+        self.mcusher = mcusher_factory(
             mcusher_name, ensemble.sublattices, ensemble.inactive_sublattices,
             *args, **kwargs)
 
         if bias_type is not None:
             bias_name = class_name_from_str(bias_type)
-            if bias_name not in self.valid_bias:
-                raise ValueError(
-                    f"Bias type {bias_type} is not valid for a "
-                    f"{type(self)} MCKernel.")
-            self._bias = mcbias_factory(
+            self.bias = mcbias_factory(
                 bias_name, ensemble.sublattices, ensemble.inactive_sublattices,
                 **bias_kwargs)
-        else:
-            self._bias = None
 
     @property
     def mcusher(self):
@@ -89,7 +124,7 @@ class MCKernel(ABC):
     @mcusher.setter
     def mcusher(self, usher):
         """Set the MCUsher."""
-        if usher.__name__ not in self.valid_mcushers:
+        if usher.__class__.__name__ not in self.valid_mcushers:
             raise ValueError(
                 f"{type(usher)} is not a valid MCUsher for this kernel.")
         self._usher = usher
@@ -102,10 +137,12 @@ class MCKernel(ABC):
     @bias.setter
     def bias(self, bias):
         """Set the MCUsher."""
-        if bias.__name__ not in self.valid_bias:
+        if bias.__class__.__name__ not in self.valid_bias:
             raise ValueError(
                 f"{type(bias)} is not a valid MCBias for this kernel.")
-        self._usher = bias
+        if 'bias' not in self.trace.delta.field_names:
+            self.trace.delta.bias = np.empty(1)
+        self._bias = bias
 
     def set_aux_state(self, state, *args, **kwargs):
         """Set the auxiliary state from initial or checkpoint values."""
@@ -154,17 +191,18 @@ class ThermalKernel(MCKernel):
                 corresponding step size.
         """
         super().__init__(ensemble, step_type, *args, **kwargs)
-        self.temperature = temperature
+        self.trace.temperature = np.array([temperature])
+        self.beta = 1.0 / (kB * temperature)
 
     @property
     def temperature(self):
         """Get the temperature of kernel."""
-        return self._temperature
+        return self.trace.temperature
 
     @temperature.setter
     def temperature(self, temperature):
         """Set the temperature and beta accordingly."""
-        self._temperature = temperature
+        self.trace.temperature = np.array([temperature])
         self.beta = 1.0 / (kB * temperature)
 
 
@@ -226,10 +264,14 @@ class Metropolis(ThermalKernel):
         step = self._usher.propose_step(occupancy)
         delta_features = self._feature_change(occupancy, step)
         delta_enthalpy = np.dot(self.natural_params, delta_features)
-        delta_bias = 0 if self._bias is None \
-            else self._bias.compute_bias_change(occupancy, step)
-        exponent = -self.beta * delta_enthalpy + delta_bias
-        accept = True if exponent >= 0 else exponent > log(random())
+        if self._bias is not None:
+            delta_bias = self._bias.compute_bias_change(occupancy, step)
+            exponent = -self.beta * delta_enthalpy + delta_bias
+            self.trace.delta.bias[0] = delta_bias
+            accept = True if exponent >= 0 else exponent > log(random())
+        else:
+            accept = (True if delta_enthalpy <= 0
+                      else -self.beta * delta_enthalpy > log(random()))
 
         if accept:
             for f in step:
