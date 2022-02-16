@@ -1,13 +1,14 @@
-# <img src="docs/images/logo.png" width="350px" alt="smol">
+<img src="docs/images/logo.png" width="350px" alt="smol">
 
 Statistical Mechanics on Lattices
 =================================
 
 ![test](https://github.com/CederGroupHub/smol/actions/workflows/test.yml/badge.svg)
 
-Lighthweight but caffeinated Python implementations of computational methods
+*Lighthweight but caffeinated Python implementations of computational methods
 for statistical mechanical calculations of configurational states for
-crystalline material systems.
+crystalline material systems.*
+
 -----------------------------------------------------------------------------
 
 **smol** is a minimal implementation of computational methods to calculate
