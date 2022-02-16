@@ -60,7 +60,8 @@ class SampleContainer(MSONable):
     """
 
     def __init__(self, num_sites, sublattices, natural_parameters,
-                 num_energy_coefs, sampling_metadata=None, nwalkers=1):
+                 num_energy_coefs, sample_trace, sampling_metadata=None,
+                 nwalkers=1):
         """Initialize a sample container.
 
         Args:
@@ -73,6 +74,8 @@ class SampleContainer(MSONable):
             num_energy_coefs (int):
                 the number of coeficients in the natural parameters that
                 correspond to the energy only.
+            sample_trace (Trace):
+                A trace object of the traced valudes during MC sampling
             sampling_metadata (Ensemble):
                 Sampling metadata (i.e. ensemble name, mckernel type, etc)
             nwalkers (int):
@@ -88,8 +91,8 @@ class SampleContainer(MSONable):
         self._chain = np.empty((0, nwalkers, num_sites), dtype=int)
         self._features = np.empty((0, nwalkers, len(natural_parameters)))
         self._enthalpy = np.empty((0, nwalkers))
-        self._temperature = np.empty((0, nwalkers))
         self._accepted = np.zeros((0, nwalkers), dtype=int)
+        self._trace = sample_trace
         self.aux_checkpoint = None
         self._backend = None  # for streaming
 
@@ -111,19 +114,19 @@ class SampleContainer(MSONable):
             efficiency = efficiency.mean()
         return efficiency
 
+    def get_trace_value(self, name, discard=0, thin_by=1, flat=True):
+        """Get sampled values of a traced value given by name."""
+        value = getattr(self._trace, name)[discard + thin_by - 1::thin_by]
+        if flat:
+            value = self._flatten(value)
+        return value
+
     def get_occupancies(self, discard=0, thin_by=1, flat=True):
         """Get an occupancy chain from samples."""
         chain = self._chain[discard + thin_by - 1::thin_by]
         if flat:
             chain = self._flatten(chain)
         return chain
-
-    def get_temperatures(self, discard=0, thin_by=1, flat=True):
-        """Get the generalized entalpy changes from samples in chain."""
-        temps = self._temperature[discard + thin_by - 1::thin_by]
-        if flat:
-            temps = self._flatten(temps)
-        return temps
 
     def get_enthalpies(self, discard=0, thin_by=1, flat=True):
         """Get the generalized entalpy changes from samples in chain."""
@@ -160,6 +163,14 @@ class SampleContainer(MSONable):
         """Get the compositions for each occupancy in the chain."""
         counts = self.get_species_counts(discard, thin_by, flat)
         return {spec: count/self.shape[1] for spec, count in counts.items()}
+
+    def mean_trace_value(self, name, discard=0, thin_by=1, flat=True):
+        """Get mean of a traced value given by name."""
+        return self.get_trace_value(name, discard, thin_by, flat).mean(axis=0)
+
+    def trace_value_variance(self, name, discard=0, thin_by=1, flat=True):
+        """Get variance of a traced value given by name."""
+        return self.get_trace_value(name, discard, thin_by, flat).var(axis=0)
 
     def mean_enthalpy(self, discard=0, thin_by=1, flat=True):
         """Get the mean generalized enthalpy."""
@@ -204,8 +215,8 @@ class SampleContainer(MSONable):
     def sublattice_composition_variance(self, sublattice, discard=0, thin_by=1,
                                         flat=True):
         """Get the varience in composition of a specific sublattice."""
-        return self.get_sublattice_compositions(sublattice, discard,
-                                                thin_by, flat).var(axis=0)
+        return self.get_sublattice_compositions(
+            sublattice, discard, thin_by, flat).var(axis=0)
 
     def get_minimum_enthalpy(self, discard=0, thin_by=1,  flat=True):
         """Get the minimum energy from samples."""
@@ -217,7 +228,8 @@ class SampleContainer(MSONable):
         if flat:
             occus = self.get_occupancies(discard, thin_by, flat)[inds]
         else:
-            occus = self.get_occupancies(discard, thin_by, flat)[inds, np.arange(self.shape[0])]  # noqa
+            occus = self.get_occupancies(
+                discard, thin_by, flat)[inds, np.arange(self.shape[0])]
         return occus
 
     def get_minimum_energy(self, discard=0, thin_by=1, flat=True):
@@ -230,7 +242,8 @@ class SampleContainer(MSONable):
         if flat:
             occus = self.get_occupancies(discard, thin_by, flat)[inds]
         else:
-            occus = self.get_occupancies(discard, thin_by, flat)[inds, np.arange(self.shape[0])]  # noqa
+            occus = self.get_occupancies(
+                discard, thin_by, flat)[inds, np.arange(self.shape[0])]
         return occus
 
     def get_species_counts(self, discard=0, thin_by=1, flat=True):
@@ -239,8 +252,8 @@ class SampleContainer(MSONable):
         shape = self.shape[0]*samples if flat else (self.shape[0], samples)
         counts = defaultdict(lambda: np.zeros(shape=shape))
         for sublattice in self.sublattices:
-            subcounts = self.get_sublattice_species_counts(sublattice, discard,
-                                                           thin_by, flat)
+            subcounts = self.get_sublattice_species_counts(
+                sublattice, discard, thin_by, flat)
             for species, count in zip(sublattice.species, subcounts.T):
                 counts[species] += count
         return counts
@@ -276,27 +289,26 @@ class SampleContainer(MSONable):
             counts = self._flatten(counts)
         return counts
 
-    def save_sample(self, accepted, temperature, occupancies, enthalpy,
-                    features, thinned_by):
+    def save_sample(self, accepted, occupancies, enthalpy, features, trace,
+                    thinned_by):
         """Save a sample from the generated chain.
 
         Args:
             accepted (ndarray):
                 array of total acceptances.
-            temperature (ndarray)
-                array of temperatures at which samples were taken.
             occupancies (ndarray):
                 array of occupancies
             enthalpy (ndarray):
                 array of generalized enthalpy changes
             features (ndarray):
                 array of feature vector changes
+            trace (Trace)
+                Trace for additional traced values
             thinned_by (int):
                 the amount that the sampling was thinned by. Used to update
                 the total mc iterations.
         """
         self._accepted[self._nsamples, :] = accepted
-        self._temperature[self._nsamples, :] = temperature
         self._chain[self._nsamples, :, :] = occupancies
         self._enthalpy[self._nsamples, :] = enthalpy
         self._features[self._nsamples, :, :] = features
@@ -311,8 +323,12 @@ class SampleContainer(MSONable):
         self._chain = np.empty((0, nwalkers, num_sites), dtype=int)
         self._features = np.empty((0, nwalkers, len(self.natural_parameters)))
         self._enthalpy = np.empty((0, nwalkers))
-        self._temperature = np.empty((0, nwalkers))
         self._accepted = np.zeros((0, nwalkers), dtype=int)
+        # clear trace
+        for name in self._trace.field_names:
+            attr = getattr(self._trace, name)
+            arr = np.empty((0, nwalkers, *attr.shape[1:]), dtype=attr.dtype)
+            setattr(self._trace, name, arr)
 
     def allocate(self, nsamples):
         """Allocate more space in arrays for more samples."""
@@ -322,10 +338,13 @@ class SampleContainer(MSONable):
         self._features = np.append(self._features, arr, axis=0)
         arr = np.empty((nsamples, *self._enthalpy.shape[1:]))
         self._enthalpy = np.append(self._enthalpy, arr, axis=0)
-        arr = np.empty((nsamples, *self._temperature.shape[1:]))
-        self._temperature = np.append(self._temperature, arr, axis=0)
         arr = np.zeros((nsamples, *self._accepted.shape[1:]), dtype=int)
         self._accepted = np.append(self._accepted, arr, axis=0)
+        # allocate space for trace
+        for name in self._trace.field_names:
+            attr = getattr(self._trace, name)
+            arr = np.empty((nsamples, *attr.shape[1:]), dtype=attr.dtype)
+            setattr(self._trace, name, np.append(attr, arr, axis=0))
 
     def flush_to_backend(self, backend):
         """Flush current samples and trace to backend file.
@@ -337,7 +356,6 @@ class SampleContainer(MSONable):
         start = backend["chain"].attrs["nsamples"]
         end = len(self._chain) + start
         backend["accepted"][start:end, :] = self._accepted
-        backend["temperature"][start:end, :] = self._temperature
         backend["chain"][start:end, :, :] = self._chain
         backend["enthalpy"][start:end, :] = self._enthalpy
         backend["features"][start:end, :, :] = self._features
@@ -410,8 +428,6 @@ class SampleContainer(MSONable):
         backend["chain"].attrs["total_mc_steps"] = 0
         backend.create_dataset("accepted",
                                (nsamples, *self._accepted.shape[1:]))
-        backend.create_dataset("temperature",
-                               (nsamples, *self._temperature.shape[1:]))
         backend.create_dataset("enthalpy",
                                (nsamples, *self._enthalpy.shape[1:]))
         backend.create_dataset("features",
@@ -423,8 +439,6 @@ class SampleContainer(MSONable):
                                  *backend["chain"].shape[1:]))
         backend["accepted"].resize((backend["chain"].shape[0] + nsamples,
                                     *self._accepted.shape[1:]))
-        backend["temperature"].resize((backend["chain"].shape[0] + nsamples,
-                                       *self._temperature.shape[1:]))
         backend["enthalpy"].resize((backend["chain"].shape[0] + nsamples,
                                     *self._enthalpy.shape[1:]))
         backend["features"].resize((backend["chain"].shape[0] + nsamples,
@@ -536,7 +550,6 @@ class SampleContainer(MSONable):
                             nwalkers=f["chain"].shape[1])
             container._chain = f["chain"][:nsamples]
             container._accepted = f["accepted"][:nsamples]
-            container._temperature = f["temperature"][:nsamples]
             container._enthalpy = f["enthalpy"][:nsamples]
             container._features = f["features"][:nsamples]
             container._nsamples = nsamples

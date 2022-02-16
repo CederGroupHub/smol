@@ -48,15 +48,11 @@ def test_constructor(ensemble, step_type, mcusher):
 
 
 def test_trace():
-    trace = Trace(first=np.ones(10), second=np.zeros(10),
-                  trace1=Trace(inner=np.zeros(10)))
-    assert all(isinstance(val, np.ndarray) or isinstance(val, Trace)
-               for val in trace.__dict__.values())
+    trace = Trace(first=np.ones(10), second=np.zeros(10))
+    assert all(isinstance(val, np.ndarray) for val in trace.__dict__.values())
     trace.third = np.random.random(10)
-    trace.trace2 = Trace(inner=np.ones(10))
-    assert all(isinstance(val, np.ndarray) or isinstance(val, Trace)
-               for val in trace.__dict__.values())
-    fields = ['first', 'second', 'third', 'trace1', 'trace2']
+    assert all(isinstance(val, np.ndarray) for val in trace.__dict__.values())
+    fields = ['first', 'second', 'third']
     assert all(field in fields for field in trace.field_names)
 
     with pytest.raises(TypeError):
@@ -64,7 +60,10 @@ def test_trace():
         trace2 = Trace(one=np.zeros(40), two=66)
     
     steptrace = StepTrace(one=np.zeros(10))
-    assert isinstance(steptrace.delta, Trace)
+    assert isinstance(steptrace.delta_trace, Trace)
+    with pytest.raises(ValueError):
+        steptrace.delta_trace = np.ones(10)
+        StepTrace(delta_trace=np.ones(10))
 
 
 def test_single_step(mckernel):
@@ -72,7 +71,7 @@ def test_single_step(mckernel):
                                  mckernel._usher.inactive_sublattices)
     for _ in range(20):
         init_occu = occu_.copy()
-        acc, occu, denth, dfeat = mckernel.single_step(init_occu)
+        acc, occu, denth, dfeat, trace = mckernel.single_step(init_occu)
         if acc:
             assert not np.array_equal(occu, occu_)
         else:
@@ -84,7 +83,9 @@ def test_single_step_bias(mckernel_bias):
                                  mckernel_bias._usher.inactive_sublattices)
     for _ in range(20):
         init_occu = occu_.copy()
-        acc, occu, denth, dfeat = mckernel_bias.single_step(init_occu)
+        acc, occu, denth, dfeat, trace = mckernel_bias.single_step(init_occu)
+        # assert delta bias is there and recorded
+        assert isinstance(trace.delta.bias[0], float)
         if acc:
             assert not np.array_equal(occu, occu_)
         else:
