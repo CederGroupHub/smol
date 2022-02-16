@@ -40,7 +40,7 @@ Functionality
 - Flexible toolset to sample cluster expansions using Monte Carlo with
   Canonical and Semigrand Canonical ensembles using a Metropolis sampler.
 
-**smol** is built on top of `pymatgen <https://pymatgen.org/>`_ so any pre/post
+**smol** is built on top of [pymatgen](https://pymatgen.org) so any pre/post
 structure analysis can be done seamlessly using the various functionality
 supported there.
 
