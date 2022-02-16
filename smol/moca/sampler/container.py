@@ -23,6 +23,7 @@ except ImportError:
     h5py = None
     h5err = ImportError("'h5py' not found. Please install it.")
 
+
 # TODO include inactive_sublattices here too
 class SampleContainer(MSONable):
     """A SampleContainer class stores Monte Carlo simulation samples.
@@ -262,8 +263,8 @@ class SampleContainer(MSONable):
         """
         if sublattice not in self.sublattices:
             raise ValueError(
-                'Sublattice provided is not recognized.\n Provide one included '
-                'in the sublattices attribute of this SampleContainer.'
+                'Sublattice provided is not recognized.\n Provide one included'
+                ' in the sublattices attribute of this SampleContainer.'
             )
         occus = self.get_occupancies(discard, thin_by, flat=False)
         counts = np.zeros((*occus.shape[:-1], len(sublattice.site_space)))
@@ -498,7 +499,8 @@ class SampleContainer(MSONable):
             sublattices = [Sublattice.from_dict(s) for s in
                            json.loads(f["sublattices"][()])]
             trace = Trace(
-                **{name: value[:nsamples] for name, value in f["trace"].items()}
+                **{name: value[:nsamples]
+                   for name, value in f["trace"].items()}
             )
             container = cls(
                 sublattices=sublattices,

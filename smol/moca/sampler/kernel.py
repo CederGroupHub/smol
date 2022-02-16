@@ -28,7 +28,8 @@ class Trace(SimpleNamespace):
     A Trace is a simple namespace to hold states and values to be recorded
     during MC sampling.
     """
-    def __init__(self, /, **kwargs):
+
+    def __init__(self, /, **kwargs):  # noqa
         if not all(isinstance(val, np.ndarray) for val in kwargs.values()):
             raise TypeError(
                 'Trace only supports attributes of type ndarray.')
@@ -36,22 +37,23 @@ class Trace(SimpleNamespace):
 
     @property
     def names(self):
-        """Get all field names"""
+        """Get all attribute names."""
         return tuple(self.__dict__.keys())
 
     def items(self):
-        """Iterator for (name, attribute)"""
+        """Return generator for (name, attribute)."""
         for name, value in self.__dict__.items():
             yield name, value
 
     def __setattr__(self, key, value):
+        """Set only ndarrays as attributes."""
         if not (isinstance(value, np.ndarray)):
             raise TypeError(
                 'Trace only supports attributes of type ndarray.')
         super().__setattr__(key, value)
 
     def as_dict(self):
-        """Return copy underlying dictionary"""
+        """Return copy underlying dictionary."""
         return self.__dict__.copy()
 
 
@@ -66,7 +68,7 @@ class StepTrace(Trace):
     kernel specific values during sampling.
     """
 
-    def __init__(self, /, **kwargs):
+    def __init__(self, /, **kwargs):  # noqa
         super().__init__(**kwargs)
         super(Trace, self).__setattr__('delta_trace', Trace())
 
@@ -77,19 +79,20 @@ class StepTrace(Trace):
             name for name in super().names if name != 'delta_trace')
 
     def items(self):
-        """Iterator for (name, attribute). Skips delta_trace."""
+        """Return generator for (name, attribute). Skips delta_trace."""
         for name, value in self.__dict__.items():
             if name == 'delta_trace':
                 continue
             yield name, value
 
     def __setattr__(self, key, value):
+        """Set only ndarrays as attributes."""
         if key == 'delta_trace':
             raise ValueError("Attribute name 'delta_trace' is reserved.")
         super().__setattr__(key, value)
 
     def as_dict(self):
-        """Return copy underlying dictionary"""
+        """Return copy underlying dictionary."""
         d = self.__dict__.copy()
         d['delta_trace'] = d['delta_trace'].as_dict()
         return d
@@ -200,7 +203,7 @@ class MCKernel(ABC):
         return self.trace
 
     def compute_initial_trace(self, occupancy):
-        """Compute inital values for sample trace given a set of occupancies
+        """Compute inital values for sample trace given occupancy.
 
         Args:
             occupancy (ndarray):
@@ -262,7 +265,7 @@ class ThermalKernel(MCKernel):
         self.beta = 1.0 / (kB * temperature)
 
     def compute_initial_trace(self, occupancy):
-        """Compute inital values for sample trace given a set of occupancies
+        """Compute inital values for sample trace given occupancy.
 
         Args:
             occupancy (ndarray):
