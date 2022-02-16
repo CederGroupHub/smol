@@ -45,6 +45,10 @@ class Trace(SimpleNamespace):
                 'Trace only supports attributes of type ndarray.')
         super().__setattr__(key, value)
 
+    def as_dict(self):
+        """Return copy underlying dictionary"""
+        return self.__dict__.copy()
+
 
 class StepTrace(Trace):
     """StepTrace class.
@@ -71,6 +75,12 @@ class StepTrace(Trace):
         if key == 'delta_trace':
             raise ValueError("Attribute name 'delta_trace' is reserved.")
         super().__setattr__(key, value)
+
+    def as_dict(self):
+        """Return copy underlying dictionary"""
+        d = self.__dict__.copy()
+        d['delta_trace'] = d['delta_trace'].as_dict()
+        return d
 
 
 class MCKernel(ABC):

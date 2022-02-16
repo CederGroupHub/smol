@@ -65,6 +65,12 @@ def test_trace():
         steptrace.delta_trace = np.ones(10)
         StepTrace(delta_trace=np.ones(10))
 
+    # check saving
+    assert trace.as_dict() == trace.__dict__
+    steptrace_d = steptrace.__dict__.copy()
+    steptrace_d['delta_trace'] = steptrace_d['delta_trace'].__dict__.copy()
+    assert steptrace.as_dict() == steptrace_d
+
 
 def test_single_step(mckernel):
     occu_ = gen_random_occupancy(mckernel._usher.sublattices,

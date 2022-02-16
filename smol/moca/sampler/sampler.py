@@ -108,9 +108,8 @@ class Sampler:
         sampling_metadata.update(ensemble.thermo_boundaries)
         sampling_metadata.update({"kernel": kernel_type, "step": step_type})
         container = SampleContainer(
-            ensemble.num_sites, ensemble.sublattices,
-            ensemble.natural_parameters, ensemble.num_energy_coefs,
-            sample_trace, sampling_metadata, nwalkers
+            ensemble.sublattices, ensemble.natural_parameters,
+            ensemble.num_energy_coefs, sample_trace, sampling_metadata
         )
         return cls(mckernel, container, seed=seed)
 

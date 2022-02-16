@@ -95,13 +95,13 @@ def test_allocate_and_save(container, fake_states):
 
     add_samples(container, fake_states)
     assert len(container) == NSAMPLES
-    assert container.total_mc_steps == NSAMPLES
+    assert container._total_steps == NSAMPLES
     container.clear()
 
     thinned = np.random.randint(50)
     add_samples(container, fake_states, thinned_by=thinned)
     assert len(container) == NSAMPLES
-    assert container.total_mc_steps == thinned * NSAMPLES
+    assert container._total_steps == thinned * NSAMPLES
     container.clear()
 
 
@@ -114,7 +114,7 @@ def test_get_sampled_values(container, fake_states, discard, thin):
     nw = container.shape[0]
     # get default flatted values
     nsamples = (NSAMPLES - discard) // thin
-    expected = (accepted[discard:].sum(axis=0) / (container.total_mc_steps - discard)).mean()
+    expected = (accepted[discard:].sum(axis=0) / (container._total_steps - discard)).mean()
     assert container.sampling_efficiency(discard=discard) == expected
     assert container.get_occupancies(discard=discard, thin_by=thin).shape == (nsamples * nw, NUM_SITES)
     assert container.get_feature_vectors(discard=discard, thin_by=thin).shape == (nsamples * nw, len(nat_params))
@@ -128,7 +128,7 @@ def test_get_sampled_values(container, fake_states, discard, thin):
 
     # get non flattened values
     npt.assert_array_equal(container.sampling_efficiency(discard=discard, flat=False),
-                           (accepted[discard:, ].sum(axis=0) / (container.total_mc_steps - discard)))
+                           (accepted[discard:, ].sum(axis=0) / (container._total_steps - discard)))
     assert container.get_occupancies(discard=discard, thin_by=thin, flat=False).shape == (nsamples, nw, NUM_SITES)
     assert container.get_feature_vectors(discard=discard, thin_by=thin, flat=False).shape == (
     nsamples, nw, len(nat_params))

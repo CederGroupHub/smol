@@ -13,8 +13,9 @@ from collections import defaultdict
 import json
 import numpy as np
 
-from monty.json import MSONable
+from monty.json import MSONable, jsanitize
 from smol.moca.sublattice import Sublattice
+from smol.moca.sampler.kernel import Trace
 
 try:
     import h5py
@@ -22,7 +23,7 @@ except ImportError:
     h5py = None
     h5err = ImportError("'h5py' not found. Please install it.")
 
-
+# TODO include inactive_sublattices here too
 class SampleContainer(MSONable):
     """A SampleContainter class stores Monte Carlo simulation samples.
 
@@ -49,53 +50,53 @@ class SampleContainer(MSONable):
             Sublattices of the ensemble sampled.
         natural_parameters (ndarray):
                 array of natural parameters used in the ensemble.
-        total_mc_steps (int)
+        _total_steps (int)
             Number of iterations used in sampling
         metadata (dict):
             Dictionary of metadata from the MC run that generated the samples.
-        aux_checkpoint (dict):
+        _aux_checkpoint (dict):
             Checkpoint dictionary of auxiliary states and variables to continue
             sampling from the last state of a previous MCMC run.
             (not implemented yet)
     """
 
-    def __init__(self, num_sites, sublattices, natural_parameters,
-                 num_energy_coefs, sample_trace, sampling_metadata=None,
-                 nwalkers=1):
+    def __init__(self, sublattices, natural_parameters, num_energy_coefs,
+                 sample_trace, sampling_metadata=None):
         """Initialize a sample container.
 
         Args:
-            num_sites (int):
-                Total number of sites in supercell of the ensemble.
             sublattices (list of Sublattice):
                 Sublattices of the ensemble sampled.
             natural_parameters (ndarray):
                 array of natural parameters used in the ensemble.
             num_energy_coefs (int):
-                the number of coeficients in the natural parameters that
+                the number of coefficients in the natural parameters that
                 correspond to the energy only.
             sample_trace (Trace):
-                A trace object for the traced valudes during MC sampling
+                A trace object for the traced values during MC sampling
             sampling_metadata (Ensemble):
                 Sampling metadata (i.e. ensemble name, mckernel type, etc)
-            nwalkers (int):
-                Number of walkers used to generate chain. Default is 1
         """
-        self.num_sites = num_sites
         self.sublattices = sublattices
         self.natural_parameters = natural_parameters
+        self._total_steps = 0
         self.metadata = {} if sampling_metadata is None else sampling_metadata
         self._num_energy_coefs = num_energy_coefs
-        self.total_mc_steps = 0
+        # need counter because cant use shape of arraus when allocating space
         self._nsamples = 0
         self._trace = sample_trace
-        self.aux_checkpoint = None
+        self._aux_checkpoint = None
         self._backend = None  # for streaming
 
     @property
     def num_samples(self):
         """Get the total number of samples."""
         return self._nsamples
+
+    @property
+    def total_mc_steps(self):
+        """Return the total number of MC steps taken during sampling."""
+        return self._total_steps
 
     @property
     def shape(self):
@@ -110,7 +111,7 @@ class SampleContainer(MSONable):
     def sampling_efficiency(self, discard=0, flat=True):
         """Return the sampling efficiency for chains."""
         total_accepted = self._trace.accepted[discard:].sum(axis=0)
-        efficiency = total_accepted/(self.total_mc_steps - discard)
+        efficiency = total_accepted/(self._total_steps - discard)
         if flat:
             efficiency = efficiency.mean()
         return efficiency
@@ -295,12 +296,12 @@ class SampleContainer(MSONable):
         for name in trace.field_names:
             getattr(self._trace, name)[self._nsamples] = getattr(trace, name)
         self._nsamples += 1
-        self.total_mc_steps += thinned_by
+        self._total_steps += thinned_by
 
     def clear(self):
         """Clear all samples from container."""
         nwalkers, num_sites = self.shape
-        self.total_mc_steps = 0
+        self._total_steps = 0
         self._nsamples = 0
         for name in self._trace.field_names:
             val = getattr(self._trace, name)
@@ -327,10 +328,10 @@ class SampleContainer(MSONable):
         backend["chain"][start:end, :, :] = self._chain
         backend["enthalpy"][start:end, :] = self._enthalpy
         backend["features"][start:end, :, :] = self._features
-        backend["chain"].attrs["total_mc_steps"] += self.total_mc_steps
+        backend["chain"].attrs["total_mc_steps"] += self._total_steps
         backend["chain"].attrs["nsamples"] += self._nsamples
         backend.flush()
-        self.total_mc_steps = 0
+        self._total_steps = 0
         self._nsamples = 0
 
     def get_backend(self, file_path, alloc_nsamples=0, swmr_mode=False):
@@ -385,7 +386,6 @@ class SampleContainer(MSONable):
         """Initialize a backend file."""
         sublattices = [sublatt.as_dict() for sublatt in self.sublattices]
         backend.create_dataset("sublattices", data=json.dumps(sublattices))
-        backend["sublattices"].attrs["num_sites"] = self.num_sites
         backend.create_dataset("natural_parameters",
                                data=self.natural_parameters)
         backend["natural_parameters"].attrs["num_energy_coefs"] = self._num_energy_coefs  # noqa
@@ -431,19 +431,15 @@ class SampleContainer(MSONable):
         """
         d = {'@module': self.__class__.__module__,
              '@class': self.__class__.__name__,
-             'num_sites': self.num_sites,
              'sublattices': [s.as_dict() for s in self.sublattices],
              'natural_parameters': self.natural_parameters,
              'metadata': self.metadata,
              'num_energy_coefs': self._num_energy_coefs,
-             'total_mc_steps': self.total_mc_steps,
+             'total_mc_steps': self._total_steps,
              'nsamples': self._nsamples,
-             'chain': self._chain.tolist(),
-             'features': self._features.tolist(),
-             'enthalpy': self._enthalpy.tolist(),
-             'accepted': self._accepted.tolist(),
-             'aux_checkpoint': self.aux_checkpoint}
-        # TODO need to think how to genrally serialize the aux checkpoint
+             'trace': jsanitize(self._trace.as_dict()),
+             'aux_checkpoint': self._aux_checkpoint}
+        # TODO need to think how to generally serialize the aux checkpoint
         return d
 
     @classmethod
@@ -457,15 +453,14 @@ class SampleContainer(MSONable):
             Sublattice
         """
         sublattices = [Sublattice.from_dict(s) for s in d['sublattices']]
-        container = cls(d['num_sites'], sublattices,
-                        d['natural_parameters'], d['num_energy_coefs'],
-                        d['metadata'])
-        if len(d['chain']) > 0:
-            container._nsamples = np.array(d['nsamples'])
-            container._chain = np.array(d['chain'], dtype=int)
-            container._features = np.array(d['features'])
-            container._enthalpy = np.array(d['enthalpy'])
-            container._accepted = np.array(d['accepted'], dtype=int)
+        trace = Trace(
+            **{key: np.array(val) for key, val in d['trace'].items()})
+        container = cls(sublattices, d['natural_parameters'],
+                        d['num_energy_coefs'], trace, d['metadata'])
+        # set the container internals
+        container._total_steps = d['total_mc_steps']
+        container._nsamples = trace.occupancy.shape[0]
+        container._aux_checkpoint = d['aux_checkpoint']
         return container
 
     def to_hdf5(self, file_path):
@@ -477,10 +472,10 @@ class SampleContainer(MSONable):
                 match samples will be appended.
         """
         # keep these to not reset writing
-        total_mc_steps, nsamples = self.total_mc_steps, self._nsamples
+        total_mc_steps, nsamples = self._total_steps, self._nsamples
         backend = self.get_backend(file_path, self.num_samples)
         self.flush_to_backend(backend)
-        self.total_mc_steps, self._nsamples = total_mc_steps, nsamples
+        self._total_steps, self._nsamples = total_mc_steps, nsamples
 
     @classmethod
     def from_hdf5(cls, file_path, swmr_mode=False):
@@ -515,11 +510,11 @@ class SampleContainer(MSONable):
                             natural_parameters=f["natural_parameters"][()],
                             num_energy_coefs=f["natural_parameters"].attrs["num_energy_coefs"],  # noqa
                             sampling_metadata=json.loads(f["sampling_metadata"][()]),  # noqa
-                            nwalkers=f["chain"].shape[1])
+                            )
             container._chain = f["chain"][:nsamples]
             container._accepted = f["accepted"][:nsamples]
             container._enthalpy = f["enthalpy"][:nsamples]
             container._features = f["features"][:nsamples]
             container._nsamples = nsamples
-            container.total_mc_steps = f["chain"].attrs["total_mc_steps"]
+            container._total_steps = f["chain"].attrs["total_mc_steps"]
         return container
