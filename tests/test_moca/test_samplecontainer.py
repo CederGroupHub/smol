@@ -74,9 +74,9 @@ def add_samples(sample_container, fake_states, thinned_by=1):
     accepted, temps, occus, enths, feats = fake_states
     sample_container.allocate(len(accepted))
     for i in range(len(accepted)):
-        sample_container.save_sample(accepted[i], temps[i], occus[i],
-                                     enths[i], feats[i],
-                                     thinned_by=thinned_by)
+        sample_container.save_sampled_trace(accepted[i], temps[i], occus[i],
+                                            enths[i], feats[i],
+                                            thinned_by=thinned_by)
 
 
 def test_allocate_and_save(container, fake_states):
@@ -251,8 +251,8 @@ def test_flush_to_hdf5(container, fake_states, mode, tmpdir):
     start = 0
     for _ in range(4):
         for i in range(start, start+chunk):
-            flushed_container.save_sample(accepted[i], temps[i], occus[i],
-                                          enths[i], feats[i], thinned_by=1)
+            flushed_container.save_sampled_trace(accepted[i], temps[i], occus[i],
+                                                 enths[i], feats[i], thinned_by=1)
         assert flushed_container._chain.shape[0] == chunk
         flushed_container.flush_to_backend(backend)
         start += chunk

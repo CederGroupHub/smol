@@ -110,7 +110,7 @@ class MCKernel(ABC):
         self.natural_params = ensemble.natural_parameters
         self._compute_features = ensemble.compute_feature_vector
         self._feature_change = ensemble.compute_feature_vector_change
-        self.trace = StepTrace(accept=np.array([True]))
+        self.trace = StepTrace(accepted=np.array([True]))
         self._usher, self._bias = None, None
 
         mcusher_name = class_name_from_str(step_type)
@@ -188,12 +188,13 @@ class MCKernel(ABC):
             Trace
         """
         trace = Trace()
+        trace.occupancy = occupancy
         trace.features = self._compute_features(occupancy)
         trace.enthalpy = np.array(
             [np.dot(self.natural_params, trace.features)])
         if self.bias is not None:
             trace.bias = np.array([self.bias.compute_bias(occupancy)])
-        trace.accept = np.array([True])
+        trace.accepted = np.array([True])
         return trace
 
 
@@ -321,16 +322,16 @@ class Metropolis(ThermalKernel):
                 [self._bias.compute_bias_change(occupancy, step)])
             exponent = -self.beta * self.trace.delta_trace.enthalpy + \
                 self.trace.delta_trace.bias
-            self.trace.accept = np.array(
+            self.trace.accepted = np.array(
                 [True if exponent >= 0 else exponent > log(random())]
             )
         else:
-            self.trace.accept = np.array([
+            self.trace.accepted = np.array([
                 True if self.trace.delta_trace.enthalpy <= 0
                 else -self.beta * self.trace.delta_trace.enthalpy > log(random())  # noqa
             ])
 
-        if self.trace.accept:
+        if self.trace.accepted:
             for f in step:
                 occupancy[f[0]] = f[1]
             self._usher.update_aux_state(step)
