@@ -41,19 +41,19 @@ def test_constructor(ensemble, step_type, mcusher):
     kernel = Metropolis(ensemble, step_type=step_type, temperature=500)
     assert isinstance(kernel._usher, mcusher)
     assert isinstance(kernel.trace, StepTrace)
-    assert 'temperature' in kernel.trace.field_names
+    assert 'temperature' in kernel.trace.names
     kernel.bias = FugacityBias(kernel.mcusher.sublattices,
-                               kernel.mcuser.inactive_sublattices)
-    assert 'bias' in kernel.trace.delta.field_names
+                               kernel.mcusher.inactive_sublattices)
+    assert 'bias' in kernel.trace.delta_trace.names
 
 
 def test_trace():
     trace = Trace(first=np.ones(10), second=np.zeros(10))
-    assert all(isinstance(val, np.ndarray) for val in trace.__dict__.values())
+    assert all(isinstance(val, np.ndarray) for _, val in trace.items())
     trace.third = np.random.random(10)
-    assert all(isinstance(val, np.ndarray) for val in trace.__dict__.values())
-    fields = ['first', 'second', 'third']
-    assert all(field in fields for field in trace.field_names)
+    assert all(isinstance(val, np.ndarray) for _, val in trace.items())
+    names = ['first', 'second', 'third']
+    assert all(name in names for name in trace.names)
 
     with pytest.raises(TypeError):
         trace.fourth = 'blabla'
@@ -76,26 +76,24 @@ def test_single_step(mckernel):
     occu_ = gen_random_occupancy(mckernel._usher.sublattices,
                                  mckernel._usher.inactive_sublattices)
     for _ in range(20):
-        init_occu = occu_.copy()
-        acc, occu, denth, dfeat, trace = mckernel.single_step(init_occu)
-        if acc:
-            assert not np.array_equal(occu, occu_)
+        trace = mckernel.single_step(occu_.copy())
+        if trace.accepted:
+            assert not np.array_equal(trace.occupancy, occu_)
         else:
-            npt.assert_array_equal(occu, occu_)
+            npt.assert_array_equal(trace.occupancy, occu_)
 
 
 def test_single_step_bias(mckernel_bias):
-    occu_ = gen_random_occupancy(mckernel_bias._usher.sublattices,
+    occu = gen_random_occupancy(mckernel_bias._usher.sublattices,
                                  mckernel_bias._usher.inactive_sublattices)
     for _ in range(20):
-        init_occu = occu_.copy()
-        acc, occu, denth, dfeat, trace = mckernel_bias.single_step(init_occu)
+        trace = mckernel_bias.single_step(occu.copy())
         # assert delta bias is there and recorded
-        assert isinstance(trace.delta.bias[0], float)
-        if acc:
-            assert not np.array_equal(occu, occu_)
+        assert isinstance(trace.delta_trace.bias[0], float)
+        if trace.accepted:
+            assert not np.array_equal(trace.occupancy, occu)
         else:
-            npt.assert_array_equal(occu, occu_)
+            npt.assert_array_equal(trace.occupancy, occu)
 
 
 def test_temperature_setter(single_canonical_ensemble):

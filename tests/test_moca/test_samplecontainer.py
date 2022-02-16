@@ -9,6 +9,7 @@ from pymatgen.core import Composition
 from smol.cofe.space.domain import SiteSpace
 from smol.moca.sublattice import Sublattice
 from smol.moca.sampler import SampleContainer
+from smol.moca.sampler.kernel import Trace
 from tests.utils import assert_msonable
 
 NUM_SITES = 500
@@ -30,23 +31,29 @@ def container(request):
     sites2 = np.setdiff1d(range(NUM_SITES), sites)
     sublatt2 = Sublattice(site_space, np.array(sites2))
     sublattices = [sublatt1, sublatt2]
-    sampler_container = SampleContainer(num_sites=NUM_SITES,
-                                        sublattices=sublattices,
+    trace = Trace(
+        occupancy=np.zeros((0, request.param, NUM_SITES), dtype=int),
+        features=np.random.random((0, request.param, len(natural_parameters))),
+        enthalpy=np.ones((0, request.param, 1)),
+        temperature=np.zeros((0, request.param, 1)),
+        accepted=np.zeros((0, request.param, 1), dtype=bool)
+    )
+    sampler_container = SampleContainer(sublattices=sublattices,
                                         natural_parameters=natural_parameters,
                                         num_energy_coefs=num_energy_coefs,
-                                        nwalkers=request.param)
+                                        sample_trace=trace)
     yield sampler_container
     sampler_container.clear()
 
 
 @pytest.fixture
-def fake_states(container):
+def fake_traces(container):
     nwalkers = container.shape[0]
     occus = np.empty((NSAMPLES, nwalkers, NUM_SITES))
-    enths = -5 * np.ones((NSAMPLES, nwalkers))
-    temps = -300.56 * np.ones((NSAMPLES, nwalkers))
-    feats = np.zeros((NSAMPLES, nwalkers,
-                         len(container.natural_parameters)))
+    enths = -5 * np.ones((NSAMPLES, nwalkers, 1))
+    temps = -300.56 * np.ones((NSAMPLES, nwalkers, 1))
+    feats = np.zeros(
+        (NSAMPLES, nwalkers, len(container.natural_parameters)))
     accepted = np.random.randint(2, size=(NSAMPLES, nwalkers))
     sites1 = container.sublattices[0].sites
     sites2 = container.sublattices[1].sites
@@ -66,49 +73,47 @@ def fake_states(container):
             occus[i, j, np.setdiff1d(sites2, s)] = 1
             # first and last feature real fake
             feats[i, j, [0, -1]] = 2.5
-
-    return accepted, temps, occus, enths, feats
-
-
-def add_samples(sample_container, fake_states, thinned_by=1):
-    accepted, temps, occus, enths, feats = fake_states
-    sample_container.allocate(len(accepted))
-    for i in range(len(accepted)):
-        sample_container.save_sampled_trace(accepted[i], temps[i], occus[i],
-                                            enths[i], feats[i],
-                                            thinned_by=thinned_by)
+    traces = [Trace(occupancy=occus[i], features=feats[i], enthalpy=enths[i],
+                    accepted=accepted[i], temperature=temps[i])
+              for i in range(len(accepted))]
+    return traces
 
 
-def test_allocate_and_save(container, fake_states):
+def add_samples(sample_container, fake_traces, thinned_by=1):
+    sample_container.allocate(len(fake_traces))
+    for trace in fake_traces:
+        sample_container.save_sampled_trace(trace, thinned_by=thinned_by)
+
+
+def test_allocate_and_save(container, fake_traces):
     nwalkers = container.shape[0]
     assert len(container) == 0
-    assert container._chain.shape == (0, nwalkers, NUM_SITES)
-    assert container._enthalpy.shape == (0, nwalkers)
-    assert container._accepted.shape == (0, nwalkers)
+    assert container._trace.occupancy.shape == (0, nwalkers, NUM_SITES)
+    assert container._trace.enthalpy.shape == (0, nwalkers, 1)
+    assert container._trace.accepted.shape == (0, nwalkers, 1)
 
     container.allocate(NSAMPLES)
     assert len(container) == 0
-    assert container._chain.shape == (NSAMPLES, nwalkers, NUM_SITES)
-    assert container._enthalpy.shape == (NSAMPLES, nwalkers)
-    assert container._accepted.shape == (NSAMPLES, nwalkers)
+    assert container._trace.occupancy.shape == (NSAMPLES, nwalkers, NUM_SITES)
+    assert container._trace.enthalpy.shape == (NSAMPLES, nwalkers, 1)
+    assert container._trace.accepted.shape == (NSAMPLES, nwalkers,1 )
     container.clear()
 
-    add_samples(container, fake_states)
+    add_samples(container, fake_traces)
     assert len(container) == NSAMPLES
     assert container._total_steps == NSAMPLES
     container.clear()
 
     thinned = np.random.randint(50)
-    add_samples(container, fake_states, thinned_by=thinned)
+    add_samples(container, fake_traces, thinned_by=thinned)
     assert len(container) == NSAMPLES
     assert container._total_steps == thinned * NSAMPLES
     container.clear()
 
 
 @pytest.mark.parametrize('discard, thin', product((0, 100), (1, 10)))
-def test_get_sampled_values(container, fake_states, discard, thin):
-    add_samples(container, fake_states)
-    accepted, temps, occus, enths, feats = fake_states
+def test_get_sampled_values(container, fake_traces, discard, thin):
+    add_samples(container, fake_traces)
     nat_params = container.natural_parameters
     sublattices = container.sublattices
     nw = container.shape[0]
@@ -148,8 +153,8 @@ def test_get_sampled_values(container, fake_states, discard, thin):
 
 
 @pytest.mark.parametrize('discard, thin', product((0, 100), (1, 10)))
-def test_means_and_variances(container, fake_states, discard, thin):
-    add_samples(container, fake_states)
+def test_means_and_variances(container, fake_traces, discard, thin):
+    add_samples(container, fake_traces)
     sublattices = container.sublattices
     nw = container.shape[0]
     assert container.mean_enthalpy(discard=discard, thin_by=thin) == -5.0
@@ -190,8 +195,8 @@ def test_means_and_variances(container, fake_states, discard, thin):
             nw * [len(sublattice.species) * [0]])
 
 
-def test_get_mins(container, fake_states):
-    add_samples(container, fake_states)
+def test_get_mins(container, fake_traces):
+    add_samples(container, fake_traces)
     i = np.random.choice(range(NSAMPLES))
     nwalkers = container.shape[0]
     container._enthalpy[i, :] = -10
@@ -208,7 +213,7 @@ def test_get_mins(container, fake_states):
                            container._chain[i])
 
 
-def test_msonable(container, fake_states):
+def test_msonable(container, fake_traces):
     # fails for empty container with nwalkers > 1
     # since the _chain.tolist turns the empty array to an empty list and so
     # the shape is lost, but dont think anyone really cares about an emtpy
@@ -217,7 +222,7 @@ def test_msonable(container, fake_states):
     # cntr = container.from_dict(d)
     # assert cntr.shape == container.shape
 
-    add_samples(container, fake_states)
+    add_samples(container, fake_traces)
     d = container.as_dict()
     cntr = container.from_dict(d)
     assert cntr.shape == container.shape
@@ -226,8 +231,8 @@ def test_msonable(container, fake_states):
     assert_msonable(cntr)
 
 
-def test_hdf5(container, fake_states, tmpdir):
-    add_samples(container, fake_states)
+def test_hdf5(container, fake_traces, tmpdir):
+    add_samples(container, fake_traces)
     file_path = os.path.join(tmpdir, 'test.h5')
     container.to_hdf5(file_path)
     cntr = SampleContainer.from_hdf5(file_path)
@@ -239,10 +244,10 @@ def test_hdf5(container, fake_states, tmpdir):
 
 
 @pytest.mark.parametrize('mode', [False, True])
-def test_flush_to_hdf5(container, fake_states, mode, tmpdir):
+def test_flush_to_hdf5(container, fake_traces, mode, tmpdir):
     flushed_container = deepcopy(container)
-    add_samples(container, fake_states)
-    accepted, temps, occus, enths, feats = fake_states
+    add_samples(container, fake_traces)
+    accepted, temps, occus, enths, feats = fake_traces
     file_path = os.path.join(tmpdir, 'test.h5')
     chunk = len(accepted) // 4
     flushed_container.allocate(chunk)

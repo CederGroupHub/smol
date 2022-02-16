@@ -35,9 +35,14 @@ class Trace(SimpleNamespace):
         super().__init__(**kwargs)
 
     @property
-    def field_names(self):
+    def names(self):
         """Get all field names"""
         return tuple(self.__dict__.keys())
+
+    def items(self):
+        """Iterator for (name, attribute)"""
+        for name, value in self.__dict__.items():
+            yield name, value
 
     def __setattr__(self, key, value):
         if not (isinstance(value, np.ndarray)):
@@ -66,10 +71,17 @@ class StepTrace(Trace):
         super(Trace, self).__setattr__('delta_trace', Trace())
 
     @property
-    def field_names(self):
+    def names(self):
         """Get all field names. Removes delta_trace from field names."""
         return tuple(
-            name for name in super().field_names if name != 'delta_trace')
+            name for name in super().names if name != 'delta_trace')
+
+    def items(self):
+        """Iterator for (name, attribute). Skips delta_trace."""
+        for name, value in self.__dict__.items():
+            if name == 'delta_trace':
+                continue
+            yield name, value
 
     def __setattr__(self, key, value):
         if key == 'delta_trace':
@@ -162,7 +174,7 @@ class MCKernel(ABC):
         if bias.__class__.__name__ not in self.valid_bias:
             raise ValueError(
                 f"{type(bias)} is not a valid MCBias for this kernel.")
-        if 'bias' not in self.trace.delta_trace.field_names:
+        if 'bias' not in self.trace.delta_trace.names:
             self.trace.delta_trace.bias = np.zeros(1)
         self._bias = bias
 

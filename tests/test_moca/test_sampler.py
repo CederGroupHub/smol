@@ -66,7 +66,8 @@ def test_anneal(sampler):
     expected = []
     for T in temperatures:
         expected += steps * sampler.samples.shape[0]*[T, ]
-    npt.assert_array_equal(sampler.samples.get_temperatures(), expected)
+    npt.assert_array_equal(
+        sampler.samples.get_trace_value('temperature'), expected)
     # test temp error
     with pytest.raises(ValueError):
         sampler.anneal([100, 200], steps)

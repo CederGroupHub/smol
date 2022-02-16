@@ -25,7 +25,7 @@ except ImportError:
 
 # TODO include inactive_sublattices here too
 class SampleContainer(MSONable):
-    """A SampleContainter class stores Monte Carlo simulation samples.
+    """A SampleContainer class stores Monte Carlo simulation samples.
 
     A SampleContainer holds samples and sampling information from an MCMC
     sampling run. It is useful to obtain the raw data and minimal empirical
@@ -106,7 +106,7 @@ class SampleContainer(MSONable):
     @property
     def traced_values(self):
         """Get the names of traced values being sampled."""
-        return self._trace.field_names
+        return self._trace.names
 
     def sampling_efficiency(self, discard=0, flat=True):
         """Return the sampling efficiency for chains."""
@@ -261,13 +261,14 @@ class SampleContainer(MSONable):
                      order as the underlying site space.
         """
         if sublattice not in self.sublattices:
-            raise ValueError('Sublattice provided is not recognized.\n'
-                             'Provide one included in the sublattices '
-                             'attribute of this SampleContainer.')
-        occu_chain = self.get_occupancies(discard, thin_by, flat=False)
-        counts = np.zeros((*occu_chain.shape[:-1], len(sublattice.site_space)))
+            raise ValueError(
+                'Sublattice provided is not recognized.\n Provide one included '
+                'in the sublattices attribute of this SampleContainer.'
+            )
+        occus = self.get_occupancies(discard, thin_by, flat=False)
+        counts = np.zeros((*occus.shape[:-1], len(sublattice.site_space)))
         #  This can probably be re-written in a clean/faster way
-        for i, occupancies in enumerate(occu_chain):
+        for i, occupancies in enumerate(occus):
             for j, occupancy in enumerate(occupancies):
                 codes, count = np.unique(occupancy[sublattice.sites],
                                          return_counts=True)
@@ -293,27 +294,24 @@ class SampleContainer(MSONable):
                 the amount that the sampling was thinned by. Used to update
                 the total mc iterations.
         """
-        for name in trace.field_names:
-            getattr(self._trace, name)[self._nsamples] = getattr(trace, name)
+        for name, value in trace.items():
+            getattr(self._trace, name)[self._nsamples] = value
         self._nsamples += 1
         self._total_steps += thinned_by
 
     def clear(self):
         """Clear all samples from container."""
-        nwalkers, num_sites = self.shape
         self._total_steps = 0
         self._nsamples = 0
-        for name in self._trace.field_names:
-            val = getattr(self._trace, name)
+        for name, value in self._trace.items():
             setattr(self._trace, name,
-                    np.empty((0, *val.shape[1:]), dtype=val.dtype))
+                    np.empty((0, *value.shape[1:]), dtype=value.dtype))
 
     def allocate(self, nsamples):
         """Allocate more space in arrays for more samples."""
-        for name in self._trace.field_names:
-            val = getattr(self._trace, name)
-            arr = np.empty((nsamples, *val.shape[1:]), dtype=val.dtype)
-            setattr(self._trace, name, np.append(val, arr, axis=0))
+        for name, value in self._trace.items():
+            arr = np.empty((nsamples, *value.shape[1:]), dtype=value.dtype)
+            setattr(self._trace, name, np.append(value, arr, axis=0))
 
     def flush_to_backend(self, backend):
         """Flush current samples and trace to backend file.
@@ -322,14 +320,13 @@ class SampleContainer(MSONable):
             backend (object):
                 backend file object, currently only hdf5 supported.
         """
-        start = backend["chain"].attrs["nsamples"]
-        end = len(self._chain) + start
-        backend["accepted"][start:end, :] = self._accepted
-        backend["chain"][start:end, :, :] = self._chain
-        backend["enthalpy"][start:end, :] = self._enthalpy
-        backend["features"][start:end, :, :] = self._features
-        backend["chain"].attrs["total_mc_steps"] += self._total_steps
-        backend["chain"].attrs["nsamples"] += self._nsamples
+        start = backend["trace"].attrs["nsamples"]
+        end = len(self._trace.occupancy) + start
+        for name, value in self._trace.items():
+            backend["trace"][name][start:end] = value
+
+        backend["trace"].attrs["total_mc_steps"] += self._total_steps
+        backend["trace"].attrs["nsamples"] += self._nsamples
         backend.flush()
         self._total_steps = 0
         self._nsamples = 0
@@ -365,7 +362,7 @@ class SampleContainer(MSONable):
                 self._grow_backend(backend, alloc_nsamples - available)
         else:
             backend = h5py.File(file_path, "w", libver='latest')
-            self._init_backed(backend, alloc_nsamples)
+            self._init_backend(backend, alloc_nsamples)
 
         if swmr_mode:
             backend.swmr_mode = swmr_mode
@@ -374,50 +371,43 @@ class SampleContainer(MSONable):
     def _check_backend(self, file_path):
         """Check if existing backend file is populated correctly."""
         backend = h5py.File(file_path, mode="r+", libver='latest')
-        if self.shape != backend["chain"].shape[1:]:
-            shape = backend['chain'].shape[1:]
+        if self.shape != backend["trace"]["occupancy"].shape[1:]:
+            shape = backend["trace"]["occupancy"].shape[1:]
             backend.close()
             raise RuntimeError(
                 f"Backend file {file_path} has incompatible dimensions "
                 f"{self.shape}, {shape}.")
         return backend
 
-    def _init_backed(self, backend, nsamples):
+    def _init_backend(self, backend, nsamples):
         """Initialize a backend file."""
         sublattices = [sublatt.as_dict() for sublatt in self.sublattices]
         backend.create_dataset("sublattices", data=json.dumps(sublattices))
-        backend.create_dataset("natural_parameters",
-                               data=self.natural_parameters)
+        backend.create_dataset(
+            "natural_parameters", data=self.natural_parameters)
         backend["natural_parameters"].attrs["num_energy_coefs"] = self._num_energy_coefs  # noqa
-        backend.create_dataset("sampling_metadata",
-                               data=json.dumps(self.metadata))
-        backend.create_dataset("chain", (nsamples, *self.shape))
-        backend["chain"].attrs["nsamples"] = 0
-        backend["chain"].attrs["total_mc_steps"] = 0
-        backend.create_dataset("accepted",
-                               (nsamples, *self._accepted.shape[1:]))
-        backend.create_dataset("enthalpy",
-                               (nsamples, *self._enthalpy.shape[1:]))
-        backend.create_dataset("features",
-                               (nsamples, *self._features.shape[1:]))
+        backend.create_dataset(
+            "sampling_metadata", data=json.dumps(self.metadata))
+        trace_grp = backend.create_group("trace")
+        for name, value in self._trace.items():
+            trace_grp.create_dataset(
+                name, shape=(nsamples, *value.shape[1:]), dtype=value.dtype,
+                maxshape=(None, *value.shape[1:])
+            )
+        trace_grp.attrs["nsamples"] = 0
+        trace_grp.attrs["total_mc_steps"] = 0
 
     def _grow_backend(self, backend, nsamples):
         """Extend space available in a backend file."""
-        backend["chain"].resize((backend["chain"].shape[0] + nsamples,
-                                 *backend["chain"].shape[1:]))
-        backend["accepted"].resize((backend["chain"].shape[0] + nsamples,
-                                    *self._accepted.shape[1:]))
-        backend["enthalpy"].resize((backend["chain"].shape[0] + nsamples,
-                                    *self._enthalpy.shape[1:]))
-        backend["features"].resize((backend["chain"].shape[0] + nsamples,
-                                    *self._features.shape[1:]))
+        for name in backend["trace"]:
+            backend["trace"][name].resize(nsamples, axis=0)
 
     @staticmethod
     def _flatten(trace):
         """Flatten values in chain with multiple walkers."""
         s = list(trace.shape[1:])
         s[0] = np.prod(trace.shape[:2])
-        return trace.reshape(s)
+        return np.squeeze(trace.reshape(s))
 
     def __len__(self):
         """Return the number of samples."""
@@ -476,9 +466,10 @@ class SampleContainer(MSONable):
         backend = self.get_backend(file_path, self.num_samples)
         self.flush_to_backend(backend)
         self._total_steps, self._nsamples = total_mc_steps, nsamples
+        backend.close()
 
     @classmethod
-    def from_hdf5(cls, file_path, swmr_mode=False):
+    def from_hdf5(cls, file_path, swmr_mode=True):
         """Instantiate a SampleContainer from an hdf5 file.
 
         Args:
@@ -496,25 +487,26 @@ class SampleContainer(MSONable):
 
         with h5py.File(file_path, "r", swmr=swmr_mode) as f:
             # Check if written states matches the size of datasets
-            nsamples = f["chain"].attrs["nsamples"]
-            if len(f["chain"]) > nsamples:
-                warnings.warn("The hdf5 file provided appears to be from an "
-                              f"unifinished MC run.\n Only {nsamples} of "
-                              f"{len(f['chain'])} samples have been written.",
-                              UserWarning)
+            nsamples = f["trace"].attrs["nsamples"]
+            if len(f["trace"]["occupancy"]) > nsamples:
+                warnings.warn(
+                    f"The hdf5 file provided appears to be from an unifinished"
+                    f" MC run.\n Only {nsamples} of "
+                    f" {len(f['trace']['occupancy'])} samples "
+                    f"have been written and will be loaded.", UserWarning)
 
             sublattices = [Sublattice.from_dict(s) for s in
                            json.loads(f["sublattices"][()])]
-            container = cls(f["sublattices"].attrs["num_sites"],
-                            sublattices=sublattices,
-                            natural_parameters=f["natural_parameters"][()],
-                            num_energy_coefs=f["natural_parameters"].attrs["num_energy_coefs"],  # noqa
-                            sampling_metadata=json.loads(f["sampling_metadata"][()]),  # noqa
-                            )
-            container._chain = f["chain"][:nsamples]
-            container._accepted = f["accepted"][:nsamples]
-            container._enthalpy = f["enthalpy"][:nsamples]
-            container._features = f["features"][:nsamples]
+            trace = Trace(
+                **{name: value[:nsamples] for name, value in f["trace"].items()}
+            )
+            container = cls(
+                sublattices=sublattices,
+                natural_parameters=f["natural_parameters"][()],
+                num_energy_coefs=f["natural_parameters"].attrs["num_energy_coefs"],  # noqa
+                sample_trace=trace,
+                sampling_metadata=json.loads(f["sampling_metadata"][()]),
+            )
             container._nsamples = nsamples
-            container._total_steps = f["chain"].attrs["total_mc_steps"]
+            container._total_steps = f["trace"].attrs["total_mc_steps"]
         return container

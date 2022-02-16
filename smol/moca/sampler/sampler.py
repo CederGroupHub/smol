@@ -96,13 +96,12 @@ class Sampler:
         mckernel = mckernel_factory(
             kernel_type, ensemble, step_type, *args, **kwargs)
         # get a trial trace to initialize sample container trace
-        single_trace = mckernel.compute_initial_trace(
+        _trace = mckernel.compute_initial_trace(
             np.zeros(ensemble.num_sites, dtype=int))
-        sample_trace = Trace()
-        for name in single_trace.field_names:
-            val = getattr(single_trace, name)
-            setattr(sample_trace, name,
-                    np.empty((0, nwalkers, *val.shape), dtype=val.dtype))
+        sample_trace = Trace(
+            **{name: np.empty((0, nwalkers, *value.shape), dtype=value.dtype)
+               for name, value in _trace.items()}
+        )
 
         sampling_metadata = {"name": type(ensemble).__name__}
         sampling_metadata.update(ensemble.thermo_boundaries)
@@ -177,7 +176,7 @@ class Sampler:
         # get initial traces and stack them
         trace = Trace()
         traces = list(map(self._kernel.compute_initial_trace, occupancies))
-        for name in traces[0].field_names:
+        for name in traces[0].names:
             stack = np.vstack([getattr(tr, name) for tr in traces])
             setattr(trace, name, stack)
 
@@ -189,12 +188,12 @@ class Sampler:
                 for _ in range(thin_by):
                     for i, strace in enumerate(
                             map(self._kernel.single_step, occupancies)):
-                        for name in strace.field_names:
-                            setattr(trace, name, getattr(strace, name))
+                        for name, value in strace.items():
+                            setattr(trace, name, value)
                         if strace.accepted:
-                            for name in strace.delta_trace.field_names:
+                            for name, delta_val in strace.delta_trace.items():
                                 val = getattr(trace, name)
-                                val[i] += getattr(strace.delta_trace, name)
+                                val[i] += delta_val
                     bar.update()
                 # yield copies
                 yield trace
