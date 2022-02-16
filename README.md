@@ -1,13 +1,14 @@
-# <img src="docs/_static/logo.png" width="350px" alt="smol">
+<img src="docs/images/logo.png" width="350px" alt="smol">
 
 Statistical Mechanics on Lattices
 =================================
 
 ![test](https://github.com/CederGroupHub/smol/actions/workflows/test.yml/badge.svg)
 
-Lighthweight but caffeinated Python implementations of computational methods
+*Lighthweight but caffeinated Python implementations of computational methods
 for statistical mechanical calculations of configurational states for
-crystalline material systems.
+crystalline material systems.*
+
 -----------------------------------------------------------------------------
 
 **smol** is a minimal implementation of computational methods to calculate
@@ -39,7 +40,7 @@ Functionality
 - Flexible toolset to sample cluster expansions using Monte Carlo with
   Canonical and Semigrand Canonical ensembles using a Metropolis sampler.
 
-**smol** is built on top of `pymatgen <https://pymatgen.org/>`_ so any pre/post
+**smol** is built on top of [pymatgen](https://pymatgen.org) so any pre/post
 structure analysis can be done seamlessly using the various functionality
 supported there.
 
