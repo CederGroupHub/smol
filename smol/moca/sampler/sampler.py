@@ -93,18 +93,25 @@ class Sampler:
         if kernel_type is None:
             kernel_type = "Metropolis"
 
-        mckernel = mckernel_factory(kernel_type, ensemble, step_type, *args,
-                                    **kwargs)
+        mckernel = mckernel_factory(
+            kernel_type, ensemble, step_type, *args, **kwargs)
+        # get a trial trace to initialize sample container trace
+        single_trace = mckernel.compute_initial_trace(
+            np.zeros(ensemble.num_sites, dtype=int))
+        sample_trace = Trace()
+        for name in single_trace.field_names:
+            val = getattr(single_trace, name)
+            setattr(sample_trace, name,
+                    np.empty((0, nwalkers, *val.shape), dtype=val.dtype))
 
         sampling_metadata = {"name": type(ensemble).__name__}
         sampling_metadata.update(ensemble.thermo_boundaries)
         sampling_metadata.update({"kernel": kernel_type, "step": step_type})
-        container = SampleContainer(ensemble.num_sites,
-                                    ensemble.sublattices,
-                                    ensemble.natural_parameters,
-                                    ensemble.num_energy_coefs,
-                                    mckernel.trace,
-                                    sampling_metadata, nwalkers)
+        container = SampleContainer(
+            ensemble.num_sites, ensemble.sublattices,
+            ensemble.natural_parameters, ensemble.num_energy_coefs,
+            sample_trace, sampling_metadata, nwalkers
+        )
         return cls(mckernel, container, seed=seed)
 
     @property
@@ -164,8 +171,8 @@ class Sampler:
                  category=RuntimeWarning)
         # TODO check that initial states are independent if num_walkers > 1
         # TODO make samplers with single chain, multiple and multiprocess
-        # set up any auxiliary states from inital occupancies
         # TODO kernel should take only 1 occupancy
+        # set up any auxiliary states from inital occupancies
         self._kernel.set_aux_state(occupancies)
 
         # get initial traces and stack them
@@ -185,7 +192,7 @@ class Sampler:
                             map(self._kernel.single_step, occupancies)):
                         for name in strace.field_names:
                             setattr(trace, name, getattr(strace, name))
-                        if strace.accept:
+                        if strace.accepted:
                             for name in strace.delta_trace.field_names:
                                 val = getattr(trace, name)
                                 val[i] += getattr(strace.delta_trace, name)
@@ -250,9 +257,9 @@ class Sampler:
             backend = None
             self.samples.allocate(nsteps // thin_by)
 
-        for i, state in enumerate(self.sample(nsteps, initial_occupancies,
+        for i, trace in enumerate(self.sample(nsteps, initial_occupancies,
                                   thin_by=thin_by, progress=progress)):
-            self.samples.save_sample(*state)
+            self.samples.save_sampled_trace(trace, thinned_by=thin_by)
             if backend is not None and (i + 1) % stream_chunk == 0:
                 self.samples.flush_to_backend(backend)
 

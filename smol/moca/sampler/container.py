@@ -75,7 +75,7 @@ class SampleContainer(MSONable):
                 the number of coeficients in the natural parameters that
                 correspond to the energy only.
             sample_trace (Trace):
-                A trace object of the traced valudes during MC sampling
+                A trace object for the traced valudes during MC sampling
             sampling_metadata (Ensemble):
                 Sampling metadata (i.e. ensemble name, mckernel type, etc)
             nwalkers (int):
@@ -88,10 +88,6 @@ class SampleContainer(MSONable):
         self._num_energy_coefs = num_energy_coefs
         self.total_mc_steps = 0
         self._nsamples = 0
-        self._chain = np.empty((0, nwalkers, num_sites), dtype=int)
-        self._features = np.empty((0, nwalkers, len(natural_parameters)))
-        self._enthalpy = np.empty((0, nwalkers))
-        self._accepted = np.zeros((0, nwalkers), dtype=int)
         self._trace = sample_trace
         self.aux_checkpoint = None
         self._backend = None  # for streaming
@@ -104,11 +100,16 @@ class SampleContainer(MSONable):
     @property
     def shape(self):
         """Get the shape of the samples in chain."""
-        return self._chain.shape[1:]
+        return self._trace.occupancy.shape[1:]
+
+    @property
+    def traced_values(self):
+        """Get the names of traced values being sampled."""
+        return self._trace.field_names
 
     def sampling_efficiency(self, discard=0, flat=True):
         """Return the sampling efficiency for chains."""
-        total_accepted = self._accepted[discard:].sum(axis=0)
+        total_accepted = self._trace.accepted[discard:].sum(axis=0)
         efficiency = total_accepted/(self.total_mc_steps - discard)
         if flat:
             efficiency = efficiency.mean()
@@ -121,49 +122,6 @@ class SampleContainer(MSONable):
             value = self._flatten(value)
         return value
 
-    def get_occupancies(self, discard=0, thin_by=1, flat=True):
-        """Get an occupancy chain from samples."""
-        chain = self._chain[discard + thin_by - 1::thin_by]
-        if flat:
-            chain = self._flatten(chain)
-        return chain
-
-    def get_enthalpies(self, discard=0, thin_by=1, flat=True):
-        """Get the generalized entalpy changes from samples in chain."""
-        enthalpies = self._enthalpy[discard + thin_by - 1::thin_by]
-        if flat:
-            enthalpies = self._flatten(enthalpies)
-        return enthalpies
-
-    def get_feature_vectors(self, discard=0, thin_by=1, flat=True):
-        """Get the feature vector changes from samples in chain."""
-        feats = self._features[discard + thin_by - 1::thin_by]
-        if flat:
-            feats = self._flatten(feats)
-        return feats
-
-    def get_energies(self, discard=0, thin_by=1, flat=True):
-        """Get the energies from samples in chain."""
-        features = self.get_feature_vectors(discard, thin_by, flat=False)
-        energies = np.array([np.dot(self.natural_parameters[:self._num_energy_coefs],  # noqa
-                             features[:, :self._num_energy_coefs].T)
-                             for features in features])
-        if flat:
-            energies = self._flatten(energies)
-        return energies
-
-    def get_sublattice_compositions(self, sublattice, discard=0, thin_by=1,
-                                    flat=True):
-        """Get the compositions of a specific sublattice."""
-        counts = self.get_sublattice_species_counts(sublattice, discard,
-                                                    thin_by, flat)
-        return counts/len(sublattice.sites)
-
-    def get_compositions(self, discard=0, thin_by=1, flat=True):
-        """Get the compositions for each occupancy in the chain."""
-        counts = self.get_species_counts(discard, thin_by, flat)
-        return {spec: count/self.shape[1] for spec, count in counts.items()}
-
     def mean_trace_value(self, name, discard=0, thin_by=1, flat=True):
         """Get mean of a traced value given by name."""
         return self.get_trace_value(name, discard, thin_by, flat).mean(axis=0)
@@ -171,6 +129,41 @@ class SampleContainer(MSONable):
     def trace_value_variance(self, name, discard=0, thin_by=1, flat=True):
         """Get variance of a traced value given by name."""
         return self.get_trace_value(name, discard, thin_by, flat).var(axis=0)
+
+    def get_occupancies(self, discard=0, thin_by=1, flat=True):
+        """Get an occupancy chain from samples."""
+        return self.get_trace_value('occupancy', discard, thin_by, flat)
+
+    def get_enthalpies(self, discard=0, thin_by=1, flat=True):
+        """Get the generalized entalpy changes from samples in chain."""
+        return self.get_trace_value('enthalpy', discard, thin_by, flat)
+
+    def get_feature_vectors(self, discard=0, thin_by=1, flat=True):
+        """Get the feature vector changes from samples in chain."""
+        return self.get_trace_value('features', discard, thin_by, flat)
+
+    def get_energies(self, discard=0, thin_by=1, flat=True):
+        """Get the energies from samples in chain."""
+        features = self.get_feature_vectors(discard, thin_by, flat=False)
+        energies = np.array(
+            [np.dot(self.natural_parameters[:self._num_energy_coefs],
+                    features[:, :self._num_energy_coefs].T)
+             for features in features])
+        if flat:
+            energies = self._flatten(energies)
+        return energies
+
+    def get_sublattice_compositions(self, sublattice, discard=0, thin_by=1,
+                                    flat=True):
+        """Get the compositions of a specific sublattice."""
+        counts = self.get_sublattice_species_counts(
+            sublattice, discard, thin_by, flat)
+        return counts/len(sublattice.sites)
+
+    def get_compositions(self, discard=0, thin_by=1, flat=True):
+        """Get the compositions for each occupancy in the chain."""
+        counts = self.get_species_counts(discard, thin_by, flat)
+        return {spec: count/self.shape[1] for spec, count in counts.items()}
 
     def mean_enthalpy(self, discard=0, thin_by=1, flat=True):
         """Get the mean generalized enthalpy."""
@@ -209,8 +202,8 @@ class SampleContainer(MSONable):
     def mean_sublattice_composition(self, sublattice, discard=0, thin_by=1,
                                     flat=True):
         """Get the mean composition of a specific sublattice."""
-        return self.get_sublattice_compositions(sublattice, discard,
-                                                thin_by, flat).mean(axis=0)
+        return self.get_sublattice_compositions(
+            sublattice, discard, thin_by, flat).mean(axis=0)
 
     def sublattice_composition_variance(self, sublattice, discard=0, thin_by=1,
                                         flat=True):
@@ -289,29 +282,18 @@ class SampleContainer(MSONable):
             counts = self._flatten(counts)
         return counts
 
-    def save_sample(self, accepted, occupancies, enthalpy, features, trace,
-                    thinned_by):
-        """Save a sample from the generated chain.
+    def save_sampled_trace(self, trace, thinned_by):
+        """Save a sampled trace.
 
         Args:
-            accepted (ndarray):
-                array of total acceptances.
-            occupancies (ndarray):
-                array of occupancies
-            enthalpy (ndarray):
-                array of generalized enthalpy changes
-            features (ndarray):
-                array of feature vector changes
             trace (Trace)
-                Trace for additional traced values
+                Trace of sampled values
             thinned_by (int):
                 the amount that the sampling was thinned by. Used to update
                 the total mc iterations.
         """
-        self._accepted[self._nsamples, :] = accepted
-        self._chain[self._nsamples, :, :] = occupancies
-        self._enthalpy[self._nsamples, :] = enthalpy
-        self._features[self._nsamples, :, :] = features
+        for name in trace.field_names:
+            getattr(self._trace, name)[self._nsamples] = getattr(trace, name)
         self._nsamples += 1
         self.total_mc_steps += thinned_by
 
@@ -320,31 +302,17 @@ class SampleContainer(MSONable):
         nwalkers, num_sites = self.shape
         self.total_mc_steps = 0
         self._nsamples = 0
-        self._chain = np.empty((0, nwalkers, num_sites), dtype=int)
-        self._features = np.empty((0, nwalkers, len(self.natural_parameters)))
-        self._enthalpy = np.empty((0, nwalkers))
-        self._accepted = np.zeros((0, nwalkers), dtype=int)
-        # clear trace
         for name in self._trace.field_names:
-            attr = getattr(self._trace, name)
-            arr = np.empty((0, nwalkers, *attr.shape[1:]), dtype=attr.dtype)
-            setattr(self._trace, name, arr)
+            val = getattr(self._trace, name)
+            setattr(self._trace, name,
+                    np.empty((0, *val.shape[1:]), dtype=val.dtype))
 
     def allocate(self, nsamples):
         """Allocate more space in arrays for more samples."""
-        arr = np.empty((nsamples, *self._chain.shape[1:]), dtype=int)
-        self._chain = np.append(self._chain, arr, axis=0)
-        arr = np.empty((nsamples, *self._features.shape[1:]))
-        self._features = np.append(self._features, arr, axis=0)
-        arr = np.empty((nsamples, *self._enthalpy.shape[1:]))
-        self._enthalpy = np.append(self._enthalpy, arr, axis=0)
-        arr = np.zeros((nsamples, *self._accepted.shape[1:]), dtype=int)
-        self._accepted = np.append(self._accepted, arr, axis=0)
-        # allocate space for trace
         for name in self._trace.field_names:
-            attr = getattr(self._trace, name)
-            arr = np.empty((nsamples, *attr.shape[1:]), dtype=attr.dtype)
-            setattr(self._trace, name, np.append(attr, arr, axis=0))
+            val = getattr(self._trace, name)
+            arr = np.empty((nsamples, *val.shape[1:]), dtype=val.dtype)
+            setattr(self._trace, name, np.append(val, arr, axis=0))
 
     def flush_to_backend(self, backend):
         """Flush current samples and trace to backend file.
@@ -445,11 +413,11 @@ class SampleContainer(MSONable):
                                     *self._features.shape[1:]))
 
     @staticmethod
-    def _flatten(chain):
+    def _flatten(trace):
         """Flatten values in chain with multiple walkers."""
-        s = list(chain.shape[1:])
-        s[0] = np.prod(chain.shape[:2])
-        return chain.reshape(s)
+        s = list(trace.shape[1:])
+        s[0] = np.prod(trace.shape[:2])
+        return trace.reshape(s)
 
     def __len__(self):
         """Return the number of samples."""
