@@ -218,6 +218,8 @@ def mcbias_factory(bias_type, sublattices, inactive_sublattices, *args,
         *kwargs:
             Keyword argument to instantiate a bias term.
     """
+    if 'bias' not in bias_type and 'Bias' not in bias_type:
+        bias_type += '-bias'
     bias_name = class_name_from_str(bias_type)
     return derived_class_factory(
         bias_name, MCBias, sublattices, inactive_sublattices, *args, **kwargs)
