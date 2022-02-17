@@ -45,12 +45,12 @@ class Trace(SimpleNamespace):
         for name, value in self.__dict__.items():
             yield name, value
 
-    def __setattr__(self, key, value):
+    def __setattr__(self, name, value):
         """Set only ndarrays as attributes."""
         if not (isinstance(value, np.ndarray)):
             raise TypeError(
                 'Trace only supports attributes of type ndarray.')
-        super().__setattr__(key, value)
+        self.__dict__[name] = value
 
     def as_dict(self):
         """Return copy underlying dictionary."""
@@ -85,11 +85,14 @@ class StepTrace(Trace):
                 continue
             yield name, value
 
-    def __setattr__(self, key, value):
+    def __setattr__(self, name, value):
         """Set only ndarrays as attributes."""
-        if key == 'delta_trace':
+        if name == 'delta_trace':
             raise ValueError("Attribute name 'delta_trace' is reserved.")
-        super().__setattr__(key, value)
+        elif not (isinstance(value, np.ndarray)):
+            raise TypeError(
+                'Trace only supports attributes of type ndarray.')
+        self.__dict__[name] = value
 
     def as_dict(self):
         """Return copy underlying dictionary."""

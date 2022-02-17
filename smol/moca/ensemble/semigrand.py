@@ -35,7 +35,8 @@ class SemiGrandEnsemble(Ensemble, MSONable):
 
     valid_mcmc_steps = ('flip',)
 
-    def __init__(self, processor, chemical_potentials, sublattices=None):
+    def __init__(self, processor, chemical_potentials, sublattices=None,
+                 inactive_sublattices=None):
         """Initialize MuSemiGrandEnsemble.
 
         Args:
@@ -48,7 +49,8 @@ class SemiGrandEnsemble(Ensemble, MSONable):
                 List of Sublattice objects representing sites in the processor
                 supercell with same site spaces.
         """
-        super().__init__(processor, sublattices=sublattices)
+        super().__init__(processor, sublattices=sublattices,
+                         inactive_sublattices=inactive_sublattices)
         self._params = np.append(self.processor.coefs, -1.0)
         # check that species are valid
         chemical_potentials = {get_species(k): v for k, v
@@ -68,6 +70,7 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         # preallocate this for slight speed improvements
         self._dfeatures = np.empty(len(processor.coefs) + 1)
         self._features = np.empty(len(processor.coefs) + 1)
+
         self._mus = chemical_potentials
         self._mu_table = self._build_mu_table(chemical_potentials)
         self.thermo_boundaries = {
