@@ -65,6 +65,22 @@ class TestStructureWrangler(unittest.TestCase):
         npt.assert_array_equal(G, G.T)
         self.assertFalse(np.allclose(np.ones(G.shape[0]), G.diagonal()))
 
+    def test_get_orb_similarity_matrix(self):
+        S = self.sw.get_orb_similarity_matrix()
+        self.assertEqual(S.shape, 2 * (self.sw.num_features,))
+        npt.assert_array_equal(S, S.T)
+        npt.assert_array_equal(S.diagonal(), np.ones(S.shape[0]))
+
+        rows = np.random.choice(range(self.sw.num_structures),
+                                self.sw.num_structures - 2)
+        cols = np.random.choice(range(self.sw.num_features),
+                                self.sw.num_features - 4)
+
+        S = self.sw.get_gram_matrix(rows=rows, cols=cols)
+        self.assertEqual(S.shape, 2 * (self.sw.num_features - 4,))
+        npt.assert_array_equal(S, S.T)
+        self.assertFalse(np.allclose(np.ones(S.shape[0]), S.diagonal()))
+
     def test_matrix_properties(self):
         self.assertGreaterEqual(self.sw.get_condition_number(), 1)
         rows = np.random.choice(range(self.sw.num_structures), 16)
@@ -125,7 +141,7 @@ class TestStructureWrangler(unittest.TestCase):
                              supercell_matrix=item['scmatrix'],
                              site_mapping=item['mapping'])
         self.assertEqual(len(self.sw.structures), len(items))
-        
+
         # Add more properties to test removal
         self.sw.add_properties('normalized',
                                self.sw.get_property_vector('energy', normalize=True))

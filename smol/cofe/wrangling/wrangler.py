@@ -345,7 +345,8 @@ class StructureWrangler(MSONable):
                 indices of structures to include in feature matrix.
             cols (list):
                 indices of features (correlations) to include in feature matrix
-
+            rtol (float);
+                relative tolerance for comparing feature matrix column values
 
         Returns:
             (n x n) Similarity matrix
@@ -357,14 +358,14 @@ class StructureWrangler(MSONable):
         A = self.feature_matrix[rows][:, cols]
         num_structs = len(rows)
         num_orbs = len(cols)
-        upper_sm = np.zeros((num_orbs, num_orbs))
+        upper_sim_matrix = np.zeros((num_orbs, num_orbs))
         for i in range(num_orbs):
             for j in range(i, num_orbs):
                 num_identical = np.sum(np.isclose(A[:, i], A[:, j], rtol=rtol))
-                upper_sm[i, j] = num_identical / num_structs
+                upper_sim_matrix[i, j] = num_identical / num_structs
 
-        lower_sm = upper_sm.transpose()
-        sim_matrix = upper_sm + lower_sm - np.identity(num_orbs)  # prevent double counting on diagonal
+        lower_sm = upper_sim_matrix.transpose()
+        sim_matrix = upper_sim_matrix + lower_sm - np.identity(num_orbs)  # prevent double counting on diagonal
 
         return sim_matrix
 
