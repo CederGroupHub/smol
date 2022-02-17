@@ -35,8 +35,7 @@ class SemiGrandEnsemble(Ensemble, MSONable):
 
     valid_mcmc_steps = ('flip',)
 
-    def __init__(self, processor, chemical_potentials,
-                 sublattices=None):
+    def __init__(self, processor, chemical_potentials, sublattices=None):
         """Initialize MuSemiGrandEnsemble.
 
         Args:
@@ -66,11 +65,16 @@ class SemiGrandEnsemble(Ensemble, MSONable):
                 raise ValueError(f'Species {sp} was not assigned a chemical '
                                  ' potential, a value must be provided.')
 
+        # preallocate this for slight speed improvements
+        self._dfeatures = np.empty(len(processor.coefs) + 1)
+        self._features = np.empty(len(processor.coefs) + 1)
         self._mus = chemical_potentials
         self._mu_table = self._build_mu_table(chemical_potentials)
-        self.thermo_boundaries = {'chemical-potentials':
-                                  {str(k): v for k, v
-                                   in chemical_potentials.items()}}
+        self.thermo_boundaries = {
+            'chemical-potentials': {
+                str(k): v for k, v in chemical_potentials.items()
+            }
+        }
 
     @property
     def natural_parameters(self):
@@ -117,10 +121,9 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         Returns:
             ndarray: feature vector
         """
-        feature_vector = self.processor.compute_feature_vector(occupancy)
-        chemical_work = self.compute_chemical_work(occupancy)
-        # prellocate to improve speed
-        return np.append(feature_vector, chemical_work)
+        self._features[:-1] = self.processor.compute_feature_vector(occupancy)
+        self._features[-1] = self.compute_chemical_work(occupancy)
+        return self._features
 
     def compute_feature_vector_change(self, occupancy, step):
         """Return the change in the feature vector from a given step.
@@ -134,13 +137,12 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         Returns:
             ndarray: difference in feature vector
         """
-        delta_feature = self.processor.compute_feature_vector_change(
+        self._dfeatures[:-1] = self.processor.compute_feature_vector_change(
             occupancy, step)
-        delta_mu = sum(
+        self._dfeatures[-1] = sum(
             self._mu_table[f[0]][f[1]] - self._mu_table[f[0]][occupancy[f[0]]]
             for f in step)
-        # prellocate to improve speed
-        return np.append(delta_feature, delta_mu)
+        return self._dfeatures
 
     def compute_chemical_work(self, occupancy):
         """Compute sum of mu * N for given occupancy."""
