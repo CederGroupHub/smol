@@ -334,29 +334,38 @@ class StructureWrangler(MSONable):
         col_mask = np.all(arr == arr[0, :], axis=0)
         return np.where(col_mask == 1)[0][1:]
 
-    def get_similarity_matrix(self, rows=None, columns=None, tol=1e-4):
-        """Generate a matrix to compare the similarity of columns in the feature matrix, which we will refer to as the
-         "similarity matrix." Matrix element a(i,j)  represents the fraction of equivalent corresponding values in
-         columns i and j. This construction is analogous to the gram matrix, but instead of an inner product between
-         columns i and j, we take their absolute difference and count the number of zero terms.
+    def get_orb_similarity_matrix(self, rows=None, cols=None, rtol=1e-5):
+        """Generate a matrix to compare the similarity of columns (orbits) in the feature matrix. Matrix element a(i,j)
+         represents the fraction of equivalent corresponding values in columns i and j. This construction is analogous
+         to the gram matrix, but instead of an inner product between columns i and j, compare element-wise difference
+         and count the identical terms.
 
         Args:
+            rows (list):
+                indices of structures to include in feature matrix.
+            cols (list):
+                indices of features (correlations) to include in feature matrix
 
 
         Returns:
             (n x n) Similarity matrix
         """
-        fm_shape = np.shape(self.feature_matrix)
-        upper_sm = np.zeros(fm_shape)
-        zero_vector = np.zeros(fm_shape[1])
-        for i in range(fm_shape[1]):
-            for j in range(i+1, fm_shape[1]):
-                col_diff = np.abs(self.feature_matrix[:, i] - self.feature_matrix[:, j])
-                num_zero = np.sum(np.isclose(col_diff, zero_vector))
-                upper_sm[i, j] = num_zero
+
+        rows = rows if rows is not None else range(self.num_structures)
+        cols = cols if cols is not None else range(self.num_features)
+
+        A = self.feature_matrix[rows][:, cols]
+        num_structs = len(rows)
+        num_orbs = len(cols)
+        upper_sm = np.zeros((num_orbs, num_orbs))
+        for i in range(num_orbs):
+            for j in range(i, num_orbs):
+                num_identical = np.sum(np.isclose(A[:, i], A[:, j], rtol=rtol))
+                upper_sm[i, j] = num_identical / num_structs
 
         lower_sm = upper_sm.transpose()
-        sim_matrix = upper_sm + lower_sm
+        sim_matrix = upper_sm + lower_sm - np.identity(num_orbs)  # prevent double counting on diagonal
+
         return sim_matrix
 
     def get_property_vector(self, key, normalize=True):
