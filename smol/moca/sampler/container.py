@@ -146,12 +146,17 @@ class SampleContainer(MSONable):
 
     def get_energies(self, discard=0, thin_by=1, flat=True):
         """Get the energies from samples in chain."""
+        if len(self.natural_parameters) == self._num_energy_coefs:
+            return self.get_enthalpies(discard, thin_by, flat)
+        # otherwise we have to calculate without the additional terms...
         feature_trace = self.get_feature_vectors(discard, thin_by, flat=False)
-        energies = np.vstack(
-            [np.tensordot(
-                features[:, :self._num_energy_coefs],
-                self.natural_parameters[:self._num_energy_coefs],
-                axes=([1], [0])) for features in feature_trace]
+        energies = np.expand_dims(
+            np.vstack(
+                [np.tensordot(
+                    features[:, :self._num_energy_coefs],
+                    self.natural_parameters[:self._num_energy_coefs],
+                    axes=([1], [0])) for features in feature_trace]),
+            axis=-1
         )
         if flat:
             energies = self._flatten(energies)
@@ -240,13 +245,13 @@ class SampleContainer(MSONable):
             occus = self.get_occupancies(discard, thin_by, flat)[inds]
         else:
             occus = self.get_occupancies(
-                discard, thin_by, flat)[inds, np.arange(self.shape[0])]
+                discard, thin_by, flat)[inds, np.arange(self.shape[0])][0]
         return occus
 
     def get_species_counts(self, discard=0, thin_by=1, flat=True):
         """Get the species counts for each occupancy in the chain."""
         samples = (self.num_samples - discard) // thin_by
-        shape = self.shape[0]*samples if flat else (self.shape[0], samples)
+        shape = self.shape[0] * samples if flat else (self.shape[0], samples)
         counts = defaultdict(lambda: np.zeros(shape=shape))
         for sublattice in self.sublattices:
             subcounts = self.get_sublattice_species_counts(
