@@ -336,9 +336,9 @@ class StructureWrangler(MSONable):
 
     def get_similarity_matrix(self, rows=None, cols=None, rtol=1e-5):
         """Generate a matrix to compare the similarity of correlation feature vectors (columns) in the feature matrix.
-         Matrix element a(i,j) represents the fraction of equivalent corresponding values in feature vectors i and j. This
-        construction is analogous to the gram matrix, but instead of an inner product, it counts the number
-        of identical corresponding elements in feature vectors i and j.
+         Matrix element a(i,j) represents the fraction of equivalent corresponding values in feature vectors i and j.
+         This construction is analogous to the gram matrix, but instead of an inner product, it counts the number
+         of identical corresponding elements in feature vectors i and j.
 
         Args:
             rows (list):
