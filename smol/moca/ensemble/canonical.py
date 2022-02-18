@@ -12,7 +12,7 @@ from monty.json import MSONable
 
 from smol.moca.ensemble.base import Ensemble
 from smol.moca.processor.base import Processor
-from .sublattice import Sublattice
+from smol.moca.sublattice import Sublattice
 
 
 class CanonicalEnsemble(Ensemble, MSONable):

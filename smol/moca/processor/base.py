@@ -17,6 +17,7 @@ import numpy as np
 from pymatgen.core import Structure, PeriodicSite
 from monty.json import MSONable
 from smol.utils import get_subclasses
+from smol.moca.sublattice import Sublattice, InactiveSublattice
 from smol.cofe.space import (get_allowed_species, get_site_spaces,
                              Vacancy)
 
@@ -56,8 +57,12 @@ class Processor(MSONable, metaclass=ABCMeta):
 
         self.coefs = np.array(coefficients)
         # this can be used (maybe should) to check if a flip is valid
-        site_spaces = get_site_spaces(self._subspace.expansion_structure)
-        self.unique_site_spaces = tuple(set(site_spaces))
+        active_site_spaces = set(
+            get_site_spaces(self._subspace.expansion_structure))
+        self.unique_site_spaces = tuple(active_site_spaces)
+        # and keep a record of sites with no DOFs
+        all_site_spaces = set(get_site_spaces(self._subspace.structure))
+        self.inactive_site_spaces = tuple(all_site_spaces - active_site_spaces)
 
         self.allowed_species = get_allowed_species(self.structure)
         self.size = self._subspace.num_prims_from_matrix(supercell_matrix)
@@ -189,6 +194,30 @@ class Processor(MSONable, metaclass=ABCMeta):
         """Decode an encoded occupancy string of int to species str."""
         return [species[i] for i, species in
                 zip(encoded_occupancy, self.allowed_species)]
+
+    def get_sublattices(self):
+        """Get a list of sublattices from a processor.
+
+        Returns:
+            list of Sublattice
+        """
+        return [Sublattice(site_space,
+                           np.array([i for i, sp in
+                                     enumerate(self.allowed_species)
+                                     if sp == list(site_space.keys())]))
+                for site_space in self.unique_site_spaces]
+
+    def get_inactive_sublattices(self):
+        """Get a list of inactive sublattices from a processor.
+
+        Returns:
+            list of InactiveSublattice
+        """
+        return [InactiveSublattice(
+            site_space, np.array([i for i, sp in
+                                 enumerate(self.allowed_species)
+                                 if sp == list(site_space.keys())]))
+                for site_space in self.inactive_site_spaces]
 
     def compute_average_drift(self, iterations=1000):
         """Compute average forward and reverse drift for the given property.

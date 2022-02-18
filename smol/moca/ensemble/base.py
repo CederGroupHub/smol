@@ -4,7 +4,6 @@ __author__ = "Luis Barroso-Luque"
 
 from abc import ABC, abstractmethod
 from smol.moca import CompositeProcessor, CEProcessor, EwaldProcessor
-from .sublattice import get_sublattices
 
 
 class Ensemble(ABC):
@@ -25,7 +24,7 @@ class Ensemble(ABC):
 
     valid_mcmc_steps = None  # add this in derived classes
 
-    def __init__(self, processor, sublattices=None):
+    def __init__(self, processor, sublattices=None, inactive_sublattices=None):
         """Initialize class instance.
 
         Args:
@@ -35,13 +34,19 @@ class Ensemble(ABC):
             sublattices (list of Sublattice): optional
                 list of Lattice objects representing sites in the processor
                 supercell with same site spaces.
+            inactive_sublattices (list of InactiveSublattice): optional
+                list of Lattice objects representing sites in the processor
+                supercell with same site spaces.
         """
         if sublattices is None:
-            sublattices = get_sublattices(processor)
+            sublattices = processor.get_sublattices()
+        if inactive_sublattices is None:
+            inactive_sublattices = processor.get_inactive_sublattices()
         self.num_energy_coefs = len(processor.coefs)
         self.thermo_boundaries = {}  # not pretty way to save general info
         self._processor = processor
         self._sublattices = sublattices
+        self._inact_sublattices = inactive_sublattices
 
     @classmethod
     def from_cluster_expansion(cls, cluster_expansion, supercell_matrix,
@@ -104,12 +109,17 @@ class Ensemble(ABC):
         """Get the ensemble processor."""
         return self._processor
 
-    # TODO make a setter for this that checks sublattices are correct and
+    # TODO make a setter for these that checks sublattices are correct and
     #  all sites are included.
     @property
     def sublattices(self):
         """Get list of sublattices included in ensemble."""
         return self._sublattices
+
+    @property
+    def inactive_sublattices(self):
+        """Get list of sublattices included in ensemble."""
+        return self._inact_sublattices
 
     @property
     def restricted_sites(self):

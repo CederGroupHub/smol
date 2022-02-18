@@ -3,9 +3,9 @@ import numpy as np
 import numpy.testing as npt
 from tests.utils import assert_msonable, gen_random_occupancy
 from smol.cofe.extern import EwaldTerm
+from smol.cofe.space.domain import Vacancy
 from smol.moca import CEProcessor, EwaldProcessor, CompositeProcessor
 from smol.moca.processor.base import Processor
-from smol.moca.ensemble.sublattice import get_sublattices
 
 RTOL = 0.0  # relative tolerance to check property change functions
 # absolute tolerance to check property change functions (eps is approx 2E-16)
@@ -49,12 +49,31 @@ def composite_processor(cluster_subspace):
 # me figure out a clean way to parametrize with parametrized fixtures or use a
 # fixture union from pytest_cases that works.
 def test_encode_decode_property(composite_processor):
-    occu = gen_random_occupancy(get_sublattices(composite_processor),
+    occu = gen_random_occupancy(composite_processor.get_sublattices(),
                                 composite_processor.num_sites)
     decoccu = composite_processor.decode_occupancy(occu)
     for species, space in zip(decoccu, composite_processor.allowed_species):
         assert species in space
     npt.assert_equal(occu, composite_processor.encode_occupancy(decoccu))
+
+
+def test_site_spaces(ce_processor):
+    assert all(
+        sp in ce_processor.structure.composition
+        for space in ce_processor.unique_site_spaces
+        for sp in space if sp != Vacancy())
+    assert all(
+        sp in ce_processor._subspace.structure.composition
+        for space in ce_processor.inactive_site_spaces
+        for sp in space if sp != Vacancy())
+    assert all(
+        sp in ce_processor._subspace.expansion_structure.composition
+        for space in ce_processor.unique_site_spaces
+        for sp in space if sp != Vacancy())
+    assert not any(
+        sp in ce_processor._subspace.expansion_structure.composition
+        for space in ce_processor.inactive_site_spaces
+        for sp in space if sp != Vacancy())
 
 
 def test_get_average_drift(composite_processor):
@@ -63,7 +82,7 @@ def test_get_average_drift(composite_processor):
 
 
 def test_compute_property_change(composite_processor):
-    sublattices = get_sublattices(composite_processor)
+    sublattices = composite_processor.get_sublattices()
     occu = gen_random_occupancy(sublattices, composite_processor.num_sites)
     for _ in range(100):
         sublatt = np.random.choice(sublattices)
@@ -92,7 +111,7 @@ def test_occupancy_from_structure():
 
 
 def test_compute_feature_change(composite_processor):
-    sublattices = get_sublattices(composite_processor)
+    sublattices = composite_processor.get_sublattices()
     occu = gen_random_occupancy(sublattices, composite_processor.num_sites)
     composite_processor.cluster_subspace.change_site_bases('indicator')
     for _ in range(100):
@@ -113,7 +132,7 @@ def test_compute_feature_change(composite_processor):
 
 
 def test_compute_property(composite_processor):
-    occu = gen_random_occupancy(get_sublattices(composite_processor),
+    occu = gen_random_occupancy(composite_processor.get_sublattices(),
                                 composite_processor.num_sites)
     struct = composite_processor.structure_from_occupancy(occu)
     pred = np.dot(composite_processor.coefs,
@@ -122,7 +141,7 @@ def test_compute_property(composite_processor):
 
 
 def test_msonable(composite_processor):
-    occu = gen_random_occupancy(get_sublattices(composite_processor),
+    occu = gen_random_occupancy(composite_processor.get_sublattices(),
                                 composite_processor.num_sites)
     d = composite_processor.as_dict()
     pr = Processor.from_dict(d)
@@ -135,7 +154,7 @@ def test_msonable(composite_processor):
 
 # CEProcessor only tests
 def test_compute_feature_vector(ce_processor):
-    occu = gen_random_occupancy(get_sublattices(ce_processor),
+    occu = gen_random_occupancy(ce_processor.get_sublattices(),
                                 ce_processor.num_sites)
     struct = ce_processor.structure_from_occupancy(occu)
     # same as normalize=False in corr_from_structure
@@ -149,7 +168,7 @@ def test_feature_change_indictator(cluster_subspace):
     cluster_subspace.change_site_bases('indicator')
     proc = CEProcessor(cluster_subspace, supercell_matrix=scmatrix,
                        coefficients=coefs)
-    sublattices = get_sublattices(proc)
+    sublattices = proc.get_sublattices()
     occu = gen_random_occupancy(sublattices, proc.num_sites)
     for _ in range(100):
         sublatt = np.random.choice(sublattices)
@@ -202,7 +221,7 @@ def test_get_average_drift(ewald_processor):
 
 
 def test_compute_property_change(ewald_processor):
-    sublattices = get_sublattices(ewald_processor)
+    sublattices = ewald_processor.get_sublattices()
     occu = gen_random_occupancy(sublattices, ewald_processor.num_sites)
     for _ in range(100):
         sublatt = np.random.choice(sublattices)
