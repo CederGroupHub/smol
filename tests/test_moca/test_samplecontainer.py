@@ -138,7 +138,7 @@ def test_get_sampled_values(container, fake_traces, discard, thin):
     assert container.get_feature_vectors(discard=discard, thin_by=thin, flat=False).shape == (
     nsamples, nw, len(nat_params))
     assert container.get_enthalpies(discard=discard, thin_by=thin, flat=False).shape == (nsamples, nw, 1)
-    assert container.get_energies(discard=discard, thin_by=thin, flat=False).shape == (nsamples, nw)
+    assert container.get_energies(discard=discard, thin_by=thin, flat=False).shape == (nsamples, nw, 1)
 
     for sublattice, comp in zip(sublattices, SUBLATTICE_COMPOSITIONS):
         c = container.get_sublattice_compositions(sublattice, discard=discard, thin_by=thin, flat=False)
@@ -178,9 +178,9 @@ def test_means_and_variances(container, fake_traces, discard, thin):
     npt.assert_array_equal(container.enthalpy_variance(discard=discard, thin_by=thin, flat=False),
                            np.array([nw * [0.0]]).T)
     npt.assert_array_equal(container.mean_energy(discard=discard, thin_by=thin, flat=False),
-                           nw * [-2.5])
+                           np.array([nw * [-2.5]]).T)
     npt.assert_array_equal(container.energy_variance(discard=discard, thin_by=thin, flat=False),
-                           nw * [0.0])
+                           np.array([nw * [0.0]]).T)
     npt.assert_array_equal(container.mean_feature_vector(discard=discard, thin_by=thin, flat=False),
                            nw * [[2.5] + 8 * [0.0, ] + [2.5]])
     npt.assert_array_equal(container.feature_vector_variance(discard=discard, thin_by=thin, flat=False),
@@ -205,7 +205,7 @@ def test_get_mins(container, fake_traces):
     npt.assert_array_equal(container.get_minimum_enthalpy(flat=False),
                            np.array([nwalkers * [-10.0]]).T)
     npt.assert_array_equal(container.get_minimum_energy(flat=False),
-                           nwalkers * [-5.0])
+                           np.array([nwalkers * [-5.0]]).T)
     npt.assert_array_equal(container.get_minimum_enthalpy_occupancy(flat=False),
                            container._trace.occupancy[i])
     npt.assert_array_equal(container.get_minimum_energy_occupancy(flat=False),
