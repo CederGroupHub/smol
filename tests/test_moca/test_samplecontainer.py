@@ -54,7 +54,7 @@ def fake_traces(container):
     temps = -300.56 * np.ones((NSAMPLES, nwalkers, 1))
     feats = np.zeros(
         (NSAMPLES, nwalkers, len(container.natural_parameters)))
-    accepted = np.random.randint(2, size=(NSAMPLES, nwalkers))
+    accepted = np.random.randint(2, size=(NSAMPLES, nwalkers, 1))
     sites1 = container.sublattices[0].sites
     sites2 = container.sublattices[1].sites
     for i in range(NSAMPLES):
@@ -118,6 +118,7 @@ def test_get_sampled_values(container, fake_traces, discard, thin):
     sublattices = container.sublattices
     nw = container.shape[0]
     # get default flatted values
+    accepted = container._trace.accepted
     nsamples = (NSAMPLES - discard) // thin
     expected = (accepted[discard:].sum(axis=0) / (container._total_steps - discard)).mean()
     assert container.sampling_efficiency(discard=discard) == expected
@@ -125,7 +126,6 @@ def test_get_sampled_values(container, fake_traces, discard, thin):
     assert container.get_feature_vectors(discard=discard, thin_by=thin).shape == (nsamples * nw, len(nat_params))
     assert container.get_enthalpies(discard=discard, thin_by=thin).shape == (nsamples * nw,)
     assert container.get_energies(discard=discard, thin_by=thin).shape == (nsamples * nw,)
-    assert container.get_temperatures(discard=discard, thin_by=thin).shape == (nsamples * nw,)
     for sublattice, comp in zip(sublattices, SUBLATTICE_COMPOSITIONS):
         c = container.get_sublattice_compositions(sublattice, discard=discard, thin_by=thin)
         assert c.shape == (nsamples * nw, len(sublattice.species))
@@ -137,9 +137,8 @@ def test_get_sampled_values(container, fake_traces, discard, thin):
     assert container.get_occupancies(discard=discard, thin_by=thin, flat=False).shape == (nsamples, nw, NUM_SITES)
     assert container.get_feature_vectors(discard=discard, thin_by=thin, flat=False).shape == (
     nsamples, nw, len(nat_params))
-    assert container.get_enthalpies(discard=discard, thin_by=thin, flat=False).shape == (nsamples, nw,)
-    assert container.get_energies(discard=discard, thin_by=thin, flat=False).shape == (nsamples, nw,)
-    assert container.get_temperatures(discard=discard, thin_by=thin, flat=False).shape == (nsamples, nw,)
+    assert container.get_enthalpies(discard=discard, thin_by=thin, flat=False).shape == (nsamples, nw, 1)
+    assert container.get_energies(discard=discard, thin_by=thin, flat=False).shape == (nsamples, nw)
 
     for sublattice, comp in zip(sublattices, SUBLATTICE_COMPOSITIONS):
         c = container.get_sublattice_compositions(sublattice, discard=discard, thin_by=thin, flat=False)
@@ -175,9 +174,9 @@ def test_means_and_variances(container, fake_traces, discard, thin):
 
     # without flattening
     npt.assert_array_equal(container.mean_enthalpy(discard=discard, thin_by=thin, flat=False),
-                           nw * [-5.0])
+                           np.array([nw * [-5.0]]).T)
     npt.assert_array_equal(container.enthalpy_variance(discard=discard, thin_by=thin, flat=False),
-                           nw * [0.0])
+                           np.array([nw * [0.0]]).T)
     npt.assert_array_equal(container.mean_energy(discard=discard, thin_by=thin, flat=False),
                            nw * [-2.5])
     npt.assert_array_equal(container.energy_variance(discard=discard, thin_by=thin, flat=False),
@@ -199,18 +198,18 @@ def test_get_mins(container, fake_traces):
     add_samples(container, fake_traces)
     i = np.random.choice(range(NSAMPLES))
     nwalkers = container.shape[0]
-    container._enthalpy[i, :] = -10
-    container._features[i, :, :] = 5.0
+    container._trace.enthalpy[i, :] = -10
+    container._trace.features[i, :, :] = 5.0
     assert container.get_minimum_enthalpy() == -10.0
     assert container.get_minimum_energy() == -5.0
     npt.assert_array_equal(container.get_minimum_enthalpy(flat=False),
-                           nwalkers * [-10.0])
+                           np.array([nwalkers * [-10.0]]).T)
     npt.assert_array_equal(container.get_minimum_energy(flat=False),
                            nwalkers * [-5.0])
     npt.assert_array_equal(container.get_minimum_enthalpy_occupancy(flat=False),
-                           container._chain[i])
+                           container._trace.occupancy[i])
     npt.assert_array_equal(container.get_minimum_energy_occupancy(flat=False),
-                           container._chain[i])
+                           container._trace.occupancy[i])
 
 
 def test_msonable(container, fake_traces):
@@ -247,29 +246,32 @@ def test_hdf5(container, fake_traces, tmpdir):
 def test_flush_to_hdf5(container, fake_traces, mode, tmpdir):
     flushed_container = deepcopy(container)
     add_samples(container, fake_traces)
-    accepted, temps, occus, enths, feats = fake_traces
     file_path = os.path.join(tmpdir, 'test.h5')
-    chunk = len(accepted) // 4
+    chunk = len(fake_traces) // 4
+    print(chunk)
     flushed_container.allocate(chunk)
     backend = flushed_container.get_backend(
-        file_path, len(accepted), swmr_mode=mode)
+        file_path, len(fake_traces), swmr_mode=mode)
     start = 0
     for _ in range(4):
         for i in range(start, start+chunk):
-            flushed_container.save_sampled_trace(accepted[i], temps[i], occus[i],
-                                                 enths[i], feats[i], thinned_by=1)
-        assert flushed_container._chain.shape[0] == chunk
+            flushed_container.save_sampled_trace(fake_traces[i], thinned_by=1)
+        assert flushed_container._trace.occupancy.shape[0] == chunk
         flushed_container.flush_to_backend(backend)
         start += chunk
 
     if mode is not True:
         backend.close()
 
-    assert flushed_container._chain.shape[0] == chunk
+    assert flushed_container._trace.occupancy.shape[0] == chunk
     assert flushed_container.num_samples == 0
     cntr = SampleContainer.from_hdf5(file_path)
-    npt.assert_array_equal(container.get_occupancies(),
-                           cntr.get_occupancies())
-    npt.assert_array_equal(container.get_energies(),
-                           cntr.get_energies())
+    npt.assert_array_equal(
+        container.get_occupancies(), cntr.get_occupancies())
+    npt.assert_array_equal(
+        container.get_energies(), cntr.get_energies())
+
+    if mode is True:
+        backend.close()
+
     os.remove(file_path)

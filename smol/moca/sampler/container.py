@@ -146,11 +146,13 @@ class SampleContainer(MSONable):
 
     def get_energies(self, discard=0, thin_by=1, flat=True):
         """Get the energies from samples in chain."""
-        features = self.get_feature_vectors(discard, thin_by, flat=False)
-        energies = np.array(
-            [np.dot(self.natural_parameters[:self._num_energy_coefs],
-                    features[:, :self._num_energy_coefs].T)
-             for features in features])
+        feature_trace = self.get_feature_vectors(discard, thin_by, flat=False)
+        energies = np.vstack(
+            [np.tensordot(
+                features[:, :self._num_energy_coefs],
+                self.natural_parameters[:self._num_energy_coefs],
+                axes=([1], [0])) for features in feature_trace]
+        )
         if flat:
             energies = self._flatten(energies)
         return energies
@@ -224,7 +226,7 @@ class SampleContainer(MSONable):
             occus = self.get_occupancies(discard, thin_by, flat)[inds]
         else:
             occus = self.get_occupancies(
-                discard, thin_by, flat)[inds, np.arange(self.shape[0])]
+                discard, thin_by, flat)[inds, np.arange(self.shape[0])][0]
         return occus
 
     def get_minimum_energy(self, discard=0, thin_by=1, flat=True):
@@ -356,8 +358,8 @@ class SampleContainer(MSONable):
 
         if os.path.isfile(file_path):
             backend = self._check_backend(file_path)
-            chain = backend["chain"]
-            available = len(chain) - chain.attrs["nsamples"]
+            trace_grp = backend["trace"]
+            available = len(trace_grp.occupancy) - trace_grp.attrs["nsamples"]
             # this probably fails since maxshape is not set.
             if available < alloc_nsamples:
                 self._grow_backend(backend, alloc_nsamples - available)
@@ -404,11 +406,11 @@ class SampleContainer(MSONable):
             backend["trace"][name].resize(nsamples, axis=0)
 
     @staticmethod
-    def _flatten(trace):
-        """Flatten values in chain with multiple walkers."""
-        s = list(trace.shape[1:])
-        s[0] = np.prod(trace.shape[:2])
-        return np.squeeze(trace.reshape(s))
+    def _flatten(traced_values):
+        """Flatten values in trace values with multiple walkers."""
+        s = list(traced_values.shape[1:])
+        s[0] = np.prod(traced_values.shape[:2])
+        return np.squeeze(traced_values.reshape(s))
 
     def __len__(self):
         """Return the number of samples."""

@@ -206,7 +206,7 @@ class MCKernel(ABC):
         return self.trace
 
     def compute_initial_trace(self, occupancy):
-        """Compute inital values for sample trace given occupancy.
+        """Compute inital values for sample trace given an occupancy.
 
         Args:
             occupancy (ndarray):
@@ -264,7 +264,7 @@ class ThermalKernel(MCKernel):
     @temperature.setter
     def temperature(self, temperature):
         """Set the temperature and beta accordingly."""
-        self.trace.temperature = np.array([temperature])
+        self.trace.temperature = np.array(temperature)
         self.beta = 1.0 / (kB * temperature)
 
     def compute_initial_trace(self, occupancy):
@@ -286,7 +286,9 @@ class UniformlyRandom(MCKernel):
     """A Kernel that accepts all proposed steps.
 
     This kernel samples the random limit distribution where all states have the
-    same probability (corresponds to an infinite temperature).
+    same probability (corresponds to an infinite temperature). Although if a
+    bias is added then the corresponding distribution will be biased
+    accoringly.
     """
 
     valid_mcushers = ALL_MCUSHERS
@@ -308,12 +310,22 @@ class UniformlyRandom(MCKernel):
         step = self._usher.propose_step(occupancy)
         self.trace.delta_trace.features = self._feature_change(occupancy, step)
         self.trace.delta_trace.enthalpy = np.array(
-            [np.dot(self.natural_params, self.trace.delta_trace.features)])
-        self._usher.update_aux_state(step)
-        for f in step:
-            occupancy[f[0]] = f[1]
-        self.trace.occupancy = occupancy
+            np.dot(self.natural_params, self.trace.delta_trace.features))
 
+        if self._bias is not None:
+            self.trace.delta_trace.bias = np.array(
+                self._bias.compute_bias_change(occupancy, step))
+            self.trace.accepted = np.array(
+                True if self.trace.delta_trace.bias >= 0
+                else self.trace.delta_trace.bias > log(random())
+            )
+
+        if self.trace.accepted:
+            for f in step:
+                occupancy[f[0]] = f[1]
+            self._usher.update_aux_state(step)
+
+        self.trace.occupancy = occupancy
         return self.trace
 
 
@@ -347,17 +359,17 @@ class Metropolis(ThermalKernel):
 
         if self._bias is not None:
             self.trace.delta_trace.bias = np.array(
-                [self._bias.compute_bias_change(occupancy, step)])
+                self._bias.compute_bias_change(occupancy, step))
             exponent = -self.beta * self.trace.delta_trace.enthalpy + \
                 self.trace.delta_trace.bias
             self.trace.accepted = np.array(
-                [True if exponent >= 0 else exponent > log(random())]
+                True if exponent >= 0 else exponent > log(random())
             )
         else:
-            self.trace.accepted = np.array([
+            self.trace.accepted = np.array(
                 True if self.trace.delta_trace.enthalpy <= 0
                 else -self.beta * self.trace.delta_trace.enthalpy > log(random())  # noqa
-            ])
+            )
 
         if self.trace.accepted:
             for f in step:

@@ -85,11 +85,13 @@ def test_single_step(mckernel):
 
 def test_single_step_bias(mckernel_bias):
     occu = gen_random_occupancy(mckernel_bias._usher.sublattices,
-                                 mckernel_bias._usher.inactive_sublattices)
+                                mckernel_bias._usher.inactive_sublattices)
     for _ in range(20):
         trace = mckernel_bias.single_step(occu.copy())
         # assert delta bias is there and recorded
-        assert isinstance(trace.delta_trace.bias[0], float)
+        assert isinstance(trace.delta_trace.bias, np.ndarray)
+        print(trace.delta_trace.bias)
+        assert len(trace.delta_trace.bias.shape) == 0  # 0 dimensional
         if trace.accepted:
             assert not np.array_equal(trace.occupancy, occu)
         else:
