@@ -20,7 +20,7 @@ from pymatgen.core import Species, DummySpecies, Element
 from smol.cofe.space.domain import get_species, Vacancy
 from smol.moca.processor.base import Processor
 from .base import Ensemble
-from .sublattice import Sublattice
+from smol.moca.sublattice import Sublattice
 
 
 class BaseSemiGrandEnsemble(Ensemble):

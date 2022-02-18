@@ -7,28 +7,13 @@ random structure supercell being sampled in a Monte Carlo simulation.
 
 __author__ = "Luis Barroso-Luque"
 
+from dataclasses import dataclass, field
 import numpy as np
 from monty.json import MSONable
 from smol.cofe.space.domain import SiteSpace
 
 
-def get_sublattices(processor):
-    """Get a list of sublattices from a processor.
-
-    Args:
-        processor (Processor):
-            A processor object to extract sublattices from
-    Returns:
-        list of Sublattice
-    """
-    return [Sublattice(site_space,
-                       np.array([i for i, sp in
-                                 enumerate(processor.allowed_species)
-                                if sp == list(site_space.keys())]))
-            for site_space in processor.unique_site_spaces]
-
-
-# TODO consider adding the inactive sublattices?
+@dataclass
 class Sublattice(MSONable):
     """Sublattice class.
 
@@ -46,18 +31,13 @@ class Sublattice(MSONable):
         array of site indices for all unrestricted sites in the sublattice.
     """
 
-    def __init__(self, site_space, sites):
-        """Initialize Sublattice.
+    site_space: SiteSpace
+    sites: np.array
+    active_sites: np.array = field(init=False)
 
-        Args:
-            site_space (SiteSpace):
-                A site space object representing the sites in the sublattice
-            sites (ndarray):
-                array with the site indices
-        """
-        self.sites = sites
-        self.site_space = site_space
-        self.active_sites = sites.copy()
+    def __post_init__(self):
+        """Copy sites into active_sites."""
+        self.active_sites = self.sites.copy()
 
     @property
     def species(self):
@@ -88,18 +68,6 @@ class Sublattice(MSONable):
         """Reset all restricted sites to active."""
         self.active_sites = self.sites.copy()
 
-    def __str__(self):
-        """Pretty print the sublattice species."""
-        string = f'Sublattice\n Site space: {dict(self.site_space)}\n'
-        string += f' Number of sites: {len(self.sites)}\n'
-        return string
-
-    def __repr__(self):
-        """Repr for nice viewing."""
-        rep = f'Sublattice Summary \n\n   site_space: {self.site_space}\n\n'
-        rep += f'   sites: {self.sites}\n\n active_sites: {self.active_sites}'
-        return rep
-
     def as_dict(self):
         """Get Json-serialization dict representation.
 
@@ -122,3 +90,38 @@ class Sublattice(MSONable):
                          sites=np.array(d['sites']))
         sublattice.active_sites = np.array(d['active_sites'])
         return sublattice
+
+
+@dataclass
+class InactiveSublattice(MSONable):
+    """Same as above but for sublattices with no configuration DOFs.
+
+    Attributes:
+     site_space (SiteSpace):
+        SiteSpace with the allowed species and their random
+        state composition.
+     sites (ndarray):
+        array of site indices for all sites in sublattice
+    """
+
+    site_space: SiteSpace
+    sites: np.array
+
+    def as_dict(self):
+        """Get Json-serialization dict representation.
+
+        Returns:
+            MSONable dict
+        """
+        d = {'site_space': self.site_space.as_dict(),
+             'sites': self.sites.tolist()}
+        return d
+
+    @classmethod
+    def from_dict(cls, d):
+        """Instantiate a sublattice from dict representation.
+
+        Returns:
+            Sublattice
+        """
+        return cls(SiteSpace.from_dict(d['site_space']), np.array(d['sites']))

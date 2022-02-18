@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+* `SamplerContainer.to_hdf5` to save MC sample containers
+[\#151](https://github.com/CederGroupHub/smol/pull/151)
+  ([lbluque](https://github.com/lbluque))
 * `PottsSubspace` class to generate redundant frame expansions.
 [\#146](https://github.com/CederGroupHub/smol/pull/146)
   ([lbluque](https://github.com/lbluque))
