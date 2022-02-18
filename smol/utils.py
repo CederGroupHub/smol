@@ -76,7 +76,7 @@ def get_subclasses(base_class: object) -> Dict[str, object]:
     """Get all non-abstract subclasses of a class.
 
     Gets all non-abstract classes that inherit from the given base class in
-    a module. This is used to obtain all the available basis functions.
+    a module.
     """
     sub_classes = {}
     for sub_class in base_class.__subclasses__():

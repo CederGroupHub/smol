@@ -5,6 +5,7 @@ Some of these are borrowed from pymatgen test scripts.
 
 import json
 import random
+from  itertools import chain
 import numpy as np
 from monty.json import MontyDecoder, MSONable
 from pymatgen.core import Composition
@@ -22,7 +23,7 @@ def assert_msonable(obj, test_if_subclass=True):
     _ = json.loads(obj.to_json(), cls=MontyDecoder)
 
 
-def gen_random_occupancy(sublattices, num_sites):
+def gen_random_occupancy(sublattices, inactive_sublattices):
     """Generate a random encoded occupancy according to a list of sublattices.
 
     Args:
@@ -32,8 +33,10 @@ def gen_random_occupancy(sublattices, num_sites):
             Total number of sites
 
     Returns:
-        ndarry: encoded occupancy
+        ndarray: encoded occupancy
     """
+    num_sites = sum(
+        len(sl.sites) for sl in chain(sublattices, inactive_sublattices))
     rand_occu = np.zeros(num_sites, dtype=int)
     for sublatt in sublattices:
         codes = range(len(sublatt.site_space))
