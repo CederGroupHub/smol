@@ -218,6 +218,7 @@ class MCKernel(ABC):
         trace = Trace()
         trace.occupancy = occupancy
         trace.features = self._compute_features(occupancy)
+        # set scalar values into shape (1,) array for sampling consistency.
         trace.enthalpy = np.array(
             [np.dot(self.natural_params, trace.features)])
         if self.bias is not None:
@@ -353,9 +354,8 @@ class Metropolis(ThermalKernel):
         """
         step = self._usher.propose_step(occupancy)
         self.trace.delta_trace.features = self._feature_change(occupancy, step)
-        # even single numbers need to be wrapped in a shape (1,) array
         self.trace.delta_trace.enthalpy = np.array(
-            [np.dot(self.natural_params, self.trace.delta_trace.features)])
+            np.dot(self.natural_params, self.trace.delta_trace.features))
 
         if self._bias is not None:
             self.trace.delta_trace.bias = np.array(
