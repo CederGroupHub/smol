@@ -65,7 +65,7 @@ class TestStructureWrangler(unittest.TestCase):
         npt.assert_array_equal(G, G.T)
         self.assertFalse(np.allclose(np.ones(G.shape[0]), G.diagonal()))
 
-    def test_get_orb_similarity_matrix(self):
+    def test_get_similarity_matrix(self):
         S = self.sw.get_orb_similarity_matrix()
         self.assertEqual(S.shape, 2 * (self.sw.num_features,))
         npt.assert_array_equal(S, S.T)

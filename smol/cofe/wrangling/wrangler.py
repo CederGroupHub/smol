@@ -334,9 +334,9 @@ class StructureWrangler(MSONable):
         col_mask = np.all(arr == arr[0, :], axis=0)
         return np.where(col_mask == 1)[0][1:]
 
-    def get_orb_similarity_matrix(self, rows=None, cols=None, rtol=1e-5):
-        """Generate a matrix to compare the similarity of orbit feature vectors (columns) in the feature matrix. Matrix
-        element a(i,j) represents the fraction of equivalent corresponding values in feature vectors i and j. This
+    def get_similarity_matrix(self, rows=None, cols=None, rtol=1e-5):
+        """Generate a matrix to compare the similarity of correlation feature vectors (columns) in the feature matrix.
+         Matrix element a(i,j) represents the fraction of equivalent corresponding values in feature vectors i and j. This
         construction is analogous to the gram matrix, but instead of an inner product, it counts the number
         of identical corresponding elements in feature vectors i and j.
 
@@ -345,7 +345,7 @@ class StructureWrangler(MSONable):
                 indices of structures to include in feature matrix.
             cols (list):
                 indices of features (correlations) to include in feature matrix
-            rtol (float);
+            rtol (float):
                 relative tolerance for comparing feature matrix column values
 
         Returns:
@@ -357,15 +357,13 @@ class StructureWrangler(MSONable):
 
         A = self.feature_matrix[rows][:, cols]
         num_structs = len(rows)
-        num_orbs = len(cols)
-        upper_sim_matrix = np.zeros((num_orbs, num_orbs))
-        for i in range(num_orbs):
-            for j in range(i, num_orbs):
+        num_corrs = len(cols)
+        sim_matrix = np.identity(num_corrs)
+        for i in range(num_corrs):
+            for j in range(i+1, num_corrs):
                 num_identical = np.sum(np.isclose(A[:, i], A[:, j], rtol=rtol))
-                upper_sim_matrix[i, j] = num_identical / num_structs
-
-        lower_sm = upper_sim_matrix.transpose()
-        sim_matrix = upper_sim_matrix + lower_sm - np.identity(num_orbs)  # prevent double counting on diagonal
+                sim_matrix[i, j] = num_identical / num_structs
+                sim_matrix[j, i] = num_identical / num_structs
 
         return sim_matrix
 
