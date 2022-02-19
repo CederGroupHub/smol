@@ -55,21 +55,25 @@ def ce_processor(cluster_subspace):
 
 @pytest.fixture(params=['CE', 'OD'], scope='module')
 def composite_processor(cluster_subspace_ewald, request):
-    coefs = 2 * np.random.random(cluster_subspace.num_corr_functions + 1)
+    coefs = 2 * np.random.random(cluster_subspace_ewald.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
-    proc = CompositeProcessor(cluster_subspace, supercell_matrix=scmatrix)
+    proc = CompositeProcessor(cluster_subspace_ewald,
+                              supercell_matrix=scmatrix)
     if request.param == 'CE':
         proc.add_processor(
-            ClusterExpansionProcessor(cluster_subspace, scmatrix, coefficients=coefs[:-1])
+            ClusterExpansionProcessor(
+                cluster_subspace_ewald, scmatrix, coefficients=coefs[:-1])
         )
     else:
-        expansion = ClusterExpansion(cluster_subspace, coefs)
+        expansion = ClusterExpansion(
+            cluster_subspace_ewald, coefs)
         proc.add_processor(
-            OrbitDecompositionProcessor(cluster_subspace, scmatrix,
-                                        expansion.orbit_factor_tensors)
+            OrbitDecompositionProcessor(
+                cluster_subspace_ewald, scmatrix,
+                expansion.orbit_factor_tensors)
         )
-    proc.add_processor(EwaldProcessor(cluster_subspace, scmatrix, EwaldTerm(),
-                                      coefficient=coefs[-1]))
+    proc.add_processor(EwaldProcessor(
+        cluster_subspace_ewald, scmatrix, EwaldTerm(), coefficient=coefs[-1]))
     # bind raw coefficients since OD processors do not store them
     # and be able to test computing properties, hacky but oh well
     proc.raw_coefs = coefs
