@@ -11,8 +11,9 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
+from datetime import date
 import sys
-import sphinx_bootstrap_theme
+import smol
 
 sys.path.insert(0, os.path.abspath('../../smol'))
 sys.path.insert(0, os.path.abspath('../../examples'))
@@ -20,11 +21,12 @@ sys.path.insert(0, os.path.abspath('../../examples'))
 # -- Project information -----------------------------------------------------
 
 project = 'smol'
-copyright = '2020, Ceder Group'
+copyright = f"2020-{date.today().year}, Ceder Group"
 author = 'Luis Barroso-Luque'
 
 # The full version, including alpha/beta/rc tags
-release = '1.0.1'
+release = smol.__version__
+version = smol.__version__
 
 
 # -- General configuration ---------------------------------------------------
@@ -37,7 +39,13 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.coverage",
+    "sphinx.ext.doctest",
+    "sphinx.ext.todo",
+    "sphinx.ext.viewcode",
     "nbsphinx",
+    "nb2plots",
     "IPython.sphinxext.ipython_console_highlighting",
 ]
 
@@ -76,107 +84,99 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
+# The name of the Pygments (syntax highlighting) style to use.
+pygments_style = "sphinx"
 
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 
-html_theme = 'bootstrap'
+html_theme = "pydata_sphinx_theme"
 
-# (Optional) Logo. Should be small enough to fit the navbar (ideally 24x24).
-# Path should be relative to the ``_static`` files directory.
-# html_logo = ""
+html_logo = "../_static/banner.svg"
 
-# Theme options are theme-specific and customize the look and feel of a
-# theme further.
 html_theme_options = {
-    # Navigation bar title. (Default: ``project`` value)
-    'navbar_title': "smol",
-
-    # Tab name for entire site. (Default: "Site")
-    'navbar_site_name': "Site",
-
-    # Render the next and previous page links in navbar. (Default: true)
-    'navbar_sidebarrel': False,
-
-    # Render the current pages TOC in the navbar. (Default: true)
-    'navbar_pagenav': True,
-
-    # Tab name for the current pages TOC. (Default: "Page")
-    'navbar_pagenav_name': "Page",
-
-    # A list of tuples containing pages or urls to link to.
-    # Valid tuples should be in the following forms:
-    #    (name, page)                 # a link to a page
-    #    (name, "/aa/bb", 1)          # a link to an arbitrary relative url
-    #    (name, "http://example.com", True) # arbitrary absolute url
-    # Note the "1" or "True" value above as the third argument to indicate
-    # an arbitrary url.
-
-    'navbar_links': [
-        ("Examples", "examples"),
-        ("API", "api"),
-        ("GitHub", "https://github.com/CederGroupHub/smol", True),
+    "github_url": "https://github.com/CederGroupHub/smol",
+    "icon_links": [ # additional links with favicons
+    #    {
+    #       "name": "PyPI",
+    #       "url": "https://pypi.org/project/pydata-sphinx-theme",
+    #       "icon": "fas fa-box",
+    #     },
     ],
-
-    # Global TOC depth for "site" navbar tab. (Default: 1)
-    # Switching to -1 shows all levels.
-    'globaltoc_depth': 1,
-
-    # Include hidden TOCs in Site navbar?
-    #
-    # Note: If this is "false", you cannot have mixed ``:hidden:`` and
-    # non-hidden ``toctree`` directives in the same page, or else the build
-    # will break.
-    #
-    # Values: "true" (default) or "false"
-    'globaltoc_includehidden': "true",
-
-    # HTML navbar class (Default: "navbar") to attach to <div> element.
-    # For black navbar, do "navbar navbar-inverse"
-    # 'navbar_class': "navbar navbar-inverse",
-
-    # Fix navigation bar to top of page?
-    # Values: "true" (default) or "false"
-    'navbar_fixed_top': "true",
-
-    # Location of link to source.
-    # Options are "nav" (default), "footer" or anything else to exclude.
-    'source_link_position': "footer",
-
-    # Bootswatch (http://bootswatch.com/) theme.
-    #
-    # Options are nothing (default) or the name of a valid theme
-    # such as "cosmo" or "sandstone".
-    #
-    # The set of valid themes depend on the version of Bootstrap
-    # that's used (the next config option).
-    #
-    # Currently, the supported themes are:
-    # - Bootstrap 2: https://bootswatch.com/2
-    # - Bootstrap 3: https://bootswatch.com/3
-    # 'bootswatch_theme': "readable",
-    'bootswatch_theme': "flatly",
-    # 'bootswatch_theme': "simplex",
-    # 'bootswatch_theme': "lumen",
-    # 'bootswatch_theme': "paper",
-
-    # Choose Bootstrap version.
-    # Values: "3" (default) or "2" (in quotes)
-    'bootstrap_version': "3",
+    "use_edit_page_button": True,
+    "show_toc_level": 2,
+    # "navbar_align": "left",  # [left, content, right] For testing that the navbar items align properly
+    # "navbar_start": ["navbar-logo", "navbar-version"],
+    # "navbar_center": ["navbar-nav", "navbar-version"],  # Just for testing
+    "collapse_navigation": True,
+    "navigation_depth": 2,
+    "show_nav_level": 2,
+    "show_prev_next": False,
+    "navbar_end": ["navbar-icon-links"], # "version-switcher",
+    # "left_sidebar_end": ["custom-template.html", "sidebar-ethical-ads.html"],
+    # "footer_items": ["copyright", "sphinx-version", ""]
+    # "switcher": {
+        # "json_url": "/_static/switcher.json",
+        # "json_url": "https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json",
+        # "url_template": "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/",
+        # "version_match": version,
+    # },
+    "external_links": [
+        {"name": "Changes",
+         "url": "https://github.com/CederGroupHub/smol/blob/master/CHANGES.md"},
+        {"name": "Issues",
+         "url": "https://github.com/CederGroupHub/smol/issues"}
+    ],
 }
 
-# If true, links to the reST sources are added to the pages.
-html_show_sourcelink = False
+html_context = {
+    "github_user": "CederGroupHub",
+    "github_repo": "smol",
+    "github_version": "master",
+    "doc_path": "doc",
+    "source_suffix": source_suffix,
+}
 
-html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
+# Custom sidebar templates, maps page names to templates.
+html_sidebars = {
+    "contribute/index": [
+        "search-field",
+        "sidebar-nav-bs",
+    ],  # This ensures we test for custom sidebars
+    # "demo/no-sidebar": [],  # Test what page looks like with no sidebar items
+}
+
+rediraffe_redirects = {
+    "contributing.rst": "contribute/index.rst",
+}
+
+# The style sheet to use for HTML and HTML Help pages. A file of that name
+# must exist either in Sphinx' static/ path, or in one of the custom paths
+# given in html_static_path.
+# html_style = ''
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
-html_css_files = [
-    '_static/default.css',
-]
+# If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
+# using the given strftime format.
+html_last_updated_fmt = "%b %d, %Y"
+
+# If true, SmartyPants will be used to convert quotes and dashes to
+# typographically correct entities.
+# html_use_smartypants = True
+
+# Content template for the index page.
+html_index = 'index.html'
+
+# If true, the reST sources are included in the HTML build as _sources/<name>.
+html_copy_source = False
+
+# html_use_opensearch = "smolurl"
+
+# Output file base name for HTML help builder.
+htmlhelp_basename = "smol"

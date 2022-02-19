@@ -127,19 +127,20 @@ class TestBasis(unittest.TestCase):
     def test_rotate(self):
         for flavor in ('sinusoid', 'legendre', 'polynomial', 'indicator'):
             b = basis.basis_factory(flavor, self.site_space)
-            f_array = b._f_array.copy()
             theta = np.pi / np.random.randint(2, 11)
-            b.rotate(theta)
             if b.is_orthogonal:
+                f_array = b._f_array.copy()
+                b.rotate(theta)
                 self.assertTrue(b.is_orthogonal)
                 # if orthogonal all inner products should match!
                 npt.assert_array_almost_equal(
                     f_array @ f_array.T, b._f_array @ b._f_array.T)
             else:
-                # if not orthogonal only vector norms should mathch!
-                npt.assert_array_almost_equal(
-                    np.diag(f_array @ f_array.T),
-                    np.diag(b._f_array @ b._f_array.T))
+                self.assertRaises(RuntimeError, b.rotate, theta)
+                # orthonormalize it and continue
+                b.orthonormalize()
+                f_array = b._f_array.copy()
+                b.rotate(theta)
 
             npt.assert_array_almost_equal(
                 b._f_array[0], np.ones(len(self.site_space)))

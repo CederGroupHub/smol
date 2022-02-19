@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+* `SamplerContainer.to_hdf5` to save MC sample containers
+[\#151](https://github.com/CederGroupHub/smol/pull/151)
+  ([lbluque](https://github.com/lbluque))
 * `PottsSubspace` class to generate redundant frame expansions.
 [\#146](https://github.com/CederGroupHub/smol/pull/146)
   ([lbluque](https://github.com/lbluque))
@@ -59,6 +62,13 @@ Use this section to keep track of changes in the works.
   [#104](https://github.com/CederGroupHub/smol/issues/104) when generating
   orbits from cutoffs. [#138](https://github.com/CederGroupHub/smol/pull/125)
   ([qchempku2017](https://github.com/qchempku2017))
+
+
+### Deprecated
+* Numerical conversion of coefficients between bases
+  `ClusterExpansion.convert_coefs`
+  [\#149](https://github.com/CederGroupHub/smol/pull/149)
+  ([lbluque](https://github.com/lbluque))
 
 ## [v1.0.1](https://github.com/CederGroupHub/smol/tree/v1.0.1) (2021-03-03)
 #### [Full Changelog](https://github.com/CederGroupHub/smol/compare/v1.0.0...v1.0.1)
@@ -209,8 +219,6 @@ limit.)
 * Single `StandardBasis` site basis class that is constructed using a basis
 function iterator for specific basis sets.
 * Example notebooks updated accordingly.
-
-### Deprecated
 
 ### Removed
 * `smol.learn` and all regression estimators have been removed.

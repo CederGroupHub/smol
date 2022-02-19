@@ -315,42 +315,6 @@ class ClusterExpansion(MSONable):
         self._eci = None  # Reset
         self._fac_tensors = None
 
-    # This needs further testing. For out-of-training structures
-    # the predictions do not always match with those using the original eci
-    # with which the fit was done.
-    def convert_coefs(self, new_basis, fit_structures, supercell_matrices,
-                      feature_matrix=None, orthonormal=False):
-        """Numerically convert expansion coeficients to a given new basis.
-
-        Args:
-            new_basis (str):
-                name of basis to convert coefficients into.
-            fit_structures (list):
-                list of pymatgen.Structure used to fit the eci
-            supercell_matrices (list):
-                list of supercell matrices for the corresponding fit structures
-            feature_matrix (ndarray):
-                feature matrix if not passed in the constructor.
-            orthonormal (bool):
-                option to make new basis orthonormal
-
-        Returns:
-            array: coefficients converted into new_basis
-        """
-        if feature_matrix is None and self._feat_matrix is None:
-            raise AttributeError("A feature matrix must be provided.")
-
-        subspace = self.cluster_subspace.copy()
-        subspace.change_site_bases(new_basis, orthonormal=orthonormal)
-        new_feature_matrix = np.array(
-            [subspace.corr_from_structure(s, scmatrix=m)
-             for s, m in zip(fit_structures, supercell_matrices)])
-        feature_matrix = feature_matrix if feature_matrix \
-            else self.feature_matrix
-        C = np.matmul(feature_matrix.T,
-                      np.linalg.pinv(new_feature_matrix.T))
-        return np.matmul(C.T, self.coefs)
-
     def __str__(self):
         """Pretty string for printing."""
         corr = np.zeros(self.cluster_subspace.num_corr_functions)

@@ -6,3 +6,4 @@ flake8>=3.9.2
 pylint>=2.9.6
 cython>=0.29.24
 scikit-learn>=0.24.2
+h5py>=3.5.0
