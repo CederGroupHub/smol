@@ -151,8 +151,8 @@ def test_compute_orbit_factors(cluster_subspace):
     expansion = ClusterExpansion(cluster_subspace, coefs)
     processor = OrbitDecompositionProcessor(
         cluster_subspace, scmatrix, expansion.orbit_factor_tensors)
-    occu = gen_random_occupancy(get_sublattices(processor),
-                                processor.num_sites)
+    occu = gen_random_occupancy(processor.get_sublattices(),
+                                processor.get_inactive_sublattices())
     struct = processor.structure_from_occupancy(occu)
     # same as normalize=False in corr_from_structure
     npt.assert_allclose(processor.compute_feature_vector(occu) / processor.size,
@@ -175,10 +175,6 @@ def test_bad_composite(cluster_subspace):
     with pytest.raises(ValueError):
         proc.add_processor(
             ClusterExpansionProcessor(cluster_subspace, 2 * scmatrix, coefficients=coefs))
-    with pytest.raises(ValueError):
-        new_cs = cluster_subspace.copy()
-        new_cs.change_site_bases("chebyshev")
-        proc.add_processor(ClusterExpansionProcessor(new_cs, scmatrix, coefficients=coefs))
     with pytest.raises(ValueError):
         new_cs = cluster_subspace.copy()
         ids = range(1, new_cs.num_corr_functions)

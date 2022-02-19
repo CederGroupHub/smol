@@ -2,9 +2,9 @@ import os
 import pytest
 import numpy as np
 from monty.serialization import loadfn
-from smol.cofe import ClusterSubspace
+from smol.cofe import ClusterSubspace, ClusterExpansion
 from smol.moca.processor import ClusterExpansionProcessor, \
-EwaldProcessor, CompositeProcessor
+    EwaldProcessor, OrbitDecompositionProcessor, CompositeProcessor
 from smol.moca import CanonicalEnsemble, SemiGrandEnsemble
 from smol.cofe.extern import EwaldTerm
 
@@ -53,15 +53,26 @@ def ce_processor(cluster_subspace):
         cluster_subspace, supercell_matrix=scmatrix, coefficients=coefs)
 
 
-@pytest.fixture(scope='module')
-def composite_processor(cluster_subspace_ewald):
-    coefs = 2 * np.random.random(cluster_subspace_ewald.num_corr_functions + 1)
+@pytest.fixture(params=['CE', 'OD'], scope='module')
+def composite_processor(cluster_subspace_ewald, request):
+    coefs = 2 * np.random.random(cluster_subspace.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
-    proc = CompositeProcessor(cluster_subspace_ewald, supercell_matrix=scmatrix)
-    proc.add_processor(ClusterExpansionProcessor(
-        cluster_subspace_ewald, scmatrix, coefficients=coefs[:-1]))
-    proc.add_processor(EwaldProcessor(
-        cluster_subspace_ewald, scmatrix, EwaldTerm(), coefficient=coefs[-1]))
+    proc = CompositeProcessor(cluster_subspace, supercell_matrix=scmatrix)
+    if request.param == 'CE':
+        proc.add_processor(
+            ClusterExpansionProcessor(cluster_subspace, scmatrix, coefficients=coefs[:-1])
+        )
+    else:
+        expansion = ClusterExpansion(cluster_subspace, coefs)
+        proc.add_processor(
+            OrbitDecompositionProcessor(cluster_subspace, scmatrix,
+                                        expansion.orbit_factor_tensors)
+        )
+    proc.add_processor(EwaldProcessor(cluster_subspace, scmatrix, EwaldTerm(),
+                                      coefficient=coefs[-1]))
+    # bind raw coefficients since OD processors do not store them
+    # and be able to test computing properties, hacky but oh well
+    proc.raw_coefs = coefs
     return proc
 
 

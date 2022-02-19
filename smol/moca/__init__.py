@@ -10,5 +10,5 @@ from smol.moca.ensemble.semigrand import SemiGrandEnsemble
 from smol.moca.sampler.sampler import Sampler
 from smol.moca.sampler.container import SampleContainer
 
-__all__ = ['CanonicalEnsemble', 'SemiGrandEnsemble,
-           'Sampler', 'SampleContainer']
+__all__ = ['CanonicalEnsemble', 'SemiGrandEnsemble', 'Sampler',
+           'SampleContainer']

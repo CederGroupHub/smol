@@ -3,8 +3,9 @@ import numpy.testing as npt
 import numpy as np
 
 from smol.cofe import ClusterExpansion, RegressionData
-from smol.moca import CanonicalEnsemble, SemiGrandEnsemble, \
-    CompositeProcessor, CEProcessor, EwaldProcessor
+from smol.moca import CanonicalEnsemble, SemiGrandEnsemble
+from smol.moca.processor import CompositeProcessor, ClusterExpansionProcessor,\
+    EwaldProcessor
 from tests.utils import assert_msonable, gen_random_occupancy
 
 ensembles = [CanonicalEnsemble, SemiGrandEnsemble]
@@ -29,8 +30,8 @@ def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_cls):
     coefs = np.random.random(cluster_subspace_ewald.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
     proc = CompositeProcessor(cluster_subspace_ewald, scmatrix)
-    proc.add_processor(CEProcessor(cluster_subspace_ewald, scmatrix,
-                                   coefficients=coefs[:-1]))
+    proc.add_processor(ClusterExpansionProcessor(
+        cluster_subspace_ewald, scmatrix, coefficients=coefs[:-1]))
     proc.add_processor(EwaldProcessor(cluster_subspace_ewald, scmatrix,
                        cluster_subspace_ewald.external_terms[0],
                                       coefficient=coefs[-1]))
