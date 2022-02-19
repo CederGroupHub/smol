@@ -216,7 +216,7 @@ class MCKernel(ABC):
         """
         trace = Trace()
         trace.occupancy = occupancy
-        trace.features = self._compute_features(occupancy)
+        trace.features = self.ensemble.compute_feature_vector(occupancy)
         # set scalar values into shape (1,) array for sampling consistency.
         trace.enthalpy = np.array(
             [np.dot(self.natural_params, trace.features)])

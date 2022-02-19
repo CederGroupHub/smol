@@ -196,9 +196,7 @@ class Sampler:
                                 val[i] += delta_val
                     bar.update()
                 # yield copies
-                yield (accepted, temperature, occupancies.copy(),
-                       enthalpy.copy(), features.copy(), thin_by)
-                accepted[:] = 0  # reset acceptance array
+                yield trace
 
     def run(self, nsteps, initial_occupancies=None, thin_by=1, progress=False,
             stream_chunk=0, stream_file=None, swmr_mode=False):
