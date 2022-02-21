@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+* `MCBias` implementation for biased sampling, `Trace` objects for general
+  state saving during sampling.
+  [\#154](https://github.com/CederGroupHub/smol/pull/154)
+  ([lbluque](https://github.com/lbluque))
+* Active and inactive sublattices for MC sampling.
+  [\#152](https://github.com/CederGroupHub/smol/pull/152)
+  ([lbluque](https://github.com/lbluque))
 * `SamplerContainer.to_hdf5` to save MC sample containers
 [\#151](https://github.com/CederGroupHub/smol/pull/151)
   ([lbluque](https://github.com/lbluque))
@@ -32,6 +39,11 @@ Use this section to keep track of changes in the works.
   ([lbluque](https://github.com/lbluque))
 
 ### Changed
+* Dropped "er" endings for `MCUsher` names. Renamed `MuSemigrandEnsemble`
+  to `SemigrandEnsemble`.
+  [\#154](https://github.com/CederGroupHub/smol/pull/154)
+  ([lbluque](https://github.com/lbluque))
+
 * Changed `ClusterSubspace.supercell_orbit_mappings` to only include cluster
   site indices.
   [#145](https://github.com/CederGroupHub/smol/pull/145)
@@ -65,6 +77,9 @@ Use this section to keep track of changes in the works.
 
 
 ### Deprecated
+* `FuSemiGrandEnsemble` now `FugacityBias`.
+  [\#154](https://github.com/CederGroupHub/smol/pull/154)
+  ([lbluque](https://github.com/lbluque))
 * Numerical conversion of coefficients between bases
   `ClusterExpansion.convert_coefs`
   [\#149](https://github.com/CederGroupHub/smol/pull/149)
