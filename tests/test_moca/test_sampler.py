@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 import numpy.testing as npt
 from smol.moca import Sampler
-from smol.moca.sampler.mcusher import Swapper, Flipper
+from smol.moca.sampler.mcusher import Swap, Flip
 from smol.moca.sampler.kernel import Metropolis
 from tests.utils import gen_random_occupancy
 
@@ -20,17 +20,17 @@ def sampler(ensemble, request):
 
 def test_from_ensemble(sampler):
     if "Canonical" in sampler.samples.metadata["name"]:
-        assert isinstance(sampler.mckernel._usher, Swapper)
+        assert isinstance(sampler.mckernel._usher, Swap)
     else:
-        assert isinstance(sampler.mckernel._usher, Flipper)
+        assert isinstance(sampler.mckernel._usher, Flip)
     assert isinstance(sampler.mckernel, Metropolis)
 
 
 @pytest.mark.parametrize('thin', (1, 10))
 def test_sample(sampler, thin):
     occu = np.vstack(
-        [gen_random_occupancy(
-            sampler.mckernel._usher.sublattices, sampler.num_sites)
+        [gen_random_occupancy(sampler.mckernel._usher.sublattices,
+                              sampler.mckernel._usher.inactive_sublattices)
          for _ in range(sampler.samples.shape[0])])
     steps = 1000
     samples = [state for state
@@ -45,8 +45,8 @@ def test_sample(sampler, thin):
 @pytest.mark.parametrize('thin', (1, 10))
 def test_run(sampler, thin):
     occu = np.vstack(
-        [gen_random_occupancy(
-            sampler.mckernel._usher.sublattices, sampler.num_sites)
+        [gen_random_occupancy(sampler.mckernel._usher.sublattices,
+                              sampler.mckernel._usher.inactive_sublattices)
             for _ in range(sampler.samples.shape[0])])
     steps = 1000
     sampler.run(steps, occu, thin_by=thin)
@@ -58,15 +58,16 @@ def test_run(sampler, thin):
 def test_anneal(sampler):
     temperatures = np.linspace(2000, 500, 5)
     occu = np.vstack(
-        [gen_random_occupancy(
-            sampler.mckernel._usher.sublattices, sampler.num_sites)
+        [gen_random_occupancy(sampler.mckernel._usher.sublattices,
+                              sampler.mckernel._usher.inactive_sublattices)
             for _ in range(sampler.samples.shape[0])])
     steps = 100
     sampler.anneal(temperatures, steps, occu)
     expected = []
     for T in temperatures:
         expected += steps * sampler.samples.shape[0]*[T, ]
-    npt.assert_array_equal(sampler.samples.get_temperatures(), expected)
+    npt.assert_array_equal(
+        sampler.samples.get_trace_value('temperature'), expected)
     # test temp error
     with pytest.raises(ValueError):
         sampler.anneal([100, 200], steps)
@@ -106,6 +107,5 @@ for sp in expected.keys():
 def test_reshape_occu(ensemble):
     sampler = Sampler.from_ensemble(ensemble, temperature=TEMPERATURE)
     occu = gen_random_occupancy(ensemble.sublattices,
-                                ensemble.num_sites)
+                                ensemble.inactive_sublattices)
     assert sampler._reshape_occu(occu).shape == (1, len(occu))
-

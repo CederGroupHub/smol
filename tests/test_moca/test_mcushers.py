@@ -3,14 +3,14 @@ import numpy as np
 from pymatgen.core import Composition
 from smol.cofe.space.domain import SiteSpace
 from smol.moca.sublattice import Sublattice, InactiveSublattice
-from smol.moca.sampler.mcusher import Swapper, Flipper
+from smol.moca.sampler.mcusher import Swap, Flip
 
-mcmcusher_classes = [Flipper, Swapper]
+mcmcusher_classes = [Flip, Swap]
 num_sites = 100
 
 
 @pytest.fixture
-def sublattices():
+def all_sublattices():
     # generate two tests sublattices
     sites = np.arange(num_sites)
     sites1 = np.random.choice(sites, size=num_sites // 3)
@@ -29,21 +29,21 @@ def sublattices():
 
 
 @pytest.fixture
-def rand_occu(sublattices):
+def rand_occu(all_sublattices):
     # generate a random occupancy according to the sublattices
     occu = np.zeros(
-        sum(len(s.sites) for sublat in sublattices for s in sublat), dtype=int)
+        sum(len(s.sites) for sublat in all_sublattices for s in sublat), dtype=int)
     for site in range(len(occu)):
-        for sublattice in sublattices[0]:
+        for sublattice in all_sublattices[0]:
             if site in sublattice.sites:
                 occu[site] = np.random.choice(range(len(sublattice.site_space)))
-    return occu, sublattices[1][0].sites  # return indices of fixed sites
+    return occu, all_sublattices[1][0].sites  # return indices of fixed sites
 
 
 @pytest.fixture(params=mcmcusher_classes)
-def mcmcusher(request, sublattices):
+def mcmcusher(request, all_sublattices):
     # instantiate mcmcushers to test
-    return request.param(*sublattices)
+    return request.param(*all_sublattices)
 
 
 def test_bad_propabilities(mcmcusher):

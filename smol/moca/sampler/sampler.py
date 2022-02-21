@@ -13,7 +13,7 @@ import os
 import numpy as np
 
 from smol.utils import progress_bar
-from smol.moca.sampler.kernel import mckernel_factory
+from smol.moca.sampler.kernel import mckernel_factory, Trace
 from smol.moca.sampler.container import SampleContainer
 
 
@@ -87,22 +87,29 @@ class Sampler:
         if step_type is None:
             step_type = ensemble.valid_mcmc_steps[0]
         elif step_type not in ensemble.valid_mcmc_steps:
-            raise ValueError(f"Step type {step_type} can not be used for "
-                             f"sampling a {type(ensemble)}!")
+            raise ValueError(
+                f"Step type {step_type} can not be used for sampling a "
+                f"{type(ensemble)}.")
         if kernel_type is None:
             kernel_type = "Metropolis"
 
-        mckernel = mckernel_factory(kernel_type, ensemble, step_type, *args,
-                                    **kwargs)
+        mckernel = mckernel_factory(
+            kernel_type, ensemble, step_type, *args, **kwargs)
+        # get a trial trace to initialize sample container trace
+        _trace = mckernel.compute_initial_trace(
+            np.zeros(ensemble.num_sites, dtype=int))
+        sample_trace = Trace(
+            **{name: np.empty((0, nwalkers, *value.shape), dtype=value.dtype)
+               for name, value in _trace.items()}
+        )
 
         sampling_metadata = {"name": type(ensemble).__name__}
         sampling_metadata.update(ensemble.thermo_boundaries)
         sampling_metadata.update({"kernel": kernel_type, "step": step_type})
-        container = SampleContainer(ensemble.num_sites,
-                                    ensemble.sublattices,
-                                    ensemble.natural_parameters,
-                                    ensemble.num_energy_coefs,
-                                    sampling_metadata, nwalkers)
+        container = SampleContainer(
+            ensemble.sublattices, ensemble.natural_parameters,
+            ensemble.num_energy_coefs, sample_trace, sampling_metadata
+        )
         return cls(mckernel, container, seed=seed)
 
     @property
@@ -161,23 +168,17 @@ class Sampler:
                  f" {thin_by}. The last {nsteps % thin_by} will be ignored.",
                  category=RuntimeWarning)
         # TODO check that initial states are independent if num_walkers > 1
-
+        # TODO make samplers with single chain, multiple and multiprocess
+        # TODO kernel should take only 1 occupancy
         # set up any auxiliary states from inital occupancies
         self._kernel.set_aux_state(occupancies)
 
-        # allocate arrays for states
-        occupancies = np.ascontiguousarray(occupancies, dtype=int)
-        accepted = np.zeros(occupancies.shape[0], dtype=int)
-        features = list(map(self._kernel.feature_fun, occupancies))
-        features = np.ascontiguousarray(features)
-        enthalpy = np.dot(self._kernel.natural_params, features.T)
-
-        # TODO clean up this hack so that temp is saved in a general blob
-        try:
-            temperature = self._kernel.temperature
-        except AttributeError:
-            temperature = 1
-        temperature = temperature * np.ones(occupancies.shape[0])
+        # get initial traces and stack them
+        trace = Trace()
+        traces = list(map(self._kernel.compute_initial_trace, occupancies))
+        for name in traces[0].names:
+            stack = np.vstack([getattr(tr, name) for tr in traces])
+            setattr(trace, name, stack)
 
         # Initialise progress bar
         chains, nsites = self.samples.shape
@@ -185,18 +186,17 @@ class Sampler:
         with progress_bar(progress, total=nsteps, description=desc) as bar:
             for _ in range(nsteps // thin_by):
                 for _ in range(thin_by):
-                    for i, (accept, occupancy, delta_enthalpy, delta_features)\
-                      in enumerate(map(self._kernel.single_step, occupancies)):
-                        accepted[i] += accept
-                        occupancies[i] = occupancy
-                        if accept:
-                            enthalpy[i] = enthalpy[i] + delta_enthalpy
-                            features[i] = features[i] + delta_features
+                    for i, strace in enumerate(
+                            map(self._kernel.single_step, occupancies)):
+                        for name, value in strace.items():
+                            setattr(trace, name, value)
+                        if strace.accepted:
+                            for name, delta_val in strace.delta_trace.items():
+                                val = getattr(trace, name)
+                                val[i] += delta_val
                     bar.update()
                 # yield copies
-                yield (accepted, temperature, occupancies.copy(),
-                       enthalpy.copy(), features.copy(), thin_by)
-                accepted[:] = 0  # reset acceptance array
+                yield trace
 
     def run(self, nsteps, initial_occupancies=None, thin_by=1, progress=False,
             stream_chunk=0, stream_file=None, swmr_mode=False):
@@ -255,9 +255,9 @@ class Sampler:
             backend = None
             self.samples.allocate(nsteps // thin_by)
 
-        for i, state in enumerate(self.sample(nsteps, initial_occupancies,
+        for i, trace in enumerate(self.sample(nsteps, initial_occupancies,
                                   thin_by=thin_by, progress=progress)):
-            self.samples.save_sample(*state)
+            self.samples.save_sampled_trace(trace, thinned_by=thin_by)
             if backend is not None and (i + 1) % stream_chunk == 0:
                 self.samples.flush_to_backend(backend)
 
@@ -317,4 +317,3 @@ class Sampler:
 
 # TODO potential define two _sample functions serial/parallel that get called
 #  in one sampler function.
-# TODO streaming container to hdf5?
