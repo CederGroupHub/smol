@@ -63,12 +63,13 @@ can help you get started.
 Contributing
 ------------
 We welcome all your contributions with open arms! Please see the 
-[contributing](https://github.com/CederGroupHub/smol/CONTRIBUTING.md) page for how to contribute.
+[contributing](https://github.com/CederGroupHub/smol/blob/master/CONTRIBUTING.md)
+page for how to contribute.
 
 
 Changes
 -------
 The most recent changes are detailed in the 
-[change log](https://github.com/CederGroupHub/smol/CHANGES.md).
+[change log](https://github.com/CederGroupHub/smol/blob/master/CHANGES.md).
 
 
