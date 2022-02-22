@@ -6,10 +6,8 @@ which is defined by the allowed species at the site and their measures, which
 is concentration of the species in the random structure)
 """
 
-__author__ = "Luis Barroso-Luque"
-
 import warnings
-from abc import abstractmethod
+from abc import ABCMeta, abstractmethod
 from collections import OrderedDict
 from collections.abc import Iterator
 from functools import partial, wraps
@@ -20,76 +18,55 @@ from numpy.polynomial.legendre import legval
 from monty.json import MSONable
 
 from .domain import SiteSpace
-from smol.utils import derived_class_factory
+from smol.utils import derived_class_factory, get_subclasses
 
 
-class SiteBasis(MSONable):
-    r"""Class that represents the basis for a site function space.
+__author__ = "Luis Barroso-Luque"
 
-    Note that all SiteBasis in theory have the first basis function
-    :math:`\phi_0 = 1`, but this should not be defined since it is handled
-    implicitly when computing bit_combos using total no. species - 1 in the
-    Orbit class.
 
-    The particular basis set is set by giving an iterable of basis functions.
-    See BasisIterator classes for details.
+class DiscreteBasis(MSONable, metaclass=ABCMeta):
+    """Abstract class to represent a basis set over a discrete finite domain.
+
+    In our case the domain is a site space which can take on values of the
+    allowed species.
     """
 
     def __init__(self, site_space, basis_functions):
-        """Initialize a SiteBasis.
+        """Initialize a StandardBasis.
 
-        Currently also accepts an OrderedDict but if you find yourself creating
-        one like so for use in production and not debuging know that it will
-        break MSONable methods in classes that use these, and at any point I
-        could change this to not allow OrderedDicts.
+        Currently also accepts an OrderedDict but if you find yourself
+        creating one like so for use in production and not debuging know that
+        it will break MSONable methods in classes that use these, and at any
+        point I could change this to not allow OrderedDicts.
 
         Args:
             site_space (OrderedDict or SiteSpace):
                 Dict representing site space (Specie, measure) or a SiteSpace
                 object.
-            basis_functions (Sequence like):
-                A Sequence of the nonconstant basis functions. Must take the
-                valuves of species as input.
+            basis_functions (BasisIterator):
+                A BasisIterator for the nonconstant basis functions. Must take
+                the values of species in the site space as input.
         """
         if isinstance(site_space, OrderedDict):
             if not np.allclose(sum(site_space.values()), 1):
-                warnings.warn('The measure given does not sum to 1.'
-                              'Are you sure this is what you want?',
-                              RuntimeWarning)
-        elif not isinstance(site_space, SiteSpace):
-            raise TypeError('site_space argument must be a SiteSpaces or an '
-                            'OrderedDict.')
+                warnings.warn(
+                    "The measure given does not sum to 1. Are you sure this "
+                    "is what you want?", RuntimeWarning)
 
         self.flavor = basis_functions.flavor
         self._domain = site_space
-        # add non constant basis functions to array
-        if len(basis_functions) != len(self.species) - 1:
-            raise ValueError(f'Must provid {len(self.species) - 1 } total non-'
-                             'constant basis functions.'
-                             f' Got only {len(basis_functions)} basis '
-                             'functions.')
 
-        func_arr = np.array([[function(sp) for sp in self.species]
-                             for function in basis_functions])
-        func_arr[abs(func_arr) < np.finfo(np.float64).eps] = 0
-        # stack the constant basis function on there for proper normalization
-        self._f_array = np.vstack((np.ones_like(func_arr[0]), func_arr))
-        self._r_array = None  # array from QR in basis orthonormalization
+        if set(site_space) != set(basis_functions.species):
+            raise ValueError(
+                "Basis function iterator provided does not contain all "
+                f"species {site_space} in the site space provided.")
 
-    @property
-    def function_array(self):
-        """Get array with the non-constant site functions as rows."""
-        return self._f_array[1:]
+        self._f_array = self._construct_function_array(basis_functions)
 
-    @property
-    def measure_vector(self):
-        """Get vector of site species measures."""
-        return np.array(list(self._domain.values()))
-
-    @property
-    def orthonormalization_array(self):
-        """Get R array from QR factorization."""
-        return self._r_array
+    @abstractmethod
+    def _construct_function_array(self, basis_functions):
+        """Construct function array with basis functions as rows."""
+        return
 
     @property
     def species(self):
@@ -107,6 +84,21 @@ class SiteBasis(MSONable):
         return self._domain
 
     @property
+    def function_array(self):
+        """Get function array with site functions as rows."""
+        return self._f_array
+
+    @property
+    def measure_array(self):
+        """Get diagonal array with site species measures."""
+        return np.diag(list(self._domain.values()))
+
+    @property
+    def measure_vector(self):
+        """Get vector of site species measures."""
+        return np.array(list(self._domain.values()))
+
+    @property
     def is_orthogonal(self):
         """Test if the basis is orthogonal."""
         # add the implicit 0th function
@@ -119,6 +111,94 @@ class SiteBasis(MSONable):
         """Test if the basis is orthonormal."""
         prods = (self.measure_vector * self._f_array) @ self._f_array.T
         return np.allclose(prods, np.eye(*prods.shape))
+
+    def as_dict(self) -> dict:
+        """Get MSONable dict representation of a DiscreteBasis."""
+        d = {"@module": self.__class__.__module__,
+             "@class": self.__class__.__name__,
+             "site_space": self._domain.as_dict(),
+             "flavor": self.flavor}
+        return d
+
+    @classmethod
+    def from_dict(cls, d):
+        """Create a DiscreteBasis from dict representation.
+
+        Args:
+            d (dict):
+                MSONable dict representation
+        Returns:
+            DiscreteBasis: A subclass of DiscreteBasis
+        """
+        try:
+            subclass = get_subclasses(cls)[d['@class']]
+        except KeyError:
+            if d['@class'] == 'SiteBasis':
+                warnings.warn(
+                    "The object you have loaded was saved with an older "
+                    "version of smol.\n Please save this object again to "
+                    "prevent these warnings.", FutureWarning)
+                subclass = StandardBasis
+            else:
+                raise NameError(
+                    f"{d['@class']} is not implemented or is not a subclass "
+                    f"of {cls}.")
+
+        return subclass.from_dict(d)
+
+
+class StandardBasis(DiscreteBasis):
+    r"""Class that represents the basis for a site function space.
+
+    Note that all StandardBasis in theory have the first basis function
+    :math:`\phi_0 = 1`, but this should not be defined since it is handled
+    implicitly when computing bit_combos using total no. species - 1 in the
+    Orbit class. As such a StandardBasis as implemented here represents a
+    Standard and/or Fourier site basis (the standard basis using indicator
+    functions is not a Fourier basis but can be used as "cluster site basis")
+
+    The particular basis set is set by giving an iterable of basis functions.
+    See BasisIterator classes for details.
+    """
+
+    def __init__(self, site_space, basis_functions):
+        """Initialize a StandardBasis.
+
+        Currently also accepts an OrderedDict but if you find yourself creating
+        one like so for use in production and not debuging know that it will
+        break MSONable methods in classes that use these, and at any point I
+        could change this to not allow OrderedDicts.
+
+        Args:
+            site_space (OrderedDict or SiteSpace):
+                Dict representing site space (Specie, measure) or a SiteSpace
+                object.
+            basis_functions (BasisIterator):
+                A BasisIterator for the nonconstant basis functions. Must take
+                the values of species in the site space as input.
+        """
+        super().__init__(site_space, basis_functions)
+        self._r_array = None  # array from QR in basis orthonormalization
+
+    def _construct_function_array(self, basis_functions):
+        """Construct function array with basis functions as rows."""
+        # exclude the last basis function since the constant phi_0 will
+        # take its place
+        nconst_functions = [function for function in basis_functions][:-1]
+        func_arr = np.array([[function(sp) for sp in self.species]
+                             for function in nconst_functions])
+        # stack the constant basis function on there for proper normalization
+        return np.vstack((np.ones_like(func_arr[0]), func_arr))
+
+    @property
+    def function_array(self):
+        """Get array with the non-constant site functions as rows."""
+        return self._f_array[1:]
+
+    @property
+    def orthonormalization_array(self):
+        """Get R array from QR factorization."""
+        return self._r_array
 
     def orthonormalize(self):
         """Orthonormalizes basis function set based on initial basis set.
@@ -140,15 +220,58 @@ class SiteBasis(MSONable):
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation."""
-        d = {"@module": self.__class__.__module__,
-             "@class": self.__class__.__name__,
-             "site_space": self._domain.as_dict(),
-             "flavor": self.flavor,
-             "func_array": self._f_array.tolist(),
-             "orthonorm_array":
-                 None if self._r_array is None else self._r_array.tolist()
-             }
+        d = super().as_dict()
+        d["func_array"] = self._f_array.tolist()
+        d["orthonorm_array"] = None if self._r_array is None \
+            else self._r_array.tolist()
         return d
+
+    @classmethod
+    def from_dict(cls, d):
+        """Create a StandardBasis from dict representation.
+
+        Args:
+            d (dict):
+                MSONable dict representation
+        Returns:
+            StandardBasis
+        """
+        site_space = SiteSpace.from_dict(d['site_space'])
+        site_basis = basis_factory(d['flavor'], site_space)
+        # restore arrays
+        site_basis._f_array = np.array(d['func_array'])
+        site_basis._r_array = np.array(d['orthonorm_array'])
+        return site_basis
+
+
+class IndicatorBasis(DiscreteBasis, MSONable):
+    """Class that represents a full indicator basis for a site space.
+
+    This class represents the "trivial" indicator basis, wich includes an
+    indicator function for every species in the site space, and does NOT
+    include a contant function.
+    NOT to be confuse with a cluster indicator basis used for a Cluster
+    Expansion (that is represented in smol by a StandardBasis with a
+    IndicatorIterator).
+
+    @lbluque takes full responsibility for the confusing terminilogy...
+    """
+
+    def __init__(self, site_space):
+        """Initialize an indicator basis for give site space.
+
+        Args:
+            site_space (OrderedDict or SiteSpace):
+                dict representing site space (Specie, measure) or a SiteSpace
+                object.
+        """
+        super().__init__(site_space,
+                         IndicatorIterator(tuple(site_space.keys())))
+
+    def _construct_function_array(self, basis_functions):
+        func_array = np.array([[function(sp) for sp in self.species]
+                               for function in basis_functions])
+        return func_array
 
     @classmethod
     def from_dict(cls, d):
@@ -158,18 +281,9 @@ class SiteBasis(MSONable):
             d (dict):
                 MSONable dict representation
         Returns:
-            SiteBasis
+            StandardBasis
         """
-        site_space = SiteSpace.from_dict(d['site_space'])
-        # Only using indicator iterator as a proxy to
-        # initialiaze class any other iterator would do. Perhaps a cleaner
-        # solution would be to allow initialization without an iterator...
-        site_basis = cls(site_space,
-                         IndicatorIterator(tuple(site_space.keys())))
-        site_basis.flavor = d['flavor']
-        site_basis._f_array = np.array(d['func_array'])
-        site_basis._r_array = np.array(d['orthonorm_array'])
-        return site_basis
+        return cls(SiteSpace.from_dict(d['site_space']))
 
 
 class BasisIterator(Iterator):
@@ -193,12 +307,12 @@ class BasisIterator(Iterator):
             species (tuple):
                 tuple of allowed species in site spaces
         """
-        self.species_iter = iter(species[:-1])  # all but one species iterator
+        self.species_iter = iter(species)
         self.species = species
 
     def __len__(self):
         """Get length of sequence."""
-        return len(self.species) - 1
+        return len(self.species)
 
 
 class IndicatorIterator(BasisIterator):
@@ -366,7 +480,7 @@ def basis_factory(basis_name, site_space):
             Site space over which the basis set is defined.
 
     Returns:
-        SiteBasis
+        StandardBasis
     """
     if isinstance(site_space, OrderedDict):
         species = tuple(site_space.keys())
@@ -374,4 +488,4 @@ def basis_factory(basis_name, site_space):
         species = tuple(site_space)
     iterator_name = basis_name.capitalize() + 'Iterator'
     basis_funcs = derived_class_factory(iterator_name, BasisIterator, species)
-    return SiteBasis(site_space, basis_funcs)
+    return StandardBasis(site_space, basis_funcs)
