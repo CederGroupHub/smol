@@ -14,11 +14,9 @@ basis_iterators = list(get_subclasses(basis.BasisIterator).values())
 
 
 @pytest.fixture(params=[True, False], scope='module')
-def site_space(structure, request):
-    sites = [site for site in structure if site.species.num_atoms < 0.99
-             or len(site.species) > 1]
+def site_space(expansion_structure, request):
     spaces = domain.get_site_spaces(
-        Structure.from_sites(sites), include_measure=request.param)
+        expansion_structure, include_measure=request.param)
     return spaces[0]
 
 

@@ -6,7 +6,7 @@ from smol.cofe.space import Cluster
 from tests.utils import assert_msonable
 
 
-@pytest.fixture
+@pytest.fixture(scope='package')
 def cluster(structure):
     num_sites = np.random.randint(2, 6)
     sites = choices(structure.frac_coords, k=num_sites)
@@ -23,8 +23,7 @@ def test_from_sites(structure):
 
 
 def test_size(cluster):
-    assert cluster.size == len(cluster)
-    assert len(cluster.sites) == cluster.size
+    assert len(cluster.sites) == len(cluster)
 
 
 def test_diameter(cluster):
@@ -36,8 +35,9 @@ def test_diameter(cluster):
 def test_periodicity(cluster):
     new_sites = cluster.sites.copy()
     new_sites += np.random.randint(-5, 5)
-    new_cluster = Cluster(new_sites, cluster.lattice)
-    assert new_cluster == cluster
+    assert Cluster(new_sites, cluster.lattice) == cluster
+    new_sites[0] += 0.005 + np.random.random()
+    assert Cluster(new_sites, cluster.lattice) != cluster
 
 
 def test_edge_case(structure):

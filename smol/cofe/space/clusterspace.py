@@ -851,13 +851,14 @@ class ClusterSubspace(MSONable):
                 are needed make level large enough or set to None.
             min_size (int): optional
                 minimum size of clusters in sub orbits to include
+                minimum size of clusters in sub orbits to include
 
         Returns:
             list of ints: list containing ids of suborbits
         """
         if orbit_id == 0:
             return []
-        size = self.orbits[orbit_id - 1].base_cluster.size
+        size = len(self.orbits[orbit_id - 1].base_cluster)
         if level is None or level < 0 or size - level - 1 < 0:
             stop = 0
         elif min_size > size - level:

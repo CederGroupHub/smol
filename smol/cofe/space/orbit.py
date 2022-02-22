@@ -92,6 +92,7 @@ class Orbit(MSONable):
         # lazy generation of properties
         self._equiv = None
         self._symops = None
+        self._permutations = None
         self._bit_combos = None
         self._basis_arrs = None
         self._bases_arr = None
@@ -117,26 +118,23 @@ class Orbit(MSONable):
 
     @property
     def bit_combos(self):
-        """Get list of site bit orderings.
+        """Get tuple of site bit orderings.
 
         tuple of ndarrays, each array is a set of symmetrically equivalent bit
         orderings represented by row. Bit combos represent non-constant site
         function orderings.
         """
-        if self._bit_combos is not None:
-            return self._bit_combos
-
-        # get all the bit symmetry operations
-        bit_ops = tuple(set(bit_op for _, bit_op in self.cluster_symops))
-        all_combos = []
-        for bit_combo in product(*self.bits):
-            if bit_combo not in chain(*all_combos):
-                bit_combo = np.array(bit_combo)
-                new_bits = list(set(
-                    tuple(bit_combo[np.array(bit_op)]) for bit_op in bit_ops))
-                all_combos.append(new_bits)
-        self._bit_combos = tuple(
-            np.array(c, dtype=np.int_) for c in all_combos)
+        if self._bit_combos is None:
+            # get all the bit symmetry operations
+            all_combos = []
+            for bit_combo in product(*self.bits):
+                if not any(np.array_equal(bit_combo, bc)
+                           for bc in chain(*all_combos)):
+                    bit_combo = np.array(bit_combo, dtype=np.int_)
+                    new_bits = np.unique(
+                        bit_combo[self.cluster_permutations], axis=0)
+                    all_combos.append(new_bits)
+            self._bit_combos = tuple(all_combos)
         return self._bit_combos
 
     @property
@@ -185,30 +183,23 @@ class Orbit(MSONable):
     def cluster_symops(self):
         """Get symmetry operations that map a cluster to its periodic image.
 
-        Each element is a tuple of (pymatgen.core.operations.Symop, mapping)
-        where mapping is a tuple such that
-        Symop.operate(sites) = sites[mapping]
-        (after translation back to unit cell)
+        Each element is a pymatgen.core.operations.Symop.
         """
-        if self._symops:
-            return self._symops
-
-        self._symops = []
-        for symop in self.structure_symops:
-            new_sites = symop.operate_multi(self.base_cluster.sites)
-            cluster = Cluster(new_sites, self.base_cluster.lattice)
-            if cluster == self.base_cluster:
-                recenter = np.round(
-                    self.base_cluster.centroid - cluster.centroid)
-                c_sites = cluster.sites + recenter
-                mapping = tuple(coord_list_mapping(
-                    self.base_cluster.sites, c_sites, atol=SITE_TOL))
-                self._symops.append((symop, mapping))
-
-        if len(self._symops) * self.multiplicity != len(self.structure_symops):
-            raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
-
+        if self._symops is None:
+            self._gen_cluster_symops()
         return self._symops
+
+    @property
+    def cluster_permutations(self):
+        """Get the symmetrical site permutations that map a cluster to itself.
+
+        A permutation is a mapping such that for a give symop in cluster_symops
+        Symop.operate(sites) = sites[mapping] (after translation back to unit
+        cell)
+        """
+        if self._permutations is None:
+            self._gen_cluster_symops()
+        return self._permutations
 
     @property
     def basis_arrays(self):  # TODO remove this?
@@ -247,6 +238,7 @@ class Orbit(MSONable):
         """Test if the orbit bases are orthonormal."""
         return all(basis.is_orthonormal for basis in self.site_bases)
 
+    # TODO deprecate this
     def remove_bit_combo(self, bits):  # seems like this is no longer used?
         """Remove bit_combos from orbit.
 
@@ -270,8 +262,8 @@ class Orbit(MSONable):
     def remove_bit_combos_by_inds(self, inds):
         """Remove bit combos by their indices in the bit_combo list."""
         if max(inds) > len(self.bit_combos) - 1:
-            raise RuntimeError(
-                f"Some indices {inds} out of ranges for total "
+            raise ValueError(
+                f"Some indices {inds} out of range for total "
                 f"{len(self._bit_combos)} bit combos")
 
         self._bit_combos = tuple(
@@ -354,7 +346,7 @@ class Orbit(MSONable):
         Returns:
             bool: True if the clusters of given orbit are subclusters.
         """
-        if self.base_cluster.size <= orbit.base_cluster.size:
+        if len(self.base_cluster) <= len(orbit.base_cluster):
             return False
         elif not np.all(sp in self.site_spaces for sp in orbit.site_spaces):
             return False
@@ -364,7 +356,7 @@ class Orbit(MSONable):
                     self.base_cluster.lattice)
             in orbit.clusters
             for inds in combinations(
-                range(self.base_cluster.size), orbit.base_cluster.size))
+                range(len(self.base_cluster)), len(orbit.base_cluster)))
 
         return match
 
@@ -384,7 +376,8 @@ class Orbit(MSONable):
         """
         indsets = np.array(list(combinations(
             (i for i, space in enumerate(self.site_spaces)
-             if space in orbit.site_spaces), len(orbit.site_spaces))))
+             if space in orbit.site_spaces), len(orbit.site_spaces))),
+            dtype=int)
 
         mappings = []
         for cluster in self.clusters:
@@ -394,15 +387,36 @@ class Orbit(MSONable):
                 recenter = np.round(centroid - orbit.base_cluster.centroid)
                 c_sites = orbit.base_cluster.sites + recenter
                 if is_coord_subset(c_sites, cluster.sites):
-                    mappings.append(
-                        coord_list_mapping(
-                            c_sites, cluster.sites, atol=SITE_TOL))
+                    mappings.append(coord_list_mapping(
+                        c_sites, cluster.sites, atol=SITE_TOL))
 
         if len(mappings) == 0 and self.is_sub_orbit(orbit):
             raise RuntimeError(
                 "The given orbit is a suborbit, but no site mappings were "
                 "found!\n Something is very wrong here!")
         return np.unique(mappings, axis=0)
+
+    def _gen_cluster_symops(self):
+        """Generate the cluster SymOps and decoration permutations"""
+        symops = []
+        permutations = []
+        for symop in self.structure_symops:
+            new_sites = symop.operate_multi(self.base_cluster.sites)
+            cluster = Cluster(new_sites, self.base_cluster.lattice)
+            if cluster == self.base_cluster:
+                recenter = np.round(
+                    self.base_cluster.centroid - cluster.centroid)
+                c_sites = cluster.sites + recenter
+                mapping = coord_list_mapping(
+                    self.base_cluster.sites, c_sites, atol=SITE_TOL)
+                symops.append(symop)
+                permutations.append(mapping)
+
+        self._permutations = np.unique(permutations, axis=0)
+        self._symops = tuple(symops)
+
+        if len(self._symops) * self.multiplicity != len(self.structure_symops):
+            raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
 
     def __len__(self):
         """Get total number of orbit basis functions.

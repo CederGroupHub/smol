@@ -54,7 +54,7 @@ class Cluster(MSONable):
         """Create a cluster from a list of pymatgen Sites."""
         return cls([s.frac_coords for s in sites], sites[0].lattice)
 
-    @property
+    @property  # TODO deprecate this
     def size(self):
         """Get number of sites in the cluster."""
         return len(self.sites)
@@ -78,7 +78,7 @@ class Cluster(MSONable):
 
     def __len__(self):
         """Get size of a cluster. The number of sites."""
-        return self.size
+        return len(self.sites)
 
     def __eq__(self, other):
         """Check equivalency of clusters considering symmetry."""

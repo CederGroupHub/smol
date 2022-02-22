@@ -1,6 +1,7 @@
 import os
 import pytest
 import numpy as np
+from pymatgen.core import Structure
 from monty.serialization import loadfn
 from smol.cofe import ClusterSubspace
 from smol.moca import CanonicalEnsemble, SemiGrandEnsemble, \
@@ -20,6 +21,13 @@ ensembles = [CanonicalEnsemble, SemiGrandEnsemble]
 @pytest.fixture(params=test_structures, scope='package')
 def structure(request):
     return request.param
+
+
+@pytest.fixture(scope='package')
+def expansion_structure(structure):
+    sites = [site for site in structure if site.species.num_atoms < 0.99
+             or len(site.species) > 1]
+    return Structure.from_sites(sites)
 
 
 @pytest.fixture(params=test_structures, scope='module')
