@@ -284,17 +284,6 @@ class ClusterSubspace(MSONable):
         mults = [1] + [orb.multiplicity for orb in self.orbits]
         return np.array(mults)
 
-    # TODO deprecate this
-    @property
-    def all_bit_combos(self):
-        """Return flattened all bit_combos for each correlation function.
-
-        A list of all bit_combos of length self.num_corr_functions.
-        This allows to obtain a bit combo by bit id (empty cluster has None)
-        """
-        return [None] + [combos for orbit in self.orbits
-                         for combos in orbit.bit_combos]
-
     @property
     def num_functions_per_orbit(self):
         """Get the number of correlation functions for each orbit.
