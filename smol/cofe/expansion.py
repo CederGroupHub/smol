@@ -269,7 +269,7 @@ class ClusterExpansion(MSONable):
         s += f'    [Orbit]  id: {str(0):<3}\n'
         s += '        bit       eci\n'
         s += f'        {"[X]":<10}{ecis[0]:<4.3}\n'
-        for orbit in self.cluster_subspace.iterorbits():
+        for orbit in self.cluster_subspace.orbits:
             s += f'    [Orbit]  id: {orbit.bit_id:<3} size: ' \
                  f'{len(orbit.bits):<3} radius: ' \
                  f'{orbit.base_cluster.diameter:<4.3}\n'

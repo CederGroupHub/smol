@@ -146,7 +146,7 @@ class TestClusterSubSpace(unittest.TestCase):
             self.assertNotEqual(o1, o2)
 
     def test_iterorbits(self):
-        orbits = [o for o in self.cs.iterorbits()]
+        orbits = [o for o in self.cs.orbits]
         for o1, o2 in zip(orbits, self.cs.orbits):
             self.assertEqual(o1, o2)
 
