@@ -1,4 +1,3 @@
-import unittest
 import pytest
 from copy import deepcopy
 from functools import reduce
@@ -6,15 +5,13 @@ from itertools import product
 from random import choices
 import numpy as np
 import numpy.testing as npt
-from pymatgen.core import Lattice, Structure, Composition
+from pymatgen.core import Composition
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe.space import Orbit, Cluster
 from smol.cofe.space.basis import basis_factory, BasisIterator
 from smol.cofe.space.domain import SiteSpace, get_site_spaces
 from smol.utils import get_subclasses
 from tests.utils import assert_msonable
-
-basis_iterators_names = list(get_subclasses(BasisIterator))
 
 
 @pytest.fixture(params=[(1, 2), (2, 8)])
@@ -280,15 +277,13 @@ def test_basis_array(orbit):
     _test_basis_arrs(bases, orbit)
 
 
-@pytest.mark.parametrize('iterator_name', basis_iterators_names)
-def test_transform_basis(orbit, iterator_name):
-    orbit.transform_site_bases(iterator_name.split('Iterator')[0])
+def test_transform_basis(orbit, basis_name):
+    orbit.transform_site_bases(basis_name)
     bases = [basis_factory(basis.flavor, basis.site_space)
              for basis in orbit.site_bases]
     _test_basis_arrs(bases, orbit)
 
-    orbit.transform_site_bases(iterator_name.split('Iterator')[0],
-                               orthonormal=True)
+    orbit.transform_site_bases(basis_name, orthonormal=True)
     bases = [basis_factory(basis.flavor, basis.site_space)
              for basis in orbit.site_bases]
     for b in bases: b.orthonormalize()
@@ -314,20 +309,17 @@ def test_msonable(orbit):
 
 # hard-coded specific tests for LiCaBr
 @pytest.fixture(scope='module')
-def licabr_orbit():
-    lattice = Lattice([[3, 3, 0], [0, 3, 3], [3, 0, 3]])
-    species = [{'Li': 0.1, 'Ca': 0.1}] * 3 + ['Br']
-    coords = ((0.25, 0.25, 0.25), (0.75, 0.75, 0.75),
-                   (0.5, 0.5, 0.5), (0, 0, 0))
-    structure = Structure(lattice, species, coords)
-    sf = SpacegroupAnalyzer(structure)
+def licabr_orbit(single_structure):
+    sf = SpacegroupAnalyzer(single_structure)
     symops = sf.get_symmetry_operations()
     spaces = [
         SiteSpace(Composition({'Li': 1.0 / 3.0, 'Ca': 1.0 / 3.0})),
         SiteSpace(Composition({'Li': 1.0 / 3.0, 'Ca': 1.0 / 3.0})),
         SiteSpace(Composition({'Li': 1.0 / 3.0, 'Ca': 1.0 / 3.0}))]
     bases = [basis_factory('indicator', bit) for bit in spaces]
-    orbit = Orbit(coords[:3], lattice, [[0, 1], [0, 1], [0, 1]], bases, symops)
+    orbit = Orbit(
+        single_structure.frac_coords[:3], single_structure.lattice,
+        [[0, 1], [0, 1], [0, 1]], bases, symops)
     orbit.assign_ids(1, 1, 1)
     return orbit
 
@@ -353,8 +345,8 @@ def test_bit_combos_fixed(licabr_orbit):
     assert len(licabr_orbit) == 6
 
     orbit1 = Orbit(licabr_orbit.base_cluster.sites[1:3],
-                  licabr_orbit.base_cluster.lattice, [[0, 1], [0, 1]],
-                  licabr_orbit.site_bases[:2], licabr_orbit.structure_symops)
+                   licabr_orbit.base_cluster.lattice, [[0, 1], [0, 1]],
+                   licabr_orbit.site_bases[:2], licabr_orbit.structure_symops)
     # orbit with only two symmetrically distinct sites
     assert len(orbit1) == 4
 

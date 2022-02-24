@@ -519,10 +519,10 @@ class ClusterSubspace(MSONable):
         if scmatrix is None:
             scmatrix = self.scmatrix_from_structure(structure)
 
-        occu = self.occupancy_from_structure(structure,
-                                             scmatrix=scmatrix,
-                                             site_mapping=site_mapping,
-                                             encode=True)
+        occu = self.occupancy_from_structure(
+            structure, scmatrix=scmatrix, site_mapping=site_mapping,
+            encode=True
+        )
         occu = np.array(occu, dtype=int)
 
         # Create a list of tuples with necessary information to compute corr
@@ -573,8 +573,8 @@ class ClusterSubspace(MSONable):
         if scmatrix is None:
             scmatrix = self.scmatrix_from_structure(structure)
 
-        occu = self.occupancy_from_structure(structure, scmatrix=scmatrix,
-                                             site_mapping=site_mapping)
+        occu = self.occupancy_from_structure(
+            structure, scmatrix=scmatrix, site_mapping=site_mapping)
 
         supercell_structure = self.structure.copy()
         supercell_structure.make_supercell(scmatrix)
@@ -667,8 +667,9 @@ class ClusterSubspace(MSONable):
         Returns:
             ndarray: matrix relating given structure and prim structure.
         """
-        scmatrix = self._sc_matcher.get_supercell_matrix(structure,
-                                                         self.structure)
+        scmatrix = self._sc_matcher.get_supercell_matrix(
+            structure, self.structure)
+
         if scmatrix is None:
             raise StructureMatchError(
                 "Supercell could not be found from structure")
@@ -802,7 +803,7 @@ class ClusterSubspace(MSONable):
 
     def copy(self):
         """Deep copy of instance."""
-        return deepcopy(self)
+        return ClusterSubspace.from_dict(self.as_dict())
 
     def structure_site_mapping(self, supercell, structure):
         """Get structure site mapping.
