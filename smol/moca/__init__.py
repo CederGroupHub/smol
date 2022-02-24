@@ -9,11 +9,11 @@ from .processor.expansion import CEProcessor
 from .processor.ewald import EwaldProcessor
 from .processor.composite import CompositeProcessor
 from .ensemble.canonical import CanonicalEnsemble
-from .ensemble.semigrand import (MuSemiGrandEnsemble, FuSemiGrandEnsemble)
+from .ensemble.semigrand import SemiGrandEnsemble
 from .sampler.sampler import Sampler
 from .sampler.container import SampleContainer
 from .comp_space import CompSpace
 
 __all__ = ['CEProcessor', 'EwaldProcessor', 'CompositeProcessor',
-           'CanonicalEnsemble', 'MuSemiGrandEnsemble', 'FuSemiGrandEnsemble',
+           'CanonicalEnsemble', 'SemiGrandEnsemble',
            'Sampler', 'SampleContainer', 'CompSpace']

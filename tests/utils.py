@@ -5,13 +5,11 @@ Some of these are borrowed from pymatgen test scripts.
 
 import json
 import random
+from  itertools import chain
 import numpy as np
-from copy import deepcopy
 from monty.json import MontyDecoder, MSONable
+from pymatgen.core import Composition
 
-from smol.moca.utils.math_utils import GCD_list
-from smol.moca.comp_space import CompSpace
-from smol.moca.utils.occu_utils import flip_weights_mask
 
 def assert_msonable(obj, test_if_subclass=True):
     """
@@ -26,7 +24,7 @@ def assert_msonable(obj, test_if_subclass=True):
     _ = json.loads(obj.to_json(), cls=MontyDecoder)
 
 
-def gen_random_occupancy(sublattices, num_sites):
+def gen_random_occupancy(sublattices, inactive_sublattices):
     """Generate a random encoded occupancy according to a list of sublattices.
 
     Args:
@@ -38,6 +36,8 @@ def gen_random_occupancy(sublattices, num_sites):
     Returns:
         ndarray: encoded occupancy
     """
+    num_sites = sum(
+        len(sl.sites) for sl in chain(sublattices, inactive_sublattices))
     rand_occu = np.zeros(num_sites, dtype=int)
     for sublatt in sublattices:
         codes = range(len(sublatt.site_space))
@@ -46,42 +46,22 @@ def gen_random_occupancy(sublattices, num_sites):
                                                     replace=True)
     return rand_occu
 
-def gen_random_neutral_occupancy(sublattices, num_sites):
-    """Generate charge neutral occupancies according to a list of sublattices.
-       Occupancies are encoded.
 
-       Will check accessibility of composition by min flip table.
+def gen_random_structure(prim, size=3):
+    """Generate an random ordered structure from a disordered prim
 
     Args:
-        sublattices (Sequence of Sublattice):
-           A sequence of sublattices, must be all sublattices, no matter
-           active or not.
-        num_sites (int):
-           Total number of sites
+        prim (pymatgen.Structure):
+            disordered primitive structure:
+        size (optional):
+            size argument to structure.make_supercell
 
     Returns:
-        ndarray: encoded occupancy, charge neutral guaranteed.
+        ordered structure
     """
-    rand_occu = np.zeros(num_sites, dtype=int)
-    bits = [sl.species for sl in sublattices]
-    sl_sizes = [len(sl.sites) for sl in sublattices]
-    sc_size = GCD_list(sl_sizes)
-
-    sl_sizes_prim = np.array(sl_sizes)//sc_size
-    comp_space = CompSpace(bits,sl_sizes_prim)
-    grids = comp_space.int_grids(sc_size=sc_size, form='compstat')
-    grids_accessible = [c for c in grids if flip_weights_mask(comp_space.min_flip_table, c).sum()!=0]
-
-    random_comp = random.choice(grids_accessible)
-
-    sites = []
-    assignments = []
-    for sl,sl_comp in zip(sublattices,random_comp):
-        sl_sites = list(sl.sites)
-        random.shuffle(sl_sites)
-        sites.extend(sl_sites)
-        for sp_id,sp_n in enumerate(sl_comp):
-            assignments.extend([sp_id for i in range(sp_n)])
-
-    rand_occu[sites] = assignments
-    return rand_occu
+    structure = prim.copy()
+    structure.make_supercell(size)
+    for site in structure:
+        site.species = Composition(
+            {random.choice(list(site.species.keys())): 1})
+    return structure

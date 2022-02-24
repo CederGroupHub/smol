@@ -6,8 +6,9 @@ because icet is HIGH FRKN QUALITY! So I trust it...
 
 import unittest
 import numpy as np
+from pymatgen.core.periodic_table import get_el_sp
 from smol.cofe import StructureWrangler, ClusterSubspace, ClusterExpansion
-from smol.moca import CEProcessor, MuSemiGrandEnsemble
+from smol.moca import SemiGrandEnsemble, Sampler, CEProcessor
 from tests.data import (icet_eci, icet_predictions, icet_fit_structs,
                         icet_test_structs, aupt_prim, icet_sgc_run_10000its)
 
@@ -42,8 +43,7 @@ class TestCEvicet(unittest.TestCase):
         self.assertTrue(np.isclose(icet_eci[0], self.coefs[0]))
         self.assertTrue(np.isclose(sum(icet_eci**2), sum(self.coefs ** 2)))
         # Now test that predictions match
-        ce = ClusterExpansion(self.cs, coefficients=self.coefs,
-                              feature_matrix=self.sw.feature_matrix)
+        ce = ClusterExpansion(self.cs, coefficients=self.coefs)
         test_structs = [i['structure'] for i in icet_test_structs]
         preds = [ce.predict(s, normalize=True) for s in test_structs]
         self.assertTrue(np.allclose(icet_predictions, preds))
@@ -53,25 +53,41 @@ class TestCEvicet(unittest.TestCase):
         struct = self.cs.structure.copy()
         struct.replace(0, 'Ag')
         struct.make_supercell(sc_matrix)
-        pr = CEProcessor(ClusterExpansion(self.cs, self.coefs, self.sw.feature_matrix),
-                         sc_matrix)
+        pr = CEProcessor(self.cs, sc_matrix, self.coefs)
+        ens = SemiGrandEnsemble(pr,
+                                chemical_potentials={'Ag': 0, 'Pd': 0})
+        sampler = Sampler.from_ensemble(ens, temperature=300)
         init_occu = pr.occupancy_from_structure(struct)
         iterations = 10000  # icet runs were done with 10000 iterations
+
+        # These still need some tweaking to pass reliably
+        # perhaps run the sampling for longer to get better averages
         for temp, dmu_dict in icet_sgc_run_10000its.items():
+            icet_avg = np.array(
+                [d['average_energy'] for _, d in dmu_dict.items()])
+            avg = []
+            sampler.mckernel.temperature = float(temp)
             for dmu, data in dmu_dict.items():
                 chemical_potentials = {'Ag': 0, 'Pd': float(dmu)}
-                ens = MuSemiGrandEnsemble(pr, temperature=float(temp),
-                                       chemical_potentials=chemical_potentials,
-                                       sample_interval=len(struct),
-                                       initial_occupancy=init_occu)
-            ens.run(iterations)
-            # need to keep these tolerances real slack since very few
-            # iterations are run and there is a transition point where the
-            # difference is acceptable.
-            self.assertAlmostEqual(data['average_energy'], ens.average_energy,
-                                   places=0)
-            self.assertAlmostEqual(data['acceptance_ratio'], ens.acceptance_ratio,
-                                   places=1)
-            for sp, comp in data['composition'].items():
-                self.assertAlmostEqual(comp, ens.average_composition[sp],
+                ens.chemical_potentials = chemical_potentials
+                sampler.run(iterations, init_occu, thin_by=len(struct))
+                # need to keep these tolerances real slack since very few
+                # iterations are run and there is a transition point where the
+                # difference is acceptable.
+                avg.append(sampler.samples.mean_energy())
+                self.assertAlmostEqual(data['acceptance_ratio'],
+                                       sampler.samples.sampling_efficiency(),
                                        places=1)
+                for sp, comp in data['composition'].items():
+                    self.assertAlmostEqual(
+                        comp,
+                        sampler.samples.mean_composition()[get_el_sp(sp)],
+                        places=1)
+                sampler.clear_samples()
+
+            # test relative error of mean energy norm only since testing
+            # individually may need more slack tolerances for point with
+            # higher variance, specifically T=300 mu>=0.15
+            self.assertAlmostEquals(
+                np.linalg.norm(icet_avg - np.array(avg))/np.linalg.norm(icet_avg),
+                0, places=1)

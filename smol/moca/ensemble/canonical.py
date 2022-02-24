@@ -12,32 +12,13 @@ from monty.json import MSONable
 
 from smol.moca.ensemble.base import Ensemble
 from smol.moca.processor.base import Processor
-from .sublattice import Sublattice
+from smol.moca.sublattice import Sublattice
 
 
 class CanonicalEnsemble(Ensemble, MSONable):
     """Canonical Ensemble class to run Monte Carlo Simulations."""
 
     valid_mcmc_steps = ('swap',)
-
-    def __init__(self, processor, sublattices=None, all_sublattices=None):
-        """Initialize CanonicalEnemble.
-
-        Args:
-            processor (Processor):
-                A processor that can compute the change in a property given
-                a set of flips.
-            sublattices (list of Sublattice): optional
-                list of Lattice objects representing sites in the processor
-                supercell with same site spaces. Only active sublattices.
-                Active means to allow multiple species occupy one sublattice.
-            all_sublattices (list of Sublattice): optional
-                All sublattices, including inactive ones. Needed when in
-                some special cases when you want to sub-divide sublattices.
-                For example, topotactic delitiation.
-        """
-        super().__init__(processor, sublattices=sublattices,
-                         all_sublattices=all_sublattices)
 
     @property
     def natural_parameters(self):
@@ -66,7 +47,7 @@ class CanonicalEnsemble(Ensemble, MSONable):
             occupancy (ndarray):
                 encoded occupancy string.
             step (list of tuple):
-                A sequence of flips as given my the MCMCUsher.propose_step
+                A sequence of flips as given my the MCUsher.propose_step
 
         Returns:
             ndarray: difference in feature vector
@@ -83,13 +64,5 @@ class CanonicalEnsemble(Ensemble, MSONable):
         Returns:
             CanonicalEnsemble
         """
-        sl_dicts = d.get('sublattices')
-        sublattices = ([Sublattice.from_dict(s) for s in sl_dicts] if
-                       sl_dicts is not None else None)
-        sl_dicts = d.get('all_sublattices')
-        all_sublattices = ([Sublattice.from_dict(s) for s in sl_dicts] if
-                           sl_dicts is not None else None)
-
         return cls(Processor.from_dict(d['processor']),
-                   sublattices=sublattices,
-                   all_sublattices=all_sublattices)
+                   [Sublattice.from_dict(s) for s in d['sublattices']])

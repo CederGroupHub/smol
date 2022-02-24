@@ -43,22 +43,6 @@ class TestClusterExpansionBinary(unittest.TestCase):
         preds = [self.ce.predict(s) for s in self.test_structs]
         self.assertTrue(np.allclose(preds, self.test_energies))
 
-    def test_convert_eci(self):
-        cs = self.ce.cluster_subspace.copy()
-        cs.change_site_bases('indicator', orthonormal=True)
-        feature_matrix = np.array([cs.corr_from_structure(s)
-                                   for s in self.sw.refined_structures])
-        eci = self.ce.convert_coefs('indicator',
-                                    self.sw.refined_structures,
-                                    self.sw.supercell_matrices,
-                                    orthonormal=True)
-        self.assertTrue(np.allclose(np.dot(self.sw.feature_matrix, self.ce.coefs),
-                                    np.dot(feature_matrix, eci)))
-        ce = ClusterExpansion(self.ce.cluster_subspace, self.ce.coefs)
-        self.assertRaises(AttributeError, ce.convert_coefs, 'indicator',
-                          self.sw.refined_structures,
-                          self.sw.supercell_matrices,)
-
     def test_prune(self):
         cs = ClusterSubspace.from_dict(synthetic_CE_binary['cluster_subspace'])
         ce = ClusterExpansion(cs, self.ce.coefs.copy(), self.ce._feat_matrix)

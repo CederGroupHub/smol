@@ -4,7 +4,6 @@ __author__ = "Luis Barroso-Luque"
 
 from abc import ABC, abstractmethod
 from smol.moca import CompositeProcessor, CEProcessor, EwaldProcessor
-from .sublattice import get_sublattices, get_all_sublattices
 
 
 class Ensemble(ABC):
@@ -25,7 +24,7 @@ class Ensemble(ABC):
 
     valid_mcmc_steps = None  # add this in derived classes
 
-    def __init__(self, processor, sublattices=None, all_sublattices=None):
+    def __init__(self, processor, sublattices=None, inactive_sublattices=None):
         """Initialize class instance.
 
         Args:
@@ -34,29 +33,20 @@ class Ensemble(ABC):
                 a set of flips.
             sublattices (list of Sublattice): optional
                 list of Lattice objects representing sites in the processor
-                supercell with same site spaces. Only active sublattices
-                are included here.
-                If you want to restrict sites, specify restricted sublattices
-                as input.
-                Active means to have multiple species occupy one sublattice.
-            all_sublattices (list of Sublattice): optional
-                All sublattices, including inactive ones. Needed when in
-                some special cases when you want to sub-divide sublattices.
-                For example, topotactic delitiation.
+                supercell with same site spaces.
+            inactive_sublattices (list of InactiveSublattice): optional
+                list of Lattice objects representing sites in the processor
+                supercell with same site spaces.
         """
         if sublattices is None:
-            sublattices = get_sublattices(processor)
-        self._sublattices = sublattices
-
-        if all_sublattices is None:
-            all_sublattices = get_all_sublattices(processor)
-            for s in all_sublattices:
-                s.restrict_sites(self.restricted_sites)
-        self._all_sublattices = all_sublattices
-
+            sublattices = processor.get_sublattices()
+        if inactive_sublattices is None:
+            inactive_sublattices = processor.get_inactive_sublattices()
         self.num_energy_coefs = len(processor.coefs)
         self.thermo_boundaries = {}  # not pretty way to save general info
         self._processor = processor
+        self._sublattices = sublattices
+        self._inact_sublattices = inactive_sublattices
 
     @classmethod
     def from_cluster_expansion(cls, cluster_expansion, supercell_matrix,
@@ -119,26 +109,24 @@ class Ensemble(ABC):
         """Get the ensemble processor."""
         return self._processor
 
-    # TODO make a setter for this that checks sublattices are correct and
+    # TODO make a setter for these that checks sublattices are correct and
     #  all sites are included.
     @property
     def sublattices(self):
-        """Get list of active sublattices included in ensemble."""
+        """Get list of sublattices included in ensemble."""
         return self._sublattices
 
     @property
-    def all_sublattices(self):
-        """Get list of all sublattices included in ensemble."""
-        return self._all_sublattices
+    def inactive_sublattices(self):
+        """Get list of sublattices included in ensemble."""
+        return self._inact_sublattices
 
     @property
     def restricted_sites(self):
         """Get indices of all restricted sites."""
         sites = []
-        # sublattice.restricted_sites is an np.ndarray;
-        # You must use extend, instead of += in concatenation.
         for sublattice in self.sublattices:
-            sites.extend(sublattice.restricted_sites)
+            sites += sublattice.restricted_sites
         return sites
 
     @property
@@ -181,7 +169,7 @@ class Ensemble(ABC):
             occupancy (ndarray):
                 encoded occupancy string.
             step (list of tuple):
-                A sequence of flips given my the MCMCUsher.propose_step
+                A sequence of flips given my the MCUsher.propose_step
 
         Returns:
             ndarray: difference in feature vector
@@ -201,14 +189,10 @@ class Ensemble(ABC):
         """
         for sublattice in self.sublattices:
             sublattice.restrict_sites(sites)
-        for sublattice in self.all_sublattices:
-            sublattice.restrict_sites(sites)
 
     def reset_restricted_sites(self):
         """Unfreeze all previously restricted sites."""
         for sublattice in self.sublattices:
-            sublattice.reset_restricted_sites()
-        for sublattice in self.all_sublattices:
             sublattice.reset_restricted_sites()
 
     def as_dict(self):
@@ -221,6 +205,5 @@ class Ensemble(ABC):
              '@class': self.__class__.__name__,
              'thermo_boundaries': self.thermo_boundaries,
              'processor': self._processor.as_dict(),
-             'sublattices': [s.as_dict() for s in self._sublattices],
-             'all_sublattices': [s.as_dict() for s in self._all_sublattices]}
+             'sublattices': [s.as_dict() for s in self._sublattices]}
         return d
