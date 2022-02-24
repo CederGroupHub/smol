@@ -146,13 +146,14 @@ class Orbit(MSONable):
     def bit_combo_array(self):
         """Single array of all bit combos."""
         if self._combo_arr is None:
+            self._combo_inds = None  # reset this so its forced to recompute
             self._combo_arr = np.vstack([combos for combos in self.bit_combos])
         return self._combo_arr
 
     @property
     def bit_combo_inds(self):
         """Get indices to symmetrically equivalent bits in bit combo array."""
-        if self._combo_inds is None or self._combo_arr is None:
+        if self._combo_inds is None:
             self._combo_inds = np.array(
                 [0] + list(accumulate([len(bc) for bc in self.bit_combos])))
         return self._combo_inds
