@@ -11,6 +11,9 @@ crystalline material systems.*
 
 -----------------------------------------------------------------------------
 
+> :warning: **smol** is still under substantial development and may possibly
+> include changes that break backwards compatibility for the near future.
+
 **smol** is a minimal implementation of computational methods to calculate
 statistical mechanical and thermodynamic properties of crystalline
 material systems based on the *cluster expansion* method from alloy theory and
