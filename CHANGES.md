@@ -39,11 +39,14 @@ Use this section to keep track of changes in the works.
   ([lbluque](https://github.com/lbluque))
 
 ### Changed
+* New `corr_from_occupancy` and `delta_corr` faster and cleaner
+  implementations. And renamed `CEProcessor` to `ClusterExpansionProcessor`
+  [\#156](https://github.com/CederGroupHub/smol/pull/156)
+  ([lbluque](https://github.com/lbluque))
 * Dropped "er" endings for `MCUsher` names. Renamed `MuSemigrandEnsemble`
   to `SemigrandEnsemble`.
   [\#154](https://github.com/CederGroupHub/smol/pull/154)
   ([lbluque](https://github.com/lbluque))
-
 * Changed `ClusterSubspace.supercell_orbit_mappings` to only include cluster
   site indices.
   [#145](https://github.com/CederGroupHub/smol/pull/145)
@@ -77,6 +80,10 @@ Use this section to keep track of changes in the works.
 
 
 ### Deprecated
+* `optimize_indicator` in `ClusterExpansionProcessor` and corresponding cython
+   function. 
+  [\#156](https://github.com/CederGroupHub/smol/pull/156)
+  ([lbluque](https://github.com/lbluque))
 * `FuSemiGrandEnsemble` now `FugacityBias`.
   [\#154](https://github.com/CederGroupHub/smol/pull/154)
   ([lbluque](https://github.com/lbluque))
