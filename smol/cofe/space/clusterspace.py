@@ -18,13 +18,13 @@ from pymatgen.analysis.structure_matcher import \
     StructureMatcher, OrderDisorderElementComparator
 from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc, \
     lattice_points_in_supercell, coord_list_mapping_pbc
-from src.mc_utils import corr_from_occupancy
 from smol.cofe.space import Orbit, basis_factory, get_site_spaces, \
     get_allowed_species, Vacancy
 from smol.cofe.space.basis import IndicatorBasis
 from smol.exceptions import SymmetryError, StructureMatchError, \
     SYMMETRY_ERROR_MESSAGE
 from smol.cofe.space.constants import SITE_TOL
+from src.mc_utils import corr_from_occupancy
 
 
 __author__ = "Luis Barroso-Luque, William Davidson Richards"
@@ -307,7 +307,7 @@ class ClusterSubspace(MSONable):
         The list returned is of length total number of orbits, each entry is
         the total number of correlation functions assocaited with that orbit.
         """
-        return [len(orbit) for orbit in self.iterorbits()]
+        return np.array([len(orbit) for orbit in self.iterorbits()])
 
     @property
     def function_orbit_ids(self):
@@ -319,7 +319,7 @@ class ClusterSubspace(MSONable):
         func_orb_ids = [0]
         for orbit in self.iterorbits():
             func_orb_ids += len(orbit) * [orbit.id, ]
-        return func_orb_ids
+        return np.array(func_orb_ids)
 
     @property
     def function_inds_by_size(self):
@@ -474,7 +474,7 @@ class ClusterSubspace(MSONable):
         inds = []
         for orbit in orbits:
             inds += list(range(orbit.bit_id, orbit.bit_id + len(orbit)))
-        return inds
+        return np.array(inds)
 
     def add_external_term(self, term):
         """Add an external term to subspace.
@@ -542,13 +542,12 @@ class ClusterSubspace(MSONable):
         occu = np.array(occu, dtype=int)
 
         # Create a list of tuples with necessary information to compute corr
-        indices = self.supercell_orbit_mappings(scmatrix)
+        mappings = self.supercell_orbit_mappings(scmatrix)
         orbit_list = [
-            (orbit.bit_id, orbit.bit_combo_array, orbit.bit_combo_inds,
-             orbit.bases_array, inds)
-            for inds, orbit in zip(indices, self.orbits)
+            (orbit.bit_id, orbit.flat_tensor_indices,
+             orbit.flat_correlation_tensors, cluster_indices)
+            for cluster_indices, orbit in zip(mappings, self.orbits)
         ]
-
         corr = corr_from_occupancy(occu, self.num_corr_functions, orbit_list)
         size = self.num_prims_from_matrix(scmatrix)
 
@@ -1069,10 +1068,8 @@ class ClusterSubspace(MSONable):
         if not all(isinstance(t1, type(t2)) for t1, t2 in
                    zip(other.external_terms, self.external_terms)):
             return False
-        # there may be a more robuse way to check the bases arrays are
-        # equivalent even if sites/functions are in different order
-        return all(o1 == o2 and np.array_equal(o1.bases_array, o2.bases_array)
-                   for o1, o2 in zip(other.orbits, self.orbits))
+        # does not check if basis functions are the same.
+        return all(o1 == o2 for o1, o2 in zip(other.orbits, self.orbits))
 
     def __len__(self):
         """Get number of correlation functions and ext terms in subspace."""
