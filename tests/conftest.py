@@ -4,7 +4,7 @@ import numpy as np
 from monty.serialization import loadfn
 from smol.cofe import ClusterSubspace
 from smol.moca import CanonicalEnsemble, SemiGrandEnsemble, \
-    CEProcessor, EwaldProcessor, CompositeProcessor
+    ClusterExpansionProcessor, EwaldProcessor, CompositeProcessor
 from smol.cofe.extern import EwaldTerm
 
 # load test data files and set them up as fixtures
@@ -48,7 +48,7 @@ def single_subspace():
 def ce_processor(cluster_subspace):
     coefs = 2 * np.random.random(cluster_subspace.num_corr_functions)
     scmatrix = 3 * np.eye(3)
-    return CEProcessor(cluster_subspace, supercell_matrix=scmatrix,
+    return ClusterExpansionProcessor(cluster_subspace, supercell_matrix=scmatrix,
                        coefficients=coefs)
 
 
@@ -57,7 +57,7 @@ def composite_processor(cluster_subspace_ewald):
     coefs = 2 * np.random.random(cluster_subspace_ewald.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
     proc = CompositeProcessor(cluster_subspace_ewald, supercell_matrix=scmatrix)
-    proc.add_processor(CEProcessor(cluster_subspace_ewald, scmatrix,
+    proc.add_processor(ClusterExpansionProcessor(cluster_subspace_ewald, scmatrix,
                                    coefficients=coefs[:-1]))
     proc.add_processor(EwaldProcessor(cluster_subspace_ewald, scmatrix, EwaldTerm(),
                                       coefficient=coefs[-1]))
@@ -78,5 +78,5 @@ def ensemble(composite_processor, request):
 @pytest.fixture(scope='module')
 def single_canonical_ensemble(single_subspace):
     coefs = np.random.random(single_subspace.num_corr_functions)
-    proc = CEProcessor(single_subspace, 4 * np.eye(3), coefs)
+    proc = ClusterExpansionProcessor(single_subspace, 4 * np.eye(3), coefs)
     return CanonicalEnsemble(proc)

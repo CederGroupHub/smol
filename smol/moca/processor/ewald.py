@@ -5,8 +5,8 @@ and changes in electrostatic energy from a list of local flips for use in
 Monte Carlo sampling.
 
 If you are using a Hamiltonian with a Cluster expansion and an Ewald summation
-electrostatic term, you should use the CompositeProcessor with a CEProcessor
-and an EwaldProcessor class.
+electrostatic term, you should use the CompositeProcessor with a
+ClusterExpansionProcessor and an EwaldProcessor class.
 """
 
 __author__ = "Luis Barroso-Luque"
@@ -28,7 +28,7 @@ class EwaldProcessor(Processor):
 
     def __init__(self, cluster_subspace, supercell_matrix, ewald_term,
                  coefficient=1.0, ewald_summation=None):
-        """Initialize an EwaldCEProcessor.
+        """Initialize an EwaldProcessor.
 
         Args:
             cluster_subspace (ClusterSubspace):
@@ -163,7 +163,7 @@ class EwaldProcessor(Processor):
 
     @classmethod
     def from_dict(cls, d):
-        """Create a CEProcessor from serialized MSONable dict."""
+        """Create a ClusterExpansionProcessor from serialized MSONable dict."""
         pr = cls(ClusterSubspace.from_dict(d['cluster_subspace']),
                  np.array(d['supercell_matrix']),
                  ewald_term=EwaldTerm.from_dict(d['ewald_term']),

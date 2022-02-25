@@ -161,8 +161,9 @@ class Processor(MSONable, metaclass=ABCMeta):
         Returns: encoded occupancy string
             list
         """
-        occu = self._subspace.occupancy_from_structure(structure,
-                                                       scmatrix=self.supercell_matrix)  # noqa
+        occu = self._subspace.occupancy_from_structure(
+            structure, scmatrix=self.supercell_matrix
+        )
         return self.encode_occupancy(occu)
 
     def structure_from_occupancy(self, occupancy):

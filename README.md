@@ -11,6 +11,9 @@ crystalline material systems.*
 
 -----------------------------------------------------------------------------
 
+> :warning: **smol** is still under substantial development and may possibly
+> include changes that break backwards compatibility for the near future.
+
 **smol** is a minimal implementation of computational methods to calculate
 statistical mechanical and thermodynamic properties of crystalline
 material systems based on the *cluster expansion* method from alloy theory and
@@ -63,12 +66,13 @@ can help you get started.
 Contributing
 ------------
 We welcome all your contributions with open arms! Please see the 
-[contributing](https://github.com/CederGroupHub/smol/CONTRIBUTING.md) page for how to contribute.
+[contributing](https://github.com/CederGroupHub/smol/blob/master/CONTRIBUTING.md)
+page for how to contribute.
 
 
 Changes
 -------
 The most recent changes are detailed in the 
-[change log](https://github.com/CederGroupHub/smol/CHANGES.md).
+[change log](https://github.com/CederGroupHub/smol/blob/master/CHANGES.md).
 
 
