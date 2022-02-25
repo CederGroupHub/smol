@@ -48,7 +48,6 @@ extensions = [
     # "sphinx.ext.linkcode",
     "nbsphinx",
     "nb2plots",
-    "sphinx_panels",
     "IPython.sphinxext.ipython_console_highlighting",
 ]
 
@@ -72,10 +71,6 @@ source_suffix = [".rst", ".ipynb"]
 
 # The encoding of source files.
 source_encoding = "utf-8"
-
-# sphinx-panels shouldn't add bootstrap css since the pydata-sphinx-theme
-# already loads it
-panels_add_bootstrap_css = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

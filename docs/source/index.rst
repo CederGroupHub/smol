@@ -28,66 +28,36 @@ crystalline material systems.*
     **smol** is still under substantial development and may possibly include
     changes that break backwards compatibility for the near future.
 
-.. panels::
-    :card: + intro-card text-center
-    :column: col-lg-6 col-md-6 col-sm-6 col-xs-12 d-flex
-    :img-top-cls: pl-5 pr-5 pt-2 pb-2
+**smol** is a minimal implementation of computational methods to calculate
+statistical mechanical and thermodynamic properties of crystalline
+material systems based on the *cluster expansion* method from alloy theory and
+related methods. Although **smol** is intentionally lightweight---in terms of
+dependencies and built-in functionality---it has a modular design that closely
+follows underlying mathematical formalism and provides useful abstractions to
+easily extend existing methods or implement and test new ones. Finally,
+although conceived mainly for method development, **smol** can (and is being)
+used in production for materials science reasearch applications.
 
-    ---
-    :img-top: ../_static/starting.svg
+Functionality
+=============
+**smol** currently includes the following functionality:
 
-    Getting started
-    ^^^^^^^^^^^^^^^
+- Defining cluster expansion terms for a given disordered structure using a
+  variety of available site basis functions with and without explicit
+  redundancy.
+- Option to include explicit electrostatics using the Ewald summation method.
+- Computing correlation vectors for a set of training structures with a variety
+  of functionality to inspect the resulting feature matrix.
+- Defining cluster expansions for subsequent property prediction.
+- Fast evaluation of correlation vectors and differences in correlation vectors
+  from local updates in order to quickly compute properties and changes in
+  properties for specified supercells.
+- Flexible toolset to sample cluster expansions using Monte Carlo with
+  Canonical and Semigrand Canonical ensembles using a Metropolis sampler.
 
-    If you are new to **smol**, start here to learn how to get started quickly,
-    the basic usage and browse example notebooks.
-
-    .. link-button:: getting_started
-            :type: ref
-            :text:
-            :classes: stretched-link
-
-    ---
-    :img-top: ../_static/user.svg
-
-    User guide
-    ^^^^^^^^^^
-
-    For in-depth information on the main concepts and core classes have a look
-    at the user guide.
-
-    .. link-button:: user_guide/index
-            :type: ref
-            :text:
-            :classes: stretched-link
-
-    ---
-    :img-top: ../_static/api.svg
-
-    API reference
-    ^^^^^^^^^^^^^
-
-    The API reference guide has detailed documentation for all classes and
-    functions in **smol**.
-
-    .. link-button:: api_reference/index
-            :type: ref
-            :text:
-            :classes: stretched-link
-
-    ---
-    :img-top: ../_static/contribute.svg
-
-    Developer guide
-    ^^^^^^^^^^^^^^^
-
-    If you want to contribute to or extend *smol* please have a look at the
-    developer guide.
-
-    .. link-button:: developer_guide/index
-            :type: ref
-            :text:
-            :classes: stretched-link
+**smol** is built on top of `pymatgen <https://pymatgen.org/>`_ so any pre/post
+structure analysis can be done seamlessly using the various functionality
+supported there.
 
 Citing
 ======
