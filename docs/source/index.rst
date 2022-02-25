@@ -1,11 +1,21 @@
+:notoc:
 
-.. title:: smol documentation
+.. toctree::
+   :maxdepth: 1
+   :hidden:
 
+   getting_started
+   user_guide/index
+   api_reference/index
+   developer_guide/index
+   citing
+
+=================================
 Statistical Mechanics on Lattices
 =================================
 
 *Lighthweight but caffeinated Python implementations of computational methods
-for statistical mechanical calculations of configurational states for
+for statistical mechanical calculations of configurational states in
 crystalline material systems.*
 
 .. image:: https://github.com/CederGroupHub/smol/actions/workflows/test.yml/badge.svg
@@ -18,43 +28,69 @@ crystalline material systems.*
     **smol** is still under substantial development and may possibly include
     changes that break backwards compatibility for the near future.
 
-**smol** is a minimal implementation of computational methods to calculate
-statistical mechanical and thermodynamic properties of crystalline
-material systems based on the *cluster expansion* method from alloy theory and
-related methods. Although **smol** is intentionally lightweight---in terms of
-dependencies and built-in functionality---it has a modular design that closely
-follows underlying mathematical formalism and provides useful abstractions to
-easily extend existing methods or implement and test new ones. Finally,
-although conceived mainly for method development, **smol** can (and is being)
-used in production for materials science reasearch applications.
+.. panels::
+    :card: + intro-card text-center
+    :column: col-lg-6 col-md-6 col-sm-6 col-xs-12 d-flex
+    :img-top-cls: pl-5 pr-5 pt-2 pb-2
 
-Functionality
--------------
-**smol** currently includes the following functionality:
+    ---
+    :img-top: ../_static/starting.svg
 
-- Defining cluster expansion terms for a given disordered structure using a
-  variety of available site basis functions with and without explicit
-  redundancy.
-- Option to include explicit electrostatics using the Ewald summation method.
-- Computing correlation vectors for a set of training structures with a variety
-  of functionality to inspect the resulting feature matrix.
-- Defining cluster expansions for subsequent property prediction.
-- Fast evaluation of correlation vectors and differences in correlation vectors
-  from local updates in order to quickly compute properties and changes in
-  properties for specified supercells.
-- Flexible toolset to sample cluster expansions using Monte Carlo with
-  Canonical and Semigrand Canonical ensembles using a Metropolis sampler.
+    Getting started
+    ^^^^^^^^^^^^^^^
 
-**smol** is built on top of `pymatgen <https://pymatgen.org/>`_ so any pre/post
-structure analysis can be done seamlessly using the various functionality
-supported there.
+    If you are new to **smol**, start here to learn how to get started quickly,
+    the basic usage and browse example notebooks.
 
-All classes and functions are designed for easy extension and implementation
-of new metholody. Please refer to the :doc:`developing page </developing>` for
-additional details.
+    .. link-button:: getting_started
+            :type: ref
+            :text:
+            :classes: stretched-link
+
+    ---
+    :img-top: ../_static/user.svg
+
+    User guide
+    ^^^^^^^^^^
+
+    For in-depth information on the main concepts and core classes have a look
+    at the user guide.
+
+    .. link-button:: user_guide/index
+            :type: ref
+            :text:
+            :classes: stretched-link
+
+    ---
+    :img-top: ../_static/api.svg
+
+    API reference
+    ^^^^^^^^^^^^^
+
+    The API reference guide has detailed documentation for all classes and
+    functions in **smol**.
+
+    .. link-button:: api_reference/index
+            :type: ref
+            :text:
+            :classes: stretched-link
+
+    ---
+    :img-top: ../_static/contribute.svg
+
+    Developer guide
+    ^^^^^^^^^^^^^^^
+
+    If you want to contribute to or extend *smol* please have a look at the
+    developer guide.
+
+    .. link-button:: developer_guide/index
+            :type: ref
+            :text:
+            :classes: stretched-link
 
 Citing
-------
+======
 If you find **smol** useful please cite the following publication,
 
     Barroso-Luque, L., Yang, J.H., Xie, F., Chen T., Zhong, P. & Ceder, G.
@@ -71,21 +107,3 @@ Please also cite this publication,
 Additionally, several of the functionality included in **smol** is based on
 methodology developed by various researchers. Please see the
 :doc:`citing page </citing>` for additional refrences.
-
-
-Installation
-------------
-1.  Clone the repository.
-2.  Go to the top level directory of the cloned repo and type::
-
-        pip install .
-
-
-.. toctree::
-   :maxdepth: 2
-   :hidden:
-
-   demo
-   examples
-   api
-   citing

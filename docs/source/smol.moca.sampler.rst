@@ -4,6 +4,14 @@ smol.moca.sampler package
 Submodules
 ----------
 
+smol.moca.sampler.bias module
+-----------------------------
+
+.. automodule:: smol.moca.sampler.bias
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 smol.moca.sampler.container module
 ----------------------------------
 
