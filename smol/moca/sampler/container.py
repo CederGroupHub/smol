@@ -35,6 +35,7 @@ class SampleContainer(MSONable):
 
     When getting any value from the provided attributes, the highly repeated
     args are:
+
         discard (int): optional
             Number of samples to discard to obtain the value requested.
         thin_by (int): optional
@@ -51,14 +52,8 @@ class SampleContainer(MSONable):
             Sublattices of the ensemble sampled.
         natural_parameters (ndarray):
                 array of natural parameters used in the ensemble.
-        _total_steps (int)
-            Number of iterations used in sampling
         metadata (dict):
             Dictionary of metadata from the MC run that generated the samples.
-        _aux_checkpoint (dict):
-            Checkpoint dictionary of auxiliary states and variables to continue
-            sampling from the last state of a previous MCMC run.
-            (not implemented yet)
     """
 
     def __init__(self, sublattices, natural_parameters, num_energy_coefs,

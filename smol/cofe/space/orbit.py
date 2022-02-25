@@ -4,14 +4,14 @@ A set of symmetrically equivalent (with respect to the given random structure
 symmetry) clusters.
 """
 
-from itertools import chain, product, accumulate, combinations
+import operator
+from functools import reduce
+from itertools import chain, product, combinations
 import numpy as np
-
 from monty.json import MSONable
 from pymatgen.core import Lattice
 from pymatgen.core.operations import SymmOp
 from pymatgen.util.coord import coord_list_mapping, is_coord_subset
-
 from smol.utils import _repr
 from smol.exceptions import SymmetryError, SYMMETRY_ERROR_MESSAGE
 from .constants import SITE_TOL
@@ -95,9 +95,8 @@ class Orbit(MSONable):
         self._permutations = None
         self._bit_combos = None
         self._basis_arrs = None
-        self._bases_arr = None
-        self._combo_arr = None
-        self._combo_inds = None
+        self._corr_tensors = None
+        self._flat_corr_tensors = None
 
         # Create basecluster
         self.base_cluster = Cluster(sites, lattice)
@@ -106,6 +105,16 @@ class Orbit(MSONable):
     def basis_type(self):
         """Return the name of basis set used."""
         return self.site_bases[0].flavor
+
+    @property
+    def basis_orthogonal(self):
+        """Test if the Orbit bases are orthogonal."""
+        return all(basis.is_orthogonal for basis in self.site_bases)
+
+    @property
+    def basis_orthonormal(self):
+        """Test if the orbit bases are orthonormal."""
+        return all(basis.is_orthonormal for basis in self.site_bases)
 
     @property
     def multiplicity(self):
@@ -141,22 +150,6 @@ class Orbit(MSONable):
     def site_spaces(self):
         """Get the site spaces for the site basis associate with each site."""
         return [site_basis.site_space for site_basis in self.site_bases]
-
-    @property
-    def bit_combo_array(self):
-        """Single array of all bit combos."""
-        if self._combo_arr is None:
-            self._combo_inds = None  # reset this so its forced to recompute
-            self._combo_arr = np.vstack([combos for combos in self.bit_combos])
-        return self._combo_arr
-
-    @property
-    def bit_combo_inds(self):
-        """Get indices to symmetrically equivalent bits in bit combo array."""
-        if self._combo_inds is None:
-            self._combo_inds = np.array(
-                [0] + list(accumulate([len(bc) for bc in self.bit_combos])))
-        return self._combo_inds
 
     @property
     def bit_combo_multiplicities(self):
@@ -203,7 +196,7 @@ class Orbit(MSONable):
         return self._permutations
 
     @property
-    def basis_arrays(self):  # TODO remove this?
+    def basis_arrays(self):
         """Get a tuple of all site function arrays for each site in orbit."""
         if self._basis_arrs is None:
             self._basis_arrs = tuple(
@@ -211,35 +204,83 @@ class Orbit(MSONable):
         return self._basis_arrs
 
     @property
-    def bases_array(self):
-        """Get bases array.
+    def correlation_tensors(self):
+        """Get the array of correlation functions for all possible configs.
 
-        3D array with all basis arrays. Since each basis array can be of
-        different dimension the 3D array is the size of the largest array.
-        Smaller arrays are padded with ones. Doing this allows using numpy
-        fancy indexing which can be faster than for loops.
+        Array of stacked correlation arrays for each symetrically distinct
+        set of bit combos.
+
+        The correlations array is a multidimensional array with each dimension
+        corresponding to each site space.
+
+        First dimension is for bit combos, the remainding dimensions correspond
+        to site spaces.
+
+        i.e. correlation_tensors[0, 1, 0, 2] gives the value of the
+        correlation function for bit_combo 0 evaluated for a cluster with
+        occupancy [1, 0, 2]
         """
-        if self._bases_arr is None or self._basis_arrs is None:
-            max_f = max(fa.shape[0] for fa in self.basis_arrays)
-            max_s = max(fa.shape[1] for fa in self.basis_arrays)
-            self._bases_arr = np.ones(
-                (len(self.basis_arrays), max_f, max_s))
-            for i, fa in enumerate(self.basis_arrays):
-                j, k = fa.shape
-                self._bases_arr[i, :j, :k] = fa
-        return self._bases_arr
+        if self._corr_tensors is None:
+            corr_tensors = np.zeros(
+                (len(self.bit_combos),
+                 *(basis.shape[1] for basis in self.basis_arrays))
+            )
+
+            for i, combos in enumerate(self.bit_combos):
+                for bits in combos:
+                    corr_tensors[i] += reduce(
+                        lambda a, b: np.tensordot(a, b, axes=0),
+                        (self.basis_arrays[i][b] for i, b in enumerate(bits)))
+                corr_tensors[i] /= len(combos)
+            self._flat_corr_tensors = None  # reset
+            self._corr_tensors = corr_tensors
+        return self._corr_tensors
 
     @property
-    def basis_orthogonal(self):
-        """Test if the Orbit bases are orthogonal."""
-        return all(basis.is_orthogonal for basis in self.site_bases)
+    def flat_correlation_tensors(self):
+        """Get correlation_tensors flattened to 2D for fast cython."""
+        if self._flat_corr_tensors is None:
+            self._flat_corr_tensors = np.ascontiguousarray(
+                np.reshape(
+                    self.correlation_tensors,
+                    (
+                        self.correlation_tensors.shape[0],
+                        np.prod(self.correlation_tensors.shape[1:])
+                    ),
+                    order='C')
+            )
+        return self._flat_corr_tensors
 
     @property
-    def basis_orthonormal(self):
-        """Test if the orbit bases are orthonormal."""
-        return all(basis.is_orthonormal for basis in self.site_bases)
+    def flat_tensor_indices(self):
+        """Index multipliers to read data easier from flat corr tensors."""
+        indices = np.cumprod(
+            np.append(self.correlation_tensors.shape[2:], 1)[::-1])[::-1]
+        return np.ascontiguousarray(indices, dtype=int)
 
-    # TODO deprecate this
+    @property
+    def rotation_array(self):
+        """Get the rotation array.
+
+        The rotation array is of size len(bit combos) x len(bit combos)
+        """
+        R = np.empty(2 * (len(self._bit_combos),))
+        for (i, j), (bcombos_i, bcombos_j) in zip(
+                product(range(len(self._bit_combos)), repeat=2),
+                product(self._bit_combos, repeat=2)):
+            R[i, j] = sum(
+                reduce(
+                    operator.mul,
+                    (np.dot(
+                        self.site_bases[k].rotation_array.T @ self.basis_arrays[k][bj],  # noqa
+                        self.site_bases[k].measure_vector * self.basis_arrays[k][bi]  # noqa
+                    )
+                        for k, (bi, bj) in enumerate(zip(bcombo_i, bcombo_j))))
+                for bcombo_i, bcombo_j in product(bcombos_i, bcombos_j)) \
+                       / len(bcombos_i)
+            # \ (len(bcombos_i) * len(bcombos_j))**0.5 is unitary
+        return R
+
     def remove_bit_combo(self, bits):  # seems like this is no longer used?
         """Remove bit_combos from orbit.
 
@@ -258,7 +299,7 @@ class Orbit(MSONable):
                 f"{self.id}")
 
         self._bit_combos = tuple(bit_combos)
-        self._combo_arr = None  # reset
+        self.reset_bases()
 
     def remove_bit_combos_by_inds(self, inds):
         """Remove bit combos by their indices in the bit_combo list."""
@@ -269,32 +310,12 @@ class Orbit(MSONable):
 
         self._bit_combos = tuple(
             b_c for i, b_c in enumerate(self._bit_combos) if i not in inds)
-        self._combo_arr = None  # reset
 
         if not self.bit_combos:
             raise RuntimeError(
                 "All bit_combos have been removed from orbit with id "
                 f"{self.id}")
-
-    def eval(self, bits, species_encoding):   # TODO remove this?
-        """Evaluate a cluster function defined for this orbit.
-
-        Args:
-            bits (list):
-                list of the cluster bits specifying which site basis function
-                to evaluate for the corresponding site.
-            species_encoding (list):
-                list of lists of species encoding for each site. (index of
-                species in species bits)
-
-        Returns: orbit function evaluated for the corresponding structure
-            float
-        """
-        p = 1
-        for i, (b, sp) in enumerate(zip(bits, species_encoding)):
-            p *= self.basis_arrays[i][b, sp]
-
-        return p
+        self.reset_bases()
 
     def transform_site_bases(self, basis_name, orthonormal=False):
         """Transform the Orbits site bases to new basis set.
@@ -313,29 +334,7 @@ class Orbit(MSONable):
             new_bases.append(new_basis)
 
         self.site_bases = tuple(new_bases)
-        self._basis_arrs, self._bases_arr = None, None
-
-    def assign_ids(self, orbit_id, orbit_bit_id, start_cluster_id):
-        """Assign unique orbit and cluster ids.
-
-        This should be called iteratively for a list of orbits to get a proper
-        set of unique id's for the orbits.
-
-        Args:
-            orbit_id (int): orbit id
-            orbit_bit_id (int): start bit ordering id
-            start_cluster_id (int): start cluster id
-
-        Returns:
-            (int, int, int):
-            next orbit id, next bit ordering id, next cluster id
-        """
-        self.id = orbit_id
-        self.bit_id = orbit_bit_id
-        c_id = start_cluster_id
-        for c in self.clusters:
-            c_id = c.assign_ids(c_id)
-        return orbit_id + 1, orbit_bit_id + len(self.bit_combos), c_id
+        self.reset_bases()
 
     def is_sub_orbit(self, orbit):
         """Check if given orbits clusters are subclusters.
@@ -376,9 +375,10 @@ class Orbit(MSONable):
                 self.base_cluster.sites[indices] = orbit.base_cluster.sites
         """
         indsets = np.array(list(combinations(
-            (i for i, space in enumerate(self.site_spaces)
-             if space in orbit.site_spaces), len(orbit.site_spaces))),
-            dtype=int)
+            (
+                i for i, space in enumerate(self.site_spaces)
+                if space in orbit.site_spaces), len(orbit.site_spaces)
+        )), dtype=int)
 
         mappings = []
         for cluster in self.clusters:
@@ -418,6 +418,34 @@ class Orbit(MSONable):
 
         if len(self._symops) * self.multiplicity != len(self.structure_symops):
             raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
+
+    def reset_bases(self):
+        """Reset cached basis function array and correlation tensors."""
+        self._basis_arrs = None
+        self._corr_tensors = None
+        self._flat_corr_tensors = None
+
+    def assign_ids(self, orbit_id, orbit_bit_id, start_cluster_id):
+        """Assign unique orbit and cluster ids.
+
+        This should be called iteratively for a list of orbits to get a proper
+        set of unique id's for the orbits.
+
+        Args:
+            orbit_id (int): orbit id
+            orbit_bit_id (int): start bit ordering id
+            start_cluster_id (int): start cluster id
+
+        Returns:
+            (int, int, int):
+            next orbit id, next bit ordering id, next cluster id
+        """
+        self.id = orbit_id
+        self.bit_id = orbit_bit_id
+        c_id = start_cluster_id
+        for c in self.clusters:
+            c_id = c.assign_ids(c_id)
+        return orbit_id + 1, orbit_bit_id + len(self.bit_combos), c_id
 
     def __len__(self):
         """Get total number of orbit basis functions.

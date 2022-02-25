@@ -1,11 +1,21 @@
+:notoc:
 
-.. title:: smol documentation
+.. toctree::
+   :maxdepth: 1
+   :hidden:
 
+   getting_started
+   user_guide/index
+   api_reference/index
+   developer_guide/index
+   citing
+
+=================================
 Statistical Mechanics on Lattices
 =================================
 
 *Lighthweight but caffeinated Python implementations of computational methods
-for statistical mechanical calculations of configurational states for
+for statistical mechanical calculations of configurational states in
 crystalline material systems.*
 
 .. image:: https://github.com/CederGroupHub/smol/actions/workflows/test.yml/badge.svg
@@ -29,7 +39,7 @@ although conceived mainly for method development, **smol** can (and is being)
 used in production for materials science reasearch applications.
 
 Functionality
--------------
+=============
 **smol** currently includes the following functionality:
 
 - Defining cluster expansion terms for a given disordered structure using a
@@ -49,12 +59,8 @@ Functionality
 structure analysis can be done seamlessly using the various functionality
 supported there.
 
-All classes and functions are designed for easy extension and implementation
-of new metholody. Please refer to the :doc:`developing page </developing>` for
-additional details.
-
 Citing
-------
+======
 If you find **smol** useful please cite the following publication,
 
     Barroso-Luque, L., Yang, J.H., Xie, F., Chen T., Zhong, P. & Ceder, G.
@@ -71,21 +77,3 @@ Please also cite this publication,
 Additionally, several of the functionality included in **smol** is based on
 methodology developed by various researchers. Please see the
 :doc:`citing page </citing>` for additional refrences.
-
-
-Installation
-------------
-1.  Clone the repository.
-2.  Go to the top level directory of the cloned repo and type::
-
-        pip install .
-
-
-.. toctree::
-   :maxdepth: 2
-   :hidden:
-
-   demo
-   examples
-   api
-   citing

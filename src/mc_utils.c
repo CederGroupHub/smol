@@ -1976,10 +1976,10 @@ static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_d_dc_l
 static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_ds_double(PyObject *, int writable_flag);
 
 /* ObjectToMemviewSlice.proto */
-static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_d_d_dc_double__const__(PyObject *, int writable_flag);
+static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_dc_double(PyObject *, int writable_flag);
 
 /* ObjectToMemviewSlice.proto */
-static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_dc_double(PyObject *, int writable_flag);
+static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_d_d_dc_double__const__(PyObject *, int writable_flag);
 
 /* RealImag.proto */
 #if CYTHON_CCOMPLEX
@@ -2169,9 +2169,11 @@ static PyObject *indirect_contiguous = 0;
 static int __pyx_memoryview_thread_locks_used;
 static PyThread_type_lock __pyx_memoryview_thread_locks[8];
 static PyObject *__pyx_f_3src_8mc_utils_corr_from_occupancy(__Pyx_memviewslice, int const , PyObject *, int __pyx_skip_dispatch); /*proto*/
-static PyObject *__pyx_f_3src_8mc_utils_general_delta_corr_single_flip(__Pyx_memviewslice, __Pyx_memviewslice, int const , PyObject *, int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_3src_8mc_utils_delta_corr_single_flip(__Pyx_memviewslice, __Pyx_memviewslice, int const , PyObject *, int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_memviewslice, __Pyx_memviewslice, int const , PyObject *, int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_3src_8mc_utils_delta_ewald_single_flip(__Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, int const , int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_3src_8mc_utils_corr_from_occupancy_low_mem(__Pyx_memviewslice, int const , PyObject *, int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_3src_8mc_utils_delta_corr_single_flip_lm(__Pyx_memviewslice, __Pyx_memviewslice, int const , PyObject *, int __pyx_skip_dispatch); /*proto*/
 static struct __pyx_array_obj *__pyx_array_new(PyObject *, Py_ssize_t, char *, char *, char *); /*proto*/
 static void *__pyx_align_pointer(void *, size_t); /*proto*/
 static PyObject *__pyx_memoryview_new(PyObject *, int, int, __Pyx_TypeInfo *); /*proto*/
@@ -2275,7 +2277,6 @@ static const char __pyx_k_pyx_state[] = "__pyx_state";
 static const char __pyx_k_reduce_ex[] = "__reduce_ex__";
 static const char __pyx_k_IndexError[] = "IndexError";
 static const char __pyx_k_ValueError[] = "ValueError";
-static const char __pyx_k_ewald_inds[] = "ewald_inds";
 static const char __pyx_k_orbit_list[] = "orbit_list";
 static const char __pyx_k_pyx_result[] = "__pyx_result";
 static const char __pyx_k_pyx_vtable[] = "__pyx_vtable__";
@@ -2285,17 +2286,18 @@ static const char __pyx_k_PickleError[] = "PickleError";
 static const char __pyx_k_ewald_matrix[] = "ewald_matrix";
 static const char __pyx_k_pyx_checksum[] = "__pyx_checksum";
 static const char __pyx_k_stringsource[] = "stringsource";
+static const char __pyx_k_ewald_indices[] = "ewald_indices";
 static const char __pyx_k_pyx_getbuffer[] = "__pyx_getbuffer";
 static const char __pyx_k_reduce_cython[] = "__reduce_cython__";
 static const char __pyx_k_View_MemoryView[] = "View.MemoryView";
 static const char __pyx_k_allocate_buffer[] = "allocate_buffer";
 static const char __pyx_k_dtype_is_object[] = "dtype_is_object";
-static const char __pyx_k_n_bit_orderings[] = "n_bit_orderings";
 static const char __pyx_k_pyx_PickleError[] = "__pyx_PickleError";
 static const char __pyx_k_setstate_cython[] = "__setstate_cython__";
 static const char __pyx_k_site_orbit_list[] = "site_orbit_list";
 static const char __pyx_k_pyx_unpickle_Enum[] = "__pyx_unpickle_Enum";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
+static const char __pyx_k_num_corr_functions[] = "num_corr_functions";
 static const char __pyx_k_strided_and_direct[] = "<strided and direct>";
 static const char __pyx_k_strided_and_indirect[] = "<strided and indirect>";
 static const char __pyx_k_contiguous_and_direct[] = "<contiguous and direct>";
@@ -2363,7 +2365,7 @@ static PyObject *__pyx_n_s_dtype_is_object;
 static PyObject *__pyx_n_s_encode;
 static PyObject *__pyx_n_s_enumerate;
 static PyObject *__pyx_n_s_error;
-static PyObject *__pyx_n_s_ewald_inds;
+static PyObject *__pyx_n_s_ewald_indices;
 static PyObject *__pyx_n_s_ewald_matrix;
 static PyObject *__pyx_n_s_flags;
 static PyObject *__pyx_n_s_format;
@@ -2378,13 +2380,13 @@ static PyObject *__pyx_kp_s_itemsize_0_for_cython_array;
 static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_memview;
 static PyObject *__pyx_n_s_mode;
-static PyObject *__pyx_n_s_n_bit_orderings;
 static PyObject *__pyx_n_s_name;
 static PyObject *__pyx_n_s_name_2;
 static PyObject *__pyx_n_s_ndim;
 static PyObject *__pyx_n_s_new;
 static PyObject *__pyx_kp_s_no_default___reduce___due_to_non;
 static PyObject *__pyx_n_s_np;
+static PyObject *__pyx_n_s_num_corr_functions;
 static PyObject *__pyx_n_s_numpy;
 static PyObject *__pyx_kp_u_numpy_core_multiarray_failed_to;
 static PyObject *__pyx_kp_u_numpy_core_umath_failed_to_impor;
@@ -2427,10 +2429,12 @@ static PyObject *__pyx_kp_s_unable_to_allocate_shape_and_str;
 static PyObject *__pyx_n_s_unpack;
 static PyObject *__pyx_n_s_update;
 static PyObject *__pyx_n_s_zeros;
-static PyObject *__pyx_pf_3src_8mc_utils_corr_from_occupancy(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu, int __pyx_v_n_bit_orderings, PyObject *__pyx_v_orbit_list); /* proto */
-static PyObject *__pyx_pf_3src_8mc_utils_2general_delta_corr_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, int __pyx_v_n_bit_orderings, PyObject *__pyx_v_site_orbit_list); /* proto */
-static PyObject *__pyx_pf_3src_8mc_utils_4indicator_delta_corr_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, int __pyx_v_n_bit_orderings, PyObject *__pyx_v_site_orbit_list); /* proto */
-static PyObject *__pyx_pf_3src_8mc_utils_6delta_ewald_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_ewald_matrix, __Pyx_memviewslice __pyx_v_ewald_inds, int __pyx_v_site_ind); /* proto */
+static PyObject *__pyx_pf_3src_8mc_utils_corr_from_occupancy(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu, int __pyx_v_num_corr_functions, PyObject *__pyx_v_orbit_list); /* proto */
+static PyObject *__pyx_pf_3src_8mc_utils_2delta_corr_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, int __pyx_v_num_corr_functions, PyObject *__pyx_v_site_orbit_list); /* proto */
+static PyObject *__pyx_pf_3src_8mc_utils_4indicator_delta_corr_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, int __pyx_v_num_corr_functions, PyObject *__pyx_v_site_orbit_list); /* proto */
+static PyObject *__pyx_pf_3src_8mc_utils_6delta_ewald_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_ewald_matrix, __Pyx_memviewslice __pyx_v_ewald_indices, int __pyx_v_site_ind); /* proto */
+static PyObject *__pyx_pf_3src_8mc_utils_8corr_from_occupancy_low_mem(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu, int __pyx_v_num_corr_functions, PyObject *__pyx_v_orbit_list); /* proto */
+static PyObject *__pyx_pf_3src_8mc_utils_10delta_corr_single_flip_lm(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, int __pyx_v_num_corr_functions, PyObject *__pyx_v_site_orbit_list); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __pyx_array_obj *__pyx_v_self, PyObject *__pyx_v_shape, Py_ssize_t __pyx_v_itemsize, PyObject *__pyx_v_format, PyObject *__pyx_v_mode, int __pyx_v_allocate_buffer); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array_2__getbuffer__(struct __pyx_array_obj *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_array___pyx_pf_15View_dot_MemoryView_5array_4__dealloc__(struct __pyx_array_obj *__pyx_v_self); /* proto */
@@ -2514,26 +2518,24 @@ static PyObject *__pyx_codeobj__27;
  * 
  * 
  * cpdef corr_from_occupancy(const long[::1] occu,             # <<<<<<<<<<<<<<
- *                           const int n_bit_orderings,
+ *                           const int num_corr_functions,
  *                           list orbit_list):
  */
 
 static PyObject *__pyx_pw_3src_8mc_utils_1corr_from_occupancy(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_f_3src_8mc_utils_corr_from_occupancy(__Pyx_memviewslice __pyx_v_occu, int const __pyx_v_n_bit_orderings, PyObject *__pyx_v_orbit_list, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_f_3src_8mc_utils_corr_from_occupancy(__Pyx_memviewslice __pyx_v_occu, int const __pyx_v_num_corr_functions, PyObject *__pyx_v_orbit_list, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_i;
   int __pyx_v_j;
-  int __pyx_v_k;
   int __pyx_v_n;
   int __pyx_v_m;
   int __pyx_v_I;
-  int __pyx_v_K;
+  int __pyx_v_J;
   int __pyx_v_M;
+  int __pyx_v_index;
   double __pyx_v_p;
-  double __pyx_v_pi;
-  __Pyx_memviewslice __pyx_v_inds = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_v_bit_combos = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_v_bit_inds = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_v_bases = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_indices = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_tensor_indices = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_corr_tensors = { 0, 0, { 0 }, { 0 }, { 0 } };
   PyObject *__pyx_v_out = NULL;
   __Pyx_memviewslice __pyx_v_o_view = { 0, 0, { 0 }, { 0 }, { 0 } };
   PyObject *__pyx_r = NULL;
@@ -2548,50 +2550,40 @@ static PyObject *__pyx_f_3src_8mc_utils_corr_from_occupancy(__Pyx_memviewslice _
   PyObject *__pyx_t_8 = NULL;
   PyObject *__pyx_t_9 = NULL;
   PyObject *__pyx_t_10 = NULL;
-  PyObject *__pyx_t_11 = NULL;
-  PyObject *(*__pyx_t_12)(PyObject *);
-  int __pyx_t_13;
+  PyObject *(*__pyx_t_11)(PyObject *);
+  int __pyx_t_12;
+  __Pyx_memviewslice __pyx_t_13 = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_t_14 = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_t_15 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_t_16 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_t_17 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  long __pyx_t_18;
-  long __pyx_t_19;
+  int __pyx_t_16;
+  int __pyx_t_17;
+  int __pyx_t_18;
+  int __pyx_t_19;
   int __pyx_t_20;
   int __pyx_t_21;
   int __pyx_t_22;
-  long __pyx_t_23;
-  long __pyx_t_24;
-  int __pyx_t_25;
-  int __pyx_t_26;
-  int __pyx_t_27;
-  int __pyx_t_28;
-  Py_ssize_t __pyx_t_29;
-  Py_ssize_t __pyx_t_30;
-  Py_ssize_t __pyx_t_31;
-  Py_ssize_t __pyx_t_32;
-  Py_ssize_t __pyx_t_33;
-  Py_ssize_t __pyx_t_34;
-  Py_ssize_t __pyx_t_35;
-  Py_ssize_t __pyx_t_36;
+  int __pyx_t_23;
+  Py_ssize_t __pyx_t_24;
+  Py_ssize_t __pyx_t_25;
+  Py_ssize_t __pyx_t_26;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("corr_from_occupancy", 0);
 
-  /* "src/mc_utils.pyx":40
- *     cdef const long[::1] bit_inds
- *     cdef const double[:, :, ::1] bases
- *     out = np.zeros(n_bit_orderings)             # <<<<<<<<<<<<<<
+  /* "src/mc_utils.pyx":41
+ *     cdef const long[::1] tensor_indices
+ *     cdef const double[:, ::1] corr_tensors
+ *     out = np.zeros(num_corr_functions)             # <<<<<<<<<<<<<<
  *     cdef double[:] o_view = out
  *     o_view[0] = 1  # empty cluster
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 40, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 41, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 40, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 41, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_n_bit_orderings); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 40, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_num_corr_functions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 41, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -2606,61 +2598,61 @@ static PyObject *__pyx_f_3src_8mc_utils_corr_from_occupancy(__Pyx_memviewslice _
   __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2);
   __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 40, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 41, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_out = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "src/mc_utils.pyx":41
- *     cdef const double[:, :, ::1] bases
- *     out = np.zeros(n_bit_orderings)
+  /* "src/mc_utils.pyx":42
+ *     cdef const double[:, ::1] corr_tensors
+ *     out = np.zeros(num_corr_functions)
  *     cdef double[:] o_view = out             # <<<<<<<<<<<<<<
  *     o_view[0] = 1  # empty cluster
  * 
  */
-  __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_v_out, PyBUF_WRITABLE); if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 41, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_v_out, PyBUF_WRITABLE); if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 42, __pyx_L1_error)
   __pyx_v_o_view = __pyx_t_5;
   __pyx_t_5.memview = NULL;
   __pyx_t_5.data = NULL;
 
-  /* "src/mc_utils.pyx":42
- *     out = np.zeros(n_bit_orderings)
+  /* "src/mc_utils.pyx":43
+ *     out = np.zeros(num_corr_functions)
  *     cdef double[:] o_view = out
  *     o_view[0] = 1  # empty cluster             # <<<<<<<<<<<<<<
  * 
- *     for n, bit_combos, bit_inds, bases, inds in orbit_list:
+ *     for n, tensor_indices, corr_tensors, indices in orbit_list:
  */
   __pyx_t_6 = 0;
   *((double *) ( /* dim=0 */ (__pyx_v_o_view.data + __pyx_t_6 * __pyx_v_o_view.strides[0]) )) = 1.0;
 
-  /* "src/mc_utils.pyx":44
+  /* "src/mc_utils.pyx":45
  *     o_view[0] = 1  # empty cluster
  * 
- *     for n, bit_combos, bit_inds, bases, inds in orbit_list:             # <<<<<<<<<<<<<<
- *         M = bit_inds.shape[0] # index of bit combos
- *         I = inds.shape[0] # cluster index
+ *     for n, tensor_indices, corr_tensors, indices in orbit_list:             # <<<<<<<<<<<<<<
+ *         M = corr_tensors.shape[0]  # index of bit combos
+ *         I = indices.shape[0] # cluster index
  */
   if (unlikely(__pyx_v_orbit_list == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-    __PYX_ERR(0, 44, __pyx_L1_error)
+    __PYX_ERR(0, 45, __pyx_L1_error)
   }
   __pyx_t_1 = __pyx_v_orbit_list; __Pyx_INCREF(__pyx_t_1); __pyx_t_7 = 0;
   for (;;) {
     if (__pyx_t_7 >= PyList_GET_SIZE(__pyx_t_1)) break;
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_7); __Pyx_INCREF(__pyx_t_3); __pyx_t_7++; if (unlikely(0 < 0)) __PYX_ERR(0, 44, __pyx_L1_error)
+    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_7); __Pyx_INCREF(__pyx_t_3); __pyx_t_7++; if (unlikely(0 < 0)) __PYX_ERR(0, 45, __pyx_L1_error)
     #else
-    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 44, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 45, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     #endif
     if ((likely(PyTuple_CheckExact(__pyx_t_3))) || (PyList_CheckExact(__pyx_t_3))) {
       PyObject* sequence = __pyx_t_3;
       Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
-      if (unlikely(size != 5)) {
-        if (size > 5) __Pyx_RaiseTooManyValuesError(5);
+      if (unlikely(size != 4)) {
+        if (size > 4) __Pyx_RaiseTooManyValuesError(4);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 44, __pyx_L1_error)
+        __PYX_ERR(0, 45, __pyx_L1_error)
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
       if (likely(PyTuple_CheckExact(sequence))) {
@@ -2668,25 +2660,22 @@ static PyObject *__pyx_f_3src_8mc_utils_corr_from_occupancy(__Pyx_memviewslice _
         __pyx_t_4 = PyTuple_GET_ITEM(sequence, 1); 
         __pyx_t_8 = PyTuple_GET_ITEM(sequence, 2); 
         __pyx_t_9 = PyTuple_GET_ITEM(sequence, 3); 
-        __pyx_t_10 = PyTuple_GET_ITEM(sequence, 4); 
       } else {
         __pyx_t_2 = PyList_GET_ITEM(sequence, 0); 
         __pyx_t_4 = PyList_GET_ITEM(sequence, 1); 
         __pyx_t_8 = PyList_GET_ITEM(sequence, 2); 
         __pyx_t_9 = PyList_GET_ITEM(sequence, 3); 
-        __pyx_t_10 = PyList_GET_ITEM(sequence, 4); 
       }
       __Pyx_INCREF(__pyx_t_2);
       __Pyx_INCREF(__pyx_t_4);
       __Pyx_INCREF(__pyx_t_8);
       __Pyx_INCREF(__pyx_t_9);
-      __Pyx_INCREF(__pyx_t_10);
       #else
       {
         Py_ssize_t i;
-        PyObject** temps[5] = {&__pyx_t_2,&__pyx_t_4,&__pyx_t_8,&__pyx_t_9,&__pyx_t_10};
-        for (i=0; i < 5; i++) {
-          PyObject* item = PySequence_ITEM(sequence, i); if (unlikely(!item)) __PYX_ERR(0, 44, __pyx_L1_error)
+        PyObject** temps[4] = {&__pyx_t_2,&__pyx_t_4,&__pyx_t_8,&__pyx_t_9};
+        for (i=0; i < 4; i++) {
+          PyObject* item = PySequence_ITEM(sequence, i); if (unlikely(!item)) __PYX_ERR(0, 45, __pyx_L1_error)
           __Pyx_GOTREF(item);
           *(temps[i]) = item;
         }
@@ -2695,194 +2684,169 @@ static PyObject *__pyx_f_3src_8mc_utils_corr_from_occupancy(__Pyx_memviewslice _
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     } else {
       Py_ssize_t index = -1;
-      PyObject** temps[5] = {&__pyx_t_2,&__pyx_t_4,&__pyx_t_8,&__pyx_t_9,&__pyx_t_10};
-      __pyx_t_11 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 44, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_11);
+      PyObject** temps[4] = {&__pyx_t_2,&__pyx_t_4,&__pyx_t_8,&__pyx_t_9};
+      __pyx_t_10 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 45, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_12 = Py_TYPE(__pyx_t_11)->tp_iternext;
-      for (index=0; index < 5; index++) {
-        PyObject* item = __pyx_t_12(__pyx_t_11); if (unlikely(!item)) goto __pyx_L5_unpacking_failed;
+      __pyx_t_11 = Py_TYPE(__pyx_t_10)->tp_iternext;
+      for (index=0; index < 4; index++) {
+        PyObject* item = __pyx_t_11(__pyx_t_10); if (unlikely(!item)) goto __pyx_L5_unpacking_failed;
         __Pyx_GOTREF(item);
         *(temps[index]) = item;
       }
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_12(__pyx_t_11), 5) < 0) __PYX_ERR(0, 44, __pyx_L1_error)
-      __pyx_t_12 = NULL;
-      __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_11(__pyx_t_10), 4) < 0) __PYX_ERR(0, 45, __pyx_L1_error)
+      __pyx_t_11 = NULL;
+      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       goto __pyx_L6_unpacking_done;
       __pyx_L5_unpacking_failed:;
-      __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-      __pyx_t_12 = NULL;
+      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+      __pyx_t_11 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 44, __pyx_L1_error)
+      __PYX_ERR(0, 45, __pyx_L1_error)
       __pyx_L6_unpacking_done:;
     }
-    __pyx_t_13 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_13 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 44, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_12 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 45, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_14 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(__pyx_t_4, 0); if (unlikely(!__pyx_t_14.memview)) __PYX_ERR(0, 44, __pyx_L1_error)
+    __pyx_t_13 = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(__pyx_t_4, 0); if (unlikely(!__pyx_t_13.memview)) __PYX_ERR(0, 45, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_15 = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(__pyx_t_8, 0); if (unlikely(!__pyx_t_15.memview)) __PYX_ERR(0, 44, __pyx_L1_error)
+    __pyx_t_14 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_double__const__(__pyx_t_8, 0); if (unlikely(!__pyx_t_14.memview)) __PYX_ERR(0, 45, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_16 = __Pyx_PyObject_to_MemoryviewSlice_d_d_dc_double__const__(__pyx_t_9, 0); if (unlikely(!__pyx_t_16.memview)) __PYX_ERR(0, 44, __pyx_L1_error)
+    __pyx_t_15 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(__pyx_t_9, 0); if (unlikely(!__pyx_t_15.memview)) __PYX_ERR(0, 45, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    __pyx_t_17 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(__pyx_t_10, 0); if (unlikely(!__pyx_t_17.memview)) __PYX_ERR(0, 44, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __pyx_v_n = __pyx_t_13;
-    __PYX_XDEC_MEMVIEW(&__pyx_v_bit_combos, 1);
-    __pyx_v_bit_combos = __pyx_t_14;
+    __pyx_v_n = __pyx_t_12;
+    __PYX_XDEC_MEMVIEW(&__pyx_v_tensor_indices, 1);
+    __pyx_v_tensor_indices = __pyx_t_13;
+    __pyx_t_13.memview = NULL;
+    __pyx_t_13.data = NULL;
+    __PYX_XDEC_MEMVIEW(&__pyx_v_corr_tensors, 1);
+    __pyx_v_corr_tensors = __pyx_t_14;
     __pyx_t_14.memview = NULL;
     __pyx_t_14.data = NULL;
-    __PYX_XDEC_MEMVIEW(&__pyx_v_bit_inds, 1);
-    __pyx_v_bit_inds = __pyx_t_15;
+    __PYX_XDEC_MEMVIEW(&__pyx_v_indices, 1);
+    __pyx_v_indices = __pyx_t_15;
     __pyx_t_15.memview = NULL;
     __pyx_t_15.data = NULL;
-    __PYX_XDEC_MEMVIEW(&__pyx_v_bases, 1);
-    __pyx_v_bases = __pyx_t_16;
-    __pyx_t_16.memview = NULL;
-    __pyx_t_16.data = NULL;
-    __PYX_XDEC_MEMVIEW(&__pyx_v_inds, 1);
-    __pyx_v_inds = __pyx_t_17;
-    __pyx_t_17.memview = NULL;
-    __pyx_t_17.data = NULL;
-
-    /* "src/mc_utils.pyx":45
- * 
- *     for n, bit_combos, bit_inds, bases, inds in orbit_list:
- *         M = bit_inds.shape[0] # index of bit combos             # <<<<<<<<<<<<<<
- *         I = inds.shape[0] # cluster index
- *         K = inds.shape[1] # index within cluster
- */
-    __pyx_v_M = (__pyx_v_bit_inds.shape[0]);
 
     /* "src/mc_utils.pyx":46
- *     for n, bit_combos, bit_inds, bases, inds in orbit_list:
- *         M = bit_inds.shape[0] # index of bit combos
- *         I = inds.shape[0] # cluster index             # <<<<<<<<<<<<<<
- *         K = inds.shape[1] # index within cluster
- *         for m in range(M - 1):
+ * 
+ *     for n, tensor_indices, corr_tensors, indices in orbit_list:
+ *         M = corr_tensors.shape[0]  # index of bit combos             # <<<<<<<<<<<<<<
+ *         I = indices.shape[0] # cluster index
+ *         J = indices.shape[1] # index within cluster
  */
-    __pyx_v_I = (__pyx_v_inds.shape[0]);
+    __pyx_v_M = (__pyx_v_corr_tensors.shape[0]);
 
     /* "src/mc_utils.pyx":47
- *         M = bit_inds.shape[0] # index of bit combos
- *         I = inds.shape[0] # cluster index
- *         K = inds.shape[1] # index within cluster             # <<<<<<<<<<<<<<
- *         for m in range(M - 1):
- *             p = 0
+ *     for n, tensor_indices, corr_tensors, indices in orbit_list:
+ *         M = corr_tensors.shape[0]  # index of bit combos
+ *         I = indices.shape[0] # cluster index             # <<<<<<<<<<<<<<
+ *         J = indices.shape[1] # index within cluster
+ *         for m in range(M):
  */
-    __pyx_v_K = (__pyx_v_inds.shape[1]);
+    __pyx_v_I = (__pyx_v_indices.shape[0]);
 
     /* "src/mc_utils.pyx":48
- *         I = inds.shape[0] # cluster index
- *         K = inds.shape[1] # index within cluster
- *         for m in range(M - 1):             # <<<<<<<<<<<<<<
+ *         M = corr_tensors.shape[0]  # index of bit combos
+ *         I = indices.shape[0] # cluster index
+ *         J = indices.shape[1] # index within cluster             # <<<<<<<<<<<<<<
+ *         for m in range(M):
+ *             p = 0
+ */
+    __pyx_v_J = (__pyx_v_indices.shape[1]);
+
+    /* "src/mc_utils.pyx":49
+ *         I = indices.shape[0] # cluster index
+ *         J = indices.shape[1] # index within cluster
+ *         for m in range(M):             # <<<<<<<<<<<<<<
  *             p = 0
  *             for i in range(I):
  */
-    __pyx_t_18 = (__pyx_v_M - 1);
-    __pyx_t_19 = __pyx_t_18;
-    for (__pyx_t_13 = 0; __pyx_t_13 < __pyx_t_19; __pyx_t_13+=1) {
-      __pyx_v_m = __pyx_t_13;
+    __pyx_t_12 = __pyx_v_M;
+    __pyx_t_16 = __pyx_t_12;
+    for (__pyx_t_17 = 0; __pyx_t_17 < __pyx_t_16; __pyx_t_17+=1) {
+      __pyx_v_m = __pyx_t_17;
 
-      /* "src/mc_utils.pyx":49
- *         K = inds.shape[1] # index within cluster
- *         for m in range(M - 1):
+      /* "src/mc_utils.pyx":50
+ *         J = indices.shape[1] # index within cluster
+ *         for m in range(M):
  *             p = 0             # <<<<<<<<<<<<<<
  *             for i in range(I):
- *                 for j in range(bit_inds[m], bit_inds[m + 1]):
+ *                 index = 0
  */
       __pyx_v_p = 0.0;
 
-      /* "src/mc_utils.pyx":50
- *         for m in range(M - 1):
+      /* "src/mc_utils.pyx":51
+ *         for m in range(M):
  *             p = 0
  *             for i in range(I):             # <<<<<<<<<<<<<<
- *                 for j in range(bit_inds[m], bit_inds[m + 1]):
- *                     pi = 1
+ *                 index = 0
+ *                 for j in range(J):
  */
-      __pyx_t_20 = __pyx_v_I;
-      __pyx_t_21 = __pyx_t_20;
-      for (__pyx_t_22 = 0; __pyx_t_22 < __pyx_t_21; __pyx_t_22+=1) {
-        __pyx_v_i = __pyx_t_22;
+      __pyx_t_18 = __pyx_v_I;
+      __pyx_t_19 = __pyx_t_18;
+      for (__pyx_t_20 = 0; __pyx_t_20 < __pyx_t_19; __pyx_t_20+=1) {
+        __pyx_v_i = __pyx_t_20;
 
-        /* "src/mc_utils.pyx":51
+        /* "src/mc_utils.pyx":52
  *             p = 0
  *             for i in range(I):
- *                 for j in range(bit_inds[m], bit_inds[m + 1]):             # <<<<<<<<<<<<<<
- *                     pi = 1
- *                     for k in range(K):
+ *                 index = 0             # <<<<<<<<<<<<<<
+ *                 for j in range(J):
+ *                     index += tensor_indices[j] * occu[indices[i, j]]
  */
-        __pyx_t_6 = (__pyx_v_m + 1);
-        __pyx_t_23 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_inds.data) + __pyx_t_6)) )));
-        __pyx_t_6 = __pyx_v_m;
-        __pyx_t_24 = __pyx_t_23;
-        for (__pyx_t_25 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_inds.data) + __pyx_t_6)) ))); __pyx_t_25 < __pyx_t_24; __pyx_t_25+=1) {
-          __pyx_v_j = __pyx_t_25;
+        __pyx_v_index = 0;
 
-          /* "src/mc_utils.pyx":52
+        /* "src/mc_utils.pyx":53
  *             for i in range(I):
- *                 for j in range(bit_inds[m], bit_inds[m + 1]):
- *                     pi = 1             # <<<<<<<<<<<<<<
- *                     for k in range(K):
- *                         pi *= bases[k, bit_combos[j, k], occu[inds[i, k]]]
+ *                 index = 0
+ *                 for j in range(J):             # <<<<<<<<<<<<<<
+ *                     index += tensor_indices[j] * occu[indices[i, j]]
+ *                 p += corr_tensors[m, index]
  */
-          __pyx_v_pi = 1.0;
+        __pyx_t_21 = __pyx_v_J;
+        __pyx_t_22 = __pyx_t_21;
+        for (__pyx_t_23 = 0; __pyx_t_23 < __pyx_t_22; __pyx_t_23+=1) {
+          __pyx_v_j = __pyx_t_23;
 
-          /* "src/mc_utils.pyx":53
- *                 for j in range(bit_inds[m], bit_inds[m + 1]):
- *                     pi = 1
- *                     for k in range(K):             # <<<<<<<<<<<<<<
- *                         pi *= bases[k, bit_combos[j, k], occu[inds[i, k]]]
- *                     p += pi
+          /* "src/mc_utils.pyx":54
+ *                 index = 0
+ *                 for j in range(J):
+ *                     index += tensor_indices[j] * occu[indices[i, j]]             # <<<<<<<<<<<<<<
+ *                 p += corr_tensors[m, index]
+ *             o_view[n] = p / I
  */
-          __pyx_t_26 = __pyx_v_K;
-          __pyx_t_27 = __pyx_t_26;
-          for (__pyx_t_28 = 0; __pyx_t_28 < __pyx_t_27; __pyx_t_28+=1) {
-            __pyx_v_k = __pyx_t_28;
+          __pyx_t_6 = __pyx_v_j;
+          __pyx_t_24 = __pyx_v_i;
+          __pyx_t_25 = __pyx_v_j;
+          __pyx_t_26 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_indices.data + __pyx_t_24 * __pyx_v_indices.strides[0]) )) + __pyx_t_25)) )));
+          __pyx_v_index = (__pyx_v_index + ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_tensor_indices.data) + __pyx_t_6)) ))) * (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu.data) + __pyx_t_26)) )))));
+        }
 
-            /* "src/mc_utils.pyx":54
- *                     pi = 1
- *                     for k in range(K):
- *                         pi *= bases[k, bit_combos[j, k], occu[inds[i, k]]]             # <<<<<<<<<<<<<<
- *                     p += pi
- *             o_view[n] = p / (I * (bit_inds[m + 1] - bit_inds[m]))
- */
-            __pyx_t_29 = __pyx_v_j;
-            __pyx_t_30 = __pyx_v_k;
-            __pyx_t_31 = __pyx_v_i;
-            __pyx_t_32 = __pyx_v_k;
-            __pyx_t_33 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_inds.data + __pyx_t_31 * __pyx_v_inds.strides[0]) )) + __pyx_t_32)) )));
-            __pyx_t_34 = __pyx_v_k;
-            __pyx_t_35 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_bit_combos.data + __pyx_t_29 * __pyx_v_bit_combos.strides[0]) )) + __pyx_t_30)) )));
-            __pyx_t_36 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu.data) + __pyx_t_33)) )));
-            __pyx_v_pi = (__pyx_v_pi * (*((double const  *) ( /* dim=2 */ ((char *) (((double const  *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_bases.data + __pyx_t_34 * __pyx_v_bases.strides[0]) ) + __pyx_t_35 * __pyx_v_bases.strides[1]) )) + __pyx_t_36)) ))));
-          }
-
-          /* "src/mc_utils.pyx":55
- *                     for k in range(K):
- *                         pi *= bases[k, bit_combos[j, k], occu[inds[i, k]]]
- *                     p += pi             # <<<<<<<<<<<<<<
- *             o_view[n] = p / (I * (bit_inds[m + 1] - bit_inds[m]))
+        /* "src/mc_utils.pyx":55
+ *                 for j in range(J):
+ *                     index += tensor_indices[j] * occu[indices[i, j]]
+ *                 p += corr_tensors[m, index]             # <<<<<<<<<<<<<<
+ *             o_view[n] = p / I
  *             n += 1
  */
-          __pyx_v_p = (__pyx_v_p + __pyx_v_pi);
-        }
+        __pyx_t_25 = __pyx_v_m;
+        __pyx_t_24 = __pyx_v_index;
+        __pyx_v_p = (__pyx_v_p + (*((double const  *) ( /* dim=1 */ ((char *) (((double const  *) ( /* dim=0 */ (__pyx_v_corr_tensors.data + __pyx_t_25 * __pyx_v_corr_tensors.strides[0]) )) + __pyx_t_24)) ))));
       }
 
       /* "src/mc_utils.pyx":56
- *                         pi *= bases[k, bit_combos[j, k], occu[inds[i, k]]]
- *                     p += pi
- *             o_view[n] = p / (I * (bit_inds[m + 1] - bit_inds[m]))             # <<<<<<<<<<<<<<
+ *                     index += tensor_indices[j] * occu[indices[i, j]]
+ *                 p += corr_tensors[m, index]
+ *             o_view[n] = p / I             # <<<<<<<<<<<<<<
  *             n += 1
  *     return out
  */
-      __pyx_t_6 = (__pyx_v_m + 1);
-      __pyx_t_32 = __pyx_v_m;
-      __pyx_t_31 = __pyx_v_n;
-      *((double *) ( /* dim=0 */ (__pyx_v_o_view.data + __pyx_t_31 * __pyx_v_o_view.strides[0]) )) = (__pyx_v_p / ((double)(__pyx_v_I * ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_inds.data) + __pyx_t_6)) ))) - (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_inds.data) + __pyx_t_32)) )))))));
+      __pyx_t_24 = __pyx_v_n;
+      *((double *) ( /* dim=0 */ (__pyx_v_o_view.data + __pyx_t_24 * __pyx_v_o_view.strides[0]) )) = (__pyx_v_p / ((double)__pyx_v_I));
 
       /* "src/mc_utils.pyx":57
- *                     p += pi
- *             o_view[n] = p / (I * (bit_inds[m + 1] - bit_inds[m]))
+ *                 p += corr_tensors[m, index]
+ *             o_view[n] = p / I
  *             n += 1             # <<<<<<<<<<<<<<
  *     return out
  * 
@@ -2890,18 +2854,18 @@ static PyObject *__pyx_f_3src_8mc_utils_corr_from_occupancy(__Pyx_memviewslice _
       __pyx_v_n = (__pyx_v_n + 1);
     }
 
-    /* "src/mc_utils.pyx":44
+    /* "src/mc_utils.pyx":45
  *     o_view[0] = 1  # empty cluster
  * 
- *     for n, bit_combos, bit_inds, bases, inds in orbit_list:             # <<<<<<<<<<<<<<
- *         M = bit_inds.shape[0] # index of bit combos
- *         I = inds.shape[0] # cluster index
+ *     for n, tensor_indices, corr_tensors, indices in orbit_list:             # <<<<<<<<<<<<<<
+ *         M = corr_tensors.shape[0]  # index of bit combos
+ *         I = indices.shape[0] # cluster index
  */
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "src/mc_utils.pyx":58
- *             o_view[n] = p / (I * (bit_inds[m + 1] - bit_inds[m]))
+ *             o_view[n] = p / I
  *             n += 1
  *     return out             # <<<<<<<<<<<<<<
  * 
@@ -2916,7 +2880,7 @@ static PyObject *__pyx_f_3src_8mc_utils_corr_from_occupancy(__Pyx_memviewslice _
  * 
  * 
  * cpdef corr_from_occupancy(const long[::1] occu,             # <<<<<<<<<<<<<<
- *                           const int n_bit_orderings,
+ *                           const int num_corr_functions,
  *                           list orbit_list):
  */
 
@@ -2930,18 +2894,15 @@ static PyObject *__pyx_f_3src_8mc_utils_corr_from_occupancy(__Pyx_memviewslice _
   __Pyx_XDECREF(__pyx_t_8);
   __Pyx_XDECREF(__pyx_t_9);
   __Pyx_XDECREF(__pyx_t_10);
-  __Pyx_XDECREF(__pyx_t_11);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_13, 1);
   __PYX_XDEC_MEMVIEW(&__pyx_t_14, 1);
   __PYX_XDEC_MEMVIEW(&__pyx_t_15, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_16, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_17, 1);
   __Pyx_AddTraceback("src.mc_utils.corr_from_occupancy", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
-  __PYX_XDEC_MEMVIEW(&__pyx_v_inds, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_v_bit_combos, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_v_bit_inds, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_v_bases, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_indices, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_tensor_indices, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_corr_tensors, 1);
   __Pyx_XDECREF(__pyx_v_out);
   __PYX_XDEC_MEMVIEW(&__pyx_v_o_view, 1);
   __Pyx_XGIVEREF(__pyx_r);
@@ -2951,10 +2912,10 @@ static PyObject *__pyx_f_3src_8mc_utils_corr_from_occupancy(__Pyx_memviewslice _
 
 /* Python wrapper */
 static PyObject *__pyx_pw_3src_8mc_utils_1corr_from_occupancy(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3src_8mc_utils_corr_from_occupancy[] = "Computes the correlation vector for a given encoded occupancy string.\n\n    Args:\n        occu (ndarray):\n            encoded occupancy vector\n        n_bit_orderings (int):\n            total number of bit orderings in expansion.\n        orbit_list:\n            Information of all orbits that include the flip site.\n            (orbit id, bit_combos, bit_combo_indices site indices, bases array)\n\n    Returns: array\n        correlation vector difference\n    ";
+static char __pyx_doc_3src_8mc_utils_corr_from_occupancy[] = "Computes the correlation vector for a given encoded occupancy string.\n\n    Args:\n        occu (ndarray):\n            encoded occupancy vector\n        num_corr_functions (int):\n            total number of bit orderings in expansion.\n        orbit_list:\n            Information of all orbits.\n            (orbit id, flat tensor index array, flat correlation tensor,\n             site indices of clusters)\n\n    Returns: array\n        correlation vector for given occupancy\n    ";
 static PyObject *__pyx_pw_3src_8mc_utils_1corr_from_occupancy(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_occu = { 0, 0, { 0 }, { 0 }, { 0 } };
-  int __pyx_v_n_bit_orderings;
+  int __pyx_v_num_corr_functions;
   PyObject *__pyx_v_orbit_list = 0;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
@@ -2963,7 +2924,7 @@ static PyObject *__pyx_pw_3src_8mc_utils_1corr_from_occupancy(PyObject *__pyx_se
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("corr_from_occupancy (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_occu,&__pyx_n_s_n_bit_orderings,&__pyx_n_s_orbit_list,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_occu,&__pyx_n_s_num_corr_functions,&__pyx_n_s_orbit_list,0};
     PyObject* values[3] = {0,0,0};
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
@@ -2985,7 +2946,7 @@ static PyObject *__pyx_pw_3src_8mc_utils_1corr_from_occupancy(PyObject *__pyx_se
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
-        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_n_bit_orderings)) != 0)) kw_args--;
+        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_corr_functions)) != 0)) kw_args--;
         else {
           __Pyx_RaiseArgtupleInvalid("corr_from_occupancy", 1, 3, 3, 1); __PYX_ERR(0, 18, __pyx_L3_error)
         }
@@ -3007,7 +2968,7 @@ static PyObject *__pyx_pw_3src_8mc_utils_1corr_from_occupancy(PyObject *__pyx_se
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
     }
     __pyx_v_occu = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[0], 0); if (unlikely(!__pyx_v_occu.memview)) __PYX_ERR(0, 18, __pyx_L3_error)
-    __pyx_v_n_bit_orderings = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_n_bit_orderings == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 19, __pyx_L3_error)
+    __pyx_v_num_corr_functions = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_num_corr_functions == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 19, __pyx_L3_error)
     __pyx_v_orbit_list = ((PyObject*)values[2]);
   }
   goto __pyx_L4_argument_unpacking_done;
@@ -3019,7 +2980,7 @@ static PyObject *__pyx_pw_3src_8mc_utils_1corr_from_occupancy(PyObject *__pyx_se
   return NULL;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_orbit_list), (&PyList_Type), 1, "orbit_list", 1))) __PYX_ERR(0, 20, __pyx_L1_error)
-  __pyx_r = __pyx_pf_3src_8mc_utils_corr_from_occupancy(__pyx_self, __pyx_v_occu, __pyx_v_n_bit_orderings, __pyx_v_orbit_list);
+  __pyx_r = __pyx_pf_3src_8mc_utils_corr_from_occupancy(__pyx_self, __pyx_v_occu, __pyx_v_num_corr_functions, __pyx_v_orbit_list);
 
   /* function exit code */
   goto __pyx_L0;
@@ -3030,7 +2991,7 @@ static PyObject *__pyx_pw_3src_8mc_utils_1corr_from_occupancy(PyObject *__pyx_se
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_8mc_utils_corr_from_occupancy(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu, int __pyx_v_n_bit_orderings, PyObject *__pyx_v_orbit_list) {
+static PyObject *__pyx_pf_3src_8mc_utils_corr_from_occupancy(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu, int __pyx_v_num_corr_functions, PyObject *__pyx_v_orbit_list) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3039,7 +3000,7 @@ static PyObject *__pyx_pf_3src_8mc_utils_corr_from_occupancy(CYTHON_UNUSED PyObj
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("corr_from_occupancy", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_8mc_utils_corr_from_occupancy(__pyx_v_occu, __pyx_v_n_bit_orderings, __pyx_v_orbit_list, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 18, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_8mc_utils_corr_from_occupancy(__pyx_v_occu, __pyx_v_num_corr_functions, __pyx_v_orbit_list, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 18, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3060,29 +3021,27 @@ static PyObject *__pyx_pf_3src_8mc_utils_corr_from_occupancy(CYTHON_UNUSED PyObj
 /* "src/mc_utils.pyx":61
  * 
  * 
- * cpdef general_delta_corr_single_flip(const long[::1] occu_f,             # <<<<<<<<<<<<<<
- *                                      const long[::1] occu_i,
- *                                      const int n_bit_orderings,
+ * cpdef delta_corr_single_flip(const long[::1] occu_f,             # <<<<<<<<<<<<<<
+ *                              const long[::1] occu_i,
+ *                              const int num_corr_functions,
  */
 
-static PyObject *__pyx_pw_3src_8mc_utils_3general_delta_corr_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_f_3src_8mc_utils_general_delta_corr_single_flip(__Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, int const __pyx_v_n_bit_orderings, PyObject *__pyx_v_site_orbit_list, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3src_8mc_utils_3delta_corr_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_f_3src_8mc_utils_delta_corr_single_flip(__Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, int const __pyx_v_num_corr_functions, PyObject *__pyx_v_site_orbit_list, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_i;
   int __pyx_v_j;
-  int __pyx_v_k;
   int __pyx_v_n;
   int __pyx_v_m;
   int __pyx_v_I;
-  int __pyx_v_K;
+  int __pyx_v_J;
   int __pyx_v_M;
+  int __pyx_v_ind_i;
+  int __pyx_v_ind_f;
   double __pyx_v_p;
-  double __pyx_v_pi;
-  double __pyx_v_pf;
-  double __pyx_v_r;
-  __Pyx_memviewslice __pyx_v_inds = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_v_bit_combos = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_v_bit_inds = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_v_bases = { 0, 0, { 0 }, { 0 }, { 0 } };
+  double __pyx_v_ratio;
+  __Pyx_memviewslice __pyx_v_indices = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_tensor_indices = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_corr_tensors = { 0, 0, { 0 }, { 0 }, { 0 } };
   PyObject *__pyx_v_out = NULL;
   __Pyx_memviewslice __pyx_v_o_view = { 0, 0, { 0 }, { 0 }, { 0 } };
   PyObject *__pyx_r = NULL;
@@ -3097,52 +3056,42 @@ static PyObject *__pyx_f_3src_8mc_utils_general_delta_corr_single_flip(__Pyx_mem
   PyObject *__pyx_t_8 = NULL;
   PyObject *__pyx_t_9 = NULL;
   PyObject *__pyx_t_10 = NULL;
-  PyObject *__pyx_t_11 = NULL;
-  PyObject *(*__pyx_t_12)(PyObject *);
-  int __pyx_t_13;
-  double __pyx_t_14;
+  PyObject *(*__pyx_t_11)(PyObject *);
+  int __pyx_t_12;
+  double __pyx_t_13;
+  __Pyx_memviewslice __pyx_t_14 = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_t_15 = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_t_16 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_t_17 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_t_18 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  long __pyx_t_19;
-  long __pyx_t_20;
+  int __pyx_t_17;
+  int __pyx_t_18;
+  int __pyx_t_19;
+  int __pyx_t_20;
   int __pyx_t_21;
   int __pyx_t_22;
   int __pyx_t_23;
-  Py_ssize_t __pyx_t_24;
-  long __pyx_t_25;
-  long __pyx_t_26;
-  int __pyx_t_27;
-  int __pyx_t_28;
-  int __pyx_t_29;
-  int __pyx_t_30;
-  Py_ssize_t __pyx_t_31;
-  Py_ssize_t __pyx_t_32;
-  Py_ssize_t __pyx_t_33;
-  Py_ssize_t __pyx_t_34;
-  Py_ssize_t __pyx_t_35;
-  Py_ssize_t __pyx_t_36;
-  Py_ssize_t __pyx_t_37;
-  Py_ssize_t __pyx_t_38;
+  int __pyx_t_24;
+  Py_ssize_t __pyx_t_25;
+  Py_ssize_t __pyx_t_26;
+  Py_ssize_t __pyx_t_27;
+  Py_ssize_t __pyx_t_28;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("general_delta_corr_single_flip", 0);
+  __Pyx_RefNannySetupContext("delta_corr_single_flip", 0);
 
-  /* "src/mc_utils.pyx":88
- *     cdef const long[::1] bit_inds
- *     cdef const double[:, :, ::1] bases
- *     out = np.zeros(n_bit_orderings)             # <<<<<<<<<<<<<<
+  /* "src/mc_utils.pyx":89
+ *     cdef const long[::1] tensor_indices
+ *     cdef const double[:, ::1] corr_tensors
+ *     out = np.zeros(num_corr_functions)             # <<<<<<<<<<<<<<
  *     cdef double[::1] o_view = out
  * 
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 88, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 89, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 88, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 89, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_n_bit_orderings); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 88, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_num_corr_functions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 89, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -3157,51 +3106,51 @@ static PyObject *__pyx_f_3src_8mc_utils_general_delta_corr_single_flip(__Pyx_mem
   __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2);
   __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 88, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_out = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "src/mc_utils.pyx":89
- *     cdef const double[:, :, ::1] bases
- *     out = np.zeros(n_bit_orderings)
+  /* "src/mc_utils.pyx":90
+ *     cdef const double[:, ::1] corr_tensors
+ *     out = np.zeros(num_corr_functions)
  *     cdef double[::1] o_view = out             # <<<<<<<<<<<<<<
  * 
- *     for n, r, bit_combos, bit_inds, bases, inds in site_orbit_list:
+ *     for n, ratio, tensor_indices, corr_tensors, indices in site_orbit_list:
  */
-  __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_dc_double(__pyx_v_out, PyBUF_WRITABLE); if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 89, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_dc_double(__pyx_v_out, PyBUF_WRITABLE); if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 90, __pyx_L1_error)
   __pyx_v_o_view = __pyx_t_5;
   __pyx_t_5.memview = NULL;
   __pyx_t_5.data = NULL;
 
-  /* "src/mc_utils.pyx":91
+  /* "src/mc_utils.pyx":92
  *     cdef double[::1] o_view = out
  * 
- *     for n, r, bit_combos, bit_inds, bases, inds in site_orbit_list:             # <<<<<<<<<<<<<<
- *         M = bit_inds.shape[0] # index of bit combos
- *         I = inds.shape[0] # cluster index
+ *     for n, ratio, tensor_indices, corr_tensors, indices in site_orbit_list:             # <<<<<<<<<<<<<<
+ *         M = corr_tensors.shape[0] # index of bit combos
+ *         I = indices.shape[0] # cluster index
  */
   if (unlikely(__pyx_v_site_orbit_list == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-    __PYX_ERR(0, 91, __pyx_L1_error)
+    __PYX_ERR(0, 92, __pyx_L1_error)
   }
   __pyx_t_1 = __pyx_v_site_orbit_list; __Pyx_INCREF(__pyx_t_1); __pyx_t_6 = 0;
   for (;;) {
     if (__pyx_t_6 >= PyList_GET_SIZE(__pyx_t_1)) break;
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_6); __Pyx_INCREF(__pyx_t_3); __pyx_t_6++; if (unlikely(0 < 0)) __PYX_ERR(0, 91, __pyx_L1_error)
+    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_6); __Pyx_INCREF(__pyx_t_3); __pyx_t_6++; if (unlikely(0 < 0)) __PYX_ERR(0, 92, __pyx_L1_error)
     #else
-    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 91, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 92, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     #endif
     if ((likely(PyTuple_CheckExact(__pyx_t_3))) || (PyList_CheckExact(__pyx_t_3))) {
       PyObject* sequence = __pyx_t_3;
       Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
-      if (unlikely(size != 6)) {
-        if (size > 6) __Pyx_RaiseTooManyValuesError(6);
+      if (unlikely(size != 5)) {
+        if (size > 5) __Pyx_RaiseTooManyValuesError(5);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 91, __pyx_L1_error)
+        __PYX_ERR(0, 92, __pyx_L1_error)
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
       if (likely(PyTuple_CheckExact(sequence))) {
@@ -3210,27 +3159,24 @@ static PyObject *__pyx_f_3src_8mc_utils_general_delta_corr_single_flip(__Pyx_mem
         __pyx_t_7 = PyTuple_GET_ITEM(sequence, 2); 
         __pyx_t_8 = PyTuple_GET_ITEM(sequence, 3); 
         __pyx_t_9 = PyTuple_GET_ITEM(sequence, 4); 
-        __pyx_t_10 = PyTuple_GET_ITEM(sequence, 5); 
       } else {
         __pyx_t_2 = PyList_GET_ITEM(sequence, 0); 
         __pyx_t_4 = PyList_GET_ITEM(sequence, 1); 
         __pyx_t_7 = PyList_GET_ITEM(sequence, 2); 
         __pyx_t_8 = PyList_GET_ITEM(sequence, 3); 
         __pyx_t_9 = PyList_GET_ITEM(sequence, 4); 
-        __pyx_t_10 = PyList_GET_ITEM(sequence, 5); 
       }
       __Pyx_INCREF(__pyx_t_2);
       __Pyx_INCREF(__pyx_t_4);
       __Pyx_INCREF(__pyx_t_7);
       __Pyx_INCREF(__pyx_t_8);
       __Pyx_INCREF(__pyx_t_9);
-      __Pyx_INCREF(__pyx_t_10);
       #else
       {
         Py_ssize_t i;
-        PyObject** temps[6] = {&__pyx_t_2,&__pyx_t_4,&__pyx_t_7,&__pyx_t_8,&__pyx_t_9,&__pyx_t_10};
-        for (i=0; i < 6; i++) {
-          PyObject* item = PySequence_ITEM(sequence, i); if (unlikely(!item)) __PYX_ERR(0, 91, __pyx_L1_error)
+        PyObject** temps[5] = {&__pyx_t_2,&__pyx_t_4,&__pyx_t_7,&__pyx_t_8,&__pyx_t_9};
+        for (i=0; i < 5; i++) {
+          PyObject* item = PySequence_ITEM(sequence, i); if (unlikely(!item)) __PYX_ERR(0, 92, __pyx_L1_error)
           __Pyx_GOTREF(item);
           *(temps[i]) = item;
         }
@@ -3239,223 +3185,190 @@ static PyObject *__pyx_f_3src_8mc_utils_general_delta_corr_single_flip(__Pyx_mem
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     } else {
       Py_ssize_t index = -1;
-      PyObject** temps[6] = {&__pyx_t_2,&__pyx_t_4,&__pyx_t_7,&__pyx_t_8,&__pyx_t_9,&__pyx_t_10};
-      __pyx_t_11 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 91, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_11);
+      PyObject** temps[5] = {&__pyx_t_2,&__pyx_t_4,&__pyx_t_7,&__pyx_t_8,&__pyx_t_9};
+      __pyx_t_10 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 92, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_12 = Py_TYPE(__pyx_t_11)->tp_iternext;
-      for (index=0; index < 6; index++) {
-        PyObject* item = __pyx_t_12(__pyx_t_11); if (unlikely(!item)) goto __pyx_L5_unpacking_failed;
+      __pyx_t_11 = Py_TYPE(__pyx_t_10)->tp_iternext;
+      for (index=0; index < 5; index++) {
+        PyObject* item = __pyx_t_11(__pyx_t_10); if (unlikely(!item)) goto __pyx_L5_unpacking_failed;
         __Pyx_GOTREF(item);
         *(temps[index]) = item;
       }
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_12(__pyx_t_11), 6) < 0) __PYX_ERR(0, 91, __pyx_L1_error)
-      __pyx_t_12 = NULL;
-      __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_11(__pyx_t_10), 5) < 0) __PYX_ERR(0, 92, __pyx_L1_error)
+      __pyx_t_11 = NULL;
+      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       goto __pyx_L6_unpacking_done;
       __pyx_L5_unpacking_failed:;
-      __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-      __pyx_t_12 = NULL;
+      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+      __pyx_t_11 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 91, __pyx_L1_error)
+      __PYX_ERR(0, 92, __pyx_L1_error)
       __pyx_L6_unpacking_done:;
     }
-    __pyx_t_13 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_13 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 91, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_12 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 92, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_14 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_14 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 91, __pyx_L1_error)
+    __pyx_t_13 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_13 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 92, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_15 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(__pyx_t_7, 0); if (unlikely(!__pyx_t_15.memview)) __PYX_ERR(0, 91, __pyx_L1_error)
+    __pyx_t_14 = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(__pyx_t_7, 0); if (unlikely(!__pyx_t_14.memview)) __PYX_ERR(0, 92, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_16 = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(__pyx_t_8, 0); if (unlikely(!__pyx_t_16.memview)) __PYX_ERR(0, 91, __pyx_L1_error)
+    __pyx_t_15 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_double__const__(__pyx_t_8, 0); if (unlikely(!__pyx_t_15.memview)) __PYX_ERR(0, 92, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_17 = __Pyx_PyObject_to_MemoryviewSlice_d_d_dc_double__const__(__pyx_t_9, 0); if (unlikely(!__pyx_t_17.memview)) __PYX_ERR(0, 91, __pyx_L1_error)
+    __pyx_t_16 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(__pyx_t_9, 0); if (unlikely(!__pyx_t_16.memview)) __PYX_ERR(0, 92, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    __pyx_t_18 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(__pyx_t_10, 0); if (unlikely(!__pyx_t_18.memview)) __PYX_ERR(0, 91, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __pyx_v_n = __pyx_t_13;
-    __pyx_v_r = __pyx_t_14;
-    __PYX_XDEC_MEMVIEW(&__pyx_v_bit_combos, 1);
-    __pyx_v_bit_combos = __pyx_t_15;
+    __pyx_v_n = __pyx_t_12;
+    __pyx_v_ratio = __pyx_t_13;
+    __PYX_XDEC_MEMVIEW(&__pyx_v_tensor_indices, 1);
+    __pyx_v_tensor_indices = __pyx_t_14;
+    __pyx_t_14.memview = NULL;
+    __pyx_t_14.data = NULL;
+    __PYX_XDEC_MEMVIEW(&__pyx_v_corr_tensors, 1);
+    __pyx_v_corr_tensors = __pyx_t_15;
     __pyx_t_15.memview = NULL;
     __pyx_t_15.data = NULL;
-    __PYX_XDEC_MEMVIEW(&__pyx_v_bit_inds, 1);
-    __pyx_v_bit_inds = __pyx_t_16;
+    __PYX_XDEC_MEMVIEW(&__pyx_v_indices, 1);
+    __pyx_v_indices = __pyx_t_16;
     __pyx_t_16.memview = NULL;
     __pyx_t_16.data = NULL;
-    __PYX_XDEC_MEMVIEW(&__pyx_v_bases, 1);
-    __pyx_v_bases = __pyx_t_17;
-    __pyx_t_17.memview = NULL;
-    __pyx_t_17.data = NULL;
-    __PYX_XDEC_MEMVIEW(&__pyx_v_inds, 1);
-    __pyx_v_inds = __pyx_t_18;
-    __pyx_t_18.memview = NULL;
-    __pyx_t_18.data = NULL;
-
-    /* "src/mc_utils.pyx":92
- * 
- *     for n, r, bit_combos, bit_inds, bases, inds in site_orbit_list:
- *         M = bit_inds.shape[0] # index of bit combos             # <<<<<<<<<<<<<<
- *         I = inds.shape[0] # cluster index
- *         K = inds.shape[1] # index within cluster
- */
-    __pyx_v_M = (__pyx_v_bit_inds.shape[0]);
 
     /* "src/mc_utils.pyx":93
- *     for n, r, bit_combos, bit_inds, bases, inds in site_orbit_list:
- *         M = bit_inds.shape[0] # index of bit combos
- *         I = inds.shape[0] # cluster index             # <<<<<<<<<<<<<<
- *         K = inds.shape[1] # index within cluster
- *         for m in range(M - 1):
+ * 
+ *     for n, ratio, tensor_indices, corr_tensors, indices in site_orbit_list:
+ *         M = corr_tensors.shape[0] # index of bit combos             # <<<<<<<<<<<<<<
+ *         I = indices.shape[0] # cluster index
+ *         J = indices.shape[1] # index within cluster
  */
-    __pyx_v_I = (__pyx_v_inds.shape[0]);
+    __pyx_v_M = (__pyx_v_corr_tensors.shape[0]);
 
     /* "src/mc_utils.pyx":94
- *         M = bit_inds.shape[0] # index of bit combos
- *         I = inds.shape[0] # cluster index
- *         K = inds.shape[1] # index within cluster             # <<<<<<<<<<<<<<
- *         for m in range(M - 1):
- *             p = 0
+ *     for n, ratio, tensor_indices, corr_tensors, indices in site_orbit_list:
+ *         M = corr_tensors.shape[0] # index of bit combos
+ *         I = indices.shape[0] # cluster index             # <<<<<<<<<<<<<<
+ *         J = indices.shape[1] # index within cluster
+ *         for m in range(M):
  */
-    __pyx_v_K = (__pyx_v_inds.shape[1]);
+    __pyx_v_I = (__pyx_v_indices.shape[0]);
 
     /* "src/mc_utils.pyx":95
- *         I = inds.shape[0] # cluster index
- *         K = inds.shape[1] # index within cluster
- *         for m in range(M - 1):             # <<<<<<<<<<<<<<
+ *         M = corr_tensors.shape[0] # index of bit combos
+ *         I = indices.shape[0] # cluster index
+ *         J = indices.shape[1] # index within cluster             # <<<<<<<<<<<<<<
+ *         for m in range(M):
+ *             p = 0
+ */
+    __pyx_v_J = (__pyx_v_indices.shape[1]);
+
+    /* "src/mc_utils.pyx":96
+ *         I = indices.shape[0] # cluster index
+ *         J = indices.shape[1] # index within cluster
+ *         for m in range(M):             # <<<<<<<<<<<<<<
  *             p = 0
  *             for i in range(I):
  */
-    __pyx_t_19 = (__pyx_v_M - 1);
-    __pyx_t_20 = __pyx_t_19;
-    for (__pyx_t_13 = 0; __pyx_t_13 < __pyx_t_20; __pyx_t_13+=1) {
-      __pyx_v_m = __pyx_t_13;
+    __pyx_t_12 = __pyx_v_M;
+    __pyx_t_17 = __pyx_t_12;
+    for (__pyx_t_18 = 0; __pyx_t_18 < __pyx_t_17; __pyx_t_18+=1) {
+      __pyx_v_m = __pyx_t_18;
 
-      /* "src/mc_utils.pyx":96
- *         K = inds.shape[1] # index within cluster
- *         for m in range(M - 1):
+      /* "src/mc_utils.pyx":97
+ *         J = indices.shape[1] # index within cluster
+ *         for m in range(M):
  *             p = 0             # <<<<<<<<<<<<<<
  *             for i in range(I):
- *                 for j in range(bit_inds[m], bit_inds[m + 1]):
+ *                 ind_i, ind_f = 0, 0
  */
       __pyx_v_p = 0.0;
 
-      /* "src/mc_utils.pyx":97
- *         for m in range(M - 1):
+      /* "src/mc_utils.pyx":98
+ *         for m in range(M):
  *             p = 0
  *             for i in range(I):             # <<<<<<<<<<<<<<
- *                 for j in range(bit_inds[m], bit_inds[m + 1]):
- *                     pf = 1
+ *                 ind_i, ind_f = 0, 0
+ *                 for j in range(J):
  */
-      __pyx_t_21 = __pyx_v_I;
-      __pyx_t_22 = __pyx_t_21;
-      for (__pyx_t_23 = 0; __pyx_t_23 < __pyx_t_22; __pyx_t_23+=1) {
-        __pyx_v_i = __pyx_t_23;
+      __pyx_t_19 = __pyx_v_I;
+      __pyx_t_20 = __pyx_t_19;
+      for (__pyx_t_21 = 0; __pyx_t_21 < __pyx_t_20; __pyx_t_21+=1) {
+        __pyx_v_i = __pyx_t_21;
 
-        /* "src/mc_utils.pyx":98
+        /* "src/mc_utils.pyx":99
  *             p = 0
  *             for i in range(I):
- *                 for j in range(bit_inds[m], bit_inds[m + 1]):             # <<<<<<<<<<<<<<
- *                     pf = 1
- *                     pi = 1
+ *                 ind_i, ind_f = 0, 0             # <<<<<<<<<<<<<<
+ *                 for j in range(J):
+ *                     ind_i += tensor_indices[j] * occu_i[indices[i, j]]
  */
-        __pyx_t_24 = (__pyx_v_m + 1);
-        __pyx_t_25 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_inds.data) + __pyx_t_24)) )));
-        __pyx_t_24 = __pyx_v_m;
-        __pyx_t_26 = __pyx_t_25;
-        for (__pyx_t_27 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_inds.data) + __pyx_t_24)) ))); __pyx_t_27 < __pyx_t_26; __pyx_t_27+=1) {
-          __pyx_v_j = __pyx_t_27;
+        __pyx_t_22 = 0;
+        __pyx_t_23 = 0;
+        __pyx_v_ind_i = __pyx_t_22;
+        __pyx_v_ind_f = __pyx_t_23;
 
-          /* "src/mc_utils.pyx":99
+        /* "src/mc_utils.pyx":100
  *             for i in range(I):
- *                 for j in range(bit_inds[m], bit_inds[m + 1]):
- *                     pf = 1             # <<<<<<<<<<<<<<
- *                     pi = 1
- *                     for k in range(K):
+ *                 ind_i, ind_f = 0, 0
+ *                 for j in range(J):             # <<<<<<<<<<<<<<
+ *                     ind_i += tensor_indices[j] * occu_i[indices[i, j]]
+ *                     ind_f += tensor_indices[j] * occu_f[indices[i, j]]
  */
-          __pyx_v_pf = 1.0;
-
-          /* "src/mc_utils.pyx":100
- *                 for j in range(bit_inds[m], bit_inds[m + 1]):
- *                     pf = 1
- *                     pi = 1             # <<<<<<<<<<<<<<
- *                     for k in range(K):
- *                         pf *= bases[k, bit_combos[j, k], occu_f[inds[i, k]]]
- */
-          __pyx_v_pi = 1.0;
+        __pyx_t_23 = __pyx_v_J;
+        __pyx_t_22 = __pyx_t_23;
+        for (__pyx_t_24 = 0; __pyx_t_24 < __pyx_t_22; __pyx_t_24+=1) {
+          __pyx_v_j = __pyx_t_24;
 
           /* "src/mc_utils.pyx":101
- *                     pf = 1
- *                     pi = 1
- *                     for k in range(K):             # <<<<<<<<<<<<<<
- *                         pf *= bases[k, bit_combos[j, k], occu_f[inds[i, k]]]
- *                         pi *= bases[k, bit_combos[j, k], occu_i[inds[i, k]]]
+ *                 ind_i, ind_f = 0, 0
+ *                 for j in range(J):
+ *                     ind_i += tensor_indices[j] * occu_i[indices[i, j]]             # <<<<<<<<<<<<<<
+ *                     ind_f += tensor_indices[j] * occu_f[indices[i, j]]
+ *                 p += (corr_tensors[m, ind_f] - corr_tensors[m, ind_i])
  */
-          __pyx_t_28 = __pyx_v_K;
-          __pyx_t_29 = __pyx_t_28;
-          for (__pyx_t_30 = 0; __pyx_t_30 < __pyx_t_29; __pyx_t_30+=1) {
-            __pyx_v_k = __pyx_t_30;
+          __pyx_t_25 = __pyx_v_j;
+          __pyx_t_26 = __pyx_v_i;
+          __pyx_t_27 = __pyx_v_j;
+          __pyx_t_28 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_indices.data + __pyx_t_26 * __pyx_v_indices.strides[0]) )) + __pyx_t_27)) )));
+          __pyx_v_ind_i = (__pyx_v_ind_i + ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_tensor_indices.data) + __pyx_t_25)) ))) * (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_i.data) + __pyx_t_28)) )))));
 
-            /* "src/mc_utils.pyx":102
- *                     pi = 1
- *                     for k in range(K):
- *                         pf *= bases[k, bit_combos[j, k], occu_f[inds[i, k]]]             # <<<<<<<<<<<<<<
- *                         pi *= bases[k, bit_combos[j, k], occu_i[inds[i, k]]]
- *                     p += (pf - pi)
+          /* "src/mc_utils.pyx":102
+ *                 for j in range(J):
+ *                     ind_i += tensor_indices[j] * occu_i[indices[i, j]]
+ *                     ind_f += tensor_indices[j] * occu_f[indices[i, j]]             # <<<<<<<<<<<<<<
+ *                 p += (corr_tensors[m, ind_f] - corr_tensors[m, ind_i])
+ *             o_view[n] = p / ratio / I
  */
-            __pyx_t_31 = __pyx_v_j;
-            __pyx_t_32 = __pyx_v_k;
-            __pyx_t_33 = __pyx_v_i;
-            __pyx_t_34 = __pyx_v_k;
-            __pyx_t_35 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_inds.data + __pyx_t_33 * __pyx_v_inds.strides[0]) )) + __pyx_t_34)) )));
-            __pyx_t_36 = __pyx_v_k;
-            __pyx_t_37 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_bit_combos.data + __pyx_t_31 * __pyx_v_bit_combos.strides[0]) )) + __pyx_t_32)) )));
-            __pyx_t_38 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_f.data) + __pyx_t_35)) )));
-            __pyx_v_pf = (__pyx_v_pf * (*((double const  *) ( /* dim=2 */ ((char *) (((double const  *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_bases.data + __pyx_t_36 * __pyx_v_bases.strides[0]) ) + __pyx_t_37 * __pyx_v_bases.strides[1]) )) + __pyx_t_38)) ))));
+          __pyx_t_27 = __pyx_v_j;
+          __pyx_t_26 = __pyx_v_i;
+          __pyx_t_28 = __pyx_v_j;
+          __pyx_t_25 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_indices.data + __pyx_t_26 * __pyx_v_indices.strides[0]) )) + __pyx_t_28)) )));
+          __pyx_v_ind_f = (__pyx_v_ind_f + ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_tensor_indices.data) + __pyx_t_27)) ))) * (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_f.data) + __pyx_t_25)) )))));
+        }
 
-            /* "src/mc_utils.pyx":103
- *                     for k in range(K):
- *                         pf *= bases[k, bit_combos[j, k], occu_f[inds[i, k]]]
- *                         pi *= bases[k, bit_combos[j, k], occu_i[inds[i, k]]]             # <<<<<<<<<<<<<<
- *                     p += (pf - pi)
- *             o_view[n] = p / r / (I * (bit_inds[m + 1] - bit_inds[m]))
- */
-            __pyx_t_34 = __pyx_v_j;
-            __pyx_t_33 = __pyx_v_k;
-            __pyx_t_35 = __pyx_v_i;
-            __pyx_t_32 = __pyx_v_k;
-            __pyx_t_31 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_inds.data + __pyx_t_35 * __pyx_v_inds.strides[0]) )) + __pyx_t_32)) )));
-            __pyx_t_38 = __pyx_v_k;
-            __pyx_t_37 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_bit_combos.data + __pyx_t_34 * __pyx_v_bit_combos.strides[0]) )) + __pyx_t_33)) )));
-            __pyx_t_36 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_i.data) + __pyx_t_31)) )));
-            __pyx_v_pi = (__pyx_v_pi * (*((double const  *) ( /* dim=2 */ ((char *) (((double const  *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_bases.data + __pyx_t_38 * __pyx_v_bases.strides[0]) ) + __pyx_t_37 * __pyx_v_bases.strides[1]) )) + __pyx_t_36)) ))));
-          }
-
-          /* "src/mc_utils.pyx":104
- *                         pf *= bases[k, bit_combos[j, k], occu_f[inds[i, k]]]
- *                         pi *= bases[k, bit_combos[j, k], occu_i[inds[i, k]]]
- *                     p += (pf - pi)             # <<<<<<<<<<<<<<
- *             o_view[n] = p / r / (I * (bit_inds[m + 1] - bit_inds[m]))
+        /* "src/mc_utils.pyx":103
+ *                     ind_i += tensor_indices[j] * occu_i[indices[i, j]]
+ *                     ind_f += tensor_indices[j] * occu_f[indices[i, j]]
+ *                 p += (corr_tensors[m, ind_f] - corr_tensors[m, ind_i])             # <<<<<<<<<<<<<<
+ *             o_view[n] = p / ratio / I
  *             n += 1
  */
-          __pyx_v_p = (__pyx_v_p + (__pyx_v_pf - __pyx_v_pi));
-        }
+        __pyx_t_28 = __pyx_v_m;
+        __pyx_t_26 = __pyx_v_ind_f;
+        __pyx_t_25 = __pyx_v_m;
+        __pyx_t_27 = __pyx_v_ind_i;
+        __pyx_v_p = (__pyx_v_p + ((*((double const  *) ( /* dim=1 */ ((char *) (((double const  *) ( /* dim=0 */ (__pyx_v_corr_tensors.data + __pyx_t_28 * __pyx_v_corr_tensors.strides[0]) )) + __pyx_t_26)) ))) - (*((double const  *) ( /* dim=1 */ ((char *) (((double const  *) ( /* dim=0 */ (__pyx_v_corr_tensors.data + __pyx_t_25 * __pyx_v_corr_tensors.strides[0]) )) + __pyx_t_27)) )))));
       }
 
-      /* "src/mc_utils.pyx":105
- *                         pi *= bases[k, bit_combos[j, k], occu_i[inds[i, k]]]
- *                     p += (pf - pi)
- *             o_view[n] = p / r / (I * (bit_inds[m + 1] - bit_inds[m]))             # <<<<<<<<<<<<<<
+      /* "src/mc_utils.pyx":104
+ *                     ind_f += tensor_indices[j] * occu_f[indices[i, j]]
+ *                 p += (corr_tensors[m, ind_f] - corr_tensors[m, ind_i])
+ *             o_view[n] = p / ratio / I             # <<<<<<<<<<<<<<
  *             n += 1
  *     return out
  */
-      __pyx_t_24 = (__pyx_v_m + 1);
-      __pyx_t_32 = __pyx_v_m;
-      __pyx_t_35 = __pyx_v_n;
-      *((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_o_view.data) + __pyx_t_35)) )) = ((__pyx_v_p / __pyx_v_r) / ((double)(__pyx_v_I * ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_inds.data) + __pyx_t_24)) ))) - (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_inds.data) + __pyx_t_32)) )))))));
+      __pyx_t_27 = __pyx_v_n;
+      *((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_o_view.data) + __pyx_t_27)) )) = ((__pyx_v_p / __pyx_v_ratio) / ((double)__pyx_v_I));
 
-      /* "src/mc_utils.pyx":106
- *                     p += (pf - pi)
- *             o_view[n] = p / r / (I * (bit_inds[m + 1] - bit_inds[m]))
+      /* "src/mc_utils.pyx":105
+ *                 p += (corr_tensors[m, ind_f] - corr_tensors[m, ind_i])
+ *             o_view[n] = p / ratio / I
  *             n += 1             # <<<<<<<<<<<<<<
  *     return out
  * 
@@ -3463,18 +3376,18 @@ static PyObject *__pyx_f_3src_8mc_utils_general_delta_corr_single_flip(__Pyx_mem
       __pyx_v_n = (__pyx_v_n + 1);
     }
 
-    /* "src/mc_utils.pyx":91
+    /* "src/mc_utils.pyx":92
  *     cdef double[::1] o_view = out
  * 
- *     for n, r, bit_combos, bit_inds, bases, inds in site_orbit_list:             # <<<<<<<<<<<<<<
- *         M = bit_inds.shape[0] # index of bit combos
- *         I = inds.shape[0] # cluster index
+ *     for n, ratio, tensor_indices, corr_tensors, indices in site_orbit_list:             # <<<<<<<<<<<<<<
+ *         M = corr_tensors.shape[0] # index of bit combos
+ *         I = indices.shape[0] # cluster index
  */
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "src/mc_utils.pyx":107
- *             o_view[n] = p / r / (I * (bit_inds[m + 1] - bit_inds[m]))
+  /* "src/mc_utils.pyx":106
+ *             o_view[n] = p / ratio / I
  *             n += 1
  *     return out             # <<<<<<<<<<<<<<
  * 
@@ -3488,9 +3401,9 @@ static PyObject *__pyx_f_3src_8mc_utils_general_delta_corr_single_flip(__Pyx_mem
   /* "src/mc_utils.pyx":61
  * 
  * 
- * cpdef general_delta_corr_single_flip(const long[::1] occu_f,             # <<<<<<<<<<<<<<
- *                                      const long[::1] occu_i,
- *                                      const int n_bit_orderings,
+ * cpdef delta_corr_single_flip(const long[::1] occu_f,             # <<<<<<<<<<<<<<
+ *                              const long[::1] occu_i,
+ *                              const int num_corr_functions,
  */
 
   /* function exit code */
@@ -3504,18 +3417,15 @@ static PyObject *__pyx_f_3src_8mc_utils_general_delta_corr_single_flip(__Pyx_mem
   __Pyx_XDECREF(__pyx_t_8);
   __Pyx_XDECREF(__pyx_t_9);
   __Pyx_XDECREF(__pyx_t_10);
-  __Pyx_XDECREF(__pyx_t_11);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_14, 1);
   __PYX_XDEC_MEMVIEW(&__pyx_t_15, 1);
   __PYX_XDEC_MEMVIEW(&__pyx_t_16, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_17, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_18, 1);
-  __Pyx_AddTraceback("src.mc_utils.general_delta_corr_single_flip", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.mc_utils.delta_corr_single_flip", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
-  __PYX_XDEC_MEMVIEW(&__pyx_v_inds, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_v_bit_combos, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_v_bit_inds, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_v_bases, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_indices, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_tensor_indices, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_corr_tensors, 1);
   __Pyx_XDECREF(__pyx_v_out);
   __PYX_XDEC_MEMVIEW(&__pyx_v_o_view, 1);
   __Pyx_XGIVEREF(__pyx_r);
@@ -3524,21 +3434,21 @@ static PyObject *__pyx_f_3src_8mc_utils_general_delta_corr_single_flip(__Pyx_mem
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_8mc_utils_3general_delta_corr_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3src_8mc_utils_2general_delta_corr_single_flip[] = "Computes the correlation difference between two occupancy vectors.\n\n    Args:\n        occu_f (ndarray):\n            encoded occupancy vector with flip\n        occu_i (ndarray):\n            encoded occupancy vector without flip\n        n_bit_orderings (int):\n            total number of bit orderings in expansion.\n        site_orbit_list:\n            Information of all orbits that include the flip site.\n            List of tuples each with\n            (orbit id, bit_combos, bit_combo_indices site indices, bases array)\n\n\n    Returns:\n        ndarray: correlation vector difference\n    ";
-static PyObject *__pyx_pw_3src_8mc_utils_3general_delta_corr_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_3src_8mc_utils_3delta_corr_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_3src_8mc_utils_2delta_corr_single_flip[] = "Computes the correlation difference between two occupancy vectors.\n\n    Args:\n        occu_f (ndarray):\n            encoded occupancy vector with flip\n        occu_i (ndarray):\n            encoded occupancy vector without flip\n        num_corr_functions (int):\n            total number of bit orderings in expansion.\n        site_orbit_list:\n            Information of all orbits that include the flip site.\n            List of tuples each with\n            (orbit id, cluster ratio, flat tensor index array,\n             flat correlation tensor, site indices of clusters)\n\n\n    Returns:\n        ndarray: correlation vector difference\n    ";
+static PyObject *__pyx_pw_3src_8mc_utils_3delta_corr_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_occu_f = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_occu_i = { 0, 0, { 0 }, { 0 }, { 0 } };
-  int __pyx_v_n_bit_orderings;
+  int __pyx_v_num_corr_functions;
   PyObject *__pyx_v_site_orbit_list = 0;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("general_delta_corr_single_flip (wrapper)", 0);
+  __Pyx_RefNannySetupContext("delta_corr_single_flip (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_occu_f,&__pyx_n_s_occu_i,&__pyx_n_s_n_bit_orderings,&__pyx_n_s_site_orbit_list,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_occu_f,&__pyx_n_s_occu_i,&__pyx_n_s_num_corr_functions,&__pyx_n_s_site_orbit_list,0};
     PyObject* values[4] = {0,0,0,0};
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
@@ -3564,23 +3474,23 @@ static PyObject *__pyx_pw_3src_8mc_utils_3general_delta_corr_single_flip(PyObjec
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_occu_i)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("general_delta_corr_single_flip", 1, 4, 4, 1); __PYX_ERR(0, 61, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("delta_corr_single_flip", 1, 4, 4, 1); __PYX_ERR(0, 61, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
-        if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_n_bit_orderings)) != 0)) kw_args--;
+        if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_corr_functions)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("general_delta_corr_single_flip", 1, 4, 4, 2); __PYX_ERR(0, 61, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("delta_corr_single_flip", 1, 4, 4, 2); __PYX_ERR(0, 61, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_site_orbit_list)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("general_delta_corr_single_flip", 1, 4, 4, 3); __PYX_ERR(0, 61, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("delta_corr_single_flip", 1, 4, 4, 3); __PYX_ERR(0, 61, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "general_delta_corr_single_flip") < 0)) __PYX_ERR(0, 61, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "delta_corr_single_flip") < 0)) __PYX_ERR(0, 61, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -3592,19 +3502,19 @@ static PyObject *__pyx_pw_3src_8mc_utils_3general_delta_corr_single_flip(PyObjec
     }
     __pyx_v_occu_f = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[0], 0); if (unlikely(!__pyx_v_occu_f.memview)) __PYX_ERR(0, 61, __pyx_L3_error)
     __pyx_v_occu_i = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[1], 0); if (unlikely(!__pyx_v_occu_i.memview)) __PYX_ERR(0, 62, __pyx_L3_error)
-    __pyx_v_n_bit_orderings = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_n_bit_orderings == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 63, __pyx_L3_error)
+    __pyx_v_num_corr_functions = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_num_corr_functions == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 63, __pyx_L3_error)
     __pyx_v_site_orbit_list = ((PyObject*)values[3]);
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("general_delta_corr_single_flip", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 61, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("delta_corr_single_flip", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 61, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("src.mc_utils.general_delta_corr_single_flip", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.mc_utils.delta_corr_single_flip", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_site_orbit_list), (&PyList_Type), 1, "site_orbit_list", 1))) __PYX_ERR(0, 64, __pyx_L1_error)
-  __pyx_r = __pyx_pf_3src_8mc_utils_2general_delta_corr_single_flip(__pyx_self, __pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_n_bit_orderings, __pyx_v_site_orbit_list);
+  __pyx_r = __pyx_pf_3src_8mc_utils_2delta_corr_single_flip(__pyx_self, __pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_num_corr_functions, __pyx_v_site_orbit_list);
 
   /* function exit code */
   goto __pyx_L0;
@@ -3615,16 +3525,16 @@ static PyObject *__pyx_pw_3src_8mc_utils_3general_delta_corr_single_flip(PyObjec
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_8mc_utils_2general_delta_corr_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, int __pyx_v_n_bit_orderings, PyObject *__pyx_v_site_orbit_list) {
+static PyObject *__pyx_pf_3src_8mc_utils_2delta_corr_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, int __pyx_v_num_corr_functions, PyObject *__pyx_v_site_orbit_list) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("general_delta_corr_single_flip", 0);
+  __Pyx_RefNannySetupContext("delta_corr_single_flip", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_8mc_utils_general_delta_corr_single_flip(__pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_n_bit_orderings, __pyx_v_site_orbit_list, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 61, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_8mc_utils_delta_corr_single_flip(__pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_num_corr_functions, __pyx_v_site_orbit_list, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 61, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3633,7 +3543,7 @@ static PyObject *__pyx_pf_3src_8mc_utils_2general_delta_corr_single_flip(CYTHON_
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.mc_utils.general_delta_corr_single_flip", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.mc_utils.delta_corr_single_flip", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_occu_f, 1);
@@ -3643,16 +3553,16 @@ static PyObject *__pyx_pf_3src_8mc_utils_2general_delta_corr_single_flip(CYTHON_
   return __pyx_r;
 }
 
-/* "src/mc_utils.pyx":110
+/* "src/mc_utils.pyx":109
  * 
  * 
  * cpdef indicator_delta_corr_single_flip(const long[::1] occu_f,             # <<<<<<<<<<<<<<
  *                                        const long[::1] occu_i,
- *                                        const int n_bit_orderings,
+ *                                        const int num_corr_functions,
  */
 
 static PyObject *__pyx_pw_3src_8mc_utils_5indicator_delta_corr_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, int const __pyx_v_n_bit_orderings, PyObject *__pyx_v_site_orbit_list, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, int const __pyx_v_num_corr_functions, PyObject *__pyx_v_site_orbit_list, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_i;
   int __pyx_v_j;
   int __pyx_v_k;
@@ -3663,8 +3573,8 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
   int __pyx_v_M;
   int __pyx_v_ok;
   __Pyx_memviewslice __pyx_v_bit_combos = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_v_inds = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_v_bit_inds = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_indices = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_bit_indices = { 0, 0, { 0 }, { 0 }, { 0 } };
   PyObject *__pyx_v_out = NULL;
   __Pyx_memviewslice __pyx_v_o_view = { 0, 0, { 0 }, { 0 }, { 0 } };
   double __pyx_v_r;
@@ -3713,9 +3623,9 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
   __Pyx_RefNannySetupContext("indicator_delta_corr_single_flip", 0);
 
   /* "src/mc_utils.pyx":135
- *     cdef const long[:, ::1] bit_combos, inds
- *     cdef const long[::1] bit_inds
- *     out = np.zeros(n_bit_orderings)             # <<<<<<<<<<<<<<
+ *     cdef const long[:, ::1] bit_combos, indices
+ *     cdef const long[::1] bit_indices
+ *     out = np.zeros(num_corr_functions)             # <<<<<<<<<<<<<<
  *     cdef double[::1] o_view = out
  *     cdef double r, o
  */
@@ -3724,7 +3634,7 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
   __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 135, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_n_bit_orderings); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 135, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_num_corr_functions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 135, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -3746,8 +3656,8 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
   __pyx_t_1 = 0;
 
   /* "src/mc_utils.pyx":136
- *     cdef const long[::1] bit_inds
- *     out = np.zeros(n_bit_orderings)
+ *     cdef const long[::1] bit_indices
+ *     out = np.zeros(num_corr_functions)
  *     cdef double[::1] o_view = out             # <<<<<<<<<<<<<<
  *     cdef double r, o
  * 
@@ -3760,9 +3670,9 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
   /* "src/mc_utils.pyx":139
  *     cdef double r, o
  * 
- *     for n, r, bit_combos, bit_inds, _, inds in site_orbit_list:             # <<<<<<<<<<<<<<
- *         M = bit_inds.shape[0] # index of bit combos
- *         I = inds.shape[0] # cluster index
+ *     for n, r, bit_combos, bit_indices, _, indices in site_orbit_list:             # <<<<<<<<<<<<<<
+ *         M = bit_indices.shape[0] # index of bit combos
+ *         I = indices.shape[0] # cluster index
  */
   if (unlikely(__pyx_v_site_orbit_list == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
@@ -3858,47 +3768,47 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
     __pyx_v_bit_combos = __pyx_t_15;
     __pyx_t_15.memview = NULL;
     __pyx_t_15.data = NULL;
-    __PYX_XDEC_MEMVIEW(&__pyx_v_bit_inds, 1);
-    __pyx_v_bit_inds = __pyx_t_16;
+    __PYX_XDEC_MEMVIEW(&__pyx_v_bit_indices, 1);
+    __pyx_v_bit_indices = __pyx_t_16;
     __pyx_t_16.memview = NULL;
     __pyx_t_16.data = NULL;
     __Pyx_XDECREF_SET(__pyx_v__, __pyx_t_9);
     __pyx_t_9 = 0;
-    __PYX_XDEC_MEMVIEW(&__pyx_v_inds, 1);
-    __pyx_v_inds = __pyx_t_17;
+    __PYX_XDEC_MEMVIEW(&__pyx_v_indices, 1);
+    __pyx_v_indices = __pyx_t_17;
     __pyx_t_17.memview = NULL;
     __pyx_t_17.data = NULL;
 
     /* "src/mc_utils.pyx":140
  * 
- *     for n, r, bit_combos, bit_inds, _, inds in site_orbit_list:
- *         M = bit_inds.shape[0] # index of bit combos             # <<<<<<<<<<<<<<
- *         I = inds.shape[0] # cluster index
- *         K = inds.shape[1] # index within cluster
+ *     for n, r, bit_combos, bit_indices, _, indices in site_orbit_list:
+ *         M = bit_indices.shape[0] # index of bit combos             # <<<<<<<<<<<<<<
+ *         I = indices.shape[0] # cluster index
+ *         K = indices.shape[1] # index within cluster
  */
-    __pyx_v_M = (__pyx_v_bit_inds.shape[0]);
+    __pyx_v_M = (__pyx_v_bit_indices.shape[0]);
 
     /* "src/mc_utils.pyx":141
- *     for n, r, bit_combos, bit_inds, _, inds in site_orbit_list:
- *         M = bit_inds.shape[0] # index of bit combos
- *         I = inds.shape[0] # cluster index             # <<<<<<<<<<<<<<
- *         K = inds.shape[1] # index within cluster
+ *     for n, r, bit_combos, bit_indices, _, indices in site_orbit_list:
+ *         M = bit_indices.shape[0] # index of bit combos
+ *         I = indices.shape[0] # cluster index             # <<<<<<<<<<<<<<
+ *         K = indices.shape[1] # index within cluster
  *         for m in range(M - 1):
  */
-    __pyx_v_I = (__pyx_v_inds.shape[0]);
+    __pyx_v_I = (__pyx_v_indices.shape[0]);
 
     /* "src/mc_utils.pyx":142
- *         M = bit_inds.shape[0] # index of bit combos
- *         I = inds.shape[0] # cluster index
- *         K = inds.shape[1] # index within cluster             # <<<<<<<<<<<<<<
+ *         M = bit_indices.shape[0] # index of bit combos
+ *         I = indices.shape[0] # cluster index
+ *         K = indices.shape[1] # index within cluster             # <<<<<<<<<<<<<<
  *         for m in range(M - 1):
  *             o = 0
  */
-    __pyx_v_K = (__pyx_v_inds.shape[1]);
+    __pyx_v_K = (__pyx_v_indices.shape[1]);
 
     /* "src/mc_utils.pyx":143
- *         I = inds.shape[0] # cluster index
- *         K = inds.shape[1] # index within cluster
+ *         I = indices.shape[0] # cluster index
+ *         K = indices.shape[1] # index within cluster
  *         for m in range(M - 1):             # <<<<<<<<<<<<<<
  *             o = 0
  *             for i in range(I):
@@ -3909,11 +3819,11 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
       __pyx_v_m = __pyx_t_13;
 
       /* "src/mc_utils.pyx":144
- *         K = inds.shape[1] # index within cluster
+ *         K = indices.shape[1] # index within cluster
  *         for m in range(M - 1):
  *             o = 0             # <<<<<<<<<<<<<<
  *             for i in range(I):
- *                 for j in range(bit_inds[m], bit_inds[m + 1]):
+ *                 for j in range(bit_indices[m], bit_indices[m + 1]):
  */
       __pyx_v_o = 0.0;
 
@@ -3921,7 +3831,7 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
  *         for m in range(M - 1):
  *             o = 0
  *             for i in range(I):             # <<<<<<<<<<<<<<
- *                 for j in range(bit_inds[m], bit_inds[m + 1]):
+ *                 for j in range(bit_indices[m], bit_indices[m + 1]):
  *                     ok = True
  */
       __pyx_t_20 = __pyx_v_I;
@@ -3932,31 +3842,31 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
         /* "src/mc_utils.pyx":146
  *             o = 0
  *             for i in range(I):
- *                 for j in range(bit_inds[m], bit_inds[m + 1]):             # <<<<<<<<<<<<<<
+ *                 for j in range(bit_indices[m], bit_indices[m + 1]):             # <<<<<<<<<<<<<<
  *                     ok = True
  *                     for k in range(K):
  */
         __pyx_t_23 = (__pyx_v_m + 1);
-        __pyx_t_24 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_inds.data) + __pyx_t_23)) )));
+        __pyx_t_24 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_indices.data) + __pyx_t_23)) )));
         __pyx_t_23 = __pyx_v_m;
         __pyx_t_25 = __pyx_t_24;
-        for (__pyx_t_26 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_inds.data) + __pyx_t_23)) ))); __pyx_t_26 < __pyx_t_25; __pyx_t_26+=1) {
+        for (__pyx_t_26 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_indices.data) + __pyx_t_23)) ))); __pyx_t_26 < __pyx_t_25; __pyx_t_26+=1) {
           __pyx_v_j = __pyx_t_26;
 
           /* "src/mc_utils.pyx":147
  *             for i in range(I):
- *                 for j in range(bit_inds[m], bit_inds[m + 1]):
+ *                 for j in range(bit_indices[m], bit_indices[m + 1]):
  *                     ok = True             # <<<<<<<<<<<<<<
  *                     for k in range(K):
- *                         if occu_f[inds[i, k]] != bit_combos[j, k]:
+ *                         if occu_f[indices[i, k]] != bit_combos[j, k]:
  */
           __pyx_v_ok = 1;
 
           /* "src/mc_utils.pyx":148
- *                 for j in range(bit_inds[m], bit_inds[m + 1]):
+ *                 for j in range(bit_indices[m], bit_indices[m + 1]):
  *                     ok = True
  *                     for k in range(K):             # <<<<<<<<<<<<<<
- *                         if occu_f[inds[i, k]] != bit_combos[j, k]:
+ *                         if occu_f[indices[i, k]] != bit_combos[j, k]:
  *                             ok = False
  */
           __pyx_t_27 = __pyx_v_K;
@@ -3967,13 +3877,13 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
             /* "src/mc_utils.pyx":149
  *                     ok = True
  *                     for k in range(K):
- *                         if occu_f[inds[i, k]] != bit_combos[j, k]:             # <<<<<<<<<<<<<<
+ *                         if occu_f[indices[i, k]] != bit_combos[j, k]:             # <<<<<<<<<<<<<<
  *                             ok = False
  *                             break
  */
             __pyx_t_30 = __pyx_v_i;
             __pyx_t_31 = __pyx_v_k;
-            __pyx_t_32 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_inds.data + __pyx_t_30 * __pyx_v_inds.strides[0]) )) + __pyx_t_31)) )));
+            __pyx_t_32 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_indices.data + __pyx_t_30 * __pyx_v_indices.strides[0]) )) + __pyx_t_31)) )));
             __pyx_t_33 = __pyx_v_j;
             __pyx_t_34 = __pyx_v_k;
             __pyx_t_35 = (((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_f.data) + __pyx_t_32)) ))) != (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_bit_combos.data + __pyx_t_33 * __pyx_v_bit_combos.strides[0]) )) + __pyx_t_34)) )))) != 0);
@@ -3981,7 +3891,7 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
 
               /* "src/mc_utils.pyx":150
  *                     for k in range(K):
- *                         if occu_f[inds[i, k]] != bit_combos[j, k]:
+ *                         if occu_f[indices[i, k]] != bit_combos[j, k]:
  *                             ok = False             # <<<<<<<<<<<<<<
  *                             break
  *                     if ok:
@@ -3989,7 +3899,7 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
               __pyx_v_ok = 0;
 
               /* "src/mc_utils.pyx":151
- *                         if occu_f[inds[i, k]] != bit_combos[j, k]:
+ *                         if occu_f[indices[i, k]] != bit_combos[j, k]:
  *                             ok = False
  *                             break             # <<<<<<<<<<<<<<
  *                     if ok:
@@ -4000,7 +3910,7 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
               /* "src/mc_utils.pyx":149
  *                     ok = True
  *                     for k in range(K):
- *                         if occu_f[inds[i, k]] != bit_combos[j, k]:             # <<<<<<<<<<<<<<
+ *                         if occu_f[indices[i, k]] != bit_combos[j, k]:             # <<<<<<<<<<<<<<
  *                             ok = False
  *                             break
  */
@@ -4041,7 +3951,7 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
  * 
  *                     ok = True             # <<<<<<<<<<<<<<
  *                     for k in range(K):
- *                         if occu_i[inds[i, k]] != bit_combos[j, k]:
+ *                         if occu_i[indices[i, k]] != bit_combos[j, k]:
  */
           __pyx_v_ok = 1;
 
@@ -4049,7 +3959,7 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
  * 
  *                     ok = True
  *                     for k in range(K):             # <<<<<<<<<<<<<<
- *                         if occu_i[inds[i, k]] != bit_combos[j, k]:
+ *                         if occu_i[indices[i, k]] != bit_combos[j, k]:
  *                             ok = False
  */
           __pyx_t_27 = __pyx_v_K;
@@ -4060,13 +3970,13 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
             /* "src/mc_utils.pyx":157
  *                     ok = True
  *                     for k in range(K):
- *                         if occu_i[inds[i, k]] != bit_combos[j, k]:             # <<<<<<<<<<<<<<
+ *                         if occu_i[indices[i, k]] != bit_combos[j, k]:             # <<<<<<<<<<<<<<
  *                             ok = False
  *                             break
  */
             __pyx_t_34 = __pyx_v_i;
             __pyx_t_33 = __pyx_v_k;
-            __pyx_t_31 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_inds.data + __pyx_t_34 * __pyx_v_inds.strides[0]) )) + __pyx_t_33)) )));
+            __pyx_t_31 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_indices.data + __pyx_t_34 * __pyx_v_indices.strides[0]) )) + __pyx_t_33)) )));
             __pyx_t_30 = __pyx_v_j;
             __pyx_t_32 = __pyx_v_k;
             __pyx_t_35 = (((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_i.data) + __pyx_t_31)) ))) != (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_bit_combos.data + __pyx_t_30 * __pyx_v_bit_combos.strides[0]) )) + __pyx_t_32)) )))) != 0);
@@ -4074,7 +3984,7 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
 
               /* "src/mc_utils.pyx":158
  *                     for k in range(K):
- *                         if occu_i[inds[i, k]] != bit_combos[j, k]:
+ *                         if occu_i[indices[i, k]] != bit_combos[j, k]:
  *                             ok = False             # <<<<<<<<<<<<<<
  *                             break
  *                     if ok:
@@ -4082,7 +3992,7 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
               __pyx_v_ok = 0;
 
               /* "src/mc_utils.pyx":159
- *                         if occu_i[inds[i, k]] != bit_combos[j, k]:
+ *                         if occu_i[indices[i, k]] != bit_combos[j, k]:
  *                             ok = False
  *                             break             # <<<<<<<<<<<<<<
  *                     if ok:
@@ -4093,7 +4003,7 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
               /* "src/mc_utils.pyx":157
  *                     ok = True
  *                     for k in range(K):
- *                         if occu_i[inds[i, k]] != bit_combos[j, k]:             # <<<<<<<<<<<<<<
+ *                         if occu_i[indices[i, k]] != bit_combos[j, k]:             # <<<<<<<<<<<<<<
  *                             ok = False
  *                             break
  */
@@ -4116,7 +4026,7 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
  *                     if ok:
  *                         o -= 1             # <<<<<<<<<<<<<<
  * 
- *             o_view[n] = o / r / (I * (bit_inds[m + 1] - bit_inds[m]))
+ *             o_view[n] = o / r / (I * (bit_indices[m + 1] - bit_indices[m]))
  */
             __pyx_v_o = (__pyx_v_o - 1.0);
 
@@ -4134,18 +4044,18 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
       /* "src/mc_utils.pyx":163
  *                         o -= 1
  * 
- *             o_view[n] = o / r / (I * (bit_inds[m + 1] - bit_inds[m]))             # <<<<<<<<<<<<<<
+ *             o_view[n] = o / r / (I * (bit_indices[m + 1] - bit_indices[m]))             # <<<<<<<<<<<<<<
  *             n += 1
  *     return out
  */
       __pyx_t_23 = (__pyx_v_m + 1);
       __pyx_t_32 = __pyx_v_m;
       __pyx_t_30 = __pyx_v_n;
-      *((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_o_view.data) + __pyx_t_30)) )) = ((__pyx_v_o / __pyx_v_r) / ((double)(__pyx_v_I * ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_inds.data) + __pyx_t_23)) ))) - (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_inds.data) + __pyx_t_32)) )))))));
+      *((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_o_view.data) + __pyx_t_30)) )) = ((__pyx_v_o / __pyx_v_r) / ((double)(__pyx_v_I * ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_indices.data) + __pyx_t_23)) ))) - (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_indices.data) + __pyx_t_32)) )))))));
 
       /* "src/mc_utils.pyx":164
  * 
- *             o_view[n] = o / r / (I * (bit_inds[m + 1] - bit_inds[m]))
+ *             o_view[n] = o / r / (I * (bit_indices[m + 1] - bit_indices[m]))
  *             n += 1             # <<<<<<<<<<<<<<
  *     return out
  * 
@@ -4156,15 +4066,15 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
     /* "src/mc_utils.pyx":139
  *     cdef double r, o
  * 
- *     for n, r, bit_combos, bit_inds, _, inds in site_orbit_list:             # <<<<<<<<<<<<<<
- *         M = bit_inds.shape[0] # index of bit combos
- *         I = inds.shape[0] # cluster index
+ *     for n, r, bit_combos, bit_indices, _, indices in site_orbit_list:             # <<<<<<<<<<<<<<
+ *         M = bit_indices.shape[0] # index of bit combos
+ *         I = indices.shape[0] # cluster index
  */
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "src/mc_utils.pyx":165
- *             o_view[n] = o / r / (I * (bit_inds[m + 1] - bit_inds[m]))
+ *             o_view[n] = o / r / (I * (bit_indices[m + 1] - bit_indices[m]))
  *             n += 1
  *     return out             # <<<<<<<<<<<<<<
  * 
@@ -4175,12 +4085,12 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
   __pyx_r = __pyx_v_out;
   goto __pyx_L0;
 
-  /* "src/mc_utils.pyx":110
+  /* "src/mc_utils.pyx":109
  * 
  * 
  * cpdef indicator_delta_corr_single_flip(const long[::1] occu_f,             # <<<<<<<<<<<<<<
  *                                        const long[::1] occu_i,
- *                                        const int n_bit_orderings,
+ *                                        const int num_corr_functions,
  */
 
   /* function exit code */
@@ -4202,8 +4112,8 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
   __pyx_r = 0;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_bit_combos, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_v_inds, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_v_bit_inds, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_indices, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_bit_indices, 1);
   __Pyx_XDECREF(__pyx_v_out);
   __PYX_XDEC_MEMVIEW(&__pyx_v_o_view, 1);
   __Pyx_XDECREF(__pyx_v__);
@@ -4214,11 +4124,11 @@ static PyObject *__pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__Pyx_m
 
 /* Python wrapper */
 static PyObject *__pyx_pw_3src_8mc_utils_5indicator_delta_corr_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3src_8mc_utils_4indicator_delta_corr_single_flip[] = "Local change in indicator basis correlation vector from single flip.\n\n    Args:\n        occu_f (ndarray):\n            encoded occupancy vector with flip\n        occu_i (ndarray):\n            encoded occupancy vector without flip\n        n_bit_orderings (int):\n            total number of bit orderings in expansion.\n        site_orbit_list:\n            Information of all orbits that include the flip site.\n            List of tuples each with\n            (orbit id, bit_combos, bit_combo_indices site indices, bases array)\n\n    Returns:\n        ndarray: correlation vector difference\n    ";
+static char __pyx_doc_3src_8mc_utils_4indicator_delta_corr_single_flip[] = "Local change in indicator basis correlation vector from single flip.\n\n    Args:\n        occu_f (ndarray):\n            encoded occupancy vector with flip\n        occu_i (ndarray):\n            encoded occupancy vector without flip\n        num_corr_functions (int):\n            total number of bit orderings in expansion.\n        site_orbit_list:\n            Information of all orbits that include the flip site.\n            List of tuples each with\n            (orbit id, cluster ratio, bit_combos,\n             bit_combo_indices site indices, bases array)\n\n    Returns:\n        ndarray: correlation vector difference\n    ";
 static PyObject *__pyx_pw_3src_8mc_utils_5indicator_delta_corr_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_occu_f = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_occu_i = { 0, 0, { 0 }, { 0 }, { 0 } };
-  int __pyx_v_n_bit_orderings;
+  int __pyx_v_num_corr_functions;
   PyObject *__pyx_v_site_orbit_list = 0;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
@@ -4227,7 +4137,7 @@ static PyObject *__pyx_pw_3src_8mc_utils_5indicator_delta_corr_single_flip(PyObj
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("indicator_delta_corr_single_flip (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_occu_f,&__pyx_n_s_occu_i,&__pyx_n_s_n_bit_orderings,&__pyx_n_s_site_orbit_list,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_occu_f,&__pyx_n_s_occu_i,&__pyx_n_s_num_corr_functions,&__pyx_n_s_site_orbit_list,0};
     PyObject* values[4] = {0,0,0,0};
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
@@ -4253,23 +4163,23 @@ static PyObject *__pyx_pw_3src_8mc_utils_5indicator_delta_corr_single_flip(PyObj
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_occu_i)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("indicator_delta_corr_single_flip", 1, 4, 4, 1); __PYX_ERR(0, 110, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("indicator_delta_corr_single_flip", 1, 4, 4, 1); __PYX_ERR(0, 109, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
-        if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_n_bit_orderings)) != 0)) kw_args--;
+        if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_corr_functions)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("indicator_delta_corr_single_flip", 1, 4, 4, 2); __PYX_ERR(0, 110, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("indicator_delta_corr_single_flip", 1, 4, 4, 2); __PYX_ERR(0, 109, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_site_orbit_list)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("indicator_delta_corr_single_flip", 1, 4, 4, 3); __PYX_ERR(0, 110, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("indicator_delta_corr_single_flip", 1, 4, 4, 3); __PYX_ERR(0, 109, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "indicator_delta_corr_single_flip") < 0)) __PYX_ERR(0, 110, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "indicator_delta_corr_single_flip") < 0)) __PYX_ERR(0, 109, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -4279,21 +4189,21 @@ static PyObject *__pyx_pw_3src_8mc_utils_5indicator_delta_corr_single_flip(PyObj
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
       values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
     }
-    __pyx_v_occu_f = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[0], 0); if (unlikely(!__pyx_v_occu_f.memview)) __PYX_ERR(0, 110, __pyx_L3_error)
-    __pyx_v_occu_i = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[1], 0); if (unlikely(!__pyx_v_occu_i.memview)) __PYX_ERR(0, 111, __pyx_L3_error)
-    __pyx_v_n_bit_orderings = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_n_bit_orderings == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 112, __pyx_L3_error)
+    __pyx_v_occu_f = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[0], 0); if (unlikely(!__pyx_v_occu_f.memview)) __PYX_ERR(0, 109, __pyx_L3_error)
+    __pyx_v_occu_i = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[1], 0); if (unlikely(!__pyx_v_occu_i.memview)) __PYX_ERR(0, 110, __pyx_L3_error)
+    __pyx_v_num_corr_functions = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_num_corr_functions == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 111, __pyx_L3_error)
     __pyx_v_site_orbit_list = ((PyObject*)values[3]);
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("indicator_delta_corr_single_flip", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 110, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("indicator_delta_corr_single_flip", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 109, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("src.mc_utils.indicator_delta_corr_single_flip", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_site_orbit_list), (&PyList_Type), 1, "site_orbit_list", 1))) __PYX_ERR(0, 113, __pyx_L1_error)
-  __pyx_r = __pyx_pf_3src_8mc_utils_4indicator_delta_corr_single_flip(__pyx_self, __pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_n_bit_orderings, __pyx_v_site_orbit_list);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_site_orbit_list), (&PyList_Type), 1, "site_orbit_list", 1))) __PYX_ERR(0, 112, __pyx_L1_error)
+  __pyx_r = __pyx_pf_3src_8mc_utils_4indicator_delta_corr_single_flip(__pyx_self, __pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_num_corr_functions, __pyx_v_site_orbit_list);
 
   /* function exit code */
   goto __pyx_L0;
@@ -4304,7 +4214,7 @@ static PyObject *__pyx_pw_3src_8mc_utils_5indicator_delta_corr_single_flip(PyObj
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_8mc_utils_4indicator_delta_corr_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, int __pyx_v_n_bit_orderings, PyObject *__pyx_v_site_orbit_list) {
+static PyObject *__pyx_pf_3src_8mc_utils_4indicator_delta_corr_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, int __pyx_v_num_corr_functions, PyObject *__pyx_v_site_orbit_list) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -4313,7 +4223,7 @@ static PyObject *__pyx_pf_3src_8mc_utils_4indicator_delta_corr_single_flip(CYTHO
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("indicator_delta_corr_single_flip", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_n_bit_orderings, __pyx_v_site_orbit_list, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 110, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_8mc_utils_indicator_delta_corr_single_flip(__pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_num_corr_functions, __pyx_v_site_orbit_list, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 109, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4341,7 +4251,7 @@ static PyObject *__pyx_pf_3src_8mc_utils_4indicator_delta_corr_single_flip(CYTHO
  */
 
 static PyObject *__pyx_pw_3src_8mc_utils_7delta_ewald_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_f_3src_8mc_utils_delta_ewald_single_flip(__Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_ewald_matrix, __Pyx_memviewslice __pyx_v_ewald_inds, int const __pyx_v_site_ind, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_f_3src_8mc_utils_delta_ewald_single_flip(__Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_ewald_matrix, __Pyx_memviewslice __pyx_v_ewald_indices, int const __pyx_v_site_ind, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_i;
   int __pyx_v_j;
   int __pyx_v_k;
@@ -4377,32 +4287,32 @@ static PyObject *__pyx_f_3src_8mc_utils_delta_ewald_single_flip(__Pyx_memviewsli
   /* "src/mc_utils.pyx":197
  * 
  *     # values of -1 are vacancies and hence don't have ewald indices
- *     add = ewald_inds[site_ind, occu_f[site_ind]]             # <<<<<<<<<<<<<<
- *     sub = ewald_inds[site_ind, occu_i[site_ind]]
+ *     add = ewald_indices[site_ind, occu_f[site_ind]]             # <<<<<<<<<<<<<<
+ *     sub = ewald_indices[site_ind, occu_i[site_ind]]
  * 
  */
   __pyx_t_1 = __pyx_v_site_ind;
   __pyx_t_2 = __pyx_v_site_ind;
   __pyx_t_3 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_f.data) + __pyx_t_1)) )));
-  __pyx_v_add = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_ewald_inds.data + __pyx_t_2 * __pyx_v_ewald_inds.strides[0]) )) + __pyx_t_3)) )));
+  __pyx_v_add = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_ewald_indices.data + __pyx_t_2 * __pyx_v_ewald_indices.strides[0]) )) + __pyx_t_3)) )));
 
   /* "src/mc_utils.pyx":198
  *     # values of -1 are vacancies and hence don't have ewald indices
- *     add = ewald_inds[site_ind, occu_f[site_ind]]
- *     sub = ewald_inds[site_ind, occu_i[site_ind]]             # <<<<<<<<<<<<<<
+ *     add = ewald_indices[site_ind, occu_f[site_ind]]
+ *     sub = ewald_indices[site_ind, occu_i[site_ind]]             # <<<<<<<<<<<<<<
  * 
  *     for k in range(occu_f.shape[0]):
  */
   __pyx_t_1 = __pyx_v_site_ind;
   __pyx_t_3 = __pyx_v_site_ind;
   __pyx_t_2 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_i.data) + __pyx_t_1)) )));
-  __pyx_v_sub = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_ewald_inds.data + __pyx_t_3 * __pyx_v_ewald_inds.strides[0]) )) + __pyx_t_2)) )));
+  __pyx_v_sub = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_ewald_indices.data + __pyx_t_3 * __pyx_v_ewald_indices.strides[0]) )) + __pyx_t_2)) )));
 
   /* "src/mc_utils.pyx":200
- *     sub = ewald_inds[site_ind, occu_i[site_ind]]
+ *     sub = ewald_indices[site_ind, occu_i[site_ind]]
  * 
  *     for k in range(occu_f.shape[0]):             # <<<<<<<<<<<<<<
- *         i = ewald_inds[k, occu_f[k]]
+ *         i = ewald_indices[k, occu_f[k]]
  *         out_k = 0
  */
   __pyx_t_4 = (__pyx_v_occu_f.shape[0]);
@@ -4413,18 +4323,18 @@ static PyObject *__pyx_f_3src_8mc_utils_delta_ewald_single_flip(__Pyx_memviewsli
     /* "src/mc_utils.pyx":201
  * 
  *     for k in range(occu_f.shape[0]):
- *         i = ewald_inds[k, occu_f[k]]             # <<<<<<<<<<<<<<
+ *         i = ewald_indices[k, occu_f[k]]             # <<<<<<<<<<<<<<
  *         out_k = 0
  *         if i != -1 and add != -1:
  */
     __pyx_t_1 = __pyx_v_k;
     __pyx_t_2 = __pyx_v_k;
     __pyx_t_3 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_f.data) + __pyx_t_1)) )));
-    __pyx_v_i = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_ewald_inds.data + __pyx_t_2 * __pyx_v_ewald_inds.strides[0]) )) + __pyx_t_3)) )));
+    __pyx_v_i = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_ewald_indices.data + __pyx_t_2 * __pyx_v_ewald_indices.strides[0]) )) + __pyx_t_3)) )));
 
     /* "src/mc_utils.pyx":202
  *     for k in range(occu_f.shape[0]):
- *         i = ewald_inds[k, occu_f[k]]
+ *         i = ewald_indices[k, occu_f[k]]
  *         out_k = 0             # <<<<<<<<<<<<<<
  *         if i != -1 and add != -1:
  *             if i != add:
@@ -4432,7 +4342,7 @@ static PyObject *__pyx_f_3src_8mc_utils_delta_ewald_single_flip(__Pyx_memviewsli
     __pyx_v_out_k = 0.0;
 
     /* "src/mc_utils.pyx":203
- *         i = ewald_inds[k, occu_f[k]]
+ *         i = ewald_indices[k, occu_f[k]]
  *         out_k = 0
  *         if i != -1 and add != -1:             # <<<<<<<<<<<<<<
  *             if i != add:
@@ -4485,7 +4395,7 @@ static PyObject *__pyx_f_3src_8mc_utils_delta_ewald_single_flip(__Pyx_memviewsli
  *             else:
  *                 out_k = out_k + ewald_matrix[i, add]             # <<<<<<<<<<<<<<
  * 
- *         j = ewald_inds[k, occu_i[k]]
+ *         j = ewald_indices[k, occu_i[k]]
  */
       /*else*/ {
         __pyx_t_3 = __pyx_v_i;
@@ -4495,7 +4405,7 @@ static PyObject *__pyx_f_3src_8mc_utils_delta_ewald_single_flip(__Pyx_memviewsli
       __pyx_L8:;
 
       /* "src/mc_utils.pyx":203
- *         i = ewald_inds[k, occu_f[k]]
+ *         i = ewald_indices[k, occu_f[k]]
  *         out_k = 0
  *         if i != -1 and add != -1:             # <<<<<<<<<<<<<<
  *             if i != add:
@@ -4506,18 +4416,18 @@ static PyObject *__pyx_f_3src_8mc_utils_delta_ewald_single_flip(__Pyx_memviewsli
     /* "src/mc_utils.pyx":209
  *                 out_k = out_k + ewald_matrix[i, add]
  * 
- *         j = ewald_inds[k, occu_i[k]]             # <<<<<<<<<<<<<<
+ *         j = ewald_indices[k, occu_i[k]]             # <<<<<<<<<<<<<<
  *         if j != -1 and sub != -1:
  *             if j != sub:
  */
     __pyx_t_1 = __pyx_v_k;
     __pyx_t_3 = __pyx_v_k;
     __pyx_t_2 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_i.data) + __pyx_t_1)) )));
-    __pyx_v_j = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_ewald_inds.data + __pyx_t_3 * __pyx_v_ewald_inds.strides[0]) )) + __pyx_t_2)) )));
+    __pyx_v_j = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_ewald_indices.data + __pyx_t_3 * __pyx_v_ewald_indices.strides[0]) )) + __pyx_t_2)) )));
 
     /* "src/mc_utils.pyx":210
  * 
- *         j = ewald_inds[k, occu_i[k]]
+ *         j = ewald_indices[k, occu_i[k]]
  *         if j != -1 and sub != -1:             # <<<<<<<<<<<<<<
  *             if j != sub:
  *                 out_k = out_k - 2 * ewald_matrix[j, sub]
@@ -4534,7 +4444,7 @@ static PyObject *__pyx_f_3src_8mc_utils_delta_ewald_single_flip(__Pyx_memviewsli
     if (__pyx_t_7) {
 
       /* "src/mc_utils.pyx":211
- *         j = ewald_inds[k, occu_i[k]]
+ *         j = ewald_indices[k, occu_i[k]]
  *         if j != -1 and sub != -1:
  *             if j != sub:             # <<<<<<<<<<<<<<
  *                 out_k = out_k - 2 * ewald_matrix[j, sub]
@@ -4555,7 +4465,7 @@ static PyObject *__pyx_f_3src_8mc_utils_delta_ewald_single_flip(__Pyx_memviewsli
         __pyx_v_out_k = (__pyx_v_out_k - (2.0 * (*((double const  *) ( /* dim=1 */ ((char *) (((double const  *) ( /* dim=0 */ (__pyx_v_ewald_matrix.data + __pyx_t_1 * __pyx_v_ewald_matrix.strides[0]) )) + __pyx_t_2)) )))));
 
         /* "src/mc_utils.pyx":211
- *         j = ewald_inds[k, occu_i[k]]
+ *         j = ewald_indices[k, occu_i[k]]
  *         if j != -1 and sub != -1:
  *             if j != sub:             # <<<<<<<<<<<<<<
  *                 out_k = out_k - 2 * ewald_matrix[j, sub]
@@ -4580,7 +4490,7 @@ static PyObject *__pyx_f_3src_8mc_utils_delta_ewald_single_flip(__Pyx_memviewsli
 
       /* "src/mc_utils.pyx":210
  * 
- *         j = ewald_inds[k, occu_i[k]]
+ *         j = ewald_indices[k, occu_i[k]]
  *         if j != -1 and sub != -1:             # <<<<<<<<<<<<<<
  *             if j != sub:
  *                 out_k = out_k - 2 * ewald_matrix[j, sub]
@@ -4592,6 +4502,7 @@ static PyObject *__pyx_f_3src_8mc_utils_delta_ewald_single_flip(__Pyx_memviewsli
  *                 out_k = out_k - ewald_matrix[j, sub]
  *         out += out_k             # <<<<<<<<<<<<<<
  *     return out
+ * 
  */
     __pyx_v_out = (__pyx_v_out + __pyx_v_out_k);
   }
@@ -4600,6 +4511,8 @@ static PyObject *__pyx_f_3src_8mc_utils_delta_ewald_single_flip(__Pyx_memviewsli
  *                 out_k = out_k - ewald_matrix[j, sub]
  *         out += out_k
  *     return out             # <<<<<<<<<<<<<<
+ * 
+ * 
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_9 = PyFloat_FromDouble(__pyx_v_out); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 216, __pyx_L1_error)
@@ -4629,12 +4542,12 @@ static PyObject *__pyx_f_3src_8mc_utils_delta_ewald_single_flip(__Pyx_memviewsli
 
 /* Python wrapper */
 static PyObject *__pyx_pw_3src_8mc_utils_7delta_ewald_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3src_8mc_utils_6delta_ewald_single_flip[] = "Compute the change in electrostatic interaction energy from a flip.\n\n    Args:\n        occu_f (ndarray):\n            encoded occupancy vector with flip\n        occu_i (ndarray):\n            encoded occupancy vector without flip\n        ewald_matrix (ndarray):\n            Ewald matrix for electrostatic interactions\n        ewald_inds (ndarray):\n            2D array of indices corresponding to a specific site occupation\n            in the ewald matrix\n        site_ind (int):\n            site index for site being flipped\n\n    Returns:\n        float: electrostatic interaction energy difference\n    ";
+static char __pyx_doc_3src_8mc_utils_6delta_ewald_single_flip[] = "Compute the change in electrostatic interaction energy from a flip.\n\n    Args:\n        occu_f (ndarray):\n            encoded occupancy vector with flip\n        occu_i (ndarray):\n            encoded occupancy vector without flip\n        ewald_matrix (ndarray):\n            Ewald matrix for electrostatic interactions\n        ewald_indices (ndarray):\n            2D array of indices corresponding to a specific site occupation\n            in the ewald matrix\n        site_ind (int):\n            site index for site being flipped\n\n    Returns:\n        float: electrostatic interaction energy difference\n    ";
 static PyObject *__pyx_pw_3src_8mc_utils_7delta_ewald_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_occu_f = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_occu_i = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_ewald_matrix = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_v_ewald_inds = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_ewald_indices = { 0, 0, { 0 }, { 0 }, { 0 } };
   int __pyx_v_site_ind;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
@@ -4643,7 +4556,7 @@ static PyObject *__pyx_pw_3src_8mc_utils_7delta_ewald_single_flip(PyObject *__py
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("delta_ewald_single_flip (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_occu_f,&__pyx_n_s_occu_i,&__pyx_n_s_ewald_matrix,&__pyx_n_s_ewald_inds,&__pyx_n_s_site_ind,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_occu_f,&__pyx_n_s_occu_i,&__pyx_n_s_ewald_matrix,&__pyx_n_s_ewald_indices,&__pyx_n_s_site_ind,0};
     PyObject* values[5] = {0,0,0,0,0};
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
@@ -4681,7 +4594,7 @@ static PyObject *__pyx_pw_3src_8mc_utils_7delta_ewald_single_flip(PyObject *__py
         }
         CYTHON_FALLTHROUGH;
         case  3:
-        if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_ewald_inds)) != 0)) kw_args--;
+        if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_ewald_indices)) != 0)) kw_args--;
         else {
           __Pyx_RaiseArgtupleInvalid("delta_ewald_single_flip", 1, 5, 5, 3); __PYX_ERR(0, 168, __pyx_L3_error)
         }
@@ -4707,7 +4620,7 @@ static PyObject *__pyx_pw_3src_8mc_utils_7delta_ewald_single_flip(PyObject *__py
     __pyx_v_occu_f = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[0], 0); if (unlikely(!__pyx_v_occu_f.memview)) __PYX_ERR(0, 168, __pyx_L3_error)
     __pyx_v_occu_i = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[1], 0); if (unlikely(!__pyx_v_occu_i.memview)) __PYX_ERR(0, 169, __pyx_L3_error)
     __pyx_v_ewald_matrix = __Pyx_PyObject_to_MemoryviewSlice_d_dc_double__const__(values[2], 0); if (unlikely(!__pyx_v_ewald_matrix.memview)) __PYX_ERR(0, 170, __pyx_L3_error)
-    __pyx_v_ewald_inds = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(values[3], 0); if (unlikely(!__pyx_v_ewald_inds.memview)) __PYX_ERR(0, 171, __pyx_L3_error)
+    __pyx_v_ewald_indices = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(values[3], 0); if (unlikely(!__pyx_v_ewald_indices.memview)) __PYX_ERR(0, 171, __pyx_L3_error)
     __pyx_v_site_ind = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_site_ind == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 172, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
@@ -4718,14 +4631,14 @@ static PyObject *__pyx_pw_3src_8mc_utils_7delta_ewald_single_flip(PyObject *__py
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3src_8mc_utils_6delta_ewald_single_flip(__pyx_self, __pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_ewald_matrix, __pyx_v_ewald_inds, __pyx_v_site_ind);
+  __pyx_r = __pyx_pf_3src_8mc_utils_6delta_ewald_single_flip(__pyx_self, __pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_ewald_matrix, __pyx_v_ewald_indices, __pyx_v_site_ind);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_8mc_utils_6delta_ewald_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_ewald_matrix, __Pyx_memviewslice __pyx_v_ewald_inds, int __pyx_v_site_ind) {
+static PyObject *__pyx_pf_3src_8mc_utils_6delta_ewald_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_ewald_matrix, __Pyx_memviewslice __pyx_v_ewald_indices, int __pyx_v_site_ind) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -4734,7 +4647,7 @@ static PyObject *__pyx_pf_3src_8mc_utils_6delta_ewald_single_flip(CYTHON_UNUSED 
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("delta_ewald_single_flip", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_8mc_utils_delta_ewald_single_flip(__pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_ewald_matrix, __pyx_v_ewald_inds, __pyx_v_site_ind, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 168, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_8mc_utils_delta_ewald_single_flip(__pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_ewald_matrix, __pyx_v_ewald_indices, __pyx_v_site_ind, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 168, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4749,7 +4662,1137 @@ static PyObject *__pyx_pf_3src_8mc_utils_6delta_ewald_single_flip(CYTHON_UNUSED 
   __PYX_XDEC_MEMVIEW(&__pyx_v_occu_f, 1);
   __PYX_XDEC_MEMVIEW(&__pyx_v_occu_i, 1);
   __PYX_XDEC_MEMVIEW(&__pyx_v_ewald_matrix, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_v_ewald_inds, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_ewald_indices, 1);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/mc_utils.pyx":219
+ * 
+ * 
+ * cpdef corr_from_occupancy_low_mem(const long[::1] occu,             # <<<<<<<<<<<<<<
+ *                                   const int num_corr_functions,
+ *                                   list orbit_list):
+ */
+
+static PyObject *__pyx_pw_3src_8mc_utils_9corr_from_occupancy_low_mem(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_f_3src_8mc_utils_corr_from_occupancy_low_mem(__Pyx_memviewslice __pyx_v_occu, int const __pyx_v_num_corr_functions, PyObject *__pyx_v_orbit_list, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  int __pyx_v_i;
+  int __pyx_v_j;
+  int __pyx_v_k;
+  int __pyx_v_n;
+  int __pyx_v_m;
+  int __pyx_v_I;
+  int __pyx_v_K;
+  int __pyx_v_M;
+  double __pyx_v_p;
+  double __pyx_v_pi;
+  __Pyx_memviewslice __pyx_v_indices = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_bit_combos = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_bit_indices = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_bases = { 0, 0, { 0 }, { 0 }, { 0 } };
+  PyObject *__pyx_v_out = NULL;
+  __Pyx_memviewslice __pyx_v_o_view = { 0, 0, { 0 }, { 0 }, { 0 } };
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  __Pyx_memviewslice __pyx_t_5 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  Py_ssize_t __pyx_t_6;
+  Py_ssize_t __pyx_t_7;
+  PyObject *__pyx_t_8 = NULL;
+  PyObject *__pyx_t_9 = NULL;
+  PyObject *__pyx_t_10 = NULL;
+  PyObject *__pyx_t_11 = NULL;
+  PyObject *(*__pyx_t_12)(PyObject *);
+  int __pyx_t_13;
+  __Pyx_memviewslice __pyx_t_14 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_t_15 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_t_16 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_t_17 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  long __pyx_t_18;
+  long __pyx_t_19;
+  int __pyx_t_20;
+  int __pyx_t_21;
+  int __pyx_t_22;
+  long __pyx_t_23;
+  long __pyx_t_24;
+  int __pyx_t_25;
+  int __pyx_t_26;
+  int __pyx_t_27;
+  int __pyx_t_28;
+  Py_ssize_t __pyx_t_29;
+  Py_ssize_t __pyx_t_30;
+  Py_ssize_t __pyx_t_31;
+  Py_ssize_t __pyx_t_32;
+  Py_ssize_t __pyx_t_33;
+  Py_ssize_t __pyx_t_34;
+  Py_ssize_t __pyx_t_35;
+  Py_ssize_t __pyx_t_36;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("corr_from_occupancy_low_mem", 0);
+
+  /* "src/mc_utils.pyx":243
+ *     cdef const long[::1] bit_indices
+ *     cdef const double[:, :, ::1] bases
+ *     out = np.zeros(num_corr_functions)             # <<<<<<<<<<<<<<
+ *     cdef double[:] o_view = out
+ *     o_view[0] = 1  # empty cluster
+ */
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 243, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 243, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_num_corr_functions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 243, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+    }
+  }
+  __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 243, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_v_out = __pyx_t_1;
+  __pyx_t_1 = 0;
+
+  /* "src/mc_utils.pyx":244
+ *     cdef const double[:, :, ::1] bases
+ *     out = np.zeros(num_corr_functions)
+ *     cdef double[:] o_view = out             # <<<<<<<<<<<<<<
+ *     o_view[0] = 1  # empty cluster
+ * 
+ */
+  __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_v_out, PyBUF_WRITABLE); if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 244, __pyx_L1_error)
+  __pyx_v_o_view = __pyx_t_5;
+  __pyx_t_5.memview = NULL;
+  __pyx_t_5.data = NULL;
+
+  /* "src/mc_utils.pyx":245
+ *     out = np.zeros(num_corr_functions)
+ *     cdef double[:] o_view = out
+ *     o_view[0] = 1  # empty cluster             # <<<<<<<<<<<<<<
+ * 
+ *     for n, bit_combos, bit_indices, bases, indices in orbit_list:
+ */
+  __pyx_t_6 = 0;
+  *((double *) ( /* dim=0 */ (__pyx_v_o_view.data + __pyx_t_6 * __pyx_v_o_view.strides[0]) )) = 1.0;
+
+  /* "src/mc_utils.pyx":247
+ *     o_view[0] = 1  # empty cluster
+ * 
+ *     for n, bit_combos, bit_indices, bases, indices in orbit_list:             # <<<<<<<<<<<<<<
+ *         M = bit_indices.shape[0] # index of bit combos
+ *         I = indices.shape[0] # cluster index
+ */
+  if (unlikely(__pyx_v_orbit_list == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
+    __PYX_ERR(0, 247, __pyx_L1_error)
+  }
+  __pyx_t_1 = __pyx_v_orbit_list; __Pyx_INCREF(__pyx_t_1); __pyx_t_7 = 0;
+  for (;;) {
+    if (__pyx_t_7 >= PyList_GET_SIZE(__pyx_t_1)) break;
+    #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_7); __Pyx_INCREF(__pyx_t_3); __pyx_t_7++; if (unlikely(0 < 0)) __PYX_ERR(0, 247, __pyx_L1_error)
+    #else
+    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 247, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    #endif
+    if ((likely(PyTuple_CheckExact(__pyx_t_3))) || (PyList_CheckExact(__pyx_t_3))) {
+      PyObject* sequence = __pyx_t_3;
+      Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
+      if (unlikely(size != 5)) {
+        if (size > 5) __Pyx_RaiseTooManyValuesError(5);
+        else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
+        __PYX_ERR(0, 247, __pyx_L1_error)
+      }
+      #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+      if (likely(PyTuple_CheckExact(sequence))) {
+        __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0); 
+        __pyx_t_4 = PyTuple_GET_ITEM(sequence, 1); 
+        __pyx_t_8 = PyTuple_GET_ITEM(sequence, 2); 
+        __pyx_t_9 = PyTuple_GET_ITEM(sequence, 3); 
+        __pyx_t_10 = PyTuple_GET_ITEM(sequence, 4); 
+      } else {
+        __pyx_t_2 = PyList_GET_ITEM(sequence, 0); 
+        __pyx_t_4 = PyList_GET_ITEM(sequence, 1); 
+        __pyx_t_8 = PyList_GET_ITEM(sequence, 2); 
+        __pyx_t_9 = PyList_GET_ITEM(sequence, 3); 
+        __pyx_t_10 = PyList_GET_ITEM(sequence, 4); 
+      }
+      __Pyx_INCREF(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(__pyx_t_8);
+      __Pyx_INCREF(__pyx_t_9);
+      __Pyx_INCREF(__pyx_t_10);
+      #else
+      {
+        Py_ssize_t i;
+        PyObject** temps[5] = {&__pyx_t_2,&__pyx_t_4,&__pyx_t_8,&__pyx_t_9,&__pyx_t_10};
+        for (i=0; i < 5; i++) {
+          PyObject* item = PySequence_ITEM(sequence, i); if (unlikely(!item)) __PYX_ERR(0, 247, __pyx_L1_error)
+          __Pyx_GOTREF(item);
+          *(temps[i]) = item;
+        }
+      }
+      #endif
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    } else {
+      Py_ssize_t index = -1;
+      PyObject** temps[5] = {&__pyx_t_2,&__pyx_t_4,&__pyx_t_8,&__pyx_t_9,&__pyx_t_10};
+      __pyx_t_11 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 247, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_11);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __pyx_t_12 = Py_TYPE(__pyx_t_11)->tp_iternext;
+      for (index=0; index < 5; index++) {
+        PyObject* item = __pyx_t_12(__pyx_t_11); if (unlikely(!item)) goto __pyx_L5_unpacking_failed;
+        __Pyx_GOTREF(item);
+        *(temps[index]) = item;
+      }
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_12(__pyx_t_11), 5) < 0) __PYX_ERR(0, 247, __pyx_L1_error)
+      __pyx_t_12 = NULL;
+      __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+      goto __pyx_L6_unpacking_done;
+      __pyx_L5_unpacking_failed:;
+      __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+      __pyx_t_12 = NULL;
+      if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
+      __PYX_ERR(0, 247, __pyx_L1_error)
+      __pyx_L6_unpacking_done:;
+    }
+    __pyx_t_13 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_13 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 247, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_14 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(__pyx_t_4, 0); if (unlikely(!__pyx_t_14.memview)) __PYX_ERR(0, 247, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __pyx_t_15 = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(__pyx_t_8, 0); if (unlikely(!__pyx_t_15.memview)) __PYX_ERR(0, 247, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    __pyx_t_16 = __Pyx_PyObject_to_MemoryviewSlice_d_d_dc_double__const__(__pyx_t_9, 0); if (unlikely(!__pyx_t_16.memview)) __PYX_ERR(0, 247, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+    __pyx_t_17 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(__pyx_t_10, 0); if (unlikely(!__pyx_t_17.memview)) __PYX_ERR(0, 247, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    __pyx_v_n = __pyx_t_13;
+    __PYX_XDEC_MEMVIEW(&__pyx_v_bit_combos, 1);
+    __pyx_v_bit_combos = __pyx_t_14;
+    __pyx_t_14.memview = NULL;
+    __pyx_t_14.data = NULL;
+    __PYX_XDEC_MEMVIEW(&__pyx_v_bit_indices, 1);
+    __pyx_v_bit_indices = __pyx_t_15;
+    __pyx_t_15.memview = NULL;
+    __pyx_t_15.data = NULL;
+    __PYX_XDEC_MEMVIEW(&__pyx_v_bases, 1);
+    __pyx_v_bases = __pyx_t_16;
+    __pyx_t_16.memview = NULL;
+    __pyx_t_16.data = NULL;
+    __PYX_XDEC_MEMVIEW(&__pyx_v_indices, 1);
+    __pyx_v_indices = __pyx_t_17;
+    __pyx_t_17.memview = NULL;
+    __pyx_t_17.data = NULL;
+
+    /* "src/mc_utils.pyx":248
+ * 
+ *     for n, bit_combos, bit_indices, bases, indices in orbit_list:
+ *         M = bit_indices.shape[0] # index of bit combos             # <<<<<<<<<<<<<<
+ *         I = indices.shape[0] # cluster index
+ *         K = indices.shape[1] # index within cluster
+ */
+    __pyx_v_M = (__pyx_v_bit_indices.shape[0]);
+
+    /* "src/mc_utils.pyx":249
+ *     for n, bit_combos, bit_indices, bases, indices in orbit_list:
+ *         M = bit_indices.shape[0] # index of bit combos
+ *         I = indices.shape[0] # cluster index             # <<<<<<<<<<<<<<
+ *         K = indices.shape[1] # index within cluster
+ *         for m in range(M - 1):
+ */
+    __pyx_v_I = (__pyx_v_indices.shape[0]);
+
+    /* "src/mc_utils.pyx":250
+ *         M = bit_indices.shape[0] # index of bit combos
+ *         I = indices.shape[0] # cluster index
+ *         K = indices.shape[1] # index within cluster             # <<<<<<<<<<<<<<
+ *         for m in range(M - 1):
+ *             p = 0
+ */
+    __pyx_v_K = (__pyx_v_indices.shape[1]);
+
+    /* "src/mc_utils.pyx":251
+ *         I = indices.shape[0] # cluster index
+ *         K = indices.shape[1] # index within cluster
+ *         for m in range(M - 1):             # <<<<<<<<<<<<<<
+ *             p = 0
+ *             for i in range(I):
+ */
+    __pyx_t_18 = (__pyx_v_M - 1);
+    __pyx_t_19 = __pyx_t_18;
+    for (__pyx_t_13 = 0; __pyx_t_13 < __pyx_t_19; __pyx_t_13+=1) {
+      __pyx_v_m = __pyx_t_13;
+
+      /* "src/mc_utils.pyx":252
+ *         K = indices.shape[1] # index within cluster
+ *         for m in range(M - 1):
+ *             p = 0             # <<<<<<<<<<<<<<
+ *             for i in range(I):
+ *                 for j in range(bit_indices[m], bit_indices[m + 1]):
+ */
+      __pyx_v_p = 0.0;
+
+      /* "src/mc_utils.pyx":253
+ *         for m in range(M - 1):
+ *             p = 0
+ *             for i in range(I):             # <<<<<<<<<<<<<<
+ *                 for j in range(bit_indices[m], bit_indices[m + 1]):
+ *                     pi = 1
+ */
+      __pyx_t_20 = __pyx_v_I;
+      __pyx_t_21 = __pyx_t_20;
+      for (__pyx_t_22 = 0; __pyx_t_22 < __pyx_t_21; __pyx_t_22+=1) {
+        __pyx_v_i = __pyx_t_22;
+
+        /* "src/mc_utils.pyx":254
+ *             p = 0
+ *             for i in range(I):
+ *                 for j in range(bit_indices[m], bit_indices[m + 1]):             # <<<<<<<<<<<<<<
+ *                     pi = 1
+ *                     for k in range(K):
+ */
+        __pyx_t_6 = (__pyx_v_m + 1);
+        __pyx_t_23 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_indices.data) + __pyx_t_6)) )));
+        __pyx_t_6 = __pyx_v_m;
+        __pyx_t_24 = __pyx_t_23;
+        for (__pyx_t_25 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_indices.data) + __pyx_t_6)) ))); __pyx_t_25 < __pyx_t_24; __pyx_t_25+=1) {
+          __pyx_v_j = __pyx_t_25;
+
+          /* "src/mc_utils.pyx":255
+ *             for i in range(I):
+ *                 for j in range(bit_indices[m], bit_indices[m + 1]):
+ *                     pi = 1             # <<<<<<<<<<<<<<
+ *                     for k in range(K):
+ *                         pi *= bases[k, bit_combos[j, k], occu[indices[i, k]]]
+ */
+          __pyx_v_pi = 1.0;
+
+          /* "src/mc_utils.pyx":256
+ *                 for j in range(bit_indices[m], bit_indices[m + 1]):
+ *                     pi = 1
+ *                     for k in range(K):             # <<<<<<<<<<<<<<
+ *                         pi *= bases[k, bit_combos[j, k], occu[indices[i, k]]]
+ *                     p += pi
+ */
+          __pyx_t_26 = __pyx_v_K;
+          __pyx_t_27 = __pyx_t_26;
+          for (__pyx_t_28 = 0; __pyx_t_28 < __pyx_t_27; __pyx_t_28+=1) {
+            __pyx_v_k = __pyx_t_28;
+
+            /* "src/mc_utils.pyx":257
+ *                     pi = 1
+ *                     for k in range(K):
+ *                         pi *= bases[k, bit_combos[j, k], occu[indices[i, k]]]             # <<<<<<<<<<<<<<
+ *                     p += pi
+ *             o_view[n] = p / (I * (bit_indices[m + 1] - bit_indices[m]))
+ */
+            __pyx_t_29 = __pyx_v_j;
+            __pyx_t_30 = __pyx_v_k;
+            __pyx_t_31 = __pyx_v_i;
+            __pyx_t_32 = __pyx_v_k;
+            __pyx_t_33 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_indices.data + __pyx_t_31 * __pyx_v_indices.strides[0]) )) + __pyx_t_32)) )));
+            __pyx_t_34 = __pyx_v_k;
+            __pyx_t_35 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_bit_combos.data + __pyx_t_29 * __pyx_v_bit_combos.strides[0]) )) + __pyx_t_30)) )));
+            __pyx_t_36 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu.data) + __pyx_t_33)) )));
+            __pyx_v_pi = (__pyx_v_pi * (*((double const  *) ( /* dim=2 */ ((char *) (((double const  *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_bases.data + __pyx_t_34 * __pyx_v_bases.strides[0]) ) + __pyx_t_35 * __pyx_v_bases.strides[1]) )) + __pyx_t_36)) ))));
+          }
+
+          /* "src/mc_utils.pyx":258
+ *                     for k in range(K):
+ *                         pi *= bases[k, bit_combos[j, k], occu[indices[i, k]]]
+ *                     p += pi             # <<<<<<<<<<<<<<
+ *             o_view[n] = p / (I * (bit_indices[m + 1] - bit_indices[m]))
+ *             n += 1
+ */
+          __pyx_v_p = (__pyx_v_p + __pyx_v_pi);
+        }
+      }
+
+      /* "src/mc_utils.pyx":259
+ *                         pi *= bases[k, bit_combos[j, k], occu[indices[i, k]]]
+ *                     p += pi
+ *             o_view[n] = p / (I * (bit_indices[m + 1] - bit_indices[m]))             # <<<<<<<<<<<<<<
+ *             n += 1
+ *     return out
+ */
+      __pyx_t_6 = (__pyx_v_m + 1);
+      __pyx_t_32 = __pyx_v_m;
+      __pyx_t_31 = __pyx_v_n;
+      *((double *) ( /* dim=0 */ (__pyx_v_o_view.data + __pyx_t_31 * __pyx_v_o_view.strides[0]) )) = (__pyx_v_p / ((double)(__pyx_v_I * ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_indices.data) + __pyx_t_6)) ))) - (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_indices.data) + __pyx_t_32)) )))))));
+
+      /* "src/mc_utils.pyx":260
+ *                     p += pi
+ *             o_view[n] = p / (I * (bit_indices[m + 1] - bit_indices[m]))
+ *             n += 1             # <<<<<<<<<<<<<<
+ *     return out
+ * 
+ */
+      __pyx_v_n = (__pyx_v_n + 1);
+    }
+
+    /* "src/mc_utils.pyx":247
+ *     o_view[0] = 1  # empty cluster
+ * 
+ *     for n, bit_combos, bit_indices, bases, indices in orbit_list:             # <<<<<<<<<<<<<<
+ *         M = bit_indices.shape[0] # index of bit combos
+ *         I = indices.shape[0] # cluster index
+ */
+  }
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "src/mc_utils.pyx":261
+ *             o_view[n] = p / (I * (bit_indices[m + 1] - bit_indices[m]))
+ *             n += 1
+ *     return out             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_out);
+  __pyx_r = __pyx_v_out;
+  goto __pyx_L0;
+
+  /* "src/mc_utils.pyx":219
+ * 
+ * 
+ * cpdef corr_from_occupancy_low_mem(const long[::1] occu,             # <<<<<<<<<<<<<<
+ *                                   const int num_corr_functions,
+ *                                   list orbit_list):
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
+  __Pyx_XDECREF(__pyx_t_8);
+  __Pyx_XDECREF(__pyx_t_9);
+  __Pyx_XDECREF(__pyx_t_10);
+  __Pyx_XDECREF(__pyx_t_11);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_14, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_15, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_16, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_17, 1);
+  __Pyx_AddTraceback("src.mc_utils.corr_from_occupancy_low_mem", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __PYX_XDEC_MEMVIEW(&__pyx_v_indices, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_bit_combos, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_bit_indices, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_bases, 1);
+  __Pyx_XDECREF(__pyx_v_out);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_o_view, 1);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_8mc_utils_9corr_from_occupancy_low_mem(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_3src_8mc_utils_8corr_from_occupancy_low_mem[] = "Computes the correlation vector for a given encoded occupancy string.\n\n    Lower memory usage but slightly slower and worse scaling\n\n    Args:\n        occu (ndarray):\n            encoded occupancy vector\n        num_corr_functions (int):\n            total number of bit orderings in expansion.\n        orbit_list:\n            Information of all orbits.\n            (orbit id, bit_combos, bit_combo_indices site indices, bases array)\n\n    Returns: array\n        correlation vector for given occupancy\n    ";
+static PyObject *__pyx_pw_3src_8mc_utils_9corr_from_occupancy_low_mem(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  __Pyx_memviewslice __pyx_v_occu = { 0, 0, { 0 }, { 0 }, { 0 } };
+  int __pyx_v_num_corr_functions;
+  PyObject *__pyx_v_orbit_list = 0;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("corr_from_occupancy_low_mem (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_occu,&__pyx_n_s_num_corr_functions,&__pyx_n_s_orbit_list,0};
+    PyObject* values[3] = {0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_occu)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_corr_functions)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("corr_from_occupancy_low_mem", 1, 3, 3, 1); __PYX_ERR(0, 219, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_orbit_list)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("corr_from_occupancy_low_mem", 1, 3, 3, 2); __PYX_ERR(0, 219, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "corr_from_occupancy_low_mem") < 0)) __PYX_ERR(0, 219, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+    }
+    __pyx_v_occu = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[0], 0); if (unlikely(!__pyx_v_occu.memview)) __PYX_ERR(0, 219, __pyx_L3_error)
+    __pyx_v_num_corr_functions = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_num_corr_functions == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 220, __pyx_L3_error)
+    __pyx_v_orbit_list = ((PyObject*)values[2]);
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("corr_from_occupancy_low_mem", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 219, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("src.mc_utils.corr_from_occupancy_low_mem", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_orbit_list), (&PyList_Type), 1, "orbit_list", 1))) __PYX_ERR(0, 221, __pyx_L1_error)
+  __pyx_r = __pyx_pf_3src_8mc_utils_8corr_from_occupancy_low_mem(__pyx_self, __pyx_v_occu, __pyx_v_num_corr_functions, __pyx_v_orbit_list);
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_8mc_utils_8corr_from_occupancy_low_mem(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu, int __pyx_v_num_corr_functions, PyObject *__pyx_v_orbit_list) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("corr_from_occupancy_low_mem", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_3src_8mc_utils_corr_from_occupancy_low_mem(__pyx_v_occu, __pyx_v_num_corr_functions, __pyx_v_orbit_list, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 219, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.mc_utils.corr_from_occupancy_low_mem", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __PYX_XDEC_MEMVIEW(&__pyx_v_occu, 1);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/mc_utils.pyx":264
+ * 
+ * 
+ * cpdef delta_corr_single_flip_lm(const long[::1] occu_f,             # <<<<<<<<<<<<<<
+ *                                      const long[::1] occu_i,
+ *                                      const int num_corr_functions,
+ */
+
+static PyObject *__pyx_pw_3src_8mc_utils_11delta_corr_single_flip_lm(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_f_3src_8mc_utils_delta_corr_single_flip_lm(__Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, int const __pyx_v_num_corr_functions, PyObject *__pyx_v_site_orbit_list, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  int __pyx_v_i;
+  int __pyx_v_j;
+  int __pyx_v_k;
+  int __pyx_v_n;
+  int __pyx_v_m;
+  int __pyx_v_I;
+  int __pyx_v_K;
+  int __pyx_v_M;
+  double __pyx_v_p;
+  double __pyx_v_pi;
+  double __pyx_v_pf;
+  double __pyx_v_r;
+  __Pyx_memviewslice __pyx_v_indices = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_bit_combos = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_bit_indices = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_bases = { 0, 0, { 0 }, { 0 }, { 0 } };
+  PyObject *__pyx_v_out = NULL;
+  __Pyx_memviewslice __pyx_v_o_view = { 0, 0, { 0 }, { 0 }, { 0 } };
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  __Pyx_memviewslice __pyx_t_5 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  Py_ssize_t __pyx_t_6;
+  PyObject *__pyx_t_7 = NULL;
+  PyObject *__pyx_t_8 = NULL;
+  PyObject *__pyx_t_9 = NULL;
+  PyObject *__pyx_t_10 = NULL;
+  PyObject *__pyx_t_11 = NULL;
+  PyObject *(*__pyx_t_12)(PyObject *);
+  int __pyx_t_13;
+  double __pyx_t_14;
+  __Pyx_memviewslice __pyx_t_15 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_t_16 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_t_17 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_t_18 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  long __pyx_t_19;
+  long __pyx_t_20;
+  int __pyx_t_21;
+  int __pyx_t_22;
+  int __pyx_t_23;
+  Py_ssize_t __pyx_t_24;
+  long __pyx_t_25;
+  long __pyx_t_26;
+  int __pyx_t_27;
+  int __pyx_t_28;
+  int __pyx_t_29;
+  int __pyx_t_30;
+  Py_ssize_t __pyx_t_31;
+  Py_ssize_t __pyx_t_32;
+  Py_ssize_t __pyx_t_33;
+  Py_ssize_t __pyx_t_34;
+  Py_ssize_t __pyx_t_35;
+  Py_ssize_t __pyx_t_36;
+  Py_ssize_t __pyx_t_37;
+  Py_ssize_t __pyx_t_38;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("delta_corr_single_flip_lm", 0);
+
+  /* "src/mc_utils.pyx":294
+ *     cdef const long[::1] bit_indices
+ *     cdef const double[:, :, ::1] bases
+ *     out = np.zeros(num_corr_functions)             # <<<<<<<<<<<<<<
+ *     cdef double[::1] o_view = out
+ * 
+ */
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 294, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 294, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_num_corr_functions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 294, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+    }
+  }
+  __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 294, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_v_out = __pyx_t_1;
+  __pyx_t_1 = 0;
+
+  /* "src/mc_utils.pyx":295
+ *     cdef const double[:, :, ::1] bases
+ *     out = np.zeros(num_corr_functions)
+ *     cdef double[::1] o_view = out             # <<<<<<<<<<<<<<
+ * 
+ *     for n, r, bit_combos, bit_indices, bases, indices in site_orbit_list:
+ */
+  __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_dc_double(__pyx_v_out, PyBUF_WRITABLE); if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 295, __pyx_L1_error)
+  __pyx_v_o_view = __pyx_t_5;
+  __pyx_t_5.memview = NULL;
+  __pyx_t_5.data = NULL;
+
+  /* "src/mc_utils.pyx":297
+ *     cdef double[::1] o_view = out
+ * 
+ *     for n, r, bit_combos, bit_indices, bases, indices in site_orbit_list:             # <<<<<<<<<<<<<<
+ *         M = bit_indices.shape[0] # index of bit combos
+ *         I = indices.shape[0] # cluster index
+ */
+  if (unlikely(__pyx_v_site_orbit_list == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
+    __PYX_ERR(0, 297, __pyx_L1_error)
+  }
+  __pyx_t_1 = __pyx_v_site_orbit_list; __Pyx_INCREF(__pyx_t_1); __pyx_t_6 = 0;
+  for (;;) {
+    if (__pyx_t_6 >= PyList_GET_SIZE(__pyx_t_1)) break;
+    #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_6); __Pyx_INCREF(__pyx_t_3); __pyx_t_6++; if (unlikely(0 < 0)) __PYX_ERR(0, 297, __pyx_L1_error)
+    #else
+    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 297, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    #endif
+    if ((likely(PyTuple_CheckExact(__pyx_t_3))) || (PyList_CheckExact(__pyx_t_3))) {
+      PyObject* sequence = __pyx_t_3;
+      Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
+      if (unlikely(size != 6)) {
+        if (size > 6) __Pyx_RaiseTooManyValuesError(6);
+        else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
+        __PYX_ERR(0, 297, __pyx_L1_error)
+      }
+      #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+      if (likely(PyTuple_CheckExact(sequence))) {
+        __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0); 
+        __pyx_t_4 = PyTuple_GET_ITEM(sequence, 1); 
+        __pyx_t_7 = PyTuple_GET_ITEM(sequence, 2); 
+        __pyx_t_8 = PyTuple_GET_ITEM(sequence, 3); 
+        __pyx_t_9 = PyTuple_GET_ITEM(sequence, 4); 
+        __pyx_t_10 = PyTuple_GET_ITEM(sequence, 5); 
+      } else {
+        __pyx_t_2 = PyList_GET_ITEM(sequence, 0); 
+        __pyx_t_4 = PyList_GET_ITEM(sequence, 1); 
+        __pyx_t_7 = PyList_GET_ITEM(sequence, 2); 
+        __pyx_t_8 = PyList_GET_ITEM(sequence, 3); 
+        __pyx_t_9 = PyList_GET_ITEM(sequence, 4); 
+        __pyx_t_10 = PyList_GET_ITEM(sequence, 5); 
+      }
+      __Pyx_INCREF(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(__pyx_t_7);
+      __Pyx_INCREF(__pyx_t_8);
+      __Pyx_INCREF(__pyx_t_9);
+      __Pyx_INCREF(__pyx_t_10);
+      #else
+      {
+        Py_ssize_t i;
+        PyObject** temps[6] = {&__pyx_t_2,&__pyx_t_4,&__pyx_t_7,&__pyx_t_8,&__pyx_t_9,&__pyx_t_10};
+        for (i=0; i < 6; i++) {
+          PyObject* item = PySequence_ITEM(sequence, i); if (unlikely(!item)) __PYX_ERR(0, 297, __pyx_L1_error)
+          __Pyx_GOTREF(item);
+          *(temps[i]) = item;
+        }
+      }
+      #endif
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    } else {
+      Py_ssize_t index = -1;
+      PyObject** temps[6] = {&__pyx_t_2,&__pyx_t_4,&__pyx_t_7,&__pyx_t_8,&__pyx_t_9,&__pyx_t_10};
+      __pyx_t_11 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 297, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_11);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __pyx_t_12 = Py_TYPE(__pyx_t_11)->tp_iternext;
+      for (index=0; index < 6; index++) {
+        PyObject* item = __pyx_t_12(__pyx_t_11); if (unlikely(!item)) goto __pyx_L5_unpacking_failed;
+        __Pyx_GOTREF(item);
+        *(temps[index]) = item;
+      }
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_12(__pyx_t_11), 6) < 0) __PYX_ERR(0, 297, __pyx_L1_error)
+      __pyx_t_12 = NULL;
+      __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+      goto __pyx_L6_unpacking_done;
+      __pyx_L5_unpacking_failed:;
+      __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+      __pyx_t_12 = NULL;
+      if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
+      __PYX_ERR(0, 297, __pyx_L1_error)
+      __pyx_L6_unpacking_done:;
+    }
+    __pyx_t_13 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_13 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 297, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_14 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_14 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 297, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __pyx_t_15 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(__pyx_t_7, 0); if (unlikely(!__pyx_t_15.memview)) __PYX_ERR(0, 297, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __pyx_t_16 = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(__pyx_t_8, 0); if (unlikely(!__pyx_t_16.memview)) __PYX_ERR(0, 297, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    __pyx_t_17 = __Pyx_PyObject_to_MemoryviewSlice_d_d_dc_double__const__(__pyx_t_9, 0); if (unlikely(!__pyx_t_17.memview)) __PYX_ERR(0, 297, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+    __pyx_t_18 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(__pyx_t_10, 0); if (unlikely(!__pyx_t_18.memview)) __PYX_ERR(0, 297, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    __pyx_v_n = __pyx_t_13;
+    __pyx_v_r = __pyx_t_14;
+    __PYX_XDEC_MEMVIEW(&__pyx_v_bit_combos, 1);
+    __pyx_v_bit_combos = __pyx_t_15;
+    __pyx_t_15.memview = NULL;
+    __pyx_t_15.data = NULL;
+    __PYX_XDEC_MEMVIEW(&__pyx_v_bit_indices, 1);
+    __pyx_v_bit_indices = __pyx_t_16;
+    __pyx_t_16.memview = NULL;
+    __pyx_t_16.data = NULL;
+    __PYX_XDEC_MEMVIEW(&__pyx_v_bases, 1);
+    __pyx_v_bases = __pyx_t_17;
+    __pyx_t_17.memview = NULL;
+    __pyx_t_17.data = NULL;
+    __PYX_XDEC_MEMVIEW(&__pyx_v_indices, 1);
+    __pyx_v_indices = __pyx_t_18;
+    __pyx_t_18.memview = NULL;
+    __pyx_t_18.data = NULL;
+
+    /* "src/mc_utils.pyx":298
+ * 
+ *     for n, r, bit_combos, bit_indices, bases, indices in site_orbit_list:
+ *         M = bit_indices.shape[0] # index of bit combos             # <<<<<<<<<<<<<<
+ *         I = indices.shape[0] # cluster index
+ *         K = indices.shape[1] # index within cluster
+ */
+    __pyx_v_M = (__pyx_v_bit_indices.shape[0]);
+
+    /* "src/mc_utils.pyx":299
+ *     for n, r, bit_combos, bit_indices, bases, indices in site_orbit_list:
+ *         M = bit_indices.shape[0] # index of bit combos
+ *         I = indices.shape[0] # cluster index             # <<<<<<<<<<<<<<
+ *         K = indices.shape[1] # index within cluster
+ *         for m in range(M - 1):
+ */
+    __pyx_v_I = (__pyx_v_indices.shape[0]);
+
+    /* "src/mc_utils.pyx":300
+ *         M = bit_indices.shape[0] # index of bit combos
+ *         I = indices.shape[0] # cluster index
+ *         K = indices.shape[1] # index within cluster             # <<<<<<<<<<<<<<
+ *         for m in range(M - 1):
+ *             p = 0
+ */
+    __pyx_v_K = (__pyx_v_indices.shape[1]);
+
+    /* "src/mc_utils.pyx":301
+ *         I = indices.shape[0] # cluster index
+ *         K = indices.shape[1] # index within cluster
+ *         for m in range(M - 1):             # <<<<<<<<<<<<<<
+ *             p = 0
+ *             for i in range(I):
+ */
+    __pyx_t_19 = (__pyx_v_M - 1);
+    __pyx_t_20 = __pyx_t_19;
+    for (__pyx_t_13 = 0; __pyx_t_13 < __pyx_t_20; __pyx_t_13+=1) {
+      __pyx_v_m = __pyx_t_13;
+
+      /* "src/mc_utils.pyx":302
+ *         K = indices.shape[1] # index within cluster
+ *         for m in range(M - 1):
+ *             p = 0             # <<<<<<<<<<<<<<
+ *             for i in range(I):
+ *                 for j in range(bit_indices[m], bit_indices[m + 1]):
+ */
+      __pyx_v_p = 0.0;
+
+      /* "src/mc_utils.pyx":303
+ *         for m in range(M - 1):
+ *             p = 0
+ *             for i in range(I):             # <<<<<<<<<<<<<<
+ *                 for j in range(bit_indices[m], bit_indices[m + 1]):
+ *                     pf = 1
+ */
+      __pyx_t_21 = __pyx_v_I;
+      __pyx_t_22 = __pyx_t_21;
+      for (__pyx_t_23 = 0; __pyx_t_23 < __pyx_t_22; __pyx_t_23+=1) {
+        __pyx_v_i = __pyx_t_23;
+
+        /* "src/mc_utils.pyx":304
+ *             p = 0
+ *             for i in range(I):
+ *                 for j in range(bit_indices[m], bit_indices[m + 1]):             # <<<<<<<<<<<<<<
+ *                     pf = 1
+ *                     pi = 1
+ */
+        __pyx_t_24 = (__pyx_v_m + 1);
+        __pyx_t_25 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_indices.data) + __pyx_t_24)) )));
+        __pyx_t_24 = __pyx_v_m;
+        __pyx_t_26 = __pyx_t_25;
+        for (__pyx_t_27 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_indices.data) + __pyx_t_24)) ))); __pyx_t_27 < __pyx_t_26; __pyx_t_27+=1) {
+          __pyx_v_j = __pyx_t_27;
+
+          /* "src/mc_utils.pyx":305
+ *             for i in range(I):
+ *                 for j in range(bit_indices[m], bit_indices[m + 1]):
+ *                     pf = 1             # <<<<<<<<<<<<<<
+ *                     pi = 1
+ *                     for k in range(K):
+ */
+          __pyx_v_pf = 1.0;
+
+          /* "src/mc_utils.pyx":306
+ *                 for j in range(bit_indices[m], bit_indices[m + 1]):
+ *                     pf = 1
+ *                     pi = 1             # <<<<<<<<<<<<<<
+ *                     for k in range(K):
+ *                         pf *= bases[k, bit_combos[j, k], occu_f[indices[i, k]]]
+ */
+          __pyx_v_pi = 1.0;
+
+          /* "src/mc_utils.pyx":307
+ *                     pf = 1
+ *                     pi = 1
+ *                     for k in range(K):             # <<<<<<<<<<<<<<
+ *                         pf *= bases[k, bit_combos[j, k], occu_f[indices[i, k]]]
+ *                         pi *= bases[k, bit_combos[j, k], occu_i[indices[i, k]]]
+ */
+          __pyx_t_28 = __pyx_v_K;
+          __pyx_t_29 = __pyx_t_28;
+          for (__pyx_t_30 = 0; __pyx_t_30 < __pyx_t_29; __pyx_t_30+=1) {
+            __pyx_v_k = __pyx_t_30;
+
+            /* "src/mc_utils.pyx":308
+ *                     pi = 1
+ *                     for k in range(K):
+ *                         pf *= bases[k, bit_combos[j, k], occu_f[indices[i, k]]]             # <<<<<<<<<<<<<<
+ *                         pi *= bases[k, bit_combos[j, k], occu_i[indices[i, k]]]
+ *                     p += (pf - pi)
+ */
+            __pyx_t_31 = __pyx_v_j;
+            __pyx_t_32 = __pyx_v_k;
+            __pyx_t_33 = __pyx_v_i;
+            __pyx_t_34 = __pyx_v_k;
+            __pyx_t_35 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_indices.data + __pyx_t_33 * __pyx_v_indices.strides[0]) )) + __pyx_t_34)) )));
+            __pyx_t_36 = __pyx_v_k;
+            __pyx_t_37 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_bit_combos.data + __pyx_t_31 * __pyx_v_bit_combos.strides[0]) )) + __pyx_t_32)) )));
+            __pyx_t_38 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_f.data) + __pyx_t_35)) )));
+            __pyx_v_pf = (__pyx_v_pf * (*((double const  *) ( /* dim=2 */ ((char *) (((double const  *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_bases.data + __pyx_t_36 * __pyx_v_bases.strides[0]) ) + __pyx_t_37 * __pyx_v_bases.strides[1]) )) + __pyx_t_38)) ))));
+
+            /* "src/mc_utils.pyx":309
+ *                     for k in range(K):
+ *                         pf *= bases[k, bit_combos[j, k], occu_f[indices[i, k]]]
+ *                         pi *= bases[k, bit_combos[j, k], occu_i[indices[i, k]]]             # <<<<<<<<<<<<<<
+ *                     p += (pf - pi)
+ *             o_view[n] = p / r / (I * (bit_indices[m + 1] - bit_indices[m]))
+ */
+            __pyx_t_34 = __pyx_v_j;
+            __pyx_t_33 = __pyx_v_k;
+            __pyx_t_35 = __pyx_v_i;
+            __pyx_t_32 = __pyx_v_k;
+            __pyx_t_31 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_indices.data + __pyx_t_35 * __pyx_v_indices.strides[0]) )) + __pyx_t_32)) )));
+            __pyx_t_38 = __pyx_v_k;
+            __pyx_t_37 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_bit_combos.data + __pyx_t_34 * __pyx_v_bit_combos.strides[0]) )) + __pyx_t_33)) )));
+            __pyx_t_36 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_i.data) + __pyx_t_31)) )));
+            __pyx_v_pi = (__pyx_v_pi * (*((double const  *) ( /* dim=2 */ ((char *) (((double const  *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_bases.data + __pyx_t_38 * __pyx_v_bases.strides[0]) ) + __pyx_t_37 * __pyx_v_bases.strides[1]) )) + __pyx_t_36)) ))));
+          }
+
+          /* "src/mc_utils.pyx":310
+ *                         pf *= bases[k, bit_combos[j, k], occu_f[indices[i, k]]]
+ *                         pi *= bases[k, bit_combos[j, k], occu_i[indices[i, k]]]
+ *                     p += (pf - pi)             # <<<<<<<<<<<<<<
+ *             o_view[n] = p / r / (I * (bit_indices[m + 1] - bit_indices[m]))
+ *             n += 1
+ */
+          __pyx_v_p = (__pyx_v_p + (__pyx_v_pf - __pyx_v_pi));
+        }
+      }
+
+      /* "src/mc_utils.pyx":311
+ *                         pi *= bases[k, bit_combos[j, k], occu_i[indices[i, k]]]
+ *                     p += (pf - pi)
+ *             o_view[n] = p / r / (I * (bit_indices[m + 1] - bit_indices[m]))             # <<<<<<<<<<<<<<
+ *             n += 1
+ *     return out
+ */
+      __pyx_t_24 = (__pyx_v_m + 1);
+      __pyx_t_32 = __pyx_v_m;
+      __pyx_t_35 = __pyx_v_n;
+      *((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_o_view.data) + __pyx_t_35)) )) = ((__pyx_v_p / __pyx_v_r) / ((double)(__pyx_v_I * ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_indices.data) + __pyx_t_24)) ))) - (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_bit_indices.data) + __pyx_t_32)) )))))));
+
+      /* "src/mc_utils.pyx":312
+ *                     p += (pf - pi)
+ *             o_view[n] = p / r / (I * (bit_indices[m + 1] - bit_indices[m]))
+ *             n += 1             # <<<<<<<<<<<<<<
+ *     return out
+ */
+      __pyx_v_n = (__pyx_v_n + 1);
+    }
+
+    /* "src/mc_utils.pyx":297
+ *     cdef double[::1] o_view = out
+ * 
+ *     for n, r, bit_combos, bit_indices, bases, indices in site_orbit_list:             # <<<<<<<<<<<<<<
+ *         M = bit_indices.shape[0] # index of bit combos
+ *         I = indices.shape[0] # cluster index
+ */
+  }
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "src/mc_utils.pyx":313
+ *             o_view[n] = p / r / (I * (bit_indices[m + 1] - bit_indices[m]))
+ *             n += 1
+ *     return out             # <<<<<<<<<<<<<<
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_out);
+  __pyx_r = __pyx_v_out;
+  goto __pyx_L0;
+
+  /* "src/mc_utils.pyx":264
+ * 
+ * 
+ * cpdef delta_corr_single_flip_lm(const long[::1] occu_f,             # <<<<<<<<<<<<<<
+ *                                      const long[::1] occu_i,
+ *                                      const int num_corr_functions,
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
+  __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_8);
+  __Pyx_XDECREF(__pyx_t_9);
+  __Pyx_XDECREF(__pyx_t_10);
+  __Pyx_XDECREF(__pyx_t_11);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_15, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_16, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_17, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_18, 1);
+  __Pyx_AddTraceback("src.mc_utils.delta_corr_single_flip_lm", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __PYX_XDEC_MEMVIEW(&__pyx_v_indices, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_bit_combos, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_bit_indices, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_bases, 1);
+  __Pyx_XDECREF(__pyx_v_out);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_o_view, 1);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_8mc_utils_11delta_corr_single_flip_lm(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_3src_8mc_utils_10delta_corr_single_flip_lm[] = "Computes the correlation difference between two occupancy vectors.\n\n    Lower memory usage but slightly slower and worse scaling\n\n    Args:\n        occu_f (ndarray):\n            encoded occupancy vector with flip\n        occu_i (ndarray):\n            encoded occupancy vector without flip\n        num_corr_functions (int):\n            total number of bit orderings in expansion.\n        site_orbit_list:\n            Information of all orbits that include the flip site.\n            List of tuples each with\n            (orbit id, clustar ratio, bit_combos,\n            bit_combo_indices site indices, bases array)\n\n\n    Returns:\n        ndarray: correlation vector difference\n    ";
+static PyObject *__pyx_pw_3src_8mc_utils_11delta_corr_single_flip_lm(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  __Pyx_memviewslice __pyx_v_occu_f = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_occu_i = { 0, 0, { 0 }, { 0 }, { 0 } };
+  int __pyx_v_num_corr_functions;
+  PyObject *__pyx_v_site_orbit_list = 0;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("delta_corr_single_flip_lm (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_occu_f,&__pyx_n_s_occu_i,&__pyx_n_s_num_corr_functions,&__pyx_n_s_site_orbit_list,0};
+    PyObject* values[4] = {0,0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+        CYTHON_FALLTHROUGH;
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_occu_f)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_occu_i)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("delta_corr_single_flip_lm", 1, 4, 4, 1); __PYX_ERR(0, 264, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_corr_functions)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("delta_corr_single_flip_lm", 1, 4, 4, 2); __PYX_ERR(0, 264, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  3:
+        if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_site_orbit_list)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("delta_corr_single_flip_lm", 1, 4, 4, 3); __PYX_ERR(0, 264, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "delta_corr_single_flip_lm") < 0)) __PYX_ERR(0, 264, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+      values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+    }
+    __pyx_v_occu_f = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[0], 0); if (unlikely(!__pyx_v_occu_f.memview)) __PYX_ERR(0, 264, __pyx_L3_error)
+    __pyx_v_occu_i = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[1], 0); if (unlikely(!__pyx_v_occu_i.memview)) __PYX_ERR(0, 265, __pyx_L3_error)
+    __pyx_v_num_corr_functions = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_num_corr_functions == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 266, __pyx_L3_error)
+    __pyx_v_site_orbit_list = ((PyObject*)values[3]);
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("delta_corr_single_flip_lm", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 264, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("src.mc_utils.delta_corr_single_flip_lm", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_site_orbit_list), (&PyList_Type), 1, "site_orbit_list", 1))) __PYX_ERR(0, 267, __pyx_L1_error)
+  __pyx_r = __pyx_pf_3src_8mc_utils_10delta_corr_single_flip_lm(__pyx_self, __pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_num_corr_functions, __pyx_v_site_orbit_list);
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_8mc_utils_10delta_corr_single_flip_lm(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, int __pyx_v_num_corr_functions, PyObject *__pyx_v_site_orbit_list) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("delta_corr_single_flip_lm", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_3src_8mc_utils_delta_corr_single_flip_lm(__pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_num_corr_functions, __pyx_v_site_orbit_list, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 264, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.mc_utils.delta_corr_single_flip_lm", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __PYX_XDEC_MEMVIEW(&__pyx_v_occu_f, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_occu_i, 1);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
@@ -19507,9 +20550,11 @@ static PyTypeObject __pyx_type___pyx_memoryviewslice = {
 
 static PyMethodDef __pyx_methods[] = {
   {"corr_from_occupancy", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_3src_8mc_utils_1corr_from_occupancy, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_8mc_utils_corr_from_occupancy},
-  {"general_delta_corr_single_flip", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_3src_8mc_utils_3general_delta_corr_single_flip, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_8mc_utils_2general_delta_corr_single_flip},
+  {"delta_corr_single_flip", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_3src_8mc_utils_3delta_corr_single_flip, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_8mc_utils_2delta_corr_single_flip},
   {"indicator_delta_corr_single_flip", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_3src_8mc_utils_5indicator_delta_corr_single_flip, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_8mc_utils_4indicator_delta_corr_single_flip},
   {"delta_ewald_single_flip", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_3src_8mc_utils_7delta_ewald_single_flip, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_8mc_utils_6delta_ewald_single_flip},
+  {"corr_from_occupancy_low_mem", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_3src_8mc_utils_9corr_from_occupancy_low_mem, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_8mc_utils_8corr_from_occupancy_low_mem},
+  {"delta_corr_single_flip_lm", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_3src_8mc_utils_11delta_corr_single_flip_lm, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3src_8mc_utils_10delta_corr_single_flip_lm},
   {0, 0, 0, 0}
 };
 
@@ -19594,7 +20639,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_encode, __pyx_k_encode, sizeof(__pyx_k_encode), 0, 0, 1, 1},
   {&__pyx_n_s_enumerate, __pyx_k_enumerate, sizeof(__pyx_k_enumerate), 0, 0, 1, 1},
   {&__pyx_n_s_error, __pyx_k_error, sizeof(__pyx_k_error), 0, 0, 1, 1},
-  {&__pyx_n_s_ewald_inds, __pyx_k_ewald_inds, sizeof(__pyx_k_ewald_inds), 0, 0, 1, 1},
+  {&__pyx_n_s_ewald_indices, __pyx_k_ewald_indices, sizeof(__pyx_k_ewald_indices), 0, 0, 1, 1},
   {&__pyx_n_s_ewald_matrix, __pyx_k_ewald_matrix, sizeof(__pyx_k_ewald_matrix), 0, 0, 1, 1},
   {&__pyx_n_s_flags, __pyx_k_flags, sizeof(__pyx_k_flags), 0, 0, 1, 1},
   {&__pyx_n_s_format, __pyx_k_format, sizeof(__pyx_k_format), 0, 0, 1, 1},
@@ -19609,13 +20654,13 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
   {&__pyx_n_s_memview, __pyx_k_memview, sizeof(__pyx_k_memview), 0, 0, 1, 1},
   {&__pyx_n_s_mode, __pyx_k_mode, sizeof(__pyx_k_mode), 0, 0, 1, 1},
-  {&__pyx_n_s_n_bit_orderings, __pyx_k_n_bit_orderings, sizeof(__pyx_k_n_bit_orderings), 0, 0, 1, 1},
   {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
   {&__pyx_n_s_name_2, __pyx_k_name_2, sizeof(__pyx_k_name_2), 0, 0, 1, 1},
   {&__pyx_n_s_ndim, __pyx_k_ndim, sizeof(__pyx_k_ndim), 0, 0, 1, 1},
   {&__pyx_n_s_new, __pyx_k_new, sizeof(__pyx_k_new), 0, 0, 1, 1},
   {&__pyx_kp_s_no_default___reduce___due_to_non, __pyx_k_no_default___reduce___due_to_non, sizeof(__pyx_k_no_default___reduce___due_to_non), 0, 0, 1, 0},
   {&__pyx_n_s_np, __pyx_k_np, sizeof(__pyx_k_np), 0, 0, 1, 1},
+  {&__pyx_n_s_num_corr_functions, __pyx_k_num_corr_functions, sizeof(__pyx_k_num_corr_functions), 0, 0, 1, 1},
   {&__pyx_n_s_numpy, __pyx_k_numpy, sizeof(__pyx_k_numpy), 0, 0, 1, 1},
   {&__pyx_kp_u_numpy_core_multiarray_failed_to, __pyx_k_numpy_core_multiarray_failed_to, sizeof(__pyx_k_numpy_core_multiarray_failed_to), 0, 1, 0, 0},
   {&__pyx_kp_u_numpy_core_umath_failed_to_impor, __pyx_k_numpy_core_umath_failed_to_impor, sizeof(__pyx_k_numpy_core_umath_failed_to_impor), 0, 1, 0, 0},
@@ -19661,7 +20706,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 48, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 49, __pyx_L1_error)
   __pyx_builtin_ImportError = __Pyx_GetBuiltinName(__pyx_n_s_ImportError); if (!__pyx_builtin_ImportError) __PYX_ERR(1, 945, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(2, 133, __pyx_L1_error)
   __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(2, 148, __pyx_L1_error)
@@ -23703,29 +24748,6 @@ __pyx_fail:
 }
 
 /* ObjectToMemviewSlice */
-  static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_d_d_dc_double__const__(PyObject *obj, int writable_flag) {
-    __Pyx_memviewslice result = { 0, 0, { 0 }, { 0 }, { 0 } };
-    __Pyx_BufFmt_StackElem stack[1];
-    int axes_specs[] = { (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_FOLLOW), (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_FOLLOW), (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_CONTIG) };
-    int retcode;
-    if (obj == Py_None) {
-        result.memview = (struct __pyx_memoryview_obj *) Py_None;
-        return result;
-    }
-    retcode = __Pyx_ValidateAndInit_memviewslice(axes_specs, __Pyx_IS_C_CONTIG,
-                                                 (PyBUF_C_CONTIGUOUS | PyBUF_FORMAT) | writable_flag, 3,
-                                                 &__Pyx_TypeInfo_double__const__, stack,
-                                                 &result, obj);
-    if (unlikely(retcode == -1))
-        goto __pyx_fail;
-    return result;
-__pyx_fail:
-    result.memview = NULL;
-    result.data = NULL;
-    return result;
-}
-
-/* ObjectToMemviewSlice */
   static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_dc_double(PyObject *obj, int writable_flag) {
     __Pyx_memviewslice result = { 0, 0, { 0 }, { 0 }, { 0 } };
     __Pyx_BufFmt_StackElem stack[1];
@@ -23738,6 +24760,29 @@ __pyx_fail:
     retcode = __Pyx_ValidateAndInit_memviewslice(axes_specs, __Pyx_IS_C_CONTIG,
                                                  (PyBUF_C_CONTIGUOUS | PyBUF_FORMAT) | writable_flag, 1,
                                                  &__Pyx_TypeInfo_double, stack,
+                                                 &result, obj);
+    if (unlikely(retcode == -1))
+        goto __pyx_fail;
+    return result;
+__pyx_fail:
+    result.memview = NULL;
+    result.data = NULL;
+    return result;
+}
+
+/* ObjectToMemviewSlice */
+  static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_d_d_dc_double__const__(PyObject *obj, int writable_flag) {
+    __Pyx_memviewslice result = { 0, 0, { 0 }, { 0 }, { 0 } };
+    __Pyx_BufFmt_StackElem stack[1];
+    int axes_specs[] = { (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_FOLLOW), (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_FOLLOW), (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_CONTIG) };
+    int retcode;
+    if (obj == Py_None) {
+        result.memview = (struct __pyx_memoryview_obj *) Py_None;
+        return result;
+    }
+    retcode = __Pyx_ValidateAndInit_memviewslice(axes_specs, __Pyx_IS_C_CONTIG,
+                                                 (PyBUF_C_CONTIGUOUS | PyBUF_FORMAT) | writable_flag, 3,
+                                                 &__Pyx_TypeInfo_double__const__, stack,
                                                  &result, obj);
     if (unlikely(retcode == -1))
         goto __pyx_fail;

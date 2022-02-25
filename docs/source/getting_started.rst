@@ -1,3 +1,19 @@
+===============
+Getting Started
+===============
+
+
+Installation
+============
+**smol** is purposedly light on dependencies which should make the installation
+process headache free. For now you will need to do an old-school install,
+pending a PyPi realease.
+
+1.  Clone the repository.
+2.  Go to the top level directory of the cloned repo and type::
+
+        pip install .
+
 Basic Usage
 ===========
 
@@ -134,3 +150,35 @@ package.
 
 .. code-links:: python
 .. code-links:: clear
+
+
+Example Notebooks
+=================
+For more detailed examples on how to use **smol** have a look at the following
+Jupyter notebooks.
+
+Basic Examples
+--------------
+
+- `Creating a basic cluster expansion`_
+- `Creating a cluster expansion with electrostatics`_
+- `Running Canonical Monte Carlo`_
+- `Running Semi-Grand Canonical Monte Carlo`_
+- `Preparing cluster expansion training data`_
+- `Adding structures to a StructureWrangler in parallel`_
+
+.. _Creating a basic cluster expansion: notebooks/1-creating-a-ce.ipynb
+
+.. _Creating a cluster expansion with electrostatics: notebooks/1-1-creating-a-ce-w-electrostatics.ipynb
+
+.. _Running Canonical Monte Carlo: notebooks/2-running-canonical-mc.ipynb
+
+.. _Running Semi-Grand Canonical Monte Carlo: notebooks/2-1-running-semigrand-mc.ipynb
+
+.. _Preparing cluster expansion training data: notebooks/3-training-data-preparation.ipynb
+
+.. _Adding structures to a StructureWrangler in parallel: notebooks/4-adding-structures-in-parallel.ipynb
+
+Advanced Examples
+-----------------
+Soon to come...

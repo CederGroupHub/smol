@@ -103,7 +103,8 @@ class ClusterExpansion(MSONable):
     :code:`sklearn.metrics` for many useful methods to get this quantities.
 
     This class is also used for Monte Carlo simulations to create a
-    :class:`CEProcessor` that calculates the CE for a fixed supercell size.
+    :class:`ClusterExpansionProcessor` that calculates the CE for a fixed
+    supercell size.
     Before using a ClusterExpansion for Monte Carlo you should consider pruning
     the correlation/orbit functions with small coefficients or eci.
 
@@ -167,7 +168,7 @@ class ClusterExpansion(MSONable):
         return self._eci
 
     @property
-    def prim_structure(self):
+    def structure(self):
         """Get primitive structure which the expansion is based on."""
         return self.cluster_subspace.structure
 
@@ -260,7 +261,7 @@ class ClusterExpansion(MSONable):
         feature_avg = np.average(self.feature_matrix, axis=0)
         feature_std = np.std(self.feature_matrix, axis=0)
         s = 'ClusterExpansion:\n    Prim Composition: ' \
-            f'{self.prim_structure.composition}\n' \
+            f'{self.structure.composition}\n' \
             f'Num corr functions: {self.cluster_subspace.num_corr_functions}\n'
         if self._feat_matrix is None:
             s += '[Feature matrix used in fit was not provided. Feature ' \
