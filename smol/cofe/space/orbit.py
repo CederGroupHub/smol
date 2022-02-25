@@ -308,6 +308,7 @@ class Orbit(MSONable):
                 f"{self.id}")
 
         self._bit_combos = tuple(bit_combos)
+        self.reset_bases()
 
     def remove_bit_combos_by_inds(self, inds):
         """Remove bit combos by their indices in the bit_combo list."""
@@ -323,6 +324,7 @@ class Orbit(MSONable):
             raise RuntimeError(
                 "All bit_combos have been removed from orbit with id "
                 f"{self.id}")
+        self.reset_bases()
 
     def transform_site_bases(self, basis_name, orthonormal=False):
         """Transform the Orbits site bases to new basis set.
