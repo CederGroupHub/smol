@@ -6,14 +6,12 @@ symmetry) clusters.
 
 import operator
 from functools import reduce
-from itertools import chain, product, accumulate, combinations
+from itertools import chain, product, combinations
 import numpy as np
-
 from monty.json import MSONable
 from pymatgen.core import Lattice
 from pymatgen.core.operations import SymmOp
 from pymatgen.util.coord import coord_list_mapping, is_coord_subset
-
 from smol.utils import _repr
 from smol.exceptions import SymmetryError, SYMMETRY_ERROR_MESSAGE
 from .constants import SITE_TOL
@@ -406,7 +404,7 @@ class Orbit(MSONable):
         return np.unique(mappings, axis=0)
 
     def reset_bases(self):
-        """Reset cached basis function array and correlation tensors"""
+        """Reset cached basis function array and correlation tensors."""
         self._basis_arrs = None
         self._corr_tensors = None
         self._flat_corr_tensors = None

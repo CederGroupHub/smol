@@ -33,31 +33,6 @@ def ewald_processor(cluster_subspace, request):
         ewald_term=ewald_term)
 
 
-@pytest.fixture(params=['CE', 'OD'])
-def composite_processor(cluster_subspace, request):
-    coefs = 2 * np.random.random(cluster_subspace.num_corr_functions + 1)
-    scmatrix = 3 * np.eye(3)
-    ewald_term = EwaldTerm()
-    cluster_subspace.add_external_term(ewald_term)
-    proc = CompositeProcessor(cluster_subspace, supercell_matrix=scmatrix)
-    if request.param == 'CE':
-        proc.add_processor(
-            ClusterExpansionProcessor(cluster_subspace, scmatrix, coefficients=coefs[:-1])
-        )
-    else:
-        expansion = ClusterExpansion(cluster_subspace, coefs)
-        proc.add_processor(
-            OrbitDecompositionProcessor(cluster_subspace, scmatrix,
-                                        expansion.orbit_factor_tensors)
-        )
-    proc.add_processor(EwaldProcessor(cluster_subspace, scmatrix, ewald_term,
-                                      coefficient=coefs[-1]))
-    # bind raw coefficients since OD processors do not store them
-    # and be able to test computing properties, hacky but oh well
-    proc.raw_coefs = coefs
-    return proc
-
-
 # General tests for all processors
 # Currently being done only on composites because I can not for the life of
 # me figure out a clean way to parametrize with parametrized fixtures or use a
@@ -193,10 +168,6 @@ def test_bad_composite(cluster_subspace):
     with pytest.raises(ValueError):
         proc.add_processor(
             ClusterExpansionProcessor(cluster_subspace, 2 * scmatrix, coefficients=coefs))
-    with pytest.raises(ValueError):
-        new_cs = cluster_subspace.copy()
-        new_cs.change_site_bases("chebyshev")
-        proc.add_processor(ClusterExpansionProcessor(new_cs, scmatrix, coefficients=coefs))
     with pytest.raises(ValueError):
         new_cs = cluster_subspace.copy()
         ids = range(1, new_cs.num_corr_functions)

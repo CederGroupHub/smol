@@ -5,8 +5,8 @@ and changes in electrostatic energy from a list of local flips for use in
 Monte Carlo sampling.
 
 If you are using a Hamiltonian with a Cluster expansion and an Ewald summation
-electrostatic term, you should use the CompositeProcessor with a ClusterExpansionProcessor
-and an EwaldProcessor class.
+electrostatic term, you should use the CompositeProcessor with a
+ClusterExpansionProcessor and an EwaldProcessor class.
 """
 
 __author__ = "Luis Barroso-Luque"

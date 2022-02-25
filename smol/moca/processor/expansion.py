@@ -11,13 +11,11 @@ import numpy as np
 from collections import defaultdict
 from smol.cofe import ClusterSubspace
 from smol.moca.processor.base import Processor
-from src.cemc_utils import (corr_from_occupancy, factors_from_occupancy,
-                            delta_corr_single_flip, delta_factors_single_flip,
-                            indicator_delta_corr_single_flip)
+from src.mc_utils import corr_from_occupancy, delta_corr_single_flip
 
 
 class ClusterExpansionProcessor(Processor):
-    """ClusterExpansionProcessor class to use a ClusterExpansion in MC simulations.
+    """ClusterExpansionProcessor class to use a ClusterExpansion in MC.
 
     A CE processor is optimized to compute correlation vectors and local
     changes in correlation vectors. This class allows the use a cluster
@@ -30,7 +28,7 @@ class ClusterExpansionProcessor(Processor):
     Attributes:
         coefs (ndarray):
             Fitted coefficients from the cluster expansion.
-        n_corr_functions (int):
+        num_corr_functions (int):
             Total number of orbit basis functions (correlation functions).
             This includes all possible labellings/orderings for all orbits.
             Same as :code:`ClusterSubspace.n_bit_orderings`.
@@ -50,12 +48,12 @@ class ClusterExpansionProcessor(Processor):
         """
         super().__init__(cluster_subspace, supercell_matrix, coefficients)
 
-        self.n_corr_functions = self.cluster_subspace.num_corr_functions
-        if len(coefficients) != self.n_corr_functions:
+        self.num_corr_functions = self.cluster_subspace.num_corr_functions
+        if len(coefficients) != self.num_corr_functions:
             raise ValueError(
                 f'The provided coeffiecients are not the right length. '
                 f'Got {len(coefficients)} coefficients, the length must be '
-                f'{self.n_corr_functions} based on the provided cluster '
+                f'{self.num_corr_functions} based on the provided cluster '
                 f'subspace.'
             )
 
@@ -98,7 +96,7 @@ class ClusterExpansionProcessor(Processor):
         Returns:
             array: correlation vector
         """
-        return corr_from_occupancy(occupancy, self.n_corr_functions,
+        return corr_from_occupancy(occupancy, self.num_corr_functions,
                                    self._orbit_list) * self.size
 
     def compute_feature_vector_change(self, occupancy, flips):
@@ -121,13 +119,13 @@ class ClusterExpansionProcessor(Processor):
             array: change in correlation vector
         """
         occu_i = occupancy
-        delta_corr = np.zeros(self.n_corr_functions)
+        delta_corr = np.zeros(self.num_corr_functions)
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
             site_orbit_list = self._orbits_by_sites[f[0]]
-            delta_corr += self._dcorr_single_flip(
-                occu_f, occu_i, self.n_corr_functions, site_orbit_list
+            delta_corr += delta_corr_single_flip(
+                occu_f, occu_i, self.num_corr_functions, site_orbit_list
             )
             occu_i = occu_f
 

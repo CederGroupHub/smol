@@ -18,13 +18,13 @@ from pymatgen.analysis.structure_matcher import \
     StructureMatcher, OrderDisorderElementComparator
 from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc, \
     lattice_points_in_supercell, coord_list_mapping_pbc
-from src.cemc_utils import corr_from_occupancy
 from smol.cofe.space import Orbit, basis_factory, get_site_spaces, \
     get_allowed_species, Vacancy
 from smol.cofe.space.basis import IndicatorBasis
 from smol.exceptions import SymmetryError, StructureMatchError, \
     SYMMETRY_ERROR_MESSAGE
 from smol.cofe.space.constants import SITE_TOL
+from src.mc_utils import corr_from_occupancy
 
 
 __author__ = "Luis Barroso-Luque, William Davidson Richards"
@@ -474,7 +474,7 @@ class ClusterSubspace(MSONable):
         inds = []
         for orbit in orbits:
             inds += list(range(orbit.bit_id, orbit.bit_id + len(orbit)))
-        return inds
+        return np.array(inds)
 
     def add_external_term(self, term):
         """Add an external term to subspace.

@@ -140,17 +140,6 @@ class TestOrbit(unittest.TestCase):
         self.assertRaises(
             RuntimeError, orb1.remove_bit_combos_by_inds, [0, 1])
 
-    def test_eval(self):
-        # Test cluster function evaluation with indicator basis
-        bases = [basis_factory('indicator', bit) for bit in self.spaces]
-        self._test_eval(bases)
-
-    def test_transform_basis(self):
-        for basis in ('sinusoid', 'chebyshev', 'legendre'):
-            self.orbit.transform_site_bases(basis)
-            bases = [basis_factory(basis, bit) for bit in self.spaces]
-            self._test_eval(bases)
-
     def test_exceptions(self):
         self.assertRaises(AttributeError, Orbit, self.coords[:3],
                           self.lattice, [[0, 1], [0, 1]], self.bases,
