@@ -8,9 +8,8 @@ import numpy.testing as npt
 from pymatgen.core import Composition
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe.space import Orbit, Cluster
-from smol.cofe.space.basis import basis_factory, BasisIterator
+from smol.cofe.space.basis import basis_factory
 from smol.cofe.space.domain import SiteSpace, get_site_spaces
-from smol.utils import get_subclasses
 from tests.utils import assert_msonable
 
 

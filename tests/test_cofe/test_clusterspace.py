@@ -488,9 +488,10 @@ def test_vs_CASM_pairs(single_structure):
     spaces = get_allowed_species(structure)
     m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     orbit_list = [
-        (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
-         orb.bases_array, inds)
-        for orb, inds in zip(cs.orbits, cs.supercell_orbit_mappings(m))]
+        (orbit.bit_id, orbit.flat_tensor_indices,
+         orbit.flat_correlation_tensors, cluster_indices)
+        for orbit, cluster_indices in
+        zip(cs.orbits, cs.supercell_orbit_mappings(m))]
 
     # last two clusters are switched from CASM output (occupancy basis)
     # all_li (ignore casm point term)
@@ -534,9 +535,10 @@ def test_vs_CASM_triplets(single_structure):
     m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 
     orbit_list = [
-        (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
-         orb.bases_array, inds)
-        for orb, inds in zip(cs.orbits, cs.supercell_orbit_mappings(m))]
+        (orbit.bit_id, orbit.flat_tensor_indices,
+         orbit.flat_correlation_tensors, cluster_indices)
+        for orbit, cluster_indices in
+        zip(cs.orbits, cs.supercell_orbit_mappings(m))]
     # last two pair terms are switched from CASM output (occupancy basis)
     # all_vacancy (ignore casm point term)
     occu = _encode_occu([Vacancy(), Vacancy(), Vacancy()], spaces)
@@ -582,9 +584,10 @@ def test_vs_CASM_multicomp(single_structure):
     m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     spaces = get_allowed_species(single_structure)
     orbit_list = [
-        (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
-         orb.bases_array, inds)
-        for orb, inds in zip(cs.orbits, cs.supercell_orbit_mappings(m))]
+        (orbit.bit_id, orbit.flat_tensor_indices,
+         orbit.flat_correlation_tensors, cluster_indices)
+        for orbit, cluster_indices in
+        zip(cs.orbits, cs.supercell_orbit_mappings(m))]
     # mixed
     occu = _encode_occu([Vacancy(), Species('Li', 1), Species('Li', 1)], spaces)
     corr = corr_from_occupancy(occu, cs.num_corr_functions, orbit_list)

@@ -1,7 +1,7 @@
 import os
 from smol.io import save_work, load_work
 from smol.cofe import ClusterSubspace, StructureWrangler
-from smol.moca import CEProcessor, CanonicalEnsemble
+from smol.moca import ClusterExpansionProcessor, CanonicalEnsemble
 
 
 def test_save_load_work(single_canonical_ensemble, tmpdir):
@@ -16,6 +16,8 @@ def test_save_load_work(single_canonical_ensemble, tmpdir):
     for name, obj in work_dict.items():
         assert name == obj.__class__.__name__
         assert type(obj) in (
-            ClusterSubspace, StructureWrangler, CEProcessor, CanonicalEnsemble)
+            ClusterSubspace, StructureWrangler, ClusterExpansionProcessor,
+            CanonicalEnsemble
+        )
     os.remove(file_path)
 
