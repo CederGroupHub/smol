@@ -276,12 +276,6 @@ class ClusterSubspace(MSONable):
         return [orbit for _, orbits
                 in sorted(self._orbits.items()) for orbit in orbits]
 
-    def iterorbits(self):
-        """Yield orbits."""
-        for _, orbits in sorted(self._orbits.items()):
-            for orbit in orbits:
-                yield orbit
-
     @property
     def orbits_by_size(self):
         """Get dictionary of orbits with key being the orbit size."""
@@ -290,18 +284,8 @@ class ClusterSubspace(MSONable):
     @property
     def orbit_multiplicities(self):
         """Get the crystallographic multiplicities for each orbit."""
-        mults = [1] + [orb.multiplicity for orb in self.iterorbits()]
+        mults = [1] + [orb.multiplicity for orb in self.orbits]
         return np.array(mults)
-
-    @property
-    def all_bit_combos(self):
-        """Return flattened all bit_combos for each correlation function.
-
-        A list of all bit_combos of length self.num_corr_functions.
-        This allows to obtain a bit combo by bit id (empty cluster has None)
-        """
-        return [None] + [combos for orbit in self.orbits
-                         for combos in orbit.bit_combos]
 
     @property
     def num_functions_per_orbit(self):
@@ -310,7 +294,7 @@ class ClusterSubspace(MSONable):
         The list returned is of length total number of orbits, each entry is
         the total number of correlation functions assocaited with that orbit.
         """
-        return np.array([len(orbit) for orbit in self.iterorbits()])
+        return np.array([len(orbit) for orbit in self.orbits])
 
     @property
     def function_orbit_ids(self):
@@ -320,7 +304,7 @@ class ClusterSubspace(MSONable):
         in the list since they are not associated with any orbit.
         """
         func_orb_ids = [0]
-        for orbit in self.iterorbits():
+        for orbit in self.orbits:
             func_orb_ids += len(orbit) * [orbit.id, ]
         return np.array(func_orb_ids)
 
@@ -359,12 +343,12 @@ class ClusterSubspace(MSONable):
     @property
     def basis_orthogonal(self):
         """Check if the orbit basis defined is orthogonal."""
-        return all(orb.basis_orthogonal for orb in self.iterorbits())
+        return all(orb.basis_orthogonal for orb in self.orbits)
 
     @property
     def basis_orthonormal(self):
         """Check if the orbit basis is orthonormal."""
-        return all(orb.basis_orthonormal for orb in self.iterorbits())
+        return all(orb.basis_orthonormal for orb in self.orbits)
 
     @property
     def external_terms(self):
@@ -731,7 +715,7 @@ class ClusterSubspace(MSONable):
             orthonormal (bool):
                 option to orthonormalize all new site basis sets
         """
-        for orbit in self.iterorbits():
+        for orbit in self.orbits:
             orbit.transform_site_bases(new_basis, orthonormal)
 
     def remove_orbits(self, orbit_ids):
@@ -799,7 +783,7 @@ class ClusterSubspace(MSONable):
         empty_orbit_ids = []
         bit_ids = np.array(bit_ids, dtype=int)
 
-        for orbit in self.iterorbits():
+        for orbit in self.orbits:
             first_id = orbit.bit_id
             last_id = orbit.bit_id + len(orbit)
             to_remove = bit_ids[bit_ids >= first_id]
@@ -820,7 +804,7 @@ class ClusterSubspace(MSONable):
 
     def copy(self):
         """Deep copy of instance."""
-        return deepcopy(self)
+        return ClusterSubspace.from_dict(self.as_dict())
 
     def structure_site_mapping(self, supercell, structure):
         """Get structure site mapping.
@@ -859,7 +843,7 @@ class ClusterSubspace(MSONable):
         """
         if orbit_id == 0:
             return []
-        size = self.orbits[orbit_id - 1].base_cluster.size
+        size = len(self.orbits[orbit_id - 1].base_cluster)
         if level is None or level < 0 or size - level - 1 < 0:
             stop = 0
         elif min_size > size - level:
@@ -1109,7 +1093,7 @@ class ClusterSubspace(MSONable):
 
         ts = lattice_points_in_supercell(scmatrix)
         orbit_indices = []
-        for orbit in self.iterorbits():
+        for orbit in self.orbits:
             prim_fcoords = np.array([c.sites for c in orbit.clusters])
             fcoords = np.dot(prim_fcoords, prim_to_supercell)
             # tcoords contains all the coordinates of the symmetrically

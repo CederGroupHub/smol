@@ -3,7 +3,7 @@ from random import choice
 from tests.utils import assert_msonable
 from pymatgen.core import Composition, Element, Species, DummySpecies
 from smol.cofe.space.domain import (get_species, get_allowed_species,
-                                    get_site_spaces, Vacancy)
+                                    get_site_spaces, SiteSpace, Vacancy)
 from copy import copy, deepcopy
 
 
@@ -40,10 +40,14 @@ def test_get_specie_vacancy(vacancy):  # smol part
 
 @pytest.mark.parametrize('specie',
                          ['Li', 'Li+', Element('Li'), Species('Li', 1),
-                          DummySpecies(), 'X'])
+                          DummySpecies(), 'X', 1, ('Li+', 'Mn2+')])
 def test_get_specie_others(specie):  # pymatgen part
     sp = get_species(specie)
-    assert isinstance(sp, Species) or isinstance(sp, Element)
+    if isinstance(specie, (list, tuple)):
+        assert all(
+            isinstance(s, Species) or isinstance(s, Element) for s in sp)
+    else:
+        assert isinstance(sp, Species) or isinstance(sp, Element)
 
 
 def test_vacancy():
@@ -55,6 +59,7 @@ def test_vacancy():
     assert vacancy != Vacancy("A")
     assert vacancy != dummy
     assert vacancy != Species('Li')
+    assert vacancy != 5.67
     _ = str(vacancy)
     _ = repr(vacancy)
     assert deepcopy(vacancy).as_dict() == vacancy.as_dict()
@@ -78,3 +83,16 @@ def test_site_space(structure):
         for specie in space:
             assert space[specie]
             assert space[str(specie)]
+
+    # test a few invalid types
+    with pytest.raises(TypeError):
+        _ = space[4.56], space[True]
+
+
+def test_bad_site_space():
+    with pytest.raises(ValueError):
+        s = SiteSpace(Composition({"A": 0.5, Vacancy(): 0.1}))
+    with pytest.raises(ValueError):
+        s = SiteSpace(Composition({"A": 0.5, "B": 0.6}))
+    with pytest.raises(ValueError):
+        s = SiteSpace(Composition({Vacancy(): 0.5, Vacancy(): 0.5}))
