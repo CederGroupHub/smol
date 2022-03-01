@@ -1030,7 +1030,6 @@ class ClusterSubspace(MSONable):
                            -x.multiplicity))
         return pt_orbits
 
-
     @staticmethod
     def _gen_multi_orbits(point_orbits, exp_struct, cutoffs, site_bases, nbits,
                           symops):
@@ -1443,7 +1442,6 @@ class PottsSubspace(ClusterSubspace):
                    supercell_matcher=supercell_matcher,
                    site_matcher=site_matcher, **matcher_kwargs)
 
-
     def get_function_decoration(self, index):
         """Get the decoration/labeling of a specific orbit function.
 
@@ -1505,7 +1503,6 @@ class PottsSubspace(ClusterSubspace):
         Returns:
             dict: {size: list of Orbits within diameter cutoff}
         """
-
         site_spaces = get_site_spaces(exp_struct)
         site_bases = tuple(
             IndicatorBasis(site_space) for site_space in site_spaces)
@@ -1542,7 +1539,6 @@ class PottsSubspace(ClusterSubspace):
                     orb.remove_bit_combos_by_inds([len(orb.bit_combos) - 1])
 
         return orbits
-
 
     def as_dict(self):
         """
