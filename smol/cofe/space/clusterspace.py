@@ -233,10 +233,10 @@ class ClusterSubspace(MSONable):
                            or len(site.species) > 1]
         expansion_structure = Structure.from_sites(sites_to_expand)
         # get orbits within given cutoffs
-        orbits = cls._orbits_from_cutoffs(expansion_structure,
-                                          cutoffs, symops,
-                                          basis, orthonormal,
-                                          use_concentration)
+        orbits = cls._gen_orbits_from_cutoffs(expansion_structure,
+                                              cutoffs, symops,
+                                              basis, orthonormal,
+                                              use_concentration)
         return cls(structure=structure,
                    expansion_structure=expansion_structure, symops=symops,
                    orbits=orbits, supercell_matcher=supercell_matcher,
@@ -925,8 +925,8 @@ class ClusterSubspace(MSONable):
         self.num_clusters = counts[2]
 
     @staticmethod
-    def _orbits_from_cutoffs(exp_struct, cutoffs, symops, basis, orthonorm,
-                             use_conc):
+    def _gen_orbits_from_cutoffs(exp_struct, cutoffs, symops, basis, orthonorm,
+                                 use_conc):
         """Generate orbits from diameter cutoffs.
 
         The diameter of a cluster is the maximum distance between any two
@@ -1356,8 +1356,8 @@ class PottsSubspace(ClusterSubspace):
                            or len(site.species) > 1]
         expansion_structure = Structure.from_sites(sites_to_expand)
         # get orbits within given cutoffs
-        orbits = cls._orbits_from_cutoffs(expansion_structure, cutoffs, symops,
-                                          remove_last_cluster)
+        orbits = cls._gen_orbits_from_cutoffs(expansion_structure, cutoffs,
+                                              symops, remove_last_cluster)
         return cls(structure=structure,
                    expansion_structure=expansion_structure, symops=symops,
                    orbits=orbits, without_last_cluster=remove_last_cluster,
@@ -1365,7 +1365,7 @@ class PottsSubspace(ClusterSubspace):
                    site_matcher=site_matcher, **matcher_kwargs)
 
     @staticmethod
-    def _orbits_from_cutoffs(exp_struct, cutoffs, symops, remove_last):
+    def _gen_orbits_from_cutoffs(exp_struct, cutoffs, symops, remove_last):
         """Generate orbits from diameter cutoffs.
 
         Generates dictionary of orbits in the same way that the cluster
