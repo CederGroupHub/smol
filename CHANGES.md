@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+* `ClusterSubspace` with no point terms using `{1: None}`.
+  [\#158](https://github.com/CederGroupHub/smol/pull/158)
+  ([lbluque](https://github.com/lbluque))
 * `MCBias` implementation for biased sampling, `Trace` objects for general
   state saving during sampling.
   [\#154](https://github.com/CederGroupHub/smol/pull/154)
