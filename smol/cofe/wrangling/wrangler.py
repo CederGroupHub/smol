@@ -335,10 +335,15 @@ class StructureWrangler(MSONable):
         return np.where(col_mask == 1)[0][1:]
 
     def get_similarity_matrix(self, rows=None, cols=None, rtol=1e-5):
-        """Generate a matrix to compare the similarity of correlation feature vectors (columns) in the feature matrix.
-         Matrix element a(i,j) represents the fraction of equivalent corresponding values in feature vectors i and j.
-         This construction is analogous to the gram matrix, but instead of an inner product, it counts the number
-         of identical corresponding elements in feature vectors i and j.
+        """Get similarity matrix of correlation vectors.
+
+        Generate a matrix to compare the similarity of correlation feature
+        vectors (columns) in the feature matrix. Matrix element a(i,j)
+        represents the fraction of equivalent corresponding values in feature
+        vectors i and j.
+        This construction is analogous to the gram matrix, but instead of an
+        inner product, it counts the number of identical corresponding elements
+        in feature vectors i and j.
 
         Args:
             rows (list):
@@ -349,7 +354,8 @@ class StructureWrangler(MSONable):
                 relative tolerance for comparing feature matrix column values
 
         Returns:
-            (n x n) Similarity matrix
+            ndarray:
+                (n x n) Similarity matrix
         """
 
         rows = rows if rows is not None else range(self.num_structures)
