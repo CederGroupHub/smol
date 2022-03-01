@@ -46,6 +46,9 @@ Use this section to keep track of changes in the works.
   ([lbluque](https://github.com/lbluque))
 
 ### Changed
+* unittests for `smol.cofe` using `pytest`.
+  [\#159](https://github.com/CederGroupHub/smol/pull/159)
+  ([lbluque](https://github.com/lbluque))
 * New `corr_from_occupancy` and `delta_corr` faster and cleaner
   implementations. And renamed `CEProcessor` to `ClusterExpansionProcessor`
   [\#156](https://github.com/CederGroupHub/smol/pull/156)

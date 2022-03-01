@@ -1104,7 +1104,7 @@ class ClusterSubspace(MSONable):
             tcs = tcoords.shape
             inds = coord_list_mapping_pbc(
                 tcoords.reshape((-1, 3)), supercell_fcoords,
-                atol=SITE_TOL).reshape((tcs[0] * tcs[1], tcs[2]))  # noqa
+                atol=SITE_TOL).reshape((tcs[0] * tcs[1], tcs[2]))
             # orbit_ids holds orbit, and 2d array of index groups that
             # correspond to the orbit
             # the 2d array may have some duplicates. This is due to

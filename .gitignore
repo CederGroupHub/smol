@@ -53,3 +53,4 @@ Thumbs.db
 .pytest_cache*
 /smol/cofe/debug/*
 */.ipynb_checkpoints/*
+/htmlcov/

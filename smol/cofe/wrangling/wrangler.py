@@ -357,7 +357,6 @@ class StructureWrangler(MSONable):
             ndarray:
                 (n x n) Similarity matrix
         """
-
         rows = rows if rows is not None else range(self.num_structures)
         cols = cols if cols is not None else range(self.num_features)
 
@@ -655,7 +654,7 @@ class StructureWrangler(MSONable):
         """
         try:
             if supercell_matrix is None:
-                supercell_matrix = self._subspace.scmatrix_from_structure(structure)  # noqa
+                supercell_matrix = self._subspace.scmatrix_from_structure(structure)
 
             size = self._subspace.num_prims_from_matrix(supercell_matrix)
             if site_mapping is None:
