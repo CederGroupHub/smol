@@ -3,12 +3,13 @@ import pytest
 import numpy as np
 from pymatgen.core import Structure
 from monty.serialization import loadfn
-from smol.cofe import ClusterSubspace
+from smol.cofe import ClusterSubspace, StructureWrangler
 from smol.moca import CanonicalEnsemble, SemiGrandEnsemble, \
     ClusterExpansionProcessor, EwaldProcessor, CompositeProcessor
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.basis import BasisIterator
 from smol.utils import get_subclasses
+from tests.utils import gen_fake_training_data
 
 # load test data files and set them up as fixtures
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
@@ -120,3 +121,12 @@ def supercell_matrix():
     while abs(np.linalg.det(m)) < 1E-6:  # make sure not singular
         m = np.random.randint(-3, 3, size=(3, 3))
     return m
+
+
+@pytest.fixture(scope='module')
+def structure_wrangler(single_subspace):
+    wrangler = StructureWrangler(single_subspace)
+    for struct, energy in gen_fake_training_data(
+            wrangler.cluster_subspace.structure, n=10):
+        wrangler.add_data(struct, {'energy': energy}, weights={'random': 2.0})
+    return wrangler

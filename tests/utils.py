@@ -65,3 +65,14 @@ def gen_random_structure(prim, size=3):
         site.species = Composition(
             {random.choice(list(site.species.keys())): 1})
     return structure
+
+
+def gen_fake_training_data(prim_structure, n=10):
+    """Generate a fake structure, energy training set."""
+
+    training_data = []
+    for energy in np.random.random(n):
+        struct = gen_random_structure(prim_structure, size=np.random.randint(2, 6))
+        energy *= -len(struct)
+        training_data.append((struct, energy))
+    return training_data
