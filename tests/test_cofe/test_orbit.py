@@ -113,13 +113,6 @@ class TestOrbit(unittest.TestCase):
         self.assertTrue(orbit1.basis_orthogonal)
         self.assertTrue(orbit1.basis_orthonormal)
 
-    def _test_eval(self, bases):
-        occu = list(range(len(self.spaces[0])))
-        for s1, s2 in combinations_with_replacement(occu, 2):
-            for i, j in combinations_with_replacement([0, 1], 2):
-                self.assertEqual(bases[0].function_array[i, s1]*bases[1].function_array[j, s2],
-                                 self.orbit.eval([i,j], [s1, s2]))
-
     def test_remove_bit_combo(self):
         bits = [0, 0]
         self.orbit.remove_bit_combo(bits)
@@ -146,17 +139,6 @@ class TestOrbit(unittest.TestCase):
                              zip(orb1.bit_combos, orb2.bit_combos)))
         self.assertRaises(
             RuntimeError, orb1.remove_bit_combos_by_inds, [0, 1])
-
-    def test_eval(self):
-        # Test cluster function evaluation with indicator basis
-        bases = [basis_factory('indicator', bit) for bit in self.spaces]
-        self._test_eval(bases)
-
-    def test_transform_basis(self):
-        for basis in ('sinusoid', 'chebyshev', 'legendre'):
-            self.orbit.transform_site_bases(basis)
-            bases = [basis_factory(basis, bit) for bit in self.spaces]
-            self._test_eval(bases)
 
     def test_exceptions(self):
         self.assertRaises(AttributeError, Orbit, self.coords[:3],

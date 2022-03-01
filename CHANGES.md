@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+* `MCBias` implementation for biased sampling, `Trace` objects for general
+  state saving during sampling.
+  [\#154](https://github.com/CederGroupHub/smol/pull/154)
+  ([lbluque](https://github.com/lbluque))
+* Active and inactive sublattices for MC sampling.
+  [\#152](https://github.com/CederGroupHub/smol/pull/152)
+  ([lbluque](https://github.com/lbluque))
 * `SamplerContainer.to_hdf5` to save MC sample containers
 [\#151](https://github.com/CederGroupHub/smol/pull/151)
   ([lbluque](https://github.com/lbluque))
@@ -32,6 +39,14 @@ Use this section to keep track of changes in the works.
   ([lbluque](https://github.com/lbluque))
 
 ### Changed
+* New `corr_from_occupancy` and `delta_corr` faster and cleaner
+  implementations. And renamed `CEProcessor` to `ClusterExpansionProcessor`
+  [\#156](https://github.com/CederGroupHub/smol/pull/156)
+  ([lbluque](https://github.com/lbluque))
+* Dropped "er" endings for `MCUsher` names. Renamed `MuSemigrandEnsemble`
+  to `SemigrandEnsemble`.
+  [\#154](https://github.com/CederGroupHub/smol/pull/154)
+  ([lbluque](https://github.com/lbluque))
 * Changed `ClusterSubspace.supercell_orbit_mappings` to only include cluster
   site indices.
   [#145](https://github.com/CederGroupHub/smol/pull/145)
@@ -65,13 +80,20 @@ Use this section to keep track of changes in the works.
 
 
 ### Deprecated
+* `optimize_indicator` in `ClusterExpansionProcessor` and corresponding cython
+   function. 
+  [\#156](https://github.com/CederGroupHub/smol/pull/156)
+  ([lbluque](https://github.com/lbluque))
+* `FuSemiGrandEnsemble` now `FugacityBias`.
+  [\#154](https://github.com/CederGroupHub/smol/pull/154)
+  ([lbluque](https://github.com/lbluque))
 * Numerical conversion of coefficients between bases
   `ClusterExpansion.convert_coefs`
   [\#149](https://github.com/CederGroupHub/smol/pull/149)
   ([lbluque](https://github.com/lbluque))
 
-## [v1.0.1](https://github.com/CederGroupHub/smol/tree/v1.0.1) (2021-03-03)
-#### [Full Changelog](https://github.com/CederGroupHub/smol/compare/v1.0.0...v1.0.1)
+## [alpha1.0.1](https://github.com/CederGroupHub/smol/tree/alpha1.0.1) (2021-03-03)
+#### [Full Changelog](https://github.com/CederGroupHub/smol/compare/alpha1.0.0...alpha1.0.1)
 
 ### Added
 * Method in `StructureWrangler` to get structure matching duplicates
@@ -156,13 +178,13 @@ Use this section to keep track of changes in the works.
 sets. [\#90](https://github.com/CederGroupHub/smol/pull/90)
   ([lbluque](https://github.com/lbluque))
 
-## [v1.0.0](https://github.com/CederGroupHub/smol/releases/tag/v1.0.0) (2020-10-27)
-#### [Full Changelog](https://github.com/CederGroupHub/smol/compare/v0.0.0...v1.0.0)
+## [alpha1.0.0](https://github.com/CederGroupHub/smol/releases/tag/alpha1.0.0) (2020-10-27)
+#### [Full Changelog](https://github.com/CederGroupHub/smol/compare/alpha0.0.0...alpha1.0.0)
 ### Added
 * Completely new `smol.moca` module. Design based generally up as follows:
   *  `Processor` classes used to compute features, properties and their local
   changes from site flips for fixed supercell sizes.
-     * `CEProcessor` to handle cluster expansions.
+     * `ClusterExpansionProcessor` to handle cluster expansions.
      * `EwaldProcessor` to handle Ewald electrostatic energy.
      * `CompositeProcessor` to mix energy models. Currently only the ones above.
   * `Ensemble` classes to represent the corresponding statistical ensemble
@@ -233,5 +255,5 @@ by making `StandardBasis` MSONable and saving corresponding arrays.
 [\#90](https://github.com/CederGroupHub/smol/pull/90)
 
 
-## [v0.0.0](https://github.com/CederGroupHub/smol/tree/v0.0.0) (2020-10-8)
+## [alpha0.0.0](https://github.com/CederGroupHub/smol/tree/alpha0.0.0) (2020-10-8)
 Initial relatively *stable* version of the code.

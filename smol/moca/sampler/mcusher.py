@@ -13,7 +13,7 @@ __author__ = "Luis Barroso-Luque"
 from abc import ABC, abstractmethod
 import random
 import numpy as np
-from smol.utils import derived_class_factory
+from smol.utils import derived_class_factory, class_name_from_str
 
 
 class MCUsher(ABC):
@@ -28,7 +28,7 @@ class MCUsher(ABC):
                 list of active Sublattices to propose steps for. Active
                 sublattices are those that include sites with configuration
                 DOFs.
-            inactive_sublattices (list of Sublattice):
+            inactive_sublattices (list of InactiveSublattice):
                 list of inactive Sublattices, i.e. those with no configuration
                 DOFs. These can be used to obtain auxiliary information for MC
                 step proposals for the active sublattices
@@ -97,7 +97,7 @@ class MCUsher(ABC):
         return random.choices(self.sublattices, weights=self._sublatt_probs)[0]
 
 
-class Flipper(MCUsher):
+class Flip(MCUsher):
     """Implementation of a simple flip step at a random site."""
 
     def propose_step(self, occupancy):
@@ -119,7 +119,7 @@ class Flipper(MCUsher):
         return [(site, random.choice(list(choices)))]
 
 
-class Swapper(MCUsher):
+class Swap(MCUsher):
     """Implementation of a simple swap step for two random sites."""
 
     def propose_step(self, occupancy):
@@ -169,6 +169,7 @@ def mcusher_factory(usher_type, sublattices, inactive_sublattices, *args,
     Returns:
         MCUsher: instance of derived class.
     """
+    usher_name = class_name_from_str(usher_type)
     return derived_class_factory(
-        usher_type.capitalize(), MCUsher, sublattices, inactive_sublattices,
+        usher_name, MCUsher, sublattices, inactive_sublattices,
         *args, **kwargs)

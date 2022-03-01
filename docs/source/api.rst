@@ -1,6 +1,6 @@
-===
-API
-===
+=========
+API reference
+=========
 
 **smol** is organized into two main submodules:
 
@@ -91,8 +91,7 @@ The core classes are:
 - :ref:`ensembles`
 
   - :class:`CanonicalEnsemle`
-  - :class:`MuSemiGrandEnsemble`
-  - :class:`FuSemiGrandEnsemble`
+  - :class:`SemiGrandEnsemble`
 
 - :ref:`processors`
 
@@ -124,21 +123,10 @@ the specific temperature to generate samples at, is set in a :class:`Sampler`.
    :undoc-members:
    :show-inheritance:
 
-.. autoclass:: smol.moca.ensemble.semigrand.BaseSemiGrandEnsemble
+.. autoclass:: smol.moca.SemiGrandEnsemble
    :members:
    :undoc-members:
    :show-inheritance:
-
-.. autoclass:: smol.moca.MuSemiGrandEnsemble
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. autoclass:: smol.moca.FuSemiGrandEnsemble
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 
 .. _processors:
 

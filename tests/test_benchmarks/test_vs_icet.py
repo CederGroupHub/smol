@@ -8,7 +8,7 @@ import unittest
 import numpy as np
 from pymatgen.core.periodic_table import get_el_sp
 from smol.cofe import StructureWrangler, ClusterSubspace, ClusterExpansion
-from smol.moca import MuSemiGrandEnsemble, Sampler, CEProcessor
+from smol.moca import SemiGrandEnsemble, Sampler, ClusterExpansionProcessor
 from tests.data import (icet_eci, icet_predictions, icet_fit_structs,
                         icet_test_structs, aupt_prim, icet_sgc_run_10000its)
 
@@ -53,9 +53,9 @@ class TestCEvicet(unittest.TestCase):
         struct = self.cs.structure.copy()
         struct.replace(0, 'Ag')
         struct.make_supercell(sc_matrix)
-        pr = CEProcessor(self.cs, sc_matrix, self.coefs)
-        ens = MuSemiGrandEnsemble(pr,
-                                  chemical_potentials={'Ag': 0, 'Pd': 0})
+        pr = ClusterExpansionProcessor(self.cs, sc_matrix, self.coefs)
+        ens = SemiGrandEnsemble(pr,
+                                chemical_potentials={'Ag': 0, 'Pd': 0})
         sampler = Sampler.from_ensemble(ens, temperature=300)
         init_occu = pr.occupancy_from_structure(struct)
         iterations = 10000  # icet runs were done with 10000 iterations

@@ -11,6 +11,17 @@ Subpackages
    smol.moca.processor
    smol.moca.sampler
 
+Submodules
+----------
+
+smol.moca.sublattice module
+---------------------------
+
+.. automodule:: smol.moca.sublattice
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

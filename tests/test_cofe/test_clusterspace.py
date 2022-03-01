@@ -89,6 +89,13 @@ def test_potts_subspace(cluster_subspace):
             deco[i] in species for deco in fdeco
             for i, species in enumerate(orbit.site_spaces))
 
+    # test removing last bit combo
+    potts_subspace1 = PottsSubspace.from_cutoffs(cluster_subspace.structure,
+                                                 cluster_subspace.cutoffs,
+                                                 remove_last_cluster=True)
+    for o1, o2 in zip(potts_subspace.orbits, potts_subspace1.orbits):
+        assert len(o1) - 1 == len(o2)
+
     assert_msonable(potts_subspace)
 
 
@@ -452,8 +459,8 @@ class TestClusterSubSpace(unittest.TestCase):
         bits = get_allowed_species(structure)
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
         orbit_list = [
-            (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
-             orb.bases_array, inds)
+            (orb.bit_id, orb.flat_tensor_indices,
+             orb.flat_correlation_tensors, inds)
             for orb, inds in zip(cs.orbits, cs.supercell_orbit_mappings(m))]
 
         # last two clusters are switched from CASM output (occupancy basis)
@@ -510,8 +517,8 @@ class TestClusterSubSpace(unittest.TestCase):
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 
         orbit_list = [
-            (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
-             orb.bases_array, inds)
+            (orb.bit_id, orb.flat_tensor_indices,
+             orb.flat_correlation_tensors, inds)
             for orb, inds in zip(cs.orbits, cs.supercell_orbit_mappings(m))]
         # last two pair terms are switched from CASM output (occupancy basis)
         # all_vacancy (ignore casm point term)
@@ -562,8 +569,8 @@ class TestClusterSubSpace(unittest.TestCase):
         m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 
         orbit_list = [
-            (orb.bit_id, orb.bit_combo_array, orb.bit_combo_inds,
-             orb.bases_array, inds)
+            (orb.bit_id, orb.flat_tensor_indices,
+             orb.flat_correlation_tensors, inds)
             for orb, inds in zip(cs.orbits, cs.supercell_orbit_mappings(m))]
         # mixed
         occu = self._encode_occu([Vacancy(), Species('Li', 1),

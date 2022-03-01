@@ -32,8 +32,8 @@ class Sublattice(MSONable):
     """
 
     site_space: SiteSpace
-    sites: np.array
-    active_sites: np.array = field(init=False)
+    sites: np.ndarray
+    active_sites: np.ndarray = field(init=False)
 
     def __post_init__(self):
         """Copy sites into active_sites."""
@@ -105,7 +105,7 @@ class InactiveSublattice(MSONable):
     """
 
     site_space: SiteSpace
-    sites: np.array
+    sites: np.ndarray
 
     def as_dict(self):
         """Get Json-serialization dict representation.
