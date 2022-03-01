@@ -92,8 +92,8 @@ Use this section to keep track of changes in the works.
   [\#149](https://github.com/CederGroupHub/smol/pull/149)
   ([lbluque](https://github.com/lbluque))
 
-## [v1.0.1](https://github.com/CederGroupHub/smol/tree/v1.0.1) (2021-03-03)
-#### [Full Changelog](https://github.com/CederGroupHub/smol/compare/v1.0.0...v1.0.1)
+## [alpha1.0.1](https://github.com/CederGroupHub/smol/tree/alpha1.0.1) (2021-03-03)
+#### [Full Changelog](https://github.com/CederGroupHub/smol/compare/alpha1.0.0...alpha1.0.1)
 
 ### Added
 * Method in `StructureWrangler` to get structure matching duplicates
@@ -178,8 +178,8 @@ Use this section to keep track of changes in the works.
 sets. [\#90](https://github.com/CederGroupHub/smol/pull/90)
   ([lbluque](https://github.com/lbluque))
 
-## [v1.0.0](https://github.com/CederGroupHub/smol/releases/tag/v1.0.0) (2020-10-27)
-#### [Full Changelog](https://github.com/CederGroupHub/smol/compare/v0.0.0...v1.0.0)
+## [alpha1.0.0](https://github.com/CederGroupHub/smol/releases/tag/alpha1.0.0) (2020-10-27)
+#### [Full Changelog](https://github.com/CederGroupHub/smol/compare/alpha0.0.0...alpha1.0.0)
 ### Added
 * Completely new `smol.moca` module. Design based generally up as follows:
   *  `Processor` classes used to compute features, properties and their local
@@ -255,5 +255,5 @@ by making `StandardBasis` MSONable and saving corresponding arrays.
 [\#90](https://github.com/CederGroupHub/smol/pull/90)
 
 
-## [v0.0.0](https://github.com/CederGroupHub/smol/tree/v0.0.0) (2020-10-8)
+## [alpha0.0.0](https://github.com/CederGroupHub/smol/tree/alpha0.0.0) (2020-10-8)
 Initial relatively *stable* version of the code.
