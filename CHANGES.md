@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+* `StructureWrangler.get_similarity_matrix` to get similarity fractions
+  between correlation vectors of training set.
+  [\#153](https://github.com/CederGroupHub/smol/pull/153)
+  ([kamronald](https://github.com/kamronald))
 * `ClusterSubspace` with no point terms using `{1: None}`.
   [\#158](https://github.com/CederGroupHub/smol/pull/158)
   ([lbluque](https://github.com/lbluque))
