@@ -170,6 +170,23 @@ def test_get_gram_matrix(structure_wrangler):
     assert not np.allclose(np.ones(G.shape[0]), G.diagonal())
 
 
+def test_get_similarity_matrix(structure_wrangler):
+    S = structure_wrangler.get_similarity_matrix()
+    assert S.shape == 2 * (structure_wrangler.num_features,)
+    npt.assert_array_equal(S, S.T)
+    npt.assert_array_equal(S.diagonal(), np.ones(S.shape[0]))
+
+    rows = np.random.choice(range(structure_wrangler.num_structures),
+                            structure_wrangler.num_structures - 2)
+    cols = np.random.choice(range(structure_wrangler.num_features),
+                            structure_wrangler.num_features - 4)
+
+    S = structure_wrangler.get_similarity_matrix(rows=rows, cols=cols)
+    assert S.shape == 2 * (structure_wrangler.num_features - 4,)
+    npt.assert_array_equal(S, S.T)
+    npt.assert_array_equal(np.ones(S.shape[0]), S.diagonal())
+
+
 def test_matrix_properties(structure_wrangler):
     assert structure_wrangler.get_condition_number() >= 1
     rows = np.random.choice(range(structure_wrangler.num_structures), 16)
