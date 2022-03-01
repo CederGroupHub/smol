@@ -9,5 +9,10 @@ from .space.clusterspace import ClusterSubspace, PottsSubspace
 from .expansion import ClusterExpansion, RegressionData
 from smol.cofe.wrangling.wrangler import StructureWrangler
 
-__all__ = ['ClusterSubspace', 'PottsSubspace', 'StructureWrangler',
-           'ClusterExpansion', 'RegressionData']
+__all__ = [
+    "ClusterSubspace",
+    "PottsSubspace",
+    "StructureWrangler",
+    "ClusterExpansion",
+    "RegressionData",
+]

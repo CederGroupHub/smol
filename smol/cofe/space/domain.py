@@ -72,8 +72,8 @@ def get_site_spaces(structure, include_measure=False):
             if site.species.num_atoms < 0.99:
                 num_species += 1
             site_space = SiteSpace(
-                Composition(
-                    {sp: 1.0 / num_species for sp in site.species.keys()}))
+                Composition({sp: 1.0 / num_species for sp in site.species.keys()})
+            )
         all_site_spaces.append(site_space)
     return all_site_spaces
 
@@ -102,7 +102,7 @@ def get_species(obj):
     if isinstance(obj, (list, tuple)):
         return [get_species(o) for o in obj]
 
-    if isinstance(obj, str) and 'vac' in obj.lower():
+    if isinstance(obj, str) and "vac" in obj.lower():
         return Vacancy()
 
     return get_el_sp(obj)
@@ -131,20 +131,24 @@ class SiteSpace(Mapping, Hashable, MSONable):
         if composition.num_atoms <= 0 or composition.num_atoms > 1:
             raise ValueError(
                 "Number of atoms in Composition must be in (0, 1]"
-                f" got {composition.num_atoms}!")
+                f" got {composition.num_atoms}!"
+            )
         elif any(isinstance(sp, Vacancy) for sp in composition):
             if composition.num_atoms != 1:
                 raise ValueError(
                     f"Composition {composition} has a Vacancy but"
-                    " number of atoms is not 1.")
+                    " number of atoms is not 1."
+                )
             elif sum(isinstance(sp, Vacancy) for sp in composition) > 1:
                 raise ValueError(
                     "There are multiple vacancies in this composition "
-                    f"{composition}.")
+                    f"{composition}."
+                )
 
         self._composition = composition
-        self._data = OrderedDict((spec, comp) for spec, comp
-                                 in sorted(composition.items()))
+        self._data = OrderedDict(
+            (spec, comp) for spec, comp in sorted(composition.items())
+        )
         if composition.num_atoms < 0.99:
             self._data[Vacancy()] = 1 - composition.num_atoms
 
@@ -166,7 +170,8 @@ class SiteSpace(Mapping, Hashable, MSONable):
         except ValueError as ex:
             raise TypeError(
                 f"Invalid key {item}, {type(item)} for Composition"
-                f".\nValueError exception:\n{ex}")
+                f".\nValueError exception:\n{ex}"
+            )
 
     def __len__(self):
         """Get number os species."""
@@ -181,8 +186,9 @@ class SiteSpace(Mapping, Hashable, MSONable):
         if not isinstance(other, SiteSpace):
             return False
 
-        return all(item1 == item2 for item1, item2
-                   in zip(self._data.items(), other.items()))
+        return all(
+            item1 == item2 for item1, item2 in zip(self._data.items(), other.items())
+        )
 
     def __hash__(self):
         """Take the hash of the composition for now."""
@@ -192,8 +198,7 @@ class SiteSpace(Mapping, Hashable, MSONable):
         """Get pretty string."""
         string = str(self._composition)
         if len(self._data) > len(self._composition):
-            string += f" {list(self._data.keys())[-1]}"\
-                      f"{self.__getitem__('Vacancy')}"
+            string += f" {list(self._data.keys())[-1]}" f"{self.__getitem__('Vacancy')}"
         return string
 
     def __repr__(self):
@@ -215,8 +220,9 @@ class SiteSpace(Mapping, Hashable, MSONable):
 class Vacancy(DummySpecie):
     """Wrapper class around DummySpecie to treat vacancies as their own."""
 
-    def __init__(self, symbol: str = "A", oxidation_state: float = 0,
-                 properties: dict = None):
+    def __init__(
+        self, symbol: str = "A", oxidation_state: float = 0, properties: dict = None
+    ):
         """Initialize a Vacancy.
 
         Args:
@@ -229,8 +235,9 @@ class Vacancy(DummySpecie):
             oxidation_state (float): Oxidation state for Vacancy. More like
                 the charge of a point defect. Defaults to zero.
         """
-        super().__init__(symbol=symbol, oxidation_state=oxidation_state,
-                         properties=properties)
+        super().__init__(
+            symbol=symbol, oxidation_state=oxidation_state, properties=properties
+        )
 
     def __eq__(self, other):
         """Test equality, only equal if isinstance."""

@@ -11,4 +11,4 @@ from .composite import CompositeProcessor
 from .expansion import ClusterExpansionProcessor
 from .ewald import EwaldProcessor
 
-__all__ = ['CompositeProcessor', 'ClusterExpansionProcessor', 'EwaldProcessor']
+__all__ = ["CompositeProcessor", "ClusterExpansionProcessor", "EwaldProcessor"]

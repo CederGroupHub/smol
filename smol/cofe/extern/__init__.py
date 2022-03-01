@@ -10,4 +10,4 @@ be the only term ever needed, but alas abstraction?
 from __future__ import division
 from .ewald import EwaldTerm
 
-__all__ = ['EwaldTerm']
+__all__ = ["EwaldTerm"]

@@ -20,7 +20,7 @@ from monty.json import MSONable
 from .domain import SiteSpace
 from smol.utils import derived_class_factory, get_subclasses
 
-ATOL, RTOL = 1E-12, 1E-8
+ATOL, RTOL = 1e-12, 1e-8
 
 
 __author__ = "Luis Barroso-Luque"
@@ -53,7 +53,9 @@ class DiscreteBasis(MSONable, metaclass=ABCMeta):
             if not np.allclose(sum(site_space.values()), 1):
                 warnings.warn(
                     "The measure given does not sum to 1. Are you sure this "
-                    "is what you want?", RuntimeWarning)
+                    "is what you want?",
+                    RuntimeWarning,
+                )
 
         self.flavor = basis_functions.flavor
         self._domain = site_space
@@ -61,7 +63,8 @@ class DiscreteBasis(MSONable, metaclass=ABCMeta):
         if set(site_space) != set(basis_functions.species):
             raise ValueError(
                 "Basis function iterator provided does not contain all "
-                f"species {site_space} in the site space provided.")
+                f"species {site_space} in the site space provided."
+            )
 
         self._f_array = self._construct_function_array(basis_functions)
 
@@ -116,10 +119,12 @@ class DiscreteBasis(MSONable, metaclass=ABCMeta):
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation of a DiscreteBasis."""
-        d = {"@module": self.__class__.__module__,
-             "@class": self.__class__.__name__,
-             "site_space": self._domain.as_dict(),
-             "flavor": self.flavor}
+        d = {
+            "@module": self.__class__.__module__,
+            "@class": self.__class__.__name__,
+            "site_space": self._domain.as_dict(),
+            "flavor": self.flavor,
+        }
         return d
 
     @classmethod
@@ -133,18 +138,21 @@ class DiscreteBasis(MSONable, metaclass=ABCMeta):
             DiscreteBasis: A subclass of DiscreteBasis
         """
         try:
-            subclass = get_subclasses(cls)[d['@class']]
+            subclass = get_subclasses(cls)[d["@class"]]
         except KeyError:
-            if d['@class'] == 'SiteBasis':
+            if d["@class"] == "SiteBasis":
                 warnings.warn(
                     "The object you have loaded was saved with an older "
                     "version of smol.\n Please save this object again to "
-                    "prevent these warnings.", FutureWarning)
+                    "prevent these warnings.",
+                    FutureWarning,
+                )
                 subclass = StandardBasis
             else:
                 raise NameError(
                     f"{d['@class']} is not implemented or is not a subclass "
-                    f"of {cls}.")
+                    f"of {cls}."
+                )
 
         return subclass.from_dict(d)
 
@@ -187,8 +195,9 @@ class StandardBasis(DiscreteBasis):
         # exclude the last basis function since the constant phi_0 will
         # take its place
         nconst_functions = [function for function in basis_functions][:-1]
-        func_arr = np.array([[function(sp) for sp in self.species]
-                             for function in nconst_functions])
+        func_arr = np.array(
+            [[function(sp) for sp in self.species] for function in nconst_functions]
+        )
         # stack the constant basis function on there for proper normalization
         return np.vstack((np.ones_like(func_arr[0]), func_arr))
 
@@ -214,14 +223,15 @@ class StandardBasis(DiscreteBasis):
         allows us to not sprinkle so many transposes.
         """
         q, r = np.linalg.qr(
-            (np.sqrt(self.measure_vector) * self._f_array).T, mode='complete')
+            (np.sqrt(self.measure_vector) * self._f_array).T, mode="complete"
+        )
 
         # make zeros actually zeros
         r[abs(r) < 2 * np.finfo(np.float64).eps] = 0.0
         q[abs(q) < 2 * np.finfo(np.float64).eps] = 0.0
 
         self._r_array = q[:, 0] / np.sqrt(self.measure_vector) * r.T
-        self._f_array = q.T/q[:, 0]  # make first row constant = 1
+        self._f_array = q.T / q[:, 0]  # make first row constant = 1
 
     def rotate(self, angle, index1=0, index2=1):
         """Rotate basis functions about subspace spaned by 2 vectors.
@@ -254,7 +264,9 @@ class StandardBasis(DiscreteBasis):
                 "This basis has a non-uniform measure, rotations are not "
                 "implemented to handle this.\n The operation will still be "
                 "carried out, but it is recommended to run orthonormalize "
-                "again if the basis was originally so.", UserWarning)
+                "again if the basis was originally so.",
+                UserWarning,
+            )
 
         if len(self.site_space) == 2:
             self._f_array[1] *= -1
@@ -264,27 +276,36 @@ class StandardBasis(DiscreteBasis):
             elif abs(index1) > len(self.site_space) - 2:
                 raise ValueError(
                     f"Basis index {index1} is out of bounds for "
-                    f"{len(self.site_space) - 1} functions!")
+                    f"{len(self.site_space) - 1} functions!"
+                )
             elif abs(index2) > len(self.site_space) - 2:
                 raise ValueError(
                     f"Basis index {index2} is out of bounds for "
-                    f"{len(self.site_space) - 1} functions!")
+                    f"{len(self.site_space) - 1} functions!"
+                )
 
-            v1 = self.function_array[index1] / np.linalg.norm(self.function_array[index1])  # noqa
-            v2 = self.function_array[index2] / np.linalg.norm(self.function_array[index2])  # noqa
-            R = np.eye(len(v1)) \
-                + (np.outer(v1, v2) - np.outer(v2, v1)) * np.sin(angle) \
+            v1 = self.function_array[index1] / np.linalg.norm(
+                self.function_array[index1]
+            )  # noqa
+            v2 = self.function_array[index2] / np.linalg.norm(
+                self.function_array[index2]
+            )  # noqa
+            R = (
+                np.eye(len(v1))
+                + (np.outer(v1, v2) - np.outer(v2, v1)) * np.sin(angle)
                 + (np.outer(v1, v1) + np.outer(v2, v2)) * (np.cos(angle) - 1)
+            )
             self._f_array[1:] = self._f_array[1:] @ R.T
             # make really small numbers zero
-            self._f_array[abs(self._f_array) < 2 * np.finfo(np.float64).eps] = 0.0  # noqa
+            self._f_array[
+                abs(self._f_array) < 2 * np.finfo(np.float64).eps
+            ] = 0.0  # noqa
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation."""
         d = super().as_dict()
         d["func_array"] = self._f_array.tolist()
-        d["orthonorm_array"] = None if self._r_array is None \
-            else self._r_array.tolist()
+        d["orthonorm_array"] = None if self._r_array is None else self._r_array.tolist()
         return d
 
     @classmethod
@@ -297,11 +318,11 @@ class StandardBasis(DiscreteBasis):
         Returns:
             StandardBasis
         """
-        site_space = SiteSpace.from_dict(d['site_space'])
-        site_basis = basis_factory(d['flavor'], site_space)
+        site_space = SiteSpace.from_dict(d["site_space"])
+        site_basis = basis_factory(d["flavor"], site_space)
         # restore arrays
-        site_basis._f_array = np.array(d['func_array'])
-        site_basis._r_array = np.array(d['orthonorm_array'])
+        site_basis._f_array = np.array(d["func_array"])
+        site_basis._r_array = np.array(d["orthonorm_array"])
         return site_basis
 
 
@@ -326,12 +347,12 @@ class IndicatorBasis(DiscreteBasis, MSONable):
                 dict representing site space (Specie, measure) or a SiteSpace
                 object.
         """
-        super().__init__(site_space,
-                         IndicatorIterator(tuple(site_space.keys())))
+        super().__init__(site_space, IndicatorIterator(tuple(site_space.keys())))
 
     def _construct_function_array(self, basis_functions):
-        func_array = np.array([[function(sp) for sp in self.species]
-                               for function in basis_functions])
+        func_array = np.array(
+            [[function(sp) for sp in self.species] for function in basis_functions]
+        )
         return func_array
 
     @classmethod
@@ -344,7 +365,7 @@ class IndicatorBasis(DiscreteBasis, MSONable):
         Returns:
             StandardBasis
         """
-        return cls(SiteSpace.from_dict(d['site_space']))
+        return cls(SiteSpace.from_dict(d["site_space"]))
 
 
 class BasisIterator(Iterator):
@@ -359,7 +380,7 @@ class BasisIterator(Iterator):
             Name specifying the type of basis that is generated.
     """
 
-    flavor = 'abstract'
+    flavor = "abstract"
 
     def __init__(self, species):
         """Initialize a BasisIterator.
@@ -382,7 +403,7 @@ class IndicatorIterator(BasisIterator):
     The basis generated as defined is not orthogonal for any number of species.
     """
 
-    flavor = 'indicator'
+    flavor = "indicator"
 
     def __next__(self):
         """Generate the next basis function."""
@@ -399,7 +420,7 @@ class SinusoidIterator(BasisIterator):
     the box, but it is not orthonormal for allowed species > 2.
     """
 
-    flavor = 'sinusoid'
+    flavor = "sinusoid"
 
     def __init__(self, species):
         """Initialize a SinusoidIterator.
@@ -414,15 +435,14 @@ class SinusoidIterator(BasisIterator):
     def __next__(self):
         """Generate the next basis function."""
         n = self.encoding[next(self.species_iter)] + 1
-        func = encode_domain(self.encoding)(
-            sinusoid_factory(n, len(self.species)))
+        func = encode_domain(self.encoding)(sinusoid_factory(n, len(self.species)))
         return func
 
 
 class NumpyPolyIterator(BasisIterator):
     """Class to quickly implement polynomial basis sets included in numpy."""
 
-    flavor = 'numpy-poly'
+    flavor = "numpy-poly"
 
     def __init__(self, species, low=-1, high=1):
         """Initialize a NumpyPolyIterator.
@@ -448,7 +468,9 @@ class NumpyPolyIterator(BasisIterator):
     def __next__(self):
         """Generate the next basis function."""
         n = self.species.index(next(self.species_iter)) + 1
-        coeffs = n*[0, ] + [1]
+        coeffs = n * [
+            0,
+        ] + [1]
         func = encode_domain(self.encoding)(partial(self.polyval, c=coeffs))
         return func
 
@@ -456,7 +478,7 @@ class NumpyPolyIterator(BasisIterator):
 class PolynomialIterator(NumpyPolyIterator):
     """A standard polynomial basis set iterator."""
 
-    flavor = 'polynomial'
+    flavor = "polynomial"
 
     @property
     def polyval(self):
@@ -467,7 +489,7 @@ class PolynomialIterator(NumpyPolyIterator):
 class ChebyshevIterator(NumpyPolyIterator):
     """Chebyshev polynomial basis set iterator."""
 
-    flavor = 'chebyshev'
+    flavor = "chebyshev"
 
     @property
     def polyval(self):
@@ -478,7 +500,7 @@ class ChebyshevIterator(NumpyPolyIterator):
 class LegendreIterator(NumpyPolyIterator):
     """Legendre polynomial basis set iterator."""
 
-    flavor = 'legendre'
+    flavor = "legendre"
 
     @property
     def polyval(self):
@@ -524,11 +546,14 @@ def encode_domain(encoding):
         encoding (dict):
             dictionary for encoding.
     """
+
     def decorate_func(func):
         @wraps(func)
         def encoded(s, *args, **kwargs):
             return func(encoding[s], *args, **kwargs)
+
         return encoded
+
     return decorate_func
 
 
@@ -548,6 +573,6 @@ def basis_factory(basis_name, site_space):
         species = tuple(site_space.keys())
     else:
         species = tuple(site_space)
-    iterator_name = basis_name.capitalize() + 'Iterator'
+    iterator_name = basis_name.capitalize() + "Iterator"
     basis_funcs = derived_class_factory(iterator_name, BasisIterator, species)
     return StandardBasis(site_space, basis_funcs)

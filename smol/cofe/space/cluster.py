@@ -63,7 +63,7 @@ class Cluster(MSONable):
     def diameter(self):
         """Get maximum distance between 2 sites in cluster."""
         coords = self.lattice.get_cartesian_coords(self.sites)
-        all_d2 = np.sum((coords[None, :, :] - coords[:, None, :])**2, axis=-1)
+        all_d2 = np.sum((coords[None, :, :] - coords[:, None, :]) ** 2, axis=-1)
         return np.max(all_d2) ** 0.5
 
     @property
@@ -94,20 +94,27 @@ class Cluster(MSONable):
     def __str__(self):
         """Pretty print a cluster."""
         points = str(np.round(self.sites, 2))
-        points = points.replace('\n', ' ').ljust(len(self.sites)*21)
+        points = points.replace("\n", " ").ljust(len(self.sites) * 21)
         centroid = str(np.round(self.centroid, 2))
-        return (f'[Base Cluster] Radius: {self.radius:<5.3} '
-                f'Centroid: {centroid:<18} Points: {points}')
+        return (
+            f"[Base Cluster] Radius: {self.radius:<5.3} "
+            f"Centroid: {centroid:<18} Points: {points}"
+        )
 
     def __repr__(self):
         """Pretty representation."""
-        return _repr(self, c_id=self.id, diameter=self.diameter,
-                     centroid=self.centroid, lattice=self.lattice)
+        return _repr(
+            self,
+            c_id=self.id,
+            diameter=self.diameter,
+            centroid=self.centroid,
+            lattice=self.lattice,
+        )
 
     @classmethod
     def from_dict(cls, d):
         """Create a cluster from serialized dict."""
-        return cls(d['sites'], Lattice.from_dict(d['lattice']))
+        return cls(d["sites"], Lattice.from_dict(d["lattice"]))
 
     def as_dict(self):
         """Get json-serialization dict representation.
@@ -115,8 +122,10 @@ class Cluster(MSONable):
         Returns:
             MSONable dict
         """
-        d = {"@module": self.__class__.__module__,
-             "@class": self.__class__.__name__,
-             "lattice": self.lattice.as_dict(),
-             "sites": self.sites.tolist()}
+        d = {
+            "@module": self.__class__.__module__,
+            "@class": self.__class__.__name__,
+            "lattice": self.lattice.as_dict(),
+            "sites": self.sites.tolist(),
+        }
         return d

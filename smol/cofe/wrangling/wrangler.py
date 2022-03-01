@@ -62,7 +62,7 @@ class StructureWrangler(MSONable):
         self._subspace = cluster_subspace
         self._items = []
         self._ind_sets = {}  # data indices for test/training splits etc
-        self._metadata = {'applied_filters': []}
+        self._metadata = {"applied_filters": []}
 
     @property
     def cluster_subspace(self):
@@ -82,8 +82,7 @@ class StructureWrangler(MSONable):
     @property
     def available_properties(self):
         """Get list of properties that have been added."""
-        return list(set(p for i in self._items
-                        for p in i['properties'].keys()))
+        return list(set(p for i in self._items for p in i["properties"].keys()))
 
     @property
     def available_indices(self):
@@ -93,18 +92,17 @@ class StructureWrangler(MSONable):
     @property
     def available_weights(self):
         """Get list of weights that have been added."""
-        return list(
-            set(p for i in self._items for p in i['weights'].keys()))
+        return list(set(p for i in self._items for p in i["weights"].keys()))
 
     @property
     def structures(self):
         """Get list of included structures."""
-        return [i['structure'] for i in self._items]
+        return [i["structure"] for i in self._items]
 
     @property
     def refined_structures(self):
         """Get list of refined structures."""
-        return [i['ref_structure'] for i in self._items]
+        return [i["ref_structure"] for i in self._items]
 
     @property
     def feature_matrix(self):
@@ -112,31 +110,33 @@ class StructureWrangler(MSONable):
 
         Rows are structures, Columns are correlations.
         """
-        return np.array([i['features'] for i in self._items])
+        return np.array([i["features"] for i in self._items])
 
     @property
     def sizes(self):
         """Get sizes of each structure in terms of number of prims."""
-        return np.array([i['size'] for i in self._items])
+        return np.array([i["size"] for i in self._items])
 
     @property
     def occupancy_strings(self):
         """Get occupancy strings for each of the structures in the wrangler."""
         occupancies = [
             self._subspace.occupancy_from_structure(
-                i['structure'], i['scmatrix'], i['mapping'])
-            for i in self._items]
+                i["structure"], i["scmatrix"], i["mapping"]
+            )
+            for i in self._items
+        ]
         return occupancies
 
     @property
     def supercell_matrices(self):
         """Get list of supercell matrices relating each structure to prim."""
-        return np.array([i['scmatrix'] for i in self._items])
+        return np.array([i["scmatrix"] for i in self._items])
 
     @property
     def structure_site_mappings(self):
         """Get list of site mappings for each structure to prim."""
-        return [i['mapping'] for i in self._items]
+        return [i["mapping"] for i in self._items]
 
     @property
     def data_items(self):
@@ -176,8 +176,11 @@ class StructureWrangler(MSONable):
         Returns:
             int: rank of orbit sub feature matrix
         """
-        columns = [i for i, oid in enumerate(self._subspace.function_orbit_ids)
-                   if oid == orbit_id]
+        columns = [
+            i
+            for i, oid in enumerate(self._subspace.function_orbit_ids)
+            if oid == orbit_id
+        ]
         return self.get_feature_matrix_rank(rows=rows, cols=columns)
 
     def get_condition_number(self, rows=None, cols=None, p=2):
@@ -230,8 +233,9 @@ class StructureWrangler(MSONable):
             X /= np.sqrt(X.T.dot(X).diagonal())
         return X.T.dot(X)
 
-    def get_duplicate_corr_indices(self, cutoffs=None, decimals=12,
-                                   rm_external_terms=True):
+    def get_duplicate_corr_indices(
+        self, cutoffs=None, decimals=12, rm_external_terms=True
+    ):
         """Find indices of rows with duplicate corr vectors in feature matrix.
 
         Args:
@@ -262,19 +266,24 @@ class StructureWrangler(MSONable):
             if not rm_external_terms:
                 inds.extend(range(-1, -num_ext - 1, -1))
 
-            feature_matrix = self.feature_matrix if decimals is None \
-                else np.around(self.feature_matrix, decimals,
-                               self.feature_matrix.copy())
-            _, inverse = np.unique(feature_matrix[:, inds],
-                                   return_inverse=True, axis=0)
-            duplicate_inds = [list(np.where(inverse == i)[0])
-                              for i in np.unique(inverse)
-                              if len(np.where(inverse == i)[0]) > 1]
+            feature_matrix = (
+                self.feature_matrix
+                if decimals is None
+                else np.around(
+                    self.feature_matrix, decimals, self.feature_matrix.copy()
+                )
+            )
+            _, inverse = np.unique(feature_matrix[:, inds], return_inverse=True, axis=0)
+            duplicate_inds = [
+                list(np.where(inverse == i)[0])
+                for i in np.unique(inverse)
+                if len(np.where(inverse == i)[0]) > 1
+            ]
         return duplicate_inds
 
-    def get_matching_corr_duplicate_indices(self, decimals=12,
-                                            structure_matcher=None,
-                                            **matcher_kwargs):
+    def get_matching_corr_duplicate_indices(
+        self, decimals=12, structure_matcher=None, **matcher_kwargs
+    ):
         """Find indices of equivalent structures.
 
         Args:
@@ -291,19 +300,24 @@ class StructureWrangler(MSONable):
             list: list of lists of equivalent structures (that match) and have
                   duplicate correlation vectors.
         """
-        matcher = structure_matcher if structure_matcher is not None \
+        matcher = (
+            structure_matcher
+            if structure_matcher is not None
             else StructureMatcher(**matcher_kwargs)
+        )
         duplicate_indices = self.get_duplicate_corr_indices(decimals)
 
         matching_inds = []
         for inds in duplicate_indices:
             # match all combinations of duplicates
-            matches = [set(c) for c in combinations(inds, 2) if
-                       matcher.fit(self.structures[c[0]],
-                                   self.structures[c[1]],
-                                   symmetric=True)]
-            overlaps = list(
-                filter(lambda s: s[0] & s[1], combinations(matches, 2)))
+            matches = [
+                set(c)
+                for c in combinations(inds, 2)
+                if matcher.fit(
+                    self.structures[c[0]], self.structures[c[1]], symmetric=True
+                )
+            ]
+            overlaps = list(filter(lambda s: s[0] & s[1], combinations(matches, 2)))
             while overlaps:  # change to := walrus when commiting to 3.8 only
                 all_overlaps = [o for overlap in overlaps for o in overlap]
                 # keep only disjoint sets
@@ -312,8 +326,7 @@ class StructureWrangler(MSONable):
                 for s1, s2 in overlaps:
                     if s1 | s2 not in matches:
                         matches.append(s1 | s2)
-                overlaps = list(
-                    filter(lambda s: s[0] & s[1], combinations(matches, 2)))
+                overlaps = list(filter(lambda s: s[0] & s[1], combinations(matches, 2)))
             matching_inds += [list(sorted(m)) for m in matches]
         return matching_inds
 
@@ -365,7 +378,7 @@ class StructureWrangler(MSONable):
         num_corrs = len(cols)
         sim_matrix = np.identity(num_corrs)
         for i in range(num_corrs):
-            for j in range(i+1, num_corrs):
+            for j in range(i + 1, num_corrs):
                 num_identical = np.sum(np.isclose(A[:, i], A[:, j], rtol=rtol))
                 sim_matrix[i, j] = num_identical / num_structs
                 sim_matrix[j, i] = num_identical / num_structs
@@ -387,7 +400,7 @@ class StructureWrangler(MSONable):
                 To normalize by prim size. If the property sought is not
                 already normalized, you need to normalize before fitting a CE.
         """
-        properties = np.array([i['properties'][key] for i in self._items])
+        properties = np.array([i["properties"][key] for i in self._items])
         if normalize:
             properties /= self.sizes
 
@@ -416,11 +429,19 @@ class StructureWrangler(MSONable):
             key (str):
                 Name of corresponding weights
         """
-        return np.array([i['weights'][key] for i in self._items])
+        return np.array([i["weights"][key] for i in self._items])
 
-    def add_data(self, structure, properties, normalized=False, weights=None,
-                 supercell_matrix=None, site_mapping=None,
-                 verbose=True, raise_failed=False):
+    def add_data(
+        self,
+        structure,
+        properties,
+        normalized=False,
+        weights=None,
+        supercell_matrix=None,
+        site_mapping=None,
+        verbose=True,
+        raise_failed=False,
+    ):
         """Add a structure and measured property to the StructureWrangler.
 
         The properties are usually extensive (i.e. not normalized per atom
@@ -468,9 +489,16 @@ class StructureWrangler(MSONable):
                 fails. This can be helpful to keep a list of structures that
                 fail for further inspection.
         """
-        item = self.process_structure(structure, properties, normalized,
-                                      weights, supercell_matrix, site_mapping,
-                                      verbose, raise_failed)
+        item = self.process_structure(
+            structure,
+            properties,
+            normalized,
+            weights,
+            supercell_matrix,
+            site_mapping,
+            verbose,
+            raise_failed,
+        )
         if item is not None:
             self._items.append(item)
         if verbose:
@@ -486,19 +514,31 @@ class StructureWrangler(MSONable):
             data_items (list of dict):
                 list of data items with all necessary information
         """
-        keys = ['structure', 'ref_structure', 'properties', 'weights',
-                'scmatrix', 'mapping', 'features', 'size']
+        keys = [
+            "structure",
+            "ref_structure",
+            "properties",
+            "weights",
+            "scmatrix",
+            "mapping",
+            "features",
+            "size",
+        ]
         for i, item in enumerate(data_items):
             if not all(key in keys for key in item.keys()):
                 raise ValueError(
                     f"Data item {i} is missing required keys. Make sure"
-                    " they were obtained with the process_structure method.")
+                    " they were obtained with the process_structure method."
+                )
             if len(self._items) > 0:
-                if not all(prop in self._items[0]['properties'].keys()
-                           for prop in item['properties'].keys()):
+                if not all(
+                    prop in self._items[0]["properties"].keys()
+                    for prop in item["properties"].keys()
+                ):
                     raise ValueError(
                         f"Data item {i} is missing one of the following "
-                        f"properties: {self.available_properties}")
+                        f"properties: {self.available_properties}"
+                    )
             self._items.append(item)
             self._corr_duplicate_warning(self.num_structures - 1)
 
@@ -517,9 +557,10 @@ class StructureWrangler(MSONable):
         if self.num_structures != len(weights):
             raise AttributeError(
                 "Length of weights must match number of structures "
-                f"{len(weights)} != {self.num_structures}.")
+                f"{len(weights)} != {self.num_structures}."
+            )
         for weight, item in zip(weights, self._items):
-            item['weights'][key] = weight
+            item["weights"][key] = weight
 
     def add_properties(self, key, property_vector, normalized=False):
         """Add another property vector to structures already in the wrangler.
@@ -539,13 +580,14 @@ class StructureWrangler(MSONable):
         if self.num_structures != len(property_vector):
             raise AttributeError(
                 "Length of property_vector must match number of structures"
-                f" {len(property_vector)} != {self.num_structures}.")
+                f" {len(property_vector)} != {self.num_structures}."
+            )
         if normalized:
             # make copy
             property_vector = self.sizes * property_vector.copy()
 
         for prop, item in zip(property_vector, self._items):
-            item['properties'][key] = prop
+            item["properties"][key] = prop
 
     def remove_properties(self, *property_keys):
         """Remove properties from given keys.
@@ -557,10 +599,9 @@ class StructureWrangler(MSONable):
         for key in property_keys:
             try:
                 for item in self._items:
-                    del item['properties'][key]
+                    del item["properties"][key]
             except KeyError:
-                warnings.warn(f'Propertiy {key} does not exist.',
-                              RuntimeWarning)
+                warnings.warn(f"Propertiy {key} does not exist.", RuntimeWarning)
 
     def remove_structure(self, structure):
         """Remove a given structure and associated data."""
@@ -569,8 +610,8 @@ class StructureWrangler(MSONable):
             del self._items[index]
         except ValueError:
             raise ValueError(
-                f"Structure {structure} was not found. Nothing has been "
-                "removed.")
+                f"Structure {structure} was not found. Nothing has been " "removed."
+            )
 
     def change_subspace(self, cluster_subspace):
         """Change the underlying cluster subspace.
@@ -594,20 +635,28 @@ class StructureWrangler(MSONable):
         the Wrangler. This will prevent having to match structures and such.
         """
         for item in self._items:
-            struct = item['structure']
-            mat = item['scmatrix']
-            mapp = item['mapping']
-            item['features'] = self._subspace.corr_from_structure(
-                struct, scmatrix=mat, site_mapping=mapp)
+            struct = item["structure"]
+            mat = item["scmatrix"]
+            mapp = item["mapping"]
+            item["features"] = self._subspace.corr_from_structure(
+                struct, scmatrix=mat, site_mapping=mapp
+            )
 
     def remove_all_data(self):
         """Remove all data from Wrangler."""
         self._items = []
 
-    def process_structure(self, structure, properties, normalized=False,
-                          weights=None, supercell_matrix=None,
-                          site_mapping=None, verbose=False,
-                          raise_failed=False):
+    def process_structure(
+        self,
+        structure,
+        properties,
+        normalized=False,
+        weights=None,
+        supercell_matrix=None,
+        site_mapping=None,
+        verbose=False,
+        raise_failed=False,
+    ):
         """Process a structure to be added to wrangler.
 
         Checks if the structure for this data item can be matched to the
@@ -661,32 +710,41 @@ class StructureWrangler(MSONable):
                 supercell = self._subspace.structure.copy()
                 supercell.make_supercell(supercell_matrix)
                 site_mapping = self._subspace.structure_site_mapping(
-                    supercell, structure)
+                    supercell, structure
+                )
 
             fm_row = self._subspace.corr_from_structure(
-                structure, scmatrix=supercell_matrix,
-                site_mapping=site_mapping)
+                structure, scmatrix=supercell_matrix, site_mapping=site_mapping
+            )
             refined_struct = self._subspace.refine_structure(
-                structure, supercell_matrix)
+                structure, supercell_matrix
+            )
 
             if normalized:
-                properties = {key: val*size for key, val in properties.items()}
+                properties = {key: val * size for key, val in properties.items()}
             weights = {} if weights is None else weights
 
         except StructureMatchError as e:
             if verbose:
                 warnings.warn(
-                    f'Unable to match {structure.composition} with '
-                    f'properties {properties} to supercell_structure. '
-                    f'Throwing out.\n Error Message: {str(e)}',
-                    UserWarning)
+                    f"Unable to match {structure.composition} with "
+                    f"properties {properties} to supercell_structure. "
+                    f"Throwing out.\n Error Message: {str(e)}",
+                    UserWarning,
+                )
             if raise_failed:
                 raise e
             return
-        return {'structure': structure, 'ref_structure': refined_struct,
-                'properties': properties, 'weights': weights,
-                'scmatrix': supercell_matrix, 'mapping': site_mapping,
-                'features': fm_row, 'size': size}
+        return {
+            "structure": structure,
+            "ref_structure": refined_struct,
+            "properties": properties,
+            "weights": weights,
+            "scmatrix": supercell_matrix,
+            "mapping": site_mapping,
+            "features": fm_row,
+            "size": size,
+        }
 
     def _corr_duplicate_warning(self, index):
         """Warn if corr vector of item with given index is duplicated."""
@@ -695,34 +753,38 @@ class StructureWrangler(MSONable):
                 duplicates = "".join(
                     f"Index {i} - {self._items[i]['structure'].composition}"
                     f"{self._items[i]['properties']}\n"
-                    for i in duplicate_inds)
+                    for i in duplicate_inds
+                )
                 warnings.warn(
                     "The following structures have duplicated correlation "
                     f"vectors:\n {duplicates} Consider adding more terms to "
                     "the clustersubspace or filtering duplicates.",
-                    UserWarning)
+                    UserWarning,
+                )
 
     @classmethod
     def from_dict(cls, d):
         """Create Structure Wrangler from an MSONable dict."""
-        module = import_module(d['_subspace']['@module'])
-        subspace_cls = getattr(module, d['_subspace']['@class'])
-        sw = cls(cluster_subspace=subspace_cls.from_dict(d['_subspace']))
+        module = import_module(d["_subspace"]["@module"])
+        subspace_cls = getattr(module, d["_subspace"]["@class"])
+        sw = cls(cluster_subspace=subspace_cls.from_dict(d["_subspace"]))
         items = []
-        for item in d['_items']:
-            items.append({'properties': item['properties'],
-                          'structure':
-                              Structure.from_dict(item['structure']),
-                          'ref_structure':
-                              Structure.from_dict(item['ref_structure']),
-                          'scmatrix': np.array(item['scmatrix']),
-                          'mapping': item['mapping'],
-                          'features': np.array(item['features']),
-                          'size': item['size'],
-                          'weights': item['weights']})
+        for item in d["_items"]:
+            items.append(
+                {
+                    "properties": item["properties"],
+                    "structure": Structure.from_dict(item["structure"]),
+                    "ref_structure": Structure.from_dict(item["ref_structure"]),
+                    "scmatrix": np.array(item["scmatrix"]),
+                    "mapping": item["mapping"],
+                    "features": np.array(item["features"]),
+                    "size": item["size"],
+                    "weights": item["weights"],
+                }
+            )
         sw._items = items
-        sw._metadata = d['metadata']
-        sw._ind_sets = d.get('_ind_sets') or {}
+        sw._metadata = d["metadata"]
+        sw._ind_sets = d.get("_ind_sets") or {}
         return sw
 
     def as_dict(self):
@@ -733,19 +795,24 @@ class StructureWrangler(MSONable):
         """
         s_items = []
         for item in self._items:
-            s_items.append({'properties': item['properties'],
-                            'structure': item['structure'].as_dict(),
-                            'ref_structure':
-                                item['ref_structure'].as_dict(),
-                            'scmatrix': item['scmatrix'].tolist(),
-                            'features': item['features'].tolist(),
-                            'mapping': item['mapping'],
-                            'size': item['size'],
-                            'weights': item['weights']})
-        d = {'@module': self.__class__.__module__,
-             '@class': self.__class__.__name__,
-             '_subspace': self._subspace.as_dict(),
-             '_items': s_items,
-             '_ind_sets': jsanitize(self._ind_sets),  # jic for np.int's
-             'metadata': self.metadata}
+            s_items.append(
+                {
+                    "properties": item["properties"],
+                    "structure": item["structure"].as_dict(),
+                    "ref_structure": item["ref_structure"].as_dict(),
+                    "scmatrix": item["scmatrix"].tolist(),
+                    "features": item["features"].tolist(),
+                    "mapping": item["mapping"],
+                    "size": item["size"],
+                    "weights": item["weights"],
+                }
+            )
+        d = {
+            "@module": self.__class__.__module__,
+            "@class": self.__class__.__name__,
+            "_subspace": self._subspace.as_dict(),
+            "_items": s_items,
+            "_ind_sets": jsanitize(self._ind_sets),  # jic for np.int's
+            "metadata": self.metadata,
+        }
         return d

@@ -19,8 +19,9 @@ from smol.utils import derived_class_factory, class_name_from_str
 class MCUsher(ABC):
     """Abstract base class for MC usher classes."""
 
-    def __init__(self, sublattices, inactive_sublattices,
-                 sublattice_probabilities=None):
+    def __init__(
+        self, sublattices, inactive_sublattices, sublattice_probabilities=None
+    ):
         """Initialize MCMCStep.
 
         Args:
@@ -41,12 +42,17 @@ class MCUsher(ABC):
 
         if sublattice_probabilities is None:
             self._sublatt_probs = np.array(
-                len(self.sublattices) * [1/len(self.sublattices), ])
+                len(self.sublattices)
+                * [
+                    1 / len(self.sublattices),
+                ]
+            )
         elif len(sublattice_probabilities) != len(self.sublattices):
-            raise AttributeError('Sublattice probabilites needs to be the '
-                                 'same length as sublattices.')
+            raise AttributeError(
+                "Sublattice probabilites needs to be the " "same length as sublattices."
+            )
         elif sum(sublattice_probabilities) != 1:
-            raise ValueError('Sublattice probabilites must sum to one.')
+            raise ValueError("Sublattice probabilites must sum to one.")
         else:
             self._sublatt_probs = sublattice_probabilities
 
@@ -60,12 +66,14 @@ class MCUsher(ABC):
         """Set the sublattice probabilities."""
         if len(value) != len(self.sublattices):
             raise AttributeError(
-                f'Can not set sublattice probabilities.\n Length must be the'
-                f' same as the number of sublattices {len(self.sublattices)}')
+                f"Can not set sublattice probabilities.\n Length must be the"
+                f" same as the number of sublattices {len(self.sublattices)}"
+            )
         elif sum(value) != 1:
             raise ValueError(
-                'Can not set sublattice probabilities.\n'
-                'Sublattice probabilites must sum to one.')
+                "Can not set sublattice probabilities.\n"
+                "Sublattice probabilites must sum to one."
+            )
         self._sublatt_probs = value
 
     @abstractmethod
@@ -149,8 +157,7 @@ class Swap(MCUsher):
         return swap
 
 
-def mcusher_factory(usher_type, sublattices, inactive_sublattices, *args,
-                    **kwargs):
+def mcusher_factory(usher_type, sublattices, inactive_sublattices, *args, **kwargs):
     """Get a MC Usher from string name.
 
     Args:
@@ -171,5 +178,5 @@ def mcusher_factory(usher_type, sublattices, inactive_sublattices, *args,
     """
     usher_name = class_name_from_str(usher_type)
     return derived_class_factory(
-        usher_name, MCUsher, sublattices, inactive_sublattices,
-        *args, **kwargs)
+        usher_name, MCUsher, sublattices, inactive_sublattices, *args, **kwargs
+    )

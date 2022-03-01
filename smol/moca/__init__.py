@@ -13,6 +13,12 @@ from .ensemble.semigrand import SemiGrandEnsemble
 from .sampler.sampler import Sampler
 from smol.moca.sampler.container import SampleContainer
 
-__all__ = ['ClusterExpansionProcessor', 'EwaldProcessor', 'CompositeProcessor',
-           'CanonicalEnsemble', 'SemiGrandEnsemble',
-           'Sampler', 'SampleContainer']
+__all__ = [
+    "ClusterExpansionProcessor",
+    "EwaldProcessor",
+    "CompositeProcessor",
+    "CanonicalEnsemble",
+    "SemiGrandEnsemble",
+    "Sampler",
+    "SampleContainer",
+]

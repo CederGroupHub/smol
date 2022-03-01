@@ -3,8 +3,11 @@
 __author__ = "Luis Barroso-Luque"
 
 from abc import ABC, abstractmethod
-from smol.moca.processor import CompositeProcessor, ClusterExpansionProcessor,\
-    EwaldProcessor
+from smol.moca.processor import (
+    CompositeProcessor,
+    ClusterExpansionProcessor,
+    EwaldProcessor,
+)
 
 
 class Ensemble(ABC):
@@ -50,8 +53,7 @@ class Ensemble(ABC):
         self._inact_sublattices = inactive_sublattices
 
     @classmethod
-    def from_cluster_expansion(cls, cluster_expansion, supercell_matrix,
-                               **kwargs):
+    def from_cluster_expansion(cls, cluster_expansion, supercell_matrix, **kwargs):
         """Initialize an ensemble from a cluster expansion.
 
         Convenience constructor to instantiate an ensemble. This will take
@@ -73,22 +75,30 @@ class Ensemble(ABC):
         """
         if len(cluster_expansion.cluster_subspace.external_terms) > 0:
             processor = CompositeProcessor(
-                cluster_expansion.cluster_subspace, supercell_matrix)
+                cluster_expansion.cluster_subspace, supercell_matrix
+            )
             ceprocessor = ClusterExpansionProcessor(
-                cluster_expansion.cluster_subspace, supercell_matrix,
-                cluster_expansion.coefs[:-1])
+                cluster_expansion.cluster_subspace,
+                supercell_matrix,
+                cluster_expansion.coefs[:-1],
+            )
             processor.add_processor(ceprocessor)
             # at some point determine term and spinup processor maybe with a
             # factory, if we ever implement more external terms.
             ewald_term = cluster_expansion.cluster_subspace.external_terms[0]
             ewprocessor = EwaldProcessor(
-                cluster_expansion.cluster_subspace, supercell_matrix,
-                ewald_term=ewald_term, coefficient=cluster_expansion.coefs[-1])
+                cluster_expansion.cluster_subspace,
+                supercell_matrix,
+                ewald_term=ewald_term,
+                coefficient=cluster_expansion.coefs[-1],
+            )
             processor.add_processor(ewprocessor)
         else:
             processor = ClusterExpansionProcessor(
-                cluster_expansion.cluster_subspace, supercell_matrix,
-                cluster_expansion.coefs)
+                cluster_expansion.cluster_subspace,
+                supercell_matrix,
+                cluster_expansion.coefs,
+            )
         return cls(processor, **kwargs)
 
     @property
@@ -198,9 +208,11 @@ class Ensemble(ABC):
         Returns:
             MSONable dict
         """
-        d = {'@module': self.__class__.__module__,
-             '@class': self.__class__.__name__,
-             'thermo_boundaries': self.thermo_boundaries,
-             'processor': self._processor.as_dict(),
-             'sublattices': [s.as_dict() for s in self._sublattices]}
+        d = {
+            "@module": self.__class__.__module__,
+            "@class": self.__class__.__name__,
+            "thermo_boundaries": self.thermo_boundaries,
+            "processor": self._processor.as_dict(),
+            "sublattices": [s.as_dict() for s in self._sublattices],
+        }
         return d

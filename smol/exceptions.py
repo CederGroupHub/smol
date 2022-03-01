@@ -1,12 +1,14 @@
 """Definitions of specific exceptions raised elsewhere."""
 
 
-SYMMETRY_ERROR_MESSAGE = ("Error in calculating symmetry operations."
-                          "Try using a more symmetrically refined input"
-                          "structure. "
-                          "SpacegroupAnalyzer(s).get_refined_structure()"
-                          ".get_primitive_structure() "
-                          "usually results in a safe choice")
+SYMMETRY_ERROR_MESSAGE = (
+    "Error in calculating symmetry operations."
+    "Try using a more symmetrically refined input"
+    "structure. "
+    "SpacegroupAnalyzer(s).get_refined_structure()"
+    ".get_primitive_structure() "
+    "usually results in a safe choice"
+)
 
 
 class NotFittedError(ValueError, AttributeError):

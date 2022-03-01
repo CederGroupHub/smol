@@ -61,8 +61,7 @@ class Sublattice(MSONable):
             sites (Sequence):
                 indices of sites in the occupancy string to restrict.
         """
-        self.active_sites = np.array([i for i in self.active_sites
-                                      if i not in sites])
+        self.active_sites = np.array([i for i in self.active_sites if i not in sites])
 
     def reset_restricted_sites(self):
         """Reset all restricted sites to active."""
@@ -74,9 +73,11 @@ class Sublattice(MSONable):
         Returns:
             MSONable dict
         """
-        d = {'site_space': self.site_space.as_dict(),
-             'sites': self.sites.tolist(),
-             'active_sites': self.active_sites.tolist()}
+        d = {
+            "site_space": self.site_space.as_dict(),
+            "sites": self.sites.tolist(),
+            "active_sites": self.active_sites.tolist(),
+        }
         return d
 
     @classmethod
@@ -86,9 +87,10 @@ class Sublattice(MSONable):
         Returns:
             Sublattice
         """
-        sublattice = cls(SiteSpace.from_dict(d['site_space']),
-                         sites=np.array(d['sites']))
-        sublattice.active_sites = np.array(d['active_sites'])
+        sublattice = cls(
+            SiteSpace.from_dict(d["site_space"]), sites=np.array(d["sites"])
+        )
+        sublattice.active_sites = np.array(d["active_sites"])
         return sublattice
 
 
@@ -113,8 +115,7 @@ class InactiveSublattice(MSONable):
         Returns:
             MSONable dict
         """
-        d = {'site_space': self.site_space.as_dict(),
-             'sites': self.sites.tolist()}
+        d = {"site_space": self.site_space.as_dict(), "sites": self.sites.tolist()}
         return d
 
     @classmethod
@@ -124,4 +125,4 @@ class InactiveSublattice(MSONable):
         Returns:
             Sublattice
         """
-        return cls(SiteSpace.from_dict(d['site_space']), np.array(d['sites']))
+        return cls(SiteSpace.from_dict(d["site_space"]), np.array(d["sites"]))
