@@ -398,7 +398,7 @@ class Orbit(MSONable):
         return np.unique(mappings, axis=0)
 
     def _gen_cluster_symops(self):
-        """Generate the cluster SymOps and decoration permutations"""
+        """Generate the cluster SymOps and decoration permutations."""
         symops = []
         permutations = []
         for symop in self.structure_symops:
