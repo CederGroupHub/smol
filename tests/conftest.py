@@ -123,7 +123,7 @@ def supercell_matrix():
     return m
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture
 def structure_wrangler(single_subspace):
     wrangler = StructureWrangler(single_subspace)
     for struct, energy in gen_fake_training_data(
