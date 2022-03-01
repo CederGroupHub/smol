@@ -31,9 +31,9 @@ class RegressionData:
 
     module: str
     estimator_name: str
-    parameters: dict
     feature_matrix: np.ndarray
     property_vector: np.ndarray
+    parameters: dict
 
     @classmethod
     def from_object(cls, estimator, feature_matrix, property_vector,
@@ -61,9 +61,9 @@ class RegressionData:
 
         return cls(module=estimator.__module__,
                    estimator_name=estimator_name,
-                   parameters=parameters,
                    feature_matrix=feature_matrix,
-                   property_vector=property_vector)
+                   property_vector=property_vector,
+                   parameters=parameters,)
 
     @classmethod
     def from_sklearn(cls, estimator, feature_matrix, property_vector):
@@ -81,9 +81,9 @@ class RegressionData:
         """
         return cls(module=estimator.__module__,
                    estimator_name=estimator.__class__.__name__,
-                   parameters=estimator.get_params(),
                    feature_matrix=feature_matrix,
-                   property_vector=property_vector)
+                   property_vector=property_vector,
+                   parameters=estimator.get_params())
 
 
 class ClusterExpansion(MSONable):
@@ -218,7 +218,7 @@ class ClusterExpansion(MSONable):
         """
         corrs = self.cluster_subspace.corr_from_structure(
             structure, normalized=normalize)
-        return np.dot(corrs, self.coefs)
+        return np.dot(self.coefs, corrs)
 
     def prune(self, threshold=0, with_multiplicity=False):
         """Remove fit coefficients or ECI's with small values.
@@ -253,6 +253,10 @@ class ClusterExpansion(MSONable):
             self._feat_matrix = self._feat_matrix[:, ids_complement]
         self._eci = None  # Reset
 
+    def copy(self):
+        """Return a copy of self."""
+        return ClusterExpansion.from_dict(self.as_dict())
+
     def __str__(self):
         """Pretty string for printing."""
         corr = np.zeros(self.cluster_subspace.num_corr_functions)
@@ -270,7 +274,7 @@ class ClusterExpansion(MSONable):
         s += f'    [Orbit]  id: {str(0):<3}\n'
         s += '        bit       eci\n'
         s += f'        {"[X]":<10}{ecis[0]:<4.3}\n'
-        for orbit in self.cluster_subspace.iterorbits():
+        for orbit in self.cluster_subspace.orbits:
             s += f'    [Orbit]  id: {orbit.bit_id:<3} size: ' \
                  f'{len(orbit.bits):<3} radius: ' \
                  f'{orbit.base_cluster.diameter:<4.3}\n'

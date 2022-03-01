@@ -1,169 +1,400 @@
-import unittest
-from itertools import combinations_with_replacement, combinations
-import json
+import pytest
+from copy import deepcopy
+from functools import reduce
+from itertools import product
+from random import choices
 import numpy as np
-from pymatgen.core import Lattice, Structure, Composition
+import numpy.testing as npt
+from pymatgen.core import Composition
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from smol.cofe.space import Orbit, Cluster
 from smol.cofe.space.basis import basis_factory
-from smol.cofe.space.domain import SiteSpace
+from smol.cofe.space.domain import SiteSpace, get_site_spaces
+from tests.utils import assert_msonable
 
 
-class TestOrbit(unittest.TestCase):
-    def setUp(self) -> None:
-        self.lattice = Lattice([[3, 3, 0], [0, 3, 3], [3, 0, 3]])
-        species = [{'Li': 0.1, 'Ca': 0.1}] * 3 + ['Br']
-        self.coords = ((0.25, 0.25, 0.25), (0.75, 0.75, 0.75),
-                       (0.5, 0.5, 0.5), (0, 0, 0))
-        self.structure = Structure(self.lattice, species, self.coords)
-        sf = SpacegroupAnalyzer(self.structure)
-        self.symops = sf.get_symmetry_operations()
-        self.spaces = [
-            SiteSpace(Composition({'Li': 1.0 / 3.0, 'Ca': 1.0 / 3.0})),
-            SiteSpace(Composition({'Li': 1.0 / 3.0, 'Ca': 1.0 / 3.0})),
-            SiteSpace(Composition({'Li': 1.0 / 3.0, 'Ca': 1.0 / 3.0}))]
-        self.bases = [basis_factory('indicator', bit) for bit in self.spaces]
-        self.basecluster = Cluster(self.coords[:3], self.lattice)
-        self.orbit = Orbit(self.coords[:3], self.lattice,
-                           [[0, 1], [0, 1], [0, 1]],
-                           self.bases, self.symops)
-        self.orbit.assign_ids(1, 1, 1)
+@pytest.fixture(params=[(1, 2), (2, 8)])
+def orbit(expansion_structure, request):
+    num_sites = np.random.randint(*request.param)
+    site_inds = choices(range(len(expansion_structure)), k=num_sites)
+    coords = [expansion_structure.frac_coords[i] for i in site_inds]
+    # add random integer multiples
+    n = 0
+    while n < request.param[0]:
+        for coord in coords:
+            coord += np.random.randint(-4, 5)
+        frac_coords, inds = np.unique(coords, axis=0, return_index=True)
+        n = len(frac_coords)
 
-    def test_constructor(self):
-        self.assertRaises(AttributeError, Orbit, self.coords[:3], self.lattice,
-                          [[0, 1], [0, 1]], self.bases, self.symops)
-        self.assertRaises(AttributeError, Orbit, self.coords[:3], self.lattice,
-                          [[0, 1]], self.bases, self.symops)
+    sg_analyzer = SpacegroupAnalyzer(expansion_structure)
+    spaces = get_site_spaces([expansion_structure[i] for i in site_inds])
+    spaces = [spaces[i] for i in inds]
+    bases = [basis_factory('indicator', bit) for bit in spaces]
+    orbit = Orbit(frac_coords, expansion_structure.lattice,
+                  [np.arange(len(space) - 1) for space in spaces],
+                  bases, sg_analyzer.get_symmetry_operations())
+    orbit.assign_ids(1, 1, 1)
+    return orbit
 
-    def test_basecluster(self):
-        self.assertEqual(self.orbit.base_cluster, self.basecluster)
 
-    def test_clusters(self):
-        self.assertEqual(len(self.orbit.clusters), 4)
-        self.assertEqual(self.orbit.clusters[0], self.basecluster)
-        for cluster in self.orbit.clusters[1:]:
-            self.assertNotEqual(self.orbit.base_cluster, cluster)
+def test_constructor(expansion_structure):
+    num_sites = len(expansion_structure) + 2
+    site_inds = choices(range(len(expansion_structure)), k=num_sites)
+    coords = [expansion_structure.frac_coords[i] for i in site_inds]
+    sg_analyzer = SpacegroupAnalyzer(expansion_structure)
+    spaces = get_site_spaces([expansion_structure[i] for i in site_inds])
+    bases = [basis_factory('indicator', bit) for bit in spaces]
+    with pytest.raises(AttributeError):
+        orbit = Orbit(coords, expansion_structure.lattice,
+                      [np.arange(len(space) - 1) for space in spaces[:-1]],
+                      bases, sg_analyzer.get_symmetry_operations())
+    with pytest.raises(AttributeError):
+        orbit = Orbit(coords, expansion_structure.lattice,
+                      [np.arange(len(space) - 1) for space in spaces[:-1]],
+                      bases[:-1], sg_analyzer.get_symmetry_operations())
 
-    def test_multiplicity(self):
-        self.assertEqual(self.orbit.multiplicity, 4)
 
-    def test_cluster_symops(self):
-        self.assertEqual(len(self.orbit.cluster_symops), 12)
+def test_cluster(orbit):
+    base_cluster = Cluster(orbit.base_cluster.sites,
+                           orbit.base_cluster.lattice)
+    assert orbit.base_cluster == base_cluster
+    assert base_cluster in orbit.clusters
+    for cluster in orbit.clusters[1:]:
+        assert base_cluster != cluster
 
-    def test_eq(self):
-        orbit1 = Orbit(self.coords[:3], self.lattice, [[0, 1], [0, 1], [0, 1]],
-                       self.bases, self.symops)
-        orbit2 = Orbit(self.coords[:2], self.lattice, [[0, 1], [0, 1]],
-                       self.bases[:2], self.symops)
-        self.assertEqual(orbit1, self.orbit)
-        self.assertNotEqual(orbit2, self.orbit)
 
-    def test_is_sub_orbit(self):
-        orbit = Orbit(self.coords[:3], self.lattice, [[0, 1], [0, 1], [0, 1]],
-                       self.bases, self.symops)
-        self.assertFalse(self.orbit.is_sub_orbit(orbit))
-        orbit = Orbit([self.coords[0], self.coords[3]], self.lattice,
-                      [[0, 1], [0, 1]],
-                      self.bases[:2], self.symops)
-        self.assertFalse(self.orbit.is_sub_orbit(orbit))
-        orbit = Orbit([self.coords[0]], self.lattice, [[0, 1]],
-                      [self.bases[0]], self.symops)
-        self.assertTrue(self.orbit.is_sub_orbit(orbit))
-        orbit = Orbit([self.coords[1]], self.lattice, [[0, 1]],
-                      [self.bases[1]], self.symops)
-        self.assertTrue(self.orbit.is_sub_orbit(orbit))
-        orbit = Orbit(self.coords[:2], self.lattice, [[0, 1], [0, 1]],
-                      self.bases[:2], self.symops)
-        self.assertTrue(self.orbit.is_sub_orbit(orbit))
-        orbit = Orbit([self.coords[3]], self.lattice, [[0, 1]],
-                      [self.bases[0]], self.symops)
-        self.assertFalse(self.orbit.is_sub_orbit(orbit))
+def test_cluster_symops(orbit):
+    assert orbit.multiplicity * len(orbit.cluster_symops) == len(orbit.structure_symops)
 
-    def test_sub_orbit_mappings(self):
-        orbit = Orbit(self.coords[1:],
-                      self.lattice, [[0, 1], [0, 1], [0, 1]],
-                      self.bases, self.symops)
-        self.assertEqual(len(self.orbit.sub_orbit_mappings(orbit)), 0)
-        orbit = Orbit(self.coords[:2],
-                      self.lattice, [[0, 1], [0, 1]],
-                      self.bases[:2], self.symops)
-        self.assertTrue(
-            np.array_equal(self.orbit.sub_orbit_mappings(orbit), [[0, 1]]))
-        orbit = Orbit([self.coords[2]], self.lattice, [[0, 1]],
-                      [self.bases[2]], self.symops)
-        self.assertTrue(
-            np.array_equal(self.orbit.sub_orbit_mappings(orbit), [[2]]))
+    for symop in orbit.cluster_symops:
+        cluster = Cluster(symop.operate_multi(orbit.base_cluster.sites),
+                          orbit.base_cluster.lattice)
+        assert cluster == orbit.base_cluster
 
-    def test_bit_combos(self):
-        # orbit with two symmetrically equivalent sites
-        self.assertEqual(len(self.orbit), 6)
-        orbit = Orbit(self.coords[1:3], self.lattice, [[0, 1], [0, 1]],
-                      self.bases[:2], self.symops)
-        # orbit with two symmetrically distinct sites
-        self.assertEqual(len(orbit), 4)
 
-    def test_is_orthonormal(self):
-        self.assertFalse(self.orbit.basis_orthogonal)
-        self.assertFalse(self.orbit.basis_orthonormal)
-        for b in self.bases:
-            b.orthonormalize()
-            self.assertTrue(b.is_orthogonal)
-        orbit1 = Orbit(self.coords[:2], self.lattice, [[0, 1], [0, 1]],
-                       self.bases[:2], self.symops)
-        self.assertTrue(orbit1.basis_orthogonal)
-        self.assertTrue(orbit1.basis_orthonormal)
+def test_cluster_permutations(orbit):
+    for permutation in orbit.cluster_permutations:
+        cluster = Cluster(orbit.base_cluster.sites[permutation],
+                          orbit.base_cluster.lattice)
+        assert cluster == orbit.base_cluster
 
-    def test_remove_bit_combo(self):
-        bits = [0, 0]
-        self.orbit.remove_bit_combo(bits)
-        self.assertFalse(any(any(np.array_equal(bits, b) for b in b_c)
-                             for b_c in self.orbit.bit_combos))
-        bits = [0, 1]
-        equiv_bits = [1, 0]
-        self.orbit.remove_bit_combo(bits)
-        self.assertFalse(any(any(np.array_equal(equiv_bits, b) for b in b_c)
-                             for b_c in self.orbit.bit_combos))
 
-    def test_remove_bit_combo_by_inds(self):
-        orb1 = Orbit(self.coords[:2], self.lattice, [[0, 1], [0, 1]],
-                     self.bases[:2], self.symops)
-        orb1.assign_ids(1, 1, 1)
-        orb2 = Orbit(self.coords[:2], self.lattice, [[0, 1], [0, 1]],
-                     self.bases[:2], self.symops)
-        orb2.assign_ids(1, 1, 1)
+def test_equality(orbit):
+    for _ in range(3):
+        frac_coords = orbit.base_cluster.sites.copy()
+        other_coords = frac_coords.copy()
+        other_coords[0] += np.random.random()
+        frac_coords += np.random.randint(-4, 4)
+        orbit1 = Orbit(frac_coords, orbit.base_cluster.lattice,
+                       [np.arange(len(space) - 1) for space in orbit.site_spaces],
+                       orbit.site_bases, orbit.structure_symops)
+        orbit2 = Orbit(frac_coords[:-1], orbit.base_cluster.lattice,
+                       [np.arange(len(space) - 1) for space in orbit.site_spaces[:-1]],
+                       orbit.site_bases[:-1], orbit.structure_symops)
+        orbit3 = Orbit(other_coords, orbit.base_cluster.lattice,
+                       [np.arange(len(space) - 1) for space in orbit.site_spaces],
+                       orbit.site_bases, orbit.structure_symops)
 
-        bit = orb1.bit_combos[1][0]
-        orb1.remove_bit_combos_by_inds([1])
-        orb2.remove_bit_combo(bit)
-        self.assertTrue(all(np.array_equal(bc1, bc2) for bc1, bc2 in
-                             zip(orb1.bit_combos, orb2.bit_combos)))
-        self.assertRaises(
-            RuntimeError, orb1.remove_bit_combos_by_inds, [0, 1])
+        assert orbit1 == orbit
+        assert orbit2 != orbit
+        assert orbit3 != orbit
 
-    def test_exceptions(self):
-        self.assertRaises(AttributeError, Orbit, self.coords[:3],
-                          self.lattice, [[0, 1], [0, 1]], self.bases,
-                          self.symops)
-        self.assertRaises(RuntimeError, self.orbit.remove_bit_combos_by_inds,
-                          [6])
 
-    def test_repr(self):
-        repr(self.orbit)
+def test_bit_combos(orbit):
+    if len(orbit.base_cluster) == 1:
+        assert len(orbit.site_spaces) == 1
+        nspecies = len(orbit.site_spaces[0])
+        assert len(orbit.bit_combos) == nspecies - 1
+        for i in range(nspecies - 1):
+            assert orbit.bit_combos[i][0] == i
+    else:
+        nfunctions = reduce(lambda x, y: x * (y - 1),
+                            [len(space) for space in orbit.site_spaces], 1)
+        if len(orbit.cluster_permutations) > 1:
+            assert len(orbit) <= nfunctions
+        else:
+            assert len(orbit) == nfunctions
 
-    def test_str(self):
-        str(self.orbit)
+        assert all(combo[i] in np.arange(len(orbit.site_spaces[i]))
+                   for bit_combo in orbit.bit_combos
+                   for combo in bit_combo
+                   for i in range(len(orbit.base_cluster)))
 
-    def test_msonable(self):
-        d = self.orbit.as_dict()
-        self.assertEqual(self.orbit, Orbit.from_dict(d))
-        # test serialization
-        j = json.dumps(d)
-        json.loads(j)
-        # test remove bit combos are properly reconstructed
-        print(self.orbit.bit_combos)
-        self.orbit.remove_bit_combos_by_inds(
-            np.random.randint(len(self.orbit.bit_combos), size=2))
-        orbit = Orbit.from_dict(self.orbit.as_dict())
-        self.assertTrue(
-            all(all(np.array_equal(b1, b2) for b1, b2 in zip(c1, c2)) for c1, c2 in
-                zip(self.orbit.bit_combos, orbit.bit_combos)))
+
+def test_remove_bit_combos(orbit):
+    nbits = len(orbit)
+    with pytest.raises(ValueError):
+        orbit.remove_bit_combos_by_inds([nbits + 1])
+
+    if nbits > 1:
+        bit_combo = orbit.bit_combos[0]
+        orbit.remove_bit_combos_by_inds([0])
+        assert not any(
+            any(np.array_equal(bit_combo, b) for b in b_c)
+            for b_c in orbit.bit_combos
+        )
+        assert len(orbit) == nbits - 1
+        nbits -= 1
+
+    # remove all bit combos
+    with pytest.raises(RuntimeError):
+        orbit.remove_bit_combos_by_inds(range(nbits))
+
+
+def test_is_sub_orbit(expansion_structure):
+    num_sites = np.random.randint(6, 10)
+    site_inds = choices(range(len(expansion_structure)), k=num_sites)
+    frac_coords = [expansion_structure.frac_coords[i] for i in site_inds]
+    # add random integer multiples
+    for coord in frac_coords:
+        coord += np.random.randint(-4, 5)
+    frac_coords, inds = np.unique(frac_coords, axis=0, return_index=True)
+
+    sg_analyzer = SpacegroupAnalyzer(expansion_structure)
+    spaces = get_site_spaces([expansion_structure[i] for i in site_inds])
+    spaces = [spaces[i] for i in inds]
+    bases = [basis_factory('indicator', bit) for bit in spaces]
+    orbit = Orbit(frac_coords[:-1], expansion_structure.lattice,
+                  [np.arange(len(space) - 1) for space in spaces[:-1]],
+                  bases[:-1], sg_analyzer.get_symmetry_operations())
+    # with itself
+    assert not orbit.is_sub_orbit(orbit)
+
+    for _ in range(3):
+        new_frac_coords = frac_coords.copy()
+        new_frac_coords += np.random.randint(-4, 5)
+
+        # same orbit but shifted sites
+        orbit1 = Orbit(new_frac_coords[:-1],
+                       orbit.base_cluster.lattice,
+                       [np.arange(len(space) - 1) for space in spaces[:-1]],
+                       bases[:-1], sg_analyzer.get_symmetry_operations())
+        assert not orbit.is_sub_orbit(orbit1)
+
+        if len(set(spaces)) > len(set(orbit.site_spaces)):
+            # singles site orbit with site not in original
+            orbit1 = Orbit([new_frac_coords[-1]],
+                           orbit.base_cluster.lattice,
+                           [np.arange(len(spaces[-1]))],
+                           [bases[-1]],
+                           sg_analyzer.get_symmetry_operations())
+            assert not orbit.is_sub_orbit(orbit1)
+
+        # pair orbit with site not in original
+        orbit1 = Orbit([new_frac_coords[0], new_frac_coords[-1]],
+                       orbit.base_cluster.lattice,
+                       [np.arange(len(spaces[i])) for i in [0, -1]],
+                       [bases[0], bases[-1]],
+                       sg_analyzer.get_symmetry_operations())
+        assert not orbit.is_sub_orbit(orbit1)
+
+        # point suborbit
+        i = np.random.choice(range(len(orbit.base_cluster.sites)))
+        orbit1 = Orbit([new_frac_coords[i]],
+                       orbit.base_cluster.lattice, [np.arange(len(spaces[i]))],
+                       [bases[i]], orbit.structure_symops)
+        assert orbit.is_sub_orbit(orbit1)
+
+        # larger suborbit
+        orbit1 = Orbit(new_frac_coords[:-2],
+                       orbit.base_cluster.lattice,
+                       [np.arange(len(space) - 1) for space in spaces[:-2]],
+                       bases[:-2], sg_analyzer.get_symmetry_operations())
+        assert orbit.is_sub_orbit(orbit1)
+
+        # shifted site
+        new_frac_coords[i] += np.random.random()
+        orbit1 = Orbit([new_frac_coords[i]],
+                       orbit.base_cluster.lattice, [np.arange(len(spaces[i]))],
+                       [bases[i]], orbit.structure_symops)
+        assert not orbit.is_sub_orbit(orbit1)
+
+
+def test_sub_orbit_mappings(orbit):
+    frac_coords = orbit.base_cluster.sites.copy()
+    frac_coords[0] += np.random.random()
+    orbit1 = Orbit(frac_coords,
+                  orbit.base_cluster.lattice,
+                  [np.arange(len(sp)) for sp in orbit.site_spaces],
+                  orbit.site_bases, orbit.structure_symops)
+    assert len(orbit.sub_orbit_mappings(orbit1)) == 0
+
+    nsites = len(orbit.base_cluster.sites)
+    # choose all but one for orbits with 2 or more sites
+    size = nsites if nsites == 1 else nsites - 1
+    for _ in range(3):
+        inds = np.random.choice(range(nsites), size=size, replace=False)
+        orbit1 = Orbit(
+            orbit.base_cluster.sites[inds], orbit.base_cluster.lattice,
+            [np.arange(len(orbit.site_spaces[i])) for i in inds],
+            [orbit.site_bases[i] for i in inds], orbit.structure_symops)
+        mappings = orbit.sub_orbit_mappings(orbit1)
+        cluster = Cluster(orbit.base_cluster.sites[mappings][0],
+                          orbit.base_cluster.lattice)
+        assert cluster in orbit1.clusters
+
+    for i in range(nsites):
+        orbit1 = Orbit(
+            [orbit.base_cluster.sites[i]], orbit.base_cluster.lattice,
+            [np.arange(len(orbit.site_spaces[i]))], [orbit.site_bases[i]],
+            orbit.structure_symops)
+        mappings = orbit.sub_orbit_mappings(orbit1)
+        cluster = Cluster(orbit.base_cluster.sites[mappings][0],
+                          orbit.base_cluster.lattice)
+        assert cluster in orbit1.clusters
+
+
+def test_basis_orthonormal(orbit):
+    assert not orbit.basis_orthogonal
+    assert not orbit.basis_orthonormal
+    bases = deepcopy(orbit.site_bases)
+    for b in bases:
+        b.orthonormalize()
+        assert b.is_orthonormal
+    orbit1 = Orbit(orbit.base_cluster.sites, orbit.base_cluster.lattice,
+                   orbit.bits, bases, orbit.structure_symops)
+    assert orbit1.basis_orthogonal
+    assert orbit1.basis_orthonormal
+
+
+def _test_basis_arrs(bases, orbit):
+    for occu in product(*[range(arr.shape[1]) for arr in orbit.basis_arrays]):
+        for bit_combo in orbit.bit_combos:
+            for combo in bit_combo:
+                value1 = np.prod([
+                    bases[i].function_array[b, s] for i, (b, s)
+                    in enumerate(zip(combo, occu))])
+                value2 = np.prod([
+                    orbit.basis_arrays[i][b, s] for i, (b, s)
+                    in enumerate(zip(combo, occu))])
+            assert value1 == value2
+
+
+def test_basis_array(orbit):
+    bases = [basis_factory(basis.flavor, basis.site_space)
+             for basis in orbit.site_bases]
+    _test_basis_arrs(bases, orbit)
+
+
+def test_transform_basis(orbit, basis_name):
+    orbit.transform_site_bases(basis_name)
+    bases = [basis_factory(basis.flavor, basis.site_space)
+             for basis in orbit.site_bases]
+    _test_basis_arrs(bases, orbit)
+
+    orbit.transform_site_bases(basis_name, orthonormal=True)
+    bases = [basis_factory(basis.flavor, basis.site_space)
+             for basis in orbit.site_bases]
+    for b in bases: b.orthonormalize()
+    assert orbit.basis_orthonormal
+    _test_basis_arrs(bases, orbit)
+
+
+def test_msonable(orbit):
+    _ = repr(orbit), str(orbit)
+    assert_msonable(orbit)
+    orbit1 = Orbit.from_dict(orbit.as_dict())
+
+    # test remove bit combos are properly reconstructed
+    if len(orbit.bit_combos) - 1 > 0:
+        orbit1.remove_bit_combos_by_inds(
+            np.random.randint(len(orbit1.bit_combos),
+                              size=len(orbit.bit_combos) - 1))
+        orbit2 = Orbit.from_dict(orbit1.as_dict())
+        assert all(
+            all(np.array_equal(b1, b2) for b1, b2 in zip(c1, c2)) for c1, c2 in
+            zip(orbit1.bit_combos, orbit2.bit_combos))
+
+
+# hard-coded specific tests for LiCaBr
+@pytest.fixture(scope='module')
+def licabr_orbit(single_structure):
+    sf = SpacegroupAnalyzer(single_structure)
+    symops = sf.get_symmetry_operations()
+    spaces = [
+        SiteSpace(Composition({'Li': 1.0 / 3.0, 'Ca': 1.0 / 3.0})),
+        SiteSpace(Composition({'Li': 1.0 / 3.0, 'Ca': 1.0 / 3.0})),
+        SiteSpace(Composition({'Li': 1.0 / 3.0, 'Ca': 1.0 / 3.0}))]
+    bases = [basis_factory('indicator', bit) for bit in spaces]
+    orbit = Orbit(
+        single_structure.frac_coords[:3], single_structure.lattice,
+        [[0, 1], [0, 1], [0, 1]], bases, symops)
+    orbit.assign_ids(1, 1, 1)
+    return orbit
+
+
+def test_fixed_values(licabr_orbit):
+    assert licabr_orbit.multiplicity == 4
+    assert len(licabr_orbit.cluster_symops) == 12
+
+
+def test_equal_fixed(licabr_orbit):
+    orbit1 = Orbit(licabr_orbit.base_cluster.sites[:3],
+                   licabr_orbit.base_cluster.lattice, [[0, 1], [0, 1], [0, 1]],
+                   licabr_orbit.site_bases, licabr_orbit.structure_symops)
+    orbit2 = Orbit(licabr_orbit.base_cluster.sites[:2],
+                   licabr_orbit.base_cluster.lattice, [[0, 1], [0, 1]],
+                   licabr_orbit.site_bases[:2], licabr_orbit.structure_symops)
+    assert orbit1 == licabr_orbit
+    assert orbit2 != licabr_orbit
+
+
+def test_bit_combos_fixed(licabr_orbit):
+    # orbit with 3 sites and two symmetrically equivalent sites
+    assert len(licabr_orbit) == 6
+
+    orbit1 = Orbit(licabr_orbit.base_cluster.sites[1:3],
+                   licabr_orbit.base_cluster.lattice, [[0, 1], [0, 1]],
+                   licabr_orbit.site_bases[:2], licabr_orbit.structure_symops)
+    # orbit with only two symmetrically distinct sites
+    assert len(orbit1) == 4
+
+
+def test_suborbits_fixed(licabr_orbit):
+    # same orbit
+    orbit = Orbit(licabr_orbit.base_cluster.sites[:3],
+                  licabr_orbit.base_cluster.lattice, [[0, 1], [0, 1], [0, 1]],
+                  licabr_orbit.site_bases, licabr_orbit.structure_symops)
+    assert not licabr_orbit.is_sub_orbit(orbit)
+    # point orbits with site in original
+    orbit = Orbit([licabr_orbit.base_cluster.sites[0]],
+                  licabr_orbit.base_cluster.lattice, [[0, 1]],
+                  [licabr_orbit.site_bases[0]], licabr_orbit.structure_symops)
+    assert licabr_orbit.is_sub_orbit(orbit)
+    orbit = Orbit([licabr_orbit.base_cluster.sites[1]],
+                  licabr_orbit.base_cluster.lattice, [[0, 1]],
+                  [licabr_orbit.site_bases[1]], licabr_orbit.structure_symops)
+    assert licabr_orbit.is_sub_orbit(orbit)
+    # pair suborbit
+    orbit = Orbit(licabr_orbit.base_cluster.sites[:2],
+                  licabr_orbit.base_cluster.lattice, [[0, 1], [0, 1]],
+                  licabr_orbit.site_bases[:2], licabr_orbit.structure_symops)
+    assert licabr_orbit.is_sub_orbit(orbit)
+    # point not in original
+    orbit = Orbit([[0, 0, 0]],
+                  licabr_orbit.base_cluster.lattice, [[0, 1]],
+                  [licabr_orbit.site_bases[0]], licabr_orbit.structure_symops)
+    assert not licabr_orbit.is_sub_orbit(orbit)
+    # pair orbit with site not in original
+    orbit = Orbit([licabr_orbit.base_cluster.sites[0], [0, 0, 0]],
+                  licabr_orbit.base_cluster.lattice, [[0, 1], [0, 1]],
+                  licabr_orbit.site_bases[:2], licabr_orbit.structure_symops)
+    assert not licabr_orbit.is_sub_orbit(orbit)
+
+
+def test_suborbit_mappings_fixed(licabr_orbit):
+    orbit = Orbit(np.vstack([licabr_orbit.base_cluster.sites[1:], [0, 0, 0]]),
+                  licabr_orbit.base_cluster.lattice, [[0, 1], [0, 1], [0, 1]],
+                  licabr_orbit.site_bases, licabr_orbit.structure_symops)
+    # zero mappings since not suborbit
+    assert len(licabr_orbit.sub_orbit_mappings(orbit)) == 0
+
+    orbit = Orbit(licabr_orbit.base_cluster.sites[:2],
+                  licabr_orbit.base_cluster.lattice, [[0, 1], [0, 1]],
+                  licabr_orbit.site_bases[:2], licabr_orbit.structure_symops)
+    npt.assert_array_equal(licabr_orbit.sub_orbit_mappings(orbit), [[0, 1]])
+
+    orbit = Orbit([licabr_orbit.base_cluster.sites[2]],
+                  licabr_orbit.base_cluster.lattice, [[0, 1]],
+                  [licabr_orbit.site_bases[2]], licabr_orbit.structure_symops)
+    npt.assert_array_equal(licabr_orbit.sub_orbit_mappings(orbit), [[2]])

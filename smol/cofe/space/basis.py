@@ -254,7 +254,7 @@ class StandardBasis(DiscreteBasis):
                 "This basis has a non-uniform measure, rotations are not "
                 "implemented to handle this.\n The operation will still be "
                 "carried out, but it is recommended to run orthonormalize "
-                "again if the basis was originally so.")
+                "again if the basis was originally so.", UserWarning)
 
         if len(self.site_space) == 2:
             self._f_array[1] *= -1
