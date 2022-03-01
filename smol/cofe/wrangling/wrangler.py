@@ -334,6 +334,39 @@ class StructureWrangler(MSONable):
         col_mask = np.all(arr == arr[0, :], axis=0)
         return np.where(col_mask == 1)[0][1:]
 
+    def get_similarity_matrix(self, rows=None, cols=None, rtol=1e-5):
+        """Generate a matrix to compare the similarity of correlation feature vectors (columns) in the feature matrix.
+         Matrix element a(i,j) represents the fraction of equivalent corresponding values in feature vectors i and j.
+         This construction is analogous to the gram matrix, but instead of an inner product, it counts the number
+         of identical corresponding elements in feature vectors i and j.
+
+        Args:
+            rows (list):
+                indices of structures to include in feature matrix.
+            cols (list):
+                indices of features (correlations) to include in feature matrix
+            rtol (float):
+                relative tolerance for comparing feature matrix column values
+
+        Returns:
+            (n x n) Similarity matrix
+        """
+
+        rows = rows if rows is not None else range(self.num_structures)
+        cols = cols if cols is not None else range(self.num_features)
+
+        A = self.feature_matrix[rows][:, cols]
+        num_structs = len(rows)
+        num_corrs = len(cols)
+        sim_matrix = np.identity(num_corrs)
+        for i in range(num_corrs):
+            for j in range(i+1, num_corrs):
+                num_identical = np.sum(np.isclose(A[:, i], A[:, j], rtol=rtol))
+                sim_matrix[i, j] = num_identical / num_structs
+                sim_matrix[j, i] = num_identical / num_structs
+
+        return sim_matrix
+
     def get_property_vector(self, key, normalize=True):
         """Get the property target vector.
 
