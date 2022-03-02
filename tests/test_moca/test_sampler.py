@@ -11,8 +11,9 @@ TEMPERATURE = 5000
 
 @pytest.fixture(params=[1, 5])
 def sampler(ensemble, request):
-    sampler = Sampler.from_ensemble(ensemble, temperature=TEMPERATURE,
-                                    nwalkers=request.param)
+    sampler = Sampler.from_ensemble(
+        ensemble, temperature=TEMPERATURE, nwalkers=request.param
+    )
     # fix this additional attribute to sampler to access in gen occus for tests
     sampler.num_sites = ensemble.num_sites
     return sampler
@@ -26,28 +27,38 @@ def test_from_ensemble(sampler):
     assert isinstance(sampler.mckernel, Metropolis)
 
 
-@pytest.mark.parametrize('thin', (1, 10))
+@pytest.mark.parametrize("thin", (1, 10))
 def test_sample(sampler, thin):
     occu = np.vstack(
-        [gen_random_occupancy(sampler.mckernel._usher.sublattices,
-                              sampler.mckernel._usher.inactive_sublattices)
-         for _ in range(sampler.samples.shape[0])])
+        [
+            gen_random_occupancy(
+                sampler.mckernel._usher.sublattices,
+                sampler.mckernel._usher.inactive_sublattices,
+            )
+            for _ in range(sampler.samples.shape[0])
+        ]
+    )
     steps = 1000
-    samples = [state for state
-               in sampler.sample(1000, occu, thin_by=thin)]
+    samples = [state for state in sampler.sample(1000, occu, thin_by=thin)]
     assert len(samples) == steps // thin
 
     it = sampler.sample(43, occu, thin_by=7)
     with pytest.warns(RuntimeWarning):
         next(it)
 
+
 # TODO efficiency is sometimes =0 and so fails
-@pytest.mark.parametrize('thin', (1, 10))
+@pytest.mark.parametrize("thin", (1, 10))
 def test_run(sampler, thin):
     occu = np.vstack(
-        [gen_random_occupancy(sampler.mckernel._usher.sublattices,
-                              sampler.mckernel._usher.inactive_sublattices)
-            for _ in range(sampler.samples.shape[0])])
+        [
+            gen_random_occupancy(
+                sampler.mckernel._usher.sublattices,
+                sampler.mckernel._usher.inactive_sublattices,
+            )
+            for _ in range(sampler.samples.shape[0])
+        ]
+    )
     steps = 1000
     sampler.run(steps, occu, thin_by=thin)
     assert len(sampler.samples) == steps // thin
@@ -58,16 +69,26 @@ def test_run(sampler, thin):
 def test_anneal(sampler):
     temperatures = np.linspace(2000, 500, 5)
     occu = np.vstack(
-        [gen_random_occupancy(sampler.mckernel._usher.sublattices,
-                              sampler.mckernel._usher.inactive_sublattices)
-            for _ in range(sampler.samples.shape[0])])
+        [
+            gen_random_occupancy(
+                sampler.mckernel._usher.sublattices,
+                sampler.mckernel._usher.inactive_sublattices,
+            )
+            for _ in range(sampler.samples.shape[0])
+        ]
+    )
     steps = 100
     sampler.anneal(temperatures, steps, occu)
     expected = []
     for T in temperatures:
-        expected += steps * sampler.samples.shape[0]*[T, ]
-    npt.assert_array_equal(
-        sampler.samples.get_trace_value('temperature'), expected)
+        expected += (
+            steps
+            * sampler.samples.shape[0]
+            * [
+                T,
+            ]
+        )
+    npt.assert_array_equal(sampler.samples.get_trace_value("temperature"), expected)
     # test temp error
     with pytest.raises(ValueError):
         sampler.anneal([100, 200], steps)
@@ -106,6 +127,5 @@ for sp in expected.keys():
 
 def test_reshape_occu(ensemble):
     sampler = Sampler.from_ensemble(ensemble, temperature=TEMPERATURE)
-    occu = gen_random_occupancy(ensemble.sublattices,
-                                ensemble.inactive_sublattices)
+    occu = gen_random_occupancy(ensemble.sublattices, ensemble.inactive_sublattices)
     assert sampler._reshape_occu(occu).shape == (1, len(occu))

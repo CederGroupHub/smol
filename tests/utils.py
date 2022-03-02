@@ -5,7 +5,7 @@ Some of these are borrowed from pymatgen test scripts.
 
 import json
 import random
-from  itertools import chain
+from itertools import chain
 import numpy as np
 from monty.json import MontyDecoder, MSONable
 from pymatgen.core import Composition
@@ -36,14 +36,13 @@ def gen_random_occupancy(sublattices, inactive_sublattices):
     Returns:
         ndarray: encoded occupancy
     """
-    num_sites = sum(
-        len(sl.sites) for sl in chain(sublattices, inactive_sublattices))
+    num_sites = sum(len(sl.sites) for sl in chain(sublattices, inactive_sublattices))
     rand_occu = np.zeros(num_sites, dtype=int)
     for sublatt in sublattices:
         codes = range(len(sublatt.site_space))
-        rand_occu[sublatt.sites] = np.random.choice(codes,
-                                                    size=len(sublatt.sites),
-                                                    replace=True)
+        rand_occu[sublatt.sites] = np.random.choice(
+            codes, size=len(sublatt.sites), replace=True
+        )
     return rand_occu
 
 
@@ -62,8 +61,7 @@ def gen_random_structure(prim, size=3):
     structure = prim.copy()
     structure.make_supercell(size)
     for site in structure:
-        site.species = Composition(
-            {random.choice(list(site.species.keys())): 1})
+        site.species = Composition({random.choice(list(site.species.keys())): 1})
     return structure
 
 

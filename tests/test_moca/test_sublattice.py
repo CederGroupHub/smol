@@ -10,8 +10,14 @@ from tests.utils import assert_msonable
 
 @pytest.fixture
 def sublattice():
-    composition = Composition({DummySpecies('A'): 0.3, DummySpecies('X'): 0.3,
-                               DummySpecies('D'): 0.2, DummySpecies('E'): 0.2})
+    composition = Composition(
+        {
+            DummySpecies("A"): 0.3,
+            DummySpecies("X"): 0.3,
+            DummySpecies("D"): 0.2,
+            DummySpecies("E"): 0.2,
+        }
+    )
     site_space = SiteSpace(composition)
     sites = np.random.choice(range(100), size=60)
     return Sublattice(site_space, sites)
@@ -41,7 +47,7 @@ def test_msonable(sublattice):
 
 
 def test_inactive_sublattice():
-    composition = Composition({DummySpecies('A'): 1})
+    composition = Composition({DummySpecies("A"): 1})
     site_space = SiteSpace(composition)
     sites = np.random.choice(range(100), size=60)
     inactive_sublattice = InactiveSublattice(site_space, sites)

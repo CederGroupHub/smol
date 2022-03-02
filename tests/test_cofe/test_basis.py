@@ -13,10 +13,9 @@ from tests.utils import assert_msonable
 basis_iterators = list(get_subclasses(basis.BasisIterator).values())
 
 
-@pytest.fixture(params=[True, False], scope='module')
+@pytest.fixture(params=[True, False], scope="module")
 def site_space(expansion_structure, request):
-    spaces = domain.get_site_spaces(
-        expansion_structure, include_measure=request.param)
+    spaces = domain.get_site_spaces(expansion_structure, include_measure=request.param)
     return spaces[0]
 
 
@@ -26,24 +25,23 @@ def standard_basis(site_space, request):
     return basis.StandardBasis(site_space, request.param(species))
 
 
-@pytest.mark.parametrize('basis_iterator_cls', basis_iterators)
+@pytest.mark.parametrize("basis_iterator_cls", basis_iterators)
 def test_basis_measure_raise(basis_iterator_cls):
-    comp = Composition((('A', 0.25), ('B', 0.25),
-                        ('C', 0.8), ('D', 0.25)))
+    comp = Composition((("A", 0.25), ("B", 0.25), ("C", 0.8), ("D", 0.25)))
     with pytest.raises(ValueError):
         space = domain.SiteSpace(comp)
         species = tuple(space.keys())
         b = basis.StandardBasis(space, basis_iterator_cls(species))
 
 
-@pytest.mark.parametrize('basis_iterator_cls', basis_iterators)
+@pytest.mark.parametrize("basis_iterator_cls", basis_iterators)
 def test_constructor(basis_iterator_cls):
-    species = OrderedDict({'A': 1, 'B': 2, 'C': 1})
+    species = OrderedDict({"A": 1, "B": 2, "C": 1})
     basis_iter = basis_iterator_cls(tuple(species.keys()))
     with pytest.warns(RuntimeWarning):
         basis.StandardBasis(species, basis_iter)
 
-    species = OrderedDict({'A': .1, 'B': .1, 'C': .1})
+    species = OrderedDict({"A": 0.1, "B": 0.1, "C": 0.1})
     basis_iter = basis.SinusoidIterator(tuple(species.keys()))
 
     with pytest.warns(RuntimeWarning):
@@ -54,7 +52,7 @@ def test_constructor(basis_iterator_cls):
         basis.StandardBasis(species, basis_iter)
 
 
-@pytest.mark.parametrize('basis_iterator_cls', basis_iterators)
+@pytest.mark.parametrize("basis_iterator_cls", basis_iterators)
 def test_msonable(site_space, basis_iterator_cls):
     species = tuple(site_space.keys())
     b = basis.StandardBasis(site_space, basis_iterator_cls(species))
@@ -81,8 +79,7 @@ def test_standard_basis(standard_basis):
     original = standard_basis._f_array.copy()
     standard_basis.orthonormalize()
     assert standard_basis.is_orthonormal
-    assert np.allclose(
-        standard_basis._r_array @ standard_basis._f_array, original)
+    assert np.allclose(standard_basis._r_array @ standard_basis._f_array, original)
 
 
 def test_rotate(standard_basis):
@@ -90,8 +87,7 @@ def test_rotate(standard_basis):
     theta = np.pi / np.random.randint(2, 10)
 
     # catch and test non-uniform measures
-    if not np.allclose(
-            standard_basis.measure_vector[0], standard_basis.measure_vector):
+    if not np.allclose(standard_basis.measure_vector[0], standard_basis.measure_vector):
         with pytest.warns(UserWarning):
             standard_basis.rotate(theta)
         return
@@ -101,25 +97,30 @@ def test_rotate(standard_basis):
         assert standard_basis.is_orthogonal
         # if orthogonal all inner products should match!
         npt.assert_array_almost_equal(
-            f_array @ f_array.T, standard_basis._f_array @ standard_basis._f_array.T)
+            f_array @ f_array.T, standard_basis._f_array @ standard_basis._f_array.T
+        )
     else:
         # if not orthogonal only vector norms should mathch!
         npt.assert_array_almost_equal(
             np.diag(f_array @ f_array.T),
-            np.diag(standard_basis._f_array @ standard_basis._f_array.T))
+            np.diag(standard_basis._f_array @ standard_basis._f_array.T),
+        )
 
     npt.assert_array_almost_equal(
-        standard_basis._f_array[0], np.ones(len(standard_basis.site_space)))
+        standard_basis._f_array[0], np.ones(len(standard_basis.site_space))
+    )
     if len(standard_basis.site_space) == 2:  # rotation is * -1
-        npt.assert_array_almost_equal(
-            standard_basis._f_array[1], -1 * f_array[1])
+        npt.assert_array_almost_equal(standard_basis._f_array[1], -1 * f_array[1])
     else:
         npt.assert_almost_equal(
             np.arccos(
                 np.dot(standard_basis._f_array[1], f_array[1])
-                / (np.linalg.norm(standard_basis._f_array[1])
-                   * np.linalg.norm(f_array[1]))),
-            theta
+                / (
+                    np.linalg.norm(standard_basis._f_array[1])
+                    * np.linalg.norm(f_array[1])
+                )
+            ),
+            theta,
         )
     standard_basis.rotate(-theta)
     npt.assert_array_almost_equal(f_array, standard_basis._f_array)
@@ -137,9 +138,8 @@ def test_rotate(standard_basis):
         with pytest.raises(ValueError):
             standard_basis.rotate(theta, 0, len(standard_basis.site_space))
 
-    comp = Composition((('A', 0.2), ('B', 0.2),
-                        ('C', 0.3), ('D', 0.3)))
-    b = basis.basis_factory('sinusoid', domain.SiteSpace(comp))
+    comp = Composition((("A", 0.2), ("B", 0.2), ("C", 0.3), ("D", 0.3)))
+    b = basis.basis_factory("sinusoid", domain.SiteSpace(comp))
     with pytest.warns(UserWarning):
         b.rotate(theta)
 
@@ -158,7 +158,7 @@ def test_indicator_basis(site_space):
     original = b._f_array.copy()
     b.orthonormalize()
     assert b.is_orthonormal
-    npt.assert_allclose(b._r_array @ b._f_array, original, atol=5E-16)
+    npt.assert_allclose(b._r_array @ b._f_array, original, atol=5e-16)
 
 
 def test_sinusoid_basis(site_space):
@@ -177,15 +177,19 @@ def test_sinusoid_basis(site_space):
     # test evaluation of basis functions
     m = len(site_space)
     for n in range(1, len(site_space)):
-        a = -(-n//2)
-        f = lambda s: -np.sin(2*np.pi*a*s/m) if n % 2 == 0 else -np.cos(2*np.pi*a*s/m)
+        a = -(-n // 2)
+        f = (
+            lambda s: -np.sin(2 * np.pi * a * s / m)
+            if n % 2 == 0
+            else -np.cos(2 * np.pi * a * s / m)
+        )
         for i, _ in enumerate(site_space):
-            npt.assert_almost_equal(b.function_array[n-1, i], f(i))
+            npt.assert_almost_equal(b.function_array[n - 1, i], f(i))
 
     original = b._f_array.copy()
     b.orthonormalize()
     assert b.is_orthonormal
-    npt.assert_allclose(b._r_array @ b._f_array, original, atol=1E-15)
+    npt.assert_allclose(b._r_array @ b._f_array, original, atol=1e-15)
 
 
 def test_chebyshev_basis(site_space):
@@ -199,7 +203,7 @@ def test_chebyshev_basis(site_space):
     # test evaluation of basis functions
     m, coeffs = len(site_space), [1]
     fun_range = np.linspace(-1, 1, m)
-    for n in range(m-1):
+    for n in range(m - 1):
         coeffs.append(0)
         for sp, x in enumerate(fun_range):
             assert b.function_array[n, sp] == chebval(x, c=coeffs[::-1])
@@ -218,7 +222,7 @@ def test_legendre_basis(site_space):
     # test evaluation of basis functions
     m, coeffs = len(site_space), [1]
     fun_range = np.linspace(-1, 1, m)
-    for n in range(m-1):
+    for n in range(m - 1):
         coeffs.append(0)
         for sp, x in enumerate(fun_range):
             assert b.function_array[n, sp] == legval(x, c=coeffs[::-1])

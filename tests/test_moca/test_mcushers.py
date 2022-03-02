@@ -14,17 +14,15 @@ def all_sublattices():
     # generate two tests sublattices
     sites = np.arange(num_sites)
     sites1 = np.random.choice(sites, size=num_sites // 3)
-    sites2 = np.random.choice(np.setdiff1d(sites, sites1),
-                              size=num_sites // 4)
+    sites2 = np.random.choice(np.setdiff1d(sites, sites1), size=num_sites // 4)
     sites3 = np.setdiff1d(sites, np.concatenate((sites1, sites2)))
-    site_space1 = SiteSpace(
-        Composition({'A': 0.1, 'B': 0.4, 'C': 0.3, 'D': 0.2}))
-    site_space2 = SiteSpace(
-        Composition({'A': 0.1, 'B': 0.4, 'E': 0.5}))
-    site_space3 = SiteSpace(Composition({'G': 1}))
-    sublattices = [Sublattice(site_space1, sites1),
-                   Sublattice(site_space2, sites2)]
-    inactive_sublattices = [InactiveSublattice(site_space3, sites3), ]
+    site_space1 = SiteSpace(Composition({"A": 0.1, "B": 0.4, "C": 0.3, "D": 0.2}))
+    site_space2 = SiteSpace(Composition({"A": 0.1, "B": 0.4, "E": 0.5}))
+    site_space3 = SiteSpace(Composition({"G": 1}))
+    sublattices = [Sublattice(site_space1, sites1), Sublattice(site_space2, sites2)]
+    inactive_sublattices = [
+        InactiveSublattice(site_space3, sites3),
+    ]
     return sublattices, inactive_sublattices
 
 
@@ -32,7 +30,8 @@ def all_sublattices():
 def rand_occu(all_sublattices):
     # generate a random occupancy according to the sublattices
     occu = np.zeros(
-        sum(len(s.sites) for sublat in all_sublattices for s in sublat), dtype=int)
+        sum(len(s.sites) for sublat in all_sublattices for s in sublat), dtype=int
+    )
     for site in range(len(occu)):
         for sublattice in all_sublattices[0]:
             if site in sublattice.sites:
@@ -70,20 +69,21 @@ def test_propose_step(mcmcusher, rand_occu):
                 count2 += 1
                 assert flip[1] in range(len(mcmcusher.sublattices[1].site_space))
             else:
-                raise RuntimeError('Something went wrong in proposing'
-                                   f'a step site proposed in {step} is'
-                                   ' not in any of the allowed sites')
+                raise RuntimeError(
+                    "Something went wrong in proposing"
+                    f"a step site proposed in {step} is"
+                    " not in any of the allowed sites"
+                )
             total += 1
             flipped_sites.append(flip[0])
 
     # check probabilities seem sound
-    assert count1 / total == pytest.approx(0.5, abs=1E-2)
-    assert count2 / total == pytest.approx(0.5, abs=1E-2)
+    assert count1 / total == pytest.approx(0.5, abs=1e-2)
+    assert count2 / total == pytest.approx(0.5, abs=1e-2)
 
     # check that every site was flipped at least once
     assert all(
-        i in flipped_sites for i in
-        np.setdiff1d(np.arange(num_sites), fixed_sites)
+        i in flipped_sites for i in np.setdiff1d(np.arange(num_sites), fixed_sites)
     )
 
     # make sure fixed sites remain the same
@@ -104,10 +104,12 @@ def test_propose_step(mcmcusher, rand_occu):
                 count2 += 1
                 assert flip[1] in range(len(mcmcusher.sublattices[1].site_space))
             else:
-                raise RuntimeError('Something went wrong in proposing'
-                                   f'a step site proposed in {step} is'
-                                   ' not in any of the allowed sites')
+                raise RuntimeError(
+                    "Something went wrong in proposing"
+                    f"a step site proposed in {step} is"
+                    " not in any of the allowed sites"
+                )
             total += 1
             flipped_sites.append(flip[0])
-    assert count1 / total == pytest.approx(0.8, abs=1E-2)
-    assert count2 / total == pytest.approx(0.2, abs=1E-2)
+    assert count1 / total == pytest.approx(0.8, abs=1e-2)
+    assert count2 / total == pytest.approx(0.2, abs=1e-2)

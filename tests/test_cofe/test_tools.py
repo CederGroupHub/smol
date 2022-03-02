@@ -83,19 +83,17 @@ def test_weights_above_hull():
 # TODO improve test by precalculating expected energies and filtered structs
 def test_filter_by_ewald(structure_wrangler):
     n_structs = structure_wrangler.num_structures
-    indices = max_ewald_energy_indices(
-        structure_wrangler, max_relative_energy=0.0)
+    indices = max_ewald_energy_indices(structure_wrangler, max_relative_energy=0.0)
     assert len(indices) < n_structs
-    indices, compliment = max_ewald_energy_indices(structure_wrangler,
-                                                   max_relative_energy=0.0,
-                                                   return_compliment=True)
+    indices, compliment = max_ewald_energy_indices(
+        structure_wrangler, max_relative_energy=0.0, return_compliment=True
+    )
     assert len(indices) + len(compliment) == n_structs
 
     # with ewaldterm now
     structure_wrangler.cluster_subspace.add_external_term(EwaldTerm())
     structure_wrangler.update_features()
-    indices2 = max_ewald_energy_indices(
-        structure_wrangler, max_relative_energy=0.0)
+    indices2 = max_ewald_energy_indices(structure_wrangler, max_relative_energy=0.0)
     npt.assert_array_equal(indices, indices2)
     structure_wrangler.cluster_subspace._external_terms = []
 
@@ -106,7 +104,7 @@ def test_filter_duplicate_corr_vectors(structure_wrangler):
     for i in range(5):
         ind = np.random.randint(structure_wrangler.num_structures)
         dup_item = deepcopy(structure_wrangler.data_items[ind])
-        dup_item['properties']['energy'] = np.inf
+        dup_item["properties"]["energy"] = np.inf
         dup_items.append(dup_item)
 
     final = structure_wrangler.num_structures
@@ -114,17 +112,16 @@ def test_filter_duplicate_corr_vectors(structure_wrangler):
     n_structs = structure_wrangler.num_structures
 
     assert structure_wrangler.num_structures == final + len(dup_items)
-    assert np.inf in structure_wrangler.get_property_vector('energy')
-    indices = unique_corr_vector_indices(structure_wrangler,
-                                         property_key='energy')
+    assert np.inf in structure_wrangler.get_property_vector("energy")
+    indices = unique_corr_vector_indices(structure_wrangler, property_key="energy")
     assert len(indices) < n_structs
     assert len(indices) == n_structs - len(dup_items)
-    assert np.inf not in structure_wrangler.get_property_vector('energy')[indices]
-    indices, compliment = unique_corr_vector_indices(structure_wrangler,
-                                                     property_key='energy',
-                                                     return_compliment=True)
+    assert np.inf not in structure_wrangler.get_property_vector("energy")[indices]
+    indices, compliment = unique_corr_vector_indices(
+        structure_wrangler, property_key="energy", return_compliment=True
+    )
     assert len(indices) + len(compliment) == n_structs
-    indices = unique_corr_vector_indices(structure_wrangler,
-                                         property_key='energy',
-                                         filter_by='max')
-    assert np.inf in structure_wrangler.get_property_vector('energy')[indices]
+    indices = unique_corr_vector_indices(
+        structure_wrangler, property_key="energy", filter_by="max"
+    )
+    assert np.inf in structure_wrangler.get_property_vector("energy")[indices]

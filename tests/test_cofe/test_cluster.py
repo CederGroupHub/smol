@@ -6,7 +6,7 @@ from smol.cofe.space import Cluster
 from tests.utils import assert_msonable
 
 
-@pytest.fixture(scope='package')
+@pytest.fixture(scope="package")
 def cluster(structure):
     num_sites = np.random.randint(2, 6)
     sites = choices(structure.frac_coords, k=num_sites)
@@ -19,7 +19,9 @@ def cluster(structure):
 
 
 def test_from_sites(structure):
-    assert Cluster(structure.frac_coords, structure.lattice) == Cluster.from_sites(structure.sites)
+    assert Cluster(structure.frac_coords, structure.lattice) == Cluster.from_sites(
+        structure.sites
+    )
 
 
 def test_size(cluster):
@@ -28,7 +30,7 @@ def test_size(cluster):
 
 def test_diameter(cluster):
     coords = cluster.lattice.get_cartesian_coords(cluster.sites)
-    diameter = max([np.sum((i - j)**2) for i, j in combinations(coords, 2)])**0.5
+    diameter = max([np.sum((i - j) ** 2) for i, j in combinations(coords, 2)]) ** 0.5
     assert diameter == cluster.diameter
 
 
