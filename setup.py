@@ -20,7 +20,6 @@ test new ones. Finally, although conceived mainly for method development, smol c
 """
 
 import sys
-import platform
 
 from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext
@@ -42,14 +41,13 @@ COMPILER_DIRECTIVES = {
 }
 
 
-
 if sys.platform.startswith("darwin"):
     COMPILE_OPTIONS["other"] += ["-march=native", "-stdlib=libc++"]
 
 
 # By subclassing build_extensions we have the actual compiler that will be used which is
 # really known only after finalize_options
-# http://stackoverflow.com/questions/724664/python-distutils-how-to-get-a-compiler-that-is-going-to-be-used
+# http://stackoverflow.com/questions/724664/python-distutils-how-to-get-a-compiler-that-is-going-to-be-used  # noqa
 class build_ext_options:
     def build_options(self):
         for e in self.extensions:
@@ -85,8 +83,7 @@ ext_modules = [
         "src.mc_utils",
         ["src/mc_utils" + ext],
         language="c",
-        include_dirs=["src/"],
-        extra_compile_args=EXTRA_COMPILE_ARGS,
+        include_dirs=["src/"]
     )
 ]
 
@@ -109,7 +106,12 @@ setup(
     setup_requires=["numpy>=1.18.1", "setuptools>=18.0"],
     python_requires=">=3.8",
     tests_require=["pytest"],
-    install_requires=["setuptools", "numpy>=1.18.1", "pymatgen>=2020.8.13", "monty>=3.0.1"],
+    install_requires=[
+        "setuptools",
+        "numpy>=1.18.1",
+        "pymatgen>=2020.8.13",
+        "monty>=3.0.1"
+    ],
     extras_require={
         "docs": [
             "sphinx==4.4.0",
