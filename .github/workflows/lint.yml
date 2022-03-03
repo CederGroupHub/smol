@@ -4,12 +4,10 @@ on:
   push:
     branches:
       - master
-      - experimental
 
   pull_request:
     branches:
       - master
-      - experimental
 
 jobs:
   lint:
@@ -30,13 +28,24 @@ jobs:
           pip install -r requirements-dev.txt
       - name: flake8
         run: |
+            flake8 --version
             flake8 --count --show-source --statistics smol
             # exit-zero treats all errors as warnings.
             flake8 --count --exit-zero --max-complexity=20 --statistics smol
+      - name: black
+        run: |
+          black --version
+          black --check --diff --color pymatgen
+      - name: pydocstyle
+        run: |
+          pydocstyle --version
+          pydocstyle --count smol
       # Not in shape for this yet
       # - name: pylint
       #  run: |
       #     pylint smol
-      - name: pydocstyle
-        run: |
-            pydocstyle --count smol
+      #- name: mypy
+       #   run: |
+        #    mypy --version
+         #   rm -rf .mypy_cache
+          #  mypy smol
