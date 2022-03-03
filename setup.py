@@ -1,8 +1,23 @@
 # coding: utf-8
 # Copyright (c)
-# Distributed under the terms of the MIT License.
 
-"""Setup.py for smol."""
+"""
+smol -- Statistical Mechanics On Lattices
+
+Lighthweight but caffeinated Python implementations of computational methods
+for statistical mechanical calculations of configurational states in
+crystalline material systems.
+
+
+smol is a minimal implementation of computational methods to calculate statistical
+mechanical and thermodynamic properties of crystalline material systems based on
+the cluster expansion method from alloy theory and related methods. Although smol
+is intentionally lightweight---in terms of dependencies and built-in functionality
+---it has a modular design that closely follows underlying mathematical formalism
+and provides useful abstractions to easily extend existing methods or implement and
+test new ones. Finally, although conceived mainly for method development, smol can
+(and is being) used in production for materials science research applications.
+"""
 
 import sys
 import platform
@@ -12,9 +27,9 @@ from setuptools.command.build_ext import build_ext
 import numpy
 
 COMPILE_OPTIONS = {
-    "msvc": ["/Ox", "/EHsc"],
-    "mingw32": ["-Wno-strict-prototypes", "-Wno-unused-function"],
-    "other": ["-Wno-strict-prototypes", "-Wno-unused-function"],
+    "msvc": ["/O2", "/EHsc", ],
+    "mingw32": ["-Wall", "-Wextra"],
+    "other": ["-Wall", "-Wextra", "-ffast-math", "-O3"],
 }
 
 LINK_OPTIONS = {
@@ -26,7 +41,7 @@ COMPILER_DIRECTIVES = {
     "language_level": 3,
 }
 
-EXTRA_COMPILE_ARGS = ["-O3", "-ffast-math"]
+
 
 if sys.platform.startswith("darwin"):
     COMPILE_OPTIONS["other"] += ["-march=native", "-stdlib=libc++"]
