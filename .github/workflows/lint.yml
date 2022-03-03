@@ -16,9 +16,9 @@ jobs:
       max-parallel: 6
 
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v2
       - name: Set up Python 3.8
-        uses: actions/setup-python@v2.2.2
+        uses: actions/setup-python@v2
         with:
           python-version: 3.8
       - name: Install dependencies
@@ -26,6 +26,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
+      - name: pre-commit
+        run: pre-commit run --all-files --show-diff-on-failure
       - name: flake8
         run: |
             flake8 --version
