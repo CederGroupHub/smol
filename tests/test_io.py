@@ -1,41 +1,25 @@
-import unittest
 import os
-import numpy as np
-from smol.io import save_work, load_work
-from smol.cofe import ClusterSubspace, ClusterExpansion, StructureWrangler
-from smol.moca import CEProcessor, CanonicalEnsemble
-from tests.data import lno_prim, lno_data
+
+from smol.cofe import ClusterSubspace, StructureWrangler
+from smol.io import load_work, save_work
+from smol.moca import CanonicalEnsemble, ClusterExpansionProcessor
 
 
-class TestSaveLoadWork(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.cs = ClusterSubspace.from_cutoffs(lno_prim, {2: 5, 3: 4.1},
-                                              ltol=0.15, stol=0.2,
-                                              angle_tol=5, supercell_size='O2-')
-        cls.sw = StructureWrangler(cls.cs)
-        for struct, energy in lno_data:
-            cls.sw.add_data(struct, {'energy': energy})
-
-        coefs = np.ones(cls.cs.num_corr_functions)
-        cls.ce = ClusterExpansion(cls.cs, coefs)
-        cls.pr = CEProcessor(cls.cs, 2 * np.eye(3), coefs)
-        cls.en = CanonicalEnsemble(cls.pr)
-        cls.file_path = './test_save_work.mson'
-
-    def test_save_load_work(self):
-        save_work(self.file_path, self.cs, self.sw, self.ce, self.pr, self.en)
-        self.assertTrue(os.path.isfile(self.file_path))
-
-        work_dict = load_work(self.file_path)
-        self.assertEqual(5, len(work_dict))
-
-        for name, obj in work_dict.items():
-            self.assertEqual(name, obj.__class__.__name__)
-            self.assertTrue(type(obj) in (ClusterSubspace, ClusterExpansion,
-                                          StructureWrangler, CEProcessor,
-                                          CanonicalEnsemble))
-
-    @classmethod
-    def tearDownClass(cls) -> None:
-        os.remove(cls.file_path)
+def test_save_load_work(single_canonical_ensemble, tmpdir):
+    processor = single_canonical_ensemble.processor
+    subspace = processor.cluster_subspace
+    wrangler = StructureWrangler(processor)
+    file_path = os.path.join(tmpdir, "smol.mson")
+    save_work(file_path, subspace, wrangler, processor, single_canonical_ensemble)
+    assert os.path.isfile(file_path)
+    work_dict = load_work(file_path)
+    assert len(work_dict) == 4
+    for name, obj in work_dict.items():
+        assert name == obj.__class__.__name__
+        assert type(obj) in (
+            ClusterSubspace,
+            StructureWrangler,
+            ClusterExpansionProcessor,
+            CanonicalEnsemble,
+        )
+    os.remove(file_path)

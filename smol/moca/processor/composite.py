@@ -24,7 +24,7 @@ class CompositeProcessor(Processor):
     heart desires.
 
     The most common use case of them all is a CompositeProcessor of a
-    CEProcessor and an EwaldProcessor for use in ionic materials.
+    ClusterExpansionProcessor and an EwaldProcessor for use in ionic materials.
 
     You can add anyone of the other processor class implemented to build a
     composite processor.
@@ -32,7 +32,7 @@ class CompositeProcessor(Processor):
     It is recommended to use the :code:`from_cluster_expansion` to create an
     ensemble and the underlying processor automatically rather than directly
     creating a processor. This will take care of creating the correct
-    :class:`CompositeProcessor` or :class:`CEProcessor` for you.
+    :class:`CompositeProcessor` or :class:`ClusterExpansionProcessor` for you.
     """
 
     def __init__(self, cluster_subspace, supercell_matrix):
@@ -63,16 +63,22 @@ class CompositeProcessor(Processor):
                 supercell matrix.
         """
         if isinstance(processor, CompositeProcessor):
-            raise AttributeError("A CompositeProcessor can not be added into "
-                                 "another CompositeProcessor")
+            raise AttributeError(
+                "A CompositeProcessor can not be added into "
+                "another CompositeProcessor"
+            )
         elif self.cluster_subspace != processor.cluster_subspace:
-            raise ValueError("The cluster subspace of the processor to be"
-                             " added does not match the one of this "
-                             "CompositeProcessor.")
+            raise ValueError(
+                "The cluster subspace of the processor to be"
+                " added does not match the one of this "
+                "CompositeProcessor."
+            )
         elif not np.array_equal(self._scmatrix, processor.supercell_matrix):
-            raise ValueError("The supercell matrix of the processor to be"
-                             " added does not match the one of this "
-                             "CompositeProcessor.")
+            raise ValueError(
+                "The supercell matrix of the processor to be"
+                " added does not match the one of this "
+                "CompositeProcessor."
+            )
         self._processors.append(processor)
         self.coefs = np.append(self.coefs, processor.coefs)
 
@@ -99,8 +105,9 @@ class CompositeProcessor(Processor):
         Returns:
             float:  property difference between inital and final states
         """
-        return sum(pr.compute_property_change(occupancy, flips)
-                   for pr in self._processors)
+        return sum(
+            pr.compute_property_change(occupancy, flips) for pr in self._processors
+        )
 
     def compute_feature_vector(self, occupancy):
         """Compute the feature vector for a given occupancy array.
@@ -115,8 +122,9 @@ class CompositeProcessor(Processor):
         Returns:
             array: correlation vector
         """
-        features = [np.array(pr.compute_feature_vector(occupancy))
-                    for pr in self._processors]
+        features = [
+            np.array(pr.compute_feature_vector(occupancy)) for pr in self._processors
+        ]
         # TODO you may be able to cut some speed by pre-allocating this
         return np.append(features[0], features[1:])
 
@@ -136,8 +144,10 @@ class CompositeProcessor(Processor):
         Returns:
             array: change in feature vector
         """
-        updates = [np.array(pr.compute_feature_vector_change(occupancy, flips))
-                   for pr in self._processors]
+        updates = [
+            np.array(pr.compute_feature_vector_change(occupancy, flips))
+            for pr in self._processors
+        ]
         # TODO you may be able to cut some speed by pre-allocating this
         return np.append(updates[0], updates[1:])
 
@@ -149,14 +159,16 @@ class CompositeProcessor(Processor):
             MSONable dict
         """
         d = super().as_dict()
-        d['processors'] = [pr.as_dict() for pr in self._processors]
+        d["processors"] = [pr.as_dict() for pr in self._processors]
         return d
 
     @classmethod
     def from_dict(cls, d):
         """Create a Composite from serialized MSONable dict."""
-        pr = cls(ClusterSubspace.from_dict(d['cluster_subspace']),
-                 np.array(d['supercell_matrix']))
-        for prd in d['processors']:
+        pr = cls(
+            ClusterSubspace.from_dict(d["cluster_subspace"]),
+            np.array(d["supercell_matrix"]),
+        )
+        for prd in d["processors"]:
             pr.add_processor(Processor.from_dict(prd))
         return pr

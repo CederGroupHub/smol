@@ -1,62 +1,76 @@
-# <img src="docs/images/logo.png" width="350px" alt="smol">
+<img src="docs/_static/logo.png" width="500px" alt="smol">
 
-### Statistical Mechanics on Lattices
+Statistical Mechanics on Lattices
+=================================
 
 ![test](https://github.com/CederGroupHub/smol/actions/workflows/test.yml/badge.svg)
 
-Lighthweight but caffeinated Python implementations of computational methods
-for statistical mechanical calculations of configurational states for
-crystalline material systems.
+*Lighthweight but caffeinated Python implementations of computational methods
+for statistical mechanical calculations of configurational states in
+crystalline material systems.*
 
-**Documentation (requires lbl vpn): <http://amox.lbl.gov/smol>**
+-----------------------------------------------------------------------------
 
-#### Installing & Running
-1.  `Clone` the repository.
-    -   The latest tag in the `master` branch is the stable version of the
-    code. The `master` branch has the newest tested features, but may have more
-    lingering bugs.
+> :warning: **smol** is still under substantial development and may possibly
+> include changes that break backwards compatibility for the near future.
 
-2.  Go to the top level directory of the cloned repo and type:
+**smol** is a minimal implementation of computational methods to calculate
+statistical mechanical and thermodynamic properties of crystalline
+material systems based on the *cluster expansion* method from alloy theory and
+related methods. Although **smol** is intentionally lightweight---in terms of
+dependencies and built-in functionality---it has a modular design that closely
+follows underlying mathematical formalism and provides useful abstractions to
+easily extend existing methods or implement and test new ones. Finally,
+although conceived mainly for method development, **smol** can (and is being)
+used in production for materials science research applications.
 
-        pip install .
 
-3.  See the [example notebooks](https://github.com/CederGroupHub/smol/tree/master/examples)
-to help you get started.
+Functionality
+-------------
+**smol** currently includes the following functionality:
 
-#### Contributing & Developing
-Please consider contributing even the smallest idea.
-The very best software comes from collaborative efforts.
+- Defining cluster expansion functions for a given disordered structure using a
+  variety of available site basis functions with and without explicit
+  redundancy.
+- Option to include explicit electrostatics in expansions using the Ewald
+  summation method.
+- Computing correlation vectors for a set of training structures with a variety
+  of functionality to inspect the resulting feature matrix.
+- Defining fitted cluster expansions for subsequent property prediction.
+- Fast evaluation of correlation vectors and differences in correlation vectors
+  from local updates in order to quickly compute properties and changes in
+  properties for specified supercell sizes.
+- Flexible toolset to sample cluster expansions using Monte Carlo with
+  Canonical and Semigrand Canonical ensembles using a Metropolis sampler.
 
-In case you have an idea, recommendation, problem or found a bug, but nothing
-actually down on code, use the [issue tracker](https://github.com/CederGroupHub/smol/issues).
+**smol** is built on top of [pymatgen](https://pymatgen.org) so any pre/post
+structure analysis can be done seamlessly using the various functionality
+supported there.
 
-If you have lovely bits of code you want to contribute then please fork + pull
-request [github-flow](https://guides.github.com/introduction/flow/) or
-[git-flow](https://nvie.com/posts/a-successful-git-branching-model/) style.
-See the contributing
-[file](https://github.com/CederGroupHub/smol/blob/master/CONTRIBUTING.md) for
-further information.
+Installation
+----------
+`Clone` the repository. The latest tag in the `master` branch is the stable version of the
+code. The `master` branch has the newest tested features, but may have more
+lingering bugs.
 
-#### Credits
-**smol** would not be possible without initial groundwork, contributions, and
-inspiration, from the following people/projects:
--   The Ceder Group Cluster Expansion team and all the contributors listed in
-    this repository have provided invaluable contributions, suggestions, ideas,
-    fixes and feedback that have continuosly improved **smol**.
--   Will Richards & Daniil Kitcheav - Provided the initial code and inspiration
-    based their cluster expansion module in the pyabinitio repository.
--   [pymatgen](https://pymatgen.org/) makes up the backbone of **smol**, by
-    providing the objects to represent compositions, structures, and symmetry
-    operations.
--   A fair deal of the design of the **smol.cofe** module is inspired by
-    [icet](https://icet.materialsmodeling.org/) another amazing and highly
-    recommended CE python package, that has many great features that are not
-    supported here.
--   A handful of ideas for the design of **smol.moca** were borrowed from many
-    great quality probabilistic programming packages such as
-    [mcpele](http://pele-python.github.io/mcpele/),
-    [TensorFlow Probability](https://www.tensorflow.org/probability),
-    [Pyro](https://pyro.ai/), [pyABC](https://pyabc.readthedocs.io/en/latest/),
-    and [emcee](https://emcee.readthedocs.io/en/stable/).
-    
+Go to the top level directory of the cloned repo and type:
 
+    pip install .
+
+Usage
+-----
+Refer to the [documentation](http://amox.lbl.gov/smol) (requires lbl vpn) for details on using
+**smol**. The [example notebooks](https://github.com/CederGroupHub/smol/tree/master/examples)
+can help you get started.
+
+Contributing
+------------
+We welcome all your contributions with open arms! Please see the
+[contributing](https://github.com/CederGroupHub/smol/blob/master/CONTRIBUTING.md)
+page for how to contribute.
+
+
+Changes
+-------
+The most recent changes are detailed in the
+[change log](https://github.com/CederGroupHub/smol/blob/master/CHANGES.md).

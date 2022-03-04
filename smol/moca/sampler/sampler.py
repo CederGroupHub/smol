@@ -6,15 +6,16 @@ by the corresponding ensemble to generate Monte Carlo samples.
 
 __author__ = "Luis Barroso-Luque"
 
-import random
-from warnings import warn
-from datetime import datetime
 import os
+import random
+from datetime import datetime
+from warnings import warn
+
 import numpy as np
 
-from smol.utils import progress_bar
-from smol.moca.sampler.kernel import mckernel_factory
 from smol.moca.sampler.container import SampleContainer
+from smol.moca.sampler.kernel import Trace, mckernel_factory
+from smol.utils import progress_bar
 
 
 class Sampler:
@@ -51,8 +52,16 @@ class Sampler:
         random.seed(seed)
 
     @classmethod
-    def from_ensemble(cls, ensemble, *args, step_type=None, kernel_type=None,
-                      nwalkers=1, seed=None, **kwargs):
+    def from_ensemble(
+        cls,
+        ensemble,
+        *args,
+        step_type=None,
+        kernel_type=None,
+        nwalkers=1,
+        seed=None,
+        **kwargs,
+    ):
         """
         Create a sampler based on an Ensemble instances.
 
@@ -87,22 +96,35 @@ class Sampler:
         if step_type is None:
             step_type = ensemble.valid_mcmc_steps[0]
         elif step_type not in ensemble.valid_mcmc_steps:
-            raise ValueError(f"Step type {step_type} can not be used for "
-                             f"sampling a {type(ensemble)}!")
+            raise ValueError(
+                f"Step type {step_type} can not be used for sampling a "
+                f"{type(ensemble)}."
+            )
         if kernel_type is None:
             kernel_type = "Metropolis"
 
-        mckernel = mckernel_factory(kernel_type, ensemble, step_type, *args,
-                                    nwalkers=nwalkers, **kwargs)
+        mckernel = mckernel_factory(
+            kernel_type, ensemble, step_type, *args, nwalkers=nwalkers, **kwargs
+        )
+        # get a trial trace to initialize sample container trace
+        _trace = mckernel.compute_initial_trace(np.zeros(ensemble.num_sites, dtype=int))
+        sample_trace = Trace(
+            **{
+                name: np.empty((0, nwalkers, *value.shape), dtype=value.dtype)
+                for name, value in _trace.items()
+            }
+        )
 
         sampling_metadata = {"name": type(ensemble).__name__}
         sampling_metadata.update(ensemble.thermo_boundaries)
         sampling_metadata.update({"kernel": kernel_type, "step": step_type})
-        container = SampleContainer(ensemble.num_sites,
-                                    ensemble.sublattices,
-                                    ensemble.natural_parameters,
-                                    ensemble.num_energy_coefs,
-                                    sampling_metadata, nwalkers)
+        container = SampleContainer(
+            ensemble.sublattices,
+            ensemble.natural_parameters,
+            ensemble.num_energy_coefs,
+            sample_trace,
+            sampling_metadata,
+        )
         return cls(mckernel, container, seed=seed)
 
     @property
@@ -157,27 +179,23 @@ class Sampler:
         if occupancies.shape != self.samples.shape:
             occupancies = self._reshape_occu(occupancies)
         if nsteps % thin_by != 0:
-            warn(f"The number of steps {nsteps} is not a multiple of thin_by "
-                 f" {thin_by}. The last {nsteps % thin_by} will be ignored.",
-                 category=RuntimeWarning)
+            warn(
+                f"The number of steps {nsteps} is not a multiple of thin_by "
+                f" {thin_by}. The last {nsteps % thin_by} will be ignored.",
+                category=RuntimeWarning,
+            )
         # TODO check that initial states are independent if num_walkers > 1
-
+        # TODO make samplers with single chain, multiple and multiprocess
+        # TODO kernel should take only 1 occupancy
         # set up any auxiliary states from inital occupancies
         self._kernel.set_aux_state(occupancies)
 
-        # allocate arrays for states
-        occupancies = np.ascontiguousarray(occupancies, dtype=int)
-        accepted = np.zeros(occupancies.shape[0], dtype=int)
-        features = list(map(self._kernel.feature_fun, occupancies))
-        features = np.ascontiguousarray(features)
-        enthalpy = np.dot(self._kernel.natural_params, features.T)
-
-        # TODO clean up this hack so that temp is saved in a general blob
-        try:
-            temperature = self._kernel.temperature
-        except AttributeError:
-            temperature = 1
-        temperature = temperature * np.ones(occupancies.shape[0])
+        # get initial traces and stack them
+        trace = Trace()
+        traces = list(map(self._kernel.compute_initial_trace, occupancies))
+        for name in traces[0].names:
+            stack = np.vstack([getattr(tr, name) for tr in traces])
+            setattr(trace, name, stack)
 
         # Initialise progress bar
         chains, nsites = self.samples.shape
@@ -185,21 +203,27 @@ class Sampler:
         with progress_bar(progress, total=nsteps, description=desc) as bar:
             for _ in range(nsteps // thin_by):
                 for _ in range(thin_by):
-                    for i, (accept, occupancy, delta_enthalpy, delta_features)\
-                      in enumerate(self._kernel.iter_steps(occupancies)):
-                        accepted[i] += accept
-                        occupancies[i] = occupancy
-                        if accept:
-                            enthalpy[i] = enthalpy[i] + delta_enthalpy
-                            features[i] = features[i] + delta_features
+                    for i, strace in enumerate(self._kernel.iter_steps(occupancies)):
+                        for name, value in strace.items():
+                            setattr(trace, name, value)
+                        if strace.accepted:
+                            for name, delta_val in strace.delta_trace.items():
+                                val = getattr(trace, name)
+                                val[i] += delta_val
                     bar.update()
                 # yield copies
-                yield (accepted, temperature, occupancies.copy(),
-                       enthalpy.copy(), features.copy(), thin_by)
-                accepted[:] = 0  # reset acceptance array
+                yield trace
 
-    def run(self, nsteps, initial_occupancies=None, thin_by=1, progress=False,
-            stream_chunk=0, stream_file=None, swmr_mode=False):
+    def run(
+        self,
+        nsteps,
+        initial_occupancies=None,
+        thin_by=1,
+        progress=False,
+        stream_chunk=0,
+        stream_file=None,
+        swmr_mode=False,
+    ):
         """Run an MCMC sampling simulation.
 
         This will run and save the samples every thin_by into a
@@ -229,16 +253,23 @@ class Sampler:
         """
         if initial_occupancies is None:
             try:
-                initial_occupancies = self.samples.get_occupancies(flat=False)[-1]  # noqa
+                initial_occupancies = self.samples.get_occupancies(flat=False)[
+                    -1
+                ]  # noqa
                 # auxiliary states from kernels should be set here
             except IndexError:
-                raise RuntimeError("There are no saved samples to obtain the "
-                                   "initial occupancies. These must be "
-                                   "provided.")
+                raise RuntimeError(
+                    "There are no saved samples to obtain the "
+                    "initial occupancies. These must be "
+                    "provided."
+                )
         elif self.samples.num_samples > 0:
-            warn("Initial occupancies where provided with a pre-existing "
-                 "set of samples.\n Make real sure that is what you want. "
-                 "If not, reset the samples in the sampler.", RuntimeWarning)
+            warn(
+                "Initial occupancies where provided with a pre-existing "
+                "set of samples.\n Make real sure that is what you want. "
+                "If not, reset the samples in the sampler.",
+                RuntimeWarning,
+            )
         else:
             if initial_occupancies.shape != self.samples.shape:
                 initial_occupancies = self._reshape_occu(initial_occupancies)
@@ -246,18 +277,20 @@ class Sampler:
         if stream_chunk > 0:
             if stream_file is None:
                 now = datetime.now()
-                file_name = 'moca-samples-' + now.strftime('%Y-%m-%d-%H%M%S%f')
-                stream_file = os.path.join(os.getcwd(), file_name + '.h5')
-            backend = self.samples.get_backend(stream_file, nsteps // thin_by,
-                                               swmr_mode=swmr_mode)
+                file_name = "moca-samples-" + now.strftime("%Y-%m-%d-%H%M%S%f")
+                stream_file = os.path.join(os.getcwd(), file_name + ".h5")
+            backend = self.samples.get_backend(
+                stream_file, nsteps // thin_by, swmr_mode=swmr_mode
+            )
             self.samples.allocate(stream_chunk)
         else:
             backend = None
             self.samples.allocate(nsteps // thin_by)
 
-        for i, state in enumerate(self.sample(nsteps, initial_occupancies,
-                                  thin_by=thin_by, progress=progress)):
-            self.samples.save_sample(*state)
+        for i, trace in enumerate(
+            self.sample(nsteps, initial_occupancies, thin_by=thin_by, progress=progress)
+        ):
+            self.samples.save_sampled_trace(trace, thinned_by=thin_by)
             if backend is not None and (i + 1) % stream_chunk == 0:
                 self.samples.flush_to_backend(backend)
 
@@ -269,8 +302,14 @@ class Sampler:
         # Note that to save any general "state" we will need to make sure it is
         # properly serializable to save as json and also to save in h5py
 
-    def anneal(self, temperatures, mcmc_steps, initial_occupancies=None,
-               thin_by=1, progress=False):
+    def anneal(
+        self,
+        temperatures,
+        mcmc_steps,
+        initial_occupancies=None,
+        thin_by=1,
+        progress=False,
+    ):
         """Carry out a simulated annealing procedure.
 
         Uses the total number of temperatures given by "steps" interpolating
@@ -292,13 +331,19 @@ class Sampler:
                 If true will show a progress bar.
         """
         if temperatures[0] < temperatures[-1]:
-            raise ValueError('End temperature is greater than start '
-                             f'temperature {temperatures[-1]:.2f} > '
-                             f'{temperatures[0]:.2f}.')
+            raise ValueError(
+                "End temperature is greater than start "
+                f"temperature {temperatures[-1]:.2f} > "
+                f"{temperatures[0]:.2f}."
+            )
         # initialize for first temperature.
         self._kernel.temperature = temperatures[0]
-        self.run(mcmc_steps, initial_occupancies=initial_occupancies,
-                 thin_by=thin_by, progress=progress)
+        self.run(
+            mcmc_steps,
+            initial_occupancies=initial_occupancies,
+            thin_by=thin_by,
+            progress=progress,
+        )
         for temperature in temperatures[1:]:
             self._kernel.temperature = temperature
             self.run(mcmc_steps, thin_by=thin_by, progress=progress)
@@ -309,12 +354,13 @@ class Sampler:
         if len(occupancies.shape) == 1 and self.samples.shape[0] == 1:
             occupancies = np.reshape(occupancies, (1, len(occupancies)))
         else:
-            raise AttributeError("The given initial occcupancies have "
-                                 "incompompatible dimensions. Shape should"
-                                 f" be {self.samples.shape}.")
+            raise AttributeError(
+                "The given initial occcupancies have "
+                "incompompatible dimensions. Shape should"
+                f" be {self.samples.shape}."
+            )
         return occupancies
 
 
 # TODO potential define two _sample functions serial/parallel that get called
 #  in one sampler function.
-# TODO streaming container to hdf5?

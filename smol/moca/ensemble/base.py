@@ -3,8 +3,12 @@
 __author__ = "Luis Barroso-Luque"
 
 from abc import ABC, abstractmethod
-from smol.moca import CompositeProcessor, CEProcessor, EwaldProcessor
-from .sublattice import get_sublattices
+
+from smol.moca.processor import (
+    ClusterExpansionProcessor,
+    CompositeProcessor,
+    EwaldProcessor,
+)
 
 
 class Ensemble(ABC):
@@ -25,7 +29,7 @@ class Ensemble(ABC):
 
     valid_mcmc_steps = None  # add this in derived classes
 
-    def __init__(self, processor, sublattices=None):
+    def __init__(self, processor, sublattices=None, inactive_sublattices=None):
         """Initialize class instance.
 
         Args:
@@ -35,17 +39,22 @@ class Ensemble(ABC):
             sublattices (list of Sublattice): optional
                 list of Lattice objects representing sites in the processor
                 supercell with same site spaces.
+            inactive_sublattices (list of InactiveSublattice): optional
+                list of Lattice objects representing sites in the processor
+                supercell with same site spaces.
         """
         if sublattices is None:
-            sublattices = get_sublattices(processor)
+            sublattices = processor.get_sublattices()
+        if inactive_sublattices is None:
+            inactive_sublattices = processor.get_inactive_sublattices()
         self.num_energy_coefs = len(processor.coefs)
         self.thermo_boundaries = {}  # not pretty way to save general info
         self._processor = processor
         self._sublattices = sublattices
+        self._inact_sublattices = inactive_sublattices
 
     @classmethod
-    def from_cluster_expansion(cls, cluster_expansion, supercell_matrix,
-                               optimize_indicator=False, **kwargs):
+    def from_cluster_expansion(cls, cluster_expansion, supercell_matrix, **kwargs):
         """Initialize an ensemble from a cluster expansion.
 
         Convenience constructor to instantiate an ensemble. This will take
@@ -57,8 +66,6 @@ class Ensemble(ABC):
                 A cluster expansion object.
             supercell_matrix (ndarray):
                 Supercell matrix defining the system size.
-            optimize_indicator (bool): optional
-                Wether to optimize calculations for indicator basis.
             **kwargs:
                 Keyword arguments to pass to ensemble constructor. Such as
                 sublattices, sublattice_probabilities, chemical_potentials,
@@ -68,25 +75,31 @@ class Ensemble(ABC):
             Ensemble
         """
         if len(cluster_expansion.cluster_subspace.external_terms) > 0:
-            processor = CompositeProcessor(cluster_expansion.cluster_subspace,
-                                           supercell_matrix)
-            ceprocessor = CEProcessor(cluster_expansion.cluster_subspace,
-                                      supercell_matrix,
-                                      cluster_expansion.coefs[:-1],
-                                      optimize_indicator=optimize_indicator)
+            processor = CompositeProcessor(
+                cluster_expansion.cluster_subspace, supercell_matrix
+            )
+            ceprocessor = ClusterExpansionProcessor(
+                cluster_expansion.cluster_subspace,
+                supercell_matrix,
+                cluster_expansion.coefs[:-1],
+            )
             processor.add_processor(ceprocessor)
             # at some point determine term and spinup processor maybe with a
             # factory, if we ever implement more external terms.
             ewald_term = cluster_expansion.cluster_subspace.external_terms[0]
-            ewprocessor = EwaldProcessor(cluster_expansion.cluster_subspace,
-                                         supercell_matrix,
-                                         ewald_term=ewald_term,
-                                         coefficient=cluster_expansion.coefs[-1])  # noqa
+            ewprocessor = EwaldProcessor(
+                cluster_expansion.cluster_subspace,
+                supercell_matrix,
+                ewald_term=ewald_term,
+                coefficient=cluster_expansion.coefs[-1],
+            )
             processor.add_processor(ewprocessor)
         else:
-            processor = CEProcessor(cluster_expansion.cluster_subspace,
-                                    supercell_matrix, cluster_expansion.coefs,
-                                    optimize_indicator=optimize_indicator)
+            processor = ClusterExpansionProcessor(
+                cluster_expansion.cluster_subspace,
+                supercell_matrix,
+                cluster_expansion.coefs,
+            )
         return cls(processor, **kwargs)
 
     @property
@@ -104,12 +117,17 @@ class Ensemble(ABC):
         """Get the ensemble processor."""
         return self._processor
 
-    # TODO make a setter for this that checks sublattices are correct and
+    # TODO make a setter for these that checks sublattices are correct and
     #  all sites are included.
     @property
     def sublattices(self):
         """Get list of sublattices included in ensemble."""
         return self._sublattices
+
+    @property
+    def inactive_sublattices(self):
+        """Get list of sublattices included in ensemble."""
+        return self._inact_sublattices
 
     @property
     def restricted_sites(self):
@@ -191,9 +209,11 @@ class Ensemble(ABC):
         Returns:
             MSONable dict
         """
-        d = {'@module': self.__class__.__module__,
-             '@class': self.__class__.__name__,
-             'thermo_boundaries': self.thermo_boundaries,
-             'processor': self._processor.as_dict(),
-             'sublattices': [s.as_dict() for s in self._sublattices]}
+        d = {
+            "@module": self.__class__.__module__,
+            "@class": self.__class__.__name__,
+            "thermo_boundaries": self.thermo_boundaries,
+            "processor": self._processor.as_dict(),
+            "sublattices": [s.as_dict() for s in self._sublattices],
+        }
         return d

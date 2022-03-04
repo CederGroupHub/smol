@@ -5,18 +5,19 @@ and changes in electrostatic energy from a list of local flips for use in
 Monte Carlo sampling.
 
 If you are using a Hamiltonian with a Cluster expansion and an Ewald summation
-electrostatic term, you should use the CompositeProcessor with a CEProcessor
-and an EwaldProcessor class.
+electrostatic term, you should use the CompositeProcessor with a
+ClusterExpansionProcessor and an EwaldProcessor class.
 """
 
 __author__ = "Luis Barroso-Luque"
 
 import numpy as np
 from pymatgen.analysis.ewald import EwaldSummation
-from src.mc_utils import delta_ewald_single_flip
+
 from smol.cofe import ClusterSubspace
 from smol.cofe.extern import EwaldTerm
 from smol.moca.processor.base import Processor
+from src.mc_utils import delta_ewald_single_flip
 
 
 class EwaldProcessor(Processor):
@@ -26,9 +27,15 @@ class EwaldProcessor(Processor):
     energy using an Ewald Summation term.
     """
 
-    def __init__(self, cluster_subspace, supercell_matrix, ewald_term,
-                 coefficient=1.0, ewald_summation=None):
-        """Initialize an EwaldCEProcessor.
+    def __init__(
+        self,
+        cluster_subspace,
+        supercell_matrix,
+        ewald_term,
+        coefficient=1.0,
+        ewald_summation=None,
+    ):
+        """Initialize an EwaldProcessor.
 
         Args:
             cluster_subspace (ClusterSubspace):
@@ -60,10 +67,12 @@ class EwaldProcessor(Processor):
     def ewald_summation(self):
         """Get the pymatgen EwaldSummation object."""
         if self._ewald is None:
-            self._ewald = EwaldSummation(self._ewald_structure,
-                                         real_space_cut=self._ewald_term.real_space_cut,  # noqa
-                                         recip_space_cut=self._ewald_term.recip_space_cut,  # noqa
-                                         eta=self._ewald_term.eta)
+            self._ewald = EwaldSummation(
+                self._ewald_structure,
+                real_space_cut=self._ewald_term.real_space_cut,  # noqa
+                recip_space_cut=self._ewald_term.recip_space_cut,  # noqa
+                eta=self._ewald_term.eta,
+            )
         return self._ewald
 
     @property  # TODO use cached_property (only for python 3.8)
@@ -101,7 +110,7 @@ class EwaldProcessor(Processor):
         Returns:
             float: electrostatic energy change
         """
-        return self.coefs*self.compute_feature_vector_change(occupancy, flips)
+        return self.coefs * self.compute_feature_vector_change(occupancy, flips)
 
     def compute_feature_vector(self, occupancy):
         """Compute the feature vector for a given occupancy array.
@@ -116,9 +125,9 @@ class EwaldProcessor(Processor):
         Returns:
             array: correlation vector
         """
-        ew_occu = self._ewald_term.get_ewald_occu(occupancy,
-                                                  self.ewald_matrix.shape[0],
-                                                  self._ewald_inds)
+        ew_occu = self._ewald_term.get_ewald_occu(
+            occupancy, self.ewald_matrix.shape[0], self._ewald_inds
+        )
         return np.sum(self.ewald_matrix[ew_occu, :][:, ew_occu])
 
     def compute_feature_vector_change(self, occupancy, flips):
@@ -142,10 +151,9 @@ class EwaldProcessor(Processor):
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
-            delta_energy += delta_ewald_single_flip(occu_f, occu_i,
-                                                    self.ewald_matrix,
-                                                    self._ewald_inds,
-                                                    f[0])
+            delta_energy += delta_ewald_single_flip(
+                occu_f, occu_i, self.ewald_matrix, self._ewald_inds, f[0]
+            )
             occu_i = occu_f
         return delta_energy
 
@@ -157,17 +165,18 @@ class EwaldProcessor(Processor):
             MSONable dict
         """
         d = super().as_dict()
-        d['ewald_summation'] = self.ewald_summation.as_dict()
-        d['ewald_term'] = self._ewald_term.as_dict()
+        d["ewald_summation"] = self.ewald_summation.as_dict()
+        d["ewald_term"] = self._ewald_term.as_dict()
         return d
 
     @classmethod
     def from_dict(cls, d):
-        """Create a CEProcessor from serialized MSONable dict."""
-        pr = cls(ClusterSubspace.from_dict(d['cluster_subspace']),
-                 np.array(d['supercell_matrix']),
-                 ewald_term=EwaldTerm.from_dict(d['ewald_term']),
-                 coefficient=d['coefficients'],
-                 ewald_summation=EwaldSummation.from_dict(d['ewald_summation'])
-                 )
+        """Create a ClusterExpansionProcessor from serialized MSONable dict."""
+        pr = cls(
+            ClusterSubspace.from_dict(d["cluster_subspace"]),
+            np.array(d["supercell_matrix"]),
+            ewald_term=EwaldTerm.from_dict(d["ewald_term"]),
+            coefficient=d["coefficients"],
+            ewald_summation=EwaldSummation.from_dict(d["ewald_summation"]),
+        )
         return pr

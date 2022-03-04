@@ -13,9 +13,11 @@ strongly tested.
 __author__ = "Luis Barroso-Luque"
 
 from copy import deepcopy
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
+
 import numpy as np
 from monty.json import MSONable, jsanitize
+
 from smol.cofe.space.clusterspace import ClusterSubspace
 
 
@@ -31,13 +33,12 @@ class RegressionData:
 
     module: str
     estimator_name: str
-    parameters: dict
     feature_matrix: np.ndarray
     property_vector: np.ndarray
+    parameters: dict
 
     @classmethod
-    def from_object(cls, estimator, feature_matrix, property_vector,
-                    parameters=None):
+    def from_object(cls, estimator, feature_matrix, property_vector, parameters=None):
         """Create a RegressionData object from an esimator class.
 
         Args:
@@ -59,11 +60,13 @@ class RegressionData:
         except AttributeError:
             estimator_name = estimator.__name__
 
-        return cls(module=estimator.__module__,
-                   estimator_name=estimator_name,
-                   parameters=parameters,
-                   feature_matrix=feature_matrix,
-                   property_vector=property_vector)
+        return cls(
+            module=estimator.__module__,
+            estimator_name=estimator_name,
+            feature_matrix=feature_matrix,
+            property_vector=property_vector,
+            parameters=parameters,
+        )
 
     @classmethod
     def from_sklearn(cls, estimator, feature_matrix, property_vector):
@@ -79,11 +82,13 @@ class RegressionData:
         Returns:
             RegressionData
         """
-        return cls(module=estimator.__module__,
-                   estimator_name=estimator.__class__.__name__,
-                   parameters=estimator.get_params(),
-                   feature_matrix=feature_matrix,
-                   property_vector=property_vector)
+        return cls(
+            module=estimator.__module__,
+            estimator_name=estimator.__class__.__name__,
+            feature_matrix=feature_matrix,
+            property_vector=property_vector,
+            parameters=estimator.get_params(),
+        )
 
 
 class ClusterExpansion(MSONable):
@@ -103,7 +108,8 @@ class ClusterExpansion(MSONable):
     :code:`sklearn.metrics` for many useful methods to get this quantities.
 
     This class is also used for Monte Carlo simulations to create a
-    :class:`CEProcessor` that calculates the CE for a fixed supercell size.
+    :class:`ClusterExpansionProcessor` that calculates the CE for a fixed
+    supercell size.
     Before using a ClusterExpansion for Monte Carlo you should consider pruning
     the correlation/orbit functions with small coefficients or eci.
 
@@ -132,24 +138,31 @@ class ClusterExpansion(MSONable):
                 necessary to compute things like numerical ECI transormations
                 for different bases.
         """
-        if regression_data is not None and \
-                len(coefficients) != regression_data.feature_matrix.shape[1]:
+        if (
+            regression_data is not None
+            and len(coefficients) != regression_data.feature_matrix.shape[1]
+        ):
             raise AttributeError(
                 f"Feature matrix shape {regression_data.feature_matrix.shape} "
                 f"does not match the number of coefficients "
-                f"{len(coefficients)}.")
+                f"{len(coefficients)}."
+            )
 
         if len(coefficients) != len(cluster_subspace):
             raise AttributeError(
                 f"The size of the give subspace {len(cluster_subspace)} does "
-                f"not match the number of coefficients {len(coefficients)}")
+                f"not match the number of coefficients {len(coefficients)}"
+            )
 
         self.coefs = coefficients
         self.regression_data = regression_data
         self._subspace = cluster_subspace
         # make copy for possible changes/pruning
-        self._feat_matrix = regression_data.feature_matrix.copy() \
-            if regression_data is not None else None
+        self._feat_matrix = (
+            regression_data.feature_matrix.copy()
+            if regression_data is not None
+            else None
+        )
         self._eci = None
 
     @property
@@ -167,7 +180,7 @@ class ClusterExpansion(MSONable):
         return self._eci
 
     @property
-    def prim_structure(self):
+    def structure(self):
         """Get primitive structure which the expansion is based on."""
         return self.cluster_subspace.structure
 
@@ -200,8 +213,11 @@ class ClusterExpansion(MSONable):
 
         If not given returns an identity matrix of len num_corrs
         """
-        return self._feat_matrix if self._feat_matrix is not None else \
-            np.eye(len(self.coefs))
+        return (
+            self._feat_matrix
+            if self._feat_matrix is not None
+            else np.eye(len(self.coefs))
+        )
 
     def predict(self, structure, normalize=False):
         """Predict the fitted property for a given set of structures.
@@ -216,8 +232,9 @@ class ClusterExpansion(MSONable):
             float
         """
         corrs = self.cluster_subspace.corr_from_structure(
-            structure, normalized=normalize)
-        return np.dot(corrs, self.coefs)
+            structure, normalized=normalize
+        )
+        return np.dot(self.coefs, corrs)
 
     def prune(self, threshold=0, with_multiplicity=False):
         """Remove fit coefficients or ECI's with small values.
@@ -241,8 +258,7 @@ class ClusterExpansion(MSONable):
                 the fit coefficients
         """
         coefs = self.eci if with_multiplicity else self.coefs
-        bit_ids = [i for i, coef in enumerate(coefs)
-                   if abs(coef) < threshold]
+        bit_ids = [i for i, coef in enumerate(coefs) if abs(coef) < threshold]
         self.cluster_subspace.remove_orbit_bit_combos(bit_ids)
         # Update necessary attributes
         ids_complement = list(set(range(len(self.coefs))) - set(bit_ids))
@@ -252,6 +268,10 @@ class ClusterExpansion(MSONable):
             self._feat_matrix = self._feat_matrix[:, ids_complement]
         self._eci = None  # Reset
 
+    def copy(self):
+        """Return a copy of self."""
+        return ClusterExpansion.from_dict(self.as_dict())
+
     def __str__(self):
         """Pretty string for printing."""
         corr = np.zeros(self.cluster_subspace.num_corr_functions)
@@ -259,51 +279,71 @@ class ClusterExpansion(MSONable):
         # This might need to be redefined to take "expectation" using measure
         feature_avg = np.average(self.feature_matrix, axis=0)
         feature_std = np.std(self.feature_matrix, axis=0)
-        s = 'ClusterExpansion:\n    Prim Composition: ' \
-            f'{self.prim_structure.composition}\n' \
-            f'Num corr functions: {self.cluster_subspace.num_corr_functions}\n'
+        s = (
+            "ClusterExpansion:\n    Prim Composition: "
+            f"{self.structure.composition}\n"
+            f"Num corr functions: {self.cluster_subspace.num_corr_functions}\n"
+        )
         if self._feat_matrix is None:
-            s += '[Feature matrix used in fit was not provided. Feature ' \
-                 'statistics are meaningless.]\n'
-        ecis = len(corr)*[0.0, ] if self.coefs is None else self.coefs
-        s += f'    [Orbit]  id: {str(0):<3}\n'
-        s += '        bit       eci\n'
+            s += (
+                "[Feature matrix used in fit was not provided. Feature "
+                "statistics are meaningless.]\n"
+            )
+        ecis = (
+            len(corr)
+            * [
+                0.0,
+            ]
+            if self.coefs is None
+            else self.coefs
+        )
+        s += f"    [Orbit]  id: {str(0):<3}\n"
+        s += "        bit       eci\n"
         s += f'        {"[X]":<10}{ecis[0]:<4.3}\n'
-        for orbit in self.cluster_subspace.iterorbits():
-            s += f'    [Orbit]  id: {orbit.bit_id:<3} size: ' \
-                 f'{len(orbit.bits):<3} radius: ' \
-                 f'{orbit.base_cluster.diameter:<4.3}\n'
-            s += '        id    bit       eci     feature avg  feature std  '\
-                 'eci*std\n'
+        for orbit in self.cluster_subspace.orbits:
+            s += (
+                f"    [Orbit]  id: {orbit.bit_id:<3} size: "
+                f"{len(orbit.bits):<3} radius: "
+                f"{orbit.base_cluster.diameter:<4.3}\n"
+            )
+            s += (
+                "        id    bit       eci     feature avg  feature std  " "eci*std\n"
+            )
             for i, bits in enumerate(orbit.bit_combos):
                 eci = ecis[orbit.bit_id + i]
                 f_avg = feature_avg[orbit.bit_id + i]
                 f_std = feature_std[orbit.bit_id + i]
-                s += f'        {orbit.bit_id + i:<6}{str(bits[0]):<10}' \
-                     f'{eci:<8.3f}{f_avg:<13.3f}{f_std:<13.3f}' \
-                     f'{eci*f_std:<.3f}\n'
+                s += (
+                    f"        {orbit.bit_id + i:<6}{str(bits[0]):<10}"
+                    f"{eci:<8.3f}{f_avg:<13.3f}{f_std:<13.3f}"
+                    f"{eci*f_std:<.3f}\n"
+                )
         return s
 
     @classmethod
     def from_dict(cls, d):
         """Create ClusterExpansion from serialized MSONable dict."""
-        reg_data_dict = deepcopy(d.get('regression_data'))
+        reg_data_dict = deepcopy(d.get("regression_data"))
         if reg_data_dict is not None:
-            reg_data_dict['feature_matrix'] = np.array(
-                d['regression_data']['feature_matrix'])
-            reg_data_dict['property_vector'] = np.array(
-                d['regression_data']['property_vector'])
+            reg_data_dict["feature_matrix"] = np.array(
+                d["regression_data"]["feature_matrix"]
+            )
+            reg_data_dict["property_vector"] = np.array(
+                d["regression_data"]["property_vector"]
+            )
             reg_data = RegressionData(**reg_data_dict)
         else:
             reg_data = None
 
-        ce = cls(ClusterSubspace.from_dict(d['cluster_subspace']),
-                 coefficients=np.array(d['coefs']),
-                 regression_data=reg_data)
+        ce = cls(
+            ClusterSubspace.from_dict(d["cluster_subspace"]),
+            coefficients=np.array(d["coefs"]),
+            regression_data=reg_data,
+        )
 
         # update copy of feature matrix to keep any changes
-        if d['feature_matrix'] is not None:
-            cls._feat_matrix = np.array(d['feature_matrix'])
+        if d["feature_matrix"] is not None:
+            cls._feat_matrix = np.array(d["feature_matrix"])
         return ce
 
     def as_dict(self):
@@ -322,10 +362,12 @@ class ClusterExpansion(MSONable):
         else:
             reg_data = None
 
-        d = {'@module': self.__class__.__module__,
-             '@class': self.__class__.__name__,
-             'cluster_subspace': self.cluster_subspace.as_dict(),
-             'coefs': self.coefs.tolist(),
-             'regression_data': reg_data,
-             'feature_matrix': feature_matrix}
+        d = {
+            "@module": self.__class__.__module__,
+            "@class": self.__class__.__name__,
+            "cluster_subspace": self.cluster_subspace.as_dict(),
+            "coefs": self.coefs.tolist(),
+            "regression_data": reg_data,
+            "feature_matrix": feature_matrix,
+        }
         return d

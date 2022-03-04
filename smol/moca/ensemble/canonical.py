@@ -12,26 +12,13 @@ from monty.json import MSONable
 
 from smol.moca.ensemble.base import Ensemble
 from smol.moca.processor.base import Processor
-from .sublattice import Sublattice
+from smol.moca.sublattice import Sublattice
 
 
 class CanonicalEnsemble(Ensemble, MSONable):
     """Canonical Ensemble class to run Monte Carlo Simulations."""
 
-    valid_mcmc_steps = ('swap',)
-
-    def __init__(self, processor, sublattices=None):
-        """Initialize CanonicalEnemble.
-
-        Args:
-            processor (Processor):
-                A processor that can compute the change in a property given
-                a set of flips.
-            sublattices (list of Sublattice): optional
-                list of Lattice objects representing sites in the processor
-                supercell with same site spaces.
-        """
-        super().__init__(processor, sublattices=sublattices)
+    valid_mcmc_steps = ("swap",)
 
     @property
     def natural_parameters(self):
@@ -77,5 +64,7 @@ class CanonicalEnsemble(Ensemble, MSONable):
         Returns:
             CanonicalEnsemble
         """
-        return cls(Processor.from_dict(d['processor']),
-                   [Sublattice.from_dict(s) for s in d['sublattices']])
+        return cls(
+            Processor.from_dict(d["processor"]),
+            [Sublattice.from_dict(s) for s in d["sublattices"]],
+        )

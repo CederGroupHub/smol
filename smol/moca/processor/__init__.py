@@ -8,7 +8,7 @@ to run Monte Carlo sampling.
 """
 
 from .composite import CompositeProcessor
-from .expansion import CEProcessor
 from .ewald import EwaldProcessor
+from .expansion import ClusterExpansionProcessor
 
-__all__ = ['CompositeProcessor', 'CEProcessor', 'EwaldProcessor']
+__all__ = ["CompositeProcessor", "ClusterExpansionProcessor", "EwaldProcessor"]
