@@ -37,7 +37,7 @@ jobs:
       - name: black
         run: |
           black --version
-          black --check --diff --color pymatgen
+          black --check --diff --color smol
       - name: pydocstyle
         run: |
           pydocstyle --version
