@@ -7,8 +7,10 @@ EwaldProcessor class to handle changes in the electrostatic interaction energy.
 
 __author__ = "Luis Barroso-Luque"
 
-import numpy as np
 from collections import defaultdict
+
+import numpy as np
+
 from smol.cofe import ClusterSubspace
 from smol.moca.processor.base import Processor
 from src.mc_utils import corr_from_occupancy, delta_corr_single_flip
@@ -51,10 +53,10 @@ class ClusterExpansionProcessor(Processor):
         self.num_corr_functions = self.cluster_subspace.num_corr_functions
         if len(coefficients) != self.num_corr_functions:
             raise ValueError(
-                f'The provided coeffiecients are not the right length. '
-                f'Got {len(coefficients)} coefficients, the length must be '
-                f'{self.num_corr_functions} based on the provided cluster '
-                f'subspace.'
+                f"The provided coeffiecients are not the right length. "
+                f"Got {len(coefficients)} coefficients, the length must be "
+                f"{self.num_corr_functions} based on the provided cluster "
+                f"subspace."
             )
 
         # List of orbit information and supercell site indices to compute corr
@@ -71,16 +73,24 @@ class ClusterExpansionProcessor(Processor):
         mappings = self._subspace.supercell_orbit_mappings(supercell_matrix)
         for cluster_indices, orbit in zip(mappings, self._subspace.orbits):
             self._orbit_list.append(
-                (orbit.bit_id, orbit.flat_tensor_indices,
-                 orbit.flat_correlation_tensors, cluster_indices)
+                (
+                    orbit.bit_id,
+                    orbit.flat_tensor_indices,
+                    orbit.flat_correlation_tensors,
+                    cluster_indices,
+                )
             )
             for site_ind in np.unique(cluster_indices):
                 in_inds = np.any(cluster_indices == site_ind, axis=-1)
                 ratio = len(cluster_indices) / np.sum(in_inds)
                 self._orbits_by_sites[site_ind].append(
-                    (orbit.bit_id, ratio, orbit.flat_tensor_indices,
-                     orbit.flat_correlation_tensors,
-                     cluster_indices[in_inds])
+                    (
+                        orbit.bit_id,
+                        ratio,
+                        orbit.flat_tensor_indices,
+                        orbit.flat_correlation_tensors,
+                        cluster_indices[in_inds],
+                    )
                 )
 
     def compute_feature_vector(self, occupancy):
@@ -96,8 +106,10 @@ class ClusterExpansionProcessor(Processor):
         Returns:
             array: correlation vector
         """
-        return corr_from_occupancy(occupancy, self.num_corr_functions,
-                                   self._orbit_list) * self.size
+        return (
+            corr_from_occupancy(occupancy, self.num_corr_functions, self._orbit_list)
+            * self.size
+        )
 
     def compute_feature_vector_change(self, occupancy, flips):
         """
@@ -134,6 +146,8 @@ class ClusterExpansionProcessor(Processor):
     @classmethod
     def from_dict(cls, d):
         """Create a ClusterExpansionProcessor from serialized MSONable dict."""
-        return cls(ClusterSubspace.from_dict(d['cluster_subspace']),
-                   np.array(d['supercell_matrix']),
-                   coefficients=np.array(d['coefficients']))
+        return cls(
+            ClusterSubspace.from_dict(d["cluster_subspace"]),
+            np.array(d["supercell_matrix"]),
+            coefficients=np.array(d["coefficients"]),
+        )

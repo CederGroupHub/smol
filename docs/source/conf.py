@@ -12,18 +12,19 @@
 #
 
 import os
-from datetime import date
 import sys
+from datetime import date
+
 import smol
 
-sys.path.insert(0, os.path.abspath('../../smol'))
-sys.path.insert(0, os.path.abspath('../../examples'))
+sys.path.insert(0, os.path.abspath("../../smol"))
+sys.path.insert(0, os.path.abspath("../../examples"))
 
 # -- Project information -----------------------------------------------------
 
-project = 'smol'
+project = "smol"
 copyright = f"2020-{date.today().year}, Ceder Group"
-author = 'Luis Barroso-Luque'
+author = "Luis Barroso-Luque"
 
 # The full version, including alpha/beta/rc tags
 release = smol.__version__
@@ -54,7 +55,7 @@ extensions = [
 # Generate the API documentation when building
 autosummary_generate = True
 add_module_names = False
-autoclass_content = 'both'
+autoclass_content = "both"
 
 napoleon_google_docstring = True
 napoleon_include_init_with_doc = False
@@ -73,7 +74,7 @@ source_suffix = [".rst", ".ipynb"]
 source_encoding = "utf-8"
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -111,10 +112,11 @@ html_theme_options = {
         "version_match": version,
     },
     "external_links": [
-        {"name": "Changes",
-         "url": "https://github.com/CederGroupHub/smol/blob/master/CHANGES.md"},
-        {"name": "Issues",
-         "url": "https://github.com/CederGroupHub/smol/issues"}
+        {
+            "name": "Changes",
+            "url": "https://github.com/CederGroupHub/smol/blob/master/CHANGES.md",
+        },
+        {"name": "Issues", "url": "https://github.com/CederGroupHub/smol/issues"},
     ],
 }
 
@@ -131,7 +133,7 @@ html_sidebars = {
     "contribute/index": [
         "search-field",
         "sidebar-nav-bs",
-        "custom-template"
+        "custom-template",
     ],  # This ensures we test for custom sidebars
     # "demo/no-sidebar": [],  # Test what page looks like with no sidebar items
 }
@@ -159,12 +161,12 @@ html_last_updated_fmt = "%b %d, %Y"
 # html_use_smartypants = True
 
 # Content template for the index page.
-html_index = 'index.html'
+html_index = "index.html"
 
 # If false, no module index is generated.
 html_use_modindex = True
 
-html_file_suffix = '.html'
+html_file_suffix = ".html"
 
 # If true, the reST sources are included in the HTML build as _sources/<name>.
 html_copy_source = False

@@ -7,4 +7,4 @@
 # script by adding these lines somewhere at the top.
 # import smol.cofe.space.constants
 # constants.SITE_TOL = your_desired_value
-SITE_TOL = 1E-6
+SITE_TOL = 1e-6

@@ -1,17 +1,23 @@
-import pytest
 import numpy as np
 import numpy.testing as npt
-
+import pytest
 from pymatgen.core import Composition, DummySpecies
+
 from smol.cofe.space.domain import SiteSpace
-from smol.moca.sublattice import Sublattice, InactiveSublattice
+from smol.moca.sublattice import InactiveSublattice, Sublattice
 from tests.utils import assert_msonable
 
 
 @pytest.fixture
 def sublattice():
-    composition = Composition({DummySpecies('A'): 0.3, DummySpecies('X'): 0.3,
-                               DummySpecies('D'): 0.2, DummySpecies('E'): 0.2})
+    composition = Composition(
+        {
+            DummySpecies("A"): 0.3,
+            DummySpecies("X"): 0.3,
+            DummySpecies("D"): 0.2,
+            DummySpecies("E"): 0.2,
+        }
+    )
     site_space = SiteSpace(composition)
     sites = np.random.choice(range(100), size=60)
     return Sublattice(site_space, sites)
@@ -41,7 +47,7 @@ def test_msonable(sublattice):
 
 
 def test_inactive_sublattice():
-    composition = Composition({DummySpecies('A'): 1})
+    composition = Composition({DummySpecies("A"): 1})
     site_space = SiteSpace(composition)
     sites = np.random.choice(range(100), size=60)
     inactive_sublattice = InactiveSublattice(site_space, sites)

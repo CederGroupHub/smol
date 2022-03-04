@@ -18,7 +18,7 @@ from smol.moca.sublattice import Sublattice
 class CanonicalEnsemble(Ensemble, MSONable):
     """Canonical Ensemble class to run Monte Carlo Simulations."""
 
-    valid_mcmc_steps = ('swap',)
+    valid_mcmc_steps = ("swap",)
 
     @property
     def natural_parameters(self):
@@ -64,5 +64,7 @@ class CanonicalEnsemble(Ensemble, MSONable):
         Returns:
             CanonicalEnsemble
         """
-        return cls(Processor.from_dict(d['processor']),
-                   [Sublattice.from_dict(s) for s in d['sublattices']])
+        return cls(
+            Processor.from_dict(d["processor"]),
+            [Sublattice.from_dict(s) for s in d["sublattices"]],
+        )

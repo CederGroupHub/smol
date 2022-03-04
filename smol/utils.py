@@ -5,7 +5,7 @@ __author__ = "Luis Barroso-Luque"
 import inspect
 import re
 import warnings
-from typing import Dict, Any
+from typing import Any, Dict
 
 
 def _repr(instance: object, **fields: Dict[str, Any]) -> str:
@@ -16,11 +16,12 @@ def _repr(instance: object, **fields: Dict[str, Any]) -> str:
     attrs = []
 
     for key, field in fields.items():
-        attrs.append(f'{key}={field!r}')
+        attrs.append(f"{key}={field!r}")
 
     if len(attrs) == 0:
-        return f"<{instance.__class__.__name__}" \
-               f"{hex(id(instance))}({','.join(attrs)})>"
+        return (
+            f"<{instance.__class__.__name__}" f"{hex(id(instance))}({','.join(attrs)})>"
+        )
     else:
         return f"<{instance.__class__.__name__} {hex(id(instance))}>"
 
@@ -43,12 +44,18 @@ def class_name_from_str(class_str):
     Returns: str
         class name in camel caps
     """
-    return ''.join([s.capitalize() for sub in class_str.split('-')
-                    for s in re.findall('[a-zA-Z][^A-Z]*', sub)])
+    return "".join(
+        [
+            s.capitalize()
+            for sub in class_str.split("-")
+            for s in re.findall("[a-zA-Z][^A-Z]*", sub)
+        ]
+    )
 
 
-def derived_class_factory(class_name: str, base_class: object,
-                          *args: Any, **kwargs: Any) -> object:
+def derived_class_factory(
+    class_name: str, base_class: object, *args: Any, **kwargs: Any
+) -> object:
     """Return an instance of derived class from a given basis class.
 
     Args:
@@ -68,7 +75,7 @@ def derived_class_factory(class_name: str, base_class: object,
         derived_class = get_subclasses(base_class)[class_name]
         instance = derived_class(*args, **kwargs)
     except KeyError:
-        raise NotImplementedError(f'{class_name} is not implemented.')
+        raise NotImplementedError(f"{class_name} is not implemented.")
     return instance
 
 
@@ -108,8 +115,9 @@ def progress_bar(display, total, description):
 
     if display:
         if tqdm is None:
-            warnings.warn("tqdm libary needs to be installed to show a "
-                          " progress bar.")
+            warnings.warn(
+                "tqdm libary needs to be installed to show a " " progress bar."
+            )
             return _EmptyBar()
         else:
             return tqdm.tqdm(total=total, desc=description)

@@ -1,15 +1,16 @@
 """Tools for training structure selection."""
 
-from warnings import warn
 import random
+from warnings import warn
+
 import numpy as np
 from scipy.linalg import lu, orth
-from scipy.stats import multivariate_normal, multinomial
+from scipy.stats import multinomial, multivariate_normal
 
 __author__ = "Luis Barroso-Luque"
 
 
-def full_row_rank_select(feature_matrix, tol=1E-15, nrows=None):
+def full_row_rank_select(feature_matrix, tol=1e-15, nrows=None):
     """Choose a (maximally) full rank subset of rows in a feature matrix.
 
     This method is for underdetermined systems.
@@ -31,9 +32,11 @@ def full_row_rank_select(feature_matrix, tol=1E-15, nrows=None):
     P, L, U = lu(feature_matrix.T)
     sample_ids = np.unique((abs(U) > tol).argmax(axis=1))[:nrows]
     if len(sample_ids) > np.linalg.matrix_rank(feature_matrix[:nrows]):
-        warn("More samples than the matrix rank where selected.\n"
-             "The selection will not actually be full rank.\n"
-             "Decrease tolerance to ensure full rank indices are selected.\n")
+        warn(
+            "More samples than the matrix rank where selected.\n"
+            "The selection will not actually be full rank.\n"
+            "Decrease tolerance to ensure full rank indices are selected.\n"
+        )
     return np.sort(sample_ids)
 
 
@@ -66,14 +69,12 @@ def gaussian_select(feature_matrix, num_samples, orthogonalize=False):
     gauss /= np.linalg.norm(gauss, axis=1).reshape(num_samples, 1)
     sample_ids, compliment = [], list(range(m))
     for vec in gauss:
-        sample_ids.append(
-            compliment[np.argmax(M[compliment] @ vec)])
+        sample_ids.append(compliment[np.argmax(M[compliment] @ vec)])
         compliment.remove(sample_ids[-1])
     return np.sort(sample_ids)
 
 
-def composition_select(composition_vector, composition, cell_sizes,
-                       num_samples):
+def composition_select(composition_vector, composition, cell_sizes, num_samples):
     """Structure selection based on composition multinomial probability.
 
     Note: this function is needs quite a bit of tweaking to get nice samples.
@@ -99,21 +100,29 @@ def composition_select(composition_vector, composition, cell_sizes,
     unique_compositions = np.unique(composition_vector, axis=1)
     # Sample structures biased by composition
     if isinstance(cell_sizes, int):
-        cell_sizes = np.array(len(composition_vector) * [cell_sizes, ])
+        cell_sizes = np.array(
+            len(composition_vector)
+            * [
+                cell_sizes,
+            ]
+        )
     else:
         cell_sizes = np.array(cell_sizes)
 
-    dists = {size: multinomial(size, composition)
-             for size in np.unique(cell_sizes)}
-    max_probs = {size: dist.pmf(size * unique_compositions).max()
-                 for size, dist in dists.items()}
+    dists = {size: multinomial(size, composition) for size in np.unique(cell_sizes)}
+    max_probs = {
+        size: dist.pmf(size * unique_compositions).max() for size, dist in dists.items()
+    }
     sample_ids = [
-        i for i, (size, comp) in enumerate(zip(cell_sizes, composition_vector))
-        if dists[size].pmf(size*comp) >= max_probs[size]*random.random()]
+        i
+        for i, (size, comp) in enumerate(zip(cell_sizes, composition_vector))
+        if dists[size].pmf(size * comp) >= max_probs[size] * random.random()
+    ]
     while len(sample_ids) <= num_samples:
         sample_ids += [
-            i for i, (size, comp) in enumerate(
-                zip(cell_sizes, composition_vector))
-            if dists[size].pmf(size*comp) >= max_probs[size]*random.random()
-            and i not in sample_ids]
+            i
+            for i, (size, comp) in enumerate(zip(cell_sizes, composition_vector))
+            if dists[size].pmf(size * comp) >= max_probs[size] * random.random()
+            and i not in sample_ids
+        ]
     return np.sort(sample_ids[:num_samples])

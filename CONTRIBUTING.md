@@ -5,7 +5,7 @@ broken up into the categories below. Both are equally as important to create
 and improve software. Please consider contributing in any way you can!
 
 ## Bugs, issues, input, questions, etc
-Please use the 
+Please use the
 [issue tracker](https://github.com/CederGroupHub/smol/issues) to share any
 of the following:
 -   Bugs
@@ -24,7 +24,7 @@ much better than nothing!
 Code contributions can be anything from fixing the simplest bugs, to adding new
 extensive features or subpackages. If you have written code or want to start
 writing new code that you think will improve `smol` then please follow the
-steps bellow to add it to the repository. 
+steps bellow to add it to the repository.
 
 1.  `Fork` the repository and then `clone` your fork to your local workspace.
     You should always keep your `master` branch up to date with the main
@@ -67,27 +67,27 @@ the following:
     if you implemented new functionality you should write tests for it.
         -   To run the tests you need to install `pytest`. Then from the top
          level directiory run:
-        
+
                 pytest tests
 
         -   New tests should be put in the `/tests/` directory, and follow
         standard `pytest` naming.
     -   You should also check your code conforms with standard python style by
         installing `flake8` (use pip). Then from the top level directory,
-        
+
                 flake8 smol
     -   Make sure you write proper docstrings following ***Google***
     style. You can just look at other docstrings to see what this looks like,
     but it is also helpful to set up your IDE to help you with this (PyCharm
     is nice for this). You should install `pydocstyle` and run it from the top
     level directory to make sure everything looks real nice.
-    
+
                 pydocstyle smol
     -   Finally, you are also encouraged to start a pull request before you're
     fully done with your work when you want others to see what you are doing
     and possibly get feedback or comments. If you open a pull request that is a
     work in progress use [WIP] in the title.
-    
+
 6. The `experimental` branch is used for new (exciting) features that are not
 fully tested. If you worked on developing something very particular to your own
 use case and you think someone at some point may benefit from it, but it is not
@@ -128,7 +128,7 @@ and collaboration with others. To open up a new branch contact a repo admin.
     necessary.
     -   Once the feature branch has been merged to the `master` branch it will
     be deleted.
- 
+
  ### A note on style
  Keeping the coding style consistently clean makes using the code and further
  development a whole lot easier. When writing new code please look at existing

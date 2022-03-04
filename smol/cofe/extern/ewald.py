@@ -10,10 +10,11 @@ W. D. Richards, et al., Energy Environ. Sci., 2016, 9, 3272–3278
 __author__ = "William Davidson Richard, Luis Barroso-Luque"
 
 import numpy as np
-from pymatgen.core import Structure, PeriodicSite
-from pymatgen.analysis.ewald import EwaldSummation
 from monty.json import MSONable
-from smol.cofe.space.domain import get_allowed_species, Vacancy
+from pymatgen.analysis.ewald import EwaldSummation
+from pymatgen.core import PeriodicSite, Structure
+
+from smol.cofe.space.domain import Vacancy, get_allowed_species
 
 
 class EwaldTerm(MSONable):
@@ -26,10 +27,11 @@ class EwaldTerm(MSONable):
     and reduce complexity (number of orbits) required to fit ionic materials.
     """
 
-    ewald_term_options = ('total', 'real', 'reciprocal', 'point')
+    ewald_term_options = ("total", "real", "reciprocal", "point")
 
-    def __init__(self, eta=None, real_space_cut=None, recip_space_cut=None,
-                 use_term='total'):
+    def __init__(
+        self, eta=None, real_space_cut=None, recip_space_cut=None, use_term="total"
+    ):
         """Initialize EwaldTerm.
 
         Input parameters are standard input parameters to pymatgen
@@ -55,7 +57,8 @@ class EwaldTerm(MSONable):
         if use_term not in self.ewald_term_options:
             raise AttributeError(
                 f"Provided use_term {use_term} is not a valid option. "
-                f"Please use one of {self.ewald_term_options}.")
+                f"Please use one of {self.ewald_term_options}."
+            )
         self.use_term = use_term
 
     @staticmethod
@@ -88,8 +91,7 @@ class EwaldTerm(MSONable):
                 if isinstance(b, Vacancy):  # skip vacancies
                     continue
                 inds[i] = len(ewald_sites)
-                ewald_sites.append(
-                    PeriodicSite(b, site.frac_coords, site.lattice))
+                ewald_sites.append(PeriodicSite(b, site.frac_coords, site.lattice))
             ewald_inds.append(inds)
         ewald_inds = np.array(ewald_inds, dtype=np.int)
         ewald_structure = Structure.from_sites(ewald_sites)
@@ -146,8 +148,9 @@ class EwaldTerm(MSONable):
             float
         """
         ewald_structure, ewald_inds = self.get_ewald_structure(structure)
-        ewald_summation = EwaldSummation(ewald_structure, self.real_space_cut,
-                                         self.recip_space_cut, eta=self.eta)
+        ewald_summation = EwaldSummation(
+            ewald_structure, self.real_space_cut, self.recip_space_cut, eta=self.eta
+        )
         ewald_matrix = self.get_ewald_matrix(ewald_summation)
         ew_occu = self.get_ewald_occu(occu, ewald_matrix.shape[0], ewald_inds)
         return np.array([np.sum(ewald_matrix[ew_occu, :][:, ew_occu])])
@@ -161,11 +164,11 @@ class EwaldTerm(MSONable):
         Returns:
             ndarray: ewald matrix for corresponding term
         """
-        if self.use_term == 'total':
+        if self.use_term == "total":
             matrix = ewald_summation.total_energy_matrix
-        elif self.use_term == 'reciprocal':
+        elif self.use_term == "reciprocal":
             matrix = ewald_summation.reciprocal_space_energy_matrix
-        elif self.use_term == 'real':
+        elif self.use_term == "real":
             matrix = ewald_summation.real_space_energy_matrix
         else:
             matrix = np.diag(ewald_summation.point_energy_matrix)
@@ -178,12 +181,14 @@ class EwaldTerm(MSONable):
         Returns:
             dict: MNSONable dict
         """
-        d = {'@module': self.__class__.__module__,
-             '@class': self.__class__.__name__,
-             'eta': self.eta,
-             'real_space_cut': self.real_space_cut,
-             'recip_space_cut': self.recip_space_cut,
-             'use_term': self.use_term}
+        d = {
+            "@module": self.__class__.__module__,
+            "@class": self.__class__.__name__,
+            "eta": self.eta,
+            "real_space_cut": self.real_space_cut,
+            "recip_space_cut": self.recip_space_cut,
+            "use_term": self.use_term,
+        }
         return d
 
     @classmethod
@@ -192,6 +197,9 @@ class EwaldTerm(MSONable):
 
         (Over-kill here since only EwaldSummation params are saved).
         """
-        return cls(eta=d['eta'], real_space_cut=d['real_space_cut'],
-                   recip_space_cut=d['recip_space_cut'],
-                   use_term=d['use_term'])
+        return cls(
+            eta=d["eta"],
+            real_space_cut=d["real_space_cut"],
+            recip_space_cut=d["recip_space_cut"],
+            use_term=d["use_term"],
+        )
