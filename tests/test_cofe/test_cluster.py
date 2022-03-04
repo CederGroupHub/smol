@@ -1,7 +1,9 @@
-import pytest
-from random import choices
 from itertools import combinations
+from random import choices
+
 import numpy as np
+import pytest
+
 from smol.cofe.space import Cluster
 from tests.utils import assert_msonable
 
@@ -30,7 +32,7 @@ def test_size(cluster):
 
 def test_diameter(cluster):
     coords = cluster.lattice.get_cartesian_coords(cluster.sites)
-    diameter = max([np.sum((i - j) ** 2) for i, j in combinations(coords, 2)]) ** 0.5
+    diameter = max(np.sum((i - j) ** 2) for i, j in combinations(coords, 2)) ** 0.5
     assert diameter == cluster.diameter
 
 

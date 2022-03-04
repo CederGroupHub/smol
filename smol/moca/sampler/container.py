@@ -7,15 +7,16 @@ samples.
 
 __author__ = "Luis Barroso-Luque"
 
+import json
 import os
 import warnings
 from collections import defaultdict
-import json
-import numpy as np
 
+import numpy as np
 from monty.json import MSONable, jsanitize
-from smol.moca.sublattice import Sublattice
+
 from smol.moca.sampler.kernel import Trace
+from smol.moca.sublattice import Sublattice
 
 try:
     import h5py

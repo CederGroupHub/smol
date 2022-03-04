@@ -1,18 +1,20 @@
 import os
-import pytest
+
 import numpy as np
-from pymatgen.core import Structure
+import pytest
 from monty.serialization import loadfn
+from pymatgen.core import Structure
+
 from smol.cofe import ClusterSubspace, StructureWrangler
-from smol.moca import (
-    CanonicalEnsemble,
-    SemiGrandEnsemble,
-    ClusterExpansionProcessor,
-    EwaldProcessor,
-    CompositeProcessor,
-)
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.basis import BasisIterator
+from smol.moca import (
+    CanonicalEnsemble,
+    ClusterExpansionProcessor,
+    CompositeProcessor,
+    EwaldProcessor,
+    SemiGrandEnsemble,
+)
 from smol.utils import get_subclasses
 from tests.utils import gen_fake_training_data
 

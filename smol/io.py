@@ -10,7 +10,8 @@ it easier to translate work.
 __author__ = "Luis Barroso-Luque"
 
 import json
-from monty.json import MSONable, MontyEncoder, MontyDecoder
+
+from monty.json import MontyDecoder, MontyEncoder, MSONable
 
 
 def save_work(file_path, *msonables):
@@ -48,7 +49,7 @@ def load_work(file_path):
     Returns: Dictionary with smol objects
         dict
     """
-    with open(file_path, "r") as fp:
+    with open(file_path) as fp:
         work_dict = json.load(fp, cls=MontyDecoder)
 
     return work_dict

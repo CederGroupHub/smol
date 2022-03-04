@@ -1,9 +1,10 @@
-import pytest
 import numpy as np
 import numpy.testing as npt
+import pytest
+
 from smol.moca import Sampler
-from smol.moca.sampler.mcusher import Swap, Flip
 from smol.moca.sampler.kernel import Metropolis
+from smol.moca.sampler.mcusher import Flip, Swap
 from tests.utils import gen_random_occupancy
 
 TEMPERATURE = 5000

@@ -1,15 +1,16 @@
-import pytest
 import os
-from itertools import product
 from copy import deepcopy
+from itertools import product
+
 import numpy as np
 import numpy.testing as npt
-
+import pytest
 from pymatgen.core import Composition
+
 from smol.cofe.space.domain import SiteSpace
-from smol.moca.sublattice import Sublattice
 from smol.moca.sampler import SampleContainer
 from smol.moca.sampler.kernel import Trace
+from smol.moca.sublattice import Sublattice
 from tests.utils import assert_msonable
 
 NUM_SITES = 500

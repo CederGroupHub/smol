@@ -10,10 +10,12 @@ More complex steps can be defined simply by deriving from the MCUsher
 
 __author__ = "Luis Barroso-Luque"
 
-from abc import ABC, abstractmethod
 import random
+from abc import ABC, abstractmethod
+
 import numpy as np
-from smol.utils import derived_class_factory, class_name_from_str
+
+from smol.utils import class_name_from_str, derived_class_factory
 
 
 class MCUsher(ABC):
@@ -94,11 +96,9 @@ class MCUsher(ABC):
 
     def update_aux_state(self, step, *args, **kwargs):
         """Update any auxiliary state information based on an accepted step."""
-        pass
 
     def set_aux_state(self, state, *args, **kwargs):
         """Set the auxiliary state from a checkpoint values."""
-        pass
 
     def get_random_sublattice(self):
         """Return a random sublattice based on given probabilities."""

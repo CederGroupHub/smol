@@ -91,7 +91,7 @@ Use this section to keep track of changes in the works.
 
 ### Deprecated
 * `optimize_indicator` in `ClusterExpansionProcessor` and corresponding cython
-   function. 
+   function.
   [\#156](https://github.com/CederGroupHub/smol/pull/156)
   ([lbluque](https://github.com/lbluque))
 * `FuSemiGrandEnsemble` now `FugacityBias`.
@@ -166,7 +166,7 @@ Use this section to keep track of changes in the works.
 (~1.5x faster)
 [\#102](https://github.com/CederGroupHub/smol/pull/102)
 ([lbluque](https://github.com/lbluque))
- 
+
 ### Fixed
 * Raise error in `StructureWrangler.append_data_items` when item properties are
   missing keys already included.
@@ -199,7 +199,7 @@ sets. [\#90](https://github.com/CederGroupHub/smol/pull/90)
      * `CompositeProcessor` to mix energy models. Currently only the ones above.
   * `Ensemble` classes to represent the corresponding statistical ensemble
   (probability space). These classes no longer run monte carlo, they only
-  compute the corresponding relative Boltzman probabilities. 
+  compute the corresponding relative Boltzman probabilities.
      * `CanonicalEnsemble` for fixed compositions.
      * `MuSemigrandEnsemble` for fixed chemical potentials.
      * `FuSemigrandEnsemble` for fixed fugacity fractions.
@@ -211,7 +211,7 @@ sets. [\#90](https://github.com/CederGroupHub/smol/pull/90)
   * `MCKernel` classes used to implement specific MCMC algorithms.
      `Metropolis` currently only kernel implemented to run single site
      Metropolis random walk.
-  * `MCUsher` classes to handle specific MCMC step proposals (i.e. single 
+  * `MCUsher` classes to handle specific MCMC step proposals (i.e. single
   swaps, to preseve composition, single flips, single constrained flips,
   multisite flips, local flips, etc).
   * `SampleContainer` class to hold MCMC samples and pertinent information for
@@ -237,11 +237,11 @@ vectors. [\#85](https://github.com/CederGroupHub/smol/pull/85)
 ([lbluque](https://github.com/lbluque))
 * Refactored `smol.cofe.configspace` -> `smol.cofe.space`
 * A few method name changes in `ClusterSubspace` to be more precise and
-appropriate. Most notably `from_radii` classmethod now `from_cutoffs` (since 
+appropriate. Most notably `from_radii` classmethod now `from_cutoffs` (since
 the distances used, max distance between 2 pts, are more like a diameter rather
 than a radius.)
 * filtering functions no longer methods in `StructureWrangler`, now defined
-as functions in `cofe.wrangling.filter`. 
+as functions in `cofe.wrangling.filter`.
 [\#85](https://github.com/CederGroupHub/smol/pull/85)
 ([lbluque](https://github.com/lbluque))
 * Species in site spaces and occupancy strings are now pymatgen `Specie` or

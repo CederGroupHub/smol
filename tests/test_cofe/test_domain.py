@@ -1,15 +1,17 @@
-import pytest
+from copy import copy, deepcopy
 from random import choice
-from tests.utils import assert_msonable
-from pymatgen.core import Composition, Element, Species, DummySpecies
+
+import pytest
+from pymatgen.core import Composition, DummySpecies, Element, Species
+
 from smol.cofe.space.domain import (
-    get_species,
-    get_allowed_species,
-    get_site_spaces,
     SiteSpace,
     Vacancy,
+    get_allowed_species,
+    get_site_spaces,
+    get_species,
 )
-from copy import copy, deepcopy
+from tests.utils import assert_msonable
 
 
 @pytest.mark.parametrize("measure", [True, False])

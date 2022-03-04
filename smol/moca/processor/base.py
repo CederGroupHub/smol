@@ -12,13 +12,14 @@ can be combined into composite processor for mixed models.
 __author__ = "Luis Barroso-Luque"
 
 from abc import ABCMeta, abstractmethod
-import numpy as np
 
-from pymatgen.core import Structure, PeriodicSite
+import numpy as np
 from monty.json import MSONable
+from pymatgen.core import PeriodicSite, Structure
+
+from smol.cofe.space import Vacancy, get_allowed_species, get_site_spaces
+from smol.moca.sublattice import InactiveSublattice, Sublattice
 from smol.utils import get_subclasses
-from smol.moca.sublattice import Sublattice, InactiveSublattice
-from smol.cofe.space import get_allowed_species, get_site_spaces, Vacancy
 
 
 class Processor(MSONable, metaclass=ABCMeta):

@@ -13,9 +13,11 @@ strongly tested.
 __author__ = "Luis Barroso-Luque"
 
 from copy import deepcopy
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
+
 import numpy as np
 from monty.json import MSONable, jsanitize
+
 from smol.cofe.space.clusterspace import ClusterSubspace
 
 

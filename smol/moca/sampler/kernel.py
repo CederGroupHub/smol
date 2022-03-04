@@ -7,15 +7,16 @@ to generate states for sampling an MCMC chain.
 __author__ = "Luis Barroso-Luque"
 
 from abc import ABC, abstractmethod
-from types import SimpleNamespace
 from math import log
 from random import random
+from types import SimpleNamespace
+
 import numpy as np
 
 from smol.constants import kB
-from smol.utils import derived_class_factory, class_name_from_str, get_subclasses
-from smol.moca.sampler.mcusher import mcusher_factory, MCUsher
-from smol.moca.sampler.bias import mcbias_factory, MCBias
+from smol.moca.sampler.bias import MCBias, mcbias_factory
+from smol.moca.sampler.mcusher import MCUsher, mcusher_factory
+from smol.utils import class_name_from_str, derived_class_factory, get_subclasses
 
 ALL_MCUSHERS = list(get_subclasses(MCUsher).keys())
 ALL_BIAS = list(get_subclasses(MCBias).keys())
@@ -40,8 +41,7 @@ class Trace(SimpleNamespace):
 
     def items(self):
         """Return generator for (name, attribute)."""
-        for name, value in self.__dict__.items():
-            yield name, value
+        yield from self.__dict__.items()
 
     def __setattr__(self, name, value):
         """Set only ndarrays as attributes."""

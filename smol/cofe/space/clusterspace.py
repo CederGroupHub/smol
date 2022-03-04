@@ -7,35 +7,36 @@ The PottsSubspace class is an (experimental) class that is similar, but
 diverges from the CE mathematic formalism.
 """
 
+import warnings
 from copy import deepcopy
 from importlib import import_module
-import warnings
+
 import numpy as np
 from monty.json import MSONable
-from pymatgen.core import Structure, PeriodicSite
-from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.analysis.structure_matcher import (
-    StructureMatcher,
     OrderDisorderElementComparator,
+    StructureMatcher,
 )
+from pymatgen.core import PeriodicSite, Structure
+from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
 from pymatgen.util.coord import (
+    coord_list_mapping_pbc,
     is_coord_subset,
     is_coord_subset_pbc,
     lattice_points_in_supercell,
-    coord_list_mapping_pbc,
 )
+
 from smol.cofe.space import (
     Orbit,
-    basis_factory,
-    get_site_spaces,
-    get_allowed_species,
     Vacancy,
+    basis_factory,
+    get_allowed_species,
+    get_site_spaces,
 )
 from smol.cofe.space.basis import IndicatorBasis
-from smol.exceptions import SymmetryError, StructureMatchError, SYMMETRY_ERROR_MESSAGE
 from smol.cofe.space.constants import SITE_TOL
+from smol.exceptions import SYMMETRY_ERROR_MESSAGE, StructureMatchError, SymmetryError
 from src.mc_utils import corr_from_occupancy
-
 
 __author__ = "Luis Barroso-Luque, William Davidson Richards"
 

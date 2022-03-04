@@ -1,9 +1,10 @@
 import numpy as np
 import numpy.testing as npt
+
 from smol.cofe.wrangling.select import (
+    composition_select,
     full_row_rank_select,
     gaussian_select,
-    composition_select,
 )
 
 

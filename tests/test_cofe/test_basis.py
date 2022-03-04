@@ -1,12 +1,13 @@
-import pytest
 from collections import OrderedDict
+
 import numpy as np
 import numpy.testing as npt
+import pytest
 from numpy.polynomial.chebyshev import chebval
 from numpy.polynomial.legendre import legval
-from pymatgen.core import Composition, Structure
-from smol.cofe.space import domain
-from smol.cofe.space import basis
+from pymatgen.core import Composition
+
+from smol.cofe.space import basis, domain
 from smol.utils import get_subclasses
 from tests.utils import assert_msonable
 
@@ -31,7 +32,7 @@ def test_basis_measure_raise(basis_iterator_cls):
     with pytest.raises(ValueError):
         space = domain.SiteSpace(comp)
         species = tuple(space.keys())
-        b = basis.StandardBasis(space, basis_iterator_cls(species))
+        basis.StandardBasis(space, basis_iterator_cls(species))
 
 
 @pytest.mark.parametrize("basis_iterator_cls", basis_iterators)

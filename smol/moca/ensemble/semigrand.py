@@ -8,13 +8,16 @@ __author__ = "Luis Barroso-Luque"
 
 
 from collections import Counter
+
 import numpy as np
 from monty.json import MSONable
-from pymatgen.core import Species, DummySpecies, Element
-from smol.cofe.space.domain import get_species, Vacancy
+from pymatgen.core import DummySpecies, Element, Species
+
+from smol.cofe.space.domain import Vacancy, get_species
 from smol.moca.processor.base import Processor
-from .base import Ensemble
 from smol.moca.sublattice import Sublattice
+
+from .base import Ensemble
 
 
 class SemiGrandEnsemble(Ensemble, MSONable):
@@ -64,7 +67,7 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         chemical_potentials = {
             get_species(k): v for k, v in chemical_potentials.items()
         }
-        species = set([sp for sps in processor.unique_site_spaces for sp in sps])
+        species = {sp for sps in processor.unique_site_spaces for sp in sps}
         for sp in chemical_potentials.keys():
             if sp not in species:
                 raise ValueError(

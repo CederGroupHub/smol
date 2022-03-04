@@ -1,16 +1,16 @@
-import pytest
 import numpy as np
 import numpy.testing as npt
-from tests.utils import assert_msonable, gen_random_occupancy
-from smol.cofe import ClusterExpansion
+import pytest
+
 from smol.cofe.extern import EwaldTerm
+from smol.cofe.space.domain import Vacancy
 from smol.moca.processor import (
     ClusterExpansionProcessor,
-    EwaldProcessor,
     CompositeProcessor,
+    EwaldProcessor,
 )
-from smol.cofe.space.domain import Vacancy
 from smol.moca.processor.base import Processor
+from tests.utils import assert_msonable, gen_random_occupancy
 
 RTOL = 0.0  # relative tolerance to check property change functions
 # absolute tolerance to check property change functions (eps is approx 2E-16)

@@ -6,15 +6,16 @@ by the corresponding ensemble to generate Monte Carlo samples.
 
 __author__ = "Luis Barroso-Luque"
 
-import random
-from warnings import warn
-from datetime import datetime
 import os
+import random
+from datetime import datetime
+from warnings import warn
+
 import numpy as np
 
-from smol.utils import progress_bar
-from smol.moca.sampler.kernel import mckernel_factory, Trace
 from smol.moca.sampler.container import SampleContainer
+from smol.moca.sampler.kernel import Trace, mckernel_factory
+from smol.utils import progress_bar
 
 
 class Sampler:

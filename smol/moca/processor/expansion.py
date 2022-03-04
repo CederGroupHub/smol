@@ -7,8 +7,10 @@ EwaldProcessor class to handle changes in the electrostatic interaction energy.
 
 __author__ = "Luis Barroso-Luque"
 
-import numpy as np
 from collections import defaultdict
+
+import numpy as np
+
 from smol.cofe import ClusterSubspace
 from smol.moca.processor.base import Processor
 from src.mc_utils import corr_from_occupancy, delta_corr_single_flip

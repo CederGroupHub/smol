@@ -5,17 +5,19 @@ because icet is HIGH FRKN QUALITY! So I trust it...
 
 
 import unittest
+
 import numpy as np
 from pymatgen.core.periodic_table import get_el_sp
-from smol.cofe import StructureWrangler, ClusterSubspace, ClusterExpansion
-from smol.moca import SemiGrandEnsemble, Sampler, ClusterExpansionProcessor
+
+from smol.cofe import ClusterExpansion, ClusterSubspace, StructureWrangler
+from smol.moca import ClusterExpansionProcessor, Sampler, SemiGrandEnsemble
 from tests.data import (
-    icet_eci,
-    icet_predictions,
-    icet_fit_structs,
-    icet_test_structs,
     aupt_prim,
+    icet_eci,
+    icet_fit_structs,
+    icet_predictions,
     icet_sgc_run_10000its,
+    icet_test_structs,
 )
 
 
@@ -100,7 +102,7 @@ class TestCEvicet(unittest.TestCase):
             # test relative error of mean energy norm only since testing
             # individually may need more slack tolerances for point with
             # higher variance, specifically T=300 mu>=0.15
-            self.assertAlmostEquals(
+            self.assertAlmostEqual(
                 np.linalg.norm(icet_avg - np.array(avg)) / np.linalg.norm(icet_avg),
                 0,
                 places=1,

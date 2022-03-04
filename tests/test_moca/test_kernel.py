@@ -1,18 +1,20 @@
-import pytest
 from itertools import product
+
 import numpy as np
 import numpy.testing as npt
+import pytest
+
 from smol.constants import kB
-from smol.moca.sampler.mcusher import Swap, Flip
+from smol.moca.sampler.bias import FugacityBias
 from smol.moca.sampler.kernel import (
+    ALL_MCUSHERS,
     Metropolis,
-    UniformlyRandom,
+    StepTrace,
     ThermalKernel,
     Trace,
-    StepTrace,
-    ALL_MCUSHERS,
+    UniformlyRandom,
 )
-from smol.moca.sampler.bias import FugacityBias
+from smol.moca.sampler.mcusher import Flip, Swap
 from tests.utils import gen_random_occupancy
 
 kernels = [UniformlyRandom, Metropolis]

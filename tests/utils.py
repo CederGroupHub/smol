@@ -6,6 +6,7 @@ Some of these are borrowed from pymatgen test scripts.
 import json
 import random
 from itertools import chain
+
 import numpy as np
 from monty.json import MontyDecoder, MSONable
 from pymatgen.core import Composition

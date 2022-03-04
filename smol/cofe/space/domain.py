@@ -10,8 +10,9 @@ of a site function and many site spaces make up the space of configurations.
 
 __author__ = "Luis Barroso-Luque, Fengyu Xie"
 
-from collections.abc import Mapping, Hashable
 from collections import OrderedDict
+from collections.abc import Hashable, Mapping
+
 from monty.json import MSONable
 from pymatgen.core import Composition
 from pymatgen.core.periodic_table import DummySpecie, get_el_sp

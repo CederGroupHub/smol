@@ -30,4 +30,3 @@ A :class:`PottsSubspace` implements the following expansion:
    :members:
    :undoc-members:
    :show-inheritance:
-

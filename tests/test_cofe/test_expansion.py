@@ -1,7 +1,8 @@
-import pytest
 import numpy as np
 import numpy.testing as npt
+import pytest
 from sklearn.linear_model import LinearRegression, Ridge
+
 from smol.cofe import ClusterExpansion, RegressionData
 from tests.utils import assert_msonable, gen_random_structure
 
@@ -58,7 +59,6 @@ def test_predict(cluster_expansion):
         atol=1E-4
     )
     """
-    pass
 
 
 def test_prune(cluster_expansion):

@@ -11,14 +11,16 @@ from abc import ABCMeta, abstractmethod
 from collections import OrderedDict
 from collections.abc import Iterator
 from functools import partial, wraps
+
 import numpy as np
-from numpy.polynomial.polynomial import polyval
+from monty.json import MSONable
 from numpy.polynomial.chebyshev import chebval
 from numpy.polynomial.legendre import legval
-from monty.json import MSONable
+from numpy.polynomial.polynomial import polyval
+
+from smol.utils import derived_class_factory, get_subclasses
 
 from .domain import SiteSpace
-from smol.utils import derived_class_factory, get_subclasses
 
 ATOL, RTOL = 1e-12, 1e-8
 

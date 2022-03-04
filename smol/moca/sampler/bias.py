@@ -9,9 +9,11 @@ __author__ = "Fengyu Xie, Luis Barroso-Luque"
 from abc import ABC, abstractmethod
 from collections import Counter
 from math import log
+
 import numpy as np
-from smol.utils import derived_class_factory, class_name_from_str
+
 from smol.cofe.space.domain import get_species
+from smol.utils import class_name_from_str, derived_class_factory
 
 
 class MCBias(ABC):

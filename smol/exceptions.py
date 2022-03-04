@@ -18,8 +18,6 @@ class NotFittedError(ValueError, AttributeError):
     exception handling and backward compatibility.
     """
 
-    pass
-
 
 class SymmetryError(ValueError):
     """Exception for incompatibility between structure and given symops.
@@ -28,10 +26,6 @@ class SymmetryError(ValueError):
     set of given symops.
     """
 
-    pass
-
 
 class StructureMatchError(RuntimeError):
     """Raised when a pymatgen StructureMatcher returns None."""
-
-    pass

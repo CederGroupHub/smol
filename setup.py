@@ -1,4 +1,3 @@
-# coding: utf-8
 # Copyright (c)
 
 """
@@ -21,12 +20,15 @@ test new ones. Finally, although conceived mainly for method development, smol c
 
 import sys
 
-from setuptools import setup, find_packages, Extension
-from setuptools.command.build_ext import build_ext
 import numpy
+from setuptools import Extension, find_packages, setup
+from setuptools.command.build_ext import build_ext
 
 COMPILE_OPTIONS = {
-    "msvc": ["/O2", "/EHsc", ],
+    "msvc": [
+        "/O2",
+        "/EHsc",
+    ],
     "mingw32": ["-Wall", "-Wextra"],
     "other": ["-Wall", "-Wextra", "-ffast-math", "-O3"],
 }
@@ -80,10 +82,7 @@ else:
 ext = ".pyx" if USE_CYTHON else ".c"
 ext_modules = [
     Extension(
-        "src.mc_utils",
-        ["src/mc_utils" + ext],
-        language="c",
-        include_dirs=["src/"]
+        "src.mc_utils", ["src/mc_utils" + ext], language="c", include_dirs=["src/"]
     )
 ]
 
@@ -110,7 +109,7 @@ setup(
         "setuptools",
         "numpy>=1.18.1",
         "pymatgen>=2020.8.13",
-        "monty>=3.0.1"
+        "monty>=3.0.1",
     ],
     extras_require={
         "docs": [
@@ -119,13 +118,13 @@ setup(
             "ipython==8.1.0",
             "nbsphinx==0.8.8",
             "nbsphinx-link==1.3.0",
-            "nb2plots==0.6.0"
+            "nb2plots==0.6.0",
         ],
         "tests": [
             "pytest==7.0.1",
             "pytest-cov==3.0.0",
             "scikit-learn>=0.24.2",
-            "h5py>=3.5.0"
+            "h5py>=3.5.0",
         ],
         "dev": ["pre-commit>=2.12.1", "cython>=0.29.24"],
     },

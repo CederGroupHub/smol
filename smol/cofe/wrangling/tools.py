@@ -1,9 +1,10 @@
 """Functions to filter data in a StructureWrangler."""
 
 from collections import defaultdict
+
 import numpy as np
-from pymatgen.core import Composition
 from pymatgen.analysis.phase_diagram import PDEntry, PhaseDiagram
+from pymatgen.core import Composition
 
 from smol.cofe.extern import EwaldTerm
 
@@ -47,7 +48,7 @@ def unique_corr_vector_indices(
     property_vector = wrangler.get_property_vector(property_key)
     dupe_inds = wrangler.get_duplicate_corr_indices(cutoffs=cutoffs)
     indices = {inds[choose_val(property_vector[inds])] for inds in dupe_inds}
-    duplicates = set(i for inds in dupe_inds for i in inds) - indices
+    duplicates = {i for inds in dupe_inds for i in inds} - indices
     indices = list(set(range(wrangler.num_structures)) - duplicates)
 
     if return_compliment:

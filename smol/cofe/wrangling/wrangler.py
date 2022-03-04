@@ -16,14 +16,16 @@ composition for a given set of structures.
 __author__ = "Luis Barroso-Luque"
 __credits__ = "William Davidson Richard"
 
-from typing import Sequence
-from importlib import import_module
 import warnings
+from importlib import import_module
 from itertools import combinations
+from typing import Sequence
+
 import numpy as np
 from monty.json import MSONable, jsanitize
-from pymatgen.core.structure import Structure
 from pymatgen.analysis.structure_matcher import StructureMatcher
+from pymatgen.core.structure import Structure
+
 from smol.exceptions import StructureMatchError
 
 
@@ -82,7 +84,7 @@ class StructureWrangler(MSONable):
     @property
     def available_properties(self):
         """Get list of properties that have been added."""
-        return list(set(p for i in self._items for p in i["properties"].keys()))
+        return list({p for i in self._items for p in i["properties"].keys()})
 
     @property
     def available_indices(self):
@@ -92,7 +94,7 @@ class StructureWrangler(MSONable):
     @property
     def available_weights(self):
         """Get list of weights that have been added."""
-        return list(set(p for i in self._items for p in i["weights"].keys()))
+        return list({p for i in self._items for p in i["weights"].keys()})
 
     @property
     def structures(self):

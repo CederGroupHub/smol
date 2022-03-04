@@ -1,11 +1,13 @@
-import pytest
-from copy import deepcopy
 import random
+from copy import deepcopy
+
 import numpy as np
 import numpy.testing as npt
+import pytest
+
 from smol.cofe import StructureWrangler
 from smol.cofe.extern import EwaldTerm
-from tests.utils import gen_random_structure, assert_msonable, gen_fake_training_data
+from tests.utils import assert_msonable, gen_fake_training_data, gen_random_structure
 
 
 def test_add_data(structure_wrangler):

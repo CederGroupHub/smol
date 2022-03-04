@@ -1,8 +1,10 @@
 from copy import deepcopy
+
 import numpy as np
 import numpy.testing as npt
+
 from smol.cofe.extern import EwaldTerm
-from smol.cofe.wrangling import unique_corr_vector_indices, max_ewald_energy_indices
+from smol.cofe.wrangling import max_ewald_energy_indices, unique_corr_vector_indices
 
 # TODO write these unit-tests
 
@@ -43,7 +45,6 @@ def test_weights_above_composition():
     self.assertEqual(num_structs, self.sw.num_structures)
     self.assertTrue(np.allclose(expected, self.sw.get_weights('comp')))
     """
-    pass
 
 
 def test_weights_above_hull():
@@ -77,7 +78,6 @@ def test_weights_above_hull():
     self.assertRaises(AttributeError, self.sw.add_weights, 'test',
                       weights[:-2])
     """
-    pass
 
 
 # TODO improve test by precalculating expected energies and filtered structs

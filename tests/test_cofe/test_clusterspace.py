@@ -1,16 +1,18 @@
-import pytest
-import warnings
-import numpy.testing as npt
 import random
-import numpy as np
+import warnings
 from itertools import combinations
-from pymatgen.core import Structure, Species
+
+import numpy as np
+import numpy.testing as npt
+import pytest
+from pymatgen.core import Species, Structure
 from pymatgen.util.coord import is_coord_subset_pbc
+
 from smol.cofe import ClusterSubspace, PottsSubspace
-from smol.cofe.space.clusterspace import invert_mapping, get_complete_mapping
+from smol.cofe.space.clusterspace import get_complete_mapping, invert_mapping
 from smol.cofe.space.constants import SITE_TOL
+from smol.cofe.space.domain import Vacancy, get_allowed_species
 from smol.exceptions import StructureMatchError
-from smol.cofe.space.domain import get_allowed_species, Vacancy
 from src.mc_utils import corr_from_occupancy
 from tests.utils import assert_msonable, gen_random_structure
 

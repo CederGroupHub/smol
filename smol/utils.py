@@ -5,7 +5,7 @@ __author__ = "Luis Barroso-Luque"
 import inspect
 import re
 import warnings
-from typing import Dict, Any
+from typing import Any, Dict
 
 
 def _repr(instance: object, **fields: Dict[str, Any]) -> str:

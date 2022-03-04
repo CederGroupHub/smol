@@ -1,13 +1,15 @@
-import pytest
 from copy import deepcopy
 from functools import reduce
 from itertools import product
 from random import choices
+
 import numpy as np
 import numpy.testing as npt
+import pytest
 from pymatgen.core import Composition
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-from smol.cofe.space import Orbit, Cluster
+
+from smol.cofe.space import Cluster, Orbit
 from smol.cofe.space.basis import basis_factory
 from smol.cofe.space.domain import SiteSpace, get_site_spaces
 from tests.utils import assert_msonable

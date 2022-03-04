@@ -1,14 +1,14 @@
-import pytest
-import numpy.testing as npt
 import numpy as np
+import numpy.testing as npt
+import pytest
 
 from smol.cofe import ClusterExpansion, RegressionData
 from smol.moca import (
     CanonicalEnsemble,
-    SemiGrandEnsemble,
-    CompositeProcessor,
     ClusterExpansionProcessor,
+    CompositeProcessor,
     EwaldProcessor,
+    SemiGrandEnsemble,
 )
 from tests.utils import assert_msonable, gen_random_occupancy
 

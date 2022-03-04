@@ -8,8 +8,8 @@ __author__ = "Luis Barroso-Luque, William Davidson Richard"
 
 import numpy as np
 from monty.json import MSONable
-from pymatgen.util.coord import is_coord_subset
 from pymatgen.core import Lattice
+from pymatgen.util.coord import is_coord_subset
 
 from smol.cofe.space.constants import SITE_TOL
 from smol.utils import _repr

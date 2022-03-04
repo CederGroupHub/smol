@@ -1,11 +1,12 @@
 """Test all bias terms."""
 
-import pytest
-from copy import deepcopy
 import random
-from smol.moca.sampler.bias import mcbias_factory, FugacityBias
-from tests.utils import gen_random_occupancy
+from copy import deepcopy
 
+import pytest
+
+from smol.moca.sampler.bias import FugacityBias, mcbias_factory
+from tests.utils import gen_random_occupancy
 
 bias_classes = [FugacityBias]
 

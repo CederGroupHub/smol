@@ -1,9 +1,11 @@
+import json
 import unittest
 from importlib.util import find_spec
 from pathlib import Path
+
 import numpy as np
-import json
 from monty.json import MontyDecoder
+
 from smol.cofe import ClusterSubspace, StructureWrangler
 
 
@@ -18,10 +20,10 @@ class TestvsCASM(unittest.TestCase):
             / "casm_mgcro"
         )
 
-        with open(data_dir / "casm-fit-data.json", "r") as fp:
+        with open(data_dir / "casm-fit-data.json") as fp:
             cls.fit_data = json.load(fp, cls=MontyDecoder)
 
-        with open(data_dir / "fit-items.json", "r") as fp:
+        with open(data_dir / "fit-items.json") as fp:
             fit_items = json.load(fp, cls=MontyDecoder)
 
         # Create the smol ClusterSubspace (takes a while...)

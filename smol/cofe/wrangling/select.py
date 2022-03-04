@@ -1,10 +1,11 @@
 """Tools for training structure selection."""
 
-from warnings import warn
 import random
+from warnings import warn
+
 import numpy as np
 from scipy.linalg import lu, orth
-from scipy.stats import multivariate_normal, multinomial
+from scipy.stats import multinomial, multivariate_normal
 
 __author__ = "Luis Barroso-Luque"
 

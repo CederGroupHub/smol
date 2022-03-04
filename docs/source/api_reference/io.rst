@@ -14,4 +14,3 @@ or is very obvious/simple what their use case is.
    :members:
    :undoc-members:
    :show-inheritance:
-

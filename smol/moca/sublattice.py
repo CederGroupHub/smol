@@ -8,8 +8,10 @@ random structure supercell being sampled in a Monte Carlo simulation.
 __author__ = "Luis Barroso-Luque"
 
 from dataclasses import dataclass, field
+
 import numpy as np
 from monty.json import MSONable
+
 from smol.cofe.space.domain import SiteSpace
 
 

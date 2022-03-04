@@ -1,6 +1,12 @@
 import pytest
-from smol.utils import derived_class_factory, get_subclasses, class_name_from_str
-from smol.moca.sampler.kernel import *
+
+from smol.moca.sampler.kernel import (
+    MCKernel,
+    Metropolis,
+    ThermalKernel,
+    UniformlyRandom,
+)
+from smol.utils import class_name_from_str, derived_class_factory, get_subclasses
 
 
 @pytest.mark.parametrize(

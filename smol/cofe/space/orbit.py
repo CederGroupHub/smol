@@ -6,17 +6,20 @@ symmetry) clusters.
 
 import operator
 from functools import reduce
-from itertools import chain, product, combinations
+from itertools import chain, combinations, product
+
 import numpy as np
 from monty.json import MSONable
 from pymatgen.core import Lattice
 from pymatgen.core.operations import SymmOp
 from pymatgen.util.coord import coord_list_mapping, is_coord_subset
+
+from smol.exceptions import SYMMETRY_ERROR_MESSAGE, SymmetryError
 from smol.utils import _repr
-from smol.exceptions import SymmetryError, SYMMETRY_ERROR_MESSAGE
-from .constants import SITE_TOL
+
+from .basis import DiscreteBasis, basis_factory
 from .cluster import Cluster
-from .basis import basis_factory, DiscreteBasis
+from .constants import SITE_TOL
 
 __author__ = "Luis Barroso-Luque, William Davidson Richard"
 
