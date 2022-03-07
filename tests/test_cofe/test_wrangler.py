@@ -96,6 +96,26 @@ def test_add_data(structure_wrangler):
         structure_wrangler.remove_properties("blab")
 
 
+def test_add_weights(structure_wrangler):
+    sc_matrices = structure_wrangler.supercell_matrices
+    num_structs = structure_wrangler.num_structures
+    structures = structure_wrangler.structures
+    energies = structure_wrangler.get_property_vector('energy')
+    weights = np.random.random(num_structs)
+    structure_wrangler.add_weights(weights, 'comp')
+    structure_wrangler.remove_all_data()
+    assert structure_wrangler.num_structures == 0
+    for struct, energy, weight, matrix in zip(structures, energies,
+                                              weights, sc_matrices):
+        structure_wrangler.add_data(struct, {'energy': energy},
+                                    weights={'comp': weight},
+                                    supercell_matrix=matrix)
+    assert num_structs == structure_wrangler.num_structures
+    assert npt.assert_array_equal(weights, structure_wrangler.get_weights('comp'))
+    with pytest.raises(AttributeError):
+        structure_wrangler.add_weights('test', weights[:-2])
+
+
 def test_append_data_items(structure_wrangler):
     items = structure_wrangler._items
     structure_wrangler.remove_all_data()

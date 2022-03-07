@@ -47,18 +47,40 @@ def test_regression_data(cluster_subspace):
     assert_msonable(expansion)
 
 
-# TODO need a realiable test, maybe create energy from a simple species concentration model
 def test_predict(cluster_expansion):
-    """
-    n = len(cluster_expansion.structures)
-    inds = np.random.choice(range(n), size=n//2)
-    structures = [cluster_expansion.structures[i] for i in inds]
-    preds = [cluster_expansion.predict(s, normalize=True) for s in structures]
-    npt.assert_allclose(
-        preds, cluster_expansion.regression_data.property_vector[inds],
-        atol=1E-4
-    )
-    """
+    subspace = cluster_expansion.cluster_subspace
+
+    prim = cluster_expansion.structure
+    scmatrix = np.eye(3, dtype=int) * 3
+    scmatrix[0, 1] = 2  # Intentionally made less symmetric
+    scmatrix[1, 2] = 1
+    N = np.abs(np.linalg.det(scmatrix))
+    pool = [gen_random_structure(prim, scmatrix) for _ in range(100)]
+    feature_matrix = np.array([subspace.corr_from_structure(s,
+                                                            scmatrix=scmatrix,
+                                                            normalized=True)
+                               for s in pool])
+
+    comps = [s.composition for s in pool]
+    all_species = list(set([b for c in comps for b in c.keys()]))
+    mus = np.random.random(len(all_species))
+
+    def get_energy(structure, species, chempots):
+        return np.dot(chempots, [structure.composition[sp] for sp in species])
+
+    energies = np.array([get_energy(s, all_species, mus) for s in pool]) / N
+    reg = LinearRegression(fit_intercept=False)
+    reg.fit(feature_matrix, energies)
+    coefs = reg.coef_
+    expansion_new = ClusterExpansion(subspace, coefs)
+    # Why don't we add a "scmatrix" option into ClusterExpansion.predict?
+    # This will make it safer to structure skew, because pymatgen can't seem
+    # to figure out highly skewed supercell matrix correctly.
+    energies_pred = np.array([expansion_new.predict(s,
+                                                    scmatrix=scmatrix,
+                                                    normalize=True)
+                              for s in pool])
+    np.testing.assert_almost_equal(energies, energies_pred, decimal=6)
 
 
 def test_prune(cluster_expansion):

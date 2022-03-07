@@ -219,20 +219,22 @@ class ClusterExpansion(MSONable):
             else np.eye(len(self.coefs))
         )
 
-    def predict(self, structure, normalize=False):
+    def predict(self, structure, scmatrix=None, normalize=False):
         """Predict the fitted property for a given set of structures.
 
         Args:
             structure (Structure):
                 Structures to predict from
-            normalize (bool):
-                Whether to return the predicted property normalized by
-                the prim cell size.
+            scmatrix (3*3 Arraylike): optional
+                Supercell matrix of structure.
+            normalize (bool): optional
+                Whether to return the predicted property normalized
+                by the prim cell size.
         Returns:
             float
         """
         corrs = self.cluster_subspace.corr_from_structure(
-            structure, normalized=normalize
+            structure, scmatrix=scmatrix, normalized=normalize
         )
         return np.dot(self.coefs, corrs)
 

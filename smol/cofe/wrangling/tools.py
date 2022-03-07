@@ -74,7 +74,9 @@ def max_ewald_energy_indices(wrangler, max_relative_energy, return_compliment=Fa
             Ewald threshold. The maximum Ewald energy relative to minumum
             energy at composition of structure (normalized by prim).
         return_compliment (bool): optional
-            If True will return the compliment of the unique indices
+            If True will return the compliment of the unique indices.
+    Returns:
+        indices, compliment
     """
     ewald_energy = None
     for term in wrangler.cluster_subspace.external_terms:
