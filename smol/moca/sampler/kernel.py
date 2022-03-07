@@ -50,18 +50,18 @@ class Trace(SimpleNamespace):
         self.__dict__[name] = value
 
     def as_dict(self):
-        """Return copy underlying dictionary."""
+        """Return copy of underlying dictionary."""
         return self.__dict__.copy()
 
 
 class StepTrace(Trace):
     """StepTrace class.
 
-    Same as the above but holds a default "delta_trace" inner trace to hold
+    Same as Trace above but holds a default "delta_trace" inner trace to hold
     trace values that represent changes from previous values, to be handled
     similarly to delta_features and delta_energy.
 
-    An StepTrace object is set as an MCKernels attribute to record
+    A StepTrace object is set as an MCKernel's attribute to record
     kernel specific values during sampling.
     """
 
@@ -90,7 +90,7 @@ class StepTrace(Trace):
         self.__dict__[name] = value
 
     def as_dict(self):
-        """Return copy underlying dictionary."""
+        """Return copy of underlying dictionary."""
         d = self.__dict__.copy()
         d["delta_trace"] = d["delta_trace"].as_dict()
         return d
@@ -99,9 +99,9 @@ class StepTrace(Trace):
 class MCKernel(ABC):
     """Abtract base class for transition kernels.
 
-    A kernel is used to implement a specific MC algorithm used to sampler
-    the ensemble classes. For an illustrtive example of how to derive from this
-    and write a specific sampler see the MetropolisSampler.
+    A kernel is used to implement a specific MC algorithm used to sample
+    the ensemble classes. For an illustrative example of how to derive from this
+    and write a specific kernel see the Metropolis kernel.
     """
 
     # Lists of valid helper classes, set these in derived kernels
@@ -115,20 +115,20 @@ class MCKernel(ABC):
 
         Args:
             ensemble (Ensemble):
-                An Ensemble instance to obtain the feautures and parameters
+                an Ensemble instance to obtain the features and parameters
                 used in computing log probabilities.
             step_type (str):
-                String specifying the MCMC step type.
+                string specifying the MCMC step type.
             bias (MCBias):
-                A bias instance.
+                a bias instance.
             bias_kwargs (dict):
                 dictionary of keyword arguments to pass to the bias
                 constructor.
             args:
-                positional arguments to instantiate the mcusher for the
+                positional arguments to instantiate the MCUsher for the
                 corresponding step size.
             kwargs:
-                Keyword arguments to instantiate the mcusher for the
+                keyword arguments to instantiate the MCUsher for the
                 corresponding step size.
         """
         self.natural_params = ensemble.natural_parameters
@@ -161,7 +161,7 @@ class MCKernel(ABC):
 
     @property
     def mcusher(self):
-        """Get the mcusher."""
+        """Get the MCUsher."""
         return self._usher
 
     @mcusher.setter
@@ -173,12 +173,12 @@ class MCKernel(ABC):
 
     @property
     def bias(self):
-        """Get the mcusher."""
+        """Get the bias."""
         return self._bias
 
     @bias.setter
     def bias(self, bias):
-        """Set the MCUsher."""
+        """Set the bias."""
         if bias.__class__.__name__ not in self.valid_bias:
             raise ValueError(f"{type(bias)} is not a valid MCBias for this kernel.")
         if "bias" not in self.trace.delta_trace.names:
@@ -239,17 +239,17 @@ class ThermalKernel(MCKernel):
 
         Args:
             ensemble (Ensemble):
-                An Ensemble instance to obtain the feautures and parameters
+                an Ensemble instance to obtain the features and parameters
                 used in computing log probabilities.
             step_type (str):
-                String specifying the MCMC step type.
+                string specifying the MCMC step type.
             temperature (float):
-                Temperature at which the MCMC sampling will be carried out.
+                temperature at which the MCMC sampling will be carried out.
             args:
-                positional arguments to instantiate the mcusher for the
+                positional arguments to instantiate the MCUsher for the
                 corresponding step size.
             kwargs:
-                Keyword arguments to instantiate the mcusher for the
+                keyword arguments to instantiate the MCUsher for the
                 corresponding step size.
         """
         # hacky for initialization single_step to run
@@ -287,9 +287,9 @@ class UniformlyRandom(MCKernel):
     """A Kernel that accepts all proposed steps.
 
     This kernel samples the random limit distribution where all states have the
-    same probability (corresponds to an infinite temperature). Although if a
+    same probability (corresponding to an infinite temperature). If a
     bias is added then the corresponding distribution will be biased
-    accoringly.
+    accordingly.
     """
 
     valid_mcushers = ALL_MCUSHERS
@@ -394,15 +394,15 @@ def mckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs):
 
     Args:
         kernel_type (str):
-            String specifying step to instantiate.
+            string specifying kernel type to instantiate.
         ensemble (Ensemble)
-            An Ensemble object to create the MCMC kernel from.
+            an Ensemble object to create the MCMC kernel from.
         step_type (str):
-            String specifying the step type (ie key to mcusher type)
+            string specifying the proposal type (i.e. key for MCUsher type)
         *args:
-            Positional arguments passed to class constructor
+            positional arguments passed to class constructor
         **kwargs:
-            Keyword arguments passed to class constructor
+            keyword arguments passed to class constructor
 
     Returns:
         MCKernel: instance of derived class.

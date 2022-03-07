@@ -25,11 +25,11 @@ class Cluster(MSONable):
     ClusterSubspace to create orbits and clusters necessary for a CE.
 
     Attributes:
-        sites (list): list of fractional coordinates of each site.
-        lattice (Lattice): underlying lattice of cluster.
-        centroid (float): goemetric centroid of included sites.
-        id (int): id of cluster.
-            Used to identify the cluster in a given ClusterSubspace.
+        sites (list): List of fractional coordinates of each site.
+        lattice (Lattice): Underlying lattice of cluster.
+        centroid (float): Geometric centroid of included sites.
+        id (int): ID of cluster.
+            Used to identify the Cluster in a given ClusterSubspace.
     """
 
     def __init__(self, sites, lattice):
@@ -61,18 +61,18 @@ class Cluster(MSONable):
 
     @property
     def diameter(self):
-        """Get maximum distance between 2 sites in cluster."""
+        """Get maximum distance between any 2 sites in the cluster."""
         coords = self.lattice.get_cartesian_coords(self.sites)
         all_d2 = np.sum((coords[None, :, :] - coords[:, None, :]) ** 2, axis=-1)
         return np.max(all_d2) ** 0.5
 
     @property
     def radius(self):
-        """Get half the maximum distance between 2 sites in cluster."""
+        """Get half the maximum distance between any 2 sites in the cluster."""
         return self.diameter / 2.0
 
     def assign_ids(self, cluster_id):
-        """Recursively assign ids to clusters after initialization."""
+        """Recursively assign IDs to clusters after initialization."""
         self.id = cluster_id
         return cluster_id + 1
 
@@ -113,7 +113,7 @@ class Cluster(MSONable):
 
     @classmethod
     def from_dict(cls, d):
-        """Create a cluster from serialized dict."""
+        """Create a Cluster from serialized dict."""
         return cls(d["sites"], Lattice.from_dict(d["lattice"]))
 
     def as_dict(self):

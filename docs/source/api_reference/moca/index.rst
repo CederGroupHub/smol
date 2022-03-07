@@ -4,3 +4,9 @@
 
 .. toctree::
    :maxdepth: 2
+
+   ensembles
+   processors
+   sampler
+   samplercontainer
+   sublattice

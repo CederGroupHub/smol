@@ -1,4 +1,4 @@
-"""Implementation of Ewald processor class for a fixed size super cell.
+"""Implementation of Ewald processor class for a fixed size supercell.
 
 An Ewald processor is optimized to compute electrostatic interaction energy
 and changes in electrostatic energy from a list of local flips for use in
@@ -13,9 +13,8 @@ __author__ = "Luis Barroso-Luque"
 
 import numpy as np
 from pymatgen.analysis.ewald import EwaldSummation
-
-from smol.cofe import ClusterSubspace
-from smol.cofe.extern import EwaldTerm
+from smol.cofe.space.clusterspace import ClusterSubspace
+from smol.cofe.extern.ewald import EwaldTerm
 from smol.moca.processor.base import Processor
 from src.mc_utils import delta_ewald_single_flip
 
@@ -39,18 +38,19 @@ class EwaldProcessor(Processor):
 
         Args:
             cluster_subspace (ClusterSubspace):
-                A cluster subspace.
+                a cluster subspace.
             supercell_matrix (ndarray):
-                An array representing the supercell matrix with respect to the
+                an array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
             ewald_term (EwaldTerm):
-                An instance of EwaldTerm to compute electrostatic energies.
+                an instance of EwaldTerm to compute electrostatic energies.
             coefficient (float):
-                Fitting coeficient to scale Ewald energy by.
+                fitting coeficient to scale Ewald energy by.
             ewald_summation (EwaldSummation): optional
                 pymatgen EwaldSummation instance, make sure this uses the exact
-                same parameters as those used in the EwaldTerm in the cluster
-                Expansion (i.e. same eta, real and recip cuts).
+                same parameters as those used in the EwaldTerm in the
+                ClusterSubspace used in the ClusterExpansion
+                (i.e. same eta, real and recip cut-offs).
         """
         super().__init__(cluster_subspace, supercell_matrix, coefficient)
 
@@ -171,7 +171,7 @@ class EwaldProcessor(Processor):
 
     @classmethod
     def from_dict(cls, d):
-        """Create a ClusterExpansionProcessor from serialized MSONable dict."""
+        """Create an EwaldProcessor from serialized MSONable dict."""
         pr = cls(
             ClusterSubspace.from_dict(d["cluster_subspace"]),
             np.array(d["supercell_matrix"]),

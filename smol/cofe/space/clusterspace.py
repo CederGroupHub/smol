@@ -59,7 +59,7 @@ class ClusterSubspace(MSONable):
     compute correlation vectors (i.e. evaluate the orbit functions for a given
     structure).
 
-    Holds a structure, its expansion structure and a list of Orbits.
+    Holds a structure, its expansion structure, and a list of Orbits.
     This class defines the cluster subspace over which to fit a cluster
     expansion: This sets the orbits (groups of clusters) and the site basis
     functions that are to be considered in the fit.
@@ -96,7 +96,7 @@ class ClusterSubspace(MSONable):
         You rarely will need to create a ClusterSubspace using the main
         constructor.
         Look at the class method :code:`from_cutoffs` for the "better" way to
-        do instantiate a ClusterSubspace.
+        instantiate a ClusterSubspace.
 
         Args:
             structure (Structure):
@@ -104,22 +104,22 @@ class ClusterSubspace(MSONable):
                 cell. Includes all species regardless of partial occupation.
             expansion_structure (Structure):
                 Structure including only sites that will be included in the
-                Cluster space. (only those with partial occupancy)
+                Cluster space (i.e. only those with partial occupancy)
             symops (list of Symmop):
                 list of Symmops for the given structure.
             orbits (dict): {size: list of Orbits}
                 Dictionary with size (number of sites) as keys and list of
                 Orbits as values.
             supercell_matcher (StructureMatcher): optional
-                A StructureMatcher class to be used to find supercell matrices
+                StructureMatcher used to find supercell matrices
                 relating the prim structure to other structures. If you pass
-                this directly you should know how to set the matcher up, other
-                wise matching your relaxed structures can fail, alot.
+                this directly you should know how to set the matcher up,
+                otherwise matching your relaxed structures can fail, alot.
             site_matcher (StructureMatcher): optional
-                A StructureMatcher class to be used to find site mappings
+                StructureMatcher used to find site mappings
                 relating the sites of a given structure to an appropriate
                 supercell of the prim structure . If you pass this directly you
-                should know how to set the matcher up other wise matching your
+                should know how to set the matcher up, otherwise matching your
                 relaxed structures can fail, alot.
             matcher_kwargs:
                 ltol, stol, angle_tol, supercell_size: parameters to pass
@@ -208,15 +208,12 @@ class ClusterSubspace(MSONable):
         orbit is the maximum distance between any two sites of a cluster of
         that orbit.
 
-        The diameter of a cluster is the maximum distance between any two
-        sites in the cluster.
-
         This is the best (and the only easy) way to create a
         :class:`ClusterSubspace`.
 
         Args:
             structure (Structure):
-                Disordered structure to build a cluster expansion for.
+                disordered structure to build a cluster expansion for.
                 Typically the primitive cell
             cutoffs (dict):
                 dict of {cluster_size: diameter cutoff}. Cutoffs should be
@@ -225,31 +222,31 @@ class ClusterSubspace(MSONable):
                 included, with the exception below.
                 To obtain a subspace with only an empty and singlet terms use
                 an empty dict {}, or {1: 1}. Adding a cutoff term for point
-                terms, ie {1: 0} is useful to exclude point terms, any other
+                terms, i.e. {1: 0} is useful to exclude point terms. Any other
                 value for the cutoff will simply be ignored.
             basis (str):
-                A string specifying the site basis functions
+                a string specifying the site basis functions
             orthonormal (bool):
-                Whether to enforce an orthonormal basis. From the current
+                whether to enforce an orthonormal basis. From the current
                 available bases only the indicator basis is not orthogonal out
                 of the box
             use_concentration (bool):
-                If true the concentrations in the prim structure sites will be
+                if True, the concentrations in the prim structure sites will be
                 used to orthormalize site bases. This gives gives a cluster
                 subspace centered about the prim composition.
             supercell_matcher (StructureMatcher): optional
-                A StructureMatcher class to be used to find supercell matrices
+                StructureMatcher used to find supercell matrices
                 relating the prim structure to other structures. If you pass
-                this directly you should know how to set the matcher up other
-                wise matching your relaxed structures will fail, alot.
+                this directly you should know how to set the matcher up,
+                otherwise matching your relaxed structures will fail, alot.
             site_matcher (StructureMatcher): optional
-                A StructureMatcher class to be used to find site mappings
+                StructureMatcher used to find site mappings
                 relating the sites of a given structure to an appropriate
                 supercell of the prim structure . If you pass this directly you
-                should know how to set the matcher up other wise matching your
+                should know how to set the matcher up, otherwise matching your
                 relaxed structures will fail, alot.
             matcher_kwargs:
-                ltol, stol, angle_tol, supercell_size. Parameters to pass
+                ltol, stol, angle_tol, supercell_size: parameters to pass
                 through to the StructureMatchers. Structures that don't match
                 to the primitive cell under these tolerances won't be included
                 in the expansion. Easiest option for supercell_size is usually
@@ -329,8 +326,9 @@ class ClusterSubspace(MSONable):
     def num_functions_per_orbit(self):
         """Get the number of correlation functions for each orbit.
 
-        The list returned is of length total number of orbits, each entry is
-        the total number of correlation functions assocaited with that orbit.
+        The list returned has length equal to the total number of orbits,
+        and each entry is the total number of correlation functions
+        associated with that orbit.
         """
         return np.array([len(orbit) for orbit in self.orbits])
 
@@ -338,7 +336,7 @@ class ClusterSubspace(MSONable):
     def function_orbit_ids(self):
         """Get Orbit IDs corresponding to each correlation function.
 
-        If the Cluster Subspace includes external terms these are not included
+        If the ClusterSubspace includes external terms, these are not included
         in the list since they are not associated with any orbit.
         """
         func_orb_ids = [0]
@@ -363,7 +361,8 @@ class ClusterSubspace(MSONable):
         The length of the array returned is the total number of correlation
         functions in the subspace for all orbits. The ordering multiplicity of
         a correlation function is the number of symmetrically equivalent bit
-        orderings the result in the product of the same single site functions.
+        orderings (function-labeled orbit configurations) that result in the
+        product of the same single site functions.
         """
         mults = [1] + [
             mult for orb in self.orbits for mult in orb.bit_combo_multiplicities
@@ -377,8 +376,9 @@ class ClusterSubspace(MSONable):
         The length of the array returned is the total number of correlation
         functions in the subspace for all orbits. The total multiplicity of a
         correlation function is the number of symmetrically equivalent bit
-        orderings the result in the product of the same single site functions
-        times the (crystallographic) multiplicity of the orbit.
+        orderings (or function-labeled orbit configurations) that result in the
+        product of the same single site functions times the (crystallographic)
+        multiplicity of the orbit.
         """
         return (
             self.orbit_multiplicities[self.function_orbit_ids]
@@ -387,7 +387,7 @@ class ClusterSubspace(MSONable):
 
     @property
     def basis_orthogonal(self):
-        """Check if the orbit basis defined is orthogonal."""
+        """Check if the orbit basis is orthogonal."""
         return all(orb.basis_orthogonal for orb in self.orbits)
 
     @property
@@ -400,12 +400,12 @@ class ClusterSubspace(MSONable):
         """Get external terms to be fitted together with the correlations.
 
         External terms are those represented by pair interaction Hamiltonians
-        (i.e. Ewald electrostatics)
+        (i.e. Ewald electrostatics).
         """
         return self._external_terms
 
     def orbit_hierarchy(self, level=1, min_size=1):
-        """Get orbit hierarchy by ids.
+        """Get orbit hierarchy by IDs.
 
         The empty/constant cluster index 0 is technically a suborbit of all
         orbits, but is not added to the hierarchy entries.
@@ -470,13 +470,13 @@ class ClusterSubspace(MSONable):
                 is given then that cutoff is used for all orbit sizes.
                 Otherwise a dict can be used to specify the cutoff for the
                 orbit cluster sizes,
-                i.e. {2: cutoff_pairs, 3: cutoff_trips, ...}
+                i.e. {2: pair_cutoff, 3: triplet_cutoff, ...}
             lower (float): optional
                 lower diameter for clusters to include. If a single float
                 is given then that cutoff is used for all orbit sizes.
                 Otherwise a dict can be used to specify the cutoff for the
                 orbit cluster sizes,
-                i.e. {2: cutoff_pairs, 3: cutoff_trips, ...}
+                i.e. {2: pair_cutoff, 3: triplet_cutoff, ...}
 
         Returns:
             list of Orbits
@@ -516,7 +516,7 @@ class ClusterSubspace(MSONable):
                 i.e. {2: cutoff_pairs, 3: cutoff_trips, ...}
 
         Returns:
-            list: of corr function indices for clusters within cutoffs
+            list: list of corr function indices for clusters within cutoffs
         """
         orbits = self.orbits_from_cutoffs(upper, lower)
         inds = []
@@ -525,11 +525,11 @@ class ClusterSubspace(MSONable):
         return np.array(inds)
 
     def add_external_term(self, term):
-        """Add an external term to subspace.
+        """Add an external term to the ClusterSubspace.
 
-        Add an external term (e.g. an Ewald term) to the cluster expansion
+        Adds an external term (e.g. an Ewald term) to the cluster expansion
         terms. External term classes must be MSONable and implement a method
-        to obtain a "correlation" see smol.cofe.extern for examples.
+        to obtain a "correlation". See smol.cofe.extern for examples.
 
         Args:
             term (ExternalTerm):
@@ -551,7 +551,7 @@ class ClusterSubspace(MSONable):
     ):
         """Get correlation vector for structure.
 
-        Returns the correlation vector for a given structure. To do this the
+        Returns the correlation vector for a given structure. To do this, the
         correct supercell matrix of the prim needs to be found to then
         determine the mappings between sites to create the occupancy
         string and also determine the orbit mappings to evaluate the
@@ -559,7 +559,7 @@ class ClusterSubspace(MSONable):
 
         Args:
             structure (Structure):
-                structure to compute correlation from
+                Structure to compute correlation from
             normalized (bool):
                 return the correlation vector normalized by the prim cell size.
                 In theory correlation vectors are always normalized, but
@@ -568,14 +568,14 @@ class ClusterSubspace(MSONable):
             scmatrix (ndarray): optional
                 supercell matrix relating the prim structure to the given
                 structure. Passing this if it has already been matched will
-                make things much quicker. You are responsible that it is
-                correct.
+                make things much quicker. You are responsible that the
+                supercell matrix is correct.
             site_mapping (list): optional
                 Site mapping as obtained by
                 :code:`StructureMatcher.get_mapping`
                 such that the elements of site_mapping represent the indices
                 of the matching sites to the prim structure. If you pass this
-                option you are fully responsible that the mappings are correct!
+                option, you are fully responsible that the mappings are correct!
 
         Returns:
             array: correlation vector for given structure
@@ -630,13 +630,13 @@ class ClusterSubspace(MSONable):
                 structure. Passing this if it has already been matched will
                 make things much quicker. You are responsible for correctness.
             site_mapping (list): optional
-                Site mapping as obtained by StructureMatcher.get_mapping
+                site mapping as obtained by StructureMatcher.get_mapping
                 such that the elements of site_mapping represent the indices
                 of the matching sites to the prim structure. Again you are
                 responsible.
 
         Returns:
-             Structure: The refined structure
+             Structure: the refined structure
         """
         if scmatrix is None:
             scmatrix = self.scmatrix_from_structure(structure)
@@ -660,34 +660,34 @@ class ClusterSubspace(MSONable):
     ):
         """Occupancy string for a given structure.
 
-        Returns a list of occupancies of each site in a the structure in the
+        Returns a list of occupancies of each site in the structure in the
         appropriate order set implicitly by the supercell matrix that is found.
 
         This function is used as input to compute correlation vectors for the
         given structure.
 
         This function is also useful to obtain an initial occupancy for a Monte
-        Carlo simulation (make sure that the same supercell matrix is being
+        Carlo simulation. (Make sure that the same supercell matrix is being
         used here as in the instance of the processor class for the simulation.
         Although it is recommended to use the similar function in Processor
-        classes.
+        classes.)
 
         Args:
             structure (Structure):
                 structure to obtain a occupancy string for
             scmatrix (array): optional
-                Super cell matrix relating the given structure and the
-                primitive structure. I you pass the supercell you fully are
+                supercell matrix relating the given structure and the
+                primitive structure. If you pass the supercell, you fully are
                 responsible that it is the correct one! This prevents running
                 the _scmatcher (supercell structure matcher)
             site_mapping (list): optional
-                Site mapping as obtained by StructureMatcher.get_mapping
+                site mapping as obtained by StructureMatcher.get_mapping
                 such that the elements of site_mapping represent the indices
-                of the matching sites to the prim structure. I you pass this
-                option you are fully responsible that the mappings are correct!
+                of the matching sites to the prim structure. If you pass this
+                option, you are fully responsible that the mappings are correct!
                 This prevents running _site_matcher to get the mappings.
             encode (bool): optional
-                If true the occupancy string will have the index of the species
+                if True, the occupancy string will have the index of the species
                 in the expansion structure site spaces, rather than the
                 species itself.
 
@@ -731,7 +731,7 @@ class ClusterSubspace(MSONable):
 
         Args:
             structure (Structure):
-                A pymatgen Structure.
+                a pymatgen Structure.
 
         Returns:
             ndarray: matrix relating given structure and prim structure.
@@ -788,16 +788,16 @@ class ClusterSubspace(MSONable):
 
         Removes orbits from cluster spaces. It is helpful to print a
         ClusterSubspace or ClusterExpansion to obtain orbit ids. After removing
-        orbits, orbit id and orbit bit id are re-assigned.
+        orbits, orbit ID's and orbit bit ID's are re-assigned.
 
         This is useful to prune a ClusterExpansion by removing orbits with
         small associated coefficients or ECI. Note that this will remove a full
         orbit, which for the case of sites with only two species is the same as
         removing a single correlation vector element (only one ECI). For cases
-        with sites having more than 2 species allowed per site there are more
-        than one orbit functions (for all the possible bit orderings) and
-        removing an orbit will remove more than one element in the correlation
-        vector.
+        with sites having more than 2 species allowed per site there is more
+        than one orbit functions (for all the possible bit orderings or function-
+        labeled orbit configurations) and removing an orbit will remove more than
+        one element in the correlation vector.
 
         Args:
             orbit_ids (list):
@@ -826,12 +826,13 @@ class ClusterSubspace(MSONable):
         self._supercell_orb_inds = {}
 
     def remove_orbit_bit_combos(self, bit_ids):
-        """Remove orbit bit combos by their ids.
+        """Remove orbit bit combos by their ID's.
 
-        Removes a specific bit combo from an orbit. This allows more granular
+        Removes a specific bit combo (or function-labeled orbit configuration)
+        from an orbit by their ID's. This allows more granular
         removal of terms involved in fitting/evaluating a cluster expansion.
-        Similar to remove_orbits this is useful to prune a cluster expansion
-        and actually allows to remove a single term (ie one with small
+        Similar to remove_orbits, this is useful to prune a cluster expansion
+        and actually allows the removal of a single term (i.e. one with small
         associated coefficient/ECI).
 
         This procedure is perfectly well posed mathematically. The resultant
@@ -881,7 +882,7 @@ class ClusterSubspace(MSONable):
 
         Args:
             supercell (Structure):
-                Supercell of prim structure with same size as other structure.
+                supercell of prim structure with same size as other structure.
             structure (Structure):
                 Structure to obtain site mappings to supercell of prim
         Returns:
@@ -929,12 +930,12 @@ class ClusterSubspace(MSONable):
         """Get the bit combo ids of all sub correlation functions.
 
         A sub correlation function of a given correlation function means that
-        the sub correlation fucntion is a factor of the correlation function
+        the sub correlation function is a factor of the correlation function
         (with the additional requirement of acting over the sites in sub
         clusters of the clusters over which the given corr function acts on).
 
-        In other works think of it an orbit of function labeled subclusters
-        of a given orbit of function labeled clusters...a mouthful...
+        In other words, think of it as an orbit of function-labeled subclusters
+        of a given orbit of function-labeled clusters...a mouthful...
 
         Args:
             corr_id (int):
@@ -1384,19 +1385,18 @@ class PottsSubspace(ClusterSubspace):
     extension of the q-state Potts Model (hence the name).
 
     The orbit functions in a PottsSubspace represent the concentrations of
-    decorations of clusters in the given orbit. Similar to a cluster subspace
+    decorations of clusters in the given orbit. Similar to a ClusterSubspace
     with site indicator basis functions. But in contrast, the Potts subspace
     includes the concentration of all possible decorations (minus 1).
 
     Although quite similar to a ClusterSubspace, there is no mathematical
     formalism guaranteeing that the orbit basis functions generated in a
-    PottsSubspace are a linear independent set spanning configuration space,
-    actually if all orbits up to any size (or infinite size) the corresponding
-    orbit function set is an overcomplete family.
+    PottsSubspace are a linear independent set spanning configuration space.
+    Actually if all orbits up to any size (or infinite size) are included,
+    the corresponding orbit function set is an overcomplete family.
 
     A PottsSubspace can be created directly with a ClusterSubspace object
-    by directly using the constructor and providing the approprately
-    constructed orbits....
+    by using the constructor and providing the appropriately constructed orbits,
     but that is a bit more painful that just using the class method here.
     """
 
@@ -1416,7 +1416,7 @@ class PottsSubspace(ClusterSubspace):
         You rarely will need to create a ClusterSubspace using the main
         constructor.
         Look at the class method :code:`from_cutoffs` for the "better" way to
-        do instantiate a ClusterSubspace.
+        instantiate a ClusterSubspace.
 
         Args:
             structure (Structure):
@@ -1431,17 +1431,17 @@ class PottsSubspace(ClusterSubspace):
                 Dictionary with size (number of sites) as keys and list of
                 Orbits as values.
             without_last_cluster (bool): optional
-                Wether last cluster labeling is removed from each orbit.
+                whether last cluster labeling is removed from each orbit.
             supercell_matcher (StructureMatcher): (optional)
-                A StructureMatcher class to be used to find supercell matrices
+                StructureMatcher used to find supercell matrices
                 relating the prim structure to other structures. If you pass
-                this directly you should know how to set the matcher up, other
-                wise matching your relaxed structures can fail, alot.
+                this directly you should know how to set the matcher up,
+                otherwise matching your relaxed structures can fail, alot.
             site_matcher (StructureMatcher): (optional)
-                A StructureMatcher class to be used to find site mappings
+                StructureMatcher used to find site mappings
                 relating the sites of a given structure to an appropriate
                 supercell of the prim structure . If you pass this directly you
-                should know how to set the matcher up other wise matching your
+                should know how to set the matcher up, otherwise matching your
                 relaxed structures can fail, alot.
             matcher_kwargs:
                 ltol, stol, angle_tol, supercell_size: parameters to pass
@@ -1480,12 +1480,9 @@ class PottsSubspace(ClusterSubspace):
         orbit is the maximum distance between any two sites of a cluster of
         that orbit.
 
-        The diameter of a cluster is the maximum distance between any two
-        sites in the cluster.
-
         Args:
            structure (Structure):
-               Disordered structure to build a cluster expansion for.
+               disordered structure to build a cluster expansion for.
                Typically the primitive cell
            cutoffs (dict):
                dict of {cluster_size: diameter cutoff}. Cutoffs should be
@@ -1494,25 +1491,25 @@ class PottsSubspace(ClusterSubspace):
                included, with the exception below.
                To obtain a subspace with only an empty and singlet terms use
                an empty dict {}, or {1: 1}. Adding a cutoff term for point
-               terms, ie {1: None} is useful to exclude point terms, any other
+               terms, i.e. {1: None} is useful to exclude point terms, any other
                value for the cutoff will simply be ignored.
            remove_last_cluster (bool): optional
-               If true will remove the last cluster labeling (decoration)
+               if True, will remove the last cluster labeling (decoration)
                from each orbit. Since sum of corr for all labelings = 1,
                removing the last is similar to working in concentration space.
            supercell_matcher (StructureMatcher): (optional)
-               A StructureMatcher class to be used to find supercell matrices
+               StructureMatcher used to find supercell matrices
                relating the prim structure to other structures. If you pass
-               this directly you should know how to set the matcher up other
-               wise matching your relaxed structures will fail, alot.
+               this directly you should know how to set the matcher up,
+               otherwise matching your relaxed structures will fail, alot.
            site_matcher (StructureMatcher): (optional)
-               A StructureMatcher class to be used to find site mappings
+               StructureMatcher used to find site mappings
                relating the sites of a given structure to an appropriate
                supercell of the prim structure . If you pass this directly you
-               should know how to set the matcher up other wise matching your
+               should know how to set the matcher up, otherwise matching your
                relaxed structures will fail, alot.
            matcher_kwargs:
-               ltol, stol, angle_tol, supercell_size. Parameters to pass
+               ltol, stol, angle_tol, supercell_size: parameters to pass
                through to the StructureMatchers. Structures that don't match
                to the primitive cell under these tolerances won't be included
                in the expansion. Easiest option for supercell_size is usually
@@ -1571,7 +1568,7 @@ class PottsSubspace(ClusterSubspace):
 
         Args:
             orbit_id (int):
-                if of orbit
+                ID of orbit
 
         Returns:
             list of list: list of lists of symmetrically equivalent

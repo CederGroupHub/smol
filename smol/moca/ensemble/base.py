@@ -1,4 +1,4 @@
-"""Abstract Base class for Monte Carlo Ensembles."""
+"""Abstract base class for Monte Carlo Ensembles."""
 
 __author__ = "Luis Barroso-Luque"
 
@@ -12,18 +12,18 @@ from smol.moca.processor import (
 
 
 class Ensemble(ABC):
-    """Abstract Base Class for Monte Carlo Ensembles.
+    """Abstract base class for Monte Carlo Ensembles.
 
     Attributes:
         num_energy_coefs (int):
             Number of coefficients in the natural parameters array that
             correspond to energy only.
         thermo_boundaries (dict):
-            dictionary with corresponding thermodynamic boundaries, i.e.
+            Dictionary with corresponding thermodynamic boundaries, i.e.
             chemical potentials or fugacity fractions. This is kept only for
             descriptive purposes.
         valid_mcmc_steps (list of str):
-            list of the valid MCMC steps that can be used to sample the
+            List of the valid MCMC steps that can be used to sample the
             ensemble in MCMC.
     """
 
@@ -34,14 +34,14 @@ class Ensemble(ABC):
 
         Args:
             processor (Processor):
-                A processor that can compute the change in a property given
+                a processor that can compute the change in property given
                 a set of flips.
             sublattices (list of Sublattice): optional
-                list of Lattice objects representing sites in the processor
+                list of Sublattice objects representing sites in the processor
                 supercell with same site spaces.
             inactive_sublattices (list of InactiveSublattice): optional
-                list of Lattice objects representing sites in the processor
-                supercell with same site spaces.
+                list of InactiveSublattice objects representing sites in the
+                processor supercell with same site spaces.
         """
         if sublattices is None:
             sublattices = processor.get_sublattices()
@@ -121,7 +121,7 @@ class Ensemble(ABC):
     #  all sites are included.
     @property
     def sublattices(self):
-        """Get list of sublattices included in ensemble."""
+        """Get list of Sublattices included in ensemble."""
         return self._sublattices
 
     @property
@@ -142,7 +142,7 @@ class Ensemble(ABC):
     def natural_parameters(self):
         """Get the vector of natural parameters.
 
-        The natural parameters correspond to the fit coeficients of the
+        The natural parameters correspond to the fit coefficients of the
         underlying processor plus any additional terms involved in the Legendre
         transformation corresponding to the ensemble.
         """
@@ -150,14 +150,14 @@ class Ensemble(ABC):
 
     @abstractmethod
     def compute_feature_vector(self, occupancy):
-        """Compute the feature vector for a give occupancy.
+        """Compute the feature vector for a given occupancy.
 
-        The feature vector is the necessary features required to compute
-        the exponent determining in the relative probability for the given
+        The feature vector includes the necessary features required to compute
+        the exponent determining the relative probability for the given
         occupancy (i.e. a generalized enthalpy). The feature vector for
         ensembles represents the sufficient statistics.
 
-        For a cluster expansion the feature vector is the
+        For a cluster expansion, the feature vector is the
         correlation vector x system size
 
         Args:
@@ -177,7 +177,7 @@ class Ensemble(ABC):
             occupancy (ndarray):
                 encoded occupancy string.
             step (list of tuple):
-                A sequence of flips given my the MCUsher.propose_step
+                a sequence of flips given by MCUsher.propose_step
 
         Returns:
             ndarray: difference in feature vector
