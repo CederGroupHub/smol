@@ -1,22 +1,26 @@
-from copy import deepcopy
 from collections import defaultdict
+from copy import deepcopy
 
-import pytest
 import numpy as np
 import numpy.testing as npt
 
 from smol.cofe.extern import EwaldTerm
-from smol.cofe.wrangling import (max_ewald_energy_indices, unique_corr_vector_indices,
-                                 weights_energy_above_composition,
-                                 weights_energy_above_hull)
-from smol.cofe.wrangling.tools import (_energies_above_hull,
-                                       _energies_above_composition)
+from smol.cofe.wrangling import (
+    max_ewald_energy_indices,
+    unique_corr_vector_indices,
+    weights_energy_above_composition,
+    weights_energy_above_hull,
+)
+from smol.cofe.wrangling.tools import _energies_above_composition
 
 
 def test_unique_corr_indices(structure_wrangler):
-    indices, duplicates = unique_corr_vector_indices(structure_wrangler, "energy",
-                                                     return_compliment=True)
-    assert set(indices) | set(duplicates) == {i for i in range(structure_wrangler.num_structures)}
+    indices, duplicates = unique_corr_vector_indices(
+        structure_wrangler, "energy", return_compliment=True
+    )
+    assert set(indices) | set(duplicates) == {
+        i for i in range(structure_wrangler.num_structures)
+    }
 
     feature_matrix = structure_wrangler.feature_matrix
     energies = structure_wrangler.get_property_vector("energy")
@@ -55,12 +59,17 @@ def test_ewald_energy_indices(structure_wrangler):
                 ewald_energy.append(term)
         return ewald_energy
 
-    indices, compliments = max_ewald_energy_indices(structure_wrangler,
-                                                    e_tol, return_compliment=True)
-    assert set(indices) | set(compliments) == {i for i in range(structure_wrangler.num_structures)}
+    indices, compliments = max_ewald_energy_indices(
+        structure_wrangler, e_tol, return_compliment=True
+    )
+    assert set(indices) | set(compliments) == {
+        i for i in range(structure_wrangler.num_structures)
+    }
 
-    comps = [item["structure"].composition.reduced_composition
-             for item in structure_wrangler.data_items]
+    comps = [
+        item["structure"].composition.reduced_composition
+        for item in structure_wrangler.data_items
+    ]
     energies = np.array(get_ewald_energies(structure_wrangler))
     comp_min_energies = defaultdict(lambda: np.inf)
     for i in indices:
@@ -72,9 +81,11 @@ def test_ewald_energy_indices(structure_wrangler):
 
 
 def test_weights_above_composition(structure_wrangler):
-    weights = weights_energy_above_composition(structure_wrangler.structures,
-                                               structure_wrangler.get_property_vector('energy', False),
-                                               temperature=1000)
+    weights = weights_energy_above_composition(
+        structure_wrangler.structures,
+        structure_wrangler.get_property_vector("energy", False),
+        temperature=1000,
+    )
     is_comp_min = np.isclose(weights, 1, atol=1e-8)
     comps = [s.composition.reduced_composition for s in structure_wrangler.structures]
     comps_min = [c for is_min, c in zip(is_comp_min, comps) if is_min]
@@ -91,8 +102,9 @@ def test_weights_above_composition(structure_wrangler):
     # assert np.allclose(expected, structure_wrangler.get_weights('comp'))
     energies = structure_wrangler.get_property_vector("energy", False)
     sizes = np.array(list(map(len, structure_wrangler.structures)))
-    e_above = _energies_above_composition(structure_wrangler.structures,
-                                          energies) * sizes
+    e_above = (
+        _energies_above_composition(structure_wrangler.structures, energies) * sizes
+    )
     comp_min_energies = defaultdict(lambda: np.inf)
     for i in range(len(energies)):
         if energies[i] < comp_min_energies[comps[i]]:
@@ -102,21 +114,25 @@ def test_weights_above_composition(structure_wrangler):
 
 
 def test_weights_above_hull(structure_wrangler):
-    weights = weights_energy_above_hull(structure_wrangler.structures,
-                                        structure_wrangler.get_property_vector('energy', False),
-                                        structure_wrangler.cluster_subspace.structure,
-                                        temperature=1000)
+    weights = weights_energy_above_hull(
+        structure_wrangler.structures,
+        structure_wrangler.get_property_vector("energy", False),
+        structure_wrangler.cluster_subspace.structure,
+        temperature=1000,
+    )
     # expected = np.array([0.85637358, 0.98816678, 1., 0.56916328, 0.96127103,
     #    0.89284844, 0.84502889, 0.91060546, 0.40490513, 0.82484222,
     #    0.81578984, 1., 0.89615121, 0.92893004, 0.81650693,
     #    0.58819251, 0.91755548, 0.89130433, 0.89315862, 0.81256235,
     #    0.9673864 , 0.91576647, 1., 0.9414506 , 1])
     # self.assertTrue(np.allclose(expected, structure_wrangler.get_weights('hull')))
-    weights_c = weights_energy_above_composition(structure_wrangler.structures,
-                                                 structure_wrangler.get_property_vector('energy', False),
-                                                 temperature=1000)
-    energies = structure_wrangler.get_property_vector("energy", False)
-    sizes = np.array(list(map(len, structure_wrangler.structures)))
+    weights_c = weights_energy_above_composition(
+        structure_wrangler.structures,
+        structure_wrangler.get_property_vector("energy", False),
+        temperature=1000,
+    )
+    structure_wrangler.get_property_vector("energy", False)
+    np.array(list(map(len, structure_wrangler.structures)))
 
     # Weak tests on the hull generation:
     # 1, Hull must always be no higher than min comp energies

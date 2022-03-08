@@ -5,10 +5,12 @@ from itertools import combinations
 import numpy as np
 import numpy.testing as npt
 import pytest
+from pymatgen.analysis.structure_matcher import (
+    OrderDisorderElementComparator,
+    StructureMatcher,
+)
 from pymatgen.core import Species, Structure
 from pymatgen.util.coord import is_coord_subset_pbc
-from pymatgen.analysis.structure_matcher import (StructureMatcher,
-                                                 OrderDisorderElementComparator)
 
 from smol.cofe import ClusterSubspace, PottsSubspace
 from smol.cofe.space.clusterspace import get_complete_mapping, invert_mapping
@@ -296,22 +298,25 @@ def test_periodicity_and_symmetry(cluster_subspace, supercell_matrix):
     corr = cluster_subspace.corr_from_structure(structure)
 
     larger_scmatrix = supercell_matrix @ np.eye(3) * 2
-    npt.assert_allclose(corr, cluster_subspace.corr_from_structure(larger_structure,
-                                                                   scmatrix=larger_scmatrix))
+    npt.assert_allclose(
+        corr,
+        cluster_subspace.corr_from_structure(
+            larger_structure, scmatrix=larger_scmatrix
+        ),
+    )
     # Sometimes when supercell_matrix is very skewed, you should provide it.
     # Structure matcher is not good at finding very off-diagonal sc matrices.
 
     cm = OrderDisorderElementComparator()
-    sm = StructureMatcher(allow_subset=True,
-                          comparator=cm,
-                          scale=True)
+    sm = StructureMatcher(allow_subset=True, comparator=cm, scale=True)
 
     def apply_operation(op, s):
         """Apply on fractional coordinates only."""
-        return Structure(s.lattice, [st.species for st in s],
-                         op.operate_multi(s.frac_coords))
+        return Structure(
+            s.lattice, [st.species for st in s], op.operate_multi(s.frac_coords)
+        )
 
-    for symop in cluster_subspace.symops[:]:
+    for symop in cluster_subspace.symops:
         # Be very careful with symop formats, whether they are fractional space
         # ops or not. By default, SpaceGroupAnalyzer gives fractional format,
         # while PointGroupAnalyzer gives cartesian format!

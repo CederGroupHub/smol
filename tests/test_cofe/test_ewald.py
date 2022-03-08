@@ -1,15 +1,12 @@
-from tests.utils import (assert_msonable, gen_random_occupancy,
-                         gen_random_neutral_occupancy)
-
-import pytest
 import numpy as np
 import numpy.testing as npt
-from pymatgen.core import PeriodicSite, Structure
 from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.structure_matcher import StructureMatcher
+from pymatgen.core import PeriodicSite, Structure
 
 from smol.cofe.extern import EwaldTerm
-from smol.cofe.space.domain import get_allowed_species, Vacancy
+from smol.cofe.space.domain import Vacancy, get_allowed_species
+from tests.utils import assert_msonable, gen_random_neutral_occupancy
 
 
 def test_get_ewald_structure(ce_processor):
@@ -37,7 +34,7 @@ def test_get_ewald_structure(ce_processor):
             n_sp = len(space) - 1
         else:
             n_sp = len(space)
-        npt.assert_allclose(inds[: n_sp], np.arange(start, start + n_sp))
+        npt.assert_allclose(inds[:n_sp], np.arange(start, start + n_sp))
         npt.assert_allclose(inds[n_sp:], -1)
         start += n_sp
 
@@ -84,6 +81,7 @@ def test_val_from_occupancy(ce_processor):
                 decimal=7,
             )
     assert n_success > 0
+
 
 def test_msonable():
     ew = EwaldTerm(eta=0.15, real_space_cut=0.5, use_term="point")
