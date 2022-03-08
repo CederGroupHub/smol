@@ -99,9 +99,12 @@ sampling of statistical mechanical ensembles represented by a cluster expansion
 Hamiltonian (there is also support to run MCMC with simple pair interaction
 models, such as Ewald electrostatic interactions). MCMC sampling is done for a
 specific supercell size. In theory the larger the supercell the better the
-results, however in practice there are many other nuances for picking the right
-supercell size that are beyond the scope of this documentation. Refer to the
-following references for appropriate expositions of the method [].
+results, but in practice there are many other nuances for picking the right
+supercell size that are beyond the scope of this documentation. Our general
+suggestion is to use the minimum supercell size that ensures convergence of
+the property of interest at equilibrium. Note that for extensive properties,
+the property of interest is usually the normalized property (e.g. energy per
+prim).
 
 The core classes are:
 
