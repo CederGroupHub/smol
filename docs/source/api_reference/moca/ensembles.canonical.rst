@@ -6,4 +6,3 @@ Canonical Ensemble
    :members:
    :undoc-members:
    :show-inheritance:
-

@@ -6,4 +6,3 @@ Global constants
    :members:
    :undoc-members:
    :show-inheritance:
-

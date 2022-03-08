@@ -6,4 +6,3 @@ MCUsher
    :members:
    :undoc-members:
    :show-inheritance:
-

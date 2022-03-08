@@ -8,4 +8,3 @@ Structure Wrangler
    :members:
    :undoc-members:
    :show-inheritance:
-

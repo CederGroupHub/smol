@@ -15,4 +15,3 @@ by structure/property/energy data in :code:`select.py`.
    wrangling.sw
    wrangling.tools
    wrangling.select
-

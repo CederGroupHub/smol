@@ -59,11 +59,6 @@ class ClusterSubspace(MSONable):
     compute correlation vectors (i.e. evaluate the orbit functions for a given
     structure).
 
-    Holds a structure, its expansion structure, and a list of Orbits.
-    This class defines the cluster subspace over which to fit a cluster
-    expansion: This sets the orbits (groups of clusters) and the site basis
-    functions that are to be considered in the fit.
-
     You probably want to generate from :code:`ClusterSubspace.from_cutoffs`,
     which will auto-generate the orbits from diameter cutoffs.
 
@@ -407,6 +402,9 @@ class ClusterSubspace(MSONable):
     def orbit_hierarchy(self, level=1, min_size=1):
         """Get orbit hierarchy by IDs.
 
+        The orbit hierarchy represents in inclusion relationships between orbits and
+        their suborbits.
+
         The empty/constant cluster index 0 is technically a suborbit of all
         orbits, but is not added to the hierarchy entries.
 
@@ -436,7 +434,10 @@ class ClusterSubspace(MSONable):
     def function_hierarchy(self, level=1, min_size=2, invert=False):
         """Get the correlation function hierarchy.
 
-        The function hierarchy is t
+        The function hierarchy is the relationship between specific correlation
+        functions and "sub" correlation functions (i.e. a correlation function is
+        a "sub" correlation factor or included in higher degree correlation function if
+        it is a factor of a higher degree correlation function.
 
         Args:
             level (int):
@@ -448,7 +449,7 @@ class ClusterSubspace(MSONable):
 
         Returns:
             list of list: each element of the inner lists is the bit id for
-            all corr functions corresponding to the corr function at the given
+            all correlation functions corresponding to the corr function at the given
             outer list index.
         """
         hierarchy = [
@@ -499,7 +500,7 @@ class ClusterSubspace(MSONable):
         ]
 
     def function_inds_from_cutoffs(self, upper, lower=0):
-        """Get indices of corr functions by cluster cutoffs.
+        """Get indices of correlation functions by cluster cutoffs.
 
         Args:
             upper (float or dict):
@@ -516,7 +517,7 @@ class ClusterSubspace(MSONable):
                 i.e. {2: cutoff_pairs, 3: cutoff_trips, ...}
 
         Returns:
-            list: list of corr function indices for clusters within cutoffs
+            list: list of correlation function indices for clusters within cutoffs
         """
         orbits = self.orbits_from_cutoffs(upper, lower)
         inds = []
@@ -837,11 +838,12 @@ class ClusterSubspace(MSONable):
 
         This procedure is perfectly well posed mathematically. The resultant
         CE is still a valid function of configurations with all the necessary
-        symmetries from the underlying structure. Chemically however it is not
-        obvious what it means to remove certain combinations of an n-body
-        interaction term, and not the whole term itself. It would be justified
+        symmetries from the underlying structure. It is also practically justified
         if we allow "in group" orbit eci sparsity...which everyone in the field
-        does anyway...
+        does anyway. In terms of physical/chemical interpretation it is not
+        obvious what it means to remove certain combinations of an n-body
+        interaction term, and not the whole term itself...so tread lighlty with your
+        model interpretations.
 
         Args:
             bit_ids (list):
@@ -1376,24 +1378,24 @@ def get_complete_mapping(mapping):
 
 
 class PottsSubspace(ClusterSubspace):
-    """PottsSubspace represents a subspace of functions using only indicators.
+    """PottsSubspace represents a subspace of functions using only indicator functions.
 
-    A PottsSubspace is a related model to a ClusterSubspace. The only
-    difference is that the single site functions for any orbit are only made
-    up of indicator functions (and there is no constant function). As such it
-    is more closely related to a generalized Ising model or better yet an
-    extension of the q-state Potts Model (hence the name).
+    A PottsSubspace is a related model to a standard ClusterSubspace used to build
+    a standard cluster expansion. The only difference is that the single site functions
+    for any orbit are only made up of indicator functions (and there is no constant
+    function). As such it is more closely related to a generalized Ising model or better
+    yet an extension of the q-state Potts Model (hence the name).
 
-    The orbit functions in a PottsSubspace represent the concentrations of
-    decorations of clusters in the given orbit. Similar to a ClusterSubspace
-    with site indicator basis functions. But in contrast, the Potts subspace
-    includes the concentration of all possible decorations (minus 1).
+    The orbit functions in a PottsSubspace represent the concentrations of all possible
+    decorations (species occupancies) of clusters in the given orbit. Similar to a
+    ClusterSubspace with site indicator basis functions. But in contrast, the Potts
+    subspace includes the concentration of all possible decorations (minus 1).
 
     Although quite similar to a ClusterSubspace, there is no mathematical
     formalism guaranteeing that the orbit basis functions generated in a
     PottsSubspace are a linear independent set spanning configuration space.
     Actually if all orbits up to any size (or infinite size) are included,
-    the corresponding orbit function set is an overcomplete family.
+    the corresponding orbit function set is an overcomplete/ highly redundant.
 
     A PottsSubspace can be created directly with a ClusterSubspace object
     by using the constructor and providing the appropriately constructed orbits,

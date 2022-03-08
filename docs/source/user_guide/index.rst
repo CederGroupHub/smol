@@ -2,17 +2,23 @@
 User Guide
 ==========
 
-**smol** is organized into two main submodules:
+**smol** implements functionality and extensions of CE-MC methodology. It includes tools
+to define, generate and fit a cluster expansion (or more generally an applied lattice
+model). Additionally, it includes tools to run Monte Carlo simulations to sample
+thermodynamic properties based on a fitted lattice model. The package is organized in
+two main submodules:
 
-- :ref:`smol.cofe ug` (Cluster Orbit Fourier Expansion) includes classes and
+- :ref:`smol.cofe ug` (Cluster Orbit Function Expansions) includes classes and
   functions to define, train, and test cluster expansions.
 - :ref:`smol.moca ug` (Monte Carlo) includes classes and functions to run
   Markov Chain Monte Carlo (MCMC) sampling based on a cluster expansion
   Hamiltonian (and a few other Hamiltonian models).
 
-Below is the documentation for the core classes in each submodule.
-You can also refer to the :ref:`api ref` for documentation of all classes
-and functions in the package.
+Below is a general description of the core classes in each submodule, to help understand
+the design, usage and capabilities of **smol**. You can also refer to the :ref:`api ref`
+for full documentation of all classes and functions in the package.
+
+----------------------------------------------------------------------------------------
 
 .. _smol.cofe ug:
 
@@ -51,8 +57,18 @@ method :meth:`from_cutoffs` to specify the cutoffs of different size
 orbits (pairs, triplets, quadruplets, etc.) In addition to specifying the
 type of site basis functions and their orthonormality,
 :class:`ClusterSubspace` also has capabilities for matching fitting structures
-and determining site mappings to compute correlation vectors. Full
-documentation of the class is available here: :ref:`cluster subspace`.
+and determining site mappings to compute correlation vectors. A variety of options
+for commonly used site basis sets are readily available, including:
+
+* Polynomial [`Sanchez et al., 1993 <https://doi.org/10.1103/PhysRevB.48.14013>`_]
+* Sinusoid [`van de Walle et al., 2009 <https://doi.org/10.1016/j.calphad.2008.12.005>`_]
+* Species indicator (aka lattice gas) [`Zhang et al. 2015 <https://doi.org/10.1007/s11669-015-0427-x>`_]
+
+Additionally, the subclass :class:`PottsSubspace` implements the terms to build a
+redundant (frame) expansion using site indicator functions
+[`Barroso-Luque et al., 2021 <https://doi.org/10.1103/PhysRevB.104.224203>`_]
+
+Full documentation of the class is available here, :ref:`cluster space`.
 
 .. _structure wrangler ug:
 
@@ -67,8 +83,9 @@ Specifically, based on a given :class:`ClusterSubspace`,
 :class:`StructureWrangler` can to compute correlation vectors and convert
 the input structure data into a feature matrix for fitting to the property
 vector. Additional methods are available to help process the input data,
-including methods for checking, preparing, and filtering the data. Full
-documentation of the class is available here: :ref:`structure wrangler`.
+including methods for checking, preparing, and filtering the data.
+
+Full documentation of the class is available here: :ref:`structure wrangler`.
 
 .. _cluster expansion ug:
 
@@ -79,14 +96,22 @@ expansion for predicting CE properties of new structures.
 Based on the feature matrix from the :class:`StructureWrangler`, one can fit
 fit the data to the properties using any fitting method they like (e.g.,
 linear regression, regularized regression, etc). :code:`smol.cofe`
-contains wrapper class :class:`RegressionData` for regression methods from
-`sklearn <https://scikit-learn.org/stable/>`_. The fitted coefficients and
+contains wrapper class :class:`RegressionData` to save important information from
+the regression method used (optionally including the feature matrix, target vector,
+regression class, and hyperparameters). Specifically a convenience constructure to
+extract information from regression methods in
+`sklearn <https://scikit-learn.org/stable/>`_ or those following their API is included.
+The fitted coefficients and
+
 :class:`ClusterSubspace` objects are then given to :class:`ClusterExpansion`.
 The :class:`ClusterExpansion` object can be used to predict the properties
-of new structures but more importantly can be given to the :ref:`smol.moca ug`
-classes for MC sampling. Full documentation of the class is available here:
-:ref:`cluster expansion`.
+of new structures but more importantly can be used along with the :ref:`smol.moca ug`
+classes for MC sampling.
 
+Full documentation of the class is available here: :ref:`cluster expansion`.
+
+
+----------------------------------------------------------------------------------------
 
 .. _smol.moca ug:
 
@@ -108,35 +133,19 @@ prim).
 
 The core classes are:
 
+- :ref:`processors ug`
+
+  - :class:`ClusterExpansionProcessor`
+  - :class:`EwaldProcessor`
+  - :class:`CompositeProcessor`
+
 - :ref:`ensembles ug`
 
   - :class:`CanonicalEnsemle`
   - :class:`SemiGrandEnsemble`
 
-- :ref:`processors ug`
-
-  - :class:`CEProcessor`
-  - :class:`EwaldProcessor`
-  - :class:`CompositeProcessor`
-
 - :ref:`sampler ug`
 - :ref:`samplecontainer ug`
-
-.. _ensembles ug:
-
-Ensembles
----------
-:class:`Ensemble` classes represent the specific statistical mechanics ensemble
-by defining the relevant thermodynamic boundary conditions in order to compute
-the appropriate ensemble probability ratios. For example,
-:class:`CanonicalEnsemble` is used for systems at constant temperature and
-constant composition, while :class:`SemiGrandEnsemble` is used for systems at
-constant temperature and constant chemical potential. Ensembles also hold
-information of the underlying set of :class:`Sublattice` for the configuration
-space to be sampled. Note that as implemented, an ensemble applies to any
-temperature, but the specific temperature to generate samples at is set in a
-:class:`Sampler`. Full documentation of the class and its subclasses are
-available here: :ref:`ensembles`.
 
 .. _processors ug:
 
@@ -152,9 +161,27 @@ to simply create an ensemble using the :meth:`from_cluster_expansion` which
 will automatically instantiate the appropriate processor. Then, accessing the
 processor can be done simply by the corresponding attribute (i.e.
 :code:`ensemble.processor`). Many methods and attributes of a processor are
-very useful for setting up and analysing MCMC sampling runs. Full
-documentation of the class and its subclasses available here:
-:ref:`processors`.
+very useful for setting up and analysing MCMC sampling runs. For more advanced or
+specific use cases, users will need to instantiate the appropriate processor directly.
+
+Full documentation of the class and its subclasses available here: :ref:`processors`.
+
+.. _ensembles ug:
+
+Ensembles
+---------
+:class:`Ensemble` classes represent the specific statistical mechanics ensemble
+by defining the relevant thermodynamic boundary conditions in order to compute
+the appropriate ensemble probability ratios. For example,
+:class:`CanonicalEnsemble` is used for systems at constant temperature and
+constant composition, while :class:`SemiGrandEnsemble` is used for systems at
+constant temperature and constant chemical potential. Ensembles also hold
+information of the underlying set of :class:`Sublattice` for the configuration
+space to be sampled. Note that as implemented, an ensemble applies to any
+temperature, but the specific temperature to generate samples at is set in kernel used
+when sampling using a :class:`Sampler`.
+
+Full documentation of the class and its subclasses are available here: :ref:`ensembles`.
 
 .. _sampler ug:
 
@@ -162,20 +189,25 @@ Sampler
 -------
 A :class:`Sampler` takes care of running MCMC sampling for a given ensemble.
 The easiest way to create a sampler (which suffices for most use cases) is to
-use the :meth:`from_ensemble` class method. For more advanced use cases and
-elaborate MCMC sampling more knowledge of the underlying classes (especially
+use the :meth:`from_ensemble` class method, which is sufficient for most cases using
+only a Metropolis algorithm and simple state transitions. For more advanced use cases
+and elaborate MCMC sampling more knowledge of the underlying classes (especially
 :class:`Metropolis` which applies the `Metropolis-Hastings algorithm
 <https://doi.org/10.1093/biomet/57.1.97>`_ and
-:class:`MCUsher` which proposes relevant flips) is necessary. Full
-documentation of the class is available here: :ref:`sampler`.
+:class:`MCUsher` which proposes relevant flips) is necessary.
+
+Full documentation of the class is available here: :ref:`sampler`.
 
 .. _samplecontainer ug:
 
 SampleContainer
 ---------------
 A :class:`SampleContainer` stores data from Monte Carlo sampling simulations,
-especially the occupancies and feature vectors. It also includes some minimal
-methods and properties useful to begin analysing the raw samples, including
-methods to obtain the mean/variance/minimum of energies, enthalpies, and
-composition. Full documentation of the class is available here:
-:ref:`sample container`.
+especially the occupancies and feature vectors. For lenghty MC simulations a
+:class:`SampleContainer` allows streaming directly to an
+`HDF5 <https://www.hdfgroup.org/solutions/hdf5/>`_ file, and so minimize
+computer memory requirements. It also includes some minimal methods and properties
+useful to begin analysing the raw samples, including methods to obtain the
+mean/variance/minimum of energies, enthalpies, and composition.
+
+Full documentation of the class is available here: :ref:`sample container`.

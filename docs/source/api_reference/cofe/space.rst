@@ -13,4 +13,3 @@ by the :class:`ClusterSubspace`.
    space.domain
    space.orbit
    space.constants
-

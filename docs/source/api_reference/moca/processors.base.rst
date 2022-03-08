@@ -6,4 +6,3 @@ Base Processor
    :members:
    :undoc-members:
    :show-inheritance:
-

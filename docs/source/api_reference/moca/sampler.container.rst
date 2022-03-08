@@ -16,4 +16,3 @@ minimum-energy occupancies, etc.
    :members:
    :undoc-members:
    :show-inheritance:
-

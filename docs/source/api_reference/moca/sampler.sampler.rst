@@ -17,4 +17,3 @@ two-site swapping depending on the ensemble.
    :members:
    :undoc-members:
    :show-inheritance:
-

@@ -1,3 +1,5 @@
+.. _cluster space:
+
 ==============
 Cluster Spaces
 ==============
@@ -9,8 +11,6 @@ information necessary for a cluster expansion. It contains the finite set
 of orbits and orbit basis functions to be included in the cluster expansion.
 The :class:`PottsSubspace` is an (experimental) class that is similar, but
 diverges from the CE mathematic formalism.
-
-.. _cluster subspace:
 
 ClusterSubspace
 ---------------

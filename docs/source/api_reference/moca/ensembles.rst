@@ -17,4 +17,3 @@ constant temperature and constant applied chemical potential
    ensembles.base
    ensembles.canonical
    ensembles.semigrand
-

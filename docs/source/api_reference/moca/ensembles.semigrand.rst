@@ -6,4 +6,3 @@ Semigrand Ensemble
    :members:
    :undoc-members:
    :show-inheritance:
-

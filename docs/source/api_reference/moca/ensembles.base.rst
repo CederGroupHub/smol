@@ -6,4 +6,3 @@ Base Ensemble
    :members:
    :undoc-members:
    :show-inheritance:
-

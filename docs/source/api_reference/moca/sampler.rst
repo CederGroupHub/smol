@@ -21,4 +21,3 @@ such as occupancy, feature vector, energy, enthalpy, etc.
    sampler.mcusher
    sampler.container
    sampler.bias
-

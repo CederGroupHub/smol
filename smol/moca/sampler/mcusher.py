@@ -99,7 +99,6 @@ class MCUsher(ABC):
 
     def set_aux_state(self, state, *args, **kwargs):
         """Set the auxiliary state from a checkpoint value."""
-        pass
 
     def get_random_sublattice(self):
         """Return a random sublattice based on given probabilities."""
