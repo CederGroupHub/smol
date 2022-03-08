@@ -27,7 +27,9 @@ def test_unique_corr_indices(structure_wrangler):
     feature_nodupe = feature_matrix[indices, :]
     # No duplicacy
     assert feature_nodupe.shape == np.unique(feature_nodupe, axis=0).shape
-    assert (feature_nodupe == np.unique(feature_nodupe, axis=0)).all(1).any()
+    feature_nodupe_sorted = sorted(feature_nodupe.tolist())
+    feature_unique_sorted = sorted(np.unique(feature_nodupe, axis=0).tolist())
+    npt.assert_allclose(feature_nodupe_sorted, feature_unique_sorted)
 
     for rid, row in zip(indices, feature_nodupe):
         dupe = np.all(np.isclose(feature_matrix, row), axis=1)

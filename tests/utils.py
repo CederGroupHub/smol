@@ -10,6 +10,7 @@ from itertools import chain
 import numpy as np
 from monty.json import MontyDecoder, MSONable
 from pymatgen.core import Composition, Element
+
 from smol.cofe.space.domain import Vacancy
 
 
@@ -60,6 +61,7 @@ def gen_random_neutral_occupancy(sublattices, inactive_sublattices, lam=10):
     Returns:
         ndarray: encoded occupancy
     """
+
     def get_charge(sp):
         if isinstance(sp, (Element, Vacancy)):
             return 0

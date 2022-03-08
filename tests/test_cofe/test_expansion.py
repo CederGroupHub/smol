@@ -56,13 +56,15 @@ def test_predict(cluster_expansion):
     scmatrix[1, 2] = 1
     N = np.abs(np.linalg.det(scmatrix))
     pool = [gen_random_structure(prim, scmatrix) for _ in range(100)]
-    feature_matrix = np.array([subspace.corr_from_structure(s,
-                                                            scmatrix=scmatrix,
-                                                            normalized=True)
-                               for s in pool])
+    feature_matrix = np.array(
+        [
+            subspace.corr_from_structure(s, scmatrix=scmatrix, normalized=True)
+            for s in pool
+        ]
+    )
 
     comps = [s.composition for s in pool]
-    all_species = list(set([b for c in comps for b in c.keys()]))
+    all_species = list({b for c in comps for b in c.keys()})
     mus = np.random.random(len(all_species))
 
     def get_energy(structure, species, chempots):
@@ -76,10 +78,9 @@ def test_predict(cluster_expansion):
     # Why don't we add a "scmatrix" option into ClusterExpansion.predict?
     # This will make it safer to structure skew, because pymatgen can't seem
     # to figure out highly skewed supercell matrix correctly.
-    energies_pred = np.array([expansion_new.predict(s,
-                                                    scmatrix=scmatrix,
-                                                    normalize=True)
-                              for s in pool])
+    energies_pred = np.array(
+        [expansion_new.predict(s, scmatrix=scmatrix, normalize=True) for s in pool]
+    )
     np.testing.assert_almost_equal(energies, energies_pred, decimal=6)
 
 

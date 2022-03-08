@@ -1,7 +1,6 @@
 import numpy as np
 import numpy.testing as npt
 import pytest
-
 from pymatgen.analysis.structure_matcher import StructureMatcher
 
 from smol.cofe.extern import EwaldTerm
@@ -12,8 +11,7 @@ from smol.moca.processor import (
     EwaldProcessor,
 )
 from smol.moca.processor.base import Processor
-from tests.utils import (assert_msonable, gen_random_occupancy,
-                         gen_random_structure)
+from tests.utils import assert_msonable, gen_random_occupancy, gen_random_structure
 
 RTOL = 0.0  # relative tolerance to check property change functions
 # absolute tolerance to check property change functions (eps is approx 2E-16)
@@ -115,8 +113,9 @@ def test_compute_property_change(composite_processor):
 def test_structure_occupancy_conversion(ce_processor):
     sm = StructureMatcher()
     for _ in range(10):
-        s_init = gen_random_structure(ce_processor.cluster_subspace.structure,
-                                      size=ce_processor.supercell_matrix)
+        s_init = gen_random_structure(
+            ce_processor.cluster_subspace.structure, size=ce_processor.supercell_matrix
+        )
         s_init = s_init.get_sorted_structure()
         occu_init = ce_processor.occupancy_from_structure(s_init)
 
