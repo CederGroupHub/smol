@@ -22,11 +22,14 @@ def test_unique_corr_indices(structure_wrangler):
     energies = structure_wrangler.get_property_vector("energy")
     feature_nodupe = feature_matrix[indices, :]
     # No duplicacy
-    npt.assert_array_equal(feature_nodupe, np.unique(feature_nodupe, axis=0))
+    feature_nodupe_sorted = sorted(feature_nodupe.tolist())
+    feature_unique_sorted = sorted(np.unique(feature_nodupe, axis=0).tolist())
+
+    npt.assert_array_equal(feature_nodupe_sorted, feature_unique_sorted)
 
     for rid, row in zip(indices, feature_nodupe):
         dupe = np.all(np.isclose(feature_matrix, row), axis=1)
-        npt.assert_equal(np.min(energies[dupe]), energies[rid])
+        assert np.min(energies[dupe]) == energies[rid]
 
 
 def test_ewald_energy_indices(structure_wrangler):
