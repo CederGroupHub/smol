@@ -26,7 +26,8 @@ def test_unique_corr_indices(structure_wrangler):
     energies = structure_wrangler.get_property_vector("energy")
     feature_nodupe = feature_matrix[indices, :]
     # No duplicacy
-    npt.assert_array_equal(feature_nodupe, np.unique(feature_nodupe, axis=0))
+    assert feature_nodupe.shape == np.unique(feature_nodupe, axis=0).shape
+    assert (feature_nodupe == np.unique(feature_nodupe, axis=0)).all(1).any()
 
     for rid, row in zip(indices, feature_nodupe):
         dupe = np.all(np.isclose(feature_matrix, row), axis=1)
