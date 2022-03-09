@@ -9,7 +9,7 @@ from smol.moca.sampler.mcusher import (Swapper, Flipper)
 from smol.moca.sampler.kernel import Metropolis
 from smol.moca.comp_space import CompSpace
 from smol.moca.ensemble.sublattice import get_all_sublattices
-from smol.moca.utils.math_utils import GCD_list
+from smol.moca.utils.math_utils_old import GCD_list
 
 from tests.utils import (gen_random_occupancy,
                          gen_random_neutral_occupancy)

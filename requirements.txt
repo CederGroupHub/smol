@@ -1,6 +1,8 @@
 numpy>=1.18.1
 monty>=3.0.2
 pymatgen>=2020.11.11
-polytope>=0.2.2
 scipy>=1.6.0
 sympy>=1.5.1
+polytope>=0.2.2
+cvxpy>=1.1.7
+cvxopt>=1.2.7

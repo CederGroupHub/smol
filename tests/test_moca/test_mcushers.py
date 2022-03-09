@@ -16,7 +16,7 @@ from smol.moca.comp_space import CompSpace
 from smol.moca.utils.occu_utils import (delta_ccoords_from_step,
                                         occu_to_species_stat,
                                         flip_weights_mask)
-from smol.moca.utils.math_utils import GCD_list
+from smol.moca.utils.math_utils_old import GCD_list
 from smol.moca.utils.occu_utils import *
 
 from tests.utils import gen_random_neutral_occupancy

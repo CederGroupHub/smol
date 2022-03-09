@@ -12,7 +12,7 @@ import numpy as np
 from monty.json import MSONable
 from smol.cofe.space.domain import SiteSpace
 
-
+#TODO: add partition capacity to sublattices.
 @dataclass
 class Sublattice(MSONable):
     """Sublattice class.

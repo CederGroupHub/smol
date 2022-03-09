@@ -24,8 +24,8 @@ from ..comp_space import (flip_vecs_to_flip_table, flip_table_to_flip_vecs,
 from ..utils.occu_utils import (occu_to_species_list, flip_weights_mask,
                                 occu_to_species_stat,
                                 delta_ucoords_from_step)
-from ..utils.math_utils import (choose_section_from_partition, GCD_list,
-                                combinatorial_number)
+from ..utils.math_utils_old import (choose_section_from_partition, GCD_list,
+                                    combinatorial_number)
 
 class MCUsher(ABC):
     """Abstract base class for MC usher classes."""

@@ -202,7 +202,7 @@ class ClusterSubspace(MSONable):
                 of the box
             use_concentration (bool):
                 If true the concentrations in the prim structure sites will be
-                used to orthormalize site bases. This gives gives a cluster
+                used to orthormalize site bases. This gives a cluster
                 subspace centered about the prim composition.
             supercell_matcher (StructureMatcher): optional
                 A StructureMatcher class to be used to find supercell matrices
@@ -398,8 +398,6 @@ class ClusterSubspace(MSONable):
     def function_hierarchy(self, level=1, min_size=2, invert=False):
         """Get the correlation function hierarchy.
 
-        The function hierarchy is t
-
         Args:
             level (int):
             min_size (int):
@@ -410,7 +408,7 @@ class ClusterSubspace(MSONable):
 
         Returns:
             list of list: each element of the inner lists is the bit id for
-            all corr functions corresponding to the corr function at the given
+            all sub corr functions corresponding to the corr function at the given
             outer list index.
         """
         hierarchy = [

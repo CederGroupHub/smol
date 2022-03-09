@@ -41,9 +41,9 @@ from monty.json import MSONable, MontyDecoder
 from pymatgen.core import Element, Composition
 from smol.cofe.space.domain import Vacancy
 
-from .utils.math_utils import (get_integer_basis, integerize_multiple,
-                               get_integer_base_solution,
-                               get_integer_grid)
+from .utils.math_utils_old import (get_integer_basis, integerize_multiple,
+                                   get_integer_base_solution,
+                                   get_integer_grid)
 
 
 NUMCONERROR = ValueError("Operation error, flipping not number \
