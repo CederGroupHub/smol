@@ -37,12 +37,14 @@ def gen_random_occupancy(sublattices, inactive_sublattices):
     Returns:
         ndarray: encoded occupancy
     """
-    num_sites = sum(len(sl.sites) for sl in chain(sublattices, inactive_sublattices))
+    num_sites = sum(
+        len(sl.frac_coords) for sl in chain(sublattices, inactive_sublattices)
+    )
     rand_occu = np.zeros(num_sites, dtype=int)
     for sublatt in sublattices:
         codes = range(len(sublatt.site_space))
-        rand_occu[sublatt.sites] = np.random.choice(
-            codes, size=len(sublatt.sites), replace=True
+        rand_occu[sublatt.frac_coords] = np.random.choice(
+            codes, size=len(sublatt.frac_coords), replace=True
         )
     return rand_occu
 

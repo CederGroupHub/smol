@@ -8,14 +8,14 @@ __author__ = "Luis Barroso-Luque, William Davidson Richard"
 
 import numpy as np
 from monty.json import MSONable
-from pymatgen.core import Lattice
+from pymatgen.core import Lattice, Site
+from pymatgen.core.structure import SiteCollection
 from pymatgen.util.coord import is_coord_subset
 
 from smol.cofe.space.constants import SITE_TOL
-from smol.utils import _repr
 
 
-class Cluster(MSONable):
+class Cluster(SiteCollection, MSONable):
     """An undecorated (no occupancies) cluster.
 
     Represented simply by a list of sites, its centroid, and the underlying
@@ -25,44 +25,52 @@ class Cluster(MSONable):
     ClusterSubspace to create orbits and clusters necessary for a CE.
 
     Attributes:
-        sites (list): list of fractional coordinates of each site.
+        frac_coords (list): list of fractional coordinates of each site.
         lattice (Lattice): underlying lattice of cluster.
         centroid (float): goemetric centroid of included sites.
         id (int): id of cluster.
             Used to identify the cluster in a given ClusterSubspace.
     """
 
-    def __init__(self, sites, lattice):
+    def __init__(self, site_spaces, frac_coords, lattice):
         """Initialize Cluster.
 
         Args:
-            sites (list):
-                list of frac coords for the sites
+            site_spaces (list of SiteSpace):
+                list of site spaces for the cluster
+            frac_coords (Sequence):
+                Sequence of frac coords for the site spaces
             lattice (Lattice):
                 pymatgen Lattice object
         """
-        sites = np.array(sites)
-        centroid = np.average(sites, axis=0)
+        frac_coords = np.array(frac_coords)
+        centroid = np.average(frac_coords, axis=0)
         shift = np.floor(centroid)
-        self.centroid = centroid - shift
-        self.sites = sites - shift
-        self.lattice = lattice
+        self._centroid = centroid - shift
+        self._frac_coords = frac_coords - shift
+        self._sites = tuple(
+            Site(site_space, coords)
+            for site_space, coords in zip(
+                site_spaces, lattice.get_cartesian_coords(frac_coords)
+            )
+        )
+        self._lattice = lattice
         self.id = None
 
-    @classmethod
-    def from_sites(cls, sites):
-        """Create a cluster from a list of pymatgen Sites."""
-        return cls([s.frac_coords for s in sites], sites[0].lattice)
+    @property
+    def centroid(self):
+        """Return the centroid of cluster."""
+        return self._centroid
 
-    @property  # TODO deprecate this
-    def size(self):
-        """Get number of sites in the cluster."""
-        return len(self.sites)
+    @property
+    def frac_coords(self):
+        """Return the fractional coordinates of cluster w.r.t the underlying lattice."""
+        return self._frac_coords
 
     @property
     def diameter(self):
         """Get maximum distance between 2 sites in cluster."""
-        coords = self.lattice.get_cartesian_coords(self.sites)
+        coords = self.lattice.get_cartesian_coords(self.frac_coords)
         all_d2 = np.sum((coords[None, :, :] - coords[:, None, :]) ** 2, axis=-1)
         return np.max(all_d2) ** 0.5
 
@@ -71,21 +79,56 @@ class Cluster(MSONable):
         """Get half the maximum distance between 2 sites in cluster."""
         return self.diameter / 2.0
 
+    @property
+    def lattice(self):
+        """Return the underlying lattice"""
+        return self._lattice
+
+    @property
+    def sites(self):
+        """Return the list of sites."""
+        return self._sites
+
+    def get_distance(self, i: int, j: int) -> float:
+        """Returns distance between sites at index i and j.
+
+        Args:
+            i: Index of first site
+            j: Index of second site
+        Returns:
+            Distance between sites at index i and index j.
+        """
+        return self[i].distance(self[j])
+
     def assign_ids(self, cluster_id):
         """Recursively assign ids to clusters after initialization."""
         self.id = cluster_id
         return cluster_id + 1
 
-    def __len__(self):
-        """Get size of a cluster. The number of sites."""
-        return len(self.sites)
+    def to(self, fmt: str = None, filename: str = None):
+        """
+        Generates well-known string representations of SiteCollections (e.g.,
+        molecules / structures). Should return a string type or write to a file.
+        """
+
+    @classmethod
+    def from_str(cls, input_string: str, fmt):
+        """
+        Reads in SiteCollection from a string.
+        """
+
+    @classmethod
+    def from_file(cls, filename: str):
+        """
+        Reads in SiteCollection from a filename.
+        """
 
     def __eq__(self, other):
         """Check equivalency of clusters considering symmetry."""
-        if self.sites.shape != other.sites.shape:
+        if self.frac_coords.shape != other.frac_coords.shape:
             return False
-        othersites = other.sites + np.round(self.centroid - other.centroid)
-        return is_coord_subset(self.sites, othersites, atol=SITE_TOL)
+        othersites = other.frac_coords + np.round(self.centroid - other.centroid)
+        return is_coord_subset(self.frac_coords, othersites, atol=SITE_TOL)
 
     def __neq__(self, other):
         """Non equivalency."""
@@ -93,8 +136,8 @@ class Cluster(MSONable):
 
     def __str__(self):
         """Pretty print a cluster."""
-        points = str(np.round(self.sites, 2))
-        points = points.replace("\n", " ").ljust(len(self.sites) * 21)
+        points = str(np.round(self.frac_coords, 2))
+        points = points.replace("\n", " ").ljust(len(self.frac_coords) * 21)
         centroid = str(np.round(self.centroid, 2))
         return (
             f"[Base Cluster] Radius: {self.radius:<5.3} "
@@ -102,14 +145,13 @@ class Cluster(MSONable):
         )
 
     def __repr__(self):
-        """Pretty representation."""
-        return _repr(
-            self,
-            c_id=self.id,
-            diameter=self.diameter,
-            centroid=self.centroid,
-            lattice=self.lattice,
-        )
+        outs = ["Cluster Summary"]
+        outs.append(f"Diameter: {self.diameter} Centroid {self.centroid}")
+        for s in self:
+            outs.append(
+                s.__repr__() + f" -> {self.lattice.get_fractional_coords(s.coords)}"
+            )
+        return "\n".join(outs)
 
     @classmethod
     def from_dict(cls, d):
@@ -126,6 +168,6 @@ class Cluster(MSONable):
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "lattice": self.lattice.as_dict(),
-            "sites": self.sites.tolist(),
+            "sites": self.frac_coords.tolist(),
         }
         return d

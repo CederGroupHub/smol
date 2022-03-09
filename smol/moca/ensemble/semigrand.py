@@ -186,7 +186,7 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         table = np.zeros((self.num_sites, num_cols))
         for sublatt in self.sublattices:
             ordered_pots = [chemical_potentials[sp] for sp in sublatt.site_space]
-            table[sublatt.sites, : len(ordered_pots)] = ordered_pots
+            table[sublatt.frac_coords, : len(ordered_pots)] = ordered_pots
         return table
 
     def as_dict(self):

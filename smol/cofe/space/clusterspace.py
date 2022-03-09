@@ -1132,11 +1132,13 @@ class ClusterSubspace(MSONable):
                     continue
                 for neighbor in neighbors:
                     if is_coord_subset(
-                        [neighbor.frac_coords], orbit.base_cluster.sites, atol=SITE_TOL
+                        [neighbor.frac_coords],
+                        orbit.base_cluster.frac_coords,
+                        atol=SITE_TOL,
                     ):
                         continue
                     new_sites = np.concatenate(
-                        [orbit.base_cluster.sites, [neighbor.frac_coords]]
+                        [orbit.base_cluster.frac_coords, [neighbor.frac_coords]]
                     )
                     new_orbit = Orbit(
                         new_sites,
@@ -1174,7 +1176,7 @@ class ClusterSubspace(MSONable):
         ts = lattice_points_in_supercell(scmatrix)
         orbit_indices = []
         for orbit in self.orbits:
-            prim_fcoords = np.array([c.sites for c in orbit.clusters])
+            prim_fcoords = np.array([c.frac_coords for c in orbit.clusters])
             fcoords = np.dot(prim_fcoords, prim_to_supercell)
             # tcoords contains all the coordinates of the symmetrically
             # equivalent clusters the indices are: [equivalent cluster

@@ -20,12 +20,6 @@ def cluster(structure):
     return cluster
 
 
-def test_from_sites(structure):
-    assert Cluster(structure.frac_coords, structure.lattice) == Cluster.from_sites(
-        structure.sites
-    )
-
-
 def test_size(cluster):
     assert len(cluster.sites) == len(cluster)
 

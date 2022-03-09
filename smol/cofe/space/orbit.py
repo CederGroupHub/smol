@@ -53,11 +53,11 @@ class Orbit(MSONable):
             underlying structure lattice.
     """
 
-    def __init__(self, sites, lattice, bits, site_bases, structure_symops):
+    def __init__(self, frac_coords, lattice, bits, site_bases, structure_symops):
         """Initialize an Orbit.
 
         Args:
-            sites (list or ndarray):
+            frac_coords (list or ndarray):
                 list of frac coords for the sites
             lattice (pymatgen.Lattice):
                 A lattice object for the given sites
@@ -74,14 +74,14 @@ class Orbit(MSONable):
             structure_symops (list of SymmOp):
                 list of symmetry operations for the base structure
         """
-        if len(sites) != len(bits):
+        if len(frac_coords) != len(bits):
             raise AttributeError(
-                f"Number of sites {len(sites)} must be equal to number of "
+                f"Number of sites {len(frac_coords)} must be equal to number of "
                 f"bits {len(bits)}"
             )
-        elif len(sites) != len(site_bases):
+        elif len(frac_coords) != len(site_bases):
             raise AttributeError(
-                f"Number of sites {len(sites)} must be equal to number of "
+                f"Number of sites {len(frac_coords)} must be equal to number of "
                 f"site bases {len(site_bases)}"
             )
 
@@ -104,7 +104,9 @@ class Orbit(MSONable):
         self._flat_corr_tensors = None
 
         # Create basecluster
-        self.base_cluster = Cluster(sites, lattice)
+        self.base_cluster = Cluster(
+            [site_basis.site_space for site_basis in site_bases], frac_coords, lattice
+        )
 
     @property
     def basis_type(self):
@@ -166,8 +168,12 @@ class Orbit(MSONable):
             return self._equiv
         equiv = [self.base_cluster]
         for symop in self.structure_symops:
-            new_sites = symop.operate_multi(self.base_cluster.sites)
-            c = Cluster(new_sites, self.base_cluster.lattice)
+            new_coords = symop.operate_multi(self.base_cluster.frac_coords)
+            c = Cluster(
+                [site_basis.site_space for site_basis in self.site_bases],
+                new_coords,
+                self.base_cluster.lattice,
+            )
             if c not in equiv:
                 equiv.append(c)
         self._equiv = equiv
@@ -364,7 +370,11 @@ class Orbit(MSONable):
             return False
 
         match = any(
-            Cluster(self.base_cluster.sites[inds, :], self.base_cluster.lattice)
+            Cluster(
+                [site_basis.site_space for site_basis in self.site_bases],
+                self.base_cluster.frac_coords[inds, :],
+                self.base_cluster.lattice,
+            )
             in orbit.clusters
             for inds in combinations(
                 range(len(self.base_cluster)), len(orbit.base_cluster)
@@ -405,12 +415,12 @@ class Orbit(MSONable):
         for cluster in self.clusters:
             for inds in indsets:
                 # take the centroid of subset of sites, not all cluster sites
-                centroid = np.average(cluster.sites[inds], axis=0)
+                centroid = np.average(cluster.frac_coords[inds], axis=0)
                 recenter = np.round(centroid - orbit.base_cluster.centroid)
-                c_sites = orbit.base_cluster.sites + recenter
-                if is_coord_subset(c_sites, cluster.sites):
+                c_sites = orbit.base_cluster.frac_coords + recenter
+                if is_coord_subset(c_sites, cluster.frac_coords):
                     mappings.append(
-                        coord_list_mapping(c_sites, cluster.sites, atol=SITE_TOL)
+                        coord_list_mapping(c_sites, cluster.frac_coords, atol=SITE_TOL)
                     )
 
         if len(mappings) == 0 and self.is_sub_orbit(orbit):
@@ -425,13 +435,17 @@ class Orbit(MSONable):
         symops = []
         permutations = []
         for symop in self.structure_symops:
-            new_sites = symop.operate_multi(self.base_cluster.sites)
-            cluster = Cluster(new_sites, self.base_cluster.lattice)
+            new_sites = symop.operate_multi(self.base_cluster.frac_coords)
+            cluster = Cluster(
+                [site_basis.site_space for site_basis in self.site_bases],
+                new_sites,
+                self.base_cluster.lattice,
+            )
             if cluster == self.base_cluster:
                 recenter = np.round(self.base_cluster.centroid - cluster.centroid)
-                c_sites = cluster.sites + recenter
+                c_sites = cluster.frac_coords + recenter
                 mapping = coord_list_mapping(
-                    self.base_cluster.sites, c_sites, atol=SITE_TOL
+                    self.base_cluster.frac_coords, c_sites, atol=SITE_TOL
                 )
                 symops.append(symop)
                 permutations.append(mapping)
@@ -541,7 +555,7 @@ class Orbit(MSONable):
         d = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
-            "sites": self.base_cluster.sites.tolist(),
+            "sites": self.base_cluster.frac_coords.tolist(),
             "lattice": self.base_cluster.lattice.as_dict(),
             "bits": self.bits,
             "site_bases": [sb.as_dict() for sb in self.site_bases],
