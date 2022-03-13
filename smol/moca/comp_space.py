@@ -1,29 +1,4 @@
-"""Compositional space file.
-
-This file contains functions related to implementing and navigating the
-compositional space.
-
-In CEAuto, we first define a starting, charge-neutral, and fully occupied
-('Vac' is also an occupation) composition in the compositional space.
-
-Then we find all possible unitary, charge and number conserving flipping
-combinations of species, and define them as axis in the compositional space.
-
-A composition is then defined as a vector, with each component corresponding
-to the number of filps that have to be done on a 'flip axis' in order to get
-the target composition from the defined, starting composition.
-
-For some supercell size, a composition might not be 'reachable' because
-supercell_size*atomic_ratioo is not an integer. For this case, you need to
-select a proper enumeration fold for your compositions(see enum_utils.py),
-or choose a proper supercell size.
-
-Case test in [[Li+,Mn3+,Ti4+],[P3-,O2-]] passed.
-
-Note: The flip table this class are not encoded, namely, specie_id
-      in flip table is NOT sublattice.encoding, but
-      sublattice.species.index()!
-"""
+"""Defines a space of compositions."""
 
 
 __author__ = "Fengyu Xie"

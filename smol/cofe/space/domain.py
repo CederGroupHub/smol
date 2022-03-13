@@ -155,7 +155,7 @@ class SiteSpace(Mapping, Hashable, MSONable):
 
     @property
     def codes(self):
-        """Return range of species."""
+        """Return range of species (not necessarily sub-lattice encodings)."""
         return tuple(range(len(self)))
 
     def __getitem__(self, item):

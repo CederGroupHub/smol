@@ -184,6 +184,7 @@ def compute_snf(A, domain=ZZ):
         s, m, t, m = s a t is the SNF:
             np.ndarray[int]
     """
+
     # Matrix pivoting operations.
     def leftmult(m, i0, i1, a, b, c, d):
         for j in range(m.cols):
@@ -268,6 +269,32 @@ def compute_snf(A, domain=ZZ):
     m = np.array(m).astype(int)
     t = np.array(t).astype(int)
     return s, m, t
+
+
+def get_diophatine_basis(A):
+    """Get basis of Diophatine solution grid.
+
+    We use Smith normal form decomposition on
+    A, find basis to solution grid: An = b.
+
+    Args:
+        A(2D ArrayLike[int]):
+            Matrix A in An=b.
+    Returns:
+        Basis vectors to grid An=b, each row is a basis vector:
+            2D np.ndarray[int]
+    """
+    A = np.array(A, dtype=int)
+    n, d = A.shape
+    U, B, V = compute_snf(A)
+    # First zero diagonal index
+    k = None
+    for i in range(min(n, d)):
+        if B[i, i] == 0:
+            k = i
+    k = min(n, d) if k is None else k
+
+    return V[:, k:].transpose().copy()
 
 
 def solve_diophantines(A, b=None):
@@ -492,7 +519,7 @@ def get_natural_solutions(n0, vs, integer_tol=1E-6):
         n_range = np.arange(n_min, n_max + 1, dtype=int)
         sols = []
         for m in n_range:
-            n0_next =  m * vs[0, :] + n0
+            n0_next = m * vs[0, :] + n0
             vs_next = vs[1:, :]
             sols_m = (get_natural_solutions(
                 n0_next, vs_next,
@@ -526,7 +553,7 @@ def flip_size(u, sublattice_dims=None):
             namely the number of species types on each
             sub-lattice.
             Must have len(u) == sum(sublattice_dims).
-            u must be sorted such that it component is ordered
+            u must be sorted such that its components are ordered
             sub-lattice by sub-lattice.
             If not give, will consider all species in a same
             sub-lattice.
@@ -643,7 +670,7 @@ def get_optimal_basis(n0, vs, xs, sublattice_dims=None,
             namely the number of species types on each
             sub-lattice.
             Must have len(u) == sum(sublattice_dims).
-            u must be sorted such that it component is ordered
+            u must be sorted such that it components are ordered
             sub-lattice by sub-lattice.
             If not give, will consider all species in a same
             sub-lattice.
@@ -691,7 +718,7 @@ def get_optimal_basis(n0, vs, xs, sublattice_dims=None,
             if len(vs_new) == n:
                 break
             vs_current = np.concatenate(vs_new, [V[i]], axis=0)
-            if np.linalg.matrix_rank(vs_current)\
+            if np.linalg.matrix_rank(vs_current) \
                     == min(vs_current.shape):
                 # Full rank.
                 vs_new = vs_current.copy()
@@ -703,15 +730,18 @@ def get_optimal_basis(n0, vs, xs, sublattice_dims=None,
     return vs_opt
 
 
-# TODO: check writing in this function.
 def get_ergodic_vectors(n0, vs, xs,
                         sublattice_dims=None, k=3):
-    """Provide vectors to add that can make table ergodic.
+    """Compute an ergodic flip table.
 
     Notice:
-        1, The following algorithm only guarantees ergodicity,
-        but not optimality, namely, we can say we satisfy
-        ergodicity by adding fewest vectors possible.
+        1, The following algorithm only guarantees getting
+        an ergodic flip table.
+        It will also try to prioritize adding flip directions
+        with  minimal flip sizes, but global optimality is not
+        guaranteed.
+        2, This algorithm does not guarantee finding the
+        fewest number of directions to satisfy ergodicity at all.
         2, This process is NP-hard. Do not use it when the
         super-cell size is large.
     Args:
@@ -729,7 +759,7 @@ def get_ergodic_vectors(n0, vs, xs,
             namely the number of species types on each
             sub-lattice.
             Must have len(u) == sum(sublattice_dims).
-            u must be sorted such that it component is ordered
+            u must be sorted such that it components are ordered
             sub-lattice by sub-lattice.
             If not give, will consider all species in a same
             sub-lattice.
@@ -744,21 +774,27 @@ def get_ergodic_vectors(n0, vs, xs,
     """
 
     def is_connected(n, vs, ns):
+        """Check whether a grid point is connected given table."""
+        n = np.array(n, dtype=int)
+        vs = np.array(vs, dtype=int)
+        ns = np.array(ns, dtype=int)
         n_images = np.concatenate((vs, -vs), axis=0) + n
         return np.any(np.all(np.isclose(n_images[:, None, :],
                                         ns[None, :, :]),
                              axis=-1))
 
-    def stat_connected(vs, ns_disconnected, ns):
+    def test_connected(vs, ns_disconnected, ns):
         return np.array([is_connected(n, vs, ns)
                          for n in ns_disconnected], dtype=bool)
+
+    def candidate_key(u):
+        return flip_size(u, sublattice_dims=sublattice_dims)
 
     n0 = np.array(n0, dtype=int)
     xs = np.array(xs, dtype=int)
     vs = np.array(vs, dtype=int)
     ns = xs @ vs + n0
-    connected = np.array([is_connected(n, vs, ns)
-                          for n in ns], dtype=bool)
+    connected = test_connected(vs, ns, ns)
     ns_disconnected = ns[~ connected]
 
     tree = KDTree(ns)
@@ -775,9 +811,6 @@ def get_ergodic_vectors(n0, vs, xs,
                 continue
             candidate_vectors.append(tuple(u.tolist()))
 
-    def candidate_key(u):
-        return flip_size(u, sublattice_dims=sublattice_dims)
-
     candidate_vectors = sorted(candidate_vectors,
                                key=candidate_key)
     candidate_vectors = np.array(candidate_vectors, dtype=int)
@@ -785,8 +818,7 @@ def get_ergodic_vectors(n0, vs, xs,
     ns_rem = ns_disconnected.copy()
     for u in candidate_vectors:
         vs_current = np.concatenate([u], selected_vectors, axis=0)
-        connected = stat_connected(vs_current,
-                                   ns_rem, ns)
+        connected = test_connected(vs_current, ns_rem, ns)
         selected_vectors = vs_current.copy()
         ns_rem = ns_rem[~ connected]
         if len(ns_rem) == 0:
@@ -796,31 +828,16 @@ def get_ergodic_vectors(n0, vs, xs,
 
 
 # Probability selection tools
-def choose_section_from_partition(probs):
+def choose_section_from_partition(p):
     """Choose one partition from multiple partitions.
 
-    This function choose one section from a partition based on each section's
-    normalized probability.
+    This function choose one section from a list with probability weights.
     Args:
-        probs(1D Arraylike[float]):
-            Probabilities of each sections. Will be normalized if not yet.
+        p(1D Arraylike[float]):
+            Probabilities of each element. Will be normalized if not yet.
     Return:
-        int, the index of randomly chosen section.
+        The index of randomly chosen element:
+           int
     """
-    N_secs = len(probs)
-    if N_secs < 1:
-        raise ValueError("Segment can't be selected!")
-
-    norm_probs = np.array(probs) / np.sum(probs)
-    upper_bnds = np.array([sum(norm_probs[:i + 1]) for i in range(N_secs)])
-    rand_seed = np.random.rand()
-
-    for sec_id, sec_upper in enumerate(upper_bnds):
-        if sec_id == 0:
-            sec_lower = 0
-        else:
-            sec_lower = upper_bnds[sec_id - 1]
-        if sec_lower <= rand_seed < sec_upper:
-            return sec_id
-
-    raise ValueError("Segment can't be selected.")
+    p = np.array(p) / np.sum(p)
+    return int(np.random.choice(len(p), p=p))
