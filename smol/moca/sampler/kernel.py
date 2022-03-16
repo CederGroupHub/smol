@@ -46,8 +46,8 @@ class Trace(SimpleNamespace):
     def __setattr__(self, name, value):
         """Set only ndarrays as attributes."""
         if isinstance(value, (float, int)):
-            print(f"Attribute cannot be a single number. Converting to an array"
-                 f" now.")
+            print(f"Attribute cannot be a single number. Converting to an "
+                  f"array now.")
             value = np.array([value])
 
         if not (isinstance(value, np.ndarray)):

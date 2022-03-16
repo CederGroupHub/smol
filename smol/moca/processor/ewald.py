@@ -63,8 +63,8 @@ class EwaldProcessor(Processor):
         if not contains_ewald:
             cluster_subspace.add_external_term(EwaldTerm())
             warnings.warn(message='Warning: cluster subspace does not contain '
-                                  'an Ewald term. Creating a default Ewald term and '
-                                  'adding to cluster subspace')
+                                  'an Ewald term. Creating a default Ewald '
+                                  'term and adding to cluster subspace')
         super().__init__(cluster_subspace, supercell_matrix, [coefficient])
 
         self._ewald_term = ewald_term
