@@ -5,6 +5,10 @@ from itertools import combinations
 import numpy as np
 import numpy.testing as npt
 import pytest
+from pymatgen.analysis.structure_matcher import (
+    OrderDisorderElementComparator,
+    StructureMatcher,
+)
 from pymatgen.core import Species, Structure
 from pymatgen.util.coord import is_coord_subset_pbc
 
@@ -286,19 +290,45 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix):
 
 
 def test_periodicity_and_symmetry(cluster_subspace, supercell_matrix):
-    # Check to see if a supercell of a smaller structure gives the same corr
+
     structure = gen_random_structure(cluster_subspace.structure, size=2)
     larger_structure = structure.copy()
     larger_structure.make_supercell(supercell_matrix)
 
     corr = cluster_subspace.corr_from_structure(structure)
 
-    npt.assert_allclose(corr, cluster_subspace.corr_from_structure(larger_structure))
+    larger_scmatrix = supercell_matrix @ np.eye(3) * 2
+    npt.assert_allclose(
+        corr,
+        cluster_subspace.corr_from_structure(
+            larger_structure, scmatrix=larger_scmatrix
+        ),
+    )
+    # Sometimes when supercell_matrix is very skewed, you should provide it.
+    # Structure matcher is not good at finding very off-diagonal sc matrices.
 
-    # TODO applying most symops leads to supercell not found errors...
-    for symop in cluster_subspace.symops[:2]:
-        structure.apply_operation(symop)
-        npt.assert_allclose(corr, cluster_subspace.corr_from_structure(structure))
+    cm = OrderDisorderElementComparator()
+    sm = StructureMatcher(allow_subset=True, comparator=cm, scale=True)
+
+    def apply_operation(op, s):
+        """Apply on fractional coordinates only."""
+        return Structure(
+            s.lattice, [st.species for st in s], op.operate_multi(s.frac_coords)
+        )
+
+    for symop in cluster_subspace.symops:
+        # Be very careful with symop formats, whether they are fractional space
+        # ops or not. By default, SpaceGroupAnalyzer gives fractional format,
+        # while PointGroupAnalyzer gives cartesian format!
+        prim = cluster_subspace.structure
+        prim_op = apply_operation(symop, prim)
+        # print("op:", symop)
+        # print("prim:\n", prim)
+        # print("prim_op:\n", prim_op)
+        assert sm.fit(prim, prim_op)
+
+        structure_op = apply_operation(symop, structure)
+        npt.assert_allclose(corr, cluster_subspace.corr_from_structure(structure_op))
 
 
 def test_msonable(cluster_subspace_ewald):

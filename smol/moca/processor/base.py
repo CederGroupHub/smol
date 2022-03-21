@@ -157,7 +157,7 @@ class Processor(MSONable, metaclass=ABCMeta):
                 A pymatgen structure (related to the cluster-expansion prim
                 by the supercell matrix passed to the processor)
         Returns: encoded occupancy string
-            list
+            np.ndarray[int]
         """
         occu = self._subspace.occupancy_from_structure(
             structure, scmatrix=self.supercell_matrix
