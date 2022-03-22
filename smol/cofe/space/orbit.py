@@ -136,7 +136,7 @@ class Orbit(MSONable):
 
         tuple of ndarrays, each array is a set of symmetrically equivalent bit
         orderings represented by each row. Bit combos represent non-constant site
-        function orderings, i.e. contracted multi-indices.
+        function orderings, i.e. contracted multi-indices
         """
         if self._bit_combos is None:
             # get all the bit symmetry operations
@@ -481,12 +481,15 @@ class Orbit(MSONable):
         """Check equality of orbits."""
         # when performing orbit in list, this ordering stops the
         # equivalent structures from generating
-        # NOTE: does not compare bit_combos!
-        return self.base_cluster in other.clusters
+        if self.base_cluster not in other.clusters:
+            return False
+        if len(self.correlation_tensors) != len(other.correlation_tensors):
+            return False
 
-    def __neq__(self, other):
-        """Check negation of orbit equality."""
-        return not self.__eq__(other)
+        return all(
+            np.allclose(ct1, ct2)
+            for ct1, ct2 in zip(self.correlation_tensors, other.correlation_tensors)
+        )
 
     def __str__(self):
         """Pretty strings for pretty things."""

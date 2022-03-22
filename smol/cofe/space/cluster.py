@@ -6,6 +6,8 @@ for a cluster basis of functions over configurational space.
 
 __author__ = "Luis Barroso-Luque, William Davidson Richard"
 
+from functools import cached_property
+
 import numpy as np
 from monty.json import MSONable
 from pymatgen.core import Lattice
@@ -54,7 +56,7 @@ class Cluster(MSONable):
         """Create a cluster from a list of pymatgen Sites."""
         return cls([s.frac_coords for s in sites], sites[0].lattice)
 
-    @property
+    @cached_property
     def diameter(self):
         """Get maximum distance between 2 sites in cluster."""
         coords = self.lattice.get_cartesian_coords(self.sites)
