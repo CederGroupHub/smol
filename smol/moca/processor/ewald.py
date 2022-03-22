@@ -67,7 +67,7 @@ class EwaldProcessor(Processor):
                 "an Ewald term. Creating a default Ewald "
                 "term and adding to cluster subspace"
             )
-        super().__init__(cluster_subspace, supercell_matrix, [coefficient])
+        super().__init__(cluster_subspace, supercell_matrix, coefficient)
 
         self._ewald_term = ewald_term
         # Set up ewald structure and indices

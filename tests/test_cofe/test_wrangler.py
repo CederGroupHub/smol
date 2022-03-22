@@ -45,6 +45,49 @@ def test_add_data(structure_wrangler):
         structure_wrangler.get_property_vector("energy", normalize=True),
     )
 
+    item = deepcopy(
+        structure_wrangler.data_items[
+            random.choice(range(structure_wrangler.num_structures))
+        ]
+    )
+
+    with pytest.raises(ValueError):
+        item["properties"].update({"foo": 10})
+        structure_wrangler.add_data(
+            item["structure"],
+            item["properties"],
+            weights=item["weights"],
+            supercell_matrix=item["scmatrix"],
+            site_mapping=item["mapping"],
+        )
+    with pytest.raises(ValueError):
+        _ = item["properties"].pop("energy")
+        structure_wrangler.add_data(
+            item["structure"],
+            item["properties"],
+            weights=item["weights"],
+            supercell_matrix=item["scmatrix"],
+            site_mapping=item["mapping"],
+        )
+    with pytest.raises(ValueError):
+        item["weights"].update({"foo": 10})
+        structure_wrangler.add_data(
+            item["structure"],
+            item["properties"],
+            weights=item["weights"],
+            supercell_matrix=item["scmatrix"],
+            site_mapping=item["mapping"],
+        )
+    with pytest.raises(ValueError):
+        _ = item["weights"].pop("random")
+        structure_wrangler.add_data(
+            item["structure"],
+            item["properties"],
+            weights=item["weights"],
+            supercell_matrix=item["scmatrix"],
+            site_mapping=item["mapping"],
+        )
+
     items = structure_wrangler._items
     structure_wrangler.remove_all_data()
     assert len(structure_wrangler.structures) == 0
@@ -132,9 +175,10 @@ def test_append_data_items(structure_wrangler):
     data_items = []
     for item in items:
         data_items.append(
-            structure_wrangler.process_structure(
+            structure_wrangler.process_data(
                 item["structure"],
                 item["properties"],
+                weights=item["weights"],
                 supercell_matrix=item["scmatrix"],
                 site_mapping=item["mapping"],
             )
@@ -142,6 +186,25 @@ def test_append_data_items(structure_wrangler):
 
     structure_wrangler.append_data_items(data_items)
     assert len(structure_wrangler.data_items) == len(items)
+
+    item = deepcopy(
+        structure_wrangler.data_items[
+            random.choice(range(structure_wrangler.num_structures))
+        ]
+    )
+
+    with pytest.raises(ValueError):
+        item["properties"].update({"foo": 10})
+        structure_wrangler.append_data_items([item])
+    with pytest.raises(ValueError):
+        _ = item["properties"].pop("energy")
+        structure_wrangler.append_data_items([item])
+    with pytest.raises(ValueError):
+        item["weights"].update({"foo": 10})
+        structure_wrangler.append_data_items([item])
+    with pytest.raises(ValueError):
+        _ = item["weights"].pop("random")
+        structure_wrangler.append_data_items([item])
 
 
 def test_data_indices(structure_wrangler):

@@ -56,6 +56,10 @@ class Processor(MSONable, metaclass=ABCMeta):
         self._scmatrix = np.array(supercell_matrix)
 
         self.coefs = np.array(coefficients)
+        # if scalar force array to have 1 dimension (1,)
+        if len(self.coefs.shape) == 0:
+            self.coefs = self.coefs[np.newaxis]
+
         # this can be used (maybe should) to check if a flip is valid
         active_site_spaces = set(get_site_spaces(self._subspace.expansion_structure))
         self.unique_site_spaces = tuple(active_site_spaces)

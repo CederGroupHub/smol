@@ -491,7 +491,7 @@ class StructureWrangler(MSONable):
                 fails. This can be helpful to keep a list of structures that
                 fail for further inspection.
         """
-        item = self.process_structure(
+        item = self.process_data(
             structure,
             properties,
             normalized,
@@ -533,13 +533,19 @@ class StructureWrangler(MSONable):
                     " they were obtained with the process_structure method."
                 )
             if len(self._items) > 0:
-                if not all(
-                    prop in self._items[0]["properties"].keys()
-                    for prop in item["properties"].keys()
-                ):
+                if set(item["properties"].keys()) != set(self.available_properties):
                     raise ValueError(
-                        f"Data item {i} is missing one of the following "
-                        f"properties: {self.available_properties}"
+                        f"The properties in the data item being added do not match all the"
+                        f"properties that have already been added: "
+                        f"{self.available_properties}.\n Additional items must include the "
+                        f"same properties included."
+                    )
+
+                if set(item["weights"].keys()) != set(self.available_weights):
+                    raise ValueError(
+                        f"The properties in the data item being added do not match all the"
+                        f"weights that have already been added: {self.available_weights}."
+                        f"\n Additional items must include the same weights included."
                     )
             self._items.append(item)
             self._corr_duplicate_warning(self.num_structures - 1)
@@ -648,7 +654,7 @@ class StructureWrangler(MSONable):
         """Remove all data from Wrangler."""
         self._items = []
 
-    def process_structure(
+    def process_data(
         self,
         structure,
         properties,
@@ -659,7 +665,7 @@ class StructureWrangler(MSONable):
         verbose=False,
         raise_failed=False,
     ):
-        """Process a structure to be added to wrangler.
+        """Process a data item to be added to wrangler.
 
         Checks if the structure for this data item can be matched to the
         cluster subspace prim structure to obtain its supercell matrix,
@@ -703,6 +709,24 @@ class StructureWrangler(MSONable):
         Returns:
             dict: data item dict for structure
         """
+        if len(self._items) > 0:
+            if set(properties.keys()) != set(self.available_properties):
+                raise ValueError(
+                    f"The properties in the data item being added do not match all the"
+                    f"properties that have already been added: "
+                    f"{self.available_properties}.\n Additional items must include the "
+                    f"same properties included."
+                )
+
+            if weights is not None and set(weights.keys()) != set(
+                self.available_weights
+            ):
+                raise ValueError(
+                    f"The properties in the data item being added do not match all the"
+                    f"weights that have already been added: {self.available_weights}."
+                    f"\n Additional items must include the same weights included."
+                )
+
         try:
             if supercell_matrix is None:
                 supercell_matrix = self._subspace.scmatrix_from_structure(structure)
