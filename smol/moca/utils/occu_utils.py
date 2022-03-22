@@ -65,21 +65,21 @@ def occu_to_species_n(occupancy, sublattices,
                     dtype=int)
 
 
-def get_dim_ids_by_sublattice(sublattices):
+def get_dim_ids_by_sublattice(bits):
     """Get the component index of each species in vector n.
 
     Args:
-        sublattices(smol.moca.Sublattice):
-            All sub-lattices, active or not.
+        bits(List[List[Specie|Vacancy|Element]]):
+           Species on each sub-lattice.
     Returns:
         Component index of each species on each sublattice in vector n:
            List[List[int]]
     """
     dim_ids = []
     dim_id = 0
-    for s in sublattices:
-        dim_ids.append(list(range(dim_id, dim_id + len(s.species))))
-        dim_id += len(s.species)
+    for species in bits:
+        dim_ids.append(list(range(dim_id, dim_id + len(species))))
+        dim_id += len(species)
     return dim_ids
 
 
@@ -109,7 +109,7 @@ def delta_n_from_step(occu, step, sublattices):
                          "fewer than total number of sites!")
 
     delta_n = np.zeros(d, dtype=int)
-    dim_ids = get_dim_ids_by_sublattice(sublattices)
+    dim_ids = get_dim_ids_by_sublattice([s.species for s in sublattices])
     operations = []
     for site_id, code in step:
         sl_id = sublattice_ids[site_id]

@@ -17,6 +17,10 @@ from sympy import Matrix, eye, ZZ
 from scipy.spatial import KDTree
 
 
+# Global numerical tolerance in this module.
+NUM_TOL = 1e-6
+
+
 class DiopInfeasibleError(Exception):
     """Diophantine equations have no integer solution."""
 
@@ -271,32 +275,6 @@ def compute_snf(A, domain=ZZ):
     return s, m, t
 
 
-def get_diophatine_basis(A):
-    """Get basis of Diophatine solution grid.
-
-    We use Smith normal form decomposition on
-    A, find basis to solution grid: An = b.
-
-    Args:
-        A(2D ArrayLike[int]):
-            Matrix A in An=b.
-    Returns:
-        Basis vectors to grid An=b, each row is a basis vector:
-            2D np.ndarray[int]
-    """
-    A = np.array(A, dtype=int)
-    n, d = A.shape
-    U, B, V = compute_snf(A)
-    # First zero diagonal index
-    k = None
-    for i in range(min(n, d)):
-        if B[i, i] == 0:
-            k = i
-    k = min(n, d) if k is None else k
-
-    return V[:, k:].transpose().copy()
-
-
 def solve_diophantines(A, b=None):
     """Solve diophantine equations An=b.
 
@@ -346,8 +324,10 @@ def get_nonneg_float_vertices(A, b):
 
     n is allowed to be non-negative floats.
     This result can be used to get the minimum
-    supercell size by integerizing these vertices,
-    if b is written according to a primitive cell.
+    supercell size by looking for the minimum
+    integer than can integerize all these vertices,
+    if b is written according to number of sites in
+    a primitive cell.
 
     Args:
         A(2D np.ndarray[int]):
@@ -355,8 +335,8 @@ def get_nonneg_float_vertices(A, b):
         b(2D np.ndarray[int]):
             b in An=b.
     Returns:
-        Vertices of polytope An=b, n>=0:
-            np.ndarray
+        Vertices of polytope An=b, n>=0 in float:
+            np.ndarray[float]
     """
     A = np.array(A, dtype=int)
     b = np.array(b, dtype=int)
@@ -387,7 +367,7 @@ def get_natural_centroid(n0, vs):
             Basis vectors of integer lattice.
 
     Returns:
-        The natural number point on the grid closest to centroid:
+        The natural number point on the grid closest to centroid ("x"):
             1D np.ndarray[int]
     """
     n0 = np.array(n0, dtype=int)
@@ -407,7 +387,7 @@ def get_natural_centroid(n0, vs):
     return np.array(np.round(x.value), dtype=int)
 
 
-def get_one_dim_solutions(n0, v, integer_tol=1E-6):
+def get_one_dim_solutions(n0, v, integer_tol=NUM_TOL):
     """Solve one dimensional integer inequalities.
 
     This will solve n0 + v * x >= 0, give all
@@ -421,7 +401,8 @@ def get_one_dim_solutions(n0, v, integer_tol=1E-6):
             Tolerance of a number off integer
             value. If (number - round(number))
             <= integer_tol, it will be considered
-            as an integer. Default is 1E-6.
+            as an integer. Default is set by global
+            NUM_TOL.
     Returns:
         All Integer solutions:
             1D np.ndarray[int]
@@ -458,7 +439,7 @@ def get_one_dim_solutions(n0, v, integer_tol=1E-6):
         return np.arange(n_min, n_max + 1, dtype=int)
 
 
-def get_natural_solutions(n0, vs, integer_tol=1E-6):
+def get_natural_solutions(n0, vs, integer_tol=NUM_TOL):
     """Enumerate all natural number solutions.
 
     Given the convex polytope n0 + sum_i x_i*v_i >= 0.
@@ -481,10 +462,11 @@ def get_natural_solutions(n0, vs, integer_tol=1E-6):
             Tolerance of a number off integer
             value. If (number - round(number))
             <= integer_tol, it will be considered
-            as an integer. Default is 1E-6.
+            as an integer. Default is set by global
+            NUM_TOL.
 
     Returns:
-        All natural number solutions:
+        All natural number solutions ("x"):
             2D np.ndarray[int]
     """
     n0 = np.array(n0, dtype=int)

@@ -1,47 +1,81 @@
 """Defines a space of compositions."""
 
-
 __author__ = "Fengyu Xie"
 
-
 import numpy as np
-import polytope as pc
-from scipy.spatial import ConvexHull
-from scipy.spatial.qhull import QhullError
-
-from itertools import product, chain
-from copy import deepcopy
+from itertools import chain
 from monty.json import MSONable, MontyDecoder
 
 from pymatgen.core import Element, Composition
 from smol.cofe.space.domain import Vacancy
 
-from .utils.math_utils_old import (get_integer_basis, integerize_multiple,
-                                   get_integer_base_solution,
-                                   get_integer_grid)
+from .utils.math_utils import (NUM_TOL, get_nonneg_float_vertices,
+                               integerize_multiple, solve_diophantines,
+                               get_natural_solutions, get_optimal_basis,
+                               get_ergodic_vectors, get_natural_centroid)
+from .utils.occu_utils import get_dim_ids_by_sublattice
 
 
-NUMCONERROR = ValueError("Operation error, flipping not number \
-                         conserved.")
-OUTOFSUBLATERROR = ValueError("Operation error, flipping between \
-                              different sublattices.")
-CHGBALANCEERROR = ValueError("Charge balance cannot be achieved \
-                             with these species.")
-OUTOFSUBSPACEERROR = ValueError("Given coordinate falls outside \
-                                the subspace.")
-SLACK_TOL = 1E-5
+class NegativeSpeciesError(Exception):
+    def __init__(self, c, form,
+                 message="Composition results in "
+                         "negative species count!"):
+        self.c = c
+        self.form = form
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self):
+        return f"Composition: {self.c}, format: {self.form} " \
+               f"-> {self.message}"
 
 
-# Finding minimun charge-conserved, number-conserved flips to establish
-# constrained coords system.
+class RoundingError(Exception):
+    def __init__(self, c, form,
+                 message="Composition can not be rounded "
+                         "to integer!"):
+        self.c = c
+        self.form = form
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self):
+        return f"Composition: {self.c}, format: {self.form}, " \
+               f"tolerance: {NUM_TOL} -> {self.message}"
+
+
+class ConstraintViolationError(Exception):
+    def __init__(self, c, form,
+                 message="Composition violates constraints!"):
+        self.c = c
+        self.form = form
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self):
+        return f"Composition: {self.c}, format: {self.form}, " \
+               f"tolerance: {NUM_TOL} -> {self.message}"
+
+
+class CompUnNormalizedError(Exception):
+    def __init__(self, c,
+                 message="Composition in comp format but not normalized!"):
+        self.c = c
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self):
+        return f"Composition: {self.c} -> {self.message}"
+
+
 def get_oxi_state(sp):
     """Oxidation state from Specie/Element/Vacancy.
 
     Args:
-       sp(Specie):
-          A species object.
+       sp(Specie/Vacancy/Element):
+          A species.
     Return:
-       Int.
+       Charge of species: int.
     """
     if isinstance(sp, (Vacancy, Element)):
         return 0
@@ -49,304 +83,113 @@ def get_oxi_state(sp):
         return sp.oxi_state
 
 
-def get_unit_excitations(bits):
-    """One atom excitations.
+def flip_vec_to_reaction(u, bits):
+    """Convert flip direction into a reaction formula in string.
 
-    Get all possible single site flips on each sublattice, and the
-    charge changes given by the flips. Flips will be encoded by
-    species indices, and will always flip from the last specie in
-    the site space, to another specie on the same sublattice.
-
+    This function is for easy interpretation of flip directions.
     Args:
-        bits(List[List[Speice|Element|Vacancy]]):
-            a list of Species or DummySpecies on each sublattice.
-            For example:
-            [[Specie.from_string('Ca2+'),Specie.from_string('Mg2+'))],
-             [Specie.from_string('O2-')]]
-    Return:
-        tuple:(list of flips in unconstrained space,
-               list of charge changes of each flip,
-               list of flip indices in each sublattice)
-    """
-    unit_excitations = []
-    unit_n_excitations = []
-    excitation_ids_by_sublat = []
-    cur_exi_id = 0
-
-    for sl_id, sl_sps in enumerate(bits):
-        unit_excitations.extend([(sp, sl_sps[-1], sl_id)
-                                for sp in sl_sps[:-1]])
-        unit_n_excitations.extend([(sp_id, len(sl_sps) - 1, sl_id)
-                                  for sp_id in range(len(sl_sps) - 1)])
-        excitation_ids_by_sublat.append([cur_exi_id + i for i in
-                                        range(len(sl_sps) - 1)])
-        cur_exi_id += (len(sl_sps) - 1)
-
-    chg_of_excitations = [int(get_oxi_state(p[0]) - get_oxi_state(p[1]))
-                          for p in unit_excitations]
-
-    return unit_n_excitations, chg_of_excitations, excitation_ids_by_sublat
-
-
-def flip_vecs_to_flip_table(unit_n_excitations, n_bits, flip_vecs):
-    """Turn multi-atom flip vector to flip table format.
-
-    Translates flips from their vector from into their
-    dictionary form.
-    Each dictionary is written in the form below:
-    {
-     'from':
-           {sublattice index:
-               {specie index in site space:
-                   number_of_this_specie_to_be_removed_from_the_sublat
-               }
-                ...
-           }
-           ...
-     'to':
-           {
-           ...     number_of_this_specie_to_be_generated_on_this_sublat
-           }
-    }
-
-    Note: specie_index is NOT sublattice.encoding! It is index in
-          sublattice.species!
-    Args:
-        unit_n_excitations(List[Tuple(int)]):
-            A flatten list of all possible, single site flips
-            represented in specie indices, each term written as:
-             (flip_to_specie_index,flip_from_specie_index,
-              sublattice_index_of_flip)
-        n_bits(List[List[int]]):
-            List containing specie indices in on each sublattice.
-        flip_vecs(2D ArrayLike):
-            Vectors in the charge neutral space, can be interpreted as
-            charge neutral flips.
-    Return:
-        List[Dict]
-    """
-    n_sls = len(n_bits)
-    flip_table = []
-
-    for flip_vec in flip_vecs:
-        flip_dict = {'from': {}, 'to': {}}
-
-        flip_dict['from'] = {sl_id: {sp_id: 0 for sp_id in n_bits[sl_id]}
-                             for sl_id in range(n_sls)}
-        flip_dict['to'] = {sl_id: {sp_id: 0 for sp_id in n_bits[sl_id]}
-                           for sl_id in range(n_sls)}
-
-        for flip, n_flip in zip(unit_n_excitations, flip_vec):
-            if n_flip > 0:
-                flip_to, flip_from, sl_id = flip
-                n = n_flip
-            elif n_flip < 0:
-                flip_from, flip_to, sl_id = flip
-                n = -1 * n_flip
-            else:
-                continue
-
-            flip_dict['from'][sl_id][flip_from] += n
-            flip_dict['to'][sl_id][flip_to] += n
-
-        # Simplify ionic equations
-        flip_dict_clean = {'from': {}, 'to': {}}
-        for sl_id in range(n_sls):
-            for sp_id in n_bits[sl_id]:
-                del_n = (flip_dict['from'][sl_id][sp_id]
-                         - flip_dict['to'][sl_id][sp_id])
-
-                if del_n > 0:
-                    if sl_id not in flip_dict_clean['from']:
-                        flip_dict_clean['from'][sl_id] = {}
-                    flip_dict_clean['from'][sl_id][sp_id] = del_n
-                elif del_n < 0:
-                    if sl_id not in flip_dict_clean['to']:
-                        flip_dict_clean['to'][sl_id] = {}
-                    flip_dict_clean['to'][sl_id][sp_id] = -1 * del_n
-                else:
-                    continue
-
-        flip_table.append(flip_dict_clean)
-
-    return flip_table
-
-
-def flip_table_to_flip_vecs(n_bits, flip_table):
-    """Compute flip vectors (unconstrained coords) from flip table.
-
-    Args:
-        n_bits(List[List[int]]):
-            List containing indices of species on sublattices.
-        flip_table(Dict):
-            Flip table, same as format described in documentation of
-            flip_vecs_to_flip_table.
-    Returns:
-        np.ndarray: Flip vectors in unconstrained coordinates.
-    """
-    flip_vecs = []
-    for flip in flip_table:
-        dcompstat = [[0 for sp_id in sl] for sl in n_bits]
-        for sl_id in flip['from']:
-            for sp_id in flip["from"][sl_id]:
-                dcompstat[sl_id][sp_id] -= flip['from'][sl_id][sp_id]
-        for sl_id in flip['to']:
-            for sp_id in flip["to"][sl_id]:
-                dcompstat[sl_id][sp_id] += flip['to'][sl_id][sp_id]
-        # Assert number conserving.
-        assert sum(chain(*dcompstat)) == 0
-        v = []
-        for dsl in dcompstat:
-            v.extend(dsl[:-1])
-        flip_vecs.append(v)
-
-    return np.array(flip_vecs, dtype=np.int64)
-
-
-def visualize_flip_table(flip_table, bits):
-    """Turn multi-atom flip table into reaction formulas.
-
-    Turns a charge constrained flip from dictionary format
-    into a string of reaction formula for easy interpretation.
-    Args:
-        flip_table(List[dict]):
-            List of flips in dictionary format. See doc of flipvec_to_
-            operation for details.
+        u(1D ArrayLike[int]):
+            The flip vector in number change of species.
         bits(List[List[Specie|DummySpecie|Element|Vacancy]]):
-            A list containing a species on all sublattices.
+            Species on all sub-lattices.
     Return:
-        List[str].
+        Reaction formulas: str.
     """
-    formula_strs = []
+    u = np.array(u, dtype=int)
+    dim_ids = get_dim_ids_by_sublattice(bits)
 
-    for flip_dict in flip_table:
-        from_strs = []
-        to_strs = []
+    from_strs = []
+    to_strs = []
 
-        for sl_id in flip_dict['from']:
-            for flip_from, n in flip_dict['from'][sl_id].items():
-                from_name = str(bits[sl_id][flip_from])
+    for sl_id, (sl_species, sl_dims) in enumerate(zip(bits, dim_ids)):
+        for specie, dim in zip(sl_species, sl_dims):
+            if u[dim] < 0:
                 from_strs.append('{} {}({})'
-                                 .format(n, from_name, sl_id))
-
-        for sl_id in flip_dict['to']:
-            for flip_to, n in flip_dict['to'][sl_id].items():
-                to_name = str(bits[sl_id][flip_to])
+                                 .format(-u[dim], str(specie), sl_id))
+            elif u[dim] > 0:
                 to_strs.append('{} {}({})'
-                               .format(n, to_name, sl_id))
+                               .format(u[dim], str(specie), sl_id))
 
-        from_str = ' + '.join(from_strs)
-        to_str = ' + '.join(to_strs)
-        formula_strs.append(from_str + ' -> ' + to_str)
-
-    return formula_strs
+    from_str = ' + '.join(from_strs)
+    to_str = ' + '.join(to_strs)
+    return from_str + ' -> ' + to_str
 
 
-# Compsitional space class
 class CompSpace(MSONable):
-    """Compositional space class.
+    """Composition space class.
 
     Generates a charge neutral compositional space from a list of Species
-    or DummySpecies and size of sublattices in a PRIMITIVE CELL.
+    or DummySpecies and number of sites in each sub-lattice of a PRIM CELL.
 
-    A composition in CEAuto can be expressed in 5 forms:
-    1, A Coordinate in compositional space without the charge constraint,
-       which uses one site flips from every last specie on sublattices
-       to every other species on the same sublattice as basis vectors.
-       An imaginary occupation with all sublattice sites occupied by the
-       last specie is defined as a background occupation, and the coordinates
-       are defined as the number of each unconstrained flips (as above)
-       required to reach a certain composition from the background occupation.
-       Define this as unconstrained coordinate. 'unconstr_coord'.
+    A composition can be expressed in 4 formats:
+    1, Number of species on each sub-lattice, concatenated by the
+       order of each sub-lattice into an 1D array. ("n" format)
 
-    2, A Coordinate in constrained, charge neutral subspace of the
-       unconstrained space, with charge neutral, number
-       conserving elementary flips (usually combined, manybody flips)
-       as basis vectors, and a selected charge neutral composition as
-       its origin.
-       (Usually selected as one vertex of the constrained space.)
-       We call this constrained coordinate ('constr_coord').
+    2, Coordinates x on the constrained integer grid. n = n0 + V @ x,
+       where V are grid basis and n0 is a base solution (not necessarily
+       a natural number solution).
+       ("x" format).
 
-    3, List of species counts on each sublattices, in the order of the
-       SiteSpace species table.
-       We call this compositional_statistics ('compstat').
+    3, pymatgen.Composition of each sub-lattice, normalized by number of
+       sites in the sub-lattice. Vacancies not explicitly included.
+       ("comp" format).
 
-    4, Normalized compostions of each sublattice.('composition').Vacancies
-       will not be explicitly included as keys.
+       Note: This format is always normalized and in fractional number.
 
-       Note: This form is always normalized by sublattice sizes,
-             while other form will only be normalized by the supercell size.
-
-    5, The above are all discriminate the same specie on different sublattice
-       as different coordinate components.
-       By summing the count of same specie on different sublattices into one
-       coordinate, we can establish the non-discriminative coordinates
-       ('nondisc').
-
-    For example, if bits = [[Li+,Mn3+,Ti4+],[P3-,O2-]] and sl_sizes = [1,1]
-    (LMTOF rock-salt), then:
-       Unconstrained space basis are:
-            Ti4+ -> Li+, Ti4+ -> Mn3+, O2- -> P3-
-
-       Back ground occupation shall be:
-            (1 Ti4+ |1 O-),supercell size = 1
-       The dimensionality of the unconstrained space is 3.
-
-       Charge-neutral combined flips basis shall be:
-            3 Mn3+ -> 2 Ti4+ + Li+, Ti4+ + P3- -> O2- + Mn3+
-
-       Charge neutral compositional space origin can be chosen as:
-            (Mn3+ | P-),supercell size = 1
-        The constrained subspace's dimensionality is 2.
-
-    Given composition:
-        (Li0.5 Mn0.5| O), supercell size=1
-    It's unconstrained coordinates will be (0.5,0.5,0), and the constrained
-    coordinates will be (0.5,1.0).
-
-    When the system is not charged (all the flips are charge conserved, and
-    the background occupation has zero charge), then the constrained
-    space will be the same as the unconstrained space.
-
-    Compspace class provides methods for you to convert between all these
-    representations easily.
-    It will also allow you to enumerate all possible integer compositions in a
-    given supercell size(shall be used as a composition enumeration in CEAuto).
-    All enumerations are done with integer enumeration methods.
-
-    Again, even if all other coordinates are in integer form, the converted
-    'composition' form will always be normalized.
+    4, Count of sorted species without distinguishing their
+       sub-lattices. If one species appears in multiple sub-lattices, it will
+       only be counted into one component of the vector.
+       ("nondisc" format).
 
     Attributes:
+        n_dims(int):
+            Sum of species number in all sub-lattices. Namely,
+            the dimension in "n" format.
         species(List[Species|DummySpecies|Element|Vacancy]):
             All species in the given system (sorted).
-        n_bits(List[List[int]]):
-            Species indices on each sublattice, used to decode
-            or encode occupations and the dictionary flips format.
-        dim(int):
-            Dimensionality of the charge constrained space.
-        min_flip_table(List[Dict]):
-            All minimal, charge neutral and number conserving flip
-            combinations in the given system, in dictionary format.
+        dim_ids(List[List[int]]):
+            The corresponding index in the "n" vector
+            of each species on each sub-lattice.
+        dim_ids_nondesc(List[List[int]]):
+            The corresponding index in the "nondesc" vector
+            of each species on each sub-lattice.
     """
 
-    def __init__(self, bits, sl_sizes=None):
+    def __init__(self, bits, sl_sizes=None, other_constraints=None,
+                 charge_balanced=True, optimize_basis=False,
+                 table_ergodic=False):
         """Initialize CompSpace.
 
         Args:
-            bits(List of Specie/DummySpecie):
-                bit list.
-                Sorted before use. We don't sort it here in case the order
-                of Vacancy is broken, so be careful.
-            sl_sizes(List[int]):
-                Sublattice sizes in a PRIMITIVE cell.
-                If None given, sl_sizes will be reset to [1,1,....]
-            encodings(List[List[int]]):
-                Number encoding of species. May not always be
-                range(len(site_space)), when you sub-divide a sublattice
-                by Species, as needed in delithation CEMC.
+            bits(List[List[Specie|Vacancy|Element]]):
+                Species on each sub-lattice.
+            sl_sizes(1D ArrayLike[int]): optional
+                Number of sites in each sub-lattice per primitive cell.
+                If not given, assume one site for each sub-lattice.
+            other_constraints(List[tuple(1D arrayLike[int], int)]): optional
+                Other integer constraints except charge balance and
+                site-number conservation. Should be given in the form of
+                tuple(a, bb), each constraint np.dot(a, n)=bb.
+            charge_balanced(bool): optional
+                Whether to add charge balance constraint. Default
+                to true.
+            optimize_basis(bool): optional
+                Whether to optimize the basis to minimal flip sizes and maximal
+                connectivity in the minimum super-cell size.
+                When the minimal super-cell size is large, we recommend not to
+                optimize basis.
+            table_ergodic(bool): optional
+                When generating a flip table, whether or not to add vectors and
+                ensure ergodicity. Default to False.
+                When the minimal super-cell size is large, we recommend not to
+                ensure ergodicity. This is not only because of computational
+                difficulty, but also because at large super-cell size, the fraction
+                of inaccessible compositions usually becomes minimal.
         """
         self.bits = bits
+        self.n_dims = sum([len(species) for species in bits])
+        self.dim_ids = get_dim_ids_by_sublattice(self.bits)
+        # dimension of "n" format
 
         # For non-discriminative coordinates
         species = list(set(chain(*self.bits)))
@@ -361,949 +204,325 @@ class CompSpace(MSONable):
                 if vac_dupe:
                     continue
             self.species.append(b)
-
-        # Sort the species
         self.species = sorted(self.species)
 
-        self.n_bits = [list(range(len(sl_bits))) for sl_bits in bits]
+        dim_ids_nondesc = []
+        for species in self.bits:
+            sl_dim_ids = []
+            for sp in species:
+                if not isinstance(sp, Vacancy):
+                    sl_dim_ids.append(self.species.index(sp))
+                else:
+                    for sp2_id, sp2 in enumerate(self.species):
+                        if isinstance(sp2, Vacancy):
+                            sl_dim_ids.append(sp2_id)
+                            break
+            dim_ids_nondesc.append(sl_dim_ids)
+        self.dim_ids_nondesc = dim_ids_nondesc
 
         if sl_sizes is None:
             self.sl_sizes = [1 for i in range(len(self.bits))]
         elif len(sl_sizes) == len(bits):
             self.sl_sizes = sl_sizes
         else:
-            raise ValueError("Sublattice number mismatch: check bits \
-                             and sl_sizes parameters.")
+            raise ValueError("Sub-lattice number not the same "
+                             "in bits and sl_sizes.")
 
-        self.N_sts_prim = sum(self.sl_sizes)
+        self.charge_balanced = charge_balanced
+        self.optimize_basis = optimize_basis
+        self.table_ergodic = table_ergodic
 
-        (self.unit_n_excitations, self.chg_of_excitations,
-         self.excitation_ids_by_sublat) = get_unit_excitations(self.bits)
+        # Set constraint equations An=b (per primitive cell).
+        A = []
+        b = []
+        if charge_balanced:
+            A.append([get_oxi_state(sp)
+                      for species in bits for sp in species])
+            b.append(0)
+        for dim_id, sl_size in zip(self.dim_ids, self.sl_sizes):
+            a = np.zeros(self.n_dims, dtype=int)
+            a[dim_id] = 1
+            A.append(a.tolist())
+            b.append(sl_size)
+        if other_constraints is None:
+            other_constraints = []
+        for a, bb in other_constraints:
+            if len(a) != self.n_dims:
+                raise ValueError(f"Constraint length: {len(a)} does not match"
+                                 f" dimensions: {self.n_dims}!")
+            A.append(a)
+            b.append(bb)
+        self._A = np.array(A, dtype=int)
+        self._b = np.array(b, dtype=int)
 
-        self._unit_basis = None
-        self._unit_vertices = None
-
-        # Matrices containing constrained subspace information.
-        self._polytope = None
-
-        # Minimum supercell size required to make vetices coordinates
+        self._prim_vertices = None
+        # Minimum supercell size required to make prim_vertices coordinates
         # all integer.
         self._min_sc_size = None
-        self._min_int_vertices = None
-        self._min_grid = None
-        self._int_grids = {}
-
-    @property
-    def background_charge(self):
-        """Charge of the background occupation state.
-
-        Computed by summing charges of the last specie on each SiteSpace's.
-        Return:
-            Int.
-        """
-        chg = 0
-        for sl_bits, sl_size in zip(self.bits, self.sl_sizes):
-            chg += int(get_oxi_state(sl_bits[-1])) * sl_size
-        return chg
-
-    @property
-    def unconstr_dim(self):
-        """Dimensionality of the unconstrained space.
-
-        Return:
-            Int.
-        """
-        return len(self.unit_n_excitations)
-
-    @property
-    def is_charge_constred(self):
-        """Check charge constrained.
-
-        Whether or not this system has charge, and requires charge
-        constraint. If true, charge neutrality reduces space dim by
-        1.
-        Return:
-            Boolean.
-        """
-        d = len(self.chg_of_excitations)
-        return not(np.allclose(np.zeros(d),
-                   self.chg_of_excitations) and self.background_charge == 0)
-
-    @property
-    def dim(self):
-        """Dimensionality of the constrained conpositional space.
-
-        Return:
-            Int.
-        """
-        d = self.unconstr_dim
-        if not self.is_charge_constred:
-            return d
-        else:
-            return d - 1
-
-    @property
-    def dim_nondisc(self):
-        """Dimension of non-discriminative coordinates.
-
-        Return:
-            Int.
-        """
-        return len(self.species)
-
-    @property
-    def unit_basis(self):
-        """Minimal charge-conserving flips in unconstrained coordinates.
-
-        Get minimal charge neutral flips to span the whole compositional,
-        space, in vector representation. These vectors are represented in
-        unconstrained coordinates, and they are lattice basis vectors of
-        the diophantine solutions.
-
-        For example:
-        [[Li+,Mn3+,Ti4+],[P3-,O2-]] system, minimal charge and number
-        conserving flips are:
-        3 Mn3+ <-> Li+ + 2 Ti4+, Ti4+ + P3- <-> Mn3+ + O2-
-        Their vector forms are:
-        (1,-3,0), (0,1,-1)
-
-        Return:
-            2D np.ndarray of np.int64
-        """
-        if self._unit_basis is None:
-            self._unit_basis = np.array(get_integer_basis(
-                                        self.chg_of_excitations,
-                                        self.excitation_ids_by_sublat),
-                                        dtype=np.int64)
-        return self._unit_basis
-
-    @property
-    def min_flip_table(self):
-        """Minimal charge conserving flips in table form.
-
-        Return:
-            List[Dict]
-        """
-        _flip_table = flip_vecs_to_flip_table(self.unit_n_excitations,
-                                              self.n_bits,
-                                              self.unit_basis)
-        return _flip_table
-
-    @property
-    def min_flip_strings(self):
-        """Reaction formulas of charge conserving flips.
-
-        Intended to be human-readable.
-        Return:
-            List[str]
-        """
-        return visualize_flip_table(self.min_flip_table, self.bits)
-
-    @property
-    def polytope(self):
-        """Constrained space in polytope form.
-
-        Express the constrained configurational space as arrays necessary
-        to initailize a polytope.Polytope object.
-
-        Polytope is expressed by A @ x <= b.
-
-        R and t are rotation matrix and translation vector to transform
-        constrained to unconstrained basis.
-
-        To transform a constrained basis to unconstrained basis, use:
-            x = R.T @ x'.append(0) + t
-
-        Notice: all A,b.R,t are defined in unitary (supercell size=1) space,
-                therefore must normalize coordinates before applying these
-                matrices.
-
-        Return:
-            tuple: (A, b, R, t), all np.ndarray.
-        """
-        if self._polytope is None:
-            facets_unconstred = []
-            for sl_flip_ids, sl_size in zip(self.excitation_ids_by_sublat,
-                                            self.sl_sizes):
-                if len(sl_flip_ids) == 0:
-                    continue
-
-                a = np.zeros(self.unconstr_dim)
-                a[sl_flip_ids] = 1
-                bi = sl_size
-                facets_unconstred.append((a, bi))
-
-            # sum(x_i) for i in sublattice <= 1
-            A_n = np.vstack([a for a, bi in facets_unconstred])
-            b_n = np.array([bi for a, bi in facets_unconstred])
-
-            # x_i >=0 for all i
-            A = np.vstack((A_n, -1 * np.identity(self.unconstr_dim)))
-            b = np.concatenate((b_n, np.zeros(self.unconstr_dim)))
-
-            if not self.is_charge_constred:
-                # Polytope = pc.Polytope(A,b) Ax<=b.
-                R = np.identity(self.unconstr_dim)
-                t = np.zeros(self.unconstr_dim)
-                self._polytope = (A, b, R, t)
-            else:
-                # x-t = R.T * x', where x'[-1]=0. Dimension reduced by 1.
-                # We have to reduce dimension first because polytope package
-                # can not handle polytope in a subspace. It will consider the
-                # subspace as an empty set.
-
-                # x: unconstrained, x': constrained
-                R = np.vstack((self.unit_basis,
-                              np.array(self.chg_of_excitations)))
-                t = np.zeros(self.unconstr_dim)
-                t[0] = -1 * self.background_charge / self.chg_of_excitations[0]
-                A_sub = A @ R.T
-                A_sub = A_sub[:, :-1]
-                # Slice A, remove last col, because the last component of x'
-                # will always be 0.
-                b_sub = b - A @ t
-                self._polytope = (A_sub, b_sub, R, t)
-
-        return self._polytope
+        self._flip_table = None
+        self._n0 = None  # Prim cell base solution
+        self._vs = None  # Basis vectors, n = n0 + vs.T @ x
+        self._comp_grids = {}  # Grid of integer compositions, in "x" format.
 
     @property
     def A(self):
-        """Polytope inequality matrix.
+        """Matrix A in constraints An=b.
 
-        Return:
-            np.ndarray
+        Returns:
+            2D np.ndarray[int]
         """
-        return self.polytope[0]
+        return self._A
 
     @property
     def b(self):
-        """Polytope inequality intercepts.
+        """Vector b in constraints An=b.
 
-        Return:
-            np.ndarray
+        Returns:
+            1D np.ndarray[int]
         """
-        return self.polytope[1]
+        return self._b
 
     @property
-    def R(self):
-        """Rotation matrix for coordinates conversion.
+    def prim_vertices(self):
+        """Vertices of polytope An=b, n>=0 in prim cell.
 
-        Return:
-            np.ndarray
+        Returns:
+            2D np.ndarray[float]
         """
-        return self.polytope[2]
-
-    @property
-    def t(self):
-        """T vector for coordinates conversion.
-
-        Return:
-            np.ndarray
-        """
-        return self.polytope[3]
-
-    def _is_in_subspace(self, x, sc_size=1):
-        """Check if unconstrained coords in charge neutral space.
-
-        Args:
-            x(1D arrayLike[int|float]):
-                The unconstrained coordinate to examine.
-            sc_size(int):
-                Supercell size corresponding to the current coordinates.
-        Return:
-            Boolean.
-        """
-        x_scaled = np.array(x) / sc_size
-
-        try:
-            _ = self._unconstr_to_constr_coords(x_scaled, sc_size=1)
-            return True
-        except ValueError:
-            return False
-
-    def _constr_is_in_subspace(self, x, sc_size=1):
-        """Check if unconstrained coords in charge neutral space.
-
-        Args:
-            x(1D arrayLike[int|float]):
-                The constrained coordinates to check.
-            sc_size(int, Default=1):
-                Supercell size corresponding to the current coordinates.
-        Return:
-            Boolean.
-        """
-        return np.all(self.A @ (x / sc_size) <= self.b + SLACK_TOL)
-
-    def unit_vertices(self, form='unconstr'):
-        """Extremums of the constrained compositional space.
-
-        All coordinates in a primitive cell.
-
-        Args:
-            form (string):
-                Specifies the format to output the compositions.
-                'unconstr': use unconstrained (type 1) coordinates.(default)
-                            Return 2D np.ndarray.
-                'constr': use constrained (type 2) coordinates.
-                          Return 2D np.ndarray.
-                'compstat': use compstat lists.(See self._unconstr_to_compstat)
-                            Return List[List[List[int]]].
-                'composition': use a pymatgen.composition for each sublattice
-                               (vacancies not explicitly included)
-                               Return List[List[Composition]].
-        Return:
-            Depends on form.
-        """
-        if self._unit_vertices is None:
-
-            if not self.is_charge_constred:
-                A, b, _, _ = self.polytope
-                poly = pc.Polytope(A, b)
-                self._unit_vertices = pc.extreme(poly)
-
-            else:
-                A, b, R, t = self.polytope
-                poly_sub = pc.Polytope(A, b)
-                vert_sub = pc.extreme(poly_sub)
-                n = vert_sub.shape[0]
-                vert = np.hstack((vert_sub, np.zeros((n, 1))))
-                # Transform back into unconstraned coord
-                self._unit_vertices = vert @ R + t
-
-        if len(self._unit_vertices) == 0:
-            raise CHGBALANCEERROR
-
-        # This function formuates multiple unconstrained coords together.
-        return self._convert_unconstr_to(self._unit_vertices, form=form,
-                                         sc_size=1)
-
-    def get_random_point_in_unit_space(self, form='unconstr'):
-        """Random point inside the prim, charge-neutral space.
-
-        Args:
-            form(str):
-                Desired format of output.
-                'unconstr': use unconstrained (type 1) coordinates.(default)
-                            Return np.ndarray.
-                'constr': use constrained (type 2) coordinates.
-                          Return np.ndarray.
-                'compstat': use compstat lists.(See self._unconstr_to_compstat)
-                            Return List[List[float]].
-                'composition': use a pymatgen.composition for each sublattice
-                               (vacancies not explicitly included)
-                               Return List[Composition]].
-        Return:
-            Depends on form.
-        """
-        verts = self.unit_vertices(form='unconstr')
-        x = verts[0].copy()
-
-        for i in range(1, len(verts)):
-            lam = np.random.random()
-            x = lam*x + (1 - lam) * verts[i]
-
-            in_spc = True
-            if not self.is_charge_constred:
-                x_prime = deepcopy(x)
-            else:
-                x_prime = np.linalg.inv((self.R).T) @ (x - self.t)
-                # d_slack = x_prime[-1]
-                x_prime = x_prime[:-1]
-
-            b = self.A @ x_prime
-            for bi_p, bi in zip(b, self.b):
-                if bi_p - bi > -1 * SLACK_TOL:
-                    in_spc = False
-                    break
-
-            if in_spc:
-                break
-
-        return self._convert_unconstr_to(x, form=form, sc_size=1)
+        if self._prim_vertices is None:
+            self._prim_vertices = get_nonneg_float_vertices(self.A, self.b)
+        return self._prim_vertices
 
     @property
     def min_sc_size(self):
-        """Minimal supercell size to have a integer composition.
+        """Minimum integer super-cell size.
 
-        Return:
-            Int.
+        Returns:
+            int
         """
-        if self._min_sc_size or self._min_int_vertices is None:
-            self._min_int_vertices, self._min_sc_size \
-                = integerize_multiple(self.unit_vertices())
+        if self._min_sc_size is None:
+            int_verts, sc_size = integerize_multiple(self.prim_vertices)
+            self._min_sc_size = sc_size
         return self._min_sc_size
 
-    def min_int_vertices(self, form='unconstr'):
-        """Minimal integerized compositional space vertices.
+    @property
+    def n0(self):
+        """Primitive cell base solution (not natural numbers).
 
-        Args:
-            form (string):
-                Desired format of output.
-                'unconstr': use unconstrained (type 1) coordinates.(default)
-                            Return 2D np.ndarray.
-                'constr': use constrained (type 2) coordinates.
-                          Return 2D np.ndarray.
-                'compstat': use compstat lists.(See self._unconstr_to_compstat)
-                            Return List[List[List[int]]].
-                'composition': use a pymatgen.composition for each sublattice
-                               (vacancies not explicitly included)
-                               Return List[List[Composition]]].
-        Return:
-            Depends on form.
+        self.n0 * sc_size is a base solution in super-cell.
+        Returns:
+             1D np.ndarray[int]
         """
-        if self._min_sc_size or self._min_int_vertices is None:
-            _ = self.min_sc_size
+        if self._n0 is None:
+            n0, vs = solve_diophantines(self.A, self.b)
+            self._n0 = n0
+        return self._n0
 
-        return self._convert_unconstr_to(self._min_int_vertices,
-                                         form=form, sc_size=self.min_sc_size)
+    @property
+    def basis(self):
+        """Basis vectors of the composition grid An=b.
 
-    def int_vertices(self, sc_size=1, form='unconstr'):
-        """Integer vertices in a neutral space of specific supercell size.
-
-        If supercell size is a multiple of min_sc_size, then int_vertices are
-        just min_int_vertices*multiple. Otherwise int_vertices are taken as
-        convex hull vertices of set self.int_grids(sc_size)
-
-        Args:
-            sc_size(int):
-                supercell sizes to enumerate integer composition on
-            form (string):
-                Desired format of output.
-                'unconstr': use unconstrained (type 1) coordinates.(default)
-                            Return 2D np.ndarray.
-                'constr': use constrained (type 2) coordinates.
-                          Return 2D np.ndarray.
-                'compstat': use compstat lists.(See self._unconstr_to_compstat)
-                            Return List[List[List[int]]].
-                'composition': use a pymatgen.composition for each sublattice
-                               (vacancies not explicitly included)
-                               Return List[List[Composition]]].
-        Return:
-            Depends on form.
+        Will be optimized if self.optimize_basis is set
+        to true.
+        Returns:
+            Basis vectors in "n" format:
+                2D np.ndarray[int]
         """
-        if sc_size % self.min_sc_size == 0:
-            vertices = self.min_int_vertices() * (sc_size // self.min_sc_size)
-        else:
-            # Approximate bounding vertices.
-            bound_vertices = (self.min_int_vertices(form='constr')
-                              * (sc_size / self.min_sc_size))
+        if self._vs is None:
+            n0, vs = solve_diophantines(self.A,
+                                        self.b * self.min_sc_size)
+            if self.optimize_basis:
+                xs = get_natural_solutions(n0, vs)
+                dims = [len(species) for species in self.bits]
+                vs_opt = get_optimal_basis(n0, vs, xs,
+                                           sublattice_dims=dims)
+            self._vs = vs_opt
+        return self._vs
 
-            # Since constrained coords are no longer ints, we have to shift
-            # by a basis solution.
-            base_shift = np.array(get_integer_base_solution(
-                                  self.chg_of_excitations,
-                                  right_side=-1 * self.background_charge
-                                  * sc_size))
-            base_shift = (np.linalg.inv((self.R).T) @
-                          (base_shift / sc_size - self.t) * sc_size)[:-1]
+    @property
+    def flip_table(self):
+        """The flip table vectors.
 
-            vertices_estimate = []
-            # Shift, jitter, then shift back.
-            for v in (bound_vertices - base_shift):
-                v_floor = np.floor(v)
-                shifts = np.array(list(product(*[[0, 1]
-                                  for i in range(len(v))])))
-                v_estimate = shifts + v_floor + base_shift
-                vertices_estimate.append(v_estimate)
-            vertices_estimate = np.vstack(vertices_estimate)
-
-            estimates_in_space = [self._constr_is_in_subspace(v,
-                                                              sc_size=sc_size)
-                                  for v in vertices_estimate]
-            vertices_estimate = vertices_estimate[estimates_in_space]
-
-            try:
-                hull = ConvexHull(vertices_estimate)
-                vertices = vertices_estimate[hull.vertices]
-            except QhullError:
-                vertices = vertices_estimate
-            vertices = self._convert_to_unconstr(vertices, form='constr',
-                                                 sc_size=sc_size)
-
-        vertices = np.array(np.round(vertices), dtype=np.int64)
-
-        return self._convert_unconstr_to(vertices, form=form, sc_size=sc_size)
-
-    def min_grid(self, form='unconstr'):
-        """All charge-neutral integer compositions in under min_sc_size.
-
-        Args:
-            form (string):
-                Desired format of output.
-                'unconstr': use unconstrained (type 1) coordinates.(default)
-                            Return 2D np.ndarray.
-                'constr': use constrained (type 2) coordinates.
-                          Return 2D np.ndarray.
-                'compstat': use compstat lists.(See self._unconstr_to_compstat)
-                            Return List[List[List[int]]].
-                'composition': use a pymatgen.composition for each sublattice
-                               (vacancies not explicitly included)
-                               Return List[List[Composition]]].
-        Return:
-            Depends on form.
+        If self.table_ergodic is true, will add flips if basis
+        is not ergodic.
+        Returns:
+            Flip vectors in the "n" format:
+                2D np.ndarray[int]
         """
-        if self._min_grid is None:
-            self._min_grid = self._enum_int_grids(sc_size=self.min_sc_size)
-
-        return self._convert_unconstr_to(self._min_grid,
-                                         form=form, sc_size=self.min_sc_size)
-
-    def int_grids(self, sc_size=1, form='unconstr'):
-        """All integer compositions in a supercell with specified size.
-
-        Args:
-            sc_size(int):
-                supercell sizes to enumerate integer composition on
-            form (string):
-                Desired format of output.
-                'unconstr': use unconstrained (type 1) coordinates.(default)
-                            Return 2D np.ndarray.
-                'constr': use constrained (type 2) coordinates.
-                          Return 2D np.ndarray.
-                'compstat': use compstat lists.(See self._unconstr_to_compstat)
-                            Return List[List[List[int]]].
-                'composition': use a pymatgen.composition for each sublattice
-                               (vacancies not explicitly included)
-                               Return List[List[Composition]]].
-        Return:
-            Depends on form.
-
-        Note: if you want enumeration by a step!=1, just divide sc_size by that
-              step, and multiply the resulted array with step. (You don't need
-              to multiply back, when formula = 'composition' since it's always
-              normalized.)
-        """
-        if sc_size not in self._int_grids:
-            self._int_grids[sc_size] = self._enum_int_grids(sc_size=sc_size)
-
-        return self._convert_unconstr_to(self._int_grids[sc_size],
-                                         form=form, sc_size=sc_size)
-
-    def _enum_int_grids(self, sc_size=1):
-        """Enumerate all possible integer compositions.
-
-        Gives unconstrained coordinates only.
-
-        Args:
-            sc_size(int):
-                The supercell size to enumerate integer compositions on.
-                Recommended is a multiply of self.min_sc_size, otherwise
-                we can't guarantee to find any integer composition.
-        Return:
-            np.ndarray
-        """
-        if sc_size % self.min_sc_size == 0:
-            magnif = sc_size // self.min_sc_size
-            int_vertices = self.min_int_vertices() * magnif
-            limiters_ub = np.max(int_vertices, axis=0)
-            limiters_lb = np.min(int_vertices, axis=0)
-
-        else:
-            # Then integer composition is not guaranteed to be found.
-            vertices = self.unit_vertices() * sc_size
-            limiters_ub = np.array(np.ceil(np.max(vertices, axis=0)),
-                                   dtype=np.int64)
-            limiters_lb = np.array(np.floor(np.min(vertices, axis=0)),
-                                   dtype=np.int64)
-
-        limiters = list(zip(limiters_lb, limiters_ub))
-        right_side = -1 * self.background_charge * sc_size
-        grid = get_integer_grid(self.chg_of_excitations, right_side=right_side,
-                                limiters=limiters)
-
-        enum_grid = []
-        for p in grid:
-            if self._is_in_subspace(p, sc_size=sc_size):
-                enum_grid.append(p)
-
-        return np.array(enum_grid, dtype=np.int64)
-
-    def frac_grids(self, sc_size=1, form='unconstr'):
-        """Normalize neutral compositions with a supercell size.
-
-        Enumerates integer compositions under a certain sc_size, and normalize
-        with sc_size. ('composition' format normalized with sublattice sizes.)
-
-        Args:
-            sc_size(int):
-                supercell sizes to enumerate integer composition on
-            form (string):
-                Desired format of output.
-                'unconstr': use unconstrained (type 1) coordinates.(default)
-                            Return 2D np.ndarray.
-                'constr': use constrained (type 2) coordinates.
-                          Return 2D np.ndarray.
-                'compstat': use compstat lists.(See self._unconstr_to_compstat)
-                            Return List[List[List[int]]].
-                'composition': use a pymatgen.composition for each sublattice
-                               (vacancies not explicitly included)
-                               Return List[List[Composition]]].
-
-        Return:
-            Depends on form.
-
-        Note: if you want to stepped enumeration, just divide sc_size by step,
-              and enter into sc_size argument.
-        """
-        comps = np.array(self.int_grids(sc_size), dtype=np.float64) / sc_size
-
-        return self._convert_unconstr_to(comps, form=form, sc_size=1)
-
-# These formatting functions will not normalize or scale compositions.
-# It's your responsibility to check scales are correct.
-    def _unconstr_to_constr_coords(self, x, sc_size=1, to_int=False):
-        """Unconstrained coordinates to constrained coordinates.
-
-        Args:
-            x(1D Arraylike):
-                Unconstrained coordinates.
-            sc_size(int):
-                Supercell size corresponding to the given coordinates.
-            to_int(Boolean):
-                If true, round coords to integers.
-
-        Return:
-            np.ndarray
-        """
-        # Scale down to unit comp space
-        x = np.array(x) / sc_size
-
-        if not self.is_charge_constred:
-            x_prime = deepcopy(x)
-            d_slack = 0
-        else:
-            x_prime = np.linalg.inv((self.R).T) @ (x - self.t)
-            d_slack = x_prime[-1]
-            x_prime = x_prime[:-1]
-
-        b = self.A @ x_prime
-
-        # Check if the given coordinates are in constrained subspace.
-        for bi_p, bi in zip(b, self.b):
-            if bi_p - bi > SLACK_TOL:
-                raise OUTOFSUBSPACEERROR
-
-        if abs(d_slack) > SLACK_TOL:
-            raise OUTOFSUBSPACEERROR
-
-        # Scale back up to sc_size
-        x_prime = x_prime * sc_size
-        d_slack = d_slack * sc_size
-
-        if to_int:
-            x_prime = np.round(x_prime)
-            x_prime = np.array(x_prime, dtype=np.int64)
-
-        return x_prime
-
-    def _constr_to_unconstr_coords(self, x_prime, sc_size=1, to_int=False):
-        """Constrained coordinates to unconstrained coordinates.
-
-        Args:
-            x_prime(1D Arraylike):
-                Constrained coordinates.
-            sc_size(int):
-                Supercell size corresponding to the given coordinates.
-            to_int(Boolean):
-                If true, round coords to integers.
-
-        Return:
-            np.ndarray
-        """
-        # Scale down to unit comp space.
-        x_prime = np.array(x_prime) / sc_size
-
-        b = self.A @ x_prime
-        for bi_p, bi in zip(b, self.b):
-            if bi_p - bi > SLACK_TOL:
-                raise OUTOFSUBSPACEERROR
-
-        if not self.is_charge_constred:
-            x = deepcopy(x_prime)
-        else:
-            x = deepcopy(x_prime)
-            x = np.concatenate((x, np.array([0])))
-            x = (self.R).T @ x + self.t
-
-        # Scale back up
-        x = x * sc_size
-
-        if to_int:
-            x = np.round(x)
-            x = np.array(x, dtype=np.int64)
-
-        return x
-
-    def _unconstr_to_compstat(self, x, sc_size=1):
-        """Unconstrained coordinates to compstats.
-
-        Args:
-            x(1D arrayLike):
-                Unconstrained coordinates.
-            sc_size(int):
-                Supercell size corresponding to given coordinates.
-
-        Return:
-            List[List[int]]
-        """
-        v_id = 0
-        compstat = [[0 for i in range(len(sl_n_bits))]
-                    for sl_n_bits in self.n_bits]
-
-        for sl_id, sl_n_bits in enumerate(self.n_bits):
-            sl_sum = 0
-            for b_id, bit in enumerate(sl_n_bits[:-1]):
-                compstat[sl_id][b_id] = x[v_id]
-                sl_sum += x[v_id]
-                v_id += 1
-
-            compstat[sl_id][-1] = self.sl_sizes[sl_id] * sc_size - sl_sum
-
-            if compstat[sl_id][-1] < 0:
-                raise OUTOFSUBSPACEERROR
-
-        return compstat
-
-    def _compstat_to_unconstr(self, compstat):
-        """Compstat to unconstrained coordinates.
-
-        Args:
-            compstat(List[List[int]]):
-                Species counts on each sublattices.
-        Return:
-            1D np.ndarray
-        """
-        x = []
-        for sl_stat in compstat:
-            x.extend(sl_stat[:-1])
-        return np.array(x)
-
-    def _unconstr_to_composition(self, x, sc_size=1):
-        """Unconstrained coordinates to composition format.
-
-        Translate an unconstranied coordinate into a list of Composition
-        by each sublattice. Vacancies are not explicitly included for the
-        convenience structure generation.
-
-        Args:
-            x(1D arrayLike):
-                Unconstrained coordinates.
-            sc_size(int):
-                Supercell size corresponding to the coordinates.
-
-        Return:
-            List[Composition]
-        """
-        compstat = self._unconstr_to_compstat(x, sc_size=sc_size)
-
-        sl_comps = []
-        for sl_id, sl_bits in enumerate(self.bits):
-            sl_comp = {}
-
-            for b_id, bit in enumerate(sl_bits):
-                # Trim vacancies from the composition, for pymatgen to
-                # read the structure.
-                if isinstance(bit, Vacancy):
-                    continue
-                # Composition will always be normalized!
-                sl_comp[bit] = (compstat[sl_id][b_id] /
-                                (self.sl_sizes[sl_id] * sc_size))
-
-            sl_comps.append(Composition(sl_comp))
-
-        return sl_comps
-
-    def _composition_to_unconstr(self, comp, sc_size=1):
-        """Composition format to unconstrained coordinates.
-
-        Args:
-            comp(List[Composition]) :
-                Composition format.
-            sc_size(int):
-                Supercell size corresponding to this compositon.
-
-        Return:
-            np.ndarray
-        """
-        x = []
-
-        for sl_id, sl_bits in enumerate(self.bits):
-            sl_size = self.sl_sizes[sl_id] * sc_size
-            for b_id, bit in enumerate(sl_bits[:-1]):
-                if isinstance(bit, Vacancy):
-                    sl_sum = sum(list(comp[sl_id].values())) * sl_size
-                    if sl_sum > sl_size:
-                        raise ValueError("{} is not a valid composition."
-                                         .format(comp[sl_id]))
-
-                    x.append(sl_size - sl_sum)
-                else:
-                    x.append(comp[sl_id][bit] * sl_size)
-
-        return np.array(x)
-
-    def _unconstr_to_nondisc(self, x, sc_size=1):
-        """Unconstrained coordinates to non-discriminative (irreversible).
-
-        Translates an unconstrained coordinate into non-discriminative
-        coordinate. Same specie on different sublattices will be summed
-        up as one coordinate.
-
-        Args:
-            x(1D arrayLike):
-                Unconstrained cooordinate.
-            sc_size(int):
-                Supercell size.
-
-        Return:
-            np.ndarray
-        """
-        nondisc = np.zeros(self.dim_nondisc)
-        compstat = self._unconstr_to_compstat(x, sc_size=sc_size)
-
-        for sl_bits, sl_ns in zip(self.bits, compstat):
-            for b, n in zip(sl_bits, sl_ns):
-                for sp_id, sp in enumerate(self.species):
-                    if sp == b:
-                        nondisc[sp_id] += n
-                        break
-                    elif (isinstance(sp, Vacancy) and isinstance(b, Vacancy)):
-                        nondisc[sp_id] += n
-                        break
-
-        if np.sum(nondisc) != sc_size * sum(self.sl_sizes):
-            raise OUTOFSUBSPACEERROR
-
-        return nondisc
-
-    def _convert_unconstr_to(self, x, form='unconstr', sc_size=1):
-        """Unconstrained coordinates to any specified form.
-
-        Args:
-            x(1D ArrayLike):
-                Unconstrained coordinates.
-            sc_size (int):
-                Supercell size to numerate on.
-            form (string):
-                Specifies the format to output the compositions.
-                'unconstr': use unconstrained (type 1) coordinates.(default)
-                'constr': use constrained (type 2) coordinates.
-                'compstat': use compstat lists.(See self._unconstr_to_compstat)
-                'composition': use a pymatgen.composition for each sublattice
-                               (vacancies not explicitly included)
-                'nondisc': non-discriminate coordinates.
-        Return:
-            Depends on form.
-        """
-        if len(np.array(x).shape) > 1:
-            result = [self._convert_unconstr_to(x_sub, form=form,
-                      sc_size=sc_size) for x_sub in x]
-            if form in ['constr', 'unconstr', 'nondisc']:
-                return np.vstack(result)
+        if self._flip_table is None:
+            if not self.table_ergodic:
+                self._flip_table = self.basis.copy()
             else:
-                return result
+                dims = [len(species) for species in self.bits]
+                self._flip_table = get_ergodic_vectors(self.n0
+                                                       * self.min_sc_size,
+                                                       self.basis,
+                                                       self.min_comp_grid,
+                                                       sublattice_dims=dims)
+        return self._flip_table
 
-        if form == 'unconstr':
-            return np.array(x)
-        elif form == 'constr':
-            return np.array(self._unconstr_to_constr_coords(x,
-                            sc_size=sc_size))
-        elif form == 'compstat':
-            return self._unconstr_to_compstat(x, sc_size=sc_size)
-        elif form == 'composition':
-            return self._unconstr_to_composition(x, sc_size=sc_size)
-        elif form == 'nondisc':
-            return self._unconstr_to_nondisc(x, sc_size=sc_size)
-        else:
-            raise ValueError('Requested format not supported.')
+    @property
+    def flip_reactions(self):
+        """Reaction formulae of table flips.
 
-    def _convert_to_unconstr(self, x, form, sc_size=1):
-        """Different forms into unconstrained coordinates.
-
-        Args:
-            x:
-                Input composition coordinates, format depends on form.
-            sc_size (int):
-                Supercell size to numerate on.
-            form (string):
-                Specifies the format pf input.
-                'unconstr': use unconstrained (type 1) coordinates.(default)
-                'constr': use constrained (type 2) coordinates.
-                'compstat': use compstat lists.(See self._unconstr_to_compstat)
-                'composition': use a pymatgen.composition for each sublattice
-                               (vacancies not explicitly included, and must be
-                                normalized.)
         Return:
-            np.ndarray
-
-        Note: 'non-disc' can not be converted back to 'unconstr'.
+            Reaction formulae (only forward direction):
+                List[str]
         """
-        if form in ['unconstr', 'constr']:
-            if len(np.array(x).shape) > 1:
-                result = [self._convert_to_unconstr(x_sub,
-                          form=form, sc_size=sc_size)
-                          for x_sub in x]
-                return np.vstack(result)
+        return [flip_vec_to_reaction(u, self.bits) for u in self.flip_table]
 
-        elif form == 'compstat':
-            if isinstance(x[0][0], list):
-                result = [self._convert_to_unconstr(x_sub,
-                          form=form, sc_size=sc_size)
-                          for x_sub in x]
-                return np.vstack(result)
-
-        elif form == 'composition':
-            if not isinstance(x[0], Composition):
-                result = [self._convert_to_unconstr(x_sub,
-                          form=form, sc_size=sc_size)
-                          for x_sub in x]
-                return np.vstack(result)
-
-        if form == 'unconstr':
-            return np.array(x)
-        elif form == 'constr':
-            return np.array(self._constr_to_unconstr_coords(x,
-                            sc_size=sc_size))
-        elif form == 'compstat':
-            return np.array(self._compstat_to_unconstr(x))
-        elif form == 'composition':
-            # Output will be a 2D list of pymatgen.Composition
-            return np.array(self._composition_to_unconstr(x,
-                            sc_size=sc_size))
-        else:
-            raise ValueError('Requested format not supported.')
-
-    def translate_format(self, x, from_format, to_format='unconstr',
-                         sc_size=1):
-        """Translate between compositional coordinates forms.
+    def get_comp_grid(self, sc_size=1):
+        """Get the natural number compositions.
 
         Args:
-            x:
-                Input compositional coordinates. Format depends on
-                'from_format' argument.
-            sc_size (int):
-                Supercell size to numerate on.
-                Default is 1, we suppose you are using primitive cell scale.
-            from_format,to_format (string):
-                Specifies the format of input and output compositions.
-                'unconstr': use unconstrained (type 1) coordinates.(default)
-                'constr': use constrained (type 2) coordinates.
-                'compstat': use compstat lists.(See self._unconstr_to_compstat)
-                'composition': use a pymatgen.composition for each sublattice
-                               (vacancies not explicitly included)
-                'nondisc': Non discriminative compositional coordinates.
-                           Can only be taken by 'to_format' argument.
+            sc_size(int):
+                Super-cell size to enumerate with.
+        Returns:
+            Solutions to n0 + Vx >= 0 ("x" format):
+                2Dnp.ndarray[int]
+        """
+        if sc_size not in self._comp_grids:
+            self._comp_grids[sc_size] = get_natural_solutions(self.n0
+                                                              * sc_size,
+                                                              self.basis)
+        return self._comp_grids[sc_size]
+
+    @property
+    def min_comp_grid(self):
+        """Get the natural number solutions on grid at min_sc_size.
+
+        Returns:
+            Solutions to n0 + Vx >= 0 ("x" format):
+                2Dnp.ndarray[int]
+        """
+        return self.get_comp_grid(sc_size=self.min_sc_size)
+
+    def get_centroid_composition(self, sc_size=None):
+        """A composition close to the centroid of polytope.
+
+        Args:
+            sc_size(int): optional
+               Super-cell size to get the composition with.
+               If not given, will use self.min_sc_size
         Return:
-            Depends on 'to_format' argument.
+            Composition close to centroid of polytope n0 + Vx >= 0
+            ("x" format):
+                1D np.ndarray[int]
+        """
+        if sc_size is None:
+            sc_size = self.min_sc_size
+        return get_natural_centroid(self.n0 * sc_size, self.basis)
+
+    def translate_format(self, c, sc_size, from_format, to_format='n',
+                         rounding=False):
+        """Translate between composition formats.
+
+        Args:
+            c(1D ArrayLike|List[Composition]):
+                Input format. Can be int or fractional.
+            sc_size (int):
+                Supercell size of this composition. You must make sure
+                it is the right super-cell size of composition c.
+            from_format(str):
+                Specifies the input format.
+                "n": number of species on each sub-lattice, concatenated;
+                "x": the grid coordinates;
+                "comp": pymatgen.Composition on each sub-lattice, Vacancies
+                        not explicitely included.
+                Note: "nondisc" can not be the input format.
+            to_format(str): optional
+                Specified the output format.
+                Same as from_format, with an addition:
+                "nondisc": count of each species, regardless of sub-lattice.
+                If not give, will always convert to "n" format.
+            rounding(bool): optional
+                If the returned format is "n", "x" or "nondisc", whether
+                or not to round up the output array as integers. Default to
+                false.
+        Return:
+            Depends on to_format argument:
+                1D np.ndarray[int|float]|List[Composition]
         """
         if from_format == 'nondisc':
-            raise ValueError('Non-discriminative coordinates can not be \
-                             converted to discriminative!')
+            raise ValueError("nondisc format can not be converted!")
 
-        ucoords = self._convert_to_unconstr(x, form=from_format,
-                                            sc_size=sc_size)
-        return self._convert_unconstr_to(ucoords, form=to_format,
-                                         sc_size=sc_size)
+        n = self._convert_to_n(c, form=from_format, sc_size=sc_size,
+                               rounding=rounding)
+        return self._convert_n_to(n, form=to_format, sc_size=sc_size,
+                                  rounding=rounding)
+
+    def _convert_to_n(self, c, form, sc_size, rounding):
+        """Convert other composition format to n-format."""
+        if form == "n":
+            n = np.array(c)
+        elif form == "x":
+            n = self.basis.transpose() @ np.array(c) + self.n0 * sc_size
+        elif form == "comp":
+            n = []
+            for species, sl_size, comp in zip(self.bits, self.sl_sizes, c):
+                if comp.num_atoms > 1:
+                    raise CompUnNormalizedError(comp)
+                for specie in species:
+                    if isinstance(specie, Vacancy):
+                        comp_novac = Composition({k: v for k, v in comp.items()
+                                                  if not isinstance(k, Vacancy)})
+                        n.append((1 - comp_novac.num_atoms) * sl_size * sc_size)
+                    else:
+                        n.append(comp[specie] * sl_size * sc_size)
+            n = np.array(n)
+        else:
+            raise ValueError(f"Composition format {form} not supported!")
+
+        if np.any(n < -NUM_TOL):
+            raise NegativeSpeciesError(n, form="n")
+        if np.any(np.abs(self.A @ (n / sc_size) - self.b)
+                  > NUM_TOL):
+            raise ConstraintViolationError(n, form="n")
+        if rounding:
+            n_round = np.array(np.round(n), dtype=int)
+            if np.any(np.abs(n_round - n) > NUM_TOL):
+                raise RoundingError(n, form="n")
+            n = n_round.copy()
+
+        return n
+
+    def _convert_n_to(self, n, form, sc_size, rounding=False):
+        n = np.array(n)
+        if np.any(n < -NUM_TOL):
+            raise NegativeSpeciesError(n, form="n")
+        if np.any(np.abs(self.A @ (n / sc_size) - self.b)
+                  > NUM_TOL):
+            raise ConstraintViolationError(n, form="n")
+
+        if form == "n":
+            c = n.copy()
+        elif form == "x":
+            dn = n - self.n0 * sc_size
+            d = len(self.basis)
+            V = self.basis.transpose()[:d, :]
+            c = np.linalg.inv(V) @ dn[:d]
+        elif form == "comp":
+            c = []
+            for species, sl_size, dim_id in zip(self.bits,
+                                                self.sl_sizes,
+                                                self.dim_ids):
+                n_sl = n[dim_id] / (sl_size * sc_size)
+                c.append(Composition({sp: n for sp, n in zip(species, n_sl)
+                                      if not isinstance(sp, Vacancy)}))
+        elif form == "nondisc":
+            c = np.zeros(len(self.species))
+            for dim_id, dim_id_nondesc in zip(self.dim_ids,
+                                              self.dim_ids_nondesc):
+                c[dim_id_nondesc] += n[dim_id]
+        else:
+            raise ValueError(f"Composition format {form} not supported!")
+
+        if rounding and form != "comp":
+            c_round = np.array(np.round(c), dtype=int)
+            if np.any(np.abs(c - c_round) > NUM_TOL):
+                raise RoundingError(c, form=form)
+            c = c_round.copy()
+        return c
 
     def as_dict(self):
         """Serialize into dictionary.
@@ -1311,25 +530,32 @@ class CompSpace(MSONable):
         Return:
             Dict.
         """
-        bits_d = [[sp.as_dict() for sp in sl_sps] for sl_sps in self.bits]
+        bits = [[sp.as_dict() for sp in sl_sps] for sl_sps in self.bits]
 
-        poly = [item.tolist() for item in self.polytope]
-        int_grids = {key: val.tolist() for key, val
-                     in self._int_grids.items()}
+        n_cons = len(self.bits)
+        if self.charge_balanced:
+            n_cons += 1
+        other_constraints = [(a, bb) for a, bb
+                             in zip(self.A[n_cons:].tolist(),
+                                    self.b[n_cons:].tolist())]
+        comp_grids = {k: v.tolist() for k, v
+                      in self._comp_grids.items()}
 
-        return {
-                'bits': bits_d,
+        return {'bits': bits,
                 'sl_sizes': self.sl_sizes,
-                'unit_basis': self.unit_basis.tolist(),
-                'unit_vertices': self.unit_vertices().tolist(),
-                'polytope': poly,
+                'other_constraints': other_constraints,
+                'charge_balanced': self.charge_balanced,
+                'optimize_basis': self.optimize_basis,
+                'table_ergodic': self.table_ergodic,
                 'min_sc_size': self.min_sc_size,
-                'min_int_vertices': self.min_int_vertices().tolist(),
-                'min_grid': self.min_grid().tolist(),
-                'int_grids': int_grids,
+                'prim_vertices': self.prim_vertices.tolist(),
+                'n0': self.n0.tolist(),
+                'vs': self.basis.tolist(),
+                'flip_table': self.flip_table.tolist(),
+                'comp_grids': comp_grids,
                 '@module': self.__class__.__module__,
                 '@class': self.__class__.__name__
-               }
+                }
 
     @classmethod
     def from_dict(cls, d):
@@ -1341,36 +567,39 @@ class CompSpace(MSONable):
         Return:
             CompSpace
         """
-        bits = [[MontyDecoder().process_decoded(sp_d) for sp_d in sl_sps]
+        decoder = MontyDecoder()
+        bits = [[decoder.process_decoded(sp_d) for sp_d in sl_sps]
                 for sl_sps in d['bits']]
+        sl_sizes = d.get('sl_sizes')
+        other_constraints = d.get('other_constraints')
+        charge_balanced = d.get('charge_balanced', True)
+        optimize_basis = d.get('optimize_basis', False)
+        table_ergodic = d.get('table_ergodic', False)
 
-        obj = cls(bits, d['sl_sizes'])
+        obj = cls(bits, sl_sizes, other_constraints,
+                  charge_balanced, optimize_basis, table_ergodic)
 
-        if 'unit_basis' in d:
-            obj._unit_basis = np.array(d['unit_basis'],
-                                       dtype=np.int64)
+        obj._min_sc_size = d.get('min_sc_size')
 
-        if 'unit_vertices' in d:
-            obj._unit_vertices = np.array(d['unit_vertices'])
+        prim_vertices = d.get('prim_vertices')
+        if prim_vertices is not None:
+            obj._prim_vertices = np.array(prim_vertices)
 
-        if 'polytope' in d:
-            poly = d['polytope']
-            poly = [np.array(item) for item in poly]
-            obj._polytope = poly
+        n0 = d.get('n0')
+        if n0 is not None:
+            obj._n0 = np.array(n0, dtype=int)
 
-        if 'min_sc_size' in d:
-            obj._min_sc_size = d['min_sc_size']
+        vs = d.get('vs')
+        if vs is not None:
+            obj._vs = np.array(vs, dtype=int)
 
-        if 'min_int_vertices' in d:
-            obj._min_int_vertices = np.array(d['min_int_vertices'],
-                                             dtype=np.int64)
+        flip_table = d.get('flip_table')
+        if flip_table is not None:
+            obj._flip_table = np.array(flip_table, dtype=int)
 
-        if 'min_grid' in d:
-            obj._min_grid = np.array(d['min_grid'], dtype=np.int64)
-
-        if 'int_grids' in d:
-            int_grids = d['int_grids']
-            obj._int_grids = {key: np.array(val, dtype=np.int64)
-                              for key, val in int_grids}
+        comp_grids = d.get('comp_grids', {})
+        comp_grids = {k: np.array(v, dtype=int)
+                      for k, v in comp_grids.items()}
+        obj._comp_grids = comp_grids
 
         return obj
