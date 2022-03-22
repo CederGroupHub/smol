@@ -222,7 +222,7 @@ def test_bad_composite(cluster_subspace):
     with pytest.raises(ValueError):
         new_cs = cluster_subspace.copy()
         ids = range(1, new_cs.num_corr_functions)
-        new_cs.remove_orbit_bit_combos(np.random.choice(ids, size=10))
+        new_cs.remove_corr_functions(np.random.choice(ids, size=10))
         proc.add_processor(
             ClusterExpansionProcessor(new_cs, scmatrix, coefficients=coefs)
         )

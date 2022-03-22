@@ -825,13 +825,12 @@ class ClusterSubspace(MSONable):
         # Clear the cached supercell orbit mappings
         self._supercell_orb_inds = {}
 
-    def remove_orbit_bit_combos(self, bit_ids):
-        """Remove orbit bit combos by their ids.
+    def remove_corr_functions(self, corr_ids):
+        """Remove correlation functions by their ids.
 
-        Removes a specific bit combo from an orbit. This allows more granular
-        removal of terms involved in fitting/evaluating a cluster expansion.
-        Similar to remove_orbits this is useful to prune a cluster expansion
-        and actually allows to remove a single term (ie one with small
+        This allows more granular removal of terms involved in fitting/evaluating a
+        cluster expansion. Similar to remove_orbits this is useful to prune a cluster
+        expansion and actually allows to remove a single term (ie one with small
         associated coefficient/ECI).
 
         This procedure is perfectly well posed mathematically. The resultant
@@ -843,16 +842,16 @@ class ClusterSubspace(MSONable):
         does anyway...
 
         Args:
-            bit_ids (list):
-                list of orbit bit ids to remove
+            corr_ids (list):
+                list of correlation function ids to remove
         """
         empty_orbit_ids = []
-        bit_ids = np.array(bit_ids, dtype=int)
+        corr_ids = np.array(corr_ids, dtype=int)
 
         for orbit in self.orbits:
             first_id = orbit.bit_id
             last_id = orbit.bit_id + len(orbit)
-            to_remove = bit_ids[bit_ids >= first_id]
+            to_remove = corr_ids[corr_ids >= first_id]
             to_remove = to_remove[to_remove < last_id] - first_id
             if to_remove.size > 0:
                 try:

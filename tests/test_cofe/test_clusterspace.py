@@ -235,7 +235,7 @@ def test_remove_corr_functions(cluster_subspace):
     ids_to_remove = np.random.choice(
         range(1, len(subspace)), size=remove_num, replace=False
     )
-    subspace.remove_orbit_bit_combos(ids_to_remove)
+    subspace.remove_corr_functions(ids_to_remove)
 
     assert len(subspace) == len(cluster_subspace) - remove_num
     assert (
@@ -251,7 +251,7 @@ def test_remove_corr_functions(cluster_subspace):
     with pytest.warns(UserWarning):
         bid = subspace.orbits[-1].bit_id
         ids = list(range(bid, bid + len(subspace.orbits[-1])))
-        subspace.remove_orbit_bit_combos(ids)
+        subspace.remove_corr_functions(ids)
 
 
 def test_orbit_mappings(cluster_subspace, supercell_matrix):

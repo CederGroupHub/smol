@@ -261,7 +261,7 @@ class ClusterExpansion(MSONable):
         """
         coefs = self.eci if with_multiplicity else self.coefs
         bit_ids = [i for i, coef in enumerate(coefs) if abs(coef) < threshold]
-        self.cluster_subspace.remove_orbit_bit_combos(bit_ids)
+        self.cluster_subspace.remove_corr_functions(bit_ids)
         # Update necessary attributes
         ids_complement = list(set(range(len(self.coefs))) - set(bit_ids))
         ids_complement.sort()

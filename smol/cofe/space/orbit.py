@@ -132,11 +132,11 @@ class Orbit(MSONable):
 
     @property
     def bit_combos(self):
-        """Get tuple of site bit orderings.
+        """Get tuple representing the multi-index for site function ordering.
 
         tuple of ndarrays, each array is a set of symmetrically equivalent bit
-        orderings represented by row. Bit combos represent non-constant site
-        function orderings.
+        orderings represented by each row. Bit combos represent non-constant site
+        function orderings, i.e. contracted multi-indices.
         """
         if self._bit_combos is None:
             # get all the bit symmetry operations
