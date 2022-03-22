@@ -54,11 +54,6 @@ class Cluster(MSONable):
         """Create a cluster from a list of pymatgen Sites."""
         return cls([s.frac_coords for s in sites], sites[0].lattice)
 
-    @property  # TODO deprecate this
-    def size(self):
-        """Get number of sites in the cluster."""
-        return len(self.sites)
-
     @property
     def diameter(self):
         """Get maximum distance between 2 sites in cluster."""
