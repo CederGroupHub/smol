@@ -4,7 +4,7 @@ import pytest
 from pymatgen.core import Composition, DummySpecies
 
 from smol.cofe.space.domain import SiteSpace
-from smol.moca.sublattice import InactiveSublattice, Sublattice
+from smol.moca.sublattice import Sublattice
 from tests.utils import assert_msonable
 
 
@@ -24,6 +24,8 @@ def sublattice():
 
 
 def test_restrict_sites(sublattice):
+    npt.assert_array_equal(sublattice.encoding,
+                           np.arange(len(sublattice.species), dtype=int))
     sites = np.random.choice(sublattice.sites, size=10)
     # test sites properly restricted
     sublattice.restrict_sites(sites)
@@ -34,6 +36,10 @@ def test_restrict_sites(sublattice):
     sublattice.reset_restricted_sites()
     npt.assert_array_equal(sublattice.active_sites, sublattice.sites)
     assert len(sublattice.restricted_sites) == 0
+
+def test_split(sublattice):
+    # TODO: write this, also modify other tests accodingly.
+    pass
 
 
 def test_msonable(sublattice):
@@ -46,9 +52,14 @@ def test_msonable(sublattice):
     assert_msonable(sublattice)
 
 
-def test_inactive_sublattice():
+def test_inactiveness():
     composition = Composition({DummySpecies("A"): 1})
     site_space = SiteSpace(composition)
     sites = np.random.choice(range(100), size=60)
-    inactive_sublattice = InactiveSublattice(site_space, sites)
-    assert_msonable(inactive_sublattice)
+    inactive_sublattice = Sublattice(site_space, sites)
+    npt.assert_array_equal(inactive_sublattice.encoding,
+                           np.array([0]))
+    assert len(inactive_sublattice.active_sites) == 0
+    npt.assert_array_equal(inactive_sublattice.restricted_sites,
+                           inactive_sublattice.sites)
+    assert not inactive_sublattice.is_active

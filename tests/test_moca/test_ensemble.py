@@ -22,11 +22,10 @@ def canonical_ensemble(composite_processor):
 
 @pytest.fixture
 def mugrand_ensemble(composite_processor):
-    chemical_potentials = {
-        sp: 0.3
-        for space in composite_processor.unique_site_spaces
-        for sp in space.keys()
-    }
+    species = {sp for space in
+               composite_processor.active_site_spaces
+               for sp in space.keys()}
+    chemical_potentials = {sp: 0.3 for sp in species}
     return SemiGrandEnsemble(
         composite_processor, chemical_potentials=chemical_potentials
     )
@@ -61,11 +60,11 @@ def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_cls):
     expansion = ClusterExpansion(cluster_subspace_ewald, coefs, reg_data)
 
     if ensemble_cls is SemiGrandEnsemble:
-        kwargs = {
-            "chemical_potentials": {
-                sp: 0.3 for space in proc.unique_site_spaces for sp in space.keys()
-            }
-        }
+        species = {sp for space in
+                   proc.active_site_spaces
+                   for sp in space.keys()}
+        chemical_potentials = {sp: 0.3 for sp in species}
+        kwargs = {"chemical_potentials": chemical_potentials}
     else:
         kwargs = {}
     ensemble = ensemble_cls.from_cluster_expansion(
@@ -76,9 +75,9 @@ def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_cls):
     )
     occu = np.zeros(ensemble.num_sites, dtype=int)
     for _ in range(50):  # test a few flips
-        sublatt = np.random.choice(ensemble.sublattices)
+        sublatt = np.random.choice(ensemble.active_sublattices)
         site = np.random.choice(sublatt.sites)
-        spec = np.random.choice(range(len(sublatt.site_space)))
+        spec = np.random.choice(sublatt.encoding)
         flip = [(site, spec)]
         assert proc.compute_property_change(
             occu, flip
@@ -94,7 +93,10 @@ def test_restrict_sites(ensemble):
         assert not any(i in sublatt.active_sites for i in sites)
     ensemble.reset_restricted_sites()
     for sublatt in ensemble.sublattices:
-        npt.assert_array_equal(sublatt.sites, sublatt.active_sites)
+        if len(sublatt.site_space) > 1:
+            npt.assert_array_equal(sublatt.sites, sublatt.active_sites)
+        else:
+            assert len(sublatt.active_sites) == 0
 
 
 def test_msonable(ensemble):
@@ -104,9 +106,7 @@ def test_msonable(ensemble):
 # Canonical Ensemble tests
 def test_compute_feature_vector_canonical(canonical_ensemble):
     processor = canonical_ensemble.processor
-    occu = gen_random_occupancy(
-        canonical_ensemble.sublattices, canonical_ensemble.inactive_sublattices
-    )
+    occu = gen_random_occupancy(canonical_ensemble.sublattices)
     assert np.dot(
         canonical_ensemble.natural_parameters,
         canonical_ensemble.compute_feature_vector(occu),
@@ -116,7 +116,7 @@ def test_compute_feature_vector_canonical(canonical_ensemble):
         canonical_ensemble.processor.compute_feature_vector(occu),
     )
     for _ in range(50):  # test a few flips
-        sublatt = np.random.choice(canonical_ensemble.sublattices)
+        sublatt = np.random.choice(canonical_ensemble.active_sublattices)
         site = np.random.choice(sublatt.sites)
         spec = np.random.choice(range(len(sublatt.site_space)))
         flip = [(site, spec)]
@@ -133,9 +133,7 @@ def test_compute_feature_vector_canonical(canonical_ensemble):
 # MuSemigrandEnsemble Tests
 def test_compute_feature_vector_sgc(mugrand_ensemble):
     proc = mugrand_ensemble.processor
-    occu = gen_random_occupancy(
-        mugrand_ensemble.sublattices, mugrand_ensemble.inactive_sublattices
-    )
+    occu = gen_random_occupancy(mugrand_ensemble.sublattices)
     assert np.dot(
         mugrand_ensemble.natural_parameters,
         mugrand_ensemble.compute_feature_vector(occu),
@@ -147,9 +145,9 @@ def test_compute_feature_vector_sgc(mugrand_ensemble):
         mugrand_ensemble.processor.compute_feature_vector(occu),
     )
     for _ in range(50):  # test a few flips
-        sublatt = np.random.choice(mugrand_ensemble.sublattices)
+        sublatt = np.random.choice(mugrand_ensemble.active_sublattices)
         site = np.random.choice(sublatt.sites)
-        spec = np.random.choice(range(len(sublatt.site_space)))
+        spec = np.random.choice(sublatt.encoding)
         flip = [(site, spec)]
         dmu = (
             mugrand_ensemble._mu_table[site][spec]
@@ -187,10 +185,10 @@ def test_bad_chemical_potentials(mugrand_ensemble):
 
 
 def test_build_mu_table(mugrand_ensemble):
-    proc = mugrand_ensemble.processor
+    # Do not use processor sub-lattices in these tests.
     table = mugrand_ensemble._build_mu_table(mugrand_ensemble.chemical_potentials)
-    for space, row in zip(proc.allowed_species, table):
-        if len(space) == 1:  # skip inactive sites
+    for sublatt, row in zip(mugrand_ensemble.active_sublattices, table):
+        if len(sublatt.species) == 1:  # skip inactive sites
             continue
-        for i, species in enumerate(space):
+        for i, species in zip(sublatt.encoding, sublatt.species):
             assert mugrand_ensemble.chemical_potentials[species] == row[i]

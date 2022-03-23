@@ -4,7 +4,9 @@ from pymatgen.core import Composition
 
 from smol.cofe.space.domain import SiteSpace
 from smol.moca.sampler.mcusher import Flip, Swap
-from smol.moca.sublattice import InactiveSublattice, Sublattice
+from smol.moca.sublattice import Sublattice
+
+from tests.utils import gen_random_occupancy
 
 mcmcusher_classes = [Flip, Swap]
 num_sites = 100
@@ -20,30 +22,22 @@ def all_sublattices():
     site_space1 = SiteSpace(Composition({"A": 0.1, "B": 0.4, "C": 0.3, "D": 0.2}))
     site_space2 = SiteSpace(Composition({"A": 0.1, "B": 0.4, "E": 0.5}))
     site_space3 = SiteSpace(Composition({"G": 1}))
-    sublattices = [Sublattice(site_space1, sites1), Sublattice(site_space2, sites2)]
-    inactive_sublattices = [
-        InactiveSublattice(site_space3, sites3),
-    ]
-    return sublattices, inactive_sublattices
+    active_sublattices = [Sublattice(site_space1, sites1), Sublattice(site_space2, sites2)]
+    inactive_sublattices = [Sublattice(site_space3, sites3)]
+    return active_sublattices, inactive_sublattices
 
 
 @pytest.fixture
 def rand_occu(all_sublattices):
     # generate a random occupancy according to the sublattices
-    occu = np.zeros(
-        sum(len(s.sites) for sublat in all_sublattices for s in sublat), dtype=int
-    )
-    for site in range(len(occu)):
-        for sublattice in all_sublattices[0]:
-            if site in sublattice.sites:
-                occu[site] = np.random.choice(range(len(sublattice.site_space)))
+    occu = gen_random_occupancy(all_sublattices[0] + all_sublattices[1])
     return occu, all_sublattices[1][0].sites  # return indices of fixed sites
 
 
 @pytest.fixture(params=mcmcusher_classes)
 def mcmcusher(request, all_sublattices):
     # instantiate mcmcushers to test
-    return request.param(*all_sublattices)
+    return request.param(all_sublattices[0] + all_sublattices[1])
 
 
 def test_bad_propabilities(mcmcusher):
@@ -63,12 +57,12 @@ def test_propose_step(mcmcusher, rand_occu):
     for i in range(iterations):
         step = mcmcusher.propose_step(occu)
         for flip in step:
-            if flip[0] in mcmcusher.sublattices[0].sites:
+            if flip[0] in mcmcusher.active_sublattices[0].sites:
                 count1 += 1
-                assert flip[1] in range(len(mcmcusher.sublattices[0].site_space))
-            elif flip[0] in mcmcusher.sublattices[1].sites:
+                assert flip[1] in mcmcusher.active_sublattices[0].encoding
+            elif flip[0] in mcmcusher.active_sublattices[1].sites:
                 count2 += 1
-                assert flip[1] in range(len(mcmcusher.sublattices[1].site_space))
+                assert flip[1] in mcmcusher.active_sublattices[1].encoding
             else:
                 raise RuntimeError(
                     "Something went wrong in proposing"
@@ -98,12 +92,12 @@ def test_propose_step(mcmcusher, rand_occu):
     for i in range(iterations):
         step = mcmcusher.propose_step(occu)
         for flip in step:
-            if flip[0] in mcmcusher.sublattices[0].sites:
+            if flip[0] in mcmcusher.active_sublattices[0].sites:
                 count1 += 1
-                assert flip[1] in range(len(mcmcusher.sublattices[0].site_space))
-            elif flip[0] in mcmcusher.sublattices[1].sites:
+                assert flip[1] in mcmcusher.active_sublattices[0].encoding
+            elif flip[0] in mcmcusher.active_sublattices[1].sites:
                 count2 += 1
-                assert flip[1] in range(len(mcmcusher.sublattices[1].site_space))
+                assert flip[1] in mcmcusher.active_sublattices[1].encoding
             else:
                 raise RuntimeError(
                     "Something went wrong in proposing"

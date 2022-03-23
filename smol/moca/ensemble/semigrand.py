@@ -42,8 +42,7 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         self,
         processor,
         chemical_potentials,
-        sublattices=None,
-        inactive_sublattices=None,
+        sublattices=None
     ):
         """Initialize MuSemiGrandEnsemble.
 
@@ -59,23 +58,16 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         """
         super().__init__(
             processor,
-            sublattices=sublattices,
-            inactive_sublattices=inactive_sublattices,
+            sublattices=sublattices
         )
         self._params = np.append(self.processor.coefs, -1.0)
         # check that species are valid
         chemical_potentials = {
             get_species(k): v for k, v in chemical_potentials.items()
         }
-        species = {sp for sps in processor.unique_site_spaces for sp in sps}
-        for sp in chemical_potentials.keys():
-            if sp not in species:
-                raise ValueError(
-                    f"Species {sp} in provided chemical "
-                    "potentials is not an allowed species in the "
-                    f"system: {species}"
-                )
-        for sp in species:
+        # Excessive species not appeared on active sub-lattices
+        # will be dropped.
+        for sp in self.species:
             if sp not in chemical_potentials.keys():
                 raise ValueError(
                     f"Species {sp} was not assigned a chemical "
@@ -86,10 +78,11 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         self._dfeatures = np.empty(len(processor.coefs) + 1)
         self._features = np.empty(len(processor.coefs) + 1)
 
-        self._mus = chemical_potentials
-        self._mu_table = self._build_mu_table(chemical_potentials)
+        self._mus = {k: v for k, v in chemical_potentials.items()
+                     if k in self.species}
+        self._mu_table = self._build_mu_table(self._mus)
         self.thermo_boundaries = {
-            "chemical-potentials": {str(k): v for k, v in chemical_potentials.items()}
+            "chemical-potentials": {str(k): v for k, v in self._mus.items()}
         }
 
     @property
@@ -101,13 +94,29 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         return self._params
 
     @property
+    def species(self):
+        """Species on active sublattices.
+
+        These are species required in setting chemical potentials.
+        """
+        return list({sp for sublatt in self.active_sublattices
+                     for sp in sublatt.site_space})
+
+    @property
     def chemical_potentials(self):
         """Get the chemical potentials for species in system."""
         return self._mus
 
     @chemical_potentials.setter
     def chemical_potentials(self, value):
-        """Set the chemical potentials and update table."""
+        """Set the chemical potentials and update table.
+
+        If you ever split sub-lattices or change activeness of
+        sub-lattices in some other way, you have to reset chemical
+        potentials before using this ensemble to run MC. Otherwise
+        the _mu_table is not updated, and your chemical work might
+        be wrong.
+        """
         for sp, count in Counter(map(get_species, value.keys())).items():
             if count > 1:
                 raise ValueError(
@@ -116,15 +125,19 @@ class SemiGrandEnsemble(Ensemble, MSONable):
                     "you are using has only string keys or only Species "
                     "objects as keys."
                 )
-        value = {get_species(k): v for k, v in value.items()}
-        if set(value.keys()) != set(self._mus.keys()):
+        value = {get_species(k): v for k, v in value.items()
+                 if k in self.species}
+        if set(value.keys()) != set(self.species):
             raise ValueError(
                 "Chemical potentials given are missing species. "
                 "Values must be given for each of the following:"
-                f" {self._mus.keys()}"
+                f" {self.species}"
             )
         self._mus = value
         self._mu_table = self._build_mu_table(value)
+        self.thermo_boundaries = {
+            "chemical-potentials": {str(k): v for k, v in self._mus.items()}
+        }
 
     def compute_feature_vector(self, occupancy):
         """Compute the feature vector for a given occupancy.
@@ -180,13 +193,14 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         be given values of 0. Also rows representing sites with not partial
         occupancy will have all 0 values and should never be used.
         """
-        num_cols = max(
-            len(site_space) for site_space in self.processor.unique_site_spaces
-        )
+        # Mu table should be built with ensemble, rather than processor data.
+        # Otherwise you may get wrong species encoding if the sub-lattices are
+        # split.
+        num_cols = max(max(sl.encoding) for sl in self.sublattices)
         table = np.zeros((self.num_sites, num_cols))
-        for sublatt in self.sublattices:
+        for sublatt in self.active_sublattices:
             ordered_pots = [chemical_potentials[sp] for sp in sublatt.site_space]
-            table[sublatt.sites, : len(ordered_pots)] = ordered_pots
+            table[sublatt.sites, sublatt.encoding] = ordered_pots
         return table
 
     def as_dict(self):
@@ -223,5 +237,5 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         return cls(
             Processor.from_dict(d["processor"]),
             chemical_potentials=chemical_potentials,
-            sublattices=[Sublattice.from_dict(s) for s in d["sublattices"]],
+            sublattices=[Sublattice.from_dict(s) for s in d["sublattices"]]
         )

@@ -141,7 +141,6 @@ class MCKernel(ABC):
         self.mcusher = mcusher_factory(
             mcusher_name,
             ensemble.sublattices,
-            ensemble.inactive_sublattices,
             *args,
             **kwargs,
         )
@@ -152,7 +151,6 @@ class MCKernel(ABC):
             self.bias = mcbias_factory(
                 bias_name,
                 ensemble.sublattices,
-                ensemble.inactive_sublattices,
                 **bias_kwargs,
             )
 

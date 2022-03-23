@@ -29,7 +29,7 @@ class Ensemble(ABC):
 
     valid_mcmc_steps = None  # add this in derived classes
 
-    def __init__(self, processor, sublattices=None, inactive_sublattices=None):
+    def __init__(self, processor, sublattices=None):
         """Initialize class instance.
 
         Args:
@@ -37,21 +37,15 @@ class Ensemble(ABC):
                 A processor that can compute the change in a property given
                 a set of flips.
             sublattices (list of Sublattice): optional
-                list of Lattice objects representing sites in the processor
-                supercell with same site spaces.
-            inactive_sublattices (list of InactiveSublattice): optional
-                list of Lattice objects representing sites in the processor
+                list of Sublattice objects representing sites in the processor
                 supercell with same site spaces.
         """
         if sublattices is None:
             sublattices = processor.get_sublattices()
-        if inactive_sublattices is None:
-            inactive_sublattices = processor.get_inactive_sublattices()
         self.num_energy_coefs = len(processor.coefs)
         self.thermo_boundaries = {}  # not pretty way to save general info
         self._processor = processor
         self._sublattices = sublattices
-        self._inact_sublattices = inactive_sublattices
 
     @classmethod
     def from_cluster_expansion(cls, cluster_expansion, supercell_matrix, **kwargs):
@@ -121,13 +115,13 @@ class Ensemble(ABC):
     #  all sites are included.
     @property
     def sublattices(self):
-        """Get list of sublattices included in ensemble."""
+        """Get list of sub-lattices included in ensemble."""
         return self._sublattices
 
     @property
-    def inactive_sublattices(self):
-        """Get list of sublattices included in ensemble."""
-        return self._inact_sublattices
+    def active_sublattices(self):
+        """Get list of active sub-lattices."""
+        return [s for s in self.sublattices if s.is_active]
 
     @property
     def restricted_sites(self):
