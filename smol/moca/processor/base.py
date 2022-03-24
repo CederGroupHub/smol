@@ -21,6 +21,7 @@ from smol.cofe.space import Vacancy, get_allowed_species, get_site_spaces
 from smol.moca.sublattice import InactiveSublattice, Sublattice
 from smol.utils import get_subclasses
 
+rng = np.random.default_rng()
 
 class Processor(MSONable, metaclass=ABCMeta):
     """Abstract base class for processors.
@@ -260,12 +261,12 @@ class Processor(MSONable, metaclass=ABCMeta):
         """
         forward_drift, reverse_drift = 0.0, 0.0
         trajectory = []
-        occu = [np.random.choice(species) for species in self.allowed_species]
+        occu = [rng.choice(species) for species in self.allowed_species]
         occu = self.encode_occupancy(occu)
         for _ in range(iterations):
-            site = np.random.randint(self.size)
+            site = rng.integers(self.size)
             species = set(range(len(self.allowed_species[site]))) - {occu[site]}
-            species = np.random.choice(list(species))
+            species = rng.choice(list(species))
             delta_prop = self.compute_property_change(occu, [(site, species)])
             new_occu = occu.copy()
             new_occu[site] = species

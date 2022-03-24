@@ -14,17 +14,18 @@ from smol.cofe.space.basis import basis_factory
 from smol.cofe.space.domain import SiteSpace, get_site_spaces
 from tests.utils import assert_msonable
 
+rng = np.random.default_rng()
 
 @pytest.fixture(params=[(1, 2), (2, 8)])
 def orbit(expansion_structure, request):
-    num_sites = np.random.randint(*request.param)
+    num_sites = rng.integers(*request.param)
     site_inds = choices(range(len(expansion_structure)), k=num_sites)
     coords = [expansion_structure.frac_coords[i] for i in site_inds]
     # add random integer multiples
     n = 0
     while n < request.param[0]:
         for coord in coords:
-            coord += np.random.randint(-4, 5)
+            coord += rng.integers(-4, 5)
         frac_coords, inds = np.unique(coords, axis=0, return_index=True)
         n = len(frac_coords)
 
@@ -98,8 +99,8 @@ def test_equality(orbit):
     for _ in range(3):
         frac_coords = orbit.base_cluster.sites.copy()
         other_coords = frac_coords.copy()
-        other_coords[0] += np.random.random()
-        frac_coords += np.random.randint(-4, 4)
+        other_coords[0] += rng.random()
+        frac_coords += rng.integers(-4, 4)
         orbit1 = Orbit(
             frac_coords,
             orbit.base_cluster.lattice,
@@ -171,12 +172,12 @@ def test_remove_bit_combos(orbit):
 
 
 def test_is_sub_orbit(expansion_structure):
-    num_sites = np.random.randint(6, 10)
+    num_sites = rng.integers(6, 10)
     site_inds = choices(range(len(expansion_structure)), k=num_sites)
     frac_coords = [expansion_structure.frac_coords[i] for i in site_inds]
     # add random integer multiples
     for coord in frac_coords:
-        coord += np.random.randint(-4, 5)
+        coord += rng.integers(-4, 5)
     frac_coords, inds = np.unique(frac_coords, axis=0, return_index=True)
 
     sg_analyzer = SpacegroupAnalyzer(expansion_structure)
@@ -195,7 +196,7 @@ def test_is_sub_orbit(expansion_structure):
 
     for _ in range(3):
         new_frac_coords = frac_coords.copy()
-        new_frac_coords += np.random.randint(-4, 5)
+        new_frac_coords += rng.integers(-4, 5)
 
         # same orbit but shifted sites
         orbit1 = Orbit(
@@ -229,7 +230,7 @@ def test_is_sub_orbit(expansion_structure):
         assert not orbit.is_sub_orbit(orbit1)
 
         # point suborbit
-        i = np.random.choice(range(len(orbit.base_cluster.sites)))
+        i = rng.choice(range(len(orbit.base_cluster.sites)))
         orbit1 = Orbit(
             [new_frac_coords[i]],
             orbit.base_cluster.lattice,
@@ -250,7 +251,7 @@ def test_is_sub_orbit(expansion_structure):
         assert orbit.is_sub_orbit(orbit1)
 
         # shifted site
-        new_frac_coords[i] += np.random.random()
+        new_frac_coords[i] += rng.random()
         orbit1 = Orbit(
             [new_frac_coords[i]],
             orbit.base_cluster.lattice,
@@ -263,7 +264,7 @@ def test_is_sub_orbit(expansion_structure):
 
 def test_sub_orbit_mappings(orbit):
     frac_coords = orbit.base_cluster.sites.copy()
-    frac_coords[0] += np.random.random()
+    frac_coords[0] += rng.random()
     orbit1 = Orbit(
         frac_coords,
         orbit.base_cluster.lattice,
@@ -277,7 +278,7 @@ def test_sub_orbit_mappings(orbit):
     # choose all but one for orbits with 2 or more sites
     size = nsites if nsites == 1 else nsites - 1
     for _ in range(3):
-        inds = np.random.choice(range(nsites), size=size, replace=False)
+        inds = rng.choice(range(nsites), size=size, replace=False)
         orbit1 = Orbit(
             orbit.base_cluster.sites[inds],
             orbit.base_cluster.lattice,
@@ -375,7 +376,7 @@ def test_msonable(orbit):
     # test remove bit combos are properly reconstructed
     if len(orbit.bit_combos) - 1 > 0:
         orbit1.remove_bit_combos_by_inds(
-            np.random.randint(len(orbit1.bit_combos), size=len(orbit.bit_combos) - 1)
+            rng.integers(len(orbit1.bit_combos), size=len(orbit.bit_combos) - 1)
         )
         orbit2 = Orbit.from_dict(orbit1.as_dict())
         assert all(

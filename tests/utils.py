@@ -13,6 +13,7 @@ from pymatgen.core import Composition, Element
 
 from smol.cofe.space.domain import Vacancy
 
+rng = np.random.default_rng()
 
 def assert_msonable(obj, test_if_subclass=True):
     """
@@ -43,7 +44,7 @@ def gen_random_occupancy(sublattices, inactive_sublattices):
     rand_occu = np.zeros(num_sites, dtype=int)
     for sublatt in sublattices:
         codes = range(len(sublatt.site_space))
-        rand_occu[sublatt.sites] = np.random.choice(
+        rand_occu[sublatt.sites] = rng.choice(
             codes, size=len(sublatt.sites), replace=True
         )
     return rand_occu
@@ -88,7 +89,7 @@ def gen_random_neutral_occupancy(sublattices, inactive_sublattices, lam=10):
         occu_next[site] = sp
         C = charge(occu, sublattices, inactives)
         C_next = charge(occu_next, sublattices, inactives)
-        accept = np.log(np.random.random()) < -lam * (C_next**2 - C**2)
+        accept = np.log(rng.random()) < -lam * (C_next**2 - C**2)
         if accept and C != 0:
             return occu_next.copy(), C_next
         else:
@@ -126,8 +127,8 @@ def gen_fake_training_data(prim_structure, n=10):
     """Generate a fake structure, energy training set."""
 
     training_data = []
-    for energy in np.random.random(n):
-        struct = gen_random_structure(prim_structure, size=np.random.randint(2, 6))
+    for energy in rng.random(n):
+        struct = gen_random_structure(prim_structure, size=rng.integers(2, 6))
         energy *= -len(struct)
         training_data.append((struct, energy))
     return training_data

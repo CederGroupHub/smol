@@ -18,14 +18,14 @@ NSAMPLES = 1000
 # compositions will depend on number of sites and num species in the
 # sublattices created in the fixture, if changing make sure it works out.
 SUBLATTICE_COMPOSITIONS = [1.0 / 3.0, 1.0 / 2.0]
-
+rng = np.random.default_rng()
 
 @pytest.fixture(params=[1, 5])
 def container(request):
     natural_parameters = np.zeros(10)
     natural_parameters[[0, -1]] = -1  # make first and last 1
     num_energy_coefs = 9
-    sites = np.random.choice(range(NUM_SITES), size=300, replace=False)
+    sites = rng.choice(range(NUM_SITES), size=300, replace=False)
     site_space = SiteSpace(Composition({"A": 0.2, "B": 0.5, "C": 0.3}))
     sublatt1 = Sublattice(site_space, sites)
     site_space = SiteSpace(Composition({"A": 0.4, "D": 0.6}))
@@ -34,7 +34,7 @@ def container(request):
     sublattices = [sublatt1, sublatt2]
     trace = Trace(
         occupancy=np.zeros((0, request.param, NUM_SITES), dtype=int),
-        features=np.random.random((0, request.param, len(natural_parameters))),
+        features=rng.random((0, request.param, len(natural_parameters))),
         enthalpy=np.ones((0, request.param, 1)),
         temperature=np.zeros((0, request.param, 1)),
         accepted=np.zeros((0, request.param, 1), dtype=bool),
@@ -56,21 +56,21 @@ def fake_traces(container):
     enths = -5 * np.ones((NSAMPLES, nwalkers, 1))
     temps = -300.56 * np.ones((NSAMPLES, nwalkers, 1))
     feats = np.zeros((NSAMPLES, nwalkers, len(container.natural_parameters)))
-    accepted = np.random.randint(2, size=(NSAMPLES, nwalkers, 1))
+    accepted = rng.integers(2, size=(NSAMPLES, nwalkers, 1))
     sites1 = container.sublattices[0].sites
     sites2 = container.sublattices[1].sites
     for i in range(NSAMPLES):
         for j in range(nwalkers):
             # make occupancy compositions (1/3, 1/3, 1/3) & (1/2, 1/2, 1/2)
             size = int(SUBLATTICE_COMPOSITIONS[0] * len(sites1))
-            s = np.random.choice(sites1, size=size, replace=False)
+            s = rng.choice(sites1, size=size, replace=False)
             occus[i, j, s] = 0
-            s1 = np.random.choice(np.setdiff1d(sites1, s), size=size, replace=False)
+            s1 = rng.choice(np.setdiff1d(sites1, s), size=size, replace=False)
             occus[i, j, s1] = 1
             s2 = np.setdiff1d(sites1, np.append(s, s1))
             occus[i, j, s2] = 2
             size = int(SUBLATTICE_COMPOSITIONS[1] * len(sites2))
-            s = np.random.choice(sites2, size=size, replace=False)
+            s = rng.choice(sites2, size=size, replace=False)
             occus[i, j, s] = 0
             occus[i, j, np.setdiff1d(sites2, s)] = 1
             # first and last feature real fake
@@ -113,7 +113,7 @@ def test_allocate_and_save(container, fake_traces):
     assert container._total_steps == NSAMPLES
     container.clear()
 
-    thinned = np.random.randint(50)
+    thinned = rng.integers(50)
     add_samples(container, fake_traces, thinned_by=thinned)
     assert len(container) == NSAMPLES
     assert container._total_steps == thinned * NSAMPLES
@@ -292,7 +292,7 @@ def test_means_and_variances(container, fake_traces, discard, thin):
 
 def test_get_mins(container, fake_traces):
     add_samples(container, fake_traces)
-    i = np.random.choice(range(NSAMPLES))
+    i = rng.choice(range(NSAMPLES))
     nwalkers = container.shape[0]
     container._trace.enthalpy[i, :] = -10
     container._trace.features[i, :, :] = 5.0
