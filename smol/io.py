@@ -36,8 +36,8 @@ def save_work(file_path, *msonables):
             )
         work_dict[msonable.__class__.__name__] = msonable
 
-    with open(file_path, "w") as fp:
-        json.dump(work_dict, fp, cls=MontyEncoder)
+    with open(file_path, "w", encoding="utf-8") as fpath:
+        json.dump(work_dict, fpath, cls=MontyEncoder)
 
 
 def load_work(file_path):
@@ -49,7 +49,7 @@ def load_work(file_path):
     Returns: Dictionary with smol objects
         dict
     """
-    with open(file_path) as fp:
-        work_dict = json.load(fp, cls=MontyDecoder)
+    with open(file_path, encoding="utf-8") as fpath:
+        work_dict = json.load(fpath, cls=MontyDecoder)
 
     return work_dict
