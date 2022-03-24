@@ -535,17 +535,18 @@ class StructureWrangler(MSONable):
             if len(self._items) > 0:
                 if set(item["properties"].keys()) != set(self.available_properties):
                     raise ValueError(
-                        f"The properties in the data item being added do not match all the"
-                        f"properties that have already been added: "
-                        f"{self.available_properties}.\n Additional items must include the "
-                        f"same properties included."
+                        f"The properties in the data item being added do not match all "
+                        f"the properties that have already been added: "
+                        f"{self.available_properties}.\n Additional items must include "
+                        f"the same properties included."
                     )
 
                 if set(item["weights"].keys()) != set(self.available_weights):
                     raise ValueError(
-                        f"The properties in the data item being added do not match all the"
-                        f"weights that have already been added: {self.available_weights}."
-                        f"\n Additional items must include the same weights included."
+                        f"The properties in the data item being added do not match all "
+                        f"the weights that have already been added: "
+                        f"{self.available_weights}.\n Additional items must include the"
+                        f" same weights included."
                     )
             self._items.append(item)
             self._corr_duplicate_warning(self.num_structures - 1)
