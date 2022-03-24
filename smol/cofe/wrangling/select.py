@@ -29,8 +29,8 @@ def full_row_rank_select(feature_matrix, tol=1e-15, nrows=None):
         list of int: list with indices of rows that form a full rank system.
     """
     nrows = nrows if nrows is not None else feature_matrix.shape[0]
-    P, L, U = lu(feature_matrix.T)
-    sample_ids = np.unique((abs(U) > tol).argmax(axis=1))[:nrows]
+    (_, _, u_mat) = lu(feature_matrix.T)
+    sample_ids = np.unique((abs(u_mat) > tol).argmax(axis=1))[:nrows]
     if len(sample_ids) > np.linalg.matrix_rank(feature_matrix[:nrows]):
         warn(
             "More samples than the matrix rank where selected.\n"
@@ -59,17 +59,17 @@ def gaussian_select(feature_matrix, num_samples, orthogonalize=False):
     Returns:
         list of int: list with indices of rows that align with Gaussian samples
     """
-    M = feature_matrix.copy()
-    m, n = M.shape
-    M /= np.linalg.norm(M, axis=1).reshape(m, 1)
-    gauss = multivariate_normal(mean=np.zeros(n)).rvs(size=num_samples)
+    matrix = feature_matrix.copy()
+    rows, cols = matrix.shape
+    matrix /= np.linalg.norm(matrix, axis=1).reshape(rows, 1)
+    gauss = multivariate_normal(mean=np.zeros(cols)).rvs(size=num_samples)
     if orthogonalize:
         gauss = orth(gauss.T).T  # orthogonalize rows of gauss
 
     gauss /= np.linalg.norm(gauss, axis=1).reshape(num_samples, 1)
-    sample_ids, compliment = [], list(range(m))
+    sample_ids, compliment = [], list(range(rows))
     for vec in gauss:
-        sample_ids.append(compliment[np.argmax(M[compliment] @ vec)])
+        sample_ids.append(compliment[np.argmax(matrix[compliment] @ vec)])
         compliment.remove(sample_ids[-1])
     return np.sort(sample_ids)
 
