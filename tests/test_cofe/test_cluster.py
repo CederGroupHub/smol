@@ -1,5 +1,4 @@
 from itertools import combinations
-from random import choices
 
 import numpy as np
 import pytest
@@ -12,7 +11,7 @@ rng = np.random.default_rng()
 @pytest.fixture(scope="package")
 def cluster(structure):
     num_sites = rng.integers(2, 6)
-    sites = choices(structure.frac_coords, k=num_sites)
+    sites = rng.choice(structure.frac_coords, size=num_sites)
     # add random integer multiples
     for site in sites:
         site += rng.integers(-3, 3)
