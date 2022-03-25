@@ -75,12 +75,12 @@ class Sublattice(MSONable):
         Returns:
             MSONable dict
         """
-        d = {
+        sublattice_d = {
             "site_space": self.site_space.as_dict(),
             "sites": self.sites.tolist(),
             "active_sites": self.active_sites.tolist(),
         }
-        return d
+        return sublattice_d
 
     @classmethod
     def from_dict(cls, d):
@@ -117,8 +117,8 @@ class InactiveSublattice(MSONable):
         Returns:
             MSONable dict
         """
-        d = {"site_space": self.site_space.as_dict(), "sites": self.sites.tolist()}
-        return d
+        inact_sublattice_d = {"site_space": self.site_space.as_dict(), "sites": self.sites.tolist()}
+        return inact_sublattice_d
 
     @classmethod
     def from_dict(cls, d):
