@@ -210,9 +210,9 @@ class SiteSpace(Mapping, Hashable, MSONable):
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation."""
-        site_space_dict = super().as_dict()
-        site_space_dict["composition"] = self._composition.as_dict()
-        return site_space_dict
+        site_space_d = super().as_dict()
+        site_space_d["composition"] = self._composition.as_dict()
+        return site_space_d
 
     @classmethod
     def from_dict(cls, d):

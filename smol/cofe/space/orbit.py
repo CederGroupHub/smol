@@ -540,7 +540,7 @@ class Orbit(MSONable):
         Returns:
             MSONable dict
         """
-        orb_dict = {
+        orb_d = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "sites": self.base_cluster.sites.tolist(),
@@ -550,4 +550,4 @@ class Orbit(MSONable):
             "structure_symops": [so.as_dict() for so in self.structure_symops],
             "_bit_combos": tuple(c.tolist() for c in self.bit_combos),
         }
-        return orb_dict
+        return orb_d

@@ -47,7 +47,7 @@ class Cluster(MSONable):
         self.centroid = centroid - shift
         self.sites = sites - shift
         self.lattice = lattice
-        self.id = None
+        self.c_id = None
 
     @classmethod
     def from_sites(cls, sites):
@@ -73,7 +73,7 @@ class Cluster(MSONable):
 
     def assign_ids(self, cluster_id):
         """Recursively assign ids to clusters after initialization."""
-        self.id = cluster_id
+        self.c_id = cluster_id
         return cluster_id + 1
 
     def __len__(self):
@@ -105,7 +105,7 @@ class Cluster(MSONable):
         """Pretty representation."""
         return _repr(
             self,
-            c_id=self.id,
+            c_id=self.c_id,
             diameter=self.diameter,
             centroid=self.centroid,
             lattice=self.lattice,
@@ -122,10 +122,10 @@ class Cluster(MSONable):
         Returns:
             MSONable dict
         """
-        d = {
+        cluster_d = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "lattice": self.lattice.as_dict(),
             "sites": self.sites.tolist(),
         }
-        return d
+        return cluster_d

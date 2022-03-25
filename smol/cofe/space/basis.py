@@ -121,13 +121,13 @@ class DiscreteBasis(MSONable, metaclass=ABCMeta):
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation of a DiscreteBasis."""
-        basis_dict = {
+        basis_d = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "site_space": self._domain.as_dict(),
             "flavor": self.flavor,
         }
-        return basis_dict
+        return basis_d
 
     @classmethod
     def from_dict(cls, d):
@@ -308,10 +308,10 @@ class StandardBasis(DiscreteBasis):
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation."""
-        basis_dict = super().as_dict()
-        basis_dict["func_array"] = self._f_array.tolist()
-        basis_dict["orthonorm_array"] = None if self._r_array is None else self._r_array.tolist()
-        return basis_dict
+        basis_d = super().as_dict()
+        basis_d["func_array"] = self._f_array.tolist()
+        basis_d["orthonorm_array"] = None if self._r_array is None else self._r_array.tolist()
+        return basis_d
 
     @classmethod
     def from_dict(cls, d):

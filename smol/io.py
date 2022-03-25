@@ -28,16 +28,16 @@ def save_work(file_path, *msonables):
         *msonables (monty.MSONable):
             MSONable child classes.
     """
-    work_dict = {}
+    work_d = {}
     for msonable in msonables:
         if not isinstance(msonable, MSONable):
             raise AttributeError(
                 "Attempting to save an object which is not " f"MSONable: {msonable}"
             )
-        work_dict[msonable.__class__.__name__] = msonable
+        work_d[msonable.__class__.__name__] = msonable
 
     with open(file_path, "w", encoding="utf-8") as fpath:
-        json.dump(work_dict, fpath, cls=MontyEncoder)
+        json.dump(work_d, fpath, cls=MontyEncoder)
 
 
 def load_work(file_path):
@@ -50,6 +50,6 @@ def load_work(file_path):
         dict
     """
     with open(file_path, encoding="utf-8") as fpath:
-        work_dict = json.load(fpath, cls=MontyDecoder)
+        work_d = json.load(fpath, cls=MontyDecoder)
 
-    return work_dict
+    return work_d

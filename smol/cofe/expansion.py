@@ -364,7 +364,7 @@ class ClusterExpansion(MSONable):
         else:
             reg_data = None
 
-        ce_dict = {
+        ce_d = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "cluster_subspace": self.cluster_subspace.as_dict(),
@@ -372,4 +372,4 @@ class ClusterExpansion(MSONable):
             "regression_data": reg_data,
             "feature_matrix": feature_matrix,
         }
-        return ce_dict
+        return ce_d
