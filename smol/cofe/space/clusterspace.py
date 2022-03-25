@@ -143,8 +143,9 @@ class ClusterSubspace(MSONable):
         # structure otherwise you can get weird subset/superset bugs.
         fcoords = self._structure.frac_coords
         for sym_op in self.symops:
-            if not is_coord_subset_pbc(sym_op.operate_multi(fcoords),
-                                       fcoords, SITE_TOL):
+            if not is_coord_subset_pbc(
+                sym_op.operate_multi(fcoords), fcoords, SITE_TOL
+            ):
                 raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
 
         # This structure matcher is used to determine if a given (supercell)
@@ -652,8 +653,9 @@ class ClusterSubspace(MSONable):
         sites = []
         for specie, site in zip(occu, supercell_structure):
             if not isinstance(specie, Vacancy):  # skip vacancies
-                site = PeriodicSite(specie, site.frac_coords,
-                                    supercell_structure.lattice)
+                site = PeriodicSite(
+                    specie, site.frac_coords, supercell_structure.lattice
+                )
                 sites.append(site)
         return Structure.from_sites(sites)
 

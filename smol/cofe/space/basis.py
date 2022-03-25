@@ -297,8 +297,9 @@ class StandardBasis(DiscreteBasis):
             rotation_mat = (
                 np.eye(len(vector1))
                 + (np.outer(vector1, vector2) - np.outer(vector2, vector1))
-                * np.sin(angle) + (np.outer(vector1, vector1) +
-                                   np.outer(vector2, vector2)) * (np.cos(angle) - 1)
+                * np.sin(angle)
+                + (np.outer(vector1, vector1) + np.outer(vector2, vector2))
+                * (np.cos(angle) - 1)
             )
             self._f_array[1:] = self._f_array[1:] @ rotation_mat.T
             # make really small numbers zero
@@ -310,8 +311,9 @@ class StandardBasis(DiscreteBasis):
         """Get MSONable dict representation."""
         basis_d = super().as_dict()
         basis_d["func_array"] = self._f_array.tolist()
-        basis_d["orthonorm_array"] = None if self._r_array is None \
-            else self._r_array.tolist()
+        basis_d["orthonorm_array"] = (
+            None if self._r_array is None else self._r_array.tolist()
+        )
         return basis_d
 
     @classmethod
@@ -441,8 +443,9 @@ class SinusoidIterator(BasisIterator):
     def __next__(self):
         """Generate the next basis function."""
         next_ind = self.encoding[next(self.species_iter)] + 1
-        func = encode_domain(self.encoding)(sinusoid_factory(next_ind,
-                                                             len(self.species)))
+        func = encode_domain(self.encoding)(
+            sinusoid_factory(next_ind, len(self.species))
+        )
         return func
 
 

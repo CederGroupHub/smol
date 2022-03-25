@@ -117,8 +117,10 @@ class InactiveSublattice(MSONable):
         Returns:
             MSONable dict
         """
-        inact_sublattice_d = {"site_space": self.site_space.as_dict(),
-                              "sites": self.sites.tolist()}
+        inact_sublattice_d = {
+            "site_space": self.site_space.as_dict(),
+            "sites": self.sites.tolist(),
+        }
         return inact_sublattice_d
 
     @classmethod

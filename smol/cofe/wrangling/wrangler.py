@@ -381,8 +381,9 @@ class StructureWrangler(MSONable):
         sim_matrix = np.identity(num_corrs)
         for i in range(num_corrs):
             for j in range(i + 1, num_corrs):
-                num_identical = np.sum(np.isclose(matrix[:, i], matrix[:, j],
-                                                  rtol=rtol))
+                num_identical = np.sum(
+                    np.isclose(matrix[:, i], matrix[:, j], rtol=rtol)
+                )
                 sim_matrix[i, j] = num_identical / num_structs
                 sim_matrix[j, i] = num_identical / num_structs
 

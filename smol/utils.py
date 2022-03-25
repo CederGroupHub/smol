@@ -18,9 +18,11 @@ def _repr(instance: object, **fields: Dict[str, Any]) -> str:
     for key, field in fields.items():
         attrs.append(f"{key}={field!r}")
 
-    return (f"<{instance.__class__.__name__}"
-            f"{hex(id(instance))}({','.join(attrs)})>") if len(attrs) == 0 \
+    return (
+        (f"<{instance.__class__.__name__} {hex(id(instance))}({','.join(attrs)})>")
+        if len(attrs) == 0
         else f"<{instance.__class__.__name__} {hex(id(instance))}>"
+    )
 
 
 def class_name_from_str(class_str):
