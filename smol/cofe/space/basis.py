@@ -310,7 +310,8 @@ class StandardBasis(DiscreteBasis):
         """Get MSONable dict representation."""
         basis_d = super().as_dict()
         basis_d["func_array"] = self._f_array.tolist()
-        basis_d["orthonorm_array"] = None if self._r_array is None else self._r_array.tolist()
+        basis_d["orthonorm_array"] = None if self._r_array is None \
+            else self._r_array.tolist()
         return basis_d
 
     @classmethod
@@ -530,6 +531,7 @@ def sinusoid_factory(n, m):
     """Sine or cosine based on AVvW sinusoid site basis."""
     a = -(-n // 2)  # ceiling division
     return partial(sin_f, a=a, m=m) if n % 2 == 0 else partial(cos_f, a=a, m=m)
+
 
 def sin_f(s, a, m):
     """Return basis function for even indices."""

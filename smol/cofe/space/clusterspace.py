@@ -1331,7 +1331,7 @@ def invert_mapping(mapping):
     for i in range(len(mapping) - 1, -1, -1):
         values_list = mapping[i]
         for value in values_list:
-            if not i in inv_mapping[value]:
+            if i not in inv_mapping[value]:
                 inv_mapping[value].append(i)
 
     return inv_mapping

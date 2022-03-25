@@ -118,10 +118,10 @@ def progress_bar(display, total, description):
             return _EmptyBar()
 
         return tqdm.tqdm(total=total, desc=description)
-            # if display is True:
-            #   return tqdm.tqdm(total=total, desc=description)
-            # else:
-            #    return getattr(tqdm, "tqdm_" + display)(total=total)
+        # if display is True:
+        #   return tqdm.tqdm(total=total, desc=description)
+        # else:
+        #    return getattr(tqdm, "tqdm_" + display)(total=total)
     return _EmptyBar()
 
 

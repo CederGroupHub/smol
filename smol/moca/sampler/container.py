@@ -294,8 +294,8 @@ class SampleContainer(MSONable):
                 )
                 # check for zero counts
                 if len(codes) != len(sublattice.sites):
-                    n = len(sublattice.site_space)
-                    missed = list(set(range(n)) - set(codes))
+                    n_sites = len(sublattice.site_space)
+                    missed = list(set(range(n_sites)) - set(codes))
                     codes = np.append(codes, missed)
                     count = np.append(count, len(missed) * [0])
 
@@ -429,9 +429,9 @@ class SampleContainer(MSONable):
     @staticmethod
     def _flatten(traced_values):
         """Flatten values in trace values with multiple walkers."""
-        s = list(traced_values.shape[1:])
-        s[0] = np.prod(traced_values.shape[:2])
-        return np.squeeze(traced_values.reshape(s))
+        shape_l = list(traced_values.shape[1:])
+        shape_l[0] = np.prod(traced_values.shape[:2])
+        return np.squeeze(traced_values.reshape(shape_l))
 
     def __len__(self):
         """Return the number of samples."""
@@ -443,7 +443,7 @@ class SampleContainer(MSONable):
         Returns:
             MSONable dict
         """
-        d = {
+        container_d = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "sublattices": [s.as_dict() for s in self.sublattices],
@@ -456,7 +456,7 @@ class SampleContainer(MSONable):
             "aux_checkpoint": self._aux_checkpoint,
         }
         # TODO need to think how to generally serialize the aux checkpoint
-        return d
+        return container_d
 
     @classmethod
     def from_dict(cls, d):
