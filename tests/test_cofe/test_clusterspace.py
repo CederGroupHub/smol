@@ -1,4 +1,3 @@
-import random
 import warnings
 from itertools import combinations
 
@@ -376,7 +375,7 @@ def test_potts_subspace(cluster_subspace):
 
     # check decorations
     for _ in range(10):
-        i = random.choice(range(1, potts_subspace.num_corr_functions))
+        i = rng.choice(range(1, potts_subspace.num_corr_functions))
         o_id = potts_subspace.function_orbit_ids[i]
         orbit = potts_subspace.orbits[o_id - 1]
         fdeco = potts_subspace.get_function_decoration(i)
@@ -556,7 +555,7 @@ def test_corr_from_structure(single_subspace):
 
     # shuffle sites and check correlation still works
     for _ in range(10):
-        random.shuffle(s)
+        rng.shuffle(s)
         npt.assert_allclose(cs.corr_from_structure(s), expected)
 
 

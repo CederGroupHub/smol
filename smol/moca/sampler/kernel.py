@@ -8,7 +8,6 @@ __author__ = "Luis Barroso-Luque"
 
 from abc import ABC, abstractmethod
 from math import log
-from random import random
 from types import SimpleNamespace
 
 import numpy as np
@@ -21,6 +20,7 @@ from smol.utils import class_name_from_str, derived_class_factory, get_subclasse
 ALL_MCUSHERS = list(get_subclasses(MCUsher).keys())
 ALL_BIAS = list(get_subclasses(MCBias).keys())
 
+rng = np.random.default_rng()
 
 class Trace(SimpleNamespace):
     """Simple Trace class.
@@ -324,7 +324,7 @@ class UniformlyRandom(MCKernel):
             self.trace.accepted = np.array(
                 True
                 if self.trace.delta_trace.bias >= 0
-                else self.trace.delta_trace.bias > log(random())
+                else self.trace.delta_trace.bias > log(rng.random())
             )
 
         if self.trace.accepted:
@@ -373,14 +373,14 @@ class Metropolis(ThermalKernel):
                 + self.trace.delta_trace.bias
             )
             self.trace.accepted = np.array(
-                True if exponent >= 0 else exponent > log(random())
+                True if exponent >= 0 else exponent > log(rng.random())
             )
         else:
             self.trace.accepted = np.array(
                 True
                 if self.trace.delta_trace.enthalpy <= 0
                 else -self.beta * self.trace.delta_trace.enthalpy
-                > log(random())  # noqa
+                > log(rng.random())  # noqa
             )
 
         if self.trace.accepted:

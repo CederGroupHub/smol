@@ -1,8 +1,8 @@
 """Test all bias terms."""
 
-import random
 from copy import deepcopy
 
+import numpy as np
 import pytest
 
 from smol.moca.sampler.bias import FugacityBias, mcbias_factory
@@ -10,6 +10,7 @@ from tests.utils import gen_random_occupancy
 
 bias_classes = [FugacityBias]
 
+rng = np.random.default_rng()
 
 @pytest.fixture(scope="module")
 def all_sublattices(ce_processor):
@@ -26,9 +27,9 @@ def test_compute_bias_change(mcbias):
     occu = gen_random_occupancy(mcbias.sublattices, mcbias.inactive_sublattices)
     new_occu = occu.copy()
     for _ in range(50):
-        s = random.choice(list(range(len(mcbias.sublattices))))
-        i = random.choice(mcbias.sublattices[s].sites)
-        sp = random.choice(list(range(len(mcbias.sublattices[s].species))))
+        s = rng.choice(list(range(len(mcbias.sublattices))))
+        i = rng.choice(mcbias.sublattices[s].sites)
+        sp = rng.choice(list(range(len(mcbias.sublattices[s].species))))
         step.append((i, sp))
         if i == 81:
             raise (ValueError, "81!!!!")

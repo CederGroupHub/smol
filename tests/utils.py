@@ -4,7 +4,6 @@ Some of these are borrowed from pymatgen test scripts.
 """
 
 import json
-import random
 from itertools import chain
 
 import numpy as np
@@ -82,9 +81,9 @@ def gen_random_neutral_occupancy(sublattices, inactive_sublattices, lam=10):
         return charge
 
     def flip(occu, sublattices, inactives, lam=10):
-        sl = random.choice(sublattices)
-        site = random.choice(sl.sites)
-        sp = random.choice(list({i for i in range(len(sl.site_space))} - {occu[site]}))
+        sl = rng.choice(sublattices)
+        site = rng.choice(sl.sites)
+        sp = rng.choice(list({i for i in range(len(sl.site_space))} - {occu[site]}))
         occu_next = occu.copy()
         occu_next[site] = sp
         C = charge(occu, sublattices, inactives)
@@ -119,7 +118,7 @@ def gen_random_structure(prim, size=3):
     structure = prim.copy()
     structure.make_supercell(size)
     for site in structure:
-        site.species = Composition({random.choice(list(site.species.keys())): 1})
+        site.species = Composition({rng.choice(list(site.species.keys())): 1})
     return structure
 
 

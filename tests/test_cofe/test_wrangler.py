@@ -1,4 +1,3 @@
-import random
 from copy import deepcopy
 
 import numpy as np
@@ -48,7 +47,7 @@ def test_add_data(structure_wrangler):
 
     item = deepcopy(
         structure_wrangler.data_items[
-            random.choice(range(structure_wrangler.num_structures))
+            rng.choice(range(structure_wrangler.num_structures))
         ]
     )
 
@@ -190,7 +189,7 @@ def test_append_data_items(structure_wrangler):
 
     item = deepcopy(
         structure_wrangler.data_items[
-            random.choice(range(structure_wrangler.num_structures))
+            rng.choice(range(structure_wrangler.num_structures))
         ]
     )
 
@@ -312,7 +311,7 @@ def test_matrix_properties(structure_wrangler):
 
 def test_get_orbit_rank(structure_wrangler):
     for _ in range(10):
-        oid = random.choice(
+        oid = rng.choice(
             range(1, len(structure_wrangler.cluster_subspace.orbits) + 1)
         )
         orb_size = structure_wrangler.cluster_subspace.orbits[oid - 1]
