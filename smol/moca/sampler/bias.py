@@ -26,7 +26,7 @@ class MCBias(ABC):
             list of inactive sublattices.
     """
 
-    def __init__(self, sublattices, inactive_sublattices, *args, **kwargs):
+    def __init__(self, sublattices, inactive_sublattices):
         """Initialize Basebias.
 
         Args:
@@ -129,11 +129,11 @@ class FugacityBias(MCBias):
     def fugacity_fractions(self, value):
         """Set the fugacity fractions and update table."""
         for sub in value:
-            for sp, count in Counter(map(get_species, sub.keys())).items():
+            for spec, count in Counter(map(get_species, sub.keys())).items():
                 if count > 1:
                     raise ValueError(
                         f"{count} values of the fugacity for the same "
-                        f"species {sp} were provided.\n Make sure the "
+                        f"species {spec} were provided.\n Make sure the "
                         f"dictionaries you are using have only "
                         f"string keys or only Species objects as keys."
                     )
@@ -141,8 +141,8 @@ class FugacityBias(MCBias):
         value = [{get_species(k): v for k, v in sub.items()} for sub in value]
         if not all(sum(fus.values()) == 1 for fus in value):
             raise ValueError("Fugacity ratios must add to one.")
-        for (sp, vals) in zip(self._species, value):
-            if sp != set(vals.keys()):
+        for (spec, vals) in zip(self._species, value):
+            if spec != set(vals.keys()):
                 raise ValueError(
                     f"Fugacity fractions given are missing or not valid "
                     f"species.\n"

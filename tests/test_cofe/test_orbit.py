@@ -51,7 +51,7 @@ def test_constructor(expansion_structure):
     spaces = get_site_spaces([expansion_structure[i] for i in site_inds])
     bases = [basis_factory("indicator", bit) for bit in spaces]
     with pytest.raises(AttributeError):
-        orbit = Orbit(
+        Orbit(
             coords,
             expansion_structure.lattice,
             [np.arange(len(space) - 1) for space in spaces[:-1]],
@@ -59,7 +59,7 @@ def test_constructor(expansion_structure):
             sg_analyzer.get_symmetry_operations(),
         )
     with pytest.raises(AttributeError):
-        orbit = Orbit(
+        Orbit(
             coords,
             expansion_structure.lattice,
             [np.arange(len(space) - 1) for space in spaces[:-1]],

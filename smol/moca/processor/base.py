@@ -182,9 +182,9 @@ class Processor(MSONable, metaclass=ABCMeta):
         """
         occupancy = self.decode_occupancy(occupancy)
         sites = []
-        for sp, s in zip(occupancy, self.structure):
-            if sp != Vacancy():
-                site = PeriodicSite(sp, s.frac_coords, self.structure.lattice)
+        for spec, site in zip(occupancy, self.structure):
+            if spec != Vacancy():
+                site = PeriodicSite(spec, site.frac_coords, self.structure.lattice)
                 sites.append(site)
         return Structure.from_sites(sites)
 
@@ -192,7 +192,10 @@ class Processor(MSONable, metaclass=ABCMeta):
         """Encode occupancy string of species str to ints."""
         # TODO check if setting to np.intc improves speed
         return np.array(
-            [species.index(sp) for species, sp in zip(self.allowed_species, occupancy)],
+            [
+                species.index(spec)
+                for species, spec in zip(self.allowed_species, occupancy)
+            ],
             dtype=int,
         )
 
@@ -214,8 +217,8 @@ class Processor(MSONable, metaclass=ABCMeta):
                 np.array(
                     [
                         i
-                        for i, sp in enumerate(self.allowed_species)
-                        if sp == list(site_space.keys())
+                        for i, spec in enumerate(self.allowed_species)
+                        if spec == list(site_space.keys())
                     ]
                 ),
             )
@@ -234,8 +237,8 @@ class Processor(MSONable, metaclass=ABCMeta):
                 np.array(
                     [
                         i
-                        for i, sp in enumerate(self.allowed_species)
-                        if sp == list(site_space.keys())
+                        for i, spec in enumerate(self.allowed_species)
+                        if spec == list(site_space.keys())
                     ]
                 ),
             )
@@ -296,14 +299,14 @@ class Processor(MSONable, metaclass=ABCMeta):
         Returns:
             MSONable dict
         """
-        d = {
+        proc_d = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "cluster_subspace": self.cluster_subspace.as_dict(),
             "supercell_matrix": self.supercell_matrix.tolist(),
             "coefficients": np.array(self.coefs).tolist(),
         }
-        return d
+        return proc_d
 
     @classmethod
     def from_dict(cls, d):
@@ -311,8 +314,8 @@ class Processor(MSONable, metaclass=ABCMeta):
         # is this good design?
         try:
             subclass = get_subclasses(cls)[d["@class"]]
-        except KeyError:
+        except KeyError as err:
             raise NameError(
                 f"{d['@class']} is not implemented or is not a subclass of " f"{cls}."
-            )
+            ) from err
         return subclass.from_dict(d)

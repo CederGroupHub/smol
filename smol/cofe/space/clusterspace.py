@@ -6,6 +6,8 @@ information necessary for a cluster expansion.
 The PottsSubspace class is an (experimental) class that is similar, but
 diverges from the CE mathematic formalism.
 """
+# pylint: disable=too-many-lines
+
 
 import warnings
 from copy import deepcopy
@@ -141,9 +143,11 @@ class ClusterSubspace(MSONable):
 
         # Test that all the found symmetry operations map back to the input
         # structure otherwise you can get weird subset/superset bugs.
-        fc = self._structure.frac_coords
-        for op in self.symops:
-            if not is_coord_subset_pbc(op.operate_multi(fc), fc, SITE_TOL):
+        fcoords = self._structure.frac_coords
+        for sym_op in self.symops:
+            if not is_coord_subset_pbc(
+                sym_op.operate_multi(fcoords), fcoords, SITE_TOL
+            ):
                 raise SymmetryError(SYMMETRY_ERROR_MESSAGE)
 
         # This structure matcher is used to determine if a given (supercell)
@@ -649,9 +653,11 @@ class ClusterSubspace(MSONable):
         supercell_structure.make_supercell(scmatrix)
 
         sites = []
-        for sp, s in zip(occu, supercell_structure):
-            if not isinstance(sp, Vacancy):  # skip vacancies
-                site = PeriodicSite(sp, s.frac_coords, supercell_structure.lattice)
+        for specie, site in zip(occu, supercell_structure):
+            if not isinstance(specie, Vacancy):  # skip vacancies
+                site = PeriodicSite(
+                    specie, site.frac_coords, supercell_structure.lattice
+                )
                 sites.append(site)
         return Structure.from_sites(sites)
 
@@ -710,17 +716,17 @@ class ClusterSubspace(MSONable):
             # only over mapping, explicitly loop over everything to
             # catch vacancies on improper sites
             if i in site_mapping:
-                sp = structure[site_mapping.index(i)].specie
+                spec = structure[site_mapping.index(i)].specie
             else:
-                sp = Vacancy()
-            if sp not in allowed_species:
+                spec = Vacancy()
+            if spec not in allowed_species:
                 raise StructureMatchError(
-                    "A site in given structure has an  unrecognized species " f"{sp}."
+                    "A site in given structure has an  unrecognized species " f"{spec}."
                 )
             if encode:
-                occu.append(allowed_species.index(sp))
+                occu.append(allowed_species.index(spec))
             else:
-                occu.append(sp)
+                occu.append(spec)
         return occu
 
     def scmatrix_from_structure(self, structure):
@@ -805,13 +811,14 @@ class ClusterSubspace(MSONable):
         """
         if min(orbit_ids) < 0:
             raise ValueError("Index out of range. Negative inds are not allowed.")
-        elif min(orbit_ids) == 0:
+
+        if min(orbit_ids) == 0:
             raise ValueError(
                 "The empty orbit can not be removed. \n If you really want to "
                 "do this remove the first column in your feature matrix before"
                 " fitting."
             )
-        elif max(orbit_ids) > self.num_orbits - 1:
+        if max(orbit_ids) > self.num_orbits - 1:
             raise ValueError(
                 "Index out of range. " "Total number of orbits is: {self.num_orbits}"
             )
@@ -1028,8 +1035,8 @@ class ClusterSubspace(MSONable):
             basis_factory(basis, site_space) for site_space in site_spaces
         )
         if orthonorm:
-            for basis in site_bases:
-                basis.orthonormalize()
+            for s_basis in site_bases:
+                s_basis.orthonormalize()
 
         orbits = {}
         nbits = np.array([len(b) - 1 for b in site_spaces])
@@ -1147,7 +1154,7 @@ class ClusterSubspace(MSONable):
 
                     if new_orbit.base_cluster.diameter > diameter + 1e-8:
                         continue
-                    elif new_orbit not in new_orbits:
+                    if new_orbit not in new_orbits:
                         new_orbits.append(new_orbit)
 
             if len(new_orbits) > 0:
@@ -1170,7 +1177,7 @@ class ClusterSubspace(MSONable):
         prim_to_supercell = np.linalg.inv(scmatrix)
         supercell_fcoords = np.array(supercell.frac_coords)
 
-        ts = lattice_points_in_supercell(scmatrix)
+        pts = lattice_points_in_supercell(scmatrix)
         orbit_indices = []
         for orbit in self.orbits:
             prim_fcoords = np.array([c.sites for c in orbit.clusters])
@@ -1179,7 +1186,7 @@ class ClusterSubspace(MSONable):
             # equivalent clusters the indices are: [equivalent cluster
             # (primitive cell), translational image, index of site in cluster,
             # coordinate index]
-            tcoords = fcoords[:, None, :, :] + ts[None, :, None, :]
+            tcoords = fcoords[:, None, :, :] + pts[None, :, None, :]
             tcs = tcoords.shape
             inds = coord_list_mapping_pbc(
                 tcoords.reshape((-1, 3)), supercell_fcoords, atol=SITE_TOL
@@ -1217,13 +1224,13 @@ class ClusterSubspace(MSONable):
 
     def __str__(self):
         """Convert class into pretty string for printing."""
-        s = f"ClusterBasis: [Prim Composition] {self.structure.composition}\n"
-        s += "    [Size] 0\n      [Orbit] id: 0  orderings: 1\n"
+        class_str = f"ClusterBasis: [Prim Composition] {self.structure.composition}\n"
+        class_str += "    [Size] 0\n      [Orbit] id: 0  orderings: 1\n"
         for size, orbits in self._orbits.items():
-            s += f"    [Size] {size}\n"
+            class_str += f"    [Size] {size}\n"
             for orbit in orbits:
-                s += f"      {orbit}\n"
-        return s
+                class_str += f"      {orbit}\n"
+        return class_str
 
     @classmethod
     def from_dict(cls, d):
@@ -1236,7 +1243,7 @@ class ClusterSubspace(MSONable):
         exp_structure = Structure.from_dict(d["expansion_structure"])
         sc_matcher = StructureMatcher.from_dict(d["sc_matcher"])
         site_matcher = StructureMatcher.from_dict(d["site_matcher"])
-        cs = cls(
+        cluster_subspace = cls(
             structure=structure,
             expansion_structure=exp_structure,
             orbits=orbits,
@@ -1252,7 +1259,7 @@ class ClusterSubspace(MSONable):
             try:
                 module = import_module(term["@module"])
                 term_class = getattr(module, term["@class"])
-                cs.add_external_term(term_class.from_dict(term))
+                cluster_subspace.add_external_term(term_class.from_dict(term))
             except AttributeError:
                 warnings.warn(
                     f"{term['@class']} was not found in {term['@module']}. You"
@@ -1278,8 +1285,8 @@ class ClusterSubspace(MSONable):
                 _supercell_orb_inds[scm] = [np.array(ind) for o_id, ind in indices]
             else:
                 _supercell_orb_inds[scm] = [np.array(ind) for ind in indices]
-        cs._supercell_orb_inds = _supercell_orb_inds
-        return cs
+        cluster_subspace._supercell_orb_inds = _supercell_orb_inds
+        return cluster_subspace
 
     def as_dict(self):
         """
@@ -1294,7 +1301,7 @@ class ClusterSubspace(MSONable):
             for scm, orb_inds in self._supercell_orb_inds.items()
         ]
 
-        d = {
+        cs_dict = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "structure": self.structure.as_dict(),
@@ -1306,7 +1313,7 @@ class ClusterSubspace(MSONable):
             "external_terms": [et.as_dict() for et in self.external_terms],
             "_supercell_orb_inds": _supercell_orb_inds,
         }
-        return d
+        return cs_dict
 
 
 def invert_mapping(mapping):
@@ -1327,7 +1334,7 @@ def invert_mapping(mapping):
     for i in range(len(mapping) - 1, -1, -1):
         values_list = mapping[i]
         for value in values_list:
-            if not (i in inv_mapping[value]):
+            if i not in inv_mapping[value]:
                 inv_mapping[value].append(i)
 
     return inv_mapping
@@ -1651,13 +1658,15 @@ class PottsSubspace(ClusterSubspace):
         Returns:
             MSONable dict
         """
-        d = super().as_dict()
-        d["_wo_last_cluster"] = self._wo_last_cluster
-        return d
+        # pylint: disable=protected-access, no-member
+        pcs_dict = super().as_dict()
+        pcs_dict["_wo_last_cluster"] = self._wo_last_cluster
+        return pcs_dict
 
     @classmethod
     def from_dict(cls, d):
         """Create ClusterSubspace from an MSONable dict."""
+        # pylint: disable=protected-access, no-member
         subspace = super().from_dict(d)
         subspace._wo_last_cluster = d.get("_wo_last_cluster", True)
         # remove last bit combo in all orbits

@@ -119,10 +119,10 @@ class Cluster(MSONable):
         Returns:
             MSONable dict
         """
-        d = {
+        cluster_d = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "lattice": self.lattice.as_dict(),
             "sites": self.sites.tolist(),
         }
-        return d
+        return cluster_d

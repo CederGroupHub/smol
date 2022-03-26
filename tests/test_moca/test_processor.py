@@ -125,14 +125,16 @@ def test_structure_occupancy_conversion(ce_processor):
         # occu_conv = ce_processor.occupancy_from_structure(s_conv)
 
         # For symetrically equivalent structures, StructureMatcher might generate
-        # different structure_site_mappings (see cluster_subspace.structure_site_mappings),
-        # therefore we may get different occupancy strings with occupancy_from_structure,
-        # and occu1 -> structure -> occu2 conversion cycle does not guarantee that occu1 == occu2.
-        # In most use cases, it is not necessary to enforce that occu1 == occu2.
-        # If you have to do so, you'll need to deeply modify the code of StructureMatcher,
-        # which might not be a trivial task. Here we will only test whether occu1 -> str1 and
-        # occu2 -> str2 are symetrically equivalent. This should be enough in our application.
-        # We notify the users about this mismatch in the documentations.
+        # different structure_site_mappings
+        # (see cluster_subspace.structure_site_mappings), therefore we may get
+        # different occupancy strings with occupancy_from_structure, and
+        # occu1 -> structure -> occu2 conversion cycle does not guarantee that
+        # occu1 == occu2. In most use cases, it is not necessary to enforce that
+        # occu1 == occu2. If you have to do so, you'll need to deeply modify the code of
+        # StructureMatcher, which might not be a trivial task. Here we will only test
+        # whether occu1 -> str1 and occu2 -> str2 are symetrically equivalent.
+        # This should be enough in our application. We notify the users about this
+        # mismatch in the documentations.
         assert sm.fit(s_init, s_conv)
 
 
