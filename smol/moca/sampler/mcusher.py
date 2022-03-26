@@ -71,7 +71,7 @@ class MCUsher(ABC):
                 f"Can not set sublattice probabilities.\n Length must be the"
                 f" same as the number of sublattices {len(self.sublattices)}"
             )
-        elif sum(value) != 1:
+        if sum(value) != 1:
             raise ValueError(
                 "Can not set sublattice probabilities.\n"
                 "Sublattice probabilites must sum to one."

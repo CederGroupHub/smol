@@ -66,7 +66,7 @@ def test_trace():
 
     with pytest.raises(TypeError):
         trace.fourth = "blabla"
-        trace2 = Trace(one=np.zeros(40), two=66)
+        Trace(one=np.zeros(40), two=66)
 
     steptrace = StepTrace(one=np.zeros(10))
     assert isinstance(steptrace.delta_trace, Trace)

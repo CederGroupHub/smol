@@ -194,7 +194,7 @@ class Sampler:
         # Initialise progress bar
         chains, nsites = self.samples.shape
         desc = f"Sampling {chains} chain(s) from a cell with {nsites} sites..."
-        with progress_bar(progress, total=nsteps, description=desc) as bar:
+        with progress_bar(progress, total=nsteps, description=desc) as p_bar:
             for _ in range(nsteps // thin_by):
                 for _ in range(thin_by):
                     for i, strace in enumerate(
@@ -206,7 +206,7 @@ class Sampler:
                             for name, delta_val in strace.delta_trace.items():
                                 val = getattr(trace, name)
                                 val[i] += delta_val
-                    bar.update()
+                    p_bar.update()
                 # yield copies
                 yield trace
 
@@ -253,12 +253,12 @@ class Sampler:
                     -1
                 ]  # noqa
                 # auxiliary states from kernels should be set here
-            except IndexError:
+            except IndexError as ind_error:
                 raise RuntimeError(
                     "There are no saved samples to obtain the "
                     "initial occupancies. These must be "
                     "provided."
-                )
+                ) from ind_error
         elif self.samples.num_samples > 0:
             warn(
                 "Initial occupancies where provided with a pre-existing "
