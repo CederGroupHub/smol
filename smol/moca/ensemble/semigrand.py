@@ -21,7 +21,7 @@ from .base import Ensemble
 
 
 class SemiGrandEnsemble(Ensemble, MSONable):
-    """Relative chemical potential based SemiGrand Ensemble.
+    """Relative chemical potential based SemiGrand Canonical Ensemble.
 
     A Semi-Grand Canonical Ensemble for Monte Carlo Simulations where species
     relative chemical potentials are predefined. Note that in the SGC Ensemble
@@ -68,17 +68,17 @@ class SemiGrandEnsemble(Ensemble, MSONable):
             get_species(k): v for k, v in chemical_potentials.items()
         }
         species = {sp for sps in processor.unique_site_spaces for sp in sps}
-        for sp in chemical_potentials.keys():
-            if sp not in species:
+        for spec in chemical_potentials.keys():
+            if spec not in species:
                 raise ValueError(
-                    f"Species {sp} in provided chemical "
+                    f"Species {spec} in provided chemical "
                     "potentials is not an allowed species in the "
                     f"system: {species}"
                 )
-        for sp in species:
-            if sp not in chemical_potentials.keys():
+        for spec in species:
+            if spec not in chemical_potentials.keys():
                 raise ValueError(
-                    f"Species {sp} was not assigned a chemical "
+                    f"Species {spec} was not assigned a chemical "
                     " potential, a value must be provided."
                 )
 
@@ -108,11 +108,11 @@ class SemiGrandEnsemble(Ensemble, MSONable):
     @chemical_potentials.setter
     def chemical_potentials(self, value):
         """Set the chemical potentials and update table."""
-        for sp, count in Counter(map(get_species, value.keys())).items():
+        for spec, count in Counter(map(get_species, value.keys())).items():
             if count > 1:
                 raise ValueError(
                     f"{count} values of the chemical potential for the same "
-                    f"species {sp} were provided.\n Make sure the dictionary "
+                    f"species {spec} were provided.\n Make sure the dictionary "
                     "you are using has only string keys or only Species "
                     "objects as keys."
                 )
@@ -195,11 +195,11 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         Returns:
             MSONable dict
         """
-        d = super().as_dict()
-        d["chemical_potentials"] = tuple(
+        sgce_d = super().as_dict()
+        sgce_d["chemical_potentials"] = tuple(
             (s.as_dict(), c) for s, c in self.chemical_potentials.items()
         )
-        return d
+        return sgce_d
 
     @classmethod
     def from_dict(cls, d):
@@ -209,17 +209,17 @@ class SemiGrandEnsemble(Ensemble, MSONable):
             CanonicalEnsemble
         """
         chemical_potentials = {}
-        for sp, c in d["chemical_potentials"]:
-            if "oxidation_state" in sp and Element.is_valid_symbol(sp["element"]):
-                sp = Species.from_dict(sp)
-            elif "oxidation_state" in sp:
-                if sp["@class"] == "Vacancy":
-                    sp = Vacancy.from_dict(sp)
+        for spec, chem_pot in d["chemical_potentials"]:
+            if "oxidation_state" in spec and Element.is_valid_symbol(spec["element"]):
+                spec = Species.from_dict(spec)
+            elif "oxidation_state" in spec:
+                if spec["@class"] == "Vacancy":
+                    spec = Vacancy.from_dict(spec)
                 else:
-                    sp = DummySpecies.from_dict(sp)
+                    spec = DummySpecies.from_dict(spec)
             else:
-                sp = Element(sp["element"])
-            chemical_potentials[sp] = c
+                spec = Element(spec["element"])
+            chemical_potentials[spec] = chem_pot
         return cls(
             Processor.from_dict(d["processor"]),
             chemical_potentials=chemical_potentials,

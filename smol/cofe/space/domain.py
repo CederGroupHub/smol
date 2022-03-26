@@ -134,13 +134,15 @@ class SiteSpace(Mapping, Hashable, MSONable):
                 "Number of atoms in Composition must be in (0, 1]"
                 f" got {composition.num_atoms}!"
             )
-        elif any(isinstance(sp, Vacancy) for sp in composition):
+
+        if any(isinstance(sp, Vacancy) for sp in composition):
             if composition.num_atoms != 1:
                 raise ValueError(
                     f"Composition {composition} has a Vacancy but"
                     " number of atoms is not 1."
                 )
-            elif sum(isinstance(sp, Vacancy) for sp in composition) > 1:
+
+            if sum(isinstance(sp, Vacancy) for sp in composition) > 1:
                 raise ValueError(
                     "There are multiple vacancies in this composition "
                     f"{composition}."
@@ -166,13 +168,13 @@ class SiteSpace(Mapping, Hashable, MSONable):
     def __getitem__(self, item):
         """Get a specie in the sitespace."""
         try:
-            sp = get_species(item)
-            return self._data[sp]
-        except ValueError as ex:
+            specie = get_species(item)
+            return self._data[specie]
+        except ValueError as exp:
             raise TypeError(
                 f"Invalid key {item}, {type(item)} for Composition"
-                f".\nValueError exception:\n{ex}"
-            )
+                f".\nValueError exception:\n{exp}"
+            ) from exp
 
     def __len__(self):
         """Get number os species."""
@@ -208,9 +210,9 @@ class SiteSpace(Mapping, Hashable, MSONable):
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation."""
-        d = super().as_dict()
-        d["composition"] = self._composition.as_dict()
-        return d
+        site_space_d = super().as_dict()
+        site_space_d["composition"] = self._composition.as_dict()
+        return site_space_d
 
     @classmethod
     def from_dict(cls, d):
@@ -242,10 +244,7 @@ class Vacancy(DummySpecie):
 
     def __eq__(self, other):
         """Test equality, only equal if isinstance."""
-        if not isinstance(other, Vacancy):
-            return False
-        else:
-            return super().__eq__(other)
+        return False if not isinstance(other, Vacancy) else super().__eq__(other)
 
     def __hash__(self):
         """Get hash, append an underscore to avoid clash with Dummy."""

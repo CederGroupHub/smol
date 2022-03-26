@@ -179,19 +179,19 @@ class EwaldProcessor(Processor):
         Returns:
             MSONable dict
         """
-        d = super().as_dict()
-        d["ewald_summation"] = self.ewald_summation.as_dict()
-        d["ewald_term"] = self._ewald_term.as_dict()
-        return d
+        ewald_d = super().as_dict()
+        ewald_d["ewald_summation"] = self.ewald_summation.as_dict()
+        ewald_d["ewald_term"] = self._ewald_term.as_dict()
+        return ewald_d
 
     @classmethod
     def from_dict(cls, d):
-        """Create a ClusterExpansionProcessor from serialized MSONable dict."""
-        pr = cls(
+        """Create a EwaldProcessor from serialized MSONable dict."""
+        # pylint: disable=duplicate-code
+        return cls(
             ClusterSubspace.from_dict(d["cluster_subspace"]),
             np.array(d["supercell_matrix"]),
             ewald_term=EwaldTerm.from_dict(d["ewald_term"]),
             coefficient=d["coefficients"],
             ewald_summation=EwaldSummation.from_dict(d["ewald_summation"]),
         )
-        return pr

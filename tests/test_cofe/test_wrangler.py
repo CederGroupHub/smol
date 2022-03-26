@@ -257,7 +257,6 @@ def test_update_features(structure_wrangler):
     structure_wrangler.cluster_subspace.add_external_term(EwaldTerm())
     structure_wrangler.update_features()
     assert shape[1] + 1 == structure_wrangler.feature_matrix.shape[1]
-    structure_wrangler.cluster_subspace._external_terms = []
     structure_wrangler.update_features()
 
 
