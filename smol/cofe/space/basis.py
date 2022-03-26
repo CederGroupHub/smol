@@ -5,6 +5,7 @@ obtain correlation vectors. The domain of a site function is a site space,
 which is defined by the allowed species at the site and their measures, which
 is concentration of the species in the random structure)
 """
+# pylint: disable=invalid-name, too-few-public-methods
 
 import warnings
 from abc import ABCMeta, abstractmethod
@@ -196,7 +197,8 @@ class StandardBasis(DiscreteBasis):
         """Construct function array with basis functions as rows."""
         # exclude the last basis function since the constant phi_0 will
         # take its place
-        nconst_functions = basis_functions[:-1]
+        # pylint: disable=unnecessary-comprehension
+        nconst_functions = [function for function in basis_functions][:-1]
         func_arr = np.array(
             [[function(sp) for sp in self.species] for function in nconst_functions]
         )
@@ -376,7 +378,7 @@ class IndicatorBasis(DiscreteBasis, MSONable):
         return cls(SiteSpace.from_dict(d["site_space"]))
 
 
-class BasisIterator(Iterator):
+class BasisIterator(Iterator, metaclass=ABCMeta):
     r"""Abstract basis iterator class.
 
     A basis iterator iterates through all non-constant site basis functions.
@@ -449,7 +451,7 @@ class SinusoidIterator(BasisIterator):
         return func
 
 
-class NumpyPolyIterator(BasisIterator):
+class NumpyPolyIterator(BasisIterator, metaclass=ABCMeta):
     """Class to quickly implement polynomial basis sets included in numpy."""
 
     flavor = "numpy-poly"

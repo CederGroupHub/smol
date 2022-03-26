@@ -108,6 +108,7 @@ def progress_bar(display, total, description):
             Description to print in progress bar.
     """
     try:
+        # pylint: disable=import-outside-toplevel
         import tqdm
     except ImportError:
         tqdm = None
@@ -133,6 +134,8 @@ class _EmptyBar:
     Idea take from emce:
     https://github.com/dfm/emcee/blob/main/src/emcee/pbar.py
     """
+
+    # pylint: disable=missing-function-docstring
 
     def __init__(self):
         pass

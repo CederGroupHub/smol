@@ -91,7 +91,7 @@ class Orbit(MSONable):
         self.structure_symops = structure_symops
 
         # ids should be assigned using the assign_id method externally
-        self.orb_id = None  # id identifying orbit amongst all other orbits only
+        self.id = None  # id identifying orbit amongst all other orbits only
         self.bit_id = None  # id for first bit combo in this orbit
         # considering all the bit combos in all orbits.
 
@@ -306,7 +306,7 @@ class Orbit(MSONable):
 
         if not bit_combos:
             raise RuntimeError(
-                "All bit_combos have been removed from orbit with id " f"{self.orb_id}"
+                "All bit_combos have been removed from orbit with id " f"{self.id}"
             )
 
         self._bit_combos = tuple(bit_combos)
@@ -326,7 +326,7 @@ class Orbit(MSONable):
 
         if not self.bit_combos:
             raise RuntimeError(
-                "All bit_combos have been removed from orbit with id " f"{self.orb_id}"
+                "All bit_combos have been removed from orbit with id " f"{self.id}"
             )
         self.reset_bases()
 
@@ -465,7 +465,7 @@ class Orbit(MSONable):
             (int, int, int):
             next orbit id, next bit ordering id, next cluster id
         """
-        self.orb_id = orbit_id
+        self.id = orbit_id
         self.bit_id = orbit_bit_id
         c_id = start_cluster_id
         for cluster in self.clusters:
@@ -493,7 +493,7 @@ class Orbit(MSONable):
     def __str__(self):
         """Pretty strings for pretty things."""
         return (
-            f"[Orbit] id: {self.orb_id:<3}"
+            f"[Orbit] id: {self.id:<3}"
             f"orderings: {len(self):<4}"
             f"multiplicity: {self.multiplicity:<4}"
             f" no. symops: {len(self.cluster_symops):<4}\n"
@@ -505,7 +505,7 @@ class Orbit(MSONable):
         """Get Orbit representation."""
         return _repr(
             self,
-            orb_id=self.orb_id,
+            orb_id=self.id,
             orb_b_id=self.bit_id,
             radius=self.base_cluster.radius,
             lattice=self.base_cluster.lattice,

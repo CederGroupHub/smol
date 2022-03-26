@@ -29,7 +29,7 @@ def full_row_rank_select(feature_matrix, tol=1e-15, nrows=None):
         list of int: list with indices of rows that form a full rank system.
     """
     nrows = nrows if nrows is not None else feature_matrix.shape[0]
-    (_, _, u_mat) = lu(feature_matrix.T)
+    _, _, u_mat = lu(feature_matrix.T)  # pylint: disable=unbalanced-tuple-unpacking
     sample_ids = np.unique((abs(u_mat) > tol).argmax(axis=1))[:nrows]
     if len(sample_ids) > np.linalg.matrix_rank(feature_matrix[:nrows]):
         warn(

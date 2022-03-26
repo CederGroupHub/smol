@@ -18,11 +18,12 @@ from monty.json import MSONable, jsanitize
 from smol.moca.sampler.kernel import Trace
 from smol.moca.sublattice import Sublattice
 
+h5err = ImportError("'h5py' not found. Please install it.")
+
 try:
     import h5py
 except ImportError:
     h5py = None
-    h5err = ImportError("'h5py' not found. Please install it.")
 
 
 # TODO include inactive_sublattices here too
@@ -380,7 +381,7 @@ class SampleContainer(MSONable):
             available = len(trace_grp.occupancy) - trace_grp.attrs["nsamples"]
             # this probably fails since maxshape is not set.
             if available < alloc_nsamples:
-                self._grow_backend(backend, alloc_nsamples - available)
+                SampleContainer._grow_backend(backend, alloc_nsamples - available)
         else:
             backend = h5py.File(file_path, "w", libver="latest")
             self._init_backend(backend, alloc_nsamples)
@@ -421,7 +422,8 @@ class SampleContainer(MSONable):
         trace_grp.attrs["nsamples"] = 0
         trace_grp.attrs["total_mc_steps"] = 0
 
-    def _grow_backend(self, backend, nsamples):
+    @staticmethod
+    def _grow_backend(backend, nsamples):
         """Extend space available in a backend file."""
         for name in backend["trace"]:
             backend["trace"][name].resize(nsamples, axis=0)

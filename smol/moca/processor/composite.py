@@ -164,7 +164,8 @@ class CompositeProcessor(Processor):
 
     @classmethod
     def from_dict(cls, d):
-        """Create a Composite from serialized MSONable dict."""
+        """Create a CompositeProcessor from serialized MSONable dict."""
+        # pylint: disable=duplicate-code
         proc = cls(
             ClusterSubspace.from_dict(d["cluster_subspace"]),
             np.array(d["supercell_matrix"]),

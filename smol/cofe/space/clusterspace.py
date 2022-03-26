@@ -6,6 +6,8 @@ information necessary for a cluster expansion.
 The PottsSubspace class is an (experimental) class that is similar, but
 diverges from the CE mathematic formalism.
 """
+# pylint: disable=too-many-lines
+
 
 import warnings
 from copy import deepcopy
@@ -1657,6 +1659,7 @@ class PottsSubspace(ClusterSubspace):
         Returns:
             MSONable dict
         """
+        # pylint: disable=protected-access, no-member
         pcs_dict = super().as_dict()
         pcs_dict["_wo_last_cluster"] = self._wo_last_cluster
         return pcs_dict
@@ -1664,6 +1667,7 @@ class PottsSubspace(ClusterSubspace):
     @classmethod
     def from_dict(cls, d):
         """Create ClusterSubspace from an MSONable dict."""
+        # pylint: disable=protected-access, no-member
         subspace = super().from_dict(d)
         subspace._wo_last_cluster = d.get("_wo_last_cluster", True)
         # remove last bit combo in all orbits

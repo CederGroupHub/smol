@@ -162,7 +162,6 @@ def test_filter_by_ewald(structure_wrangler):
     structure_wrangler.update_features()
     indices2 = max_ewald_energy_indices(structure_wrangler, max_relative_energy=0.0)
     npt.assert_array_equal(indices, indices2)
-    structure_wrangler.cluster_subspace._external_terms = []
 
 
 def test_filter_duplicate_corr_vectors(structure_wrangler):

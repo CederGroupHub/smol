@@ -26,7 +26,7 @@ class MCBias(ABC):
             list of inactive sublattices.
     """
 
-    def __init__(self, sublattices, inactive_sublattices, *args, **kwargs):
+    def __init__(self, sublattices, inactive_sublattices):
         """Initialize Basebias.
 
         Args:

@@ -170,11 +170,11 @@ class SiteSpace(Mapping, Hashable, MSONable):
         try:
             specie = get_species(item)
             return self._data[specie]
-        except ValueError as ex:
+        except ValueError as exp:
             raise TypeError(
                 f"Invalid key {item}, {type(item)} for Composition"
-                f".\nValueError exception:\n{ex}"
-            ) from ex
+                f".\nValueError exception:\n{exp}"
+            ) from exp
 
     def __len__(self):
         """Get number os species."""
