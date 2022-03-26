@@ -51,7 +51,9 @@ def unique_corr_vector_indices(
     duplicates = {i for inds in dupe_inds for i in inds} - indices
     indices = list(set(range(wrangler.num_structures)) - duplicates)
 
-    return indices, list(duplicates) if return_compliment else indices
+    if return_compliment:
+        return indices, list(duplicates)
+    return indices
 
 
 def max_ewald_energy_indices(wrangler, max_relative_energy, return_compliment=False):
@@ -112,7 +114,9 @@ def max_ewald_energy_indices(wrangler, max_relative_energy, return_compliment=Fa
         else:
             compliment.append(i)
 
-    return indices, compliment if return_compliment else indices
+    if return_compliment:
+        return indices, compliment
+    return indices
 
 
 def weights_energy_above_composition(structures, energies, temperature=2000):
