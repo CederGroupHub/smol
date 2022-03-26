@@ -7,10 +7,11 @@ from smol.cofe.wrangling.select import (
     gaussian_select,
 )
 
+rng = np.random.default_rng()
 
 def test_full_row_rank_select():
     for shape in ((100, 100), (100, 200), (100, 500)):
-        matrix = 10 * np.random.random(shape)
+        matrix = 10 * rng.random(shape)
         # test for set sizes
         for n in range(5, shape[0] // 2):
             inds = full_row_rank_select(feature_matrix=matrix, nrows=n)
@@ -26,7 +27,7 @@ def test_full_row_rank_select():
 
 def test_gaussian_select():
     # not an amazing test, but something is something
-    matrix = 10 * np.random.random((3000, 1000)) - 2
+    matrix = 10 * rng.random((3000, 1000)) - 2
     inds = gaussian_select(matrix, 300)
     std = matrix[inds].std(axis=0)
     assert len(np.unique(inds)) == 300
@@ -36,9 +37,9 @@ def test_gaussian_select():
 
 def test_composition_select():
     n = 5000
-    cell_sizes = np.random.choice((5, 10, 15, 20), size=n)
+    cell_sizes = rng.choice((5, 10, 15, 20), size=n)
     species = [
-        np.array([np.random.randint(0, 3) for _ in range(size)]) for size in cell_sizes
+        np.array([rng.integers(0, 3) for _ in range(size)]) for size in cell_sizes
     ]
     concentrations = np.array(
         [

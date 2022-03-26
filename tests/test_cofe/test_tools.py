@@ -13,6 +13,7 @@ from smol.cofe.wrangling import (
 )
 from smol.cofe.wrangling.tools import _energies_above_composition
 
+rng = np.random.default_rng()
 
 def test_unique_corr_indices(structure_wrangler):
     indices, duplicates = unique_corr_vector_indices(
@@ -168,7 +169,7 @@ def test_filter_duplicate_corr_vectors(structure_wrangler):
     # add some repeat structures with infinite energy
     dup_items = []
     for i in range(5):
-        ind = np.random.randint(structure_wrangler.num_structures)
+        ind = rng.integers(structure_wrangler.num_structures)
         dup_item = deepcopy(structure_wrangler.data_items[ind])
         dup_item["properties"]["energy"] = np.inf
         dup_items.append(dup_item)

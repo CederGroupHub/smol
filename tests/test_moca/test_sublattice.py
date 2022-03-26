@@ -7,6 +7,7 @@ from smol.cofe.space.domain import SiteSpace
 from smol.moca.sublattice import InactiveSublattice, Sublattice
 from tests.utils import assert_msonable
 
+rng = np.random.default_rng()
 
 @pytest.fixture
 def sublattice():
@@ -19,12 +20,12 @@ def sublattice():
         }
     )
     site_space = SiteSpace(composition)
-    sites = np.random.choice(range(100), size=60)
+    sites = rng.choice(range(100), size=60)
     return Sublattice(site_space, sites)
 
 
 def test_restrict_sites(sublattice):
-    sites = np.random.choice(sublattice.sites, size=10)
+    sites = rng.choice(sublattice.sites, size=10)
     # test sites properly restricted
     sublattice.restrict_sites(sites)
     assert not any(s in sublattice.active_sites for s in sites)
@@ -49,6 +50,6 @@ def test_msonable(sublattice):
 def test_inactive_sublattice():
     composition = Composition({DummySpecies("A"): 1})
     site_space = SiteSpace(composition)
-    sites = np.random.choice(range(100), size=60)
+    sites = rng.choice(range(100), size=60)
     inactive_sublattice = InactiveSublattice(site_space, sites)
     assert_msonable(inactive_sublattice)

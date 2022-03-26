@@ -13,6 +13,7 @@ from tests.utils import assert_msonable
 
 basis_iterators = list(get_subclasses(basis.BasisIterator).values())
 
+rng = np.random.default_rng()
 
 @pytest.fixture(params=[True, False], scope="module")
 def site_space(expansion_structure, request):
@@ -85,7 +86,7 @@ def test_standard_basis(standard_basis):
 
 def test_rotate(standard_basis):
     f_array = standard_basis._f_array.copy()
-    theta = np.pi / np.random.randint(2, 10)
+    theta = np.pi / rng.integers(2, 10)
 
     # catch and test non-uniform measures
     if not np.allclose(standard_basis.measure_vector[0], standard_basis.measure_vector):
