@@ -109,14 +109,7 @@ class SemiGrandEnsemble(Ensemble, MSONable):
 
     @chemical_potentials.setter
     def chemical_potentials(self, value):
-        """Set the chemical potentials and update table.
-
-        If you ever split sub-lattices or change activeness of
-        sub-lattices in some other way, you have to reset chemical
-        potentials before using this ensemble to run MC. Otherwise
-        the _mu_table is not updated, and your chemical work might
-        be wrong.
-        """
+        """Set the chemical potentials and update table."""
         for sp, count in Counter(map(get_species, value.keys())).items():
             if count > 1:
                 raise ValueError(
@@ -182,6 +175,38 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         return sum(
             self._mu_table[site][species] for site, species in enumerate(occupancy)
         )
+
+    def split_sublattice_by_species(self, sublattice_id, occu,
+                                    codes_in_partitions):
+        """Split a sub-lattice in system by its occupied species.
+
+        An example use case might be simulating topotactic Li extraction
+        and insertion, where we want to consider Li/Vac, TM and O as
+        different sub-lattices that can not be mixed by swapping.
+
+        In the grand canonical ensemble, the mu table will also be updated
+        after split.
+
+        Args:
+            sublattice_id (int):
+                The index of sub-lattice to split in self.sublattices.
+            occu (np.ndarray[int]):
+                An occupancy array to reference with.
+            codes_in_partitions (List[List[int]]):
+                Each sub-list contains a few encodings of species in
+                the site space to be grouped as a new sub-lattice, namely,
+                sites with occu[sites] == specie in the sub-list, will be
+                used to initialize a new sub-lattice.
+                Sub-lists will be pre-sorted to ascending order.
+        """
+        super(SemiGrandEnsemble, self)\
+            .split_sublattice_by_species(sublattice_id, occu,
+                                         codes_in_partitions)
+        # Species in active sub-lattices may change after split.
+        # Need to reset and rebuild mu table.
+        new_chemical_potentials = {k: self._mus[k] for k in
+                                   self.species}
+        self.chemical_potentials = new_chemical_potentials
 
     def _build_mu_table(self, chemical_potentials):
         """Build an array for chemical potentials for all sites in system.

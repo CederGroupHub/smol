@@ -80,15 +80,16 @@ class Sublattice(MSONable):
         if len(self.site_space) > 1:
             self.active_sites = self.sites.copy()
 
-    def split_by_species_at_occupancy(self, occu, species_in_partitions):
-        """Split a sublattice into multiple by specie.
+    def split_by_species(self, occu, codes_in_partitions):
+        """Split a sub-lattice into multiple by specie.
+
         An example use case might be simulating topotactic Li extraction
         and insertion, where we want to consider Li/Vac, TM and O as
         different sub-lattices that can not be mixed by swapping.
         Args:
             occu (np.ndarray[int]):
                 An occupancy array to reference with.
-            species_in_partitions (List[List[int]]):
+            codes_in_partitions (List[List[int]]):
                 Each sub-list contains a few encodings of species in
                 the site space to be grouped as a new sub-lattice, namely,
                 sites with occu[sites] == specie in the sub-list, will be
@@ -99,7 +100,7 @@ class Sublattice(MSONable):
                 List[Sublattice]
         """
         part_sublattices = []
-        for species_codes in species_in_partitions:
+        for species_codes in codes_in_partitions:
             part_comp = {}
             part_sites = []
             part_actives = []
@@ -125,6 +126,8 @@ class Sublattice(MSONable):
             part_sublatt = Sublattice(part_space, part_sites)
             part_sublatt.active_sites = part_actives
             part_sublatt.encoding = part_codes
+            if len(part_codes) == 1:
+                part_sublatt.restrict_sites(part_sublatt.sites)
             part_sublattices.append(part_sublatt)
         return part_sublattices
 

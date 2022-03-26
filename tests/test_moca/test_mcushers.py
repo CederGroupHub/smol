@@ -57,10 +57,11 @@ def test_propose_step(mcmcusher, rand_occu):
     for i in range(iterations):
         step = mcmcusher.propose_step(occu)
         for flip in step:
-            if flip[0] in mcmcusher.active_sublattices[0].sites:
+            assert flip[1] != occu[flip[0]]
+            if flip[0] in mcmcusher.active_sublattices[0].active_sites:
                 count1 += 1
                 assert flip[1] in mcmcusher.active_sublattices[0].encoding
-            elif flip[0] in mcmcusher.active_sublattices[1].sites:
+            elif flip[0] in mcmcusher.active_sublattices[1].active_sites:
                 count2 += 1
                 assert flip[1] in mcmcusher.active_sublattices[1].encoding
             else:
@@ -92,7 +93,7 @@ def test_propose_step(mcmcusher, rand_occu):
     for i in range(iterations):
         step = mcmcusher.propose_step(occu)
         for flip in step:
-            if flip[0] in mcmcusher.active_sublattices[0].sites:
+            if flip[0] in mcmcusher.active_sublattices[0].active_sites:
                 count1 += 1
                 assert flip[1] in mcmcusher.active_sublattices[0].encoding
             elif flip[0] in mcmcusher.active_sublattices[1].sites:

@@ -1,6 +1,8 @@
 import numpy as np
 import numpy.testing as npt
 import pytest
+import random
+from copy import deepcopy
 
 from smol.cofe import ClusterExpansion, RegressionData
 from smol.moca import (
@@ -101,6 +103,80 @@ def test_restrict_sites(ensemble):
 
 def test_msonable(ensemble):
     assert_msonable(ensemble)
+
+
+def test_split_ensemble(ensemble):
+    occu = gen_random_occupancy(ensemble.sublattices)
+    for sublattice in ensemble.sublattices:
+        npt.assert_array_equal(np.arange(len(sublattice.species)),
+                               sublattice.encoding)
+    while len(ensemble.active_sublattices) > 0:
+        sublattice = random.choice(ensemble.active_sublattices)
+        sl_id = ensemble.sublattices.index(sublattice)
+        S = len(sublattice.species)
+        old_sublattices = deepcopy(ensemble.sublattices)
+        old_species = deepcopy(ensemble.species)
+        if isinstance(ensemble, SemiGrandEnsemble):
+            old_chemical_potentials = deepcopy(ensemble.chemical_potentials)
+            old_mu_table = deepcopy(ensemble._mu_table)
+        split_encodings = [sublattice.encoding[S // 2:],
+                           sublattice.encoding[:S // 2]]
+        ensemble.split_sublattice_by_species(sl_id, occu,
+                                             split_encodings)
+        assert len(ensemble.sublattices) == len(old_sublattices) + 1
+        for i in range(len(old_sublattices)):
+            if i != sl_id:
+                if i < sl_id:
+                    new_sublattice = ensemble.sublattices[i]
+                    old_sublattice = old_sublattices[i]
+                else:
+                    new_sublattice = ensemble.sublattices[i + 1]
+                    old_sublattice = old_sublattices[i]
+                assert new_sublattice.site_space == old_sublattice.site_space
+                npt.assert_array_equal(new_sublattice.sites,
+                                       old_sublattice.sites)
+                npt.assert_array_equal(new_sublattice.active_sites,
+                                       old_sublattice.active_sites)
+                npt.assert_array_equal(new_sublattice.encoding,
+                                       old_sublattice.encoding)
+            else:
+                old_sublattice = old_sublattice[i]
+                new1 = ensemble.sublattices[i]
+                new2 = ensemble.sublattices[i + 1]
+                npt.assert_array_equal(np.sort(old_sublattice.sites),
+                                       np.sort(np.concatenate((new1.sites, new2.sites)))
+                                       )
+                npt.assert_array_equal(np.sort(old_sublattice.active_sites),
+                                       np.sort(np.concatenate((new1.active_sites,
+                                                               new2.active_sites)))
+                                       )
+                npt.assert_array_equal(np.sort(old_sublattice.encoding),
+                                       np.sort(np.concatenate((new1.encoding,
+                                                               new2.encoding)))
+                                       )
+                assert len(new1.encoding) == len(new1.species)
+                assert len(new2.encoding) == len(new2.species)
+        if isinstance(ensemble, SemiGrandEnsemble):
+            assert (set(ensemble.chemical_potentials.keys())
+                    == set(ensemble.species))
+            assert ensemble._mu_table.shape == old_mu_table.shape
+            for sp in ensemble.species:
+                assert sp in old_species
+                assert ensemble.chemical_potentials[sp] == old_chemical_potentials[sp]
+                for sublattice in old_sublattices:
+                    if sp in sublattice.species:
+                        code = sublattice.encoding[sublattice.species.index(sp)]
+                        npt.assert_array_equal(ensemble._mu_table[sublattice.sites, code],
+                                               ensemble.chemical_potentials[sp])
+            for sp in set(old_species) - set(ensemble.species):
+                for sublattice in old_sublattices:
+                    if not sublattice.is_active:
+                        assert sp not in sublattice.species
+                    else:
+                        if sp in sublattice.species:
+                            code = sublattice.encoding[sublattice.species.index(sp)]
+                            npt.assert_array_equal(ensemble._mu_table[sublattice.sites, code],
+                                                   0)
 
 
 # Canonical Ensemble tests
