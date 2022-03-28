@@ -8,12 +8,12 @@ from smol.moca.sublattice import InactiveSublattice, Sublattice
 
 mcmcusher_classes = [Flip, Swap]
 num_sites = 100
-rng = np.random.default_rng()
 
 @pytest.fixture
 def all_sublattices():
     # generate two tests sublattices
     sites = np.arange(num_sites)
+    rng = np.random.default_rng()
     sites1 = rng.choice(sites, size=num_sites // 3)
     sites2 = rng.choice(np.setdiff1d(sites, sites1), size=num_sites // 4)
     sites3 = np.setdiff1d(sites, np.concatenate((sites1, sites2)))
@@ -30,6 +30,7 @@ def all_sublattices():
 @pytest.fixture
 def rand_occu(all_sublattices):
     # generate a random occupancy according to the sublattices
+    rng = np.random.default_rng()
     occu = np.zeros(
         sum(len(s.sites) for sublat in all_sublattices for s in sublat), dtype=int
     )

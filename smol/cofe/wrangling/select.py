@@ -8,8 +8,6 @@ from scipy.stats import multinomial, multivariate_normal
 
 __author__ = "Luis Barroso-Luque"
 
-rng = np.random.default_rng()
-
 def full_row_rank_select(feature_matrix, tol=1e-15, nrows=None):
     """Choose a (maximally) full rank subset of rows in a feature matrix.
 
@@ -113,6 +111,8 @@ def composition_select(composition_vector, composition, cell_sizes, num_samples)
     max_probs = {
         size: dist.pmf(size * unique_compositions).max() for size, dist in dists.items()
     }
+
+    rng = np.random.default_rng()
     sample_ids = [
         i
         for i, (size, comp) in enumerate(zip(cell_sizes, composition_vector))

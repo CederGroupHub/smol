@@ -21,7 +21,6 @@ from smol.cofe.space import Vacancy, get_allowed_species, get_site_spaces
 from smol.moca.sublattice import InactiveSublattice, Sublattice
 from smol.utils import get_subclasses
 
-rng = np.random.default_rng()
 
 class Processor(MSONable, metaclass=ABCMeta):
     """Abstract base class for processors.
@@ -262,6 +261,7 @@ class Processor(MSONable, metaclass=ABCMeta):
         Returns:
             tuple: (float, float) forward and reverse average property drift
         """
+        rng = np.random.default_rng()
         forward_drift, reverse_drift = 0.0, 0.0
         trajectory = []
         occu = [rng.choice(species) for species in self.allowed_species]

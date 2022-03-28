@@ -13,8 +13,6 @@ from smol.moca.processor import (
 from smol.moca.processor.base import Processor
 from tests.utils import assert_msonable, gen_random_occupancy, gen_random_structure
 
-rng = np.random.default_rng()
-
 RTOL = 0.0  # relative tolerance to check property change functions
 # absolute tolerance to check property change functions (eps is approx 2E-16)
 ATOL = 2e4 * np.finfo(float).eps
@@ -23,6 +21,7 @@ DRIFT_TOL = 10 * np.finfo(float).eps  # tolerance of average drift
 
 @pytest.fixture
 def ce_processor(cluster_subspace):
+    rng = np.random.default_rng()
     coefs = 2 * rng.random(cluster_subspace.num_corr_functions)
     scmatrix = 3 * np.eye(3)
     return ClusterExpansionProcessor(
@@ -32,6 +31,7 @@ def ce_processor(cluster_subspace):
 
 @pytest.fixture(params=["real", "reciprocal", "point"])
 def ewald_processor(cluster_subspace, request):
+    rng = np.random.default_rng()
     coef = rng.random(1)
     scmatrix = 3 * np.eye(3)
     ewald_term = EwaldTerm(use_term=request.param)
@@ -95,6 +95,7 @@ def test_compute_property_change(composite_processor):
     occu = gen_random_occupancy(
         sublattices, composite_processor.get_inactive_sublattices()
     )
+    rng = np.random.default_rng()
     for _ in range(100):
         sublatt = rng.choice(sublattices)
         site = rng.choice(sublatt.sites)
@@ -146,6 +147,7 @@ def test_compute_feature_change(composite_processor):
         sublattices, composite_processor.get_inactive_sublattices()
     )
     composite_processor.cluster_subspace.change_site_bases("indicator")
+    rng = np.random.default_rng()
     for _ in range(100):
         sublatt = rng.choice(sublattices)
         site = rng.choice(sublatt.sites)
@@ -204,12 +206,14 @@ def test_compute_feature_vector(ce_processor):
 
 
 def test_bad_coef_length(cluster_subspace):
+    rng = np.random.default_rng()
     coefs = rng.random(cluster_subspace.num_corr_functions - 1)
     with pytest.raises(ValueError):
         ClusterExpansionProcessor(cluster_subspace, 5 * np.eye(3), coefficients=coefs)
 
 
 def test_bad_composite(cluster_subspace):
+    rng = np.random.default_rng()
     coefs = 2 * rng.random(cluster_subspace.num_corr_functions)
     scmatrix = 3 * np.eye(3)
     proc = CompositeProcessor(cluster_subspace, supercell_matrix=scmatrix)

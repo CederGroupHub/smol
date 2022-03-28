@@ -7,9 +7,8 @@ from smol.cofe.wrangling.select import (
     gaussian_select,
 )
 
-rng = np.random.default_rng()
-
 def test_full_row_rank_select():
+    rng = np.random.default_rng()
     for shape in ((100, 100), (100, 200), (100, 500)):
         matrix = 10 * rng.random(shape)
         # test for set sizes
@@ -27,6 +26,7 @@ def test_full_row_rank_select():
 
 def test_gaussian_select():
     # not an amazing test, but something is something
+    rng = np.random.default_rng()
     matrix = 10 * rng.random((3000, 1000)) - 2
     inds = gaussian_select(matrix, 300)
     std = matrix[inds].std(axis=0)
@@ -36,6 +36,7 @@ def test_gaussian_select():
 
 
 def test_composition_select():
+    rng = np.random.default_rng()
     n = 5000
     cell_sizes = rng.choice((5, 10, 15, 20), size=n)
     species = [

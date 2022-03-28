@@ -12,8 +12,6 @@ from pymatgen.core import Composition, Element
 
 from smol.cofe.space.domain import Vacancy
 
-rng = np.random.default_rng()
-
 def assert_msonable(obj, test_if_subclass=True):
     """
     Tests if obj is MSONable and tries to verify whether the contract is
@@ -39,6 +37,7 @@ def gen_random_occupancy(sublattices, inactive_sublattices):
     Returns:
         ndarray: encoded occupancy
     """
+    rng = np.random.default_rng()
     num_sites = sum(len(sl.sites) for sl in chain(sublattices, inactive_sublattices))
     rand_occu = np.zeros(num_sites, dtype=int)
     for sublatt in sublattices:
@@ -81,6 +80,7 @@ def gen_random_neutral_occupancy(sublattices, inactive_sublattices, lam=10):
         return charge
 
     def flip(occu, sublattices, inactives, lam=10):
+        rng = np.random.default_rng()
         sl = rng.choice(sublattices)
         site = rng.choice(sl.sites)
         sp = rng.choice(list({i for i in range(len(sl.site_space))} - {occu[site]}))
@@ -115,6 +115,7 @@ def gen_random_structure(prim, size=3):
     Returns:
         ordered structure
     """
+    rng = np.random.default_rng()
     structure = prim.copy()
     structure.make_supercell(size)
     for site in structure:
@@ -124,7 +125,7 @@ def gen_random_structure(prim, size=3):
 
 def gen_fake_training_data(prim_structure, n=10):
     """Generate a fake structure, energy training set."""
-
+    rng = np.random.default_rng()
     training_data = []
     for energy in rng.random(n):
         struct = gen_random_structure(prim_structure, size=rng.integers(2, 6))
