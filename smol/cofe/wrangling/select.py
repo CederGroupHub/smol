@@ -8,6 +8,7 @@ from scipy.stats import multinomial, multivariate_normal
 
 __author__ = "Luis Barroso-Luque"
 
+
 def full_row_rank_select(feature_matrix, tol=1e-15, nrows=None):
     """Choose a (maximally) full rank subset of rows in a feature matrix.
 
