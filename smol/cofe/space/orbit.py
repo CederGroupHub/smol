@@ -79,7 +79,7 @@ class Orbit(MSONable):
                 f"Number of sites {len(frac_coords)} must be equal to number of "
                 f"bits {len(bits)}"
             )
-        elif len(frac_coords) != len(site_bases):
+        if len(frac_coords) != len(site_bases):
             raise AttributeError(
                 f"Number of sites {len(frac_coords)} must be equal to number of "
                 f"site bases {len(site_bases)}"
@@ -134,11 +134,11 @@ class Orbit(MSONable):
 
     @property
     def bit_combos(self):
-        """Get tuple of site bit orderings.
+        """Get tuple representing the multi-index for site function ordering.
 
         tuple of ndarrays, each array is a set of symmetrically equivalent bit
-        orderings represented by row. Bit combos represent non-constant site
-        function orderings.
+        orderings represented by each row. Bit combos represent non-constant site
+        function orderings, i.e. contracted multi-indices
         """
         if self._bit_combos is None:
             # get all the bit symmetry operations
@@ -169,13 +169,13 @@ class Orbit(MSONable):
         equiv = [self.base_cluster]
         for symop in self.structure_symops:
             new_coords = symop.operate_multi(self.base_cluster.frac_coords)
-            c = Cluster(
+            cluster = Cluster(
                 [site_basis.site_space for site_basis in self.site_bases],
                 new_coords,
                 self.base_cluster.lattice,
             )
-            if c not in equiv:
-                equiv.append(c)
+            if cluster not in equiv:
+                equiv.append(cluster)
         self._equiv = equiv
         if len(equiv) * len(self.cluster_symops) != len(self.structure_symops):
             self._equiv = None  # Unset this
@@ -274,12 +274,12 @@ class Orbit(MSONable):
 
         The rotation array is of size len(bit combos) x len(bit combos)
         """
-        R = np.empty(2 * (len(self._bit_combos),))
+        rot_array = np.empty(2 * (len(self._bit_combos),))
         for (i, j), (bcombos_i, bcombos_j) in zip(
             product(range(len(self._bit_combos)), repeat=2),
             product(self._bit_combos, repeat=2),
         ):
-            R[i, j] = sum(
+            rot_array[i, j] = sum(
                 reduce(
                     operator.mul,
                     (
@@ -295,7 +295,7 @@ class Orbit(MSONable):
                 for bcombo_i, bcombo_j in product(bcombos_i, bcombos_j)
             ) / len(bcombos_i)
             # \ (len(bcombos_i) * len(bcombos_j))**0.5 is unitary
-        return R
+        return rot_array
 
     def remove_bit_combo(self, bits):  # seems like this is no longer used?
         """Remove bit_combos from orbit.
@@ -366,7 +366,8 @@ class Orbit(MSONable):
         """
         if len(self.base_cluster) <= len(orbit.base_cluster):
             return False
-        elif not np.all(sp in self.site_spaces for sp in orbit.site_spaces):
+
+        if not np.all(sp in self.site_spaces for sp in orbit.site_spaces):
             return False
 
         match = any(
@@ -480,8 +481,8 @@ class Orbit(MSONable):
         self.id = orbit_id
         self.bit_id = orbit_bit_id
         c_id = start_cluster_id
-        for c in self.clusters:
-            c_id = c.assign_ids(c_id)
+        for cluster in self.clusters:
+            c_id = cluster.assign_ids(c_id)
         return orbit_id + 1, orbit_bit_id + len(self.bit_combos), c_id
 
     def __len__(self):
@@ -495,12 +496,15 @@ class Orbit(MSONable):
         """Check equality of orbits."""
         # when performing orbit in list, this ordering stops the
         # equivalent structures from generating
-        # NOTE: does not compare bit_combos!
-        return self.base_cluster in other.clusters
+        if self.base_cluster not in other.clusters:
+            return False
+        if len(self.correlation_tensors) != len(other.correlation_tensors):
+            return False
 
-    def __neq__(self, other):
-        """Check negation of orbit equality."""
-        return not self.__eq__(other)
+        return all(
+            np.allclose(ct1, ct2)
+            for ct1, ct2 in zip(self.correlation_tensors, other.correlation_tensors)
+        )
 
     def __str__(self):
         """Pretty strings for pretty things."""
@@ -529,7 +533,7 @@ class Orbit(MSONable):
         """Create Orbit from serialized MSONable dict."""
         structure_symops = [SymmOp.from_dict(so_d) for so_d in d["structure_symops"]]
         site_bases = [DiscreteBasis.from_dict(sd) for sd in d["site_bases"]]
-        o = cls(
+        orb = cls(
             d["sites"],
             Lattice.from_dict(d["lattice"]),
             d["bits"],
@@ -537,14 +541,14 @@ class Orbit(MSONable):
             structure_symops,
         )
 
-        o._bit_combos = (
+        orb._bit_combos = (
             tuple(np.array(c, dtype=int) for c in d["_bit_combos"])
             if "_bit_combos" in d
             else None
         )
         # This is to ensure that, after removing some bit_combos, an orbit
         # can still be correctly recorded and reloaded.
-        return o
+        return orb
 
     def as_dict(self):
         """Get Json-serialization dict representation.
@@ -552,7 +556,7 @@ class Orbit(MSONable):
         Returns:
             MSONable dict
         """
-        d = {
+        orb_d = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "sites": self.base_cluster.frac_coords.tolist(),
@@ -562,4 +566,4 @@ class Orbit(MSONable):
             "structure_symops": [so.as_dict() for so in self.structure_symops],
             "_bit_combos": tuple(c.tolist() for c in self.bit_combos),
         }
-        return d
+        return orb_d

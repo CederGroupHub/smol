@@ -111,8 +111,8 @@ def test_site_space(structure):
 
 def test_bad_site_space():
     with pytest.raises(ValueError):
-        s = SiteSpace(Composition({"A": 0.5, Vacancy(): 0.1}))
+        SiteSpace(Composition({"A": 0.5, Vacancy(): 0.1}))
     with pytest.raises(ValueError):
-        s = SiteSpace(Composition({"A": 0.5, "B": 0.6}))
+        SiteSpace(Composition({"A": 0.5, "B": 0.6}))
     with pytest.raises(ValueError):
-        s = SiteSpace(Composition({Vacancy(): 0.5, Vacancy(): 0.5}))
+        SiteSpace(Composition({Vacancy(): 0.5, Vacancy(): 0.5}))

@@ -1,6 +1,7 @@
 import numpy as np
 import numpy.testing as npt
 import pytest
+from pymatgen.analysis.structure_matcher import StructureMatcher
 
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.domain import Vacancy
@@ -10,7 +11,7 @@ from smol.moca.processor import (
     EwaldProcessor,
 )
 from smol.moca.processor.base import Processor
-from tests.utils import assert_msonable, gen_random_occupancy
+from tests.utils import assert_msonable, gen_random_occupancy, gen_random_structure
 
 RTOL = 0.0  # relative tolerance to check property change functions
 # absolute tolerance to check property change functions (eps is approx 2E-16)
@@ -109,13 +110,32 @@ def test_compute_property_change(composite_processor):
         assert dprop == -1 * rdprop
 
 
-# TODO implement these
-def test_structure_from_occupancy():
-    pass
+def test_structure_occupancy_conversion(ce_processor):
+    sm = StructureMatcher()
+    for _ in range(10):
+        s_init = gen_random_structure(
+            ce_processor.cluster_subspace.structure, size=ce_processor.supercell_matrix
+        )
+        s_init = s_init.get_sorted_structure()
+        occu_init = ce_processor.occupancy_from_structure(s_init)
 
+        s_conv = ce_processor.structure_from_occupancy(occu_init)
+        s_conv = s_conv.get_sorted_structure()
 
-def test_occupancy_from_structure():
-    pass
+        # occu_conv = ce_processor.occupancy_from_structure(s_conv)
+
+        # For symetrically equivalent structures, StructureMatcher might generate
+        # different structure_site_mappings
+        # (see cluster_subspace.structure_site_mappings), therefore we may get
+        # different occupancy strings with occupancy_from_structure, and
+        # occu1 -> structure -> occu2 conversion cycle does not guarantee that
+        # occu1 == occu2. In most use cases, it is not necessary to enforce that
+        # occu1 == occu2. If you have to do so, you'll need to deeply modify the code of
+        # StructureMatcher, which might not be a trivial task. Here we will only test
+        # whether occu1 -> str1 and occu2 -> str2 are symetrically equivalent.
+        # This should be enough in our application. We notify the users about this
+        # mismatch in the documentations.
+        assert sm.fit(s_init, s_conv)
 
 
 def test_compute_feature_change(composite_processor):
@@ -204,7 +224,7 @@ def test_bad_composite(cluster_subspace):
     with pytest.raises(ValueError):
         new_cs = cluster_subspace.copy()
         ids = range(1, new_cs.num_corr_functions)
-        new_cs.remove_orbit_bit_combos(np.random.choice(ids, size=10))
+        new_cs.remove_corr_functions(np.random.choice(ids, size=10))
         proc.add_processor(
             ClusterExpansionProcessor(new_cs, scmatrix, coefficients=coefs)
         )

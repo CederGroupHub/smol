@@ -45,7 +45,10 @@ class Trace(SimpleNamespace):
 
     def __setattr__(self, name, value):
         """Set only ndarrays as attributes."""
-        if not (isinstance(value, np.ndarray)):
+        if isinstance(value, (float, int)):
+            value = np.array([value])
+
+        if not isinstance(value, np.ndarray):
             raise TypeError("Trace only supports attributes of type ndarray.")
         self.__dict__[name] = value
 
@@ -85,15 +88,15 @@ class StepTrace(Trace):
         """Set only ndarrays as attributes."""
         if name == "delta_trace":
             raise ValueError("Attribute name 'delta_trace' is reserved.")
-        elif not (isinstance(value, np.ndarray)):
+        if not isinstance(value, np.ndarray):
             raise TypeError("Trace only supports attributes of type ndarray.")
         self.__dict__[name] = value
 
     def as_dict(self):
         """Return copy underlying dictionary."""
-        d = self.__dict__.copy()
-        d["delta_trace"] = d["delta_trace"].as_dict()
-        return d
+        step_trace_d = self.__dict__.copy()
+        step_trace_d["delta_trace"] = step_trace_d["delta_trace"].as_dict()
+        return step_trace_d
 
 
 class MCKernel(ABC):
@@ -325,8 +328,8 @@ class UniformlyRandom(MCKernel):
             )
 
         if self.trace.accepted:
-            for f in step:
-                occupancy[f[0]] = f[1]
+            for tup in step:
+                occupancy[tup[0]] = tup[1]
             self._usher.update_aux_state(step)
 
         self.trace.occupancy = occupancy
@@ -381,8 +384,8 @@ class Metropolis(ThermalKernel):
             )
 
         if self.trace.accepted:
-            for f in step:
-                occupancy[f[0]] = f[1]
+            for tup in step:
+                occupancy[tup[0]] = tup[1]
             self._usher.update_aux_state(step)
         self.trace.occupancy = occupancy
 

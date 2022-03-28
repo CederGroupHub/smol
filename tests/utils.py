@@ -9,7 +9,9 @@ from itertools import chain
 
 import numpy as np
 from monty.json import MontyDecoder, MSONable
-from pymatgen.core import Composition
+from pymatgen.core import Composition, Element
+
+from smol.cofe.space.domain import Vacancy
 
 
 def assert_msonable(obj, test_if_subclass=True):
@@ -47,6 +49,60 @@ def gen_random_occupancy(sublattices, inactive_sublattices):
             codes, size=len(sublatt.frac_coords), replace=True
         )
     return rand_occu
+
+
+def gen_random_neutral_occupancy(sublattices, inactive_sublattices, lam=10):
+    """Generate a random encoded occupancy according to a list of sublattices.
+
+    Args:
+        sublattices (Sequence of Sublattice):
+            A sequence of sublattices
+        num_sites (int):
+            Total number of sites
+
+    Returns:
+        ndarray: encoded occupancy
+    """
+
+    def get_charge(sp):
+        if isinstance(sp, (Element, Vacancy)):
+            return 0
+        else:
+            return sp.oxi_state
+
+    def charge(occu, sublattices, inactives):
+        charge = 0
+        for sl in sublattices:
+            for site in sl.sites:
+                charge += get_charge(sl.species[occu[site]])
+        for sl in inactives:
+            for site in sl.sites:
+                assert occu[site] == 0
+                assert len(sl.site_space) == 1
+                charge += get_charge(list(sl.site_space.keys())[0])
+        return charge
+
+    def flip(occu, sublattices, inactives, lam=10):
+        sl = random.choice(sublattices)
+        site = random.choice(sl.sites)
+        sp = random.choice(list({i for i in range(len(sl.site_space))} - {occu[site]}))
+        occu_next = occu.copy()
+        occu_next[site] = sp
+        C = charge(occu, sublattices, inactives)
+        C_next = charge(occu_next, sublattices, inactives)
+        accept = np.log(np.random.random()) < -lam * (C_next**2 - C**2)
+        if accept and C != 0:
+            return occu_next.copy(), C_next
+        else:
+            return occu.copy(), C
+
+    occu = gen_random_occupancy(sublattices, inactive_sublattices)
+    for _ in range(10000):
+        occu, C = flip(occu, sublattices, inactive_sublattices, lam=lam)
+        if C == 0:
+            return occu.copy()
+
+    raise TimeoutError("Can not generate a neutral occupancy in 10000 flips!")
 
 
 def gen_random_structure(prim, size=3):
