@@ -131,6 +131,15 @@ class Ensemble(ABC):
             sites += sublattice.restricted_sites
         return sites
 
+    @property
+    def species(self):
+        """Species on active sublattices.
+
+        These are minimal species required in setting chemical potentials.
+        """
+        return list({sp for sublatt in self.active_sublattices
+                     for sp in sublatt.site_space})
+
     def split_sublattice_by_species(self, sublattice_id, occu,
                                     codes_in_partitions):
         """Split a sub-lattice in system by its occupied species.
@@ -155,7 +164,7 @@ class Ensemble(ABC):
                   .split_by_species(occu, codes_in_partitions))
         self._sublattices = (self._sublattices[: sublattice_id]
                              + splits
-                             + self._sublattices[sublattice_id + 1, :])
+                             + self._sublattices[sublattice_id + 1 :])
 
     @property
     @abstractmethod

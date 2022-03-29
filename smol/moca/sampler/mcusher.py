@@ -64,7 +64,7 @@ class MCUsher(ABC):
     @sublattice_probabilities.setter
     def sublattice_probabilities(self, value):
         """Set the sublattice probabilities."""
-        if len(value) != len(self.sublattices):
+        if len(value) != len(self.active_sublattices):
             raise AttributeError(
                 f"Can not set sublattice probabilities.\n Length must be the"
                 f" same as the number of sublattices {len(self.sublattices)}"

@@ -94,15 +94,6 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         return self._params
 
     @property
-    def species(self):
-        """Species on active sublattices.
-
-        These are species required in setting chemical potentials.
-        """
-        return list({sp for sublatt in self.active_sublattices
-                     for sp in sublatt.site_space})
-
-    @property
     def chemical_potentials(self):
         """Get the chemical potentials for species in system."""
         return self._mus
@@ -221,11 +212,12 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         # Mu table should be built with ensemble, rather than processor data.
         # Otherwise you may get wrong species encoding if the sub-lattices are
         # split.
-        num_cols = max(max(sl.encoding) for sl in self.sublattices)
+        num_cols = max(max(sl.encoding) for sl in self.sublattices) + 1
+        # Sublattice can only be initialized as default, or splitted from default.
         table = np.zeros((self.num_sites, num_cols))
         for sublatt in self.active_sublattices:
             ordered_pots = [chemical_potentials[sp] for sp in sublatt.site_space]
-            table[sublatt.sites, sublatt.encoding] = ordered_pots
+            table[sublatt.sites[:, None], sublatt.encoding] = ordered_pots
         return table
 
     def as_dict(self):

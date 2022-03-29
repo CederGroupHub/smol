@@ -2,6 +2,7 @@
 
 import random
 from copy import deepcopy
+import numpy as np
 
 import pytest
 
@@ -23,12 +24,12 @@ def mcbias(all_sublattices, request):
 
 def test_compute_bias_change(mcbias):
     step = []
-    occu = gen_random_occupancy(mcbias.sublattices, mcbias.inactive_sublattices)
+    occu = gen_random_occupancy(mcbias.sublattices)
     new_occu = occu.copy()
     for _ in range(50):
-        s = random.choice(list(range(len(mcbias.sublattices))))
-        i = random.choice(mcbias.sublattices[s].sites)
-        sp = random.choice(list(range(len(mcbias.sublattices[s].species))))
+        s = random.choice(list(range(len(mcbias.active_sublattices))))
+        i = random.choice(mcbias.active_sublattices[s].sites)
+        sp = random.choice(list(range(len(mcbias.active_sublattices[s].species))))
         step.append((i, sp))
         if i == 81:
             raise (ValueError, "81!!!!")

@@ -193,12 +193,14 @@ class FugacityBias(MCBias):
         be given values of 1. Also rows representing sites with not partial
         occupancy will have all 1 values and should never be used.
         """
-        num_cols = max(max(sl.encoding) for sl in self.sublattices)
+        num_cols = max(max(sl.encoding) for sl in self.sublattices) + 1
+        # Sublattice can only be initialized as default, or splitted from default.
         num_rows = sum(len(sl.sites) for sl in self.sublattices)
         table = np.ones((num_rows, num_cols))
         for fus, sublatt in zip(fugacity_fractions, self.active_sublattices):
-            ordered_fus = [fus[sp] for sp in sublatt.site_space]
-            table[sublatt.sites, sublatt.encoding] = ordered_fus
+            ordered_fus = np.array([fus[sp] for sp in sublatt.site_space])
+            table[sublatt.sites[:, None], sublatt.encoding]\
+                = ordered_fus[None, :]
         return table
 
 

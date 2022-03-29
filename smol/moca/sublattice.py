@@ -41,6 +41,7 @@ class Sublattice(MSONable):
 
     def __post_init__(self):
         """Copy sites into active_sites, and initial setup."""
+        self.sites = np.unique(self.sites)
         self.active_sites = self.sites.copy()
         if len(self.site_space) <= 1:
             # A single-species sub-lattice should not be active at all.

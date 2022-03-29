@@ -110,17 +110,20 @@ def test_split_ensemble(ensemble):
     for sublattice in ensemble.sublattices:
         npt.assert_array_equal(np.arange(len(sublattice.species)),
                                sublattice.encoding)
+        # ensemble must have been initialized from default.
     while len(ensemble.active_sublattices) > 0:
-        sublattice = random.choice(ensemble.active_sublattices)
-        sl_id = ensemble.sublattices.index(sublattice)
+        is_active = [s.is_active for s in ensemble.sublattices]
+        sl_id = np.random.choice(np.arange(len(is_active),
+                                           dtype=int)[is_active])
+        sublattice = ensemble.sublattices[sl_id]
         S = len(sublattice.species)
         old_sublattices = deepcopy(ensemble.sublattices)
         old_species = deepcopy(ensemble.species)
         if isinstance(ensemble, SemiGrandEnsemble):
             old_chemical_potentials = deepcopy(ensemble.chemical_potentials)
             old_mu_table = deepcopy(ensemble._mu_table)
-        split_encodings = [sublattice.encoding[S // 2:],
-                           sublattice.encoding[:S // 2]]
+        split_encodings = [sublattice.encoding[: S // 2],
+                           sublattice.encoding[S // 2:]]
         ensemble.split_sublattice_by_species(sl_id, occu,
                                              split_encodings)
         assert len(ensemble.sublattices) == len(old_sublattices) + 1
@@ -140,16 +143,17 @@ def test_split_ensemble(ensemble):
                 npt.assert_array_equal(new_sublattice.encoding,
                                        old_sublattice.encoding)
             else:
-                old_sublattice = old_sublattice[i]
+                old_sublattice = old_sublattices[i]
                 new1 = ensemble.sublattices[i]
                 new2 = ensemble.sublattices[i + 1]
                 npt.assert_array_equal(np.sort(old_sublattice.sites),
                                        np.sort(np.concatenate((new1.sites, new2.sites)))
                                        )
-                npt.assert_array_equal(np.sort(old_sublattice.active_sites),
-                                       np.sort(np.concatenate((new1.active_sites,
-                                                               new2.active_sites)))
-                                       )
+                if new1.is_active and new2.is_active:
+                    npt.assert_array_equal(np.sort(old_sublattice.active_sites),
+                                           np.sort(np.concatenate((new1.active_sites,
+                                                                   new2.active_sites)))
+                                           )
                 npt.assert_array_equal(np.sort(old_sublattice.encoding),
                                        np.sort(np.concatenate((new1.encoding,
                                                                new2.encoding)))
@@ -163,20 +167,21 @@ def test_split_ensemble(ensemble):
             for sp in ensemble.species:
                 assert sp in old_species
                 assert ensemble.chemical_potentials[sp] == old_chemical_potentials[sp]
-                for sublattice in old_sublattices:
+                for sublattice in ensemble.active_sublattices:
                     if sp in sublattice.species:
                         code = sublattice.encoding[sublattice.species.index(sp)]
                         npt.assert_array_equal(ensemble._mu_table[sublattice.sites, code],
                                                ensemble.chemical_potentials[sp])
             for sp in set(old_species) - set(ensemble.species):
                 for sublattice in old_sublattices:
-                    if not sublattice.is_active:
-                        assert sp not in sublattice.species
-                    else:
-                        if sp in sublattice.species:
-                            code = sublattice.encoding[sublattice.species.index(sp)]
-                            npt.assert_array_equal(ensemble._mu_table[sublattice.sites, code],
-                                                   0)
+                    if sp in sublattice.species:
+                        code = sublattice.encoding[sublattice.species.index(sp)]
+                        npt.assert_array_equal(ensemble._mu_table[sublattice.sites, code],
+                                               0)
+            for sublattice in ensemble.sublattices:
+                if not sublattice.is_active:
+                    npt.assert_array_equal(ensemble._mu_table[sublattice.sites, :],
+                                           0)
 
 
 # Canonical Ensemble tests
@@ -205,6 +210,37 @@ def test_compute_feature_vector_canonical(canonical_ensemble):
             processor.compute_feature_vector_change(occu, flip),
         )
 
+    # Can still work normally with processor after splitting.
+    is_active = [s.is_active for s in canonical_ensemble.sublattices]
+    sl_id = np.random.choice(np.arange(len(canonical_ensemble.sublattices),
+                                       dtype=int)[is_active])
+    encoding = canonical_ensemble.sublattices[sl_id].encoding
+    S = len(encoding)
+    split = [encoding[: S // 2], encoding[S // 2:]]
+    canonical_ensemble.split_sublattice_by_species(sl_id, occu, split)
+    if len(canonical_ensemble.active_sublattices) > 0:
+        assert np.dot(
+            canonical_ensemble.natural_parameters,
+            canonical_ensemble.compute_feature_vector(occu),
+        ) == pytest.approx(processor.compute_property(occu))
+        npt.assert_array_equal(
+            canonical_ensemble.compute_feature_vector(occu),
+            canonical_ensemble.processor.compute_feature_vector(occu),
+        )
+        for _ in range(50):  # test a few flips
+            sublatt = np.random.choice(canonical_ensemble.active_sublattices)
+            site = np.random.choice(sublatt.sites)
+            spec = np.random.choice(range(len(sublatt.site_space)))
+            flip = [(site, spec)]
+            assert np.dot(
+                canonical_ensemble.natural_parameters,
+                canonical_ensemble.compute_feature_vector_change(occu, flip),
+            ) == pytest.approx(processor.compute_property_change(occu, flip))
+            npt.assert_array_equal(
+                canonical_ensemble.compute_feature_vector_change(occu, flip),
+                processor.compute_feature_vector_change(occu, flip),
+            )
+
 
 # MuSemigrandEnsemble Tests
 def test_compute_feature_vector_sgc(mugrand_ensemble):
@@ -225,10 +261,9 @@ def test_compute_feature_vector_sgc(mugrand_ensemble):
         site = np.random.choice(sublatt.sites)
         spec = np.random.choice(sublatt.encoding)
         flip = [(site, spec)]
-        dmu = (
-            mugrand_ensemble._mu_table[site][spec]
-            - mugrand_ensemble._mu_table[site][occu[site]]
-        )
+        dmu = (mugrand_ensemble._mu_table[site][spec]
+               - mugrand_ensemble._mu_table[site][occu[site]]
+               )
         assert np.dot(
             mugrand_ensemble.natural_parameters,
             mugrand_ensemble.compute_feature_vector_change(occu, flip),
@@ -237,6 +272,41 @@ def test_compute_feature_vector_sgc(mugrand_ensemble):
             mugrand_ensemble.compute_feature_vector_change(occu, flip),
             np.append(proc.compute_feature_vector_change(occu, flip), dmu),
         )
+    # Can still work normally with processor after splitting.
+    is_active = [s.is_active for s in mugrand_ensemble.sublattices]
+    sl_id = np.random.choice(np.arange(len(mugrand_ensemble.sublattices),
+                                       dtype=int)[is_active])
+    encoding = mugrand_ensemble.sublattices[sl_id].encoding
+    S = len(encoding)
+    split = [encoding[: S // 2], encoding[S // 2:]]
+    mugrand_ensemble.split_sublattice_by_species(sl_id, occu, split)
+    if len(mugrand_ensemble.active_sublattices) > 0:
+        assert np.dot(
+            mugrand_ensemble.natural_parameters,
+            mugrand_ensemble.compute_feature_vector(occu),
+        ) == pytest.approx(
+            proc.compute_property(occu) - mugrand_ensemble.compute_chemical_work(occu)
+        )
+        npt.assert_array_equal(
+            mugrand_ensemble.compute_feature_vector(occu)[:-1],
+            mugrand_ensemble.processor.compute_feature_vector(occu),
+        )
+        for _ in range(50):  # test a few flips
+            sublatt = np.random.choice(mugrand_ensemble.active_sublattices)
+            site = np.random.choice(sublatt.sites)
+            spec = np.random.choice(sublatt.encoding)
+            flip = [(site, spec)]
+            dmu = (mugrand_ensemble._mu_table[site][spec]
+                   - mugrand_ensemble._mu_table[site][occu[site]]
+                   )
+            assert np.dot(
+                mugrand_ensemble.natural_parameters,
+                mugrand_ensemble.compute_feature_vector_change(occu, flip),
+            ) == pytest.approx(proc.compute_property_change(occu, flip) - dmu)
+            npt.assert_array_equal(
+                mugrand_ensemble.compute_feature_vector_change(occu, flip),
+                np.append(proc.compute_feature_vector_change(occu, flip), dmu),
+            )
 
 
 def test_bad_chemical_potentials(mugrand_ensemble):

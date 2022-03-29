@@ -4,7 +4,7 @@ import pytest
 from pymatgen.analysis.structure_matcher import StructureMatcher
 
 from smol.cofe.extern import EwaldTerm
-from smol.cofe.space.domain import Vacancy
+from smol.cofe.space.domain import Vacancy, get_allowed_species
 from smol.moca.processor import (
     ClusterExpansionProcessor,
     CompositeProcessor,
@@ -68,6 +68,19 @@ def test_site_spaces(ce_processor):
         for sp in space
         if sp != Vacancy()
     )
+
+
+def test_sublattice(ce_processor):
+    sublattices = ce_processor.get_sublattices()
+    # These are default initialized, not splitted.
+    site_species = get_allowed_species(ce_processor.structure)
+    for sublatt, site_space in zip(sublattices,
+                                   ce_processor.unique_site_spaces):
+        assert sublatt.site_space == site_space
+        for site in sublatt.sites:
+            assert site_species[site] == list(site_space.keys())
+    assert (sum(len(sublatt.sites) for sublatt in sublattices)
+            == len(ce_processor.structure))
 
 
 def test_get_average_drift(composite_processor):
