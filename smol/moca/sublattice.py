@@ -1,4 +1,5 @@
 """Implementation of Sublattice class.
+
 A sublattice represents a set of sites in a supercell that have all have
 the same site space. More rigourously it represents a substructure of the
 random structure supercell being sampled in a Monte Carlo simulation.
@@ -17,9 +18,11 @@ from pymatgen.core import Composition
 @dataclass
 class Sublattice(MSONable):
     """Sublattice class.
+
     A Sublattice is used to represent a subset of supercell sites that have
     the same site space. Rigorously it represents a set of sites in a
     "substructure" of the total structure.
+
     Attributes:
      site_space (SiteSpace):
         SiteSpace with the allowed species and their random
@@ -66,14 +69,15 @@ class Sublattice(MSONable):
 
     def restrict_sites(self, sites):
         """Restricts (freezes) the given sites.
+
         Once a site is restricted, no Metropolis step can be proposed
         with it, including flipping, swapping, etc.
+
         Args:
             sites (Sequence):
                 indices of sites in the occupancy string to restrict.
         """
-        self.active_sites = np.array([i for i in self.active_sites
-                                      if i not in sites])
+        self.active_sites = np.array([i for i in self.active_sites if i not in sites])
 
     def reset_restricted_sites(self):
         """Reset all restricted sites to active."""
@@ -134,23 +138,24 @@ class Sublattice(MSONable):
 
     def as_dict(self):
         """Get Json-serialization dict representation.
+
         Returns:
             MSONable dict
         """
-        d = {'site_space': self.site_space.as_dict(),
+        sl_d = {'site_space': self.site_space.as_dict(),
              'sites': self.sites.tolist(),
              'encoding': self.encoding.tolist(),
              'active_sites': self.active_sites.tolist()}
-        return d
+        return sl_d
 
     @classmethod
     def from_dict(cls, d):
         """Instantiate a sublattice from dict representation.
+
         Returns:
             Sublattice
         """
-        sublattice = cls(SiteSpace.from_dict(d['site_space']),
-                         sites=np.array(d['sites'], dtype=int))
+        sublattice = cls(SiteSpace.from_dict(d['site_space']), sites=np.array(d['sites'], dtype=int))
         sublattice.active_sites = np.array(d['active_sites'], dtype=int)
         sublattice.encoding = np.array(d['encoding'], dtype=int)
         return sublattice

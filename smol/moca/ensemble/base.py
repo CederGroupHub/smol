@@ -238,11 +238,11 @@ class Ensemble(ABC):
         Returns:
             MSONable dict
         """
-        d = {
+        ensemble_d = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "thermo_boundaries": self.thermo_boundaries,
             "processor": self._processor.as_dict(),
             "sublattices": [s.as_dict() for s in self._sublattices],
         }
-        return d
+        return ensemble_d

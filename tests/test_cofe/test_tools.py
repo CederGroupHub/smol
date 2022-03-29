@@ -95,7 +95,8 @@ def test_weights_above_composition(structure_wrangler):
 
     # For each composition, at least one structure in minimum set.
     assert set(comps) == set(comps_min)
-    # These weights were generated from fixed lno data, but can not be used with random wrangler.
+    # These weights were generated from fixed lno data, but can not be used with random
+    # wrangler.
     # We can not check correctness of energies and weights with random wrangler.
     # expected = np.array([0.85637358, 0.98816678, 1., 0.59209449, 1.,
     #             0.92882071, 0.87907454, 0.94729315, 0.40490513, 0.82484222,
@@ -162,14 +163,14 @@ def test_filter_by_ewald(structure_wrangler):
     structure_wrangler.update_features()
     indices2 = max_ewald_energy_indices(structure_wrangler, max_relative_energy=0.0)
     npt.assert_array_equal(indices, indices2)
-    structure_wrangler.cluster_subspace._external_terms = []
 
 
 def test_filter_duplicate_corr_vectors(structure_wrangler):
     # add some repeat structures with infinite energy
+    rng = np.random.default_rng()
     dup_items = []
     for i in range(5):
-        ind = np.random.randint(structure_wrangler.num_structures)
+        ind = rng.integers(structure_wrangler.num_structures)
         dup_item = deepcopy(structure_wrangler.data_items[ind])
         dup_item["properties"]["energy"] = np.inf
         dup_items.append(dup_item)

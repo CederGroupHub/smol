@@ -4,7 +4,6 @@ Some of these are borrowed from pymatgen test scripts.
 """
 
 import json
-import random
 from itertools import chain
 
 import numpy as np
@@ -37,6 +36,7 @@ def gen_random_occupancy(sublattices):
     Returns:
         ndarray: encoded occupancy
     """
+
     num_sites = sum(len(sl.sites) for sl in sublattices)
     rand_occu = np.zeros(num_sites, dtype=int)
     for sublatt in sublattices:
@@ -107,19 +107,20 @@ def gen_random_structure(prim, size=3):
     Returns:
         ordered structure
     """
+    rng = np.random.default_rng()
     structure = prim.copy()
     structure.make_supercell(size)
     for site in structure:
-        site.species = Composition({random.choice(list(site.species.keys())): 1})
+        site.species = Composition({rng.choice(list(site.species.keys())): 1})
     return structure
 
 
 def gen_fake_training_data(prim_structure, n=10):
     """Generate a fake structure, energy training set."""
-
+    rng = np.random.default_rng()
     training_data = []
-    for energy in np.random.random(n):
-        struct = gen_random_structure(prim_structure, size=np.random.randint(2, 6))
+    for energy in rng.random(n):
+        struct = gen_random_structure(prim_structure, size=rng.integers(2, 6))
         energy *= -len(struct)
         training_data.append((struct, energy))
     return training_data

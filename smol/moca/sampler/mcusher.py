@@ -10,7 +10,6 @@ More complex steps can be defined simply by deriving from the MCUsher
 
 __author__ = "Luis Barroso-Luque"
 
-import random
 from abc import ABC, abstractmethod
 
 import numpy as np
@@ -18,6 +17,7 @@ import numpy as np
 from smol.utils import class_name_from_str, derived_class_factory
 
 
+#TODO  keep RNG as attribute for reproducibility, pass as optional constructor...
 class MCUsher(ABC):
     """Abstract base class for MC usher classes."""
 
@@ -37,8 +37,9 @@ class MCUsher(ABC):
                 sublattice.
         """
         self.sublattices = sublattices
-        self.active_sublattices = [sl for sl in self.sublattices
-                                   if sl.is_active]
+        self.active_sublattices = [
+            sublatt for sublatt in self.sublattices if sublatt.is_active
+        ]
 
         if sublattice_probabilities is None:
             self._sublatt_probs = np.array(
@@ -69,7 +70,7 @@ class MCUsher(ABC):
                 f"Can not set sublattice probabilities.\n Length must be the"
                 f" same as the number of sublattices {len(self.sublattices)}"
             )
-        elif sum(value) != 1:
+        if sum(value) != 1:
             raise ValueError(
                 "Can not set sublattice probabilities.\n"
                 "Sublattice probabilites must sum to one."
@@ -100,8 +101,8 @@ class MCUsher(ABC):
 
     def get_random_sublattice(self):
         """Return a random sublattice based on given probabilities."""
-        return random.choices(self.active_sublattices,
-                              weights=self._sublatt_probs)[0]
+        rng = np.random.default_rng()
+        return rng.choice(self.active_sublattices, p=self._sublatt_probs)
 
 
 class Flip(MCUsher):
@@ -120,10 +121,11 @@ class Flip(MCUsher):
         Returns:
             list(tuple): list of tuples each with (index, code)
         """
+        rng = np.random.default_rng()
         sublattice = self.get_random_sublattice()
         site = random.choice(sublattice.active_sites)
         choices = set(sublattice.encoding) - {occupancy[site]}
-        return [(site, random.choice(list(choices)))]
+        return [(site, rng.choice(list(choices)))]
 
 
 class Swap(MCUsher):
@@ -142,13 +144,14 @@ class Swap(MCUsher):
         Returns:
             list(tuple): list of tuples each with (idex, code)
         """
+        rng = np.random.default_rng()
         sublattice = self.get_random_sublattice()
-        site1 = random.choice(sublattice.active_sites)
+        site1 = rng.choice(sublattice.active_sites)
         species1 = occupancy[site1]
         sublattice_occu = occupancy[sublattice.active_sites]
         swap_options = sublattice.active_sites[sublattice_occu != species1]
         if swap_options.size > 0:  # check if swap_options are not empty
-            site2 = random.choice(swap_options)
+            site2 = rng.choice(swap_options)
             swap = [(site1, occupancy[site2]), (site2, species1)]
         else:
             # inefficient, maybe re-call method? infinite recursion problem

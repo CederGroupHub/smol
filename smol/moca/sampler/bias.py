@@ -24,7 +24,7 @@ class MCBias(ABC):
             list of sublattices with active sites.
     """
 
-    def __init__(self, sublattices, *args, **kwargs):
+    def __init__(self, sublattices, inactive_sublattices, *args, **kwargs):
         """Initialize Basebias.
 
         Args:
@@ -37,7 +37,7 @@ class MCBias(ABC):
                 Additional keyword arguments buffer.
         """
         self.sublattices = sublattices
-        self.active_sublattices = [sl for sl in self.sublattices if sl.is_active]
+        self.active_sublattices = [sublatt for sublatt in self.sublattices if sublatt.is_active]
 
     @abstractmethod
     def compute_bias(self, occupancy):
@@ -101,8 +101,9 @@ class FugacityBias(MCBias):
         self._fus = None
         self._fu_table = None
         # Consider only species on active sub-lattices
-        self._species = [set(sublatt.site_space.keys())
-                         for sublatt in self.active_sublattices]
+        self._species = [
+            set(sublatt.site_space.keys()) for sublatt in self.active_sublattices
+        ]
 
         if fugacity_fractions is not None:
             # check that species are valid
@@ -126,11 +127,11 @@ class FugacityBias(MCBias):
     def fugacity_fractions(self, value):
         """Set the fugacity fractions on active sublatts and update table."""
         for sub in value:
-            for sp, count in Counter(map(get_species, sub.keys())).items():
+            for spec, count in Counter(map(get_species, sub.keys())).items():
                 if count > 1:
                     raise ValueError(
                         f"{count} values of the fugacity for the same "
-                        f"species {sp} were provided.\n Make sure the "
+                        f"species {spec} were provided.\n Make sure the "
                         f"dictionaries you are using have only "
                         f"string keys or only Species objects as keys."
                     )
@@ -138,8 +139,8 @@ class FugacityBias(MCBias):
         value = [{get_species(k): v for k, v in sub.items()} for sub in value]
         if not all(sum(fus.values()) == 1 for fus in value):
             raise ValueError("Fugacity ratios must add to one.")
-        for (sp, vals) in zip(self._species, value):
-            if sp != set(vals.keys()):
+        for (spec, vals) in zip(self._species, value):
+            if spec != set(vals.keys()):
                 raise ValueError(
                     f"Fugacity fractions given are missing or not valid "
                     f"species.\n"
@@ -193,14 +194,13 @@ class FugacityBias(MCBias):
         be given values of 1. Also rows representing sites with not partial
         occupancy will have all 1 values and should never be used.
         """
-        num_cols = max(max(sl.encoding) for sl in self.sublattices) + 1
+        num_cols = max(max(sublatt.encoding) for sublatt in self.sublattices) + 1
         # Sublattice can only be initialized as default, or splitted from default.
         num_rows = sum(len(sl.sites) for sl in self.sublattices)
         table = np.ones((num_rows, num_cols))
         for fus, sublatt in zip(fugacity_fractions, self.active_sublattices):
             ordered_fus = np.array([fus[sp] for sp in sublatt.site_space])
-            table[sublatt.sites[:, None], sublatt.encoding]\
-                = ordered_fus[None, :]
+            table[sublatt.sites[:, None], sublatt.encoding] = ordered_fus[None, :]
         return table
 
 

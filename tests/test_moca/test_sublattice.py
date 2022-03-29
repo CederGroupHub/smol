@@ -10,6 +10,7 @@ from tests.utils import assert_msonable
 
 @pytest.fixture
 def sublattice():
+    rng = np.random.default_rng()
     composition = Composition(
         {
             DummySpecies("A"): 0.3,
@@ -19,7 +20,7 @@ def sublattice():
         }
     )
     site_space = SiteSpace(composition)
-    sites = np.random.choice(range(100), size=60)
+    sites = rng.choice(range(100), size=60)
     return Sublattice(site_space, sites)
 
 
@@ -28,7 +29,8 @@ def test_restrict_sites(sublattice):
     npt.assert_array_equal(sublattice.sites, np.unique(sublattice.sites))
     npt.assert_array_equal(sublattice.encoding,
                            np.arange(len(sublattice.species), dtype=int))
-    sites = np.random.choice(sublattice.sites, size=min(10, len(sublattice.sites)))
+    rng = np.random.default_rng()
+    sites = rng.choice(sublattice.sites, size=min(10, len(sublattice.sites)))
     # test sites properly restricted
     sublattice.restrict_sites(sites)
     assert not any(s in sublattice.active_sites for s in sites)
@@ -41,14 +43,15 @@ def test_restrict_sites(sublattice):
 
 
 def test_split(sublattice):
-    sublattice.restrict_sites(np.random.choice(sublattice.sites,
+    rng = np.random.default_rng()
+    sublattice.restrict_sites(rng.choice(sublattice.sites,
                                                size=len(sublattice.sites) // 2))
     occu = np.zeros(100, dtype=int) - 1
     pool = sublattice.sites.copy()
     for code, x in zip(sublattice.encoding,
                        sublattice.site_space.values()):
         n = int(round(x * len(sublattice.sites)))
-        select = np.random.choice(pool, size=min(n, len(pool)), replace=False)
+        select = rng.choice(pool, size=min(n, len(pool)), replace=False)
         occu[select] = code
         pool = np.setdiff1d(pool, select)
     if len(pool) > 0:
@@ -126,13 +129,12 @@ def test_msonable(sublattice):
 def test_inactiveness(sublattice):
     composition = Composition({DummySpecies("A"): 1})
     site_space = SiteSpace(composition)
-    sites = np.random.choice(range(100), size=60, replace=False)
+    rng = np.random.default_rng()
+    sites = rng.choice(range(100), size=60, replace=False)
     inactive_sublattice = Sublattice(site_space, sites)
-    npt.assert_array_equal(inactive_sublattice.encoding,
-                           np.array([0]))
+    npt.assert_array_equal(inactive_sublattice.encoding, np.array([0]))
     assert len(inactive_sublattice.active_sites) == 0
-    npt.assert_array_equal(np.sort(inactive_sublattice.restricted_sites),
-                           np.sort(inactive_sublattice.sites))
+    npt.assert_array_equal(np.sort(inactive_sublattice.restricted_sites), np.sort(inactive_sublattice.sites))
     assert not inactive_sublattice.is_active
 
     sublattice.restrict_sites(sublattice.sites)
