@@ -35,7 +35,8 @@ def mugrand_ensemble(composite_processor):
 # Test with composite processors to cover more ground
 @pytest.mark.parametrize("ensemble_cls", ensembles)
 def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_cls):
-    coefs = np.random.random(cluster_subspace_ewald.num_corr_functions + 1)
+    rng = np.random.default_rng()
+    coefs = rng.random(cluster_subspace_ewald.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
     proc = CompositeProcessor(cluster_subspace_ewald, scmatrix)
     proc.add_processor(
@@ -54,8 +55,8 @@ def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_cls):
     reg_data = RegressionData(
         module="fake.module",
         estimator_name="Estimator",
-        feature_matrix=np.random.random((5, len(coefs))),
-        property_vector=np.random.random(len(coefs)),
+        feature_matrix=rng.random((5, len(coefs))),
+        property_vector=rng.random(len(coefs)),
         parameters={"foo": "bar"},
     )
     expansion = ClusterExpansion(cluster_subspace_ewald, coefs, reg_data)
@@ -76,9 +77,9 @@ def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_cls):
     )
     occu = np.zeros(ensemble.num_sites, dtype=int)
     for _ in range(50):  # test a few flips
-        sublatt = np.random.choice(ensemble.sublattices)
-        site = np.random.choice(sublatt.sites)
-        spec = np.random.choice(range(len(sublatt.site_space)))
+        sublatt = rng.choice(ensemble.sublattices)
+        site = rng.choice(sublatt.sites)
+        spec = rng.choice(range(len(sublatt.site_space)))
         flip = [(site, spec)]
         assert proc.compute_property_change(
             occu, flip
@@ -88,7 +89,8 @@ def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_cls):
 
 
 def test_restrict_sites(ensemble):
-    sites = np.random.choice(range(ensemble.processor.num_sites), size=5)
+    rng = np.random.default_rng()
+    sites = rng.choice(range(ensemble.processor.num_sites), size=5)
     ensemble.restrict_sites(sites)
     for sublatt in ensemble.sublattices:
         assert not any(i in sublatt.active_sites for i in sites)
@@ -115,10 +117,11 @@ def test_compute_feature_vector_canonical(canonical_ensemble):
         canonical_ensemble.compute_feature_vector(occu),
         canonical_ensemble.processor.compute_feature_vector(occu),
     )
+    rng = np.random.default_rng()
     for _ in range(50):  # test a few flips
-        sublatt = np.random.choice(canonical_ensemble.sublattices)
-        site = np.random.choice(sublatt.sites)
-        spec = np.random.choice(range(len(sublatt.site_space)))
+        sublatt = rng.choice(canonical_ensemble.sublattices)
+        site = rng.choice(sublatt.sites)
+        spec = rng.choice(range(len(sublatt.site_space)))
         flip = [(site, spec)]
         assert np.dot(
             canonical_ensemble.natural_parameters,
@@ -146,10 +149,11 @@ def test_compute_feature_vector_sgc(mugrand_ensemble):
         mugrand_ensemble.compute_feature_vector(occu)[:-1],
         mugrand_ensemble.processor.compute_feature_vector(occu),
     )
+    rng = np.random.default_rng()
     for _ in range(50):  # test a few flips
-        sublatt = np.random.choice(mugrand_ensemble.sublattices)
-        site = np.random.choice(sublatt.sites)
-        spec = np.random.choice(range(len(sublatt.site_space)))
+        sublatt = rng.choice(mugrand_ensemble.sublattices)
+        site = rng.choice(sublatt.sites)
+        spec = rng.choice(range(len(sublatt.site_space)))
         flip = [(site, spec)]
         dmu = (
             mugrand_ensemble._mu_table[site][spec]

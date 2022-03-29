@@ -10,7 +10,6 @@ More complex steps can be defined simply by deriving from the MCUsher
 
 __author__ = "Luis Barroso-Luque"
 
-import random
 from abc import ABC, abstractmethod
 
 import numpy as np
@@ -102,7 +101,8 @@ class MCUsher(ABC):
 
     def get_random_sublattice(self):
         """Return a random sublattice based on given probabilities."""
-        return random.choices(self.sublattices, weights=self._sublatt_probs)[0]
+        rng = np.random.default_rng()
+        return rng.choice(a=self.sublattices, p=self._sublatt_probs)
 
 
 class Flip(MCUsher):
@@ -121,10 +121,11 @@ class Flip(MCUsher):
         Returns:
             list(tuple): list of tuples each with (index, code)
         """
+        rng = np.random.default_rng()
         sublattice = self.get_random_sublattice()
-        site = random.choice(sublattice.active_sites)
+        site = rng.choice(sublattice.active_sites)
         choices = set(range(len(sublattice.site_space))) - {occupancy[site]}
-        return [(site, random.choice(list(choices)))]
+        return [(site, rng.choice(list(choices)))]
 
 
 class Swap(MCUsher):
@@ -143,13 +144,14 @@ class Swap(MCUsher):
         Returns:
             list(tuple): list of tuples each with (idex, code)
         """
+        rng = np.random.default_rng()
         sublattice = self.get_random_sublattice()
-        site1 = random.choice(sublattice.active_sites)
+        site1 = rng.choice(sublattice.active_sites)
         species1 = occupancy[site1]
         sublattice_occu = occupancy[sublattice.active_sites]
         swap_options = sublattice.active_sites[sublattice_occu != species1]
         if swap_options.size > 0:  # check if swap_options are not empty
-            site2 = random.choice(swap_options)
+            site2 = rng.choice(swap_options)
             swap = [(site1, occupancy[site2]), (site2, species1)]
         else:
             # inefficient, maybe re-call method? infinite recursion problem

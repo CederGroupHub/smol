@@ -166,9 +166,10 @@ def test_filter_by_ewald(structure_wrangler):
 
 def test_filter_duplicate_corr_vectors(structure_wrangler):
     # add some repeat structures with infinite energy
+    rng = np.random.default_rng()
     dup_items = []
     for i in range(5):
-        ind = np.random.randint(structure_wrangler.num_structures)
+        ind = rng.integers(structure_wrangler.num_structures)
         dup_item = deepcopy(structure_wrangler.data_items[ind])
         dup_item["properties"]["energy"] = np.inf
         dup_items.append(dup_item)
