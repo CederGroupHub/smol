@@ -20,7 +20,6 @@ from smol.utils import class_name_from_str, derived_class_factory, get_subclasse
 ALL_MCUSHERS = list(get_subclasses(MCUsher).keys())
 ALL_BIAS = list(get_subclasses(MCBias).keys())
 
-rng = np.random.default_rng()
 
 class Trace(SimpleNamespace):
     """Simple Trace class.
@@ -311,6 +310,7 @@ class UniformlyRandom(MCKernel):
         Returns:
             StepTrace
         """
+        rng = np.random.default_rng()
         step = self._usher.propose_step(occupancy)
         self.trace.delta_trace.features = self._feature_change(occupancy, step)
         self.trace.delta_trace.enthalpy = np.array(
@@ -358,6 +358,7 @@ class Metropolis(ThermalKernel):
         Returns:
             StepTrace
         """
+        rng = np.random.default_rng()
         step = self._usher.propose_step(occupancy)
         self.trace.delta_trace.features = self._feature_change(occupancy, step)
         self.trace.delta_trace.enthalpy = np.array(

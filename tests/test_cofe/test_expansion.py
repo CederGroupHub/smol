@@ -6,11 +6,11 @@ from sklearn.linear_model import LinearRegression, Ridge
 from smol.cofe import ClusterExpansion, RegressionData
 from tests.utils import assert_msonable, gen_random_structure
 
-rng = np.random.default_rng()
 
 @pytest.fixture(scope="module")
 def cluster_expansion(cluster_subspace):
     reg = Ridge(alpha=1e-8, fit_intercept=False)
+    rng = np.random.default_rng()
     n = rng.integers(50, 100)
     feat_matrix = np.empty((n, len(cluster_subspace)))
     structures = []
@@ -34,6 +34,7 @@ def cluster_expansion(cluster_subspace):
 
 def test_regression_data(cluster_subspace):
     reg = LinearRegression(fit_intercept=False)
+    rng = np.random.default_rng()
     n = rng.integers(10, 100)
     feat_matrix = rng.random((n, len(cluster_subspace)))
     prop_vec = rng.random(n)
@@ -66,6 +67,7 @@ def test_predict(cluster_expansion):
 
     comps = [s.composition for s in pool]
     all_species = list({b for c in comps for b in c.keys()})
+    rng = np.random.default_rng()
     mus = rng.random(len(all_species))
 
     def get_energy(structure, species, chempots):

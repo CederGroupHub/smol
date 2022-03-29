@@ -14,10 +14,10 @@ from smol.cofe.space.basis import basis_factory
 from smol.cofe.space.domain import SiteSpace, get_site_spaces
 from tests.utils import assert_msonable
 
-rng = np.random.default_rng()
 
 @pytest.fixture(params=[(1, 2), (2, 8)])
 def orbit(expansion_structure, request):
+    rng = np.random.default_rng()
     num_sites = rng.integers(*request.param)
     site_inds = choices(range(len(expansion_structure)), k=num_sites)
     coords = [expansion_structure.frac_coords[i] for i in site_inds]
@@ -96,6 +96,7 @@ def test_cluster_permutations(orbit):
 
 
 def test_equality(orbit):
+    rng = np.random.default_rng()
     for _ in range(3):
         frac_coords = orbit.base_cluster.sites.copy()
         other_coords = frac_coords.copy()
@@ -172,6 +173,7 @@ def test_remove_bit_combos(orbit):
 
 
 def test_is_sub_orbit(expansion_structure):
+    rng = np.random.default_rng()
     num_sites = rng.integers(6, 10)
     site_inds = choices(range(len(expansion_structure)), k=num_sites)
     frac_coords = [expansion_structure.frac_coords[i] for i in site_inds]
@@ -264,6 +266,7 @@ def test_is_sub_orbit(expansion_structure):
 
 def test_sub_orbit_mappings(orbit):
     frac_coords = orbit.base_cluster.sites.copy()
+    rng = np.random.default_rng()
     frac_coords[0] += rng.random()
     orbit1 = Orbit(
         frac_coords,
@@ -372,6 +375,7 @@ def test_msonable(orbit):
     _ = repr(orbit), str(orbit)
     assert_msonable(orbit)
     orbit1 = Orbit.from_dict(orbit.as_dict())
+    rng = np.random.default_rng()
 
     # test remove bit combos are properly reconstructed
     if len(orbit.bit_combos) - 1 > 0:

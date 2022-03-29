@@ -10,8 +10,6 @@ from tests.utils import gen_random_occupancy
 
 bias_classes = [FugacityBias]
 
-rng = np.random.default_rng()
-
 @pytest.fixture(scope="module")
 def all_sublattices(ce_processor):
     return ce_processor.get_sublattices(), ce_processor.get_inactive_sublattices()
@@ -26,6 +24,7 @@ def test_compute_bias_change(mcbias):
     step = []
     occu = gen_random_occupancy(mcbias.sublattices, mcbias.inactive_sublattices)
     new_occu = occu.copy()
+    rng = np.random.default_rng()
     for _ in range(50):
         s = rng.choice(list(range(len(mcbias.sublattices))))
         i = rng.choice(mcbias.sublattices[s].sites)

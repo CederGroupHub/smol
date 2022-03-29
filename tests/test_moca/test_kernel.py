@@ -19,7 +19,6 @@ from tests.utils import gen_random_occupancy
 
 kernels = [UniformlyRandom, Metropolis]
 ushers = ALL_MCUSHERS
-rng = np.random.default_rng()
 
 @pytest.fixture(params=product(kernels, ushers), scope="module")
 def mckernel(ensemble, request):
@@ -59,6 +58,7 @@ def test_constructor(ensemble, step_type, mcusher):
 def test_trace():
     trace = Trace(first=np.ones(10), second=np.zeros(10))
     assert all(isinstance(val, np.ndarray) for _, val in trace.items())
+    rng = np.random.default_rng()
     trace.third = rng.random(10)
     assert all(isinstance(val, np.ndarray) for _, val in trace.items())
     names = ["first", "second", "third"]

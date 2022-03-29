@@ -18,13 +18,13 @@ NSAMPLES = 1000
 # compositions will depend on number of sites and num species in the
 # sublattices created in the fixture, if changing make sure it works out.
 SUBLATTICE_COMPOSITIONS = [1.0 / 3.0, 1.0 / 2.0]
-rng = np.random.default_rng()
 
 @pytest.fixture(params=[1, 5])
 def container(request):
     natural_parameters = np.zeros(10)
     natural_parameters[[0, -1]] = -1  # make first and last 1
     num_energy_coefs = 9
+    rng = np.random.default_rng()
     sites = rng.choice(range(NUM_SITES), size=300, replace=False)
     site_space = SiteSpace(Composition({"A": 0.2, "B": 0.5, "C": 0.3}))
     sublatt1 = Sublattice(site_space, sites)
@@ -56,6 +56,7 @@ def fake_traces(container):
     enths = -5 * np.ones((NSAMPLES, nwalkers, 1))
     temps = -300.56 * np.ones((NSAMPLES, nwalkers, 1))
     feats = np.zeros((NSAMPLES, nwalkers, len(container.natural_parameters)))
+    rng = np.random.default_rng()
     accepted = rng.integers(2, size=(NSAMPLES, nwalkers, 1))
     sites1 = container.sublattices[0].sites
     sites2 = container.sublattices[1].sites
@@ -113,6 +114,7 @@ def test_allocate_and_save(container, fake_traces):
     assert container._total_steps == NSAMPLES
     container.clear()
 
+    rng = np.random.default_rng()
     thinned = rng.integers(50)
     add_samples(container, fake_traces, thinned_by=thinned)
     assert len(container) == NSAMPLES
@@ -292,6 +294,7 @@ def test_means_and_variances(container, fake_traces, discard, thin):
 
 def test_get_mins(container, fake_traces):
     add_samples(container, fake_traces)
+    rng = np.random.default_rng()
     i = rng.choice(range(NSAMPLES))
     nwalkers = container.shape[0]
     container._trace.enthalpy[i, :] = -10

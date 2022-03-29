@@ -16,7 +16,6 @@ import numpy as np
 
 from smol.utils import class_name_from_str, derived_class_factory
 
-rng = np.random.default_rng()
 
 class MCUsher(ABC):
     """Abstract base class for MC usher classes."""
@@ -102,6 +101,7 @@ class MCUsher(ABC):
 
     def get_random_sublattice(self):
         """Return a random sublattice based on given probabilities."""
+        rng = np.random.default_rng()
         return rng.choice(a=self.sublattices, p=self._sublatt_probs)
 
 
@@ -121,6 +121,7 @@ class Flip(MCUsher):
         Returns:
             list(tuple): list of tuples each with (index, code)
         """
+        rng = np.random.default_rng()
         sublattice = self.get_random_sublattice()
         site = rng.choice(sublattice.active_sites)
         choices = set(range(len(sublattice.site_space))) - {occupancy[site]}
@@ -143,6 +144,7 @@ class Swap(MCUsher):
         Returns:
             list(tuple): list of tuples each with (idex, code)
         """
+        rng = np.random.default_rng()
         sublattice = self.get_random_sublattice()
         site1 = rng.choice(sublattice.active_sites)
         species1 = occupancy[site1]

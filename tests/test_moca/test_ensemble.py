@@ -13,7 +13,6 @@ from smol.moca import (
 from tests.utils import assert_msonable, gen_random_occupancy
 
 ensembles = [CanonicalEnsemble, SemiGrandEnsemble]
-rng = np.random.default_rng()
 
 @pytest.fixture
 def canonical_ensemble(composite_processor):
@@ -35,6 +34,7 @@ def mugrand_ensemble(composite_processor):
 # Test with composite processors to cover more ground
 @pytest.mark.parametrize("ensemble_cls", ensembles)
 def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_cls):
+    rng = np.random.default_rng()
     coefs = rng.random(cluster_subspace_ewald.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
     proc = CompositeProcessor(cluster_subspace_ewald, scmatrix)
@@ -88,6 +88,7 @@ def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_cls):
 
 
 def test_restrict_sites(ensemble):
+    rng = np.random.default_rng()
     sites = rng.choice(range(ensemble.processor.num_sites), size=5)
     ensemble.restrict_sites(sites)
     for sublatt in ensemble.sublattices:
@@ -115,6 +116,7 @@ def test_compute_feature_vector_canonical(canonical_ensemble):
         canonical_ensemble.compute_feature_vector(occu),
         canonical_ensemble.processor.compute_feature_vector(occu),
     )
+    rng = np.random.default_rng()
     for _ in range(50):  # test a few flips
         sublatt = rng.choice(canonical_ensemble.sublattices)
         site = rng.choice(sublatt.sites)
@@ -146,6 +148,7 @@ def test_compute_feature_vector_sgc(mugrand_ensemble):
         mugrand_ensemble.compute_feature_vector(occu)[:-1],
         mugrand_ensemble.processor.compute_feature_vector(occu),
     )
+    rng = np.random.default_rng()
     for _ in range(50):  # test a few flips
         sublatt = rng.choice(mugrand_ensemble.sublattices)
         site = rng.choice(sublatt.sites)

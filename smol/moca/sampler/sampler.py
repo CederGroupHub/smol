@@ -16,6 +16,7 @@ from smol.moca.sampler.container import SampleContainer
 from smol.moca.sampler.kernel import Trace, mckernel_factory
 from smol.utils import progress_bar
 
+
 class Sampler:
     """
     A sampler is used to run MCMC sampling simulations.

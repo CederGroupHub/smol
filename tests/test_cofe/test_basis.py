@@ -13,8 +13,6 @@ from tests.utils import assert_msonable
 
 basis_iterators = list(get_subclasses(basis.BasisIterator).values())
 
-rng = np.random.default_rng()
-
 @pytest.fixture(params=[True, False], scope="module")
 def site_space(expansion_structure, request):
     spaces = domain.get_site_spaces(expansion_structure, include_measure=request.param)
@@ -85,6 +83,7 @@ def test_standard_basis(standard_basis):
 
 
 def test_rotate(standard_basis):
+    rng = np.random.default_rng()
     f_array = standard_basis._f_array.copy()
     theta = np.pi / rng.integers(2, 10)
 
