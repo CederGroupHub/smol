@@ -10,6 +10,7 @@ from tests.utils import gen_random_occupancy
 
 bias_classes = [FugacityBias]
 
+
 @pytest.fixture(scope="module")
 def all_sublattices(ce_processor):
     return ce_processor.get_sublattices(), ce_processor.get_inactive_sublattices()

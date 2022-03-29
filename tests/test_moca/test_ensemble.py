@@ -14,6 +14,7 @@ from tests.utils import assert_msonable, gen_random_occupancy
 
 ensembles = [CanonicalEnsemble, SemiGrandEnsemble]
 
+
 @pytest.fixture
 def canonical_ensemble(composite_processor):
     return CanonicalEnsemble(composite_processor)

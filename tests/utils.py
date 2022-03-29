@@ -12,6 +12,7 @@ from pymatgen.core import Composition, Element
 
 from smol.cofe.space.domain import Vacancy
 
+
 def assert_msonable(obj, test_if_subclass=True):
     """
     Tests if obj is MSONable and tries to verify whether the contract is

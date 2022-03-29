@@ -235,9 +235,7 @@ def test_remove_corr_functions(cluster_subspace):
     subspace = cluster_subspace.copy()  # make copy
     rng = np.random.default_rng()
     remove_num = rng.integers(2, len(subspace) - 1)
-    ids_to_remove = rng.choice(
-        range(1, len(subspace)), size=remove_num, replace=False
-    )
+    ids_to_remove = rng.choice(range(1, len(subspace)), size=remove_num, replace=False)
     subspace.remove_orbit_bit_combos(ids_to_remove)
 
     assert len(subspace) == len(cluster_subspace) - remove_num

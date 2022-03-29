@@ -13,6 +13,7 @@ from tests.utils import assert_msonable
 
 basis_iterators = list(get_subclasses(basis.BasisIterator).values())
 
+
 @pytest.fixture(params=[True, False], scope="module")
 def site_space(expansion_structure, request):
     spaces = domain.get_site_spaces(expansion_structure, include_measure=request.param)

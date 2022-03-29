@@ -20,6 +20,7 @@ from tests.utils import gen_random_occupancy
 kernels = [UniformlyRandom, Metropolis]
 ushers = ALL_MCUSHERS
 
+
 @pytest.fixture(params=product(kernels, ushers), scope="module")
 def mckernel(ensemble, request):
     kwargs = {}

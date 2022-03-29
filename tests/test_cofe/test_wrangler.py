@@ -317,9 +317,7 @@ def test_matrix_properties(structure_wrangler):
 def test_get_orbit_rank(structure_wrangler):
     rng = np.random.default_rng()
     for _ in range(10):
-        oid = rng.choice(
-            range(1, len(structure_wrangler.cluster_subspace.orbits) + 1)
-        )
+        oid = rng.choice(range(1, len(structure_wrangler.cluster_subspace.orbits) + 1))
         orb_size = structure_wrangler.cluster_subspace.orbits[oid - 1]
         assert structure_wrangler.get_feature_matrix_orbit_rank(oid) <= len(orb_size)
 

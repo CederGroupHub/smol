@@ -7,6 +7,7 @@ from smol.cofe.wrangling.select import (
     gaussian_select,
 )
 
+
 def test_full_row_rank_select():
     rng = np.random.default_rng()
     for shape in ((100, 100), (100, 200), (100, 500)):

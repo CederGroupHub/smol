@@ -19,6 +19,7 @@ NSAMPLES = 1000
 # sublattices created in the fixture, if changing make sure it works out.
 SUBLATTICE_COMPOSITIONS = [1.0 / 3.0, 1.0 / 2.0]
 
+
 @pytest.fixture(params=[1, 5])
 def container(request):
     natural_parameters = np.zeros(10)

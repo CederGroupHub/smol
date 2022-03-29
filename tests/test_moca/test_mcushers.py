@@ -9,6 +9,7 @@ from smol.moca.sublattice import InactiveSublattice, Sublattice
 mcmcusher_classes = [Flip, Swap]
 num_sites = 100
 
+
 @pytest.fixture
 def all_sublattices():
     # generate two tests sublattices
