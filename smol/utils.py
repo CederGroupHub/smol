@@ -2,7 +2,6 @@
 
 __author__ = "Luis Barroso-Luque"
 
-import re
 import inspect
 import re
 import warnings

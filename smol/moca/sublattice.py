@@ -1,4 +1,5 @@
 """Implementation of Sublattice class.
+
 A sublattice represents a set of sites in a supercell that have all have
 the same site space. More rigourously it represents a substructure of the
 random structure supercell being sampled in a Monte Carlo simulation.
@@ -17,6 +18,7 @@ from pymatgen.core import Composition
 @dataclass
 class Sublattice(MSONable):
     """Sublattice class.
+
     A Sublattice is used to represent a subset of supercell sites that have
     the same site space. Rigorously it represents a set of sites in a
     "substructure" of the total structure.
@@ -66,6 +68,7 @@ class Sublattice(MSONable):
 
     def restrict_sites(self, sites):
         """Restricts (freezes) the given sites.
+
         Once a site is restricted, no Metropolis step can be proposed
         with it, including flipping, swapping, etc.
         Args:
@@ -134,6 +137,7 @@ class Sublattice(MSONable):
 
     def as_dict(self):
         """Get Json-serialization dict representation.
+
         Returns:
             MSONable dict
         """
@@ -146,6 +150,7 @@ class Sublattice(MSONable):
     @classmethod
     def from_dict(cls, d):
         """Instantiate a sublattice from dict representation.
+
         Returns:
             Sublattice
         """
