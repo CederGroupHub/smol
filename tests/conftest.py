@@ -92,7 +92,8 @@ def single_subspace(single_structure):
 
 @pytest.fixture(scope="module")
 def ce_processor(cluster_subspace):
-    coefs = 2 * np.random.random(cluster_subspace.num_corr_functions)
+    rng = np.random.default_rng()
+    coefs = 2 * rng.random(cluster_subspace.num_corr_functions)
     scmatrix = 3 * np.eye(3)
     return ClusterExpansionProcessor(
         cluster_subspace, supercell_matrix=scmatrix, coefficients=coefs
@@ -101,7 +102,8 @@ def ce_processor(cluster_subspace):
 
 @pytest.fixture(scope="module")
 def composite_processor(cluster_subspace_ewald):
-    coefs = 2 * np.random.random(cluster_subspace_ewald.num_corr_functions + 1)
+    rng = np.random.default_rng()
+    coefs = 2 * rng.random(cluster_subspace_ewald.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
     proc = CompositeProcessor(cluster_subspace_ewald, supercell_matrix=scmatrix)
     proc.add_processor(
@@ -134,7 +136,8 @@ def ensemble(composite_processor, request):
 
 @pytest.fixture(scope="module")
 def single_canonical_ensemble(single_subspace):
-    coefs = np.random.random(single_subspace.num_corr_functions)
+    rng = np.random.default_rng()
+    coefs = rng.random(single_subspace.num_corr_functions)
     proc = ClusterExpansionProcessor(single_subspace, 4 * np.eye(3), coefs)
     return CanonicalEnsemble(proc)
 
@@ -146,9 +149,10 @@ def basis_name(request):
 
 @pytest.fixture
 def supercell_matrix():
-    m = np.random.randint(-3, 3, size=(3, 3))
+    rng = np.random.default_rng()
+    m = rng.integers(-3, 3, size=(3, 3))
     while abs(np.linalg.det(m)) < 1e-6:  # make sure not singular
-        m = np.random.randint(-3, 3, size=(3, 3))
+        m = rng.integers(-3, 3, size=(3, 3))
     return m
 
 
