@@ -10,19 +10,21 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+
 import os
-from datetime import date
 import sys
+from datetime import date
+
 import smol
 
-sys.path.insert(0, os.path.abspath('../../smol'))
-sys.path.insert(0, os.path.abspath('../../examples'))
+sys.path.insert(0, os.path.abspath("../../smol"))
+sys.path.insert(0, os.path.abspath("../../examples"))
 
 # -- Project information -----------------------------------------------------
 
-project = 'smol'
+project = "smol"
 copyright = f"2020-{date.today().year}, Ceder Group"
-author = 'Luis Barroso-Luque'
+author = "Luis Barroso-Luque"
 
 # The full version, including alpha/beta/rc tags
 release = smol.__version__
@@ -37,13 +39,14 @@ version = smol.__version__
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
-    "sphinx.ext.intersphinx",
+    # "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
     "sphinx.ext.autosummary",
-    "sphinx.ext.coverage",
-    "sphinx.ext.doctest",
-    "sphinx.ext.todo",
-    "sphinx.ext.viewcode",
+    # "sphinx.ext.coverage",
+    # "sphinx.ext.doctest",
+    # "sphinx.ext.todo",
+    # "sphinx.ext.viewcode",
+    # "sphinx.ext.linkcode",
     "nbsphinx",
     "nb2plots",
     "IPython.sphinxext.ipython_console_highlighting",
@@ -52,7 +55,7 @@ extensions = [
 # Generate the API documentation when building
 autosummary_generate = True
 add_module_names = False
-autoclass_content = 'both'
+autoclass_content = "both"
 
 napoleon_google_docstring = True
 napoleon_include_init_with_doc = False
@@ -66,18 +69,12 @@ napoleon_custom_sections = None
 
 # Add any paths that contain templates here, relative to this directory.
 source_suffix = [".rst", ".ipynb"]
-master_doc = "index"
 
-# intersphinx configuration
-intersphinx_mapping = {
-    'python': ('https://docs.python.org/{.major}'.format(
-        sys.version_info), None),
-    'numpy': ('https://docs.scipy.org/doc/numpy/', None),
-    'scipy': ('https://docs.scipy.org/doc/scipy/reference', None),
-}
+# The encoding of source files.
+source_encoding = "utf-8"
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -98,36 +95,28 @@ html_logo = "../_static/banner.svg"
 
 html_theme_options = {
     "github_url": "https://github.com/CederGroupHub/smol",
-    "icon_links": [ # additional links with favicons
-    #    {
-    #       "name": "PyPI",
-    #       "url": "https://pypi.org/project/pydata-sphinx-theme",
-    #       "icon": "fas fa-box",
-    #     },
-    ],
     "use_edit_page_button": True,
-    "show_toc_level": 2,
+    "show_toc_level": 1,
     # "navbar_align": "left",  # [left, content, right] For testing that the navbar items align properly
     # "navbar_start": ["navbar-logo", "navbar-version"],
     # "navbar_center": ["navbar-nav", "navbar-version"],  # Just for testing
-    "collapse_navigation": True,
     "navigation_depth": 2,
     "show_nav_level": 2,
-    "show_prev_next": False,
-    "navbar_end": ["navbar-icon-links"], # "version-switcher",
+    "navbar_end": ["version-switcher", "navbar-icon-links"],  #
     # "left_sidebar_end": ["custom-template.html", "sidebar-ethical-ads.html"],
     # "footer_items": ["copyright", "sphinx-version", ""]
-    # "switcher": {
+    "switcher": {
         # "json_url": "/_static/switcher.json",
-        # "json_url": "https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json",
-        # "url_template": "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/",
-        # "version_match": version,
-    # },
+        "json_url": "https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json",
+        "url_template": "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/",
+        "version_match": version,
+    },
     "external_links": [
-        {"name": "Changes",
-         "url": "https://github.com/CederGroupHub/smol/blob/master/CHANGES.md"},
-        {"name": "Issues",
-         "url": "https://github.com/CederGroupHub/smol/issues"}
+        {
+            "name": "Changes",
+            "url": "https://github.com/CederGroupHub/smol/blob/master/CHANGES.md",
+        },
+        {"name": "Issues", "url": "https://github.com/CederGroupHub/smol/issues"},
     ],
 }
 
@@ -135,7 +124,7 @@ html_context = {
     "github_user": "CederGroupHub",
     "github_repo": "smol",
     "github_version": "master",
-    "doc_path": "doc",
+    "doc_path": "docs",
     "source_suffix": source_suffix,
 }
 
@@ -144,12 +133,9 @@ html_sidebars = {
     "contribute/index": [
         "search-field",
         "sidebar-nav-bs",
+        "custom-template",
     ],  # This ensures we test for custom sidebars
     # "demo/no-sidebar": [],  # Test what page looks like with no sidebar items
-}
-
-rediraffe_redirects = {
-    "contributing.rst": "contribute/index.rst",
 }
 
 # The style sheet to use for HTML and HTML Help pages. A file of that name
@@ -162,6 +148,10 @@ rediraffe_redirects = {
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 
+html_css_files = [
+    "css/smol.css",
+]
+
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
 html_last_updated_fmt = "%b %d, %Y"
@@ -171,7 +161,12 @@ html_last_updated_fmt = "%b %d, %Y"
 # html_use_smartypants = True
 
 # Content template for the index page.
-html_index = 'index.html'
+html_index = "index.html"
+
+# If false, no module index is generated.
+html_use_modindex = True
+
+html_file_suffix = ".html"
 
 # If true, the reST sources are included in the HTML build as _sources/<name>.
 html_copy_source = False

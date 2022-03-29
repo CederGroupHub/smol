@@ -1,9 +1,10 @@
 """Functions to filter data in a StructureWrangler."""
 
 from collections import defaultdict
+
 import numpy as np
-from pymatgen.core import Composition
 from pymatgen.analysis.phase_diagram import PDEntry, PhaseDiagram
+from pymatgen.core import Composition
 
 from smol.cofe.extern import EwaldTerm
 
@@ -12,8 +13,9 @@ __author__ = "Luis Barroso-Luque, William Davidson Richard"
 from smol.constants import kB
 
 
-def unique_corr_vector_indices(wrangler, property_key, filter_by='min',
-                               cutoffs=None, return_compliment=False):
+def unique_corr_vector_indices(
+    wrangler, property_key, filter_by="min", cutoffs=None, return_compliment=False
+):
     """Return index set of structures with unique correlation vectors.
 
     Keep structures with the min or max value of the given property.
@@ -38,16 +40,15 @@ def unique_corr_vector_indices(wrangler, property_key, filter_by='min',
     Returns:
         indices, compliment
     """
-    if filter_by not in ('max', 'min'):
-        raise ValueError(f'Filtering by {filter_by} is not an option.')
+    if filter_by not in ("max", "min"):
+        raise ValueError(f"Filtering by {filter_by} is not an option.")
 
-    choose_val = np.argmin if filter_by == 'min' else np.argmax
+    choose_val = np.argmin if filter_by == "min" else np.argmax
 
     property_vector = wrangler.get_property_vector(property_key)
     dupe_inds = wrangler.get_duplicate_corr_indices(cutoffs=cutoffs)
-    indices = {inds[choose_val(property_vector[inds])]
-               for inds in dupe_inds}
-    duplicates = set(i for inds in dupe_inds for i in inds) - indices
+    indices = {inds[choose_val(property_vector[inds])] for inds in dupe_inds}
+    duplicates = {i for inds in dupe_inds for i in inds} - indices
     indices = list(set(range(wrangler.num_structures)) - duplicates)
 
     if return_compliment:
@@ -56,8 +57,7 @@ def unique_corr_vector_indices(wrangler, property_key, filter_by='min',
         return indices
 
 
-def max_ewald_energy_indices(wrangler, max_relative_energy,
-                             return_compliment=False):
+def max_ewald_energy_indices(wrangler, max_relative_energy, return_compliment=False):
     """Return index set of structures by electrostatic interaction energy.
 
     Filter the input structures to only use those with low electrostatic
@@ -74,23 +74,23 @@ def max_ewald_energy_indices(wrangler, max_relative_energy,
             Ewald threshold. The maximum Ewald energy relative to minumum
             energy at composition of structure (normalized by prim).
         return_compliment (bool): optional
-            If True will return the compliment of the unique indices
+            If True will return the compliment of the unique indices.
+    Returns:
+        indices, compliment
     """
     ewald_energy = None
     for term in wrangler.cluster_subspace.external_terms:
         if isinstance(term, EwaldTerm):
-            ewald_energy = [i['features'][-1] for i in wrangler.data_items]
+            ewald_energy = [i["features"][-1] for i in wrangler.data_items]
     if ewald_energy is None:
         ewald_energy = []
         for item in wrangler.data_items:
-            struct = item['structure']
-            matrix = item['scmatrix']
-            mapp = item['mapping']
+            struct = item["structure"]
+            matrix = item["scmatrix"]
+            mapp = item["mapping"]
             occu = wrangler.cluster_subspace.occupancy_from_structure(
-                struct,
-                encode=True,
-                scmatrix=matrix,
-                site_mapping=mapp)
+                struct, encode=True, scmatrix=matrix, site_mapping=mapp
+            )
 
             supercell = wrangler.cluster_subspace.structure.copy()
             supercell.make_supercell(matrix)
@@ -100,14 +100,15 @@ def max_ewald_energy_indices(wrangler, max_relative_energy,
 
     min_energy_by_comp = defaultdict(lambda: np.inf)
     for energy, item in zip(ewald_energy, wrangler.data_items):
-        c = item['structure'].composition.reduced_composition
+        c = item["structure"].composition.reduced_composition
         if energy < min_energy_by_comp[c]:
             min_energy_by_comp[c] = energy
 
     indices, compliment = [], []
     for i, (energy, item) in enumerate(zip(ewald_energy, wrangler.data_items)):
         min_energy = min_energy_by_comp[
-            item['structure'].composition.reduced_composition]
+            item["structure"].composition.reduced_composition
+        ]
         rel_energy = energy - min_energy
         if rel_energy < max_relative_energy:
             indices.append(i)
@@ -137,8 +138,7 @@ def weights_energy_above_composition(structures, energies, temperature=2000):
     return np.exp(-e_above_comp / (kB * temperature))
 
 
-def weights_energy_above_hull(structures, energies, cs_structure,
-                              temperature=2000):
+def weights_energy_above_hull(structures, energies, cs_structure, temperature=2000):
     """Compute weights for structure energy above the hull of given structures.
 
     Args:

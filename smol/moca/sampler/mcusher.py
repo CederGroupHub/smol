@@ -17,7 +17,7 @@ import warnings
 import math
 from copy import deepcopy
 
-from smol.utils import derived_class_factory
+from smol.utils import derived_class_factory, class_name_from_str
 from ..comp_space import (flip_vecs_to_flip_table, flip_table_to_flip_vecs,
                           CompSpace)
 
@@ -30,33 +30,38 @@ from ..utils.math_utils_old import (choose_section_from_partition, GCD_list,
 class MCUsher(ABC):
     """Abstract base class for MC usher classes."""
 
-    def __init__(self, sublattices, sublattice_probabilities=None):
+    def __init__(
+        self, sublattices, sublattice_probabilities=None
+    ):
         """Initialize MCMCStep.
 
         Args:
             sublattices (list of Sublattice):
                 list of active Sublattices to propose steps for. Active
                 sublattices are those that include sites with configuration
-                DOFs.
-            inactive_sublattices (list of InactiveSublattice):
-                list of inactive Sublattices, i.e. those with no configuration
-                DOFs. These can be used to obtain auxiliary information for MC
-                step proposals for the active sublattices
+                DOFs, only occupancy on active sub-lattices' active sites
+                are allowed to change.
             sublattice_probabilities (list of float): optional
                 list of probability to pick a site from a specific active
                 sublattice.
         """
         self.sublattices = sublattices
-        self.inactive_sublattices = inactive_sublattices
+        self.active_sublattices = [sl for sl in self.sublattices
+                                   if sl.is_active]
 
         if sublattice_probabilities is None:
             self._sublatt_probs = np.array(
-                len(self.sublattices) * [1/len(self.sublattices), ])
-        elif len(sublattice_probabilities) != len(self.sublattices):
-            raise AttributeError('Sublattice probabilites needs to be the '
-                                 'same length as sublattices.')
+                len(self.active_sublattices)
+                * [
+                    1 / len(self.active_sublattices),
+                ]
+            )
+        elif len(sublattice_probabilities) != len(self.active_sublattices):
+            raise AttributeError(
+                "Sublattice probabilites needs to be the " "same length as sublattices."
+            )
         elif sum(sublattice_probabilities) != 1:
-            raise ValueError('Sublattice probabilites must sum to one.')
+            raise ValueError("Sublattice probabilites must sum to one.")
         else:
             self._sublatt_probs = sublattice_probabilities
 
@@ -68,14 +73,16 @@ class MCUsher(ABC):
     @sublattice_probabilities.setter
     def sublattice_probabilities(self, value):
         """Set the sublattice probabilities."""
-        if len(value) != len(self.sublattices):
+        if len(value) != len(self.active_sublattices):
             raise AttributeError(
-                f'Can not set sublattice probabilities.\n Length must be the'
-                f' same as the number of sublattices {len(self.sublattices)}')
+                f"Can not set sublattice probabilities.\n Length must be the"
+                f" same as the number of sublattices {len(self.sublattices)}"
+            )
         elif sum(value) != 1:
             raise ValueError(
-                'Can not set sublattice probabilities.\n'
-                'Sublattice probabilites must sum to one.')
+                "Can not set sublattice probabilities.\n"
+                "Sublattice probabilites must sum to one."
+            )
         self._sublatt_probs = value
 
     @abstractmethod
@@ -113,15 +120,14 @@ class MCUsher(ABC):
 
     def update_aux_state(self, step, *args, **kwargs):
         """Update any auxiliary state information based on an accepted step."""
-        pass
 
     def set_aux_state(self, state, *args, **kwargs):
         """Set the auxiliary state from a checkpoint values."""
-        pass
 
     def get_random_sublattice(self):
         """Return a random sublattice based on given probabilities."""
-        return random.choices(self.sublattices, weights=self._sublatt_probs)[0]
+        return random.choices(self.active_sublattices,
+                              weights=self._sublatt_probs)[0]
 
 
 class Flip(MCUsher):
@@ -142,7 +148,7 @@ class Flip(MCUsher):
         """
         sublattice = self.get_random_sublattice()
         site = random.choice(sublattice.active_sites)
-        choices = set(range(len(sublattice.site_space))) - {occupancy[site]}
+        choices = set(sublattice.encoding) - {occupancy[site]}
         return [(site, random.choice(list(choices)))]
 
 
@@ -479,9 +485,6 @@ def mcusher_factory(usher_type, sublattices, *args, **kwargs):
             string specifying step to instantiate.
         sublattices (list of Sublattice):
                 list of Sublattices to propose steps for.
-        inactive_sublattices (list of InactiveSublattice):
-                list of InactiveSublattices for sites with no configuration
-                DOFs.
         *args:
             positional arguments passed to class constructor
         **kwargs:
@@ -492,5 +495,5 @@ def mcusher_factory(usher_type, sublattices, *args, **kwargs):
     """
     usher_name = class_name_from_str(usher_type)
     return derived_class_factory(
-        usher_name, MCUsher, sublattices, inactive_sublattices,
-        *args, **kwargs)
+        usher_name, MCUsher, sublattices, *args, **kwargs
+    )

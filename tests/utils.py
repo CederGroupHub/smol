@@ -5,10 +5,13 @@ Some of these are borrowed from pymatgen test scripts.
 
 import json
 import random
-from  itertools import chain
+from itertools import chain
+
 import numpy as np
 from monty.json import MontyDecoder, MSONable
-from pymatgen.core import Composition
+from pymatgen.core import Composition, Element
+
+from smol.cofe.space.domain import Vacancy
 
 
 def assert_msonable(obj, test_if_subclass=True):
@@ -24,27 +27,72 @@ def assert_msonable(obj, test_if_subclass=True):
     _ = json.loads(obj.to_json(), cls=MontyDecoder)
 
 
-def gen_random_occupancy(sublattices, inactive_sublattices):
+def gen_random_occupancy(sublattices):
     """Generate a random encoded occupancy according to a list of sublattices.
 
     Args:
         sublattices (Sequence of Sublattice):
             A sequence of sublattices
-        num_sites (int):
-            Total number of sites
 
     Returns:
         ndarray: encoded occupancy
     """
-    num_sites = sum(
-        len(sl.sites) for sl in chain(sublattices, inactive_sublattices))
+    num_sites = sum(len(sl.sites) for sl in sublattices)
     rand_occu = np.zeros(num_sites, dtype=int)
     for sublatt in sublattices:
-        codes = range(len(sublatt.site_space))
-        rand_occu[sublatt.sites] = np.random.choice(codes,
-                                                    size=len(sublatt.sites),
-                                                    replace=True)
+        rand_occu[sublatt.sites] = np.random.choice(
+            sublatt.encoding, size=len(sublatt.sites), replace=True
+        )
     return rand_occu
+
+
+def gen_random_neutral_occupancy(sublattices, lam=10):
+    """Generate a random encoded occupancy according to a list of sublattices.
+
+    Args:
+        sublattices (Sequence of Sublattice):
+            A sequence of sublattices
+
+    Returns:
+        ndarray: encoded occupancy
+    """
+
+    def get_charge(sp):
+        if isinstance(sp, (Element, Vacancy)):
+            return 0
+        else:
+            return sp.oxi_state
+
+    def charge(occu, sublattices):
+        charge = 0
+        for sl in sublattices:
+            for site in sl.sites:
+                sp_id = sl.encoding.tolist().index(occu[site])
+                charge += get_charge(sl.species[sp_id])
+        return charge
+
+    def flip(occu, sublattices, lam=10):
+        actives = [s for s in sublattices if s.is_active]
+        sl = random.choice(actives)
+        site = random.choice(sl.sites)
+        code = random.choice(list(set(sl.encoding) - {occu[site]}))
+        occu_next = occu.copy()
+        occu_next[site] = code
+        C = charge(occu, sublattices)
+        C_next = charge(occu_next, sublattices)
+        accept = np.log(np.random.random()) < -lam * (C_next**2 - C**2)
+        if accept and C != 0:
+            return occu_next.copy(), C_next
+        else:
+            return occu.copy(), C
+
+    occu = gen_random_occupancy(sublattices)
+    for _ in range(10000):
+        occu, C = flip(occu, sublattices, lam=lam)
+        if C == 0:
+            return occu.copy()
+
+    raise TimeoutError("Can not generate a neutral occupancy in 10000 flips!")
 
 
 def gen_random_structure(prim, size=3):
@@ -62,6 +110,16 @@ def gen_random_structure(prim, size=3):
     structure = prim.copy()
     structure.make_supercell(size)
     for site in structure:
-        site.species = Composition(
-            {random.choice(list(site.species.keys())): 1})
+        site.species = Composition({random.choice(list(site.species.keys())): 1})
     return structure
+
+
+def gen_fake_training_data(prim_structure, n=10):
+    """Generate a fake structure, energy training set."""
+
+    training_data = []
+    for energy in np.random.random(n):
+        struct = gen_random_structure(prim_structure, size=np.random.randint(2, 6))
+        energy *= -len(struct)
+        training_data.append((struct, energy))
+    return training_data

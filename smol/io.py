@@ -10,7 +10,8 @@ it easier to translate work.
 __author__ = "Luis Barroso-Luque"
 
 import json
-from monty.json import MSONable, MontyEncoder, MontyDecoder
+
+from monty.json import MontyDecoder, MontyEncoder, MSONable
 
 
 def save_work(file_path, *msonables):
@@ -30,11 +31,12 @@ def save_work(file_path, *msonables):
     work_dict = {}
     for msonable in msonables:
         if not isinstance(msonable, MSONable):
-            raise AttributeError('Attempting to save an object which is not '
-                                 f'MSONable: {msonable}')
+            raise AttributeError(
+                "Attempting to save an object which is not " f"MSONable: {msonable}"
+            )
         work_dict[msonable.__class__.__name__] = msonable
 
-    with open(file_path, 'w') as fp:
+    with open(file_path, "w") as fp:
         json.dump(work_dict, fp, cls=MontyEncoder)
 
 
@@ -47,7 +49,7 @@ def load_work(file_path):
     Returns: Dictionary with smol objects
         dict
     """
-    with open(file_path, 'r') as fp:
+    with open(file_path) as fp:
         work_dict = json.load(fp, cls=MontyDecoder)
 
     return work_dict

@@ -1,137 +1,48 @@
-import pytest
 import numpy as np
-import random
-from copy import deepcopy
-from collections import Counter
+import pytest
+from pymatgen.core import Composition
 
-from scipy.stats import norm
+from smol.cofe.space.domain import SiteSpace
+from smol.moca.sampler.mcusher import Flip, Swap
+from smol.moca.sublattice import Sublattice
 
-from pymatgen.core import Composition, Species
+from tests.utils import gen_random_occupancy
 
-from smol.cofe.space.domain import SiteSpace, Vacancy
-from smol.moca.ensemble.sublattice import Sublattice
-from smol.moca.sampler.mcusher import (Swapper, Flipper,
-                                       Tableflipper)
-from smol.moca.comp_space import CompSpace
-from smol.moca.utils.occu_utils import (delta_ccoords_from_step,
-                                        occu_to_species_stat,
-                                        flip_weights_mask)
-from smol.moca.utils.math_utils_old import GCD_list
-from smol.moca.utils.occu_utils import *
-
-from tests.utils import gen_random_neutral_occupancy
-from itertools import permutations
-
-mcmcusher_classes = [Flipper, Swapper]
+mcmcusher_classes = [Flip, Swap]
 num_sites = 100
 
+
 @pytest.fixture
-def sublattices():
+def all_sublattices():
     # generate two tests sublattices
     sites = np.arange(num_sites)
-    sites1 = np.random.choice(sites, size=40)
-    sites2 = np.setdiff1d(sites, sites1)
-    site_space1 = SiteSpace(
-        Composition({'A': 0.1, 'B': 0.4, 'C': 0.3, 'D': 0.2}))
-    site_space2 = SiteSpace(
-        Composition({'A': 0.1, 'B': 0.4, 'E': 0.5}))
-    sublattices = [Sublattice(site_space1, sites1),
-                   Sublattice(site_space2, sites2)]
-    return sublattices
+    sites1 = np.random.choice(sites, size=num_sites // 3)
+    sites2 = np.random.choice(np.setdiff1d(sites, sites1), size=num_sites // 4)
+    sites3 = np.setdiff1d(sites, np.concatenate((sites1, sites2)))
+    site_space1 = SiteSpace(Composition({"A": 0.1, "B": 0.4, "C": 0.3, "D": 0.2}))
+    site_space2 = SiteSpace(Composition({"A": 0.1, "B": 0.4, "E": 0.5}))
+    site_space3 = SiteSpace(Composition({"G": 1}))
+    active_sublattices = [Sublattice(site_space1, sites1), Sublattice(site_space2, sites2)]
+    inactive_sublattices = [Sublattice(site_space3, sites3)]
+    return active_sublattices, inactive_sublattices
+
 
 @pytest.fixture
-def sublattices_neutral():
-    space1 = SiteSpace(Composition({'Li+':0.5,'Mn3+':0.3333333,'Ti4+':0.1666667}))
-    space2 = SiteSpace(Composition({'O2-':0.8333333,'P3-':0.1666667}))
-    sl1 = Sublattice(space1,np.array([0,1,2,3,4,5]))
-    sl2 = Sublattice(space2,np.array([6,7,8,9,10,11]))
-    return [sl1,sl2]
-
-@pytest.fixture
-def sublattices_partial():
-    space1 = SiteSpace(Composition({'Li+':0.5,'Mn3+':0.3333333,'Ti4+':0.1666667}))
-    space2 = SiteSpace(Composition({'O2-':0.8333333,'P3-':0.1666667}))
-    sl1 = Sublattice(space1,np.array([0,1,2,3,4,5]))
-    sl1.restrict_sites([0, 3]) # Ti not on these sites.
-    sl2 = Sublattice(space2,np.array([6,7,8,9,10,11]))
-    sl2.restrict_sites([6, 9]) # P not on these sites.
-    return [sl1,sl2]
-
-@pytest.fixture
-def all_sublattices_deli(): # deLi-MC
-    space1 = SiteSpace(Composition({'Li+':1/2}))
-    space2 = SiteSpace(Composition({'Mn2+':1/3, 'Mn3+':1/3, 'Mn4+':1/3}))
-    space3 = SiteSpace(Composition({'O2-':1/2, 'O-':1/2}))
-    space4 = SiteSpace(Composition({'F-':1}))
-    sl1 = Sublattice(space1, np.arange(2, dtype=int), encoding=[0, 4])
-    sl2 = Sublattice(space2, np.arange(2, 4, dtype=int), encoding=[1, 2, 3])
-    sl3 = Sublattice(space3, np.arange(4, 6, dtype=int), encoding=[0, 1])
-    sl4 = Sublattice(space4, np.arange(6, 8, dtype=int), encoding=[2])
-    return [sl1, sl2, sl3, sl4]
-
-@pytest.fixture
-def sublattices_deli(all_sublattices_deli):
-    return [all_sublattices_deli[0],
-            all_sublattices_deli[1],
-            all_sublattices_deli[2]]
-
-@pytest.fixture
-def rand_occu(sublattices):
+def rand_occu(all_sublattices):
     # generate a random occupancy according to the sublattices
-    occu = np.zeros(sum(len(s.sites) for s in sublattices), dtype=int)
-    for site in range(len(occu)):
-        for sublattice in sublattices:
-            if site in sublattice.sites:
-                occu[site] = np.random.choice(range(len(sublattice.site_space)))
-    return occu
+    occu = gen_random_occupancy(all_sublattices[0] + all_sublattices[1])
+    return occu, all_sublattices[1][0].sites  # return indices of fixed sites
 
-@pytest.fixture
-def rand_occu_neutral(sublattices_neutral):
-    return gen_random_neutral_occupancy(sublattices_neutral, 12)
-
-@pytest.fixture
-def rand_occu_partial():
-    return np.array([0, 0, 0, 2, 2, 1, 1, 1, 1, 1, 1, 0], dtype=int)
-
-@pytest.fixture
-def rand_occu_deli():
-    return np.array([0, 0, 1, 1, 0, 0, 2, 2], dtype=int)
-
-@pytest.fixture
-def flip_table_deli():
-    return [{'from':{0: {0: 1}, 1: {0: 1}},
-             'to':{0: {1: 1}, 1:{1: 1}}
-            },  # Li+ + Mn2+ -> Vac + Mn3+
-            {'from':{0: {0: 1}, 1: {1: 1}},
-             'to':{0: {1: 1}, 1: {2: 1}}
-            },  # Li+ + Mn3+ -> Vac + Mn4+
-            {'from':{0: {0: 1}, 2: {0: 1}},
-             'to':{0: {1: 1}, 2: {1: 1}}
-            }   # Li+ + O2- -> Vac + O-
-           ]
 
 @pytest.fixture(params=mcmcusher_classes)
-def mcmcusher(request, sublattices):
+def mcmcusher(request, all_sublattices):
     # instantiate mcmcushers to test
-    return request.param(sublattices)
+    return request.param(all_sublattices[0] + all_sublattices[1])
 
 @pytest.fixture
 def tableflipper(sublattices_neutral):
     return Tableflipper(sublattices_neutral, swap_weight = 0)
 
-@pytest.fixture
-def partialflipper(sublattices_partial):
-    return Tableflipper(sublattices_partial, swap_weight = 0)
-
-@pytest.fixture
-def deliflipper(all_sublattices_deli, flip_table_deli):
-    return Tableflipper(all_sublattices_deli,
-                        flip_table = flip_table_deli,
-                        swap_weight = 0)
-
-@pytest.fixture
-def deliflipper_auto(all_sublattices_deli):
-    return Tableflipper(all_sublattices_deli, swap_weight = 0)
 
 def test_bad_propabilities(mcmcusher):
     with pytest.raises(ValueError):
@@ -140,75 +51,43 @@ def test_bad_propabilities(mcmcusher):
         mcmcusher.sublattice_probabilities = [0.5, 0.2, 0.3]
 
 
-def test_deli_decoding(all_sublattices_deli):
-
-    occu_pro = np.array([0, 0, 1, 1, 0, 0, 2, 2])
-    species_stat = occu_to_species_list(occu_pro, all_sublattices_deli)
-
-    assert len(species_stat[0]) == 2
-    assert set(species_stat[0][0]) == set([0, 1])
-    assert set(species_stat[0][1]) == set([])
-
-    assert len(species_stat[1]) == 3
-    assert set(species_stat[1][0]) == set([2, 3])
-    assert set(species_stat[1][1]) == set([])
-    assert set(species_stat[1][2]) == set([])
-
-    assert len(species_stat[2]) == 2
-    assert set(species_stat[2][0]) == set([4, 5])
-    assert set(species_stat[2][1]) == set([])
-
-    assert len(species_stat[3]) == 1
-    assert set(species_stat[3][0]) == set([6, 7])
-
-    occu_pro = np.array([0, 4, 2, 1, 1, 0, 2, 2])
-    species_stat = occu_to_species_list(occu_pro, all_sublattices_deli)
-
-    assert len(species_stat[0]) == 2
-    assert set(species_stat[0][0]) == set([0])
-    assert set(species_stat[0][1]) == set([1])
-
-    assert len(species_stat[1]) == 3
-    assert set(species_stat[1][0]) == set([3])
-    assert set(species_stat[1][1]) == set([2])
-    assert set(species_stat[1][2]) == set([])
-
-    assert len(species_stat[2]) == 2
-    assert set(species_stat[2][0]) == set([5])
-    assert set(species_stat[2][1]) == set([4])
-
-    assert len(species_stat[3]) == 1
-    assert set(species_stat[3][0]) == set([6, 7])
-
-
 def test_propose_step(mcmcusher, rand_occu):
+    occu, fixed_sites = rand_occu
     iterations = 50000
     # test with 50/50 probability
     flipped_sites = []
     count1, count2 = 0, 0
     total = 0
     for i in range(iterations):
-        step = mcmcusher.propose_step(rand_occu)
+        step = mcmcusher.propose_step(occu)
         for flip in step:
-            if flip[0] in mcmcusher.sublattices[0].sites:
+            assert flip[1] != occu[flip[0]]
+            if flip[0] in mcmcusher.active_sublattices[0].active_sites:
                 count1 += 1
-                assert flip[1] in range(len(mcmcusher.sublattices[0].site_space))
-            elif flip[0] in mcmcusher.sublattices[1].sites:
+                assert flip[1] in mcmcusher.active_sublattices[0].encoding
+            elif flip[0] in mcmcusher.active_sublattices[1].active_sites:
                 count2 += 1
-                assert flip[1] in range(len(mcmcusher.sublattices[1].site_space))
+                assert flip[1] in mcmcusher.active_sublattices[1].encoding
             else:
-                raise RuntimeError('Something went wrong in proposing'
-                                   f'a step site proposed in {step} is'
-                                   ' not in any of the allowed sites')
+                raise RuntimeError(
+                    "Something went wrong in proposing"
+                    f"a step site proposed in {step} is"
+                    " not in any of the allowed sites"
+                )
             total += 1
             flipped_sites.append(flip[0])
 
     # check probabilities seem sound
-    assert count1 / total == pytest.approx(0.5, abs=1E-2)
-    assert count2 / total == pytest.approx(0.5, abs=1E-2)
+    assert count1 / total == pytest.approx(0.5, abs=1e-2)
+    assert count2 / total == pytest.approx(0.5, abs=1e-2)
 
     # check that every site was flipped at least once
-    assert all(i in flipped_sites for i in np.arange(num_sites))
+    assert all(
+        i in flipped_sites for i in np.setdiff1d(np.arange(num_sites), fixed_sites)
+    )
+
+    # make sure fixed sites remain the same
+    assert all(i not in fixed_sites for i in flipped_sites)
 
     # Now check with a sublattice bias
     mcmcusher.sublattice_probabilities = [0.8, 0.2]
@@ -216,22 +95,24 @@ def test_propose_step(mcmcusher, rand_occu):
     count1, count2 = 0, 0
     total = 0
     for i in range(iterations):
-        step = mcmcusher.propose_step(rand_occu)
+        step = mcmcusher.propose_step(occu)
         for flip in step:
-            if flip[0] in mcmcusher.sublattices[0].sites:
+            if flip[0] in mcmcusher.active_sublattices[0].active_sites:
                 count1 += 1
-                assert flip[1] in range(len(mcmcusher.sublattices[0].site_space))
-            elif flip[0] in mcmcusher.sublattices[1].sites:
+                assert flip[1] in mcmcusher.active_sublattices[0].encoding
+            elif flip[0] in mcmcusher.active_sublattices[1].sites:
                 count2 += 1
-                assert flip[1] in range(len(mcmcusher.sublattices[1].site_space))
+                assert flip[1] in mcmcusher.active_sublattices[1].encoding
             else:
-                raise RuntimeError('Something went wrong in proposing'
-                                   f'a step site proposed in {step} is'
-                                   ' not in any of the allowed sites')
+                raise RuntimeError(
+                    "Something went wrong in proposing"
+                    f"a step site proposed in {step} is"
+                    " not in any of the allowed sites"
+                )
             total += 1
             flipped_sites.append(flip[0])
-    assert count1 / total == pytest.approx(0.8, abs=1E-2)
-    assert count2 / total == pytest.approx(0.2, abs=1E-2)
+    assert count1 / total == pytest.approx(0.8, abs=1e-2)
+    assert count2 / total == pytest.approx(0.2, abs=1e-2)
 
 
 def get_oxi_state(sp):
@@ -464,7 +345,7 @@ def test_neutral_probabilities():
     print("Min frequency:", sorted_counter[0][1])
     print("Min frequency occu:", sorted_counter[0][0])
     print("Average frequency:", np.average(list(state_counter.values())))
- 
+
     # Test with zero hamiltonian, assert equal frequency.
     assert len(state_counter) <= 34  # Total 34 possible states.
     assert len(state_counter) > 31
@@ -507,7 +388,7 @@ def test_partial_probabilities():
     print("Min frequency:", sorted_counter[0][1])
     print("Min frequency occu:", sorted_counter[0][0])
     print("Average frequency:", np.average(list(state_counter.values())))
- 
+
     # Test with zero hamiltonian, assert equal frequency.
     assert len(state_counter) <= 19  # Total 19 possible states.
     assert len(state_counter) > 17
@@ -545,7 +426,7 @@ def test_deli_probabilities(deliflipper, rand_occu_deli):
     print("Min frequency:", sorted_counter[0][1])
     print("Min frequency occu:", sorted_counter[0][0])
     print("Average frequency:", np.average(list(state_counter.values())))
- 
+
     # Test with zero hamiltonian, assert equal frequency.
     assert len(state_counter) <= 17  # Total 17 possible deLi states.
     assert len(state_counter) > 15
@@ -582,7 +463,7 @@ def test_deli_auto_probabilities(deliflipper_auto, rand_occu_deli):
     print("Min frequency:", sorted_counter[0][1])
     print("Min frequency occu:", sorted_counter[0][0])
     print("Average frequency:", np.average(list(state_counter.values())))
- 
+
     # Test with zero hamiltonian, assert equal frequency.
     assert len(state_counter) <= 17  # Total 17 possible deLi states.
     assert len(state_counter) > 15

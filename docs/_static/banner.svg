@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   inkscape:export-ydpi="600"
-   inkscape:export-xdpi="600"
-   inkscape:export-filename="/home/lbluque/GoogleDrive/Research/cg-research/free-energy/smol/logo.png"
    width="463.7193mm"
    height="125.25285mm"
    viewBox="0 0 463.7193 125.25285"
    version="1.1"
    id="svg42286"
-   inkscape:version="1.1 (c4e8f9ed74, 2021-05-24)"
-   sodipodi:docname="smol-logo2.svg"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -32,13 +25,11 @@
        height="108.10062"
        id="rect42409" />
     <marker
-       inkscape:stockid="Arrow1Lend"
        orient="auto"
        refY="0"
        refX="0"
        id="Arrow1Lend"
-       style="overflow:visible"
-       inkscape:isstock="true">
+       style="overflow:visible">
       <path
          id="path41913"
          d="M 0,0 5,-5 -12.5,0 5,5 Z"
@@ -51,40 +42,12 @@
        width="1.0000083"
        x="-4.135803e-06"
        id="filter863"
-       style="color-interpolation-filters:sRGB"
-       inkscape:collect="always">
+       style="color-interpolation-filters:sRGB">
       <feGaussianBlur
          id="feGaussianBlur865"
-         stdDeviation="0.0003782305"
-         inkscape:collect="always" />
+         stdDeviation="0.0003782305" />
     </filter>
   </defs>
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="0.35"
-     inkscape:cx="970"
-     inkscape:cy="151.42857"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     inkscape:document-rotation="0"
-     showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1056"
-     inkscape:window-x="1920"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     inkscape:pagecheckerboard="0"
-     width="561.44104mm"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     showguides="false" />
   <metadata
      id="metadata42283">
     <rdf:RDF>
@@ -97,8 +60,6 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
      id="layer1"
      transform="translate(-262.82591,-52.474978)">
     <g
@@ -108,7 +69,6 @@
       <g
          style="stroke:#dd9200;stroke-width:8.87182;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.996078"
          id="layer2"
-         inkscape:label="Layer2"
          transform="translate(-101.71905,-226.02196)">
         <g
            id="g42237"
@@ -119,7 +79,6 @@
              transform="rotate(8.8978278,181.90104,307.85292)"
              style="stroke:#dd9200;stroke-width:9.28854;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.996078">
             <path
-               sodipodi:nodetypes="cccccccccccc"
                style="fill:none;stroke:#dd9200;stroke-width:9.28854;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.996078"
                d="m 167.21666,350.04375 v 0 l -0.52916,-97.36667 29.89791,12.7 0.52917,97.63125 -59.53125,-25.66458 v -64.82292 l 28.44496,12.312 60.19046,26.05259 v 32.27916 l -88.63542,-37.83541 v 0.26458"
                id="path42231" />
@@ -131,7 +90,6 @@
         </g>
       </g>
       <g
-         inkscape:label="Layer1"
          id="layer1-6"
          style="display:inline;fill:#0072b0;fill-opacity:0.968721"
          transform="translate(-101.71905,-226.02196)">
@@ -179,8 +137,8 @@
        transform="matrix(2.1870344,0,0,2.1870344,186.83599,-358.83031)"><tspan
          x="33.640625"
          y="243.22422"
-         id="tspan301680"><tspan
+         id="tspan928"><tspan
            style="font-family:GeosansLight;-inkscape-font-specification:GeosansLight"
-           id="tspan301678">smol</tspan></tspan></text>
+           id="tspan926">smol</tspan></tspan></text>
   </g>
 </svg>

@@ -7,25 +7,36 @@ The PottsSubspace class is an (experimental) class that is similar, but
 diverges from the CE mathematic formalism.
 """
 
+import warnings
 from copy import deepcopy
 from importlib import import_module
-import warnings
+
 import numpy as np
 from monty.json import MSONable
-from pymatgen.core import Structure, PeriodicSite
+from pymatgen.analysis.structure_matcher import (
+    OrderDisorderElementComparator,
+    StructureMatcher,
+)
+from pymatgen.core import PeriodicSite, Structure
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SymmOp
-from pymatgen.analysis.structure_matcher import \
-    StructureMatcher, OrderDisorderElementComparator
-from pymatgen.util.coord import is_coord_subset, is_coord_subset_pbc, \
-    lattice_points_in_supercell, coord_list_mapping_pbc
-from src.mc_utils import corr_from_occupancy
-from smol.cofe.space import Orbit, basis_factory, get_site_spaces, \
-    get_allowed_species, Vacancy
-from smol.cofe.space.basis import IndicatorBasis
-from smol.exceptions import SymmetryError, StructureMatchError, \
-    SYMMETRY_ERROR_MESSAGE
-from smol.cofe.space.constants import SITE_TOL
+from pymatgen.util.coord import (
+    coord_list_mapping_pbc,
+    is_coord_subset,
+    is_coord_subset_pbc,
+    lattice_points_in_supercell,
+)
 
+from smol.cofe.space import (
+    Orbit,
+    Vacancy,
+    basis_factory,
+    get_allowed_species,
+    get_site_spaces,
+)
+from smol.cofe.space.basis import IndicatorBasis
+from smol.cofe.space.constants import SITE_TOL
+from smol.exceptions import SYMMETRY_ERROR_MESSAGE, StructureMatchError, SymmetryError
+from src.mc_utils import corr_from_occupancy
 
 __author__ = "Luis Barroso-Luque, William Davidson Richards"
 
@@ -70,8 +81,16 @@ class ClusterSubspace(MSONable):
             in the subspace.
     """
 
-    def __init__(self, structure, expansion_structure, symops, orbits,
-                 supercell_matcher=None, site_matcher=None, **matcher_kwargs):
+    def __init__(
+        self,
+        structure,
+        expansion_structure,
+        symops,
+        orbits,
+        supercell_matcher=None,
+        site_matcher=None,
+        **matcher_kwargs,
+    ):
         """Initialize a ClusterSubspace.
 
         You rarely will need to create a ClusterSubspace using the main
@@ -132,12 +151,14 @@ class ClusterSubspace(MSONable):
         # relating them. Only the "get_supercell_matrix" method is used.
         if supercell_matcher is None:
             sc_comparator = OrderDisorderElementComparator()
-            self._sc_matcher = StructureMatcher(primitive_cell=False,
-                                                attempt_supercell=True,
-                                                allow_subset=True,
-                                                comparator=sc_comparator,
-                                                scale=True,
-                                                **matcher_kwargs)
+            self._sc_matcher = StructureMatcher(
+                primitive_cell=False,
+                attempt_supercell=True,
+                allow_subset=True,
+                comparator=sc_comparator,
+                scale=True,
+                **matcher_kwargs,
+            )
         else:
             self._sc_matcher = supercell_matcher
 
@@ -146,12 +167,14 @@ class ClusterSubspace(MSONable):
         # supercell of the prim structure. Only "get_mapping" method is used.
         if site_matcher is None:
             site_comparator = OrderDisorderElementComparator()
-            self._site_matcher = StructureMatcher(primitive_cell=False,
-                                                  attempt_supercell=False,
-                                                  allow_subset=True,
-                                                  comparator=site_comparator,
-                                                  scale=True,
-                                                  **matcher_kwargs)
+            self._site_matcher = StructureMatcher(
+                primitive_cell=False,
+                attempt_supercell=False,
+                allow_subset=True,
+                comparator=site_comparator,
+                scale=True,
+                **matcher_kwargs,
+            )
         else:
             self._site_matcher = site_matcher
 
@@ -167,10 +190,17 @@ class ClusterSubspace(MSONable):
         self._assign_orbit_ids()
 
     @classmethod
-    def from_cutoffs(cls, structure, cutoffs, basis='indicator',
-                     orthonormal=False, use_concentration=False,
-                     supercell_matcher=None, site_matcher=None,
-                     **matcher_kwargs):
+    def from_cutoffs(
+        cls,
+        structure,
+        cutoffs,
+        basis="indicator",
+        orthonormal=False,
+        use_concentration=False,
+        supercell_matcher=None,
+        site_matcher=None,
+        **matcher_kwargs,
+    ):
         """Create a ClusterSubspace from diameter cutoffs.
 
         Creates a :class:`ClusterSubspace` with orbits of the given size and
@@ -191,9 +221,12 @@ class ClusterSubspace(MSONable):
             cutoffs (dict):
                 dict of {cluster_size: diameter cutoff}. Cutoffs should be
                 strictly decreasing. Typically something like {2:5, 3:4}.
-                Empty and singlet orbits are always included.
+                The empty orbit is always included. Singlets are by default
+                included, with the exception below.
                 To obtain a subspace with only an empty and singlet terms use
-                an empty dict {}
+                an empty dict {}, or {1: 1}. Adding a cutoff term for point
+                terms, ie {1: 0} is useful to exclude point terms, any other
+                value for the cutoff will simply be ignored.
             basis (str):
                 A string specifying the site basis functions
             orthonormal (bool):
@@ -228,19 +261,25 @@ class ClusterSubspace(MSONable):
         # get symmetry operations of prim structure.
         symops = SpacegroupAnalyzer(structure).get_symmetry_operations()
         # get the active sites (partial occupancy) to expand over.
-        sites_to_expand = [site for site in structure
-                           if site.species.num_atoms < 0.99
-                           or len(site.species) > 1]
+        sites_to_expand = [
+            site
+            for site in structure
+            if site.species.num_atoms < 0.99 or len(site.species) > 1
+        ]
         expansion_structure = Structure.from_sites(sites_to_expand)
         # get orbits within given cutoffs
-        orbits = cls._orbits_from_cutoffs(expansion_structure,
-                                          cutoffs, symops,
-                                          basis, orthonormal,
-                                          use_concentration)
-        return cls(structure=structure,
-                   expansion_structure=expansion_structure, symops=symops,
-                   orbits=orbits, supercell_matcher=supercell_matcher,
-                   site_matcher=site_matcher, **matcher_kwargs)
+        orbits = cls._gen_orbits_from_cutoffs(
+            expansion_structure, cutoffs, symops, basis, orthonormal, use_concentration
+        )
+        return cls(
+            structure=structure,
+            expansion_structure=expansion_structure,
+            symops=symops,
+            orbits=orbits,
+            supercell_matcher=supercell_matcher,
+            site_matcher=site_matcher,
+            **matcher_kwargs,
+        )
 
     @property
     def basis_type(self):
@@ -264,20 +303,16 @@ class ClusterSubspace(MSONable):
         These are "tight" cutoffs, as in the maximum diameter for each cluster
         size, which is <= the input to from_cutoffs.
         """
-        return {size: max(orbit.base_cluster.diameter for orbit in orbits)
-                for size, orbits in self._orbits.items() if size != 1}
+        return {
+            size: max(orbit.base_cluster.diameter for orbit in orbits)
+            for size, orbits in self._orbits.items()
+            if size != 1
+        }
 
     @property
     def orbits(self):
         """Return a list of all orbits sorted by size."""
-        return [orbit for _, orbits
-                in sorted(self._orbits.items()) for orbit in orbits]
-
-    def iterorbits(self):
-        """Yield orbits."""
-        for _, orbits in sorted(self._orbits.items()):
-            for orbit in orbits:
-                yield orbit
+        return [orbit for _, orbits in sorted(self._orbits.items()) for orbit in orbits]
 
     @property
     def orbits_by_size(self):
@@ -287,18 +322,8 @@ class ClusterSubspace(MSONable):
     @property
     def orbit_multiplicities(self):
         """Get the crystallographic multiplicities for each orbit."""
-        mults = [1] + [orb.multiplicity for orb in self.iterorbits()]
+        mults = [1] + [orb.multiplicity for orb in self.orbits]
         return np.array(mults)
-
-    @property
-    def all_bit_combos(self):
-        """Return flattened all bit_combos for each correlation function.
-
-        A list of all bit_combos of length self.num_corr_functions.
-        This allows to obtain a bit combo by bit id (empty cluster has None)
-        """
-        return [None] + [combos for orbit in self.orbits
-                         for combos in orbit.bit_combos]
 
     @property
     def num_functions_per_orbit(self):
@@ -307,7 +332,7 @@ class ClusterSubspace(MSONable):
         The list returned is of length total number of orbits, each entry is
         the total number of correlation functions assocaited with that orbit.
         """
-        return [len(orbit) for orbit in self.iterorbits()]
+        return np.array([len(orbit) for orbit in self.orbits])
 
     @property
     def function_orbit_ids(self):
@@ -317,15 +342,19 @@ class ClusterSubspace(MSONable):
         in the list since they are not associated with any orbit.
         """
         func_orb_ids = [0]
-        for orbit in self.iterorbits():
-            func_orb_ids += len(orbit) * [orbit.id, ]
-        return func_orb_ids
+        for orbit in self.orbits:
+            func_orb_ids += len(orbit) * [
+                orbit.id,
+            ]
+        return np.array(func_orb_ids)
 
     @property
     def function_inds_by_size(self):
         """Get correlation function indices by cluster sizes."""
-        return {s: list(range(os[0].bit_id, os[-1].bit_id + len(os[-1])))
-                for s, os in self._orbits.items()}
+        return {
+            s: list(range(os[0].bit_id, os[-1].bit_id + len(os[-1])))
+            for s, os in self._orbits.items()
+        }
 
     @property
     def function_ordering_multiplicities(self):
@@ -336,8 +365,9 @@ class ClusterSubspace(MSONable):
         a correlation function is the number of symmetrically equivalent bit
         orderings the result in the product of the same single site functions.
         """
-        mults = [1] + [mult for orb in self.orbits
-                       for mult in orb.bit_combo_multiplicities]
+        mults = [1] + [
+            mult for orb in self.orbits for mult in orb.bit_combo_multiplicities
+        ]
         return np.array(mults)
 
     @property
@@ -350,18 +380,20 @@ class ClusterSubspace(MSONable):
         orderings the result in the product of the same single site functions
         times the (crystallographic) multiplicity of the orbit.
         """
-        return self.orbit_multiplicities[self.function_orbit_ids] * \
-            self.function_ordering_multiplicities
+        return (
+            self.orbit_multiplicities[self.function_orbit_ids]
+            * self.function_ordering_multiplicities
+        )
 
     @property
     def basis_orthogonal(self):
         """Check if the orbit basis defined is orthogonal."""
-        return all(orb.basis_orthogonal for orb in self.iterorbits())
+        return all(orb.basis_orthogonal for orb in self.orbits)
 
     @property
     def basis_orthonormal(self):
         """Check if the orbit basis is orthonormal."""
-        return all(orb.basis_orthonormal for orb in self.iterorbits())
+        return all(orb.basis_orthonormal for orb in self.orbits)
 
     @property
     def external_terms(self):
@@ -388,12 +420,18 @@ class ClusterSubspace(MSONable):
             index.
         """
         sub_ids = [
-            [suborb.id for suborb in self.get_sub_orbits(
-                orb.id, level=level, min_size=min_size)]
+            [
+                suborb.id
+                for suborb in self.get_sub_orbits(
+                    orb.id, level=level, min_size=min_size
+                )
+            ]
             for orb in self.orbits
         ]
 
-        return [[], ] + sub_ids
+        return [
+            [],
+        ] + sub_ids
 
     def function_hierarchy(self, level=1, min_size=2, invert=False):
         """Get the correlation function hierarchy.
@@ -441,12 +479,22 @@ class ClusterSubspace(MSONable):
         Returns:
             list of Orbits
         """
-        upper = upper if isinstance(upper, dict) \
+        upper = (
+            upper
+            if isinstance(upper, dict)
             else {k: upper for k in self._orbits.keys()}
-        lower = lower if isinstance(lower, dict) \
+        )
+        lower = (
+            lower
+            if isinstance(lower, dict)
             else {k: lower for k in self._orbits.keys()}
-        return [orbit for size in upper.keys() for orbit in self._orbits[size]
-                if lower[size] <= orbit.base_cluster.diameter <= upper[size]]
+        )
+        return [
+            orbit
+            for size in upper.keys()
+            for orbit in self._orbits[size]
+            if lower[size] <= orbit.base_cluster.diameter <= upper[size]
+        ]
 
     def function_inds_from_cutoffs(self, upper, lower=0):
         """Get indices of corr functions by cluster cutoffs.
@@ -472,7 +520,7 @@ class ClusterSubspace(MSONable):
         inds = []
         for orbit in orbits:
             inds += list(range(orbit.bit_id, orbit.bit_id + len(orbit)))
-        return inds
+        return np.array(inds)
 
     def add_external_term(self, term):
         """Add an external term to subspace.
@@ -488,8 +536,7 @@ class ClusterSubspace(MSONable):
         """
         for added_term in self.external_terms:
             if isinstance(term, type(added_term)):
-                raise ValueError(
-                    f"This ClusterSubspaces already has an {type(term)}.")
+                raise ValueError(f"This ClusterSubspaces already has an {type(term)}.")
         self._external_terms.append(term)
 
     @staticmethod
@@ -497,8 +544,9 @@ class ClusterSubspace(MSONable):
         """Get number of prim structures in a supercell for a given matrix."""
         return int(round(np.abs(np.linalg.det(scmatrix))))
 
-    def corr_from_structure(self, structure, normalized=True, scmatrix=None,
-                            site_mapping=None):
+    def corr_from_structure(
+        self, structure, normalized=True, scmatrix=None, site_mapping=None
+    ):
         """Get correlation vector for structure.
 
         Returns the correlation vector for a given structure. To do this the
@@ -533,28 +581,32 @@ class ClusterSubspace(MSONable):
         if scmatrix is None:
             scmatrix = self.scmatrix_from_structure(structure)
 
-        occu = self.occupancy_from_structure(structure,
-                                             scmatrix=scmatrix,
-                                             site_mapping=site_mapping,
-                                             encode=True)
+        occu = self.occupancy_from_structure(
+            structure, scmatrix=scmatrix, site_mapping=site_mapping, encode=True
+        )
         occu = np.array(occu, dtype=int)
 
         # Create a list of tuples with necessary information to compute corr
-        indices = self.supercell_orbit_mappings(scmatrix)
+        mappings = self.supercell_orbit_mappings(scmatrix)
         orbit_list = [
-            (orbit.bit_id, orbit.bit_combo_array, orbit.bit_combo_inds,
-             orbit.bases_array, inds)
-            for inds, orbit in zip(indices, self.orbits)
+            (
+                orbit.bit_id,
+                orbit.flat_tensor_indices,
+                orbit.flat_correlation_tensors,
+                cluster_indices,
+            )
+            for cluster_indices, orbit in zip(mappings, self.orbits)
         ]
-
         corr = corr_from_occupancy(occu, self.num_corr_functions, orbit_list)
         size = self.num_prims_from_matrix(scmatrix)
 
         if self.external_terms:
             supercell = self.structure.copy()
             supercell.make_supercell(scmatrix)
-            extras = [term.value_from_occupancy(occu, supercell)/size
-                      for term in self._external_terms]
+            extras = [
+                term.value_from_occupancy(occu, supercell) / size
+                for term in self._external_terms
+            ]
             corr = np.concatenate([corr, *extras])
 
         if not normalized:
@@ -587,8 +639,9 @@ class ClusterSubspace(MSONable):
         if scmatrix is None:
             scmatrix = self.scmatrix_from_structure(structure)
 
-        occu = self.occupancy_from_structure(structure, scmatrix=scmatrix,
-                                             site_mapping=site_mapping)
+        occu = self.occupancy_from_structure(
+            structure, scmatrix=scmatrix, site_mapping=site_mapping
+        )
 
         supercell_structure = self.structure.copy()
         supercell_structure.make_supercell(scmatrix)
@@ -596,13 +649,13 @@ class ClusterSubspace(MSONable):
         sites = []
         for sp, s in zip(occu, supercell_structure):
             if not isinstance(sp, Vacancy):  # skip vacancies
-                site = PeriodicSite(sp, s.frac_coords,
-                                    supercell_structure.lattice)
+                site = PeriodicSite(sp, s.frac_coords, supercell_structure.lattice)
                 sites.append(site)
         return Structure.from_sites(sites)
 
-    def occupancy_from_structure(self, structure, scmatrix=None,
-                                 site_mapping=None, encode=False):
+    def occupancy_from_structure(
+        self, structure, scmatrix=None, site_mapping=None, encode=False
+    ):
         """Occupancy string for a given structure.
 
         Returns a list of occupancies of each site in a the structure in the
@@ -660,8 +713,8 @@ class ClusterSubspace(MSONable):
                 sp = Vacancy()
             if sp not in allowed_species:
                 raise StructureMatchError(
-                    "A site in given structure has an  unrecognized species "
-                    f"{sp}.")
+                    "A site in given structure has an  unrecognized species " f"{sp}."
+                )
             if encode:
                 occu.append(allowed_species.index(sp))
             else:
@@ -681,11 +734,9 @@ class ClusterSubspace(MSONable):
         Returns:
             ndarray: matrix relating given structure and prim structure.
         """
-        scmatrix = self._sc_matcher.get_supercell_matrix(structure,
-                                                         self.structure)
+        scmatrix = self._sc_matcher.get_supercell_matrix(structure, self.structure)
         if scmatrix is None:
-            raise StructureMatchError(
-                "Supercell could not be found from structure")
+            raise StructureMatchError("Supercell could not be found from structure")
         if np.linalg.det(scmatrix) < 0:
             scmatrix *= -1
         return scmatrix
@@ -727,7 +778,7 @@ class ClusterSubspace(MSONable):
             orthonormal (bool):
                 option to orthonormalize all new site basis sets
         """
-        for orbit in self.iterorbits():
+        for orbit in self.orbits:
             orbit.transform_site_bases(new_basis, orthonormal)
 
     def remove_orbits(self, orbit_ids):
@@ -751,21 +802,22 @@ class ClusterSubspace(MSONable):
                 list of orbit ids to be removed
         """
         if min(orbit_ids) < 0:
-            raise ValueError(
-                'Index out of range. Negative inds are not allowed.')
+            raise ValueError("Index out of range. Negative inds are not allowed.")
         elif min(orbit_ids) == 0:
             raise ValueError(
                 "The empty orbit can not be removed. \n If you really want to "
                 "do this remove the first column in your feature matrix before"
-                " fitting.")
+                " fitting."
+            )
         elif max(orbit_ids) > self.num_orbits - 1:
             raise ValueError(
-                "Index out of range. "
-                "Total number of orbits is: {self.num_orbits}")
+                "Index out of range. " "Total number of orbits is: {self.num_orbits}"
+            )
 
         for size, orbits in self._orbits.items():
-            self._orbits[size] = [orbit for orbit in orbits
-                                  if orbit.id not in orbit_ids]
+            self._orbits[size] = [
+                orbit for orbit in orbits if orbit.id not in orbit_ids
+            ]
 
         self._assign_orbit_ids()  # Re-assign ids
         # Clear the cached supercell orbit mappings
@@ -795,7 +847,7 @@ class ClusterSubspace(MSONable):
         empty_orbit_ids = []
         bit_ids = np.array(bit_ids, dtype=int)
 
-        for orbit in self.iterorbits():
+        for orbit in self.orbits:
             first_id = orbit.bit_id
             last_id = orbit.bit_id + len(orbit)
             to_remove = bit_ids[bit_ids >= first_id]
@@ -807,7 +859,8 @@ class ClusterSubspace(MSONable):
                     empty_orbit_ids.append(orbit.id)
                     warnings.warn(
                         "All bit combos have been removed from orbit with id "
-                        f"{orbit.id}. This orbit will be fully removed.")
+                        f"{orbit.id}. This orbit will be fully removed."
+                    )
 
         if empty_orbit_ids:
             self.remove_orbits(empty_orbit_ids)
@@ -816,7 +869,7 @@ class ClusterSubspace(MSONable):
 
     def copy(self):
         """Deep copy of instance."""
-        return deepcopy(self)
+        return ClusterSubspace.from_dict(self.as_dict())
 
     def structure_site_mapping(self, supercell, structure):
         """Get structure site mapping.
@@ -834,8 +887,7 @@ class ClusterSubspace(MSONable):
         """
         mapping = self._site_matcher.get_mapping(supercell, structure)
         if mapping is None:
-            raise StructureMatchError(
-                "Mapping could not be found from structure.")
+            raise StructureMatchError("Mapping could not be found from structure.")
         return mapping.tolist()
 
     def get_sub_orbits(self, orbit_id, level=1, min_size=1):
@@ -855,7 +907,7 @@ class ClusterSubspace(MSONable):
         """
         if orbit_id == 0:
             return []
-        size = self.orbits[orbit_id - 1].base_cluster.size
+        size = len(self.orbits[orbit_id - 1].base_cluster)
         if level is None or level < 0 or size - level - 1 < 0:
             stop = 0
         elif min_size > size - level:
@@ -864,8 +916,12 @@ class ClusterSubspace(MSONable):
             stop = size - level - 1
 
         search_sizes = range(size - 1, stop, -1)
-        return [orbit for s in search_sizes for orbit in self._orbits[s]
-                if self.orbits[orbit_id - 1].is_sub_orbit(orbit)]
+        return [
+            orbit
+            for s in search_sizes
+            for orbit in self._orbits[s]
+            if self.orbits[orbit_id - 1].is_sub_orbit(orbit)
+        ]
 
     def get_sub_function_ids(self, corr_id, level=1, min_size=1):
         """Get the bit combo ids of all sub correlation functions.
@@ -897,13 +953,10 @@ class ClusterSubspace(MSONable):
         bit_combo = orbit.bit_combos[corr_id - orbit.bit_id]
 
         sub_fun_ids = []
-        for sub_orbit in self.get_sub_orbits(orbit.id, level=level,
-                                             min_size=min_size):
+        for sub_orbit in self.get_sub_orbits(orbit.id, level=level, min_size=min_size):
             inds = orbit.sub_orbit_mappings(sub_orbit)
             for i, sub_bit_combo in enumerate(sub_orbit.bit_combos):
-                if np.any(
-                        np.all(
-                            sub_bit_combo[0] == bit_combo[:, inds], axis=2)):
+                if np.any(np.all(sub_bit_combo[0] == bit_combo[:, inds], axis=2)):
                     sub_fun_ids.append(sub_orbit.bit_id + i)
 
         return sub_fun_ids
@@ -924,8 +977,9 @@ class ClusterSubspace(MSONable):
         self.num_clusters = counts[2]
 
     @staticmethod
-    def _orbits_from_cutoffs(exp_struct, cutoffs, symops, basis, orthonorm,
-                             use_conc):
+    def _gen_orbits_from_cutoffs(
+        exp_struct, cutoffs, symops, basis, orthonorm, use_conc
+    ):
         """Generate orbits from diameter cutoffs.
 
         The diameter of a cluster is the maximum distance between any two
@@ -942,6 +996,9 @@ class ClusterSubspace(MSONable):
                 dict of cutoffs for cluster diameters {size: cutoff}.
                 Cutoff diameters must decrease with cluster size, otherwise
                 algorithm can not guarantee completeness of cluster subspace.
+                Adding a cutoff term for point terms, ie {1: 0} is useful
+                to exclude point terms any other value for the cutoff will
+                simply be ignored.
             symops (list of SymmOps):
                 list of symmetry operations for structure
             basis (str):
@@ -954,60 +1011,138 @@ class ClusterSubspace(MSONable):
         Returns:
             dict: {size: list of Orbits within diameter cutoff}
         """
+        try:
+            if cutoffs.pop(1) is None:
+                if len(cutoffs) != 0:
+                    raise ValueError(
+                        f"Unable to generate clusters of higher order "
+                        f" {cutoffs} if point terms are excluded."
+                    )
+                return {}
+        except KeyError:
+            pass
+
         site_spaces = get_site_spaces(exp_struct, include_measure=use_conc)
         site_bases = tuple(
-            basis_factory(basis, site_space) for site_space in site_spaces)
+            basis_factory(basis, site_space) for site_space in site_spaces
+        )
         if orthonorm:
             for basis in site_bases:
                 basis.orthonormalize()
 
         orbits = {}
-        new_orbits = []
         nbits = np.array([len(b) - 1 for b in site_spaces])
 
         # Generate singlet/point orbits
-        for nbit, site, sbasis in zip(nbits, exp_struct, site_bases):
-            # Coordinates of point terms must stay in [0, 1] to guarantee
-            # correct math of the following algorithm.
-            new_orbit = Orbit(
-                [np.mod(site.frac_coords, 1)], exp_struct.lattice,
-                [list(range(nbit))], [sbasis], symops)
-            if new_orbit not in new_orbits:
-                new_orbits.append(new_orbit)
-
-        orbits[1] = sorted(
-            new_orbits,
-            key=lambda x: (np.round(x.base_cluster.diameter, 6),
-                           -x.multiplicity))
+        orbits[1] = ClusterSubspace._gen_point_orbits(
+            exp_struct, site_bases, nbits, symops
+        )
 
         if len(cutoffs) == 0:  # return singlets only if no cutoffs provided
             return orbits
 
+        orbits.update(
+            ClusterSubspace._gen_multi_orbits(
+                orbits[1], exp_struct, cutoffs, site_bases, nbits, symops
+            )
+        )
+        return orbits
+
+    @staticmethod
+    def _gen_point_orbits(exp_struct, site_bases, nbits, symops):
+        """Generate point orbits.
+
+        Args:
+            nbits (ndarray):
+                array with total values for function indices per site.
+            exp_struct (Structure):
+                expansion structure, disordered sites only.
+            site_bases (list of DiscreteBasis):
+                list of site basis for each site in the expansion structure.
+            symops (list of SymmOp):
+                lists of symmetry operations of the underlying structure.
+
+        Returns:
+            list of Orbits:
+                list of point orbits.
+        """
+        pt_orbits = []
+        for nbit, site, sbasis in zip(nbits, exp_struct, site_bases):
+            # Coordinates of point terms must stay in [0, 1] to guarantee
+            # correct math of the following algorithm.
+            new_orbit = Orbit(
+                [np.mod(site.frac_coords, 1)],
+                exp_struct.lattice,
+                [list(range(nbit))],
+                [sbasis],
+                symops,
+            )
+            if new_orbit not in pt_orbits:
+                pt_orbits.append(new_orbit)
+
+        pt_orbits = sorted(
+            pt_orbits,
+            key=lambda x: (np.round(x.base_cluster.diameter, 6), -x.multiplicity),
+        )
+        return pt_orbits
+
+    @staticmethod
+    def _gen_multi_orbits(point_orbits, exp_struct, cutoffs, site_bases, nbits, symops):
+        """Generate point orbits.
+
+        Args:
+            point_orbits (list of Orbit):
+                list of point orbits.
+            exp_struct (Structure):
+                expansion structure, disordered sites only.
+            cutoffs (dict):
+                dict of cutoffs for cluster diameters {size: cutoff}.
+                Cutoff diameters must decrease with cluster size, otherwise
+                algorithm can not guarantee completeness of cluster subspace.
+                Adding a cutoff term for point terms, ie {1: None} is useful
+                to exclude point terms any other value for the cutoff will
+                simply be ignored.
+            site_bases (list of DiscreteBasis):
+                list of site basis for each site in the expansion structure.
+            nbits (ndarray):
+                array with total values for function indices per site.
+            symops (list of SymmOp):
+                lists of symmetry operations of the underlying structure.
+
+        Returns:
+            dict:
+                {size: list of Orbits within diameter cutoff}
+        """
         # Vector sum of a, b, c divided by 2.
         # diameter + max_lp gives maximum possible distance from
         # [0.5, 0.5, 0.5] prim centoid to a point in all enumerable
         # clusters. Add SITE_TOL as a numerical tolerance grace.
+        orbits = {1: point_orbits}
         max_lp = np.linalg.norm(exp_struct.lattice.matrix.sum(axis=0)) / 2
         max_lp += SITE_TOL
         for size, diameter in sorted(cutoffs.items()):
             new_orbits = []
             neighbors = exp_struct.get_sites_in_sphere(
-                [0.5, 0.5, 0.5], diameter + max_lp, include_index=True)
-            for orbit in orbits[size-1]:
+                [0.5, 0.5, 0.5], diameter + max_lp, include_index=True
+            )
+            for orbit in orbits[size - 1]:
                 if orbit.base_cluster.diameter > diameter:
                     continue
                 for neighbor in neighbors:
                     if is_coord_subset(
-                            [neighbor.frac_coords], orbit.base_cluster.sites,
-                            atol=SITE_TOL):
+                        [neighbor.frac_coords], orbit.base_cluster.sites, atol=SITE_TOL
+                    ):
                         continue
                     new_sites = np.concatenate(
-                        [orbit.base_cluster.sites, [neighbor.frac_coords]])
+                        [orbit.base_cluster.sites, [neighbor.frac_coords]]
+                    )
                     new_orbit = Orbit(
-                        new_sites, exp_struct.lattice,
+                        new_sites,
+                        exp_struct.lattice,
                         orbit.bits + [list(range(nbits[neighbor.index]))],
                         orbit.site_bases + [site_bases[neighbor.index]],
-                        symops)
+                        symops,
+                    )
 
                     if new_orbit.base_cluster.diameter > diameter + 1e-8:
                         continue
@@ -1017,8 +1152,11 @@ class ClusterSubspace(MSONable):
             if len(new_orbits) > 0:
                 orbits[size] = sorted(
                     new_orbits,
-                    key=lambda x: (np.round(x.base_cluster.diameter, 6),
-                                   -x.multiplicity))
+                    key=lambda x: (
+                        np.round(x.base_cluster.diameter, 6),
+                        -x.multiplicity,
+                    ),
+                )
         return orbits
 
     def _gen_orbit_indices(self, scmatrix):
@@ -1033,7 +1171,7 @@ class ClusterSubspace(MSONable):
 
         ts = lattice_points_in_supercell(scmatrix)
         orbit_indices = []
-        for orbit in self.iterorbits():
+        for orbit in self.orbits:
             prim_fcoords = np.array([c.sites for c in orbit.clusters])
             fcoords = np.dot(prim_fcoords, prim_to_supercell)
             # tcoords contains all the coordinates of the symmetrically
@@ -1043,8 +1181,8 @@ class ClusterSubspace(MSONable):
             tcoords = fcoords[:, None, :, :] + ts[None, :, None, :]
             tcs = tcoords.shape
             inds = coord_list_mapping_pbc(
-                tcoords.reshape((-1, 3)), supercell_fcoords,
-                atol=SITE_TOL).reshape((tcs[0] * tcs[1], tcs[2]))  # noqa
+                tcoords.reshape((-1, 3)), supercell_fcoords, atol=SITE_TOL
+            ).reshape((tcs[0] * tcs[1], tcs[2]))
             # orbit_ids holds orbit, and 2d array of index groups that
             # correspond to the orbit
             # the 2d array may have some duplicates. This is due to
@@ -1064,13 +1202,13 @@ class ClusterSubspace(MSONable):
             return False
         if len(self.external_terms) != len(other.external_terms):
             return False
-        if not all(isinstance(t1, type(t2)) for t1, t2 in
-                   zip(other.external_terms, self.external_terms)):
+        if not all(
+            isinstance(t1, type(t2))
+            for t1, t2 in zip(other.external_terms, self.external_terms)
+        ):
             return False
-        # there may be a more robuse way to check the bases arrays are
-        # equivalent even if sites/functions are in different order
-        return all(o1 == o2 and np.array_equal(o1.bases_array, o2.bases_array)
-                   for o1, o2 in zip(other.orbits, self.orbits))
+        # does not check if basis functions are the same.
+        return all(o1 == o2 for o1, o2 in zip(other.orbits, self.orbits))
 
     def __len__(self):
         """Get number of correlation functions and ext terms in subspace."""
@@ -1078,61 +1216,67 @@ class ClusterSubspace(MSONable):
 
     def __str__(self):
         """Convert class into pretty string for printing."""
-        s = f'ClusterBasis: [Prim Composition] {self.structure.composition}\n'
-        s += '    [Size] 0\n      [Orbit] id: 0  orderings: 1\n'
+        s = f"ClusterBasis: [Prim Composition] {self.structure.composition}\n"
+        s += "    [Size] 0\n      [Orbit] id: 0  orderings: 1\n"
         for size, orbits in self._orbits.items():
-            s += f'    [Size] {size}\n'
+            s += f"    [Size] {size}\n"
             for orbit in orbits:
-                s += f'      {orbit}\n'
+                s += f"      {orbit}\n"
         return s
 
     @classmethod
     def from_dict(cls, d):
         """Create ClusterSubspace from an MSONable dict."""
-        symops = [SymmOp.from_dict(so_d) for so_d in d['symops']]
-        orbits = {int(s): [Orbit.from_dict(o) for o in v]
-                  for s, v in d['orbits'].items()}
-        structure = Structure.from_dict(d['structure'])
-        exp_structure = Structure.from_dict(d['expansion_structure'])
-        sc_matcher = StructureMatcher.from_dict(d['sc_matcher'])
-        site_matcher = StructureMatcher.from_dict(d['site_matcher'])
-        cs = cls(structure=structure,
-                 expansion_structure=exp_structure,
-                 orbits=orbits, symops=symops,
-                 supercell_matcher=sc_matcher,
-                 site_matcher=site_matcher)
+        symops = [SymmOp.from_dict(so_d) for so_d in d["symops"]]
+        orbits = {
+            int(s): [Orbit.from_dict(o) for o in v] for s, v in d["orbits"].items()
+        }
+        structure = Structure.from_dict(d["structure"])
+        exp_structure = Structure.from_dict(d["expansion_structure"])
+        sc_matcher = StructureMatcher.from_dict(d["sc_matcher"])
+        site_matcher = StructureMatcher.from_dict(d["site_matcher"])
+        cs = cls(
+            structure=structure,
+            expansion_structure=exp_structure,
+            orbits=orbits,
+            symops=symops,
+            supercell_matcher=sc_matcher,
+            site_matcher=site_matcher,
+        )
 
         # attempt to recreate external terms. This can be much improved if
         # a base class is used.
         # TODO update this using instances of BasePairTerm when the time comes
-        for term in d['external_terms']:
+        for term in d["external_terms"]:
             try:
-                module = import_module(term['@module'])
-                term_class = getattr(module, term['@class'])
+                module = import_module(term["@module"])
+                term_class = getattr(module, term["@class"])
                 cs.add_external_term(term_class.from_dict(term))
             except AttributeError:
                 warnings.warn(
                     f"{term['@class']} was not found in {term['@module']}. You"
-                    f" will need to add this yourself.", RuntimeWarning)
+                    f" will need to add this yourself.",
+                    RuntimeWarning,
+                )
             except ImportError:
                 warnings.warn(
                     f"Module {term['@module']} for class {term['@class']} was "
                     f"not found. You will have to add this yourself.",
-                    ImportWarning)
+                    ImportWarning,
+                )
         # re-create supercell orb inds cache
         _supercell_orb_inds = {}
-        for scm, indices in d['_supercell_orb_inds']:
+        for scm, indices in d["_supercell_orb_inds"]:
             scm = tuple(tuple(s) for s in scm)
             if isinstance(indices, tuple):
                 warnings.warn(
                     "This ClusterSubspace was created with a previous version "
                     "of smol. Please resave it to avoid this warning.",
-                    FutureWarning)
-                _supercell_orb_inds[scm] = [
-                    np.array(ind) for o_id, ind in indices]
+                    FutureWarning,
+                )
+                _supercell_orb_inds[scm] = [np.array(ind) for o_id, ind in indices]
             else:
-                _supercell_orb_inds[scm] = [
-                    np.array(ind) for ind in indices]
+                _supercell_orb_inds[scm] = [np.array(ind) for ind in indices]
         cs._supercell_orb_inds = _supercell_orb_inds
         return cs
 
@@ -1144,21 +1288,23 @@ class ClusterSubspace(MSONable):
             MSONable dict
         """
         # modify cached sc orb inds so it can be serialized
-        _supercell_orb_inds = [(scm, [ind.tolist() for ind
-                               in orb_inds]) for scm, orb_inds
-                               in self._supercell_orb_inds.items()]
+        _supercell_orb_inds = [
+            (scm, [ind.tolist() for ind in orb_inds])
+            for scm, orb_inds in self._supercell_orb_inds.items()
+        ]
 
-        d = {'@module': self.__class__.__module__,
-             '@class': self.__class__.__name__,
-             'structure': self.structure.as_dict(),
-             'expansion_structure': self.expansion_structure.as_dict(),
-             'symops': [so.as_dict() for so in self.symops],
-             'orbits': {s: [o.as_dict() for o in v]
-                        for s, v in self._orbits.items()},
-             'sc_matcher': self._sc_matcher.as_dict(),
-             'site_matcher': self._site_matcher.as_dict(),
-             'external_terms': [et.as_dict() for et in self.external_terms],
-             '_supercell_orb_inds': _supercell_orb_inds}
+        d = {
+            "@module": self.__class__.__module__,
+            "@class": self.__class__.__name__,
+            "structure": self.structure.as_dict(),
+            "expansion_structure": self.expansion_structure.as_dict(),
+            "symops": [so.as_dict() for so in self.symops],
+            "orbits": {s: [o.as_dict() for o in v] for s, v in self._orbits.items()},
+            "sc_matcher": self._sc_matcher.as_dict(),
+            "site_matcher": self._site_matcher.as_dict(),
+            "external_terms": [et.as_dict() for et in self.external_terms],
+            "_supercell_orb_inds": _supercell_orb_inds,
+        }
         return d
 
 
@@ -1252,9 +1398,17 @@ class PottsSubspace(ClusterSubspace):
     but that is a bit more painful that just using the class method here.
     """
 
-    def __init__(self, structure, expansion_structure, symops, orbits,
-                 without_last_cluster=True, supercell_matcher=None,
-                 site_matcher=None, **matcher_kwargs):
+    def __init__(
+        self,
+        structure,
+        expansion_structure,
+        symops,
+        orbits,
+        without_last_cluster=True,
+        supercell_matcher=None,
+        site_matcher=None,
+        **matcher_kwargs,
+    ):
         """Initialize a PottsSubspace.
 
         You rarely will need to create a ClusterSubspace using the main
@@ -1297,13 +1451,26 @@ class PottsSubspace(ClusterSubspace):
                 more details.
         """
         self._wo_last_cluster = without_last_cluster
-        super().__init__(structure, expansion_structure, symops, orbits,
-                         supercell_matcher, site_matcher, **matcher_kwargs)
+        super().__init__(
+            structure,
+            expansion_structure,
+            symops,
+            orbits,
+            supercell_matcher,
+            site_matcher,
+            **matcher_kwargs,
+        )
 
     @classmethod
-    def from_cutoffs(cls, structure, cutoffs, remove_last_cluster=False,
-                     supercell_matcher=None, site_matcher=None,
-                     **matcher_kwargs):
+    def from_cutoffs(
+        cls,
+        structure,
+        cutoffs,
+        remove_last_cluster=False,
+        supercell_matcher=None,
+        site_matcher=None,
+        **matcher_kwargs,
+    ):
         """Create a PottsSubspace from diameter cutoffs.
 
         Creates a :class:`PottsSubspace` with orbits of the given size and
@@ -1321,9 +1488,12 @@ class PottsSubspace(ClusterSubspace):
            cutoffs (dict):
                dict of {cluster_size: diameter cutoff}. Cutoffs should be
                strictly decreasing. Typically something like {2:5, 3:4}.
-               Empty and singlet orbits are always included.
+               The empty orbit is always included. Singlets are by default
+               included, with the exception below.
                To obtain a subspace with only an empty and singlet terms use
-               an empty dict {}
+               an empty dict {}, or {1: 1}. Adding a cutoff term for point
+               terms, ie {1: None} is useful to exclude point terms, any other
+               value for the cutoff will simply be ignored.
            remove_last_cluster (bool): optional
                If true will remove the last cluster labeling (decoration)
                from each orbit. Since sum of corr for all labelings = 1,
@@ -1352,107 +1522,26 @@ class PottsSubspace(ClusterSubspace):
         # get symmetry operations of prim structure.
         symops = SpacegroupAnalyzer(structure).get_symmetry_operations()
         # get the active sites (partial occupancy) to expand over.
-        sites_to_expand = [site for site in structure
-                           if site.species.num_atoms < 0.99
-                           or len(site.species) > 1]
+        sites_to_expand = [
+            site
+            for site in structure
+            if site.species.num_atoms < 0.99 or len(site.species) > 1
+        ]
         expansion_structure = Structure.from_sites(sites_to_expand)
         # get orbits within given cutoffs
-        orbits = cls._orbits_from_cutoffs(expansion_structure, cutoffs, symops,
-                                          remove_last_cluster)
-        return cls(structure=structure,
-                   expansion_structure=expansion_structure, symops=symops,
-                   orbits=orbits, without_last_cluster=remove_last_cluster,
-                   supercell_matcher=supercell_matcher,
-                   site_matcher=site_matcher, **matcher_kwargs)
-
-    @staticmethod
-    def _orbits_from_cutoffs(exp_struct, cutoffs, symops, remove_last):
-        """Generate orbits from diameter cutoffs.
-
-        Generates dictionary of orbits in the same way that the cluster
-        subspace class does, except that the orbit functions (and corresponding
-        bit combos) include all symmetrically distinct decorations/labelings
-        of indicator functions for all allowed species (except 1 decoration
-        for each orbit since this value is just 1 - sum of concentration of all
-        other decorations
-
-        Args:
-            exp_struct (Structure):
-                Structure with all sites that have partial occupancy.
-            cutoffs (dict):
-                dict of cutoffs for cluster diameters {size: cutoff}
-            symops (list of SymmOps):
-                list of symmetry operations for structure
-            remove_last (bool):
-                remove the last cluster labeling from each orbit.
-
-        Returns:
-            dict: {size: list of Orbits within diameter cutoff}
-        """
-        site_spaces = get_site_spaces(exp_struct)
-        site_bases = tuple(
-            IndicatorBasis(site_space) for site_space in site_spaces)
-        orbits = {}
-        new_orbits = []
-        nbits = np.array([len(b) for b in site_spaces])
-
-        # Generate singlet/point orbits
-        for nbit, site, sbasis in zip(nbits, exp_struct, site_bases):
-            # Coordinates of point terms must stay in [0, 1] to guarantee
-            # correct math of the following algorithm.
-            new_orbit = Orbit(
-                [np.mod(site.frac_coords, 1)], exp_struct.lattice,
-                [list(range(nbit))], [sbasis], symops)
-            if remove_last:
-                new_orbit.remove_bit_combos_by_inds(
-                    [len(new_orbit.bit_combos) - 1])
-            if new_orbit not in new_orbits:
-                new_orbits.append(new_orbit)
-
-        orbits[1] = sorted(
-            new_orbits,
-            key=lambda x: (np.round(x.base_cluster.diameter, 6),
-                           -x.multiplicity))
-
-        if len(cutoffs) == 0:  # return singlets only if no cutoffs provided
-            return orbits
-
-        max_lp = np.linalg.norm(exp_struct.lattice.matrix.sum(axis=0)) / 2
-        max_lp += SITE_TOL
-        for size, diameter in sorted(cutoffs.items()):
-            new_orbits = []
-            neighbors = exp_struct.get_sites_in_sphere(
-                [0.5, 0.5, 0.5], diameter + max_lp, include_index=True)
-            for orbit in orbits[size-1]:
-                if orbit.base_cluster.diameter > diameter:
-                    continue
-                for neighbor in neighbors:
-                    if is_coord_subset(
-                            [neighbor.frac_coords], orbit.base_cluster.sites,
-                            atol=SITE_TOL):
-                        continue
-                    new_sites = np.concatenate(
-                        [orbit.base_cluster.sites, [neighbor.frac_coords]])
-                    new_orbit = Orbit(
-                        new_sites, exp_struct.lattice,
-                        orbit.bits + [list(range(nbits[neighbor.index]))],
-                        orbit.site_bases + [site_bases[neighbor.index]],
-                        symops)
-
-                    if remove_last:
-                        new_orbit.remove_bit_combos_by_inds(
-                            [len(new_orbit.bit_combos) - 1])
-                    if new_orbit.base_cluster.diameter > diameter + 1e-8:
-                        continue
-                    elif new_orbit not in new_orbits:
-                        new_orbits.append(new_orbit)
-
-            if len(new_orbits) > 0:
-                orbits[size] = sorted(
-                    new_orbits,
-                    key=lambda x: (np.round(x.base_cluster.diameter, 6),
-                                   -x.multiplicity))
-        return orbits
+        orbits = cls._gen_orbits_from_cutoffs(
+            expansion_structure, cutoffs, symops, remove_last_cluster
+        )
+        return cls(
+            structure=structure,
+            expansion_structure=expansion_structure,
+            symops=symops,
+            orbits=orbits,
+            without_last_cluster=remove_last_cluster,
+            supercell_matcher=supercell_matcher,
+            site_matcher=site_matcher,
+            **matcher_kwargs,
+        )
 
     def get_function_decoration(self, index):
         """Get the decoration/labeling of a specific orbit function.
@@ -1488,8 +1577,71 @@ class PottsSubspace(ClusterSubspace):
         """
         bit_id = self.orbits[orbit_id - 1].bit_id
         num_combos = len(self.orbits[orbit_id - 1].bit_combos)
-        return [self.get_function_decoration(bid)
-                for bid in range(bit_id, bit_id + num_combos)]
+        return [
+            self.get_function_decoration(bid)
+            for bid in range(bit_id, bit_id + num_combos)
+        ]
+
+    @staticmethod
+    def _gen_orbits_from_cutoffs(exp_struct, cutoffs, symops, remove_last):
+        """Generate orbits from diameter cutoffs.
+
+        Generates dictionary of orbits in the same way that the cluster
+        subspace class does, except that the orbit functions (and corresponding
+        bit combos) include all symmetrically distinct decorations/labelings
+        of indicator functions for all allowed species (except 1 decoration
+        for each orbit since this value is just 1 - sum of concentration of all
+        other decorations
+
+        Args:
+            exp_struct (Structure):
+                Structure with all sites that have partial occupancy.
+            cutoffs (dict):
+                dict of cutoffs for cluster diameters {size: cutoff}
+            symops (list of SymmOps):
+                list of symmetry operations for structure
+            remove_last (bool):
+                remove the last cluster labeling from each orbit.
+
+        Returns:
+            dict: {size: list of Orbits within diameter cutoff}
+        """
+        site_spaces = get_site_spaces(exp_struct)
+        site_bases = tuple(IndicatorBasis(site_space) for site_space in site_spaces)
+        orbits = {}
+        nbits = np.array([len(b) for b in site_spaces])
+
+        try:
+            if cutoffs.pop(1) is None:
+                if len(cutoffs) != 0:
+                    raise ValueError(
+                        f"Unable to generate clusters of higher order "
+                        f" {cutoffs} if point terms are excluded."
+                    )
+                return {}
+        except KeyError:
+            pass
+
+        # Generate singlet/point orbits
+        orbits[1] = ClusterSubspace._gen_point_orbits(
+            exp_struct, site_bases, nbits, symops
+        )
+
+        if len(cutoffs) == 0:  # return singlets only if no cutoffs provided
+            return orbits
+
+        orbits.update(
+            ClusterSubspace._gen_multi_orbits(
+                orbits[1], exp_struct, cutoffs, site_bases, nbits, symops
+            )
+        )
+
+        if remove_last:
+            for orbs in orbits.values():
+                for orb in orbs:
+                    orb.remove_bit_combos_by_inds([len(orb.bit_combos) - 1])
+
+        return orbits
 
     def as_dict(self):
         """
@@ -1499,14 +1651,14 @@ class PottsSubspace(ClusterSubspace):
             MSONable dict
         """
         d = super().as_dict()
-        d['_wo_last_cluster'] = self._wo_last_cluster
+        d["_wo_last_cluster"] = self._wo_last_cluster
         return d
 
     @classmethod
     def from_dict(cls, d):
         """Create ClusterSubspace from an MSONable dict."""
         subspace = super().from_dict(d)
-        subspace._wo_last_cluster = d.get('_wo_last_cluster', True)
+        subspace._wo_last_cluster = d.get("_wo_last_cluster", True)
         # remove last bit combo in all orbits
         if subspace._wo_last_cluster:
             for orbit in subspace.orbits:

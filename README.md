@@ -8,10 +8,13 @@ Statistical Mechanics on Lattices
 ![Codacy Badge](https://img.shields.io/codacy/grade/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge)
 
 *Lighthweight but caffeinated Python implementations of computational methods
-for statistical mechanical calculations of configurational states for
+for statistical mechanical calculations of configurational states in
 crystalline material systems.*
 
 -----------------------------------------------------------------------------
+
+> :warning: **smol** is still under substantial development and may possibly
+> include changes that break backwards compatibility for the near future.
 
 **smol** is a minimal implementation of computational methods to calculate
 statistical mechanical and thermodynamic properties of crystalline
@@ -64,14 +67,12 @@ can help you get started.
 
 Contributing
 ------------
-We welcome all your contributions with open arms! Please see the 
+We welcome all your contributions with open arms! Please see the
 [contributing](https://github.com/CederGroupHub/smol/blob/master/CONTRIBUTING.md)
 page for how to contribute.
 
 
 Changes
 -------
-The most recent changes are detailed in the 
+The most recent changes are detailed in the
 [change log](https://github.com/CederGroupHub/smol/blob/master/CHANGES.md).
-
-
