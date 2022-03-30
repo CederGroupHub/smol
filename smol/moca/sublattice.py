@@ -7,14 +7,14 @@ random structure supercell being sampled in a Monte Carlo simulation.
 
 __author__ = "Luis Barroso-Luque"
 
+import itertools
 from dataclasses import dataclass, field
 
 import numpy as np
-import itertools
 from monty.json import MSONable
 from pymatgen.core import Composition
 
-from smol.cofe.space.domain import SiteSpace, Vacancy, get_species
+from smol.cofe.space.domain import SiteSpace, Vacancy
 
 
 @dataclass
@@ -108,8 +108,10 @@ class Sublattice(MSONable):
         """
         part_sublattices = []
         # Codes given
-        if all(isinstance(sp, (int, np.int32, np.int64)) for sp in
-               itertools.chain(*species_in_partitions)):
+        if all(
+            isinstance(sp, (int, np.int32, np.int64))
+            for sp in itertools.chain(*species_in_partitions)
+        ):
             codes_in_partitions = species_in_partitions
         # Species or species strings given.
         else:
@@ -122,9 +124,10 @@ class Sublattice(MSONable):
                             return i
                 return species.index(sp)
 
-            codes_in_partitions = [[self.encoding[get_index(sp, self.species)]
-                                    for sp in partition]
-                                   for partition in species_in_partitions]
+            codes_in_partitions = [
+                [self.encoding[get_index(sp, self.species)] for sp in partition]
+                for partition in species_in_partitions
+            ]
 
         for species_codes in codes_in_partitions:
             part_comp = {}
@@ -136,8 +139,7 @@ class Sublattice(MSONable):
                 sp_id = np.where(self.encoding == code)[0][0]
                 sp = self.species[sp_id]
                 part_comp[sp] = self.site_space[sp]
-                part_sites.extend(self.sites[occu[self.sites] == code]
-                                  .tolist())
+                part_sites.extend(self.sites[occu[self.sites] == code].tolist())
                 part_actives.extend(
                     self.active_sites[occu[self.active_sites] == code].tolist()
                 )
