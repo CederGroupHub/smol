@@ -122,13 +122,12 @@ def composite_processor(cluster_subspace_ewald):
 @pytest.fixture(params=ensembles, scope="module")
 def ensemble(composite_processor, request):
     if request.param is SemiGrandEnsemble:
-        kwargs = {
-            "chemical_potentials": {
-                sp: 0.3
-                for space in composite_processor.unique_site_spaces
-                for sp in space.keys()
-            }
+        species = {
+            sp
+            for space in composite_processor.active_site_spaces
+            for sp in space.keys()
         }
+        kwargs = {"chemical_potentials": {sp: 0.3 for sp in species}}
     else:
         kwargs = {}
     return request.param(composite_processor, **kwargs)
