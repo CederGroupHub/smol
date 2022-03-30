@@ -113,8 +113,16 @@ class Sublattice(MSONable):
             codes_in_partitions = species_in_partitions
         # Species or species strings given.
         else:
-            codes_in_partitions = [[self.encoding[self.species
-                                                  .index(get_species(sp))]
+            # Treat vacancies more carefully. One sub-lattice can only
+            # have one vacancy species.
+            def get_index(sp, species):
+                if isinstance(sp, Vacancy):
+                    for i, sp2 in enumerate(species):
+                        if isinstance(sp2, Vacancy):
+                            return i
+                return species.index(sp)
+
+            codes_in_partitions = [[self.encoding[get_index(sp, self.species)]
                                     for sp in partition]
                                    for partition in species_in_partitions]
 
