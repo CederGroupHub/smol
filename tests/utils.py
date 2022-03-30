@@ -4,7 +4,6 @@ Some of these are borrowed from pymatgen test scripts.
 """
 
 import json
-from itertools import chain
 
 import numpy as np
 from monty.json import MontyDecoder, MSONable
@@ -39,8 +38,9 @@ def gen_random_occupancy(sublattices):
 
     num_sites = sum(len(sl.sites) for sl in sublattices)
     rand_occu = np.zeros(num_sites, dtype=int)
+    rng = np.random.default_rng()
     for sublatt in sublattices:
-        rand_occu[sublatt.sites] = np.random.choice(
+        rand_occu[sublatt.sites] = rng.choice(
             sublatt.encoding, size=len(sublatt.sites), replace=True
         )
     return rand_occu
@@ -56,6 +56,7 @@ def gen_random_neutral_occupancy(sublattices, lam=10):
     Returns:
         ndarray: encoded occupancy
     """
+    rng = np.random.default_rng()
 
     def get_charge(sp):
         if isinstance(sp, (Element, Vacancy)):
@@ -73,14 +74,14 @@ def gen_random_neutral_occupancy(sublattices, lam=10):
 
     def flip(occu, sublattices, lam=10):
         actives = [s for s in sublattices if s.is_active]
-        sl = random.choice(actives)
-        site = random.choice(sl.sites)
-        code = random.choice(list(set(sl.encoding) - {occu[site]}))
+        sl = rng.choice(actives)
+        site = rng.choice(sl.sites)
+        code = rng.choice(list(set(sl.encoding) - {occu[site]}))
         occu_next = occu.copy()
         occu_next[site] = code
         C = charge(occu, sublattices)
         C_next = charge(occu_next, sublattices)
-        accept = np.log(np.random.random()) < -lam * (C_next**2 - C**2)
+        accept = np.log(rng.random()) < -lam * (C_next**2 - C**2)
         if accept and C != 0:
             return occu_next.copy(), C_next
         else:

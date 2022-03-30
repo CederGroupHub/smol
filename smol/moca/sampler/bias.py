@@ -24,7 +24,7 @@ class MCBias(ABC):
             list of sublattices with active sites.
     """
 
-    def __init__(self, sublattices, inactive_sublattices, *args, **kwargs):
+    def __init__(self, sublattices, *args, **kwargs):
         """Initialize Basebias.
 
         Args:
@@ -37,7 +37,9 @@ class MCBias(ABC):
                 Additional keyword arguments buffer.
         """
         self.sublattices = sublattices
-        self.active_sublattices = [sublatt for sublatt in self.sublattices if sublatt.is_active]
+        self.active_sublattices = [
+            sublatt for sublatt in self.sublattices if sublatt.is_active
+        ]
 
     @abstractmethod
     def compute_bias(self, occupancy):
@@ -113,8 +115,7 @@ class FugacityBias(MCBias):
             ]
         else:
             fugacity_fractions = [
-                dict(sublatt.site_space)
-                for sublatt in self.active_sublattices
+                dict(sublatt.site_space) for sublatt in self.active_sublattices
             ]
         self.fugacity_fractions = fugacity_fractions
 
@@ -221,6 +222,4 @@ def mcbias_factory(bias_type, sublattices, *args, **kwargs):
     if "bias" not in bias_type and "Bias" not in bias_type:
         bias_type += "-bias"
     bias_name = class_name_from_str(bias_type)
-    return derived_class_factory(
-        bias_name, MCBias, sublattices, *args, **kwargs
-    )
+    return derived_class_factory(bias_name, MCBias, sublattices, *args, **kwargs)

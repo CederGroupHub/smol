@@ -5,7 +5,6 @@ from pymatgen.core import Composition
 from smol.cofe.space.domain import SiteSpace
 from smol.moca.sampler.mcusher import Flip, Swap
 from smol.moca.sublattice import Sublattice
-
 from tests.utils import gen_random_occupancy
 
 mcmcusher_classes = [Flip, Swap]
@@ -23,7 +22,10 @@ def all_sublattices():
     site_space1 = SiteSpace(Composition({"A": 0.1, "B": 0.4, "C": 0.3, "D": 0.2}))
     site_space2 = SiteSpace(Composition({"A": 0.1, "B": 0.4, "E": 0.5}))
     site_space3 = SiteSpace(Composition({"G": 1}))
-    active_sublattices = [Sublattice(site_space1, sites1), Sublattice(site_space2, sites2)]
+    active_sublattices = [
+        Sublattice(site_space1, sites1),
+        Sublattice(site_space2, sites2),
+    ]
     inactive_sublattices = [Sublattice(site_space3, sites3)]
     return active_sublattices, inactive_sublattices
 

@@ -8,11 +8,12 @@ random structure supercell being sampled in a Monte Carlo simulation.
 __author__ = "Luis Barroso-Luque"
 
 from dataclasses import dataclass, field
+
 import numpy as np
 from monty.json import MSONable
-from smol.cofe.space.domain import SiteSpace, Vacancy
-
 from pymatgen.core import Composition
+
+from smol.cofe.space.domain import SiteSpace, Vacancy
 
 
 @dataclass
@@ -115,14 +116,17 @@ class Sublattice(MSONable):
                 sp_id = np.where(self.encoding == code)[0][0]
                 sp = self.species[sp_id]
                 part_comp[sp] = self.site_space[sp]
-                part_sites.extend(self.sites[occu[self.sites] == code]
-                                  .tolist())
-                part_actives.extend(self.active_sites[occu[self.active_sites]
-                                    == code].tolist())
+                part_sites.extend(self.sites[occu[self.sites] == code].tolist())
+                part_actives.extend(
+                    self.active_sites[occu[self.active_sites] == code].tolist()
+                )
             # Re-weighting partitioned site-space
             part_n = sum(list(part_comp.values()))
-            part_comp = {sp: part_comp[sp] / part_n for sp in part_comp
-                         if not isinstance(sp, Vacancy)}
+            part_comp = {
+                sp: part_comp[sp] / part_n
+                for sp in part_comp
+                if not isinstance(sp, Vacancy)
+            }
             part_comp = Composition(part_comp)
             part_space = SiteSpace(part_comp)
             part_sites = np.array(part_sites, dtype=int)
@@ -142,10 +146,12 @@ class Sublattice(MSONable):
         Returns:
             MSONable dict
         """
-        sl_d = {'site_space': self.site_space.as_dict(),
-             'sites': self.sites.tolist(),
-             'encoding': self.encoding.tolist(),
-             'active_sites': self.active_sites.tolist()}
+        sl_d = {
+            "site_space": self.site_space.as_dict(),
+            "sites": self.sites.tolist(),
+            "encoding": self.encoding.tolist(),
+            "active_sites": self.active_sites.tolist(),
+        }
         return sl_d
 
     @classmethod
@@ -155,7 +161,9 @@ class Sublattice(MSONable):
         Returns:
             Sublattice
         """
-        sublattice = cls(SiteSpace.from_dict(d['site_space']), sites=np.array(d['sites'], dtype=int))
-        sublattice.active_sites = np.array(d['active_sites'], dtype=int)
-        sublattice.encoding = np.array(d['encoding'], dtype=int)
+        sublattice = cls(
+            SiteSpace.from_dict(d["site_space"]), sites=np.array(d["sites"], dtype=int)
+        )
+        sublattice.active_sites = np.array(d["active_sites"], dtype=int)
+        sublattice.encoding = np.array(d["encoding"], dtype=int)
         return sublattice

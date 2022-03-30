@@ -48,9 +48,7 @@ def ewald_processor(cluster_subspace, request):
 # me figure out a clean way to parametrize with parametrized fixtures or use a
 # fixture union from pytest_cases that works.
 def test_encode_decode_property(composite_processor):
-    occu = gen_random_occupancy(
-        composite_processor.get_sublattices()
-    )
+    occu = gen_random_occupancy(composite_processor.get_sublattices())
     decoccu = composite_processor.decode_occupancy(occu)
     for species, space in zip(decoccu, composite_processor.allowed_species):
         assert species in space
@@ -76,13 +74,13 @@ def test_sublattice(ce_processor):
     sublattices = ce_processor.get_sublattices()
     # These are default initialized, not splitted.
     site_species = get_allowed_species(ce_processor.structure)
-    for sublatt, site_space in zip(sublattices,
-                                   ce_processor.unique_site_spaces):
+    for sublatt, site_space in zip(sublattices, ce_processor.unique_site_spaces):
         assert sublatt.site_space == site_space
         for site in sublatt.sites:
             assert site_species[site] == list(site_space.keys())
-    assert (sum(len(sublatt.sites) for sublatt in sublattices)
-            == len(ce_processor.structure))
+    assert sum(len(sublatt.sites) for sublatt in sublattices) == len(
+        ce_processor.structure
+    )
 
 
 def test_get_average_drift(composite_processor):
@@ -93,8 +91,7 @@ def test_get_average_drift(composite_processor):
 def test_compute_property_change(composite_processor):
     sublattices = composite_processor.get_sublattices()
     occu = gen_random_occupancy(sublattices)
-    active_sublattices = [sublatt for sublatt in sublattices
-                          if sublatt.is_active]
+    active_sublattices = [sublatt for sublatt in sublattices if sublatt.is_active]
     rng = np.random.default_rng()
     for _ in range(100):
         sublatt = rng.choice(active_sublattices)
@@ -144,8 +141,7 @@ def test_structure_occupancy_conversion(ce_processor):
 def test_compute_feature_change(composite_processor):
     sublattices = composite_processor.get_sublattices()
     occu = gen_random_occupancy(sublattices)
-    active_sublattices = [sublatt for sublatt in sublattices
-                          if sublatt.is_active]
+    active_sublattices = [sublatt for sublatt in sublattices if sublatt.is_active]
     composite_processor.cluster_subspace.change_site_bases("indicator")
     rng = np.random.default_rng()
     for _ in range(100):

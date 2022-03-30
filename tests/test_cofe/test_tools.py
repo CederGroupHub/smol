@@ -142,7 +142,7 @@ def test_weights_above_hull(structure_wrangler):
     # 1, Hull must always be no higher than min comp energies
     # 2, There must be at least one comp with min energy in hull.
     # Add a small tolerance to avoid occasional fails.
-    assert np.all(weights_c + 1E-7 >= weights)
+    assert np.all(weights_c + 1e-7 >= weights)
     is_comp_min = np.isclose(weights_c, 1, atol=1e-8)
     on_hull = np.isclose(weights, 1, atol=1e-8)
     assert np.sum(on_hull & is_comp_min) > 0

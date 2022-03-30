@@ -17,13 +17,11 @@ import numpy as np
 from smol.utils import class_name_from_str, derived_class_factory
 
 
-#TODO  keep RNG as attribute for reproducibility, pass as optional constructor...
+# TODO  keep RNG as attribute for reproducibility, pass as optional constructor...
 class MCUsher(ABC):
     """Abstract base class for MC usher classes."""
 
-    def __init__(
-        self, sublattices, sublattice_probabilities=None
-    ):
+    def __init__(self, sublattices, sublattice_probabilities=None):
         """Initialize MCMCStep.
 
         Args:
@@ -123,7 +121,7 @@ class Flip(MCUsher):
         """
         rng = np.random.default_rng()
         sublattice = self.get_random_sublattice()
-        site = random.choice(sublattice.active_sites)
+        site = rng.choice(sublattice.active_sites)
         choices = set(sublattice.encoding) - {occupancy[site]}
         return [(site, rng.choice(list(choices)))]
 
@@ -176,6 +174,4 @@ def mcusher_factory(usher_type, sublattices, *args, **kwargs):
         MCUsher: instance of derived class.
     """
     usher_name = class_name_from_str(usher_type)
-    return derived_class_factory(
-        usher_name, MCUsher, sublattices, *args, **kwargs
-    )
+    return derived_class_factory(usher_name, MCUsher, sublattices, *args, **kwargs)

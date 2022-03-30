@@ -299,8 +299,7 @@ class SampleContainer(MSONable):
                     count = np.append(count, len(missed) * [0])
 
                 original_codes = sublattice.encoding.tolist()
-                order = [codes.tolist().index(code)
-                         for code in original_codes]
+                order = [codes.tolist().index(code) for code in original_codes]
                 counts[i][j] = count[order]  # order them accordingly
         if flat:
             counts = self._flatten(counts)

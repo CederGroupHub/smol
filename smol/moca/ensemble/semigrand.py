@@ -38,12 +38,7 @@ class SemiGrandEnsemble(Ensemble, MSONable):
 
     valid_mcmc_steps = ("flip",)
 
-    def __init__(
-        self,
-        processor,
-        chemical_potentials,
-        sublattices=None
-    ):
+    def __init__(self, processor, chemical_potentials, sublattices=None):
         """Initialize MuSemiGrandEnsemble.
 
         Args:
@@ -56,10 +51,7 @@ class SemiGrandEnsemble(Ensemble, MSONable):
                 List of Sublattice objects representing sites in the processor
                 supercell with same site spaces.
         """
-        super().__init__(
-            processor,
-            sublattices=sublattices
-        )
+        super().__init__(processor, sublattices=sublattices)
         self._params = np.append(self.processor.coefs, -1.0)
         # check that species are valid
         chemical_potentials = {
@@ -78,8 +70,7 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         self._dfeatures = np.empty(len(processor.coefs) + 1)
         self._features = np.empty(len(processor.coefs) + 1)
 
-        self._mus = {k: v for k, v in chemical_potentials.items()
-                     if k in self.species}
+        self._mus = {k: v for k, v in chemical_potentials.items() if k in self.species}
         self._mu_table = self._build_mu_table(self._mus)
         self.thermo_boundaries = {
             "chemical-potentials": {str(k): v for k, v in self._mus.items()}
@@ -109,8 +100,7 @@ class SemiGrandEnsemble(Ensemble, MSONable):
                     "you are using has only string keys or only Species "
                     "objects as keys."
                 )
-        value = {get_species(k): v for k, v in value.items()
-                 if k in self.species}
+        value = {get_species(k): v for k, v in value.items() if k in self.species}
         if set(value.keys()) != set(self.species):
             raise ValueError(
                 "Chemical potentials given are missing species. "
@@ -189,7 +179,7 @@ class SemiGrandEnsemble(Ensemble, MSONable):
                 used to initialize a new sub-lattice.
                 Sub-lists will be pre-sorted to ascending order.
         """
-        super(SemiGrandEnsemble, self).split_sublattice_by_species(sublattice_id, occu, codes_in_partitions)
+        super().split_sublattice_by_species(sublattice_id, occu, codes_in_partitions)
         # Species in active sub-lattices may change after split.
         # Need to reset and rebuild mu table.
         new_chemical_potentials = {spec: self._mus[spec] for spec in self.species}
@@ -248,12 +238,12 @@ class SemiGrandEnsemble(Ensemble, MSONable):
                 spec = Element(spec["element"])
             chemical_potentials[spec] = chem_pot
 
-        sublatts = d.get('sublattices')  # keep backwards compatibility
+        sublatts = d.get("sublattices")  # keep backwards compatibility
         if sublatts is not None:
             sublatts = [Sublattice.from_dict(sl_d) for sl_d in sublatts]
 
         return cls(
             Processor.from_dict(d["processor"]),
             chemical_potentials=chemical_potentials,
-            sublattices=sublatts
+            sublattices=sublatts,
         )

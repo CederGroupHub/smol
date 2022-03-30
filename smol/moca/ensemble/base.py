@@ -137,11 +137,11 @@ class Ensemble(ABC):
 
         These are minimal species required in setting chemical potentials.
         """
-        return list({sp for sublatt in self.active_sublattices
-                     for sp in sublatt.site_space})
+        return list(
+            {sp for sublatt in self.active_sublattices for sp in sublatt.site_space}
+        )
 
-    def split_sublattice_by_species(self, sublattice_id, occu,
-                                    codes_in_partitions):
+    def split_sublattice_by_species(self, sublattice_id, occu, codes_in_partitions):
         """Split a sub-lattice in system by its occupied species.
 
         An example use case might be simulating topotactic Li extraction
@@ -160,11 +160,14 @@ class Ensemble(ABC):
                 used to initialize a new sub-lattice.
                 Sub-lists will be pre-sorted to ascending order.
         """
-        splits = (self.sublattices[sublattice_id]
-                  .split_by_species(occu, codes_in_partitions))
-        self._sublattices = (self._sublattices[: sublattice_id]
-                             + splits
-                             + self._sublattices[sublattice_id + 1 :])
+        splits = self.sublattices[sublattice_id].split_by_species(
+            occu, codes_in_partitions
+        )
+        self._sublattices = (
+            self._sublattices[:sublattice_id]
+            + splits
+            + self._sublattices[sublattice_id + 1 :]
+        )
 
     @property
     @abstractmethod

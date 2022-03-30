@@ -1,7 +1,8 @@
+from copy import deepcopy
+
 import numpy as np
 import numpy.testing as npt
 import pytest
-from copy import deepcopy
 
 from smol.cofe import ClusterExpansion, RegressionData
 from smol.moca import (
@@ -23,9 +24,9 @@ def canonical_ensemble(composite_processor):
 
 @pytest.fixture
 def mugrand_ensemble(composite_processor):
-    species = {sp for space in
-               composite_processor.active_site_spaces
-               for sp in space.keys()}
+    species = {
+        sp for space in composite_processor.active_site_spaces for sp in space.keys()
+    }
     chemical_potentials = {sp: 0.3 for sp in species}
     return SemiGrandEnsemble(
         composite_processor, chemical_potentials=chemical_potentials
@@ -62,9 +63,7 @@ def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_cls):
     expansion = ClusterExpansion(cluster_subspace_ewald, coefs, reg_data)
 
     if ensemble_cls is SemiGrandEnsemble:
-        species = {sp for space in
-                   proc.active_site_spaces
-                   for sp in space.keys()}
+        species = {sp for space in proc.active_site_spaces for sp in space.keys()}
         chemical_potentials = {sp: 0.3 for sp in species}
         kwargs = {"chemical_potentials": chemical_potentials}
     else:
@@ -109,13 +108,11 @@ def test_msonable(ensemble):
 def test_split_ensemble(ensemble):
     occu = gen_random_occupancy(ensemble.sublattices)
     for sublattice in ensemble.sublattices:
-        npt.assert_array_equal(np.arange(len(sublattice.species)),
-                               sublattice.encoding)
+        npt.assert_array_equal(np.arange(len(sublattice.species)), sublattice.encoding)
         # ensemble must have been initialized from default.
     while len(ensemble.active_sublattices) > 0:
         is_active = [s.is_active for s in ensemble.sublattices]
-        sl_id = np.random.choice(np.arange(len(is_active),
-                                           dtype=int)[is_active])
+        sl_id = np.random.choice(np.arange(len(is_active), dtype=int)[is_active])
         sublattice = ensemble.sublattices[sl_id]
         S = len(sublattice.species)
         old_sublattices = deepcopy(ensemble.sublattices)
@@ -123,10 +120,8 @@ def test_split_ensemble(ensemble):
         if isinstance(ensemble, SemiGrandEnsemble):
             old_chemical_potentials = deepcopy(ensemble.chemical_potentials)
             old_mu_table = deepcopy(ensemble._mu_table)
-        split_encodings = [sublattice.encoding[: S // 2],
-                           sublattice.encoding[S // 2:]]
-        ensemble.split_sublattice_by_species(sl_id, occu,
-                                             split_encodings)
+        split_encodings = [sublattice.encoding[: S // 2], sublattice.encoding[S // 2 :]]
+        ensemble.split_sublattice_by_species(sl_id, occu, split_encodings)
         assert len(ensemble.sublattices) == len(old_sublattices) + 1
         for i in range(len(old_sublattices)):
             if i != sl_id:
@@ -137,33 +132,32 @@ def test_split_ensemble(ensemble):
                     new_sublattice = ensemble.sublattices[i + 1]
                     old_sublattice = old_sublattices[i]
                 assert new_sublattice.site_space == old_sublattice.site_space
-                npt.assert_array_equal(new_sublattice.sites,
-                                       old_sublattice.sites)
-                npt.assert_array_equal(new_sublattice.active_sites,
-                                       old_sublattice.active_sites)
-                npt.assert_array_equal(new_sublattice.encoding,
-                                       old_sublattice.encoding)
+                npt.assert_array_equal(new_sublattice.sites, old_sublattice.sites)
+                npt.assert_array_equal(
+                    new_sublattice.active_sites, old_sublattice.active_sites
+                )
+                npt.assert_array_equal(new_sublattice.encoding, old_sublattice.encoding)
             else:
                 old_sublattice = old_sublattices[i]
                 new1 = ensemble.sublattices[i]
                 new2 = ensemble.sublattices[i + 1]
-                npt.assert_array_equal(np.sort(old_sublattice.sites),
-                                       np.sort(np.concatenate((new1.sites, new2.sites)))
-                                       )
+                npt.assert_array_equal(
+                    np.sort(old_sublattice.sites),
+                    np.sort(np.concatenate((new1.sites, new2.sites))),
+                )
                 if new1.is_active and new2.is_active:
-                    npt.assert_array_equal(np.sort(old_sublattice.active_sites),
-                                           np.sort(np.concatenate((new1.active_sites,
-                                                                   new2.active_sites)))
-                                           )
-                npt.assert_array_equal(np.sort(old_sublattice.encoding),
-                                       np.sort(np.concatenate((new1.encoding,
-                                                               new2.encoding)))
-                                       )
+                    npt.assert_array_equal(
+                        np.sort(old_sublattice.active_sites),
+                        np.sort(np.concatenate((new1.active_sites, new2.active_sites))),
+                    )
+                npt.assert_array_equal(
+                    np.sort(old_sublattice.encoding),
+                    np.sort(np.concatenate((new1.encoding, new2.encoding))),
+                )
                 assert len(new1.encoding) == len(new1.species)
                 assert len(new2.encoding) == len(new2.species)
         if isinstance(ensemble, SemiGrandEnsemble):
-            assert (set(ensemble.chemical_potentials.keys())
-                    == set(ensemble.species))
+            assert set(ensemble.chemical_potentials.keys()) == set(ensemble.species)
             assert ensemble._mu_table.shape == old_mu_table.shape
             for sp in ensemble.species:
                 assert sp in old_species
@@ -171,18 +165,20 @@ def test_split_ensemble(ensemble):
                 for sublattice in ensemble.active_sublattices:
                     if sp in sublattice.species:
                         code = sublattice.encoding[sublattice.species.index(sp)]
-                        npt.assert_array_equal(ensemble._mu_table[sublattice.sites, code],
-                                               ensemble.chemical_potentials[sp])
+                        npt.assert_array_equal(
+                            ensemble._mu_table[sublattice.sites, code],
+                            ensemble.chemical_potentials[sp],
+                        )
             for sp in set(old_species) - set(ensemble.species):
                 for sublattice in old_sublattices:
                     if sp in sublattice.species:
                         code = sublattice.encoding[sublattice.species.index(sp)]
-                        npt.assert_array_equal(ensemble._mu_table[sublattice.sites, code],
-                                               0)
+                        npt.assert_array_equal(
+                            ensemble._mu_table[sublattice.sites, code], 0
+                        )
             for sublattice in ensemble.sublattices:
                 if not sublattice.is_active:
-                    npt.assert_array_equal(ensemble._mu_table[sublattice.sites, :],
-                                           0)
+                    npt.assert_array_equal(ensemble._mu_table[sublattice.sites, :], 0)
 
 
 # Canonical Ensemble tests
@@ -214,11 +210,12 @@ def test_compute_feature_vector_canonical(canonical_ensemble):
 
     # Can still work normally with processor after splitting.
     is_active = [s.is_active for s in canonical_ensemble.sublattices]
-    sl_id = np.random.choice(np.arange(len(canonical_ensemble.sublattices),
-                                       dtype=int)[is_active])
+    sl_id = np.random.choice(
+        np.arange(len(canonical_ensemble.sublattices), dtype=int)[is_active]
+    )
     encoding = canonical_ensemble.sublattices[sl_id].encoding
     S = len(encoding)
-    split = [encoding[: S // 2], encoding[S // 2:]]
+    split = [encoding[: S // 2], encoding[S // 2 :]]
     canonical_ensemble.split_sublattice_by_species(sl_id, occu, split)
     if len(canonical_ensemble.active_sublattices) > 0:
         assert np.dot(
@@ -264,9 +261,10 @@ def test_compute_feature_vector_sgc(mugrand_ensemble):
         site = rng.choice(sublatt.sites)
         spec = rng.choice(sublatt.encoding)
         flip = [(site, spec)]
-        dmu = (mugrand_ensemble._mu_table[site][spec]
-               - mugrand_ensemble._mu_table[site][occu[site]]
-               )
+        dmu = (
+            mugrand_ensemble._mu_table[site][spec]
+            - mugrand_ensemble._mu_table[site][occu[site]]
+        )
         assert np.dot(
             mugrand_ensemble.natural_parameters,
             mugrand_ensemble.compute_feature_vector_change(occu, flip),
@@ -277,11 +275,12 @@ def test_compute_feature_vector_sgc(mugrand_ensemble):
         )
     # Can still work normally with processor after splitting.
     is_active = [s.is_active for s in mugrand_ensemble.sublattices]
-    sl_id = np.random.choice(np.arange(len(mugrand_ensemble.sublattices),
-                                       dtype=int)[is_active])
+    sl_id = np.random.choice(
+        np.arange(len(mugrand_ensemble.sublattices), dtype=int)[is_active]
+    )
     encoding = mugrand_ensemble.sublattices[sl_id].encoding
     S = len(encoding)
-    split = [encoding[: S // 2], encoding[S // 2:]]
+    split = [encoding[: S // 2], encoding[S // 2 :]]
     mugrand_ensemble.split_sublattice_by_species(sl_id, occu, split)
     if len(mugrand_ensemble.active_sublattices) > 0:
         assert np.dot(
@@ -299,9 +298,10 @@ def test_compute_feature_vector_sgc(mugrand_ensemble):
             site = np.random.choice(sublatt.sites)
             spec = np.random.choice(sublatt.encoding)
             flip = [(site, spec)]
-            dmu = (mugrand_ensemble._mu_table[site][spec]
-                   - mugrand_ensemble._mu_table[site][occu[site]]
-                   )
+            dmu = (
+                mugrand_ensemble._mu_table[site][spec]
+                - mugrand_ensemble._mu_table[site][occu[site]]
+            )
             assert np.dot(
                 mugrand_ensemble.natural_parameters,
                 mugrand_ensemble.compute_feature_vector_change(occu, flip),

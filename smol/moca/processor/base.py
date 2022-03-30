@@ -18,7 +18,7 @@ from monty.json import MSONable
 from pymatgen.core import PeriodicSite, Structure
 
 from smol.cofe.space import Vacancy, get_allowed_species, get_site_spaces
-from smol.moca.sublattice import InactiveSublattice, Sublattice
+from smol.moca.sublattice import Sublattice
 from smol.utils import get_subclasses
 
 
@@ -63,9 +63,9 @@ class Processor(MSONable, metaclass=ABCMeta):
         # this can be used (maybe should) to check if a flip is valid
         site_spaces = set(get_site_spaces(self.structure))
         self.unique_site_spaces = tuple(site_spaces)
-        self.active_site_spaces = tuple(space for space in
-                                        self.unique_site_spaces
-                                        if len(space) > 1)
+        self.active_site_spaces = tuple(
+            space for space in self.unique_site_spaces if len(space) > 1
+        )
 
         self.allowed_species = get_allowed_species(self.structure)
         self.size = self._subspace.num_prims_from_matrix(supercell_matrix)
@@ -283,7 +283,7 @@ class Processor(MSONable, metaclass=ABCMeta):
         Returns:
             MSONable dict
         """
-        d = {
+        proc_d = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "cluster_subspace": self.cluster_subspace.as_dict(),
