@@ -43,12 +43,11 @@ def test_val_from_occupancy(ce_processor):
     # Test 10 times at random, with charge balance.
     supercell = ce_processor.structure
     sublattices = ce_processor.get_sublattices()
-    inactives = ce_processor.get_inactive_sublattices()
     n_success = 0
     for _ in range(10):
         try:
             # We should only test neutral occupancies.
-            occu = gen_random_neutral_occupancy(sublattices, inactives)
+            occu = gen_random_neutral_occupancy(sublattices)
             n_success += 1
         except TimeoutError:
             occu = None

@@ -114,6 +114,8 @@ class Sampler:
         sampling_metadata = {"name": type(ensemble).__name__}
         sampling_metadata.update(ensemble.thermo_boundaries)
         sampling_metadata.update({"kernel": kernel_type, "step": step_type})
+        # Container will be initialized to read all sub-lattices,
+        # active or not.
         container = SampleContainer(
             ensemble.sublattices,
             ensemble.natural_parameters,

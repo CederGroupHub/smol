@@ -18,7 +18,7 @@ from monty.json import MSONable
 from pymatgen.core import PeriodicSite, Structure
 
 from smol.cofe.space import Vacancy, get_allowed_species, get_site_spaces
-from smol.moca.sublattice import InactiveSublattice, Sublattice
+from smol.moca.sublattice import Sublattice
 from smol.utils import get_subclasses
 
 
@@ -61,11 +61,11 @@ class Processor(MSONable, metaclass=ABCMeta):
             self.coefs = self.coefs[np.newaxis]
 
         # this can be used (maybe should) to check if a flip is valid
-        active_site_spaces = set(get_site_spaces(self._subspace.expansion_structure))
-        self.unique_site_spaces = tuple(active_site_spaces)
-        # and keep a record of sites with no DOFs
-        all_site_spaces = set(get_site_spaces(self._subspace.structure))
-        self.inactive_site_spaces = tuple(all_site_spaces - active_site_spaces)
+        site_spaces = set(get_site_spaces(self.structure))
+        self.unique_site_spaces = tuple(site_spaces)
+        self.active_site_spaces = tuple(
+            space for space in self.unique_site_spaces if len(space) > 1
+        )
 
         self.allowed_species = get_allowed_species(self.structure)
         self.size = self._subspace.num_prims_from_matrix(supercell_matrix)
@@ -206,6 +206,11 @@ class Processor(MSONable, metaclass=ABCMeta):
     def get_sublattices(self):
         """Get a list of sublattices from a processor.
 
+        Initialized as the default encoding, but encoding can be changed
+        in Ensemble (for example, when a sub-lattice is split by occupancy,
+        usually seen in a de-lithiation MC). Therefore, these sub-lattices,
+        and self.unique_site_spaces are not always consistent with the
+        sub-lattices in the ensemble. Use them carefully!
         Returns:
             list of Sublattice
         """
@@ -221,26 +226,6 @@ class Processor(MSONable, metaclass=ABCMeta):
                 ),
             )
             for site_space in self.unique_site_spaces
-        ]
-
-    def get_inactive_sublattices(self):
-        """Get a list of inactive sublattices from a processor.
-
-        Returns:
-            list of InactiveSublattice
-        """
-        return [
-            InactiveSublattice(
-                site_space,
-                np.array(
-                    [
-                        i
-                        for i, spec in enumerate(self.allowed_species)
-                        if spec == list(site_space.keys())
-                    ]
-                ),
-            )
-            for site_space in self.inactive_site_spaces
         ]
 
     def compute_average_drift(self, iterations=1000):

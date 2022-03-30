@@ -129,9 +129,10 @@ class SiteSpace(Mapping, Hashable, MSONable):
             composition (Composition):
                 Composition object that specifies the site space.
         """
-        if composition.num_atoms <= 0 or composition.num_atoms > 1:
+        # num_atoms = 0 identified as vacancy-only site-space.
+        if composition.num_atoms < 0 or composition.num_atoms > 1:
             raise ValueError(
-                "Number of atoms in Composition must be in (0, 1]"
+                "Number of atoms in Composition must be in [0, 1]"
                 f" got {composition.num_atoms}!"
             )
 
