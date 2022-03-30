@@ -1,6 +1,5 @@
 """Tools for training structure selection."""
 
-import random
 from warnings import warn
 
 import numpy as np
@@ -113,16 +112,18 @@ def composition_select(composition_vector, composition, cell_sizes, num_samples)
     max_probs = {
         size: dist.pmf(size * unique_compositions).max() for size, dist in dists.items()
     }
+
+    rng = np.random.default_rng()
     sample_ids = [
         i
         for i, (size, comp) in enumerate(zip(cell_sizes, composition_vector))
-        if dists[size].pmf(size * comp) >= max_probs[size] * random.random()
+        if dists[size].pmf(size * comp) >= max_probs[size] * rng.random()
     ]
     while len(sample_ids) <= num_samples:
         sample_ids += [
             i
             for i, (size, comp) in enumerate(zip(cell_sizes, composition_vector))
-            if dists[size].pmf(size * comp) >= max_probs[size] * random.random()
+            if dists[size].pmf(size * comp) >= max_probs[size] * rng.random()
             and i not in sample_ids
         ]
     return np.sort(sample_ids[:num_samples])

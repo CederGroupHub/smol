@@ -7,7 +7,6 @@ by the corresponding ensemble to generate Monte Carlo samples.
 __author__ = "Luis Barroso-Luque"
 
 import os
-import random
 from datetime import datetime
 from warnings import warn
 
@@ -45,11 +44,10 @@ class Sampler:
         self._container = container
         # Set and save the seed for random. This allows reproducible results.
         if seed is None:
-            seed = random.randint(1, np.iinfo(np.uint64).max)
+            seed = np.random.seed()
         #  Save the seed for reproducibility
         self._container.metadata["seed"] = seed
         self._seed = seed
-        random.seed(seed)
 
     @classmethod
     def from_ensemble(
@@ -116,6 +114,8 @@ class Sampler:
         sampling_metadata = {"name": type(ensemble).__name__}
         sampling_metadata.update(ensemble.thermo_boundaries)
         sampling_metadata.update({"kernel": kernel_type, "step": step_type})
+        # Container will be initialized to read all sub-lattices,
+        # active or not.
         container = SampleContainer(
             ensemble.sublattices,
             ensemble.natural_parameters,
@@ -138,7 +138,6 @@ class Sampler:
     @seed.setter
     def seed(self, seed):
         """Set the seed for the PRNG."""
-        random.seed(seed)
         self._seed = seed
 
     @property

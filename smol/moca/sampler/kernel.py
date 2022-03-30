@@ -8,7 +8,6 @@ __author__ = "Luis Barroso-Luque"
 
 from abc import ABC, abstractmethod
 from math import log
-from random import random
 from types import SimpleNamespace
 
 import numpy as np
@@ -144,7 +143,6 @@ class MCKernel(ABC):
         self.mcusher = mcusher_factory(
             mcusher_name,
             ensemble.sublattices,
-            ensemble.inactive_sublattices,
             *args,
             **kwargs,
         )
@@ -155,7 +153,6 @@ class MCKernel(ABC):
             self.bias = mcbias_factory(
                 bias_name,
                 ensemble.sublattices,
-                ensemble.inactive_sublattices,
                 **bias_kwargs,
             )
 
@@ -311,6 +308,7 @@ class UniformlyRandom(MCKernel):
         Returns:
             StepTrace
         """
+        rng = np.random.default_rng()
         step = self._usher.propose_step(occupancy)
         self.trace.delta_trace.features = self._feature_change(occupancy, step)
         self.trace.delta_trace.enthalpy = np.array(
@@ -324,7 +322,7 @@ class UniformlyRandom(MCKernel):
             self.trace.accepted = np.array(
                 True
                 if self.trace.delta_trace.bias >= 0
-                else self.trace.delta_trace.bias > log(random())
+                else self.trace.delta_trace.bias > log(rng.random())
             )
 
         if self.trace.accepted:
@@ -358,6 +356,7 @@ class Metropolis(ThermalKernel):
         Returns:
             StepTrace
         """
+        rng = np.random.default_rng()
         step = self._usher.propose_step(occupancy)
         self.trace.delta_trace.features = self._feature_change(occupancy, step)
         self.trace.delta_trace.enthalpy = np.array(
@@ -373,14 +372,14 @@ class Metropolis(ThermalKernel):
                 + self.trace.delta_trace.bias
             )
             self.trace.accepted = np.array(
-                True if exponent >= 0 else exponent > log(random())
+                True if exponent >= 0 else exponent > log(rng.random())
             )
         else:
             self.trace.accepted = np.array(
                 True
                 if self.trace.delta_trace.enthalpy <= 0
                 else -self.beta * self.trace.delta_trace.enthalpy
-                > log(random())  # noqa
+                > log(rng.random())  # noqa
             )
 
         if self.trace.accepted:

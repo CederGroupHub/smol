@@ -1,4 +1,3 @@
-import random
 import warnings
 from itertools import combinations
 
@@ -158,7 +157,8 @@ def test_supercell_matrix_from_structure(cluster_subspace):
     # Test a slightly distorted structure
     supercell = cluster_subspace.structure.copy()
     # up to 2% strain
-    supercell.apply_strain(np.random.uniform(-0.02, 0.02, size=3))
+    rng = np.random.default_rng()
+    supercell.apply_strain(rng.uniform(-0.02, 0.02, size=3))
     supercell.make_supercell(2)
     sc_matrix = cluster_subspace.scmatrix_from_structure(supercell)
     assert np.linalg.det(sc_matrix) == pytest.approx(8)
@@ -168,7 +168,8 @@ def test_refine_structure(cluster_subspace):
     supercell = cluster_subspace.structure.copy()
     supercell.make_supercell(3)
     structure = gen_random_structure(cluster_subspace.structure, size=3)
-    structure.apply_strain(np.random.uniform(-0.01, 0.01, size=3))
+    rng = np.random.default_rng()
+    structure.apply_strain(rng.uniform(-0.01, 0.01, size=3))
 
     #  TODO this sometimes fails because sc_matrix is not found!!!
     try:
@@ -195,8 +196,9 @@ def test_refine_structure(cluster_subspace):
 
 def test_remove_orbits(cluster_subspace):
     subspace = cluster_subspace.copy()  # make copy
-    remove_num = np.random.randint(2, subspace.num_orbits - 1)
-    ids_to_remove = np.random.choice(
+    rng = np.random.default_rng()
+    remove_num = rng.integers(2, subspace.num_orbits - 1)
+    ids_to_remove = rng.choice(
         range(1, subspace.num_orbits), size=remove_num, replace=False
     )
     subspace.remove_orbits(ids_to_remove)
@@ -231,10 +233,9 @@ def test_remove_orbits(cluster_subspace):
 
 def test_remove_corr_functions(cluster_subspace):
     subspace = cluster_subspace.copy()  # make copy
-    remove_num = np.random.randint(2, len(subspace) - 1)
-    ids_to_remove = np.random.choice(
-        range(1, len(subspace)), size=remove_num, replace=False
-    )
+    rng = np.random.default_rng()
+    remove_num = rng.integers(2, len(subspace) - 1)
+    ids_to_remove = rng.choice(range(1, len(subspace)), size=remove_num, replace=False)
     subspace.remove_corr_functions(ids_to_remove)
 
     assert len(subspace) == len(cluster_subspace) - remove_num
@@ -335,9 +336,10 @@ def test_msonable(cluster_subspace_ewald):
     # force caching some orb indices for a few random structures
     _ = repr(cluster_subspace_ewald)  # can probably do better testing than this...
     _ = str(cluster_subspace_ewald)
+    rng = np.random.default_rng()
 
     for _ in range(2):
-        size = np.random.randint(1, 4)
+        size = rng.integers(1, 4)
         s = gen_random_structure(cluster_subspace_ewald.structure, size=size)
         _ = cluster_subspace_ewald.corr_from_structure(s)
 
@@ -373,9 +375,10 @@ def test_potts_subspace(cluster_subspace):
             bits_i = np.concatenate([b[:, i] for b in porbit.bit_combos])
             assert all(j in bits_i for j in site_space.codes)
 
+    rng = np.random.default_rng()
     # check decorations
     for _ in range(10):
-        i = random.choice(range(1, potts_subspace.num_corr_functions))
+        i = rng.choice(range(1, potts_subspace.num_corr_functions))
         o_id = potts_subspace.function_orbit_ids[i]
         orbit = potts_subspace.orbits[o_id - 1]
         fdeco = potts_subspace.get_function_decoration(i)
@@ -553,9 +556,10 @@ def test_corr_from_structure(single_subspace):
     ]
     assert all(s1 == s2 for s1, s2 in zip(occu, cs.occupancy_from_structure(s)))
 
+    rng = np.random.default_rng()
     # shuffle sites and check correlation still works
     for _ in range(10):
-        random.shuffle(s)
+        rng.shuffle(s)
         npt.assert_allclose(cs.corr_from_structure(s), expected)
 
 
