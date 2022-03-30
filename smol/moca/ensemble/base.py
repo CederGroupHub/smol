@@ -141,7 +141,7 @@ class Ensemble(ABC):
             {sp for sublatt in self.active_sublattices for sp in sublatt.site_space}
         )
 
-    def split_sublattice_by_species(self, sublattice_id, occu, codes_in_partitions):
+    def split_sublattice_by_species(self, sublattice_id, occu, species_in_partitions):
         """Split a sub-lattice in system by its occupied species.
 
         An example use case might be simulating topotactic Li extraction
@@ -153,15 +153,15 @@ class Ensemble(ABC):
                 The index of sub-lattice to split in self.sublattices.
             occu (np.ndarray[int]):
                 An occupancy array to reference with.
-            codes_in_partitions (List[List[int]]):
-                Each sub-list contains a few encodings of species in
+            species_in_partitions (List[List[int|Species|Vacancy|Element|str]]):
+                Each sub-list contains a few species or encodings of species in
                 the site space to be grouped as a new sub-lattice, namely,
                 sites with occu[sites] == specie in the sub-list, will be
                 used to initialize a new sub-lattice.
                 Sub-lists will be pre-sorted to ascending order.
         """
         splits = self.sublattices[sublattice_id].split_by_species(
-            occu, codes_in_partitions
+            occu, species_in_partitions
         )
         self._sublattices = (
             self._sublattices[:sublattice_id]

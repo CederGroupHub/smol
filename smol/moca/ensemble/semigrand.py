@@ -157,7 +157,7 @@ class SemiGrandEnsemble(Ensemble, MSONable):
             self._mu_table[site][species] for site, species in enumerate(occupancy)
         )
 
-    def split_sublattice_by_species(self, sublattice_id, occu, codes_in_partitions):
+    def split_sublattice_by_species(self, sublattice_id, occu, species_in_partitions):
         """Split a sub-lattice in system by its occupied species.
 
         An example use case might be simulating topotactic Li extraction
@@ -172,14 +172,14 @@ class SemiGrandEnsemble(Ensemble, MSONable):
                 The index of sub-lattice to split in self.sublattices.
             occu (np.ndarray[int]):
                 An occupancy array to reference with.
-            codes_in_partitions (List[List[int]]):
-                Each sub-list contains a few encodings of species in
+            species_in_partitions (List[List[int|Species|Vacancy|Element|str]]):
+                Each sub-list contains a few species or encodings of species in
                 the site space to be grouped as a new sub-lattice, namely,
                 sites with occu[sites] == specie in the sub-list, will be
                 used to initialize a new sub-lattice.
                 Sub-lists will be pre-sorted to ascending order.
         """
-        super().split_sublattice_by_species(sublattice_id, occu, codes_in_partitions)
+        super().split_sublattice_by_species(sublattice_id, occu, species_in_partitions)
         # Species in active sub-lattices may change after split.
         # Need to reset and rebuild mu table.
         new_chemical_potentials = {spec: self._mus[spec] for spec in self.species}

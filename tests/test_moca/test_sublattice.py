@@ -121,6 +121,15 @@ def test_split(sublattice):
         np.sort(splits[1].active_sites), np.sort(sublattice.active_sites)
     )
 
+    splits_by_species = sublattice.split_by_species(
+        occu, [sublattice.species[0:1], sublattice.species[1:]]
+    )
+    for sublatt1, sublatt2 in zip(splits_by_species, splits):
+        npt.assert_array_equal(sublatt1.sites, sublatt2.sites)
+        npt.assert_array_equal(sublatt1.active_sites, sublatt2.active_sites)
+        assert sublatt1.species == sublatt2.species
+        npt.assert_array_equal(sublatt1.encoding, sublatt2.encoding)
+
 
 def test_msonable(sublattice):
     # Test msnoable serialization
