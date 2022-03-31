@@ -14,11 +14,15 @@ import numpy as np
 
 from smol.cofe.space.domain import get_species
 from smol.utils import class_name_from_str, derived_class_factory
+from smol.moca.comp_space import get_oxi_state
+from smol.moca.utils.occu_utils import occu_to_species_n
 
 
 class MCBias(ABC):
     """Base bias term class.
 
+    Note: Any MCBias should be implemented as beta*E-bias
+    will be minimized in thermodynamics kernel.
     Attributes:
         sublattices (List[Sublattice]):
             list of sublattices with active sites.
@@ -202,6 +206,130 @@ class FugacityBias(MCBias):
             table[sublatt.sites[:, None], sublatt.encoding]\
                 = ordered_fus[None, :]
         return table
+
+
+class SquarechargeBias(MCBias):
+    """Square charge bias.
+
+    This bias penalizes energy on square of the system net charge.
+    """
+    def __init__(self, sublattices, lam=0.5):
+        """Square charge bias.
+
+        Args:
+            sublattices (List[Sublattice]):
+                List of active sublattices, containing species information and
+                site indices in sublattice. Must include all sites!
+            lam (float): optional
+                Penalty factor. energy/kT will be penalized by + lambda
+                * charge**2 to minimize.
+                Must be positive. Default to 0.5, which works
+                for most of the cases.
+        """
+        super().__init__(sublattices)
+        charges = [[get_oxi_state(sp) for sp in sublatt.species]
+                   for sublatt in self.sublattices]
+        if lam <= 0:
+            raise ValueError("Penalty factor should be > 0!")
+        self.lam = lam
+        num_cols = max(max(sl.encoding) for sl in self.sublattices) + 1
+        num_rows = sum(len(sl.sites) for sl in self.sublattices)
+        table = np.zeros((num_cols, num_rows))
+        for cs, sublatt in zip(charges, self.sublattices):
+            cs = np.array(cs)
+            table[sublatt.sites[:, None], sublatt.encoding] = cs[None, :]
+        self._c_table = table
+
+    def compute_bias(self, occupancy):
+        """Compute bias from occupancy.
+
+        Args:
+            occupancy(np.ndarray):
+                Encoded occupancy string.
+        Returns:
+            Float, bias value.
+        """
+        c = np.sum(self._c_table[np.arange(len(occupancy), dtype=int),
+                                 occupancy])
+        return -self.lam * c ** 2
+
+    def compute_bias_change(self, occupancy, step):
+        """Compute bias change from step.
+
+        Args:
+            occupancy: (ndarray):
+                Encoded occupancy array.
+            step: (List[tuple(int,int)]):
+                Step returned by MCUsher.
+        Return:
+            Float, change of bias value after step.
+        """
+        occu_next = occupancy.copy()
+        step = np.array(step, dtype=int)
+        occu_next[step[:, 0]] = step[:, 1]
+        return (self.compute_bias(occu_next)
+                - self.compute_bias(occupancy))
+
+
+class SquarecompBias(MCBias):
+    """Square composition bias.
+
+    This bias penalizes energy on square of metric ||A n - b||^2
+    where n is the number "n" representation of composition
+    (See CompSpace document), and matrix A and b define constraints
+    to n.
+    """
+    def __init__(self, sublattices, A, b, lam=0.5):
+        """Square composition bias.
+
+        Use this when you have other constraints to the composition
+        than the charge constraint.
+        Args:
+            sublattices (List[Sublattice]):
+                List of active sublattices, containing species information and
+                site indices in sublattice. Must include all sites!
+            A, b (ArrayLike):
+                Matrix A and vector b in An-b.
+            lam (float): optional
+                Penalty factor. energy/kT will be penalized by +lambda
+                * ||A n - b||**2 to minimize. Must be positive.
+                Default to 0.5, which works for most of the cases.
+        """
+        super().__init__(sublattices)
+        if lam <= 0:
+            raise ValueError("Penalty factor should be > 0!")
+        self.lam = lam
+        self.A = np.array(A, dtype=int)
+        self.b = np.array(b, dtype=int)
+
+    def compute_bias(self, occupancy):
+        """Compute bias from occupancy.
+
+        Args:
+            occupancy(np.ndarray):
+                Encoded occupancy string.
+        Returns:
+            Float, bias value.
+        """
+        n = occu_to_species_n(occupancy, self.sublattices)
+        return -self.lam * np.sum((self.A @ n - self.b) ** 2)
+
+    def compute_bias_change(self, occupancy, step):
+        """Compute bias change from step.
+
+        Args:
+            occupancy: (ndarray):
+                Encoded occupancy array.
+            step: (List[tuple(int,int)]):
+                Step returned by MCUsher.
+        Return:
+            Float, change of bias value after step.
+        """
+        occu_next = occupancy.copy()
+        step = np.array(step, dtype=int)
+        occu_next[step[:, 0]] = step[:, 1]
+        return (self.compute_bias(occu_next)
+                - self.compute_bias(occupancy))
 
 
 def mcbias_factory(bias_type, sublattices, *args, **kwargs):

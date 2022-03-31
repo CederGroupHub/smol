@@ -10,6 +10,7 @@ __author__ = "Luis Barroso-Luque"
 from dataclasses import dataclass, field
 import numpy as np
 from monty.json import MSONable
+import warnings
 from smol.cofe.space.domain import SiteSpace, Vacancy
 
 from pymatgen.core import Composition
@@ -22,6 +23,13 @@ class Sublattice(MSONable):
     A Sublattice is used to represent a subset of supercell sites that have
     the same site space. Rigorously it represents a set of sites in a
     "substructure" of the total structure.
+
+    As implemented in the Sublattice class, you are allowed to have multiple
+    species on an inactive sub-lattice, but it is not the suggested approach.
+    For simplicity, especially when you generate a CompSpace, you had better
+    always split inactive sub-lattices until each inactive sub-lattice have
+    only 1 species in it.
+
     Attributes:
      site_space (SiteSpace):
         SiteSpace with the allowed species and their random
@@ -54,6 +62,9 @@ class Sublattice(MSONable):
     @property
     def is_active(self):
         """Whether sub-lattice has active sites."""
+        if len(self.active_sites) == 0 and len(self.species) > 1:
+            warnings.warn(f"Sub-lattice is inactive, but have multiple "
+                          f"allowed species. You'd better split it.")
         return len(self.active_sites) > 0
 
     @property

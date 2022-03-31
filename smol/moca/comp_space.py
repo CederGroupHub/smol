@@ -2,6 +2,7 @@
 
 __author__ = "Fengyu Xie"
 
+import warnings
 import numpy as np
 from itertools import chain
 from monty.json import MSONable, MontyDecoder
@@ -23,7 +24,7 @@ class NegativeSpeciesError(Exception):
         self.c = c
         self.form = form
         self.message = message
-        super().__init__(self.message)
+        super(NegativeSpeciesError, self).__init__(self.message)
 
     def __str__(self):
         return f"Composition: {self.c}, format: {self.form} " \
@@ -37,7 +38,7 @@ class RoundingError(Exception):
         self.c = c
         self.form = form
         self.message = message
-        super().__init__(self.message)
+        super(RoundingError, self).__init__(self.message)
 
     def __str__(self):
         return f"Composition: {self.c}, format: {self.form}, " \
@@ -50,7 +51,7 @@ class ConstraintViolationError(Exception):
         self.c = c
         self.form = form
         self.message = message
-        super().__init__(self.message)
+        super(ConstraintViolationError, self).__init__(self.message)
 
     def __str__(self):
         return f"Composition: {self.c}, format: {self.form}, " \
@@ -62,7 +63,7 @@ class CompUnNormalizedError(Exception):
                  message="Composition in comp format but not normalized!"):
         self.c = c
         self.message = message
-        super().__init__(self.message)
+        super(CompUnNormalizedError, self).__init__(self.message)
 
     def __str__(self):
         return f"Composition: {self.c} -> {self.message}"
@@ -77,10 +78,10 @@ def get_oxi_state(sp):
     Return:
        Charge of species: int.
     """
-    if isinstance(sp, (Vacancy, Element)):
+    if isinstance(sp, Element):
         return 0
     else:
-        return sp.oxi_state
+        return int(sp.oxi_state)
 
 
 def flip_vec_to_reaction(u, bits):
@@ -126,20 +127,21 @@ class CompSpace(MSONable):
        order of each sub-lattice into an 1D array. ("n" format)
 
     2, Coordinates x on the constrained integer grid. n = n0 + V @ x,
-       where V are grid basis and n0 is a base solution (not necessarily
-       a natural number solution).
+       where V are grid basis and n0 is a base solution (whose n is
+       not necessarily guaranteed as natural numbers).
        ("x" format).
 
     3, pymatgen.Composition of each sub-lattice, normalized by number of
-       sites in the sub-lattice. Vacancies not explicitly included.
+       sites in the sub-lattice. Vacancies never explicitly included.
        ("comp" format).
 
-       Note: This format is always normalized and in fractional number.
+       Note: This format is always normalized (0<num_atoms <=1).
+       If <1, the remaining part will be filled with vacancies.
 
-    4, Count of sorted species without distinguishing their
-       sub-lattices. If one species appears in multiple sub-lattices, it will
-       only be counted into one component of the vector.
-       ("nondisc" format).
+    4, Count of sorted species without distinguishing sub-lattices.
+       Namely, if one species appears in multiple sub-lattices, it will
+       only be counted into one component of the vector correponding to
+       that species. ("nondisc" format).
 
     Attributes:
         n_dims(int):
@@ -150,13 +152,15 @@ class CompSpace(MSONable):
         dim_ids(List[List[int]]):
             The corresponding index in the "n" vector
             of each species on each sub-lattice.
-        dim_ids_nondesc(List[List[int]]):
-            The corresponding index in the "nondesc" vector
+        dim_ids_nondisc(List[List[int]]):
+            The corresponding index in the "nondisc" vector
             of each species on each sub-lattice.
     """
 
-    def __init__(self, bits, sl_sizes=None, other_constraints=None,
-                 charge_balanced=True, optimize_basis=False,
+    def __init__(self, bits, sl_sizes=None,
+                 charge_balanced=True,
+                 other_constraints=None,
+                 optimize_basis=False,
                  table_ergodic=False):
         """Initialize CompSpace.
 
@@ -166,25 +170,28 @@ class CompSpace(MSONable):
             sl_sizes(1D ArrayLike[int]): optional
                 Number of sites in each sub-lattice per primitive cell.
                 If not given, assume one site for each sub-lattice.
-            other_constraints(List[tuple(1D arrayLike[int], int)]): optional
-                Other integer constraints except charge balance and
-                site-number conservation. Should be given in the form of
-                tuple(a, bb), each constraint np.dot(a, n)=bb.
+                Better provide them as co-prime integers.
             charge_balanced(bool): optional
                 Whether to add charge balance constraint. Default
                 to true.
+            other_constraints(List[tuple(1D arrayLike[int], int)]): optional
+                Other integer constraints except charge balance and
+                site-number conservation. Should be given in the form of
+                tuple(a, bb), each gives constraint np.dot(a, n)=bb.
             optimize_basis(bool): optional
                 Whether to optimize the basis to minimal flip sizes and maximal
                 connectivity in the minimum super-cell size.
                 When the minimal super-cell size is large, we recommend not to
                 optimize basis.
             table_ergodic(bool): optional
-                When generating a flip table, whether or not to add vectors and
-                ensure ergodicity. Default to False.
+                When generating a flip table, whether to add vectors and
+                ensure ergodicity under a minimal super-cell size.
+                Default to False.
                 When the minimal super-cell size is large, we recommend not to
-                ensure ergodicity. This is not only because of computational
-                difficulty, but also because at large super-cell size, the fraction
-                of inaccessible compositions usually becomes minimal.
+                ensure ergodicity. This is not only because of the computation
+                difficulty; but also because at large super-cell size,
+                the fraction of inaccessible compositions usually becomes
+                minimal.
         """
         self.bits = bits
         self.n_dims = sum([len(species) for species in bits])
@@ -206,7 +213,7 @@ class CompSpace(MSONable):
             self.species.append(b)
         self.species = sorted(self.species)
 
-        dim_ids_nondesc = []
+        dim_ids_nondisc = []
         for species in self.bits:
             sl_dim_ids = []
             for sp in species:
@@ -217,16 +224,16 @@ class CompSpace(MSONable):
                         if isinstance(sp2, Vacancy):
                             sl_dim_ids.append(sp2_id)
                             break
-            dim_ids_nondesc.append(sl_dim_ids)
-        self.dim_ids_nondesc = dim_ids_nondesc
+            dim_ids_nondisc.append(sl_dim_ids)
+        self.dim_ids_nondisc = dim_ids_nondisc
 
         if sl_sizes is None:
             self.sl_sizes = [1 for i in range(len(self.bits))]
         elif len(sl_sizes) == len(bits):
             self.sl_sizes = sl_sizes
         else:
-            raise ValueError("Sub-lattice number not the same "
-                             "in bits and sl_sizes.")
+            raise ValueError("Sub-lattice number is not the same "
+                             "in parameters bits and sl_sizes.")
 
         self.charge_balanced = charge_balanced
         self.optimize_basis = optimize_basis
@@ -250,10 +257,13 @@ class CompSpace(MSONable):
             if len(a) != self.n_dims:
                 raise ValueError(f"Constraint length: {len(a)} does not match"
                                  f" dimensions: {self.n_dims}!")
+            if not np.allclose(np.array(a), np.round(a)) or not \
+                    np.allclose(b, np.round(b)):
+                raise ValueError("Provided constraints must be integers!")
             A.append(a)
             b.append(bb)
-        self._A = np.array(A, dtype=int)
-        self._b = np.array(b, dtype=int)
+        self._A = np.array(np.round(A), dtype=int)
+        self._b = np.array(np.round(b), dtype=int)
 
         self._prim_vertices = None
         # Minimum supercell size required to make prim_vertices coordinates
@@ -306,10 +316,18 @@ class CompSpace(MSONable):
         return self._min_sc_size
 
     @property
+    def n_comps_estimate(self):
+        """Estimated number of compositions w.o constraints."""
+        return np.prod([(sl_size * self.min_sc_size) ** len(species)
+                        for species, sl_size
+                        in zip(self.bits, self.sl_sizes)])
+
+    @property
     def n0(self):
         """Primitive cell base solution (not natural numbers).
 
-        self.n0 * sc_size is a base solution in super-cell.
+        self.n0 * sc_size is a base solution in super-cell in
+        "n" format.
         Returns:
              1D np.ndarray[int]
         """
@@ -332,10 +350,18 @@ class CompSpace(MSONable):
             n0, vs = solve_diophantines(self.A,
                                         self.b * self.min_sc_size)
             if self.optimize_basis:
+                n_comps = self.n_comps_estimate
+                if n_comps > 10 ** 6:
+                    warnings.warn("Basis optimization can be very costly "
+                                  "at your composition space size = "
+                                  f"{n_comps}. "
+                                  "Do this at your own risk!")
                 xs = get_natural_solutions(n0, vs)
                 dims = [len(species) for species in self.bits]
                 vs_opt = get_optimal_basis(n0, vs, xs,
                                            sublattice_dims=dims)
+            else:
+                vs_opt = vs.copy()
             self._vs = vs_opt
         return self._vs
 
@@ -353,6 +379,12 @@ class CompSpace(MSONable):
             if not self.table_ergodic:
                 self._flip_table = self.basis.copy()
             else:
+                n_comps = self.n_comps_estimate
+                if n_comps > 10 ** 6:
+                    warnings.warn("Ergodicity computation can be very costly "
+                                  "at your composition space size = "
+                                  f"{n_comps}. "
+                                  "Do this at your own risk!")
                 dims = [len(species) for species in self.bits]
                 self._flip_table = get_ergodic_vectors(self.n0
                                                        * self.min_sc_size,
@@ -378,7 +410,7 @@ class CompSpace(MSONable):
             sc_size(int):
                 Super-cell size to enumerate with.
         Returns:
-            Solutions to n0 + Vx >= 0 ("x" format):
+            Solutions to n0 + Vx >= 0 ("x" format, not normalized):
                 2Dnp.ndarray[int]
         """
         if sc_size not in self._comp_grids:
@@ -392,7 +424,7 @@ class CompSpace(MSONable):
         """Get the natural number solutions on grid at min_sc_size.
 
         Returns:
-            Solutions to n0 + Vx >= 0 ("x" format):
+            Solutions to n0 + Vx >= 0 ("x" format, not normalized):
                 2Dnp.ndarray[int]
         """
         return self.get_comp_grid(sc_size=self.min_sc_size)
@@ -406,7 +438,7 @@ class CompSpace(MSONable):
                If not given, will use self.min_sc_size
         Return:
             Composition close to centroid of polytope n0 + Vx >= 0
-            ("x" format):
+            ("x" format, not normalized):
                 1D np.ndarray[int]
         """
         if sc_size is None:
@@ -429,7 +461,9 @@ class CompSpace(MSONable):
                 "x": the grid coordinates;
                 "comp": pymatgen.Composition on each sub-lattice, Vacancies
                         not explicitely included.
-                Note: "nondisc" can not be the input format.
+                "nondisc" can not be the input format.
+                "n" and "x" requires un-normalized, while "comp" is normalized
+                to number of sites in sub-lattice.
             to_format(str): optional
                 Specified the output format.
                 Same as from_format, with an addition:
@@ -440,11 +474,12 @@ class CompSpace(MSONable):
                 or not to round up the output array as integers. Default to
                 false.
         Return:
-            Depends on to_format argument:
+            Depends on to_format argument ("n","x","nondisc" not normalized):
                 1D np.ndarray[int|float]|List[Composition]
         """
         if from_format == 'nondisc':
-            raise ValueError("nondisc format can not be converted!")
+            raise ValueError("nondisc format can not be converted to "
+                             "other formats!")
 
         n = self._convert_to_n(c, form=from_format, sc_size=sc_size,
                                rounding=rounding)
@@ -460,7 +495,7 @@ class CompSpace(MSONable):
         elif form == "comp":
             n = []
             for species, sl_size, comp in zip(self.bits, self.sl_sizes, c):
-                if comp.num_atoms > 1:
+                if comp.num_atoms > 1 or comp.num_atoms < 0:
                     raise CompUnNormalizedError(comp)
                 for specie in species:
                     if isinstance(specie, Vacancy):
@@ -475,9 +510,7 @@ class CompSpace(MSONable):
 
         if np.any(n < -NUM_TOL):
             raise NegativeSpeciesError(n, form="n")
-        if np.any(np.abs(self.A @ (n / sc_size) - self.b)
-                  > NUM_TOL):
-            raise ConstraintViolationError(n, form="n")
+        # Does not check constraints violation when converting to "n"
         if rounding:
             n_round = np.array(np.round(n), dtype=int)
             if np.any(np.abs(n_round - n) > NUM_TOL):
@@ -511,9 +544,9 @@ class CompSpace(MSONable):
                                       if not isinstance(sp, Vacancy)}))
         elif form == "nondisc":
             c = np.zeros(len(self.species))
-            for dim_id, dim_id_nondesc in zip(self.dim_ids,
-                                              self.dim_ids_nondesc):
-                c[dim_id_nondesc] += n[dim_id]
+            for dim_id, dim_id_nondisc in zip(self.dim_ids,
+                                              self.dim_ids_nondisc):
+                c[dim_id_nondisc] += n[dim_id]
         else:
             raise ValueError(f"Composition format {form} not supported!")
 

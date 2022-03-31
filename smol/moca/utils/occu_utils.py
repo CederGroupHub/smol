@@ -19,7 +19,7 @@ def occu_to_species_list(occupancy, sublattices,
         sublattices(smol.moca.Sublattice):
             All sub-lattices, active or not.
         active_only(Boolean):
-            If true, will count un-restricted sites on active
+            If true, will count un-restricted sites on all
             sub-lattices only. Default to false, will count
             all sites and sub-lattices.
 
@@ -32,7 +32,7 @@ def occu_to_species_list(occupancy, sublattices,
     # Encodings is not necessarily range(len)
     if active_only:
         return [s.active_sites[occu[s.active_sites] == sp_id]
-                    .tolist() for s in sublattices if s.is_active
+                .tolist() for s in sublattices
                 for sp_id in s.encoding]
     else:
         return [s.sites[occu[s.sites] == sp_id].tolist()
@@ -100,7 +100,7 @@ def delta_n_from_step(occu, step, sublattices):
             1D np.ndarray[int]
     """
     occu = np.array(occu, dtype=int)
-    d = sum([len(s.species) for s in sublattices])
+    d = sum([len(s.site_space) for s in sublattices])
     sublattice_ids = np.zeros(len(occu), dtype=int) - 1
     for sl_id, s in enumerate(sublattices):
         sublattice_ids[s.sites] = sl_id
@@ -110,15 +110,12 @@ def delta_n_from_step(occu, step, sublattices):
 
     delta_n = np.zeros(d, dtype=int)
     dim_ids = get_dim_ids_by_sublattice([s.species for s in sublattices])
-    operations = []
     for site_id, code in step:
         sl_id = sublattice_ids[site_id]
         ori_code = occu[site_id]
 
-        code_id = np.where(sublattices[sl_id].encoding
-                           == code)[0][0]  # No duplicacy of codes.
-        ori_code_id = np.where(sublattices[sl_id].encoding
-                               == ori_code)[0][0]  # No duplicacy of codes.
+        code_id = sublattices[sl_id].encoding.tolist().index(code)
+        ori_code_id = sublattices[sl_id].encoding.tolist().index(ori_code)
 
         ori_dim_id = dim_ids[sl_id][ori_code_id]
         dim_id = dim_ids[sl_id][code_id]
@@ -142,7 +139,7 @@ def delta_x_from_step(occu, step, sublattices, comp_space):
         comp_space(smol.CompSpace):
             composition space object.
 
-        Note: comp_space must be generated from sublattices.
+        comp_space must be generated from sublattices.
     Return:
         Change of constraint lattice coordinates:
             1D np.ndarray[int]
@@ -154,7 +151,7 @@ def delta_x_from_step(occu, step, sublattices, comp_space):
                                        check_bounded=False)
 
 
-def flip_weights_mask(flip_vectors, n):
+def flip_weights_mask(flip_vectors, n, max_n=None):
     """Mark feasibility of flip vectors.
 
     If a flip direction leads to any n+v < 0, then it is marked
@@ -169,6 +166,10 @@ def flip_weights_mask(flip_vectors, n):
         n(1D ArrayLike[int]):
             Amount of each specie on sublattices. Same as returned
             by occu_to_species_n.
+        max_n(1D ArrayLike[int]): optional
+            Maximum number of each species allowed. This is needed
+            When the number of active sites != number of sites in
+            some sub-lattice.
 
     Return:
         Direction and its inverse are feasible or not:
@@ -176,4 +177,11 @@ def flip_weights_mask(flip_vectors, n):
     """
     flip_vectors = np.array(flip_vectors, dtype=int)
     directions = np.concatenate([(u, -u) for u in flip_vectors])
-    return np.any(directions + n < 0, axis=-1)
+    if max_n is None:
+        max_n = np.ones(len(n)) * np.inf
+    elif isinstance(max_n, (int, np.int32, np.int64)):
+        max_n = np.ones(len(n), dtype=int) * max_n
+    else:
+        max_n = np.array(max_n, dtype=int)
+    return (np.any(directions + n < 0, axis=-1)
+            | np.any(directions + n) > max_n)

@@ -1,18 +1,13 @@
 """Test all bias terms."""
 
-from smol.moca.sampler.bias import (Nullbias, Squarechargebias,
-                                    Squarecompconstraintbias,
-                                    FugacityBias,
-                                    mcbias_factory)
-from smol.moca.ensemble.sublattice import get_all_sublattices
-from smol.moca.processor import CEProcessor
 import numpy as np
 import random
 import pytest
-from smol.moca.sampler.bias import mcbias_factory, FugacityBias
+from smol.moca.sampler.bias import mcbias_factory
+from smol.moca.sampler.kernel import ALL_BIAS
 from tests.utils import gen_random_occupancy
 
-bias_classes = [FugacityBias, Squarechargebias, Squarecompconstraintbias]
+bias_classes = ALL_BIAS
 
 
 @pytest.fixture(scope="module")
@@ -23,6 +18,7 @@ def all_sublattices(ce_processor):
 @pytest.fixture(params=bias_classes)
 def mcbias(all_sublattices, request):
     return request.param(all_sublattices)
+
 
 def get_charge(occupancy, sublattices):
     n_cols = max(len(s.species) for s in sublattices)

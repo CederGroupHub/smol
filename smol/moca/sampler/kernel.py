@@ -307,6 +307,7 @@ class UniformlyRandom(MCKernel):
             StepTrace
         """
         step = self._usher.propose_step(occupancy)
+        log_factor = self._usher.compute_log_priori_factor(occupancy, step)
         self.trace.delta_trace.features = self._feature_change(occupancy, step)
         self.trace.delta_trace.enthalpy = np.array(
             np.dot(self.natural_params, self.trace.delta_trace.features)
@@ -316,10 +317,9 @@ class UniformlyRandom(MCKernel):
             self.trace.delta_trace.bias = np.array(
                 self._bias.compute_bias_change(occupancy, step)
             )
+            exponent = self.trace.delta_trace.bias + log_factor
             self.trace.accepted = np.array(
-                True
-                if self.trace.delta_trace.bias >= 0
-                else self.trace.delta_trace.bias > log(random())
+                True if exponent >= 0 else exponent > log(random())
             )
 
         if self.trace.accepted:
@@ -354,6 +354,7 @@ class Metropolis(ThermalKernel):
             StepTrace
         """
         step = self._usher.propose_step(occupancy)
+        log_factor = self._usher.compute_log_priori_factor(occupancy, step)
         self.trace.delta_trace.features = self._feature_change(occupancy, step)
         self.trace.delta_trace.enthalpy = np.array(
             np.dot(self.natural_params, self.trace.delta_trace.features)
@@ -365,7 +366,7 @@ class Metropolis(ThermalKernel):
             )
             exponent = (
                 -self.beta * self.trace.delta_trace.enthalpy
-                + self.trace.delta_trace.bias
+                + self.trace.delta_trace.bias + log_factor
             )
             self.trace.accepted = np.array(
                 True if exponent >= 0 else exponent > log(random())
@@ -384,7 +385,7 @@ class Metropolis(ThermalKernel):
             self._usher.update_aux_state(step)
         self.trace.occupancy = occupancy
 
-        return accept, occupancy, delta_enthalpy, delta_features
+        return self.trace
 
 
 def mckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs):
