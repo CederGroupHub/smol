@@ -125,12 +125,6 @@ def test_equality(orbit):
         )
 
         assert orbit1 == orbit
-        orbit1.transform_site_bases("sinusoid")
-        assert orbit1 != orbit
-        if len(orbit1.bit_combos) > 1:  # check removing bit combos
-            orbit1.transform_site_bases("indicator")
-            orbit1.remove_bit_combos_by_inds([0])
-            assert orbit1 != orbit
         assert orbit2 != orbit
         assert orbit3 != orbit
 
