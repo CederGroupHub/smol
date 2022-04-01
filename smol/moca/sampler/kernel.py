@@ -8,7 +8,6 @@ __author__ = "Luis Barroso-Luque"
 
 from abc import ABC, abstractmethod
 from math import log
-from random import random
 from types import SimpleNamespace
 
 import numpy as np
@@ -45,7 +44,10 @@ class Trace(SimpleNamespace):
 
     def __setattr__(self, name, value):
         """Set only ndarrays as attributes."""
-        if not (isinstance(value, np.ndarray)):
+        if isinstance(value, (float, int)):
+            value = np.array([value])
+
+        if not isinstance(value, np.ndarray):
             raise TypeError("Trace only supports attributes of type ndarray.")
         self.__dict__[name] = value
 
@@ -85,15 +87,15 @@ class StepTrace(Trace):
         """Set only ndarrays as attributes."""
         if name == "delta_trace":
             raise ValueError("Attribute name 'delta_trace' is reserved.")
-        elif not (isinstance(value, np.ndarray)):
+        if not isinstance(value, np.ndarray):
             raise TypeError("Trace only supports attributes of type ndarray.")
         self.__dict__[name] = value
 
     def as_dict(self):
         """Return copy underlying dictionary."""
-        d = self.__dict__.copy()
-        d["delta_trace"] = d["delta_trace"].as_dict()
-        return d
+        step_trace_d = self.__dict__.copy()
+        step_trace_d["delta_trace"] = step_trace_d["delta_trace"].as_dict()
+        return step_trace_d
 
 
 class MCKernel(ABC):
@@ -140,7 +142,6 @@ class MCKernel(ABC):
         self.mcusher = mcusher_factory(
             mcusher_name,
             ensemble.sublattices,
-            ensemble.inactive_sublattices,
             *args,
             **kwargs,
         )
@@ -151,7 +152,6 @@ class MCKernel(ABC):
             self.bias = mcbias_factory(
                 bias_name,
                 ensemble.sublattices,
-                ensemble.inactive_sublattices,
                 **bias_kwargs,
             )
 
@@ -307,6 +307,7 @@ class UniformlyRandom(MCKernel):
         Returns:
             StepTrace
         """
+        rng = np.random.default_rng()
         step = self._usher.propose_step(occupancy)
         self.trace.delta_trace.features = self.ensemble.compute_feature_vector_change(
             occupancy, step
@@ -322,12 +323,12 @@ class UniformlyRandom(MCKernel):
             self.trace.accepted = np.array(
                 True
                 if self.trace.delta_trace.bias >= 0
-                else self.trace.delta_trace.bias > log(random())
+                else self.trace.delta_trace.bias > log(rng.random())
             )
 
         if self.trace.accepted:
-            for f in step:
-                occupancy[f[0]] = f[1]
+            for tup in step:
+                occupancy[tup[0]] = tup[1]
             self._usher.update_aux_state(step)
 
         self.trace.occupancy = occupancy
@@ -356,6 +357,7 @@ class Metropolis(ThermalKernel):
         Returns:
             StepTrace
         """
+        rng = np.random.default_rng()
         step = self._usher.propose_step(occupancy)
         self.trace.delta_trace.features = self.ensemble.compute_feature_vector_change(
             occupancy, step
@@ -373,19 +375,19 @@ class Metropolis(ThermalKernel):
                 + self.trace.delta_trace.bias
             )
             self.trace.accepted = np.array(
-                True if exponent >= 0 else exponent > log(random())
+                True if exponent >= 0 else exponent > log(rng.random())
             )
         else:
             self.trace.accepted = np.array(
                 True
                 if self.trace.delta_trace.enthalpy <= 0
                 else -self.beta * self.trace.delta_trace.enthalpy
-                > log(random())  # noqa
+                > log(rng.random())  # noqa
             )
 
         if self.trace.accepted:
-            for f in step:
-                occupancy[f[0]] = f[1]
+            for tup in step:
+                occupancy[tup[0]] = tup[1]
             self._usher.update_aux_state(step)
         self.trace.occupancy = occupancy
 

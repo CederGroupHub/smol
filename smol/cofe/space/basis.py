@@ -5,6 +5,7 @@ obtain correlation vectors. The domain of a site function is a site space,
 which is defined by the allowed species at the site and their measures, which
 is concentration of the species in the random structure)
 """
+# pylint: disable=invalid-name, too-few-public-methods
 
 import warnings
 from abc import ABCMeta, abstractmethod
@@ -121,13 +122,13 @@ class DiscreteBasis(MSONable, metaclass=ABCMeta):
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation of a DiscreteBasis."""
-        d = {
+        basis_d = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "site_space": self._domain.as_dict(),
             "flavor": self.flavor,
         }
-        return d
+        return basis_d
 
     @classmethod
     def from_dict(cls, d):
@@ -141,7 +142,7 @@ class DiscreteBasis(MSONable, metaclass=ABCMeta):
         """
         try:
             subclass = get_subclasses(cls)[d["@class"]]
-        except KeyError:
+        except KeyError as key_error:
             if d["@class"] == "SiteBasis":
                 warnings.warn(
                     "The object you have loaded was saved with an older "
@@ -154,7 +155,7 @@ class DiscreteBasis(MSONable, metaclass=ABCMeta):
                 raise NameError(
                     f"{d['@class']} is not implemented or is not a subclass "
                     f"of {cls}."
-                )
+                ) from key_error
 
         return subclass.from_dict(d)
 
@@ -177,7 +178,7 @@ class StandardBasis(DiscreteBasis):
         """Initialize a StandardBasis.
 
         Currently also accepts an OrderedDict but if you find yourself creating
-        one like so for use in production and not debuging know that it will
+        one like so for use in production and not debugging know that it will
         break MSONable methods in classes that use these, and at any point I
         could change this to not allow OrderedDicts.
 
@@ -198,6 +199,7 @@ class StandardBasis(DiscreteBasis):
         """Construct function array with basis functions as rows."""
         # exclude the last basis function since the constant phi_0 will
         # take its place
+        # pylint: disable=unnecessary-comprehension
         nconst_functions = [function for function in basis_functions][:-1]
         func_arr = np.array(
             [[function(sp) for sp in self.species] for function in nconst_functions]
@@ -231,16 +233,16 @@ class StandardBasis(DiscreteBasis):
         Due to how the func_arr is saved (rows are vectors/functions) this
         allows us to not sprinkle so many transposes.
         """
-        q, r = np.linalg.qr(
+        q_mat, r_mat = np.linalg.qr(
             (np.sqrt(self.measure_vector) * self._f_array).T, mode="complete"
         )
 
         # make zeros actually zeros
-        r[abs(r) < 2 * np.finfo(np.float64).eps] = 0.0
-        q[abs(q) < 2 * np.finfo(np.float64).eps] = 0.0
+        r_mat[abs(r_mat) < 2 * np.finfo(np.float64).eps] = 0.0
+        q_mat[abs(q_mat) < 2 * np.finfo(np.float64).eps] = 0.0
 
-        self._r_array = q[:, 0] / np.sqrt(self.measure_vector) * r.T
-        self._f_array = q.T / q[:, 0]  # make first row constant = 1
+        self._r_array = q_mat[:, 0] / np.sqrt(self.measure_vector) * r_mat.T
+        self._f_array = q_mat.T / q_mat[:, 0]  # make first row constant = 1
 
     def rotate(self, angle, index1=0, index2=1):
         """Rotate basis functions about subspace spaned by 2 vectors.
@@ -285,42 +287,48 @@ class StandardBasis(DiscreteBasis):
         else:
             if index1 == index2:
                 raise ValueError("Basis function indices cannot be the same!")
-            elif abs(index1) > len(self.site_space) - 2:
+
+            if abs(index1) > len(self.site_space) - 2:
                 raise ValueError(
                     f"Basis index {index1} is out of bounds for "
                     f"{len(self.site_space) - 1} functions!"
                 )
-            elif abs(index2) > len(self.site_space) - 2:
+
+            if abs(index2) > len(self.site_space) - 2:
                 raise ValueError(
                     f"Basis index {index2} is out of bounds for "
                     f"{len(self.site_space) - 1} functions!"
                 )
 
-            v1 = self.function_array[index1] / np.linalg.norm(
+            vector1 = self.function_array[index1] / np.linalg.norm(
                 self.function_array[index1]
             )  # noqa
-            v2 = self.function_array[index2] / np.linalg.norm(
+            vector2 = self.function_array[index2] / np.linalg.norm(
                 self.function_array[index2]
             )  # noqa
-            R = (
-                np.eye(len(v1))
-                + (np.outer(v1, v2) - np.outer(v2, v1)) * np.sin(angle)
-                + (np.outer(v1, v1) + np.outer(v2, v2)) * (np.cos(angle) - 1)
+            rotation_mat = (
+                np.eye(len(vector1))
+                + (np.outer(vector1, vector2) - np.outer(vector2, vector1))
+                * np.sin(angle)
+                + (np.outer(vector1, vector1) + np.outer(vector2, vector2))
+                * (np.cos(angle) - 1)
             )
-            self._f_array[1:] = self._f_array[1:] @ R.T
+            self._f_array[1:] = self._f_array[1:] @ rotation_mat.T
             # make really small numbers zero
             self._f_array[
                 abs(self._f_array) < EPS_MULT * np.finfo(np.float64).eps
             ] = 0.0
-            self._rot_array = R @ self._rot_array
+            self._rot_array = rotation_mat @ self._rot_array
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation."""
-        d = super().as_dict()
-        d["func_array"] = self._f_array.tolist()
-        d["orthonorm_array"] = None if self._r_array is None else self._r_array.tolist()
-        d["rot_array"] = self._rot_array.tolist()
-        return d
+        basis_d = super().as_dict()
+        basis_d["func_array"] = self._f_array.tolist()
+        basis_d["orthonorm_array"] = (
+            None if self._r_array is None else self._r_array.tolist()
+        )
+        basis_d["rot_array"] = self._rot_array.tolist()
+        return basis_d
 
     @classmethod
     def from_dict(cls, d):
@@ -385,7 +393,7 @@ class IndicatorBasis(DiscreteBasis, MSONable):
         return cls(SiteSpace.from_dict(d["site_space"]))
 
 
-class BasisIterator(Iterator):
+class BasisIterator(Iterator, metaclass=ABCMeta):
     r"""Abstract basis iterator class.
 
     A basis iterator iterates through all non-constant site basis functions.
@@ -451,12 +459,14 @@ class SinusoidIterator(BasisIterator):
 
     def __next__(self):
         """Generate the next basis function."""
-        n = self.encoding[next(self.species_iter)] + 1
-        func = encode_domain(self.encoding)(sinusoid_factory(n, len(self.species)))
+        next_ind = self.encoding[next(self.species_iter)] + 1
+        func = encode_domain(self.encoding)(
+            sinusoid_factory(next_ind, len(self.species))
+        )
         return func
 
 
-class NumpyPolyIterator(BasisIterator):
+class NumpyPolyIterator(BasisIterator, metaclass=ABCMeta):
     """Class to quickly implement polynomial basis sets included in numpy."""
 
     flavor = "numpy-poly"
@@ -474,7 +484,7 @@ class NumpyPolyIterator(BasisIterator):
         """
         super().__init__(species)
         enc = np.linspace(low, high, len(self.species))
-        self.encoding = {s: i for (s, i) in zip(species, enc)}
+        self.encoding = dict(zip(species, enc))
 
     @property
     @abstractmethod
@@ -484,8 +494,8 @@ class NumpyPolyIterator(BasisIterator):
 
     def __next__(self):
         """Generate the next basis function."""
-        n = self.species.index(next(self.species_iter)) + 1
-        coeffs = n * [
+        next_ind = self.species.index(next(self.species_iter)) + 1
+        coeffs = next_ind * [
             0,
         ] + [1]
         func = encode_domain(self.encoding)(partial(self.polyval, c=coeffs))
@@ -540,10 +550,7 @@ def indicator(s, sp):
 def sinusoid_factory(n, m):
     """Sine or cosine based on AVvW sinusoid site basis."""
     a = -(-n // 2)  # ceiling division
-    if n % 2 == 0:
-        return partial(sin_f, a=a, m=m)
-    else:
-        return partial(cos_f, a=a, m=m)
+    return partial(sin_f, a=a, m=m) if n % 2 == 0 else partial(cos_f, a=a, m=m)
 
 
 def sin_f(s, a, m):
