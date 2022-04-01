@@ -36,7 +36,6 @@ class EwaldProcessor(Processor):
         supercell_matrix,
         ewald_term,
         coefficient=1.0,
-        ewald_summation=None,
     ):
         """Initialize an EwaldProcessor.
 
