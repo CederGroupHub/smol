@@ -297,7 +297,8 @@ class CompSpace(MSONable):
         """Vertices of polytope An=b, n>=0 in prim cell.
 
         Returns:
-            2D np.ndarray[float]
+            prim vertices in "n" format:
+                2D np.ndarray[float]
         """
         if self._prim_vertices is None:
             self._prim_vertices = get_nonneg_float_vertices(self.A, self.b)
@@ -357,9 +358,7 @@ class CompSpace(MSONable):
                                   f"{n_comps}. "
                                   "Do this at your own risk!")
                 xs = get_natural_solutions(n0, vs)
-                dims = [len(species) for species in self.bits]
-                vs_opt = get_optimal_basis(n0, vs, xs,
-                                           sublattice_dims=dims)
+                vs_opt = get_optimal_basis(n0, vs, xs)
             else:
                 vs_opt = vs.copy()
             self._vs = vs_opt
@@ -385,12 +384,10 @@ class CompSpace(MSONable):
                                   "at your composition space size = "
                                   f"{n_comps}. "
                                   "Do this at your own risk!")
-                dims = [len(species) for species in self.bits]
                 self._flip_table = get_ergodic_vectors(self.n0
                                                        * self.min_sc_size,
                                                        self.basis,
-                                                       self.min_comp_grid,
-                                                       sublattice_dims=dims)
+                                                       self.min_comp_grid)
         return self._flip_table
 
     @property

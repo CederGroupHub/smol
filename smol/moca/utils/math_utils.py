@@ -89,19 +89,20 @@ def comb(n, k):
                 (math.factorial(n - k) * math.factorial(k)))
 
 
-def rationalize_number(a, max_denominator=100, dtol=1E-5):
+def rationalize_number(a, max_denominator=1000, dtol=NUM_TOL):
     """Find a rational number near real number within dtol.
 
     Args:
         a(float):
             A number to be rationalized
-        max_denominator(int,default=100):
-            Maximum allowed denominator.
-        dtol(float,default=1E-5):
+        max_denominator(int): optional
+            Maximum allowed denominator. Default 1000.
+        dtol(float): optional
             Maximum allowed difference of variable a
-            to its rational form
+            to its rational form. Default 1E-6.
+            You must have 1/max_denominator > dtol!
     Return:
-        Numerator and denominator:
+        Numerator and denominator (always positive):
            int, int
     """
     f = Fraction.from_float(a).limit_denominator(max_denominator)
@@ -115,7 +116,7 @@ def rationalize_number(a, max_denominator=100, dtol=1E-5):
     return numerator, denominator
 
 
-def integerize_vector(v, max_denominator=100, dtol=1E-5):
+def integerize_vector(v, max_denominator=1000, dtol=NUM_TOL):
     """Integerize all components of a vector v.
 
     Rationalize all components of a vector, then multiply
@@ -126,11 +127,12 @@ def integerize_vector(v, max_denominator=100, dtol=1E-5):
     Args:
         v(np.ndarray(float)):
             A vector to be rationalized
-        max_denominator(int,default=100):
+        max_denominator(int,default=1000):
             Maximum allowed denominator.
-        dtol(float,default=1E-5):
+        dtol(float,default=1E-6):
             Maximum allowed difference of variable a
-            to its rational form
+            to its rational form.
+        You must have 1/max_denominator > dtol!
     Return:
         Integrized vector, LCM of denominators:
             np.ndarray, int
@@ -147,17 +149,18 @@ def integerize_vector(v, max_denominator=100, dtol=1E-5):
     return np.array(np.round(v * lcm), dtype=np.int64), lcm
 
 
-def integerize_multiple(vs, max_denominator=100, dtol=1E-5):
+def integerize_multiple(vs, max_denominator=1000, dtol=NUM_TOL):
     """Integerize multiple vectors in a matrix.
 
     Args:
         vs(np.ndarray(float)):
             A matrix of vectors to be rationalized.
-        max_denominator(int,default=100):
+        max_denominator(int,default=1000):
             Maximum allowed denominator.
-        dtol(float,default=1E-5):
+        dtol(float,default=1E-6):
             Maximum allowed difference of variable a
             to its rational form.
+        You must have 1/max_denominator > dtol!
     Return:
         Integerized vectors in the input shape, LCM of denominator:
             np.ndarray[int], int
@@ -509,7 +512,7 @@ def get_natural_solutions(n0, vs, integer_tol=NUM_TOL):
             )
             if len(sols_m) > 0:
                 sols_m = np.append(m * np.ones(len(sols_m),
-                                               dtype=int),
+                                               dtype=int).reshape(-1, 1),
                                    sols_m, axis=-1)
             else:
                 sols_m = np.array([], dtype=int).reshape(-1, n)
@@ -519,7 +522,7 @@ def get_natural_solutions(n0, vs, integer_tol=NUM_TOL):
 
 
 # Flip table utilities
-def flip_size(u, sublattice_dims=None):
+def flip_size(u):
     """Get metric of a direction.
 
     This function can compute flip size, absolute
@@ -528,39 +531,20 @@ def flip_size(u, sublattice_dims=None):
         u(1D ArrayLike[int]):
             A flip direction on the composition lattice.
             The components of u must be ordered, such that
-            u is a simple concatenation of coordinates on
-            each sub-lattice in sublattice_dims.
-        sublattice_dims(1D ArrayLike[int]): optional
-            Number of dimensions on each sub-lattice,
-            namely the number of species types on each
-            sub-lattice.
-            Must have len(u) == sum(sublattice_dims).
-            u must be sorted such that its components are ordered
-            sub-lattice by sub-lattice.
-            If not give, will consider all species in a same
-            sub-lattice.
+            u is a simple concatenation of components on
+            each sub-lattice.
+            We only check that sum(u) == 0. It is your
+            responsibility to check that's also true
+            per-sub-lattice.
 
     Returns:
         Metric of direction u:
             int
     """
-    if sublattice_dims is None:
-        sublattice_dims = [len(u)]
-
-    if len(u) != sum(sublattice_dims):
-        raise ValueError("Sum of sub-lattice dimensions mismatch " +
-                         "with total dimensions!")
-
-    u = np.array(u, dtype=int)
-    U = 0  # Flip size.
-    begin = 0
-    for d_sl in sublattice_dims:
-        end = begin + d_sl
-        u_sl = u[begin: end]
-        U += np.sum(u_sl[u_sl > 0])
-        begin = end
-
-    return U
+    if np.sum(u) != 0:
+        raise ValueError(f"Flip vector {u} does not"
+                         "conserve number of sites!")
+    return np.sum(u[u > 0])
 
 
 def count_row_matches(a1, a2):
@@ -593,8 +577,8 @@ def connectivity(u, ns):
         u(1D ArrayLike[int]):
             A flip direction on the composition lattice.
             The components of u must be ordered, such that
-            u is a simple concatenation of coordinates on
-            each sub-lattice in sublattice_dims.
+            u is a simple concatenation of components in
+            each sub-lattice.
         ns(2D ArrayLike[int]):
             A grid of natural number solutions.
 
@@ -604,12 +588,13 @@ def connectivity(u, ns):
     u = np.array(u, dtype=int)
     ns = np.array(ns, dtype=int)
 
-    return (count_row_matches(ns, ns - u) +
-            count_row_matches(ns, ns + u))
+    # Connectivity of u must be the same as -u,
+    # This is trivial conclusion from sets theory,
+    # so do not double-count.
+    return count_row_matches(ns, ns + u)
 
 
-def get_optimal_basis(n0, vs, xs, sublattice_dims=None,
-                      max_loops=100):
+def get_optimal_basis(n0, vs, xs, max_loops=100):
     """Get the optimal basis vectors to include in the flip table.
 
     Generate optimal basis vectors by:
@@ -647,15 +632,6 @@ def get_optimal_basis(n0, vs, xs, sublattice_dims=None,
             n0.T + x.T @ vs is a natural number point
             on the lattice.
             Shape = (n_solutions, n_basis_vectors)
-        sublattice_dims(1D ArrayLike[int]): optional
-            Number of dimensions on each sub-lattice,
-            namely the number of species types on each
-            sub-lattice.
-            Must have len(u) == sum(sublattice_dims).
-            u must be sorted such that it components are ordered
-            sub-lattice by sub-lattice.
-            If not give, will consider all species in a same
-            sub-lattice.
         max_loops(int): optional
             Maximum number of optimization loops.
 
@@ -672,8 +648,7 @@ def get_optimal_basis(n0, vs, xs, sublattice_dims=None,
     n, d = vs.shape
 
     def key_func(u):
-        return (flip_size(u, sublattice_dims),
-                -1 * connectivity(u, ns))
+        return flip_size(u), -1 * connectivity(u, ns)
 
     # Make the first column always positive.
     def standardize_table(V):
@@ -712,8 +687,7 @@ def get_optimal_basis(n0, vs, xs, sublattice_dims=None,
     return vs_opt
 
 
-def get_ergodic_vectors(n0, vs, xs,
-                        sublattice_dims=None, k=3):
+def get_ergodic_vectors(n0, vs, xs, k=3):
     """Compute an ergodic flip table.
 
     Notice:
@@ -736,15 +710,6 @@ def get_ergodic_vectors(n0, vs, xs,
             n0.T + x.T @ vs is a natural number point
             on the lattice.
             Shape = (n_solutions, n_basis_vectors)
-        sublattice_dims(1D ArrayLike[int]): optional
-            Number of dimensions on each sub-lattice,
-            namely the number of species types on each
-            sub-lattice.
-            Must have len(u) == sum(sublattice_dims).
-            u must be sorted such that it components are ordered
-            sub-lattice by sub-lattice.
-            If not give, will consider all species in a same
-            sub-lattice.
         k(int): optional
             Find k-nearest neighbor of non-ergodic points,
             add those of them with minimal flip size to ensure
@@ -770,7 +735,7 @@ def get_ergodic_vectors(n0, vs, xs,
                          for n in ns_disconnected], dtype=bool)
 
     def candidate_key(u):
-        return flip_size(u, sublattice_dims=sublattice_dims)
+        return flip_size(u)
 
     n0 = np.array(n0, dtype=int)
     xs = np.array(xs, dtype=int)
