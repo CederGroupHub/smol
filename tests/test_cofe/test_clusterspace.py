@@ -332,6 +332,31 @@ def test_periodicity_and_symmetry(cluster_subspace, supercell_matrix):
         npt.assert_allclose(corr, cluster_subspace.corr_from_structure(structure_op))
 
 
+def test_equality(single_subspace):
+    subspace = single_subspace.copy()
+    assert subspace == single_subspace
+    subspace.change_site_bases("legendre")
+    assert subspace == single_subspace
+    rng = np.random.default_rng()
+    subspace.remove_orbits(rng.choice(range(1, subspace.num_orbits), 2))
+    assert subspace != single_subspace
+
+
+def test_contains(single_subspace):
+    for orbit in single_subspace.orbits:
+        assert orbit in single_subspace
+
+    subspace = single_subspace.copy()
+    rng = np.random.default_rng()
+    orb_ids = rng.choice(range(1, subspace.num_orbits), 2)
+    subspace.remove_orbits(orb_ids)
+    for i, orbit in enumerate(single_subspace.orbits):
+        if i + 1 in orb_ids:
+            assert orbit not in subspace
+        else:
+            assert orbit in subspace
+
+
 def test_msonable(cluster_subspace_ewald):
     # force caching some orb indices for a few random structures
     _ = repr(cluster_subspace_ewald)  # can probably do better testing than this...

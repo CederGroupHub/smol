@@ -1136,11 +1136,13 @@ class ClusterSubspace(MSONable):
             for orbit in orbits[size - 1]:
                 if orbit.base_cluster.diameter > diameter:
                     continue
+
                 for neighbor in neighbors:
                     if is_coord_subset(
                         [neighbor.frac_coords], orbit.base_cluster.sites, atol=SITE_TOL
                     ):
                         continue
+
                     new_sites = np.concatenate(
                         [orbit.base_cluster.sites, [neighbor.frac_coords]]
                     )
@@ -1154,6 +1156,7 @@ class ClusterSubspace(MSONable):
 
                     if new_orbit.base_cluster.diameter > diameter + 1e-8:
                         continue
+
                     if new_orbit not in new_orbits:
                         new_orbits.append(new_orbit)
 
@@ -1217,6 +1220,10 @@ class ClusterSubspace(MSONable):
             return False
         # does not check if basis functions are the same.
         return all(o1 == o2 for o1, o2 in zip(other.orbits, self.orbits))
+
+    def __contains__(self, orbit):
+        """Check if subspace contains orbit."""
+        return orbit in self.orbits
 
     def __len__(self):
         """Get number of correlation functions and ext terms in subspace."""

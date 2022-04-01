@@ -110,13 +110,6 @@ def test_equality(orbit):
             orbit.structure_symops,
         )
         orbit2 = Orbit(
-            frac_coords[:-1],
-            orbit.base_cluster.lattice,
-            [np.arange(len(space) - 1) for space in orbit.site_spaces[:-1]],
-            orbit.site_bases[:-1],
-            orbit.structure_symops,
-        )
-        orbit3 = Orbit(
             other_coords,
             orbit.base_cluster.lattice,
             [np.arange(len(space) - 1) for space in orbit.site_spaces],
@@ -126,7 +119,25 @@ def test_equality(orbit):
 
         assert orbit1 == orbit
         assert orbit2 != orbit
-        assert orbit3 != orbit
+        if len(frac_coords) > 1:
+            orbit3 = Orbit(
+                frac_coords[:-1],
+                orbit.base_cluster.lattice,
+                [np.arange(len(space) - 1) for space in orbit.site_spaces[:-1]],
+                orbit.site_bases[:-1],
+                orbit.structure_symops,
+            )
+            assert orbit3 != orbit
+
+
+def test_contains(orbit):
+    for cluster in orbit.clusters:
+        assert cluster in orbit
+    rng = np.random.default_rng()
+    new_coords = orbit.base_cluster.sites.copy()
+    new_coords += 2 * rng.random(new_coords.shape) - 1
+    cluster = Cluster(new_coords, orbit.base_cluster.lattice)
+    assert cluster not in orbit
 
 
 def test_bit_combos(orbit):

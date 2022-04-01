@@ -485,6 +485,10 @@ class Orbit(MSONable):
         # equivalent structures from generating
         return self.base_cluster in other.clusters
 
+    def __contains__(self, cluster):
+        """Check if a cluster is included in orbit."""
+        return cluster in self.clusters
+
     def __str__(self):
         """Pretty strings for pretty things."""
         return (
