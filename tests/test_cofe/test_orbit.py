@@ -69,7 +69,9 @@ def test_constructor(expansion_structure):
 
 
 def test_cluster(orbit):
-    base_cluster = Cluster(orbit.base_cluster.frac_coords, orbit.base_cluster.lattice)
+    base_cluster = Cluster(
+        orbit.site_spaces, orbit.base_cluster.frac_coords, orbit.base_cluster.lattice
+    )
     assert orbit.base_cluster == base_cluster
     assert base_cluster in orbit.clusters
     for cluster in orbit.clusters[1:]:
@@ -81,6 +83,7 @@ def test_cluster_symops(orbit):
 
     for symop in orbit.cluster_symops:
         cluster = Cluster(
+            orbit.site_spaces,
             symop.operate_multi(orbit.base_cluster.frac_coords),
             orbit.base_cluster.lattice,
         )
@@ -90,7 +93,9 @@ def test_cluster_symops(orbit):
 def test_cluster_permutations(orbit):
     for permutation in orbit.cluster_permutations:
         cluster = Cluster(
-            orbit.base_cluster.frac_coords[permutation], orbit.base_cluster.lattice
+            orbit.site_spaces,
+            orbit.base_cluster.frac_coords[permutation],
+            orbit.base_cluster.lattice,
         )
         assert cluster == orbit.base_cluster
 
@@ -294,7 +299,9 @@ def test_sub_orbit_mappings(orbit):
         )
         mappings = orbit.sub_orbit_mappings(orbit1)
         cluster = Cluster(
-            orbit.base_cluster.frac_coords[mappings][0], orbit.base_cluster.lattice
+            orbit.site_spaces,
+            orbit.base_cluster.frac_coords[mappings][0],
+            orbit.base_cluster.lattice,
         )
         assert cluster in orbit1.clusters
 
@@ -308,7 +315,9 @@ def test_sub_orbit_mappings(orbit):
         )
         mappings = orbit.sub_orbit_mappings(orbit1)
         cluster = Cluster(
-            orbit.base_cluster.frac_coords[mappings][0], orbit.base_cluster.lattice
+            orbit.site_spaces,
+            orbit.base_cluster.frac_coords[mappings][0],
+            orbit.base_cluster.lattice,
         )
         assert cluster in orbit1.clusters
 

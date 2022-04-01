@@ -14,7 +14,7 @@ from pymatgen.core import Composition, Element
 from smol.cofe.space.domain import Vacancy
 
 
-def assert_msonable(obj, test_if_subclass=True):
+def assert_msonable(obj, skip_keys=None, test_if_subclass=True):
     """
     Tests if obj is MSONable and tries to verify whether the contract is
     fulfilled.
@@ -23,11 +23,18 @@ def assert_msonable(obj, test_if_subclass=True):
     """
     if test_if_subclass:
         assert isinstance(obj, MSONable)
-    assert obj.as_dict() == obj.__class__.from_dict(obj.as_dict()).as_dict()
+
+    skip_keys = [] if skip_keys is None else skip_keys
+    d1 = obj.as_dict()
+    d2 = obj.__class__.from_dict(obj.as_dict()).as_dict()
+    for key in d1.keys():
+        if key in skip_keys:
+            continue
+        assert d1[key] == d2[key]
     _ = json.loads(obj.to_json(), cls=MontyDecoder)
 
 
-def gen_random_occupancy(sublattices, inactive_sublattices):
+def gen_random_occupancy(sublattices):
     """Generate a random encoded occupancy according to a list of sublattices.
 
     Args:
@@ -39,14 +46,12 @@ def gen_random_occupancy(sublattices, inactive_sublattices):
     Returns:
         ndarray: encoded occupancy
     """
-    num_sites = sum(
-        len(sl.frac_coords) for sl in chain(sublattices, inactive_sublattices)
-    )
+    num_sites = sum(len(sl.sites) for sl in chain(sublattices))
     rand_occu = np.zeros(num_sites, dtype=int)
     for sublatt in sublattices:
         codes = range(len(sublatt.site_space))
-        rand_occu[sublatt.frac_coords] = np.random.choice(
-            codes, size=len(sublatt.frac_coords), replace=True
+        rand_occu[sublatt.sites] = np.random.choice(
+            codes, size=len(sublatt.sites), replace=True
         )
     return rand_occu
 

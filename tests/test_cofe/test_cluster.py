@@ -5,17 +5,19 @@ import numpy as np
 import pytest
 
 from smol.cofe.space import Cluster
+from smol.cofe.space.domain import get_site_spaces
 from tests.utils import assert_msonable
 
 
 @pytest.fixture(scope="package")
 def cluster(structure):
     num_sites = np.random.randint(2, 6)
-    sites = choices(structure.frac_coords, k=num_sites)
+    sites = choices(structure, k=num_sites)
+    coords = [site.frac_coords.copy() for site in sites]
     # add random integer multiples
-    for site in sites:
-        site += np.random.randint(-3, 3)
-    cluster = Cluster(sites, structure.lattice)
+    for coord in coords:
+        coord += np.random.randint(-3, 3)
+    cluster = Cluster(get_site_spaces(sites), coords, structure.lattice)
     cluster.assign_ids(1)
     return cluster
 
@@ -25,17 +27,18 @@ def test_size(cluster):
 
 
 def test_diameter(cluster):
-    coords = cluster.lattice.get_cartesian_coords(cluster.sites)
+    coords = cluster.lattice.get_cartesian_coords(cluster.frac_coords)
     diameter = max(np.sum((i - j) ** 2) for i, j in combinations(coords, 2)) ** 0.5
     assert diameter == cluster.diameter
 
 
 def test_periodicity(cluster):
-    new_sites = cluster.sites.copy()
-    new_sites += np.random.randint(-5, 5)
-    assert Cluster(new_sites, cluster.lattice) == cluster
-    new_sites[0] += 0.005 + np.random.random()
-    assert Cluster(new_sites, cluster.lattice) != cluster
+    new_coords = cluster.frac_coords.copy()
+    new_coords += np.random.randint(-5, 5)
+    site_spaces = [s.species for s in cluster.sites]
+    assert Cluster(site_spaces, new_coords, cluster.lattice) == cluster
+    new_coords[0] += 0.005 + np.random.random()
+    assert Cluster(site_spaces, new_coords, cluster.lattice) != cluster
 
 
 def test_edge_case(structure):
@@ -43,12 +46,13 @@ def test_edge_case(structure):
     c2 = np.array([0, 0, 1])
     c3 = np.array([0.25, 1.25, -0.75])
     c4 = np.array([0, 1, 0])
-    clust1 = Cluster([c1, c2], structure.lattice)
-    clust2 = Cluster([c3, c4], structure.lattice)
+    sspaces = get_site_spaces(structure)
+    clust1 = Cluster(sspaces, [c1, c2], structure.lattice)
+    clust2 = Cluster(sspaces, [c3, c4], structure.lattice)
     assert clust1 == clust2
 
 
 def test_msonable(cluster):
     _ = repr(cluster)
     _ = str(cluster)
-    assert_msonable(cluster)
+    assert_msonable(cluster, skip_keys=["sites"])

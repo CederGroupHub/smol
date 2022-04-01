@@ -6,15 +6,22 @@ for a cluster basis of functions over configurational space.
 
 __author__ = "Luis Barroso-Luque, William Davidson Richard"
 
+import json
+import os
+from fnmatch import fnmatch
 from functools import cached_property
+from io import StringIO
 
 import numpy as np
+from monty.io import zopen
 from monty.json import MSONable
 from pymatgen.core import Lattice, Site
-from pymatgen.core.structure import SiteCollection
+from pymatgen.core.structure import Composition, SiteCollection
 from pymatgen.util.coord import is_coord_subset
+from ruamel.yaml import YAML
 
 from smol.cofe.space.constants import SITE_TOL
+from smol.cofe.space.domain import Vacancy, get_site_spaces
 
 
 class Cluster(SiteCollection, MSONable):
@@ -69,7 +76,6 @@ class Cluster(SiteCollection, MSONable):
         """Return the fractional coordinates of cluster w.r.t the underlying lattice."""
         return self._frac_coords
 
-    @property
     @cached_property
     def diameter(self):
         """Get maximum distance between 2 sites in cluster."""
@@ -110,21 +116,95 @@ class Cluster(SiteCollection, MSONable):
 
     def to(self, fmt: str = None, filename: str = None):
         """
-        Generates well-known string representations of SiteCollections (e.g.,
-        molecules / structures). Should return a string type or write to a file.
+        Outputs the cluster  to a file or string.
+
+        this is basically a watered down version of pymatgen.Molecule.to
+
+        Args:
+            fmt (str): Format to output to. Defaults to JSON unless filename
+                is provided. If fmt is specifies, it overrides whatever the
+                filename is. Options include "yaml" and "json" only.
+                 Non-case sensitive.
+            filename (str): If provided, output will be written to a file. If
+                fmt is not specified, the format is determined from the
+                filename. Defaults is None, i.e. string output.
+        Returns:
+            (str) if filename is None. None otherwise.
         """
+        fmt = "" if fmt is None else fmt.lower()
+        fname = os.path.basename(filename or "")
+        if fmt == "json" or fnmatch(fname, "*.json*") or fnmatch(fname, "*.mson*"):
+            if filename:
+                with zopen(filename, "wt", encoding="utf8") as f:
+                    return json.dump(self.as_dict(), f)
+            else:
+                return json.dumps(self.as_dict())
+
+        if fmt == "yaml" or fnmatch(fname, "*.yaml*"):
+            yaml = YAML()
+            if filename:
+                with zopen(fname, "wt", encoding="utf8") as f:
+                    return yaml.dump(self.as_dict(), f)
+            else:
+                sio = StringIO()
+                yaml.dump(self.as_dict(), sio)
+                return sio.getvalue()
+
+        raise ValueError(f"Invalid format: `{str(fmt)}`")
 
     @classmethod
     def from_str(cls, input_string: str, fmt):
         """
-        Reads in SiteCollection from a string.
+        Reads acluster from a string.
+
+        Args:
+            input_string (str): String to parse.
+            fmt (str): Format to output to. Defaults to JSON unless filename
+                is provided. If fmt is specifies, it overrides whatever the
+                filename is. Options include "yaml", "json". Non-case sensitive.
+        Returns:
+            Cluster
         """
+
+        if fmt == "json":
+            d = json.loads(input_string)
+            return cls.from_dict(d)
+        if fmt == "yaml":
+            yaml = YAML()
+            d = yaml.load(input_string)
+            return cls.from_dict(d)
+
+        raise ValueError(f"Invalid format: `{str(fmt)}`")
 
     @classmethod
     def from_file(cls, filename: str):
         """
-        Reads in SiteCollection from a filename.
+        Reads a cluster from a file. Supported formats are json and yaml only.
+
+        Args:
+            filename (str): The filename to read from.
+        Returns:
+            Cluster
         """
+        filename = str(filename)
+
+        with zopen(filename) as f:
+            contents = f.read()
+        fname = filename.lower()
+
+        if fnmatch(fname, "*.json*") or fnmatch(fname, "*.mson*"):
+            return cls.from_str(contents, fmt="json")
+        if fnmatch(fname, "*.yaml*"):
+            return cls.from_str(contents, fmt="yaml")
+
+        raise ValueError("Cannot determine file type.")
+
+    @classmethod
+    def from_sites(cls, sites, lattice):
+        """Create a cluster from a list of sites and lattice object."""
+        frac_coords = [lattice.get_fractional_coords(site.coords) for site in sites]
+        site_spaces = get_site_spaces(sites)
+        return cls(site_spaces, frac_coords, lattice)
 
     def __eq__(self, other):
         """Check equivalency of clusters considering symmetry."""
@@ -139,13 +219,32 @@ class Cluster(SiteCollection, MSONable):
 
     def __str__(self):
         """Pretty print a cluster."""
-        points = str(np.round(self.frac_coords, 2))
-        points = points.replace("\n", " ").ljust(len(self.frac_coords) * 21)
-        centroid = str(np.round(self.centroid, 2))
-        return (
-            f"[Base Cluster] Radius: {self.radius:<5.3} "
-            f"Centroid: {centroid:<18} Points: {points}"
-        )
+        outs = [
+            f"Full Formula ({self.composition.formula})",
+            "Reduced Formula: " + self.composition.reduced_formula,
+            f"Diameter: {self.diameter}",
+            f"Centroid: {self.centroid}",
+            f"Charge = {self.charge}",
+            f"Sites ({len(self)})",
+        ]
+        for i, site in enumerate(self):
+            outs.append(
+                " ".join(
+                    [
+                        str(i),
+                        site.species_string,
+                        " ".join([f"{j:0.6f}".rjust(12) for j in site.coords]),
+                        "->",
+                        " ".join(
+                            [
+                                f"{j:0.6f}".rjust(12)
+                                for j in self.lattice.get_fractional_coords(site.coords)
+                            ]
+                        ),
+                    ]
+                )
+            )
+        return "\n".join(outs)
 
     def __repr__(self):
         outs = ["Cluster Summary"]
@@ -159,7 +258,25 @@ class Cluster(SiteCollection, MSONable):
     @classmethod
     def from_dict(cls, d):
         """Create a cluster from serialized dict."""
-        return cls(d["sites"], Lattice.from_dict(d["lattice"]))
+        sites = [Site.from_dict(item) for item in d["sites"]]
+        # Force vacancies back to vacancies
+        for symbols, site in zip(d["vacancy_symbols"], sites):
+            site.species = Composition(
+                {
+                    spec
+                    if spec.symbol not in symbols
+                    else Vacancy(
+                        spec.symbol, spec.oxidation_state, spec.properties
+                    ): val
+                    for spec, val in site.species.items()
+                    if spec.symbol not in symbols
+                }
+            )
+
+        cluster = Cluster.from_sites(sites, Lattice.from_dict(d["lattice"]))
+        #  force set this to get exact object
+        cluster._frac_coords = np.array(d["frac_coords"])
+        return cluster
 
     def as_dict(self):
         """Get json-serialization dict representation.
@@ -171,6 +288,11 @@ class Cluster(SiteCollection, MSONable):
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "lattice": self.lattice.as_dict(),
-            "sites": self.frac_coords.tolist(),
+            "frac_coords": self.frac_coords.tolist(),
+            "sites": [site.as_dict() for site in self.sites],
+            "vacancy_symbols": [
+                [spec.symbol for spec in site.species if isinstance(spec, Vacancy)]
+                for site in self.sites
+            ],
         }
         return cluster_d
