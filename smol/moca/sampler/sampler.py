@@ -7,7 +7,6 @@ by the corresponding ensemble to generate Monte Carlo samples.
 __author__ = "Luis Barroso-Luque"
 
 import os
-import random
 from datetime import datetime
 from warnings import warn
 
@@ -45,11 +44,10 @@ class Sampler:
         self._container = container
         # Set and save the seed for random. This allows reproducible results.
         if seed is None:
-            seed = random.randint(1, np.iinfo(np.uint64).max)
+            seed = np.random.seed()
         #  Save the seed for reproducibility
         self._container.metadata["seed"] = seed
         self._seed = seed
-        random.seed(seed)
 
     @classmethod
     def from_ensemble(
@@ -118,6 +116,8 @@ class Sampler:
         sampling_metadata = {"name": type(ensemble).__name__}
         sampling_metadata.update(ensemble.thermo_boundaries)
         sampling_metadata.update({"kernel": kernel_type, "step": step_type})
+        # Container will be initialized to read all sub-lattices,
+        # active or not.
         container = SampleContainer(
             ensemble.sublattices,
             ensemble.natural_parameters,
@@ -140,7 +140,6 @@ class Sampler:
     @seed.setter
     def seed(self, seed):
         """Set the seed for the PRNG."""
-        random.seed(seed)
         self._seed = seed
 
     @property
@@ -200,7 +199,7 @@ class Sampler:
         # Initialise progress bar
         chains, nsites = self.samples.shape
         desc = f"Sampling {chains} chain(s) from a cell with {nsites} sites..."
-        with progress_bar(progress, total=nsteps, description=desc) as bar:
+        with progress_bar(progress, total=nsteps, description=desc) as p_bar:
             for _ in range(nsteps // thin_by):
                 for _ in range(thin_by):
                     for i, strace in enumerate(self._kernel.iter_steps(occupancies)):
@@ -210,7 +209,7 @@ class Sampler:
                             for name, delta_val in strace.delta_trace.items():
                                 val = getattr(trace, name)
                                 val[i] += delta_val
-                    bar.update()
+                    p_bar.update()
                 # yield copies
                 yield trace
 
@@ -257,12 +256,12 @@ class Sampler:
                     -1
                 ]  # noqa
                 # auxiliary states from kernels should be set here
-            except IndexError:
+            except IndexError as ind_error:
                 raise RuntimeError(
                     "There are no saved samples to obtain the "
                     "initial occupancies. These must be "
                     "provided."
-                )
+                ) from ind_error
         elif self.samples.num_samples > 0:
             warn(
                 "Initial occupancies where provided with a pre-existing "

@@ -18,12 +18,11 @@ def _repr(instance: object, **fields: Dict[str, Any]) -> str:
     for key, field in fields.items():
         attrs.append(f"{key}={field!r}")
 
-    if len(attrs) == 0:
-        return (
-            f"<{instance.__class__.__name__}" f"{hex(id(instance))}({','.join(attrs)})>"
-        )
-    else:
-        return f"<{instance.__class__.__name__} {hex(id(instance))}>"
+    return (
+        (f"<{instance.__class__.__name__} {hex(id(instance))}({','.join(attrs)})>")
+        if len(attrs) == 0
+        else f"<{instance.__class__.__name__} {hex(id(instance))}>"
+    )
 
 
 def class_name_from_str(class_str):
@@ -74,8 +73,8 @@ def derived_class_factory(
     try:
         derived_class = get_subclasses(base_class)[class_name]
         instance = derived_class(*args, **kwargs)
-    except KeyError:
-        raise NotImplementedError(f"{class_name} is not implemented.")
+    except KeyError as key_error:
+        raise NotImplementedError(f"{class_name} is not implemented.") from key_error
     return instance
 
 
@@ -109,6 +108,7 @@ def progress_bar(display, total, description):
             Description to print in progress bar.
     """
     try:
+        # pylint: disable=import-outside-toplevel
         import tqdm
     except ImportError:
         tqdm = None
@@ -119,12 +119,12 @@ def progress_bar(display, total, description):
                 "tqdm libary needs to be installed to show a " " progress bar."
             )
             return _EmptyBar()
-        else:
-            return tqdm.tqdm(total=total, desc=description)
-            # if display is True:
-            #   return tqdm.tqdm(total=total, desc=description)
-            # else:
-            #    return getattr(tqdm, "tqdm_" + display)(total=total)
+
+        return tqdm.tqdm(total=total, desc=description)
+        # if display is True:
+        #   return tqdm.tqdm(total=total, desc=description)
+        # else:
+        #    return getattr(tqdm, "tqdm_" + display)(total=total)
     return _EmptyBar()
 
 
@@ -134,6 +134,8 @@ class _EmptyBar:
     Idea take from emce:
     https://github.com/dfm/emcee/blob/main/src/emcee/pbar.py
     """
+
+    # pylint: disable=missing-function-docstring
 
     def __init__(self):
         pass

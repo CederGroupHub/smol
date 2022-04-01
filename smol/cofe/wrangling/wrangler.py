@@ -185,7 +185,7 @@ class StructureWrangler(MSONable):
         ]
         return self.get_feature_matrix_rank(rows=rows, cols=columns)
 
-    def get_condition_number(self, rows=None, cols=None, p=2):
+    def get_condition_number(self, rows=None, cols=None, norm_p=2):
         """Compute the condition number for the feature matrix or submatrix.
 
         The condition number is a measure of how sensitive the solution to
@@ -197,7 +197,7 @@ class StructureWrangler(MSONable):
                 indices of structures to include in feature matrix.
             cols (list):
                 indices of features (correlations) to include in feature matrix
-            p : (optional)
+            norm_p : (optional)
                 the type of norm to use when computing condition number.
                 see the numpy docs for np.linalg.cond for options.
 
@@ -206,7 +206,7 @@ class StructureWrangler(MSONable):
         """
         rows = rows if rows is not None else range(self.num_structures)
         cols = cols if cols is not None else range(self.num_features)
-        return np.linalg.cond(self.feature_matrix[rows][:, cols], p=p)
+        return np.linalg.cond(self.feature_matrix[rows][:, cols], p=norm_p)
 
     def get_gram_matrix(self, rows=None, cols=None, normalize=True):
         r"""Compute the Gram matrix for the feature matrix or a submatrix.
@@ -230,10 +230,10 @@ class StructureWrangler(MSONable):
         """
         rows = rows if rows is not None else range(self.num_structures)
         cols = cols if cols is not None else range(self.num_features)
-        X = self.feature_matrix[rows][:, cols]
+        matrix = self.feature_matrix[rows][:, cols]
         if normalize:
-            X /= np.sqrt(X.T.dot(X).diagonal())
-        return X.T.dot(X)
+            matrix /= np.sqrt(matrix.T.dot(matrix).diagonal())
+        return matrix.T.dot(matrix)
 
     def get_duplicate_corr_indices(
         self, cutoffs=None, decimals=12, rm_external_terms=True
@@ -325,9 +325,9 @@ class StructureWrangler(MSONable):
                 # keep only disjoint sets
                 matches = [s for s in matches if s not in all_overlaps]
                 # add union of overlapping sets
-                for s1, s2 in overlaps:
-                    if s1 | s2 not in matches:
-                        matches.append(s1 | s2)
+                for set1, set2 in overlaps:
+                    if set1 | set2 not in matches:
+                        matches.append(set1 | set2)
                 overlaps = list(filter(lambda s: s[0] & s[1], combinations(matches, 2)))
             matching_inds += [list(sorted(m)) for m in matches]
         return matching_inds
@@ -375,13 +375,15 @@ class StructureWrangler(MSONable):
         rows = rows if rows is not None else range(self.num_structures)
         cols = cols if cols is not None else range(self.num_features)
 
-        A = self.feature_matrix[rows][:, cols]
+        matrix = self.feature_matrix[rows][:, cols]
         num_structs = len(rows)
         num_corrs = len(cols)
         sim_matrix = np.identity(num_corrs)
         for i in range(num_corrs):
             for j in range(i + 1, num_corrs):
-                num_identical = np.sum(np.isclose(A[:, i], A[:, j], rtol=rtol))
+                num_identical = np.sum(
+                    np.isclose(matrix[:, i], matrix[:, j], rtol=rtol)
+                )
                 sim_matrix[i, j] = num_identical / num_structs
                 sim_matrix[j, i] = num_identical / num_structs
 
@@ -420,7 +422,8 @@ class StructureWrangler(MSONable):
         """
         if not isinstance(indices, (Sequence, np.ndarray)):
             raise TypeError("indices must be Sequence like or an ndarray.")
-        elif any(i not in range(self.num_structures) for i in indices):
+
+        if any(i not in range(self.num_structures) for i in indices):
             raise ValueError("One or more indices are out of range.")
         self._ind_sets[key] = list(indices)
 
@@ -491,7 +494,7 @@ class StructureWrangler(MSONable):
                 fails. This can be helpful to keep a list of structures that
                 fail for further inspection.
         """
-        item = self.process_structure(
+        item = self.process_data(
             structure,
             properties,
             normalized,
@@ -533,13 +536,20 @@ class StructureWrangler(MSONable):
                     " they were obtained with the process_structure method."
                 )
             if len(self._items) > 0:
-                if not all(
-                    prop in self._items[0]["properties"].keys()
-                    for prop in item["properties"].keys()
-                ):
+                if set(item["properties"].keys()) != set(self.available_properties):
                     raise ValueError(
-                        f"Data item {i} is missing one of the following "
-                        f"properties: {self.available_properties}"
+                        f"The properties in the data item being added do not match all "
+                        f"the properties that have already been added: "
+                        f"{self.available_properties}.\n Additional items must include "
+                        f"the same properties included."
+                    )
+
+                if set(item["weights"].keys()) != set(self.available_weights):
+                    raise ValueError(
+                        f"The properties in the data item being added do not match all "
+                        f"the weights that have already been added: "
+                        f"{self.available_weights}.\n Additional items must include the"
+                        f" same weights included."
                     )
             self._items.append(item)
             self._corr_duplicate_warning(self.num_structures - 1)
@@ -610,10 +620,10 @@ class StructureWrangler(MSONable):
         try:
             index = self.structures.index(structure)
             del self._items[index]
-        except ValueError:
+        except ValueError as value_error:
             raise ValueError(
                 f"Structure {structure} was not found. Nothing has been " "removed."
-            )
+            ) from value_error
 
     def change_subspace(self, cluster_subspace):
         """Change the underlying cluster subspace.
@@ -648,7 +658,7 @@ class StructureWrangler(MSONable):
         """Remove all data from Wrangler."""
         self._items = []
 
-    def process_structure(
+    def process_data(
         self,
         structure,
         properties,
@@ -659,7 +669,7 @@ class StructureWrangler(MSONable):
         verbose=False,
         raise_failed=False,
     ):
-        """Process a structure to be added to wrangler.
+        """Process a data item to be added to wrangler.
 
         Checks if the structure for this data item can be matched to the
         cluster subspace prim structure to obtain its supercell matrix,
@@ -703,6 +713,24 @@ class StructureWrangler(MSONable):
         Returns:
             dict: data item dict for structure
         """
+        if len(self._items) > 0:
+            if set(properties.keys()) != set(self.available_properties):
+                raise ValueError(
+                    f"The properties in the data item being added do not match all the"
+                    f"properties that have already been added: "
+                    f"{self.available_properties}.\n Additional items must include the "
+                    f"same properties included."
+                )
+
+            if weights is not None and set(weights.keys()) != set(
+                self.available_weights
+            ):
+                raise ValueError(
+                    f"The properties in the data item being added do not match all the"
+                    f"weights that have already been added: {self.available_weights}."
+                    f"\n Additional items must include the same weights included."
+                )
+
         try:
             if supercell_matrix is None:
                 supercell_matrix = self._subspace.scmatrix_from_structure(structure)
@@ -726,17 +754,18 @@ class StructureWrangler(MSONable):
                 properties = {key: val * size for key, val in properties.items()}
             weights = {} if weights is None else weights
 
-        except StructureMatchError as e:
+        except StructureMatchError as s_match_error:
             if verbose:
                 warnings.warn(
                     f"Unable to match {structure.composition} with "
                     f"properties {properties} to supercell_structure. "
-                    f"Throwing out.\n Error Message: {str(e)}",
+                    f"Throwing out.\n Error Message: {str(s_match_error)}",
                     UserWarning,
                 )
             if raise_failed:
-                raise e
-            return
+                raise s_match_error
+            return None
+
         return {
             "structure": structure,
             "ref_structure": refined_struct,
@@ -769,7 +798,7 @@ class StructureWrangler(MSONable):
         """Create Structure Wrangler from an MSONable dict."""
         module = import_module(d["_subspace"]["@module"])
         subspace_cls = getattr(module, d["_subspace"]["@class"])
-        sw = cls(cluster_subspace=subspace_cls.from_dict(d["_subspace"]))
+        wrangler = cls(cluster_subspace=subspace_cls.from_dict(d["_subspace"]))
         items = []
         for item in d["_items"]:
             items.append(
@@ -784,10 +813,10 @@ class StructureWrangler(MSONable):
                     "weights": item["weights"],
                 }
             )
-        sw._items = items
-        sw._metadata = d["metadata"]
-        sw._ind_sets = d.get("_ind_sets") or {}
-        return sw
+        wrangler._items = items
+        wrangler._metadata = d["metadata"]
+        wrangler._ind_sets = d.get("_ind_sets") or {}
+        return wrangler
 
     def as_dict(self):
         """Get Json-serialization dict representation.
@@ -809,7 +838,7 @@ class StructureWrangler(MSONable):
                     "weights": item["weights"],
                 }
             )
-        d = {
+        wrangler_dict = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "_subspace": self._subspace.as_dict(),
@@ -817,4 +846,4 @@ class StructureWrangler(MSONable):
             "_ind_sets": jsanitize(self._ind_sets),  # jic for np.int's
             "metadata": self.metadata,
         }
-        return d
+        return wrangler_dict

@@ -71,6 +71,9 @@ Use this section to keep track of changes in the works.
   ([lbluque](https://github.com/lbluque))
 
 ### Fixed
+* Allow Ewald only MC.
+  [\#141](https://github.com/CederGroupHub/smol/pull/169)
+  ([kamronald](https://github.com/kamronald))
 * Fix [141](https://github.com/CederGroupHub/smol/issues/140) corrected
   implementation of correlation function hierarchy.
   [\#141](https://github.com/CederGroupHub/smol/pull/141)
