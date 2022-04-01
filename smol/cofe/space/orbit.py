@@ -493,18 +493,14 @@ class Orbit(MSONable):
         return len(self.bit_combos)
 
     def __eq__(self, other):
-        """Check equality of orbits."""
+        """Check equality of orbits (only compares crystallographic equivalence)."""
         # when performing orbit in list, this ordering stops the
         # equivalent structures from generating
-        if self.base_cluster not in other.clusters:
-            return False
-        if len(self.correlation_tensors) != len(other.correlation_tensors):
-            return False
+        return self.base_cluster in other.clusters
 
-        return all(
-            np.allclose(ct1, ct2)
-            for ct1, ct2 in zip(self.correlation_tensors, other.correlation_tensors)
-        )
+    def __contains__(self, cluster):
+        """Check if a cluster is included in orbit."""
+        return cluster in self.clusters
 
     def __str__(self):
         """Pretty strings for pretty things."""

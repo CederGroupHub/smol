@@ -13,12 +13,11 @@ import warnings
 from collections import defaultdict
 
 import numpy as np
+from monty.dev import requires
 from monty.json import MSONable, jsanitize
 
 from smol.moca.sampler.kernel import Trace
 from smol.moca.sublattice import Sublattice
-
-h5err = ImportError("'h5py' not found. Please install it.")
 
 try:
     import h5py
@@ -26,7 +25,6 @@ except ImportError:
     h5py = None
 
 
-# TODO include inactive_sublattices here too
 class SampleContainer(MSONable):
     """A SampleContainer class stores Monte Carlo simulation samples.
 
@@ -294,13 +292,14 @@ class SampleContainer(MSONable):
                     occupancy[sublattice.sites], return_counts=True
                 )
                 # check for zero counts
-                if len(codes) != len(sublattice.sites):
-                    n_sites = len(sublattice.site_space)
-                    missed = list(set(range(n_sites)) - set(codes))
+                if len(codes) != len(sublattice.site_space):
+                    missed = list(set(sublattice.encoding) - set(codes))
                     codes = np.append(codes, missed)
                     count = np.append(count, len(missed) * [0])
 
-                counts[i][j] = count[codes.argsort()]  # order them accordingly
+                original_codes = sublattice.encoding.tolist()
+                order = [codes.tolist().index(code) for code in original_codes]
+                counts[i][j] = count[order]  # order them accordingly
         if flat:
             counts = self._flatten(counts)
         return counts
@@ -353,6 +352,7 @@ class SampleContainer(MSONable):
         self._total_steps = 0
         self._nsamples = 0
 
+    @requires(h5py is not None, "'h5py' not found. Please install it.")
     def get_backend(self, file_path, alloc_nsamples=0, swmr_mode=False):
         """Get a backend file object.
 
@@ -372,9 +372,6 @@ class SampleContainer(MSONable):
         Returns:
             h5.File object
         """
-        if h5py is None:
-            raise h5err
-
         if os.path.isfile(file_path):
             backend = self._check_backend(file_path)
             trace_grp = backend["trace"]
@@ -501,6 +498,7 @@ class SampleContainer(MSONable):
         backend.close()
 
     @classmethod
+    @requires(h5py is not None, "'h5py' not found. Please install it.")
     def from_hdf5(cls, file_path, swmr_mode=True):
         """Instantiate a SampleContainer from an hdf5 file.
 
@@ -514,9 +512,6 @@ class SampleContainer(MSONable):
         Returns:
             SampleContainer
         """
-        if h5py is None:
-            raise h5err
-
         with h5py.File(file_path, "r", swmr=swmr_mode) as f:
             # Check if written states matches the size of datasets
             nsamples = f["trace"].attrs["nsamples"]

@@ -141,7 +141,8 @@ def test_weights_above_hull(structure_wrangler):
     # Weak tests on the hull generation:
     # 1, Hull must always be no higher than min comp energies
     # 2, There must be at least one comp with min energy in hull.
-    assert np.all(weights_c >= weights)
+    # Add a small tolerance to avoid occasional fails.
+    assert np.all(weights_c + 1e-7 >= weights)
     is_comp_min = np.isclose(weights_c, 1, atol=1e-8)
     on_hull = np.isclose(weights, 1, atol=1e-8)
     assert np.sum(on_hull & is_comp_min) > 0
@@ -166,9 +167,10 @@ def test_filter_by_ewald(structure_wrangler):
 
 def test_filter_duplicate_corr_vectors(structure_wrangler):
     # add some repeat structures with infinite energy
+    rng = np.random.default_rng()
     dup_items = []
     for i in range(5):
-        ind = np.random.randint(structure_wrangler.num_structures)
+        ind = rng.integers(structure_wrangler.num_structures)
         dup_item = deepcopy(structure_wrangler.data_items[ind])
         dup_item["properties"]["energy"] = np.inf
         dup_items.append(dup_item)

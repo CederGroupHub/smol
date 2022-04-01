@@ -213,10 +213,6 @@ class Cluster(SiteCollection, MSONable):
         othersites = other.frac_coords + np.round(self.centroid - other.centroid)
         return is_coord_subset(self.frac_coords, othersites, atol=SITE_TOL)
 
-    def __neq__(self, other):
-        """Non equivalency."""
-        return not self.__eq__(other)
-
     def __str__(self):
         """Pretty print a cluster."""
         outs = [
