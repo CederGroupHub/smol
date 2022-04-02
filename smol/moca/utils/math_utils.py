@@ -37,22 +37,22 @@ class NaturalInfeasibleError(Exception):
         super(NaturalInfeasibleError, self).__init__(message)
 
 
-def GCD(a, b):
+def gcd(a, b):
     """Euclidean Algorithm, giving positive GCD's."""
     return math.gcd(a, b)
 
 
-def GCD_list(L):
+def gcd_list(l):
     """Find GCD of a list of numbers."""
-    if len(L) < 1:
+    if len(l) < 1:
         return None
-    elif len(L) == 1:
-        return L[0]
+    elif len(l) == 1:
+        return l[0]
     else:
-        return reduce(lambda a, b: GCD(a, b), L)
+        return reduce(lambda a, b: gcd(a, b), l)
 
 
-def LCM(a, b):
+def lcm(a, b):
     """Find LCM of two numbers."""
     if a == 0 and b == 0:
         return 0
@@ -61,17 +61,17 @@ def LCM(a, b):
     elif a != 0 and b == 0:
         return a
     else:
-        return a * b // GCD(a, b)
+        return a * b // gcd(a, b)
 
 
-def LCM_list(L):
+def lcm_list(l):
     """Find LCM of a list of numbers."""
-    if len(L) < 1:
+    if len(l) < 1:
         return None
-    elif len(L) == 1:
-        return L[0]
+    elif len(l) == 1:
+        return l[0]
     else:
-        return reduce(LCM, L)
+        return reduce(lcm, l)
 
 
 # Combinatoric and intergerization
@@ -145,7 +145,7 @@ def integerize_vector(v, max_denominator=1000, dtol=NUM_TOL):
             dtol=dtol
         )
         denos.append(deno)
-    lcm = LCM_list(denos)
+    lcm = lcm_list(denos)
     return np.array(np.round(v * lcm), dtype=np.int64), lcm
 
 
@@ -541,6 +541,7 @@ def flip_size(u):
         Metric of direction u:
             int
     """
+    u = np.array(u, dtype=int)
     if np.sum(u) != 0:
         raise ValueError(f"Flip vector {u} does not"
                          "conserve number of sites!")
@@ -592,6 +593,28 @@ def connectivity(u, ns):
     # This is trivial conclusion from sets theory,
     # so do not double-count.
     return count_row_matches(ns, ns + u)
+
+
+def is_connected(n, vs, ns):
+    """Check whether a grid point is connected by flip vectors.
+
+    Args:
+        n(1D ArrayLike[int]):
+            A grid point.
+        vs(2D ArrayLike[int]):
+            Table of flip vectors.
+        ns(2D ArrayLike[int]):
+            All grid points.
+    Returns:
+        bool.
+    """
+    n = np.array(n, dtype=int)
+    vs = np.array(vs, dtype=int)
+    ns = np.array(ns, dtype=int)
+    n_images = np.concatenate((vs, -vs), axis=0) + n
+    return np.any(np.all(np.isclose(n_images[:, None, :],
+                                    ns[None, :, :]),
+                         axis=-1))
 
 
 def get_optimal_basis(n0, vs, xs, max_loops=100):
@@ -665,8 +688,8 @@ def get_optimal_basis(n0, vs, xs, max_loops=100):
 
     for _ in range(max_loops):
         V = vs_opt.copy()
-        for i1, i2 in combinations(list(range(n))):
-            np.concatenate(V, [vs[i1] + vs[i2], vs[i1] - vs[i2]],
+        for i1, i2 in combinations(list(range(n)), 2):
+            np.concatenate(V, [V[i1] + V[i2], V[i1] - V[i2]],
                            axis=0)
 
         V = np.array(sorted(V, key=key_func), dtype=int)
@@ -680,7 +703,7 @@ def get_optimal_basis(n0, vs, xs, max_loops=100):
                 # Full rank.
                 vs_new = vs_current.copy()
 
-        if table_match(vs_new, vs):
+        if table_match(vs_new, vs_opt):
             break
         vs_opt = vs_new.copy()
 
@@ -719,17 +742,6 @@ def get_ergodic_vectors(n0, vs, xs, k=3):
         Basis + Flip directions added to guarantee ergodicity:
             2D np.ndarray[int]
     """
-
-    def is_connected(n, vs, ns):
-        """Check whether a grid point is connected given table."""
-        n = np.array(n, dtype=int)
-        vs = np.array(vs, dtype=int)
-        ns = np.array(ns, dtype=int)
-        n_images = np.concatenate((vs, -vs), axis=0) + n
-        return np.any(np.all(np.isclose(n_images[:, None, :],
-                                        ns[None, :, :]),
-                             axis=-1))
-
     def test_connected(vs, ns_disconnected, ns):
         return np.array([is_connected(n, vs, ns)
                          for n in ns_disconnected], dtype=bool)
@@ -753,8 +765,8 @@ def get_ergodic_vectors(n0, vs, xs, k=3):
         points = np.array(np.round(points), dtype=int)
         for point in points:
             u = point - n
-            if (tuple(u.tolist()) in candidate_vectors or
-                    tuple(-u.tolist()) in candidate_vectors):
+            if (tuple(u.tolist()) in candidate_vectors
+                    or tuple(-u.tolist()) in candidate_vectors):
                 continue
             candidate_vectors.append(tuple(u.tolist()))
 
@@ -764,7 +776,7 @@ def get_ergodic_vectors(n0, vs, xs, k=3):
     selected_vectors = vs.copy()
     ns_rem = ns_disconnected.copy()
     for u in candidate_vectors:
-        vs_current = np.concatenate([u], selected_vectors, axis=0)
+        vs_current = np.concatenate(selected_vectors, [u], axis=0)
         connected = test_connected(vs_current, ns_rem, ns)
         selected_vectors = vs_current.copy()
         ns_rem = ns_rem[~ connected]
@@ -772,6 +784,42 @@ def get_ergodic_vectors(n0, vs, xs, k=3):
             break
 
     return selected_vectors
+
+
+def flip_weights_mask(flip_vectors, n, max_n=None):
+    """Mark feasibility of flip vectors.
+
+    If a flip direction leads to any n+v < 0, then it is marked
+    infeasible. Generates a boolean mask, every two components
+    marks whether a flip direction and its inverse is feasible
+    given n at the current occupancy.
+    Will be used by Tableflipper.
+
+    Args:
+        flip_vectors(1D ArrayLike[int]):
+            Flip directions in the table (inverses not included).
+        n(1D ArrayLike[int]):
+            Amount of each specie on sublattices. Same as returned
+            by occu_to_species_n.
+        max_n(1D ArrayLike[int]): optional
+            Maximum number of each species allowed. This is needed
+            When the number of active sites != number of sites in
+            some sub-lattice.
+
+    Return:
+        Direction and its inverse are feasible or not:
+           1D np.ndarray[bool]
+    """
+    flip_vectors = np.array(flip_vectors, dtype=int)
+    directions = np.concatenate([(u, -u) for u in flip_vectors], axis=0)
+    if max_n is None:
+        max_n = np.ones(len(n)) * np.inf
+    elif isinstance(max_n, (int, np.int32, np.int64)):
+        max_n = np.ones(len(n), dtype=int) * max_n
+    else:
+        max_n = np.array(max_n, dtype=int)
+    return ~(np.any(directions + n < 0, axis=-1)
+             | np.any(directions + n > max_n, axis=-1))
 
 
 # Probability selection tools
@@ -787,4 +835,4 @@ def choose_section_from_partition(p):
            int
     """
     p = np.array(p) / np.sum(p)
-    return int(np.random.choice(len(p), p=p))
+    return int(round(np.random.choice(len(p), p=p)))

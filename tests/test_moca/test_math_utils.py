@@ -5,16 +5,18 @@ from smol.moca.utils.math_utils import *
 import numpy as np
 import numpy.testing as npt
 
+from collections import Counter
+
 
 def test_gcd():
     for _ in range(10):
         a = np.random.randint(low=-10000, high=10000, size=100)
-        gcd = GCD_list(a)
+        gcd = gcd_list(a)
         a_p = a // gcd
         npt.assert_array_equal(np.round(a % gcd), 0)
-        assert GCD_list(a_p) == 1
+        assert gcd_list(a_p) == 1
         a_0 = np.append(a, 0)
-        gcd_0 = GCD_list(a_0)
+        gcd_0 = gcd_list(a_0)
         assert gcd_0 == gcd
 
 
@@ -310,3 +312,113 @@ def test_connectivity():
 
     assert connectivity(np.zeros(5, dtype=int), ns) == len(ns)
     assert connectivity([4, -6, 2, -6, 6], ns) == 1
+
+
+def test_optimal_basis():
+    for _ in range(10):
+        a = np.random.randint(low=-8, high=8,
+                              size=(3, 5))
+        nn = np.random.randint(low=0, high=8,
+                               size=5)
+        b = a @ nn
+        n0, vs = solve_diophantines(a, b)
+        xs = get_natural_solutions(n0, vs)
+        ns = xs @ vs + n0
+        vs_opt = get_optimal_basis(n0, vs, xs)
+        assert len(vs_opt) == len(vs)
+        assert np.linalg.matrix_rank(vs_opt) == len(vs)
+        npt.assert_array_equal(a @ (vs_opt + n0).T - b[:, None], 0)
+        # Test if really been optimized.
+        sizes_ori = sorted([flip_size(v) for v in vs])
+        sizes_opt = sorted([flip_size(v) for v in vs_opt])
+        assert np.all(sizes_ori >= sizes_opt)
+        conn_ori = sorted([connectivity(v, ns) for v in vs])
+        conn_opt = sorted([connectivity(v, ns) for v in vs_opt])
+        assert np.all(conn_ori <= conn_opt)
+
+    # Do a pre-computed test.
+    a = np.array([[1, 3, 4, -3, -2],
+                  [1, 1, 1, 0, 0],
+                  [0, 0, 0, 1, 1]])
+    b = np.array([0, 6, 6])
+    n0, vs = solve_diophantines(a, b)
+    xs = get_natural_solutions(n0, vs)
+    vs_opt = get_optimal_basis(n0, vs, xs)
+    vs_std = np.array([[0, -1, 1, 1, -1],
+                       [-1, 1, 0, 2, -2]])
+    table_opt = np.concatenate([vs_opt, -vs_opt], axis=0)
+    table_opt = np.array(sorted(table_opt.tolist()), dtype=int)
+    table_std = np.concatenate([vs_std, -vs_std], axis=0)
+    table_std = np.array(sorted(table_std.tolist()), dtype=int)
+
+    npt.assert_array_equal(table_opt, table_std)
+
+
+def test_ergodic_vectors():
+    for _ in range(10):
+        a = np.random.randint(low=-8, high=8,
+                              size=(3, 5))
+        nn = np.random.randint(low=0, high=8,
+                               size=5)
+        b = a @ nn
+        n0, vs = solve_diophantines(a, b)
+        xs = get_natural_solutions(n0, vs)
+        ns = xs @ vs + n0
+        vs_tab = get_ergodic_vectors(n0, vs, xs)
+        assert np.all(is_connected(n, vs_tab, ns) for n in ns)
+
+    # Pre-computed test
+    a = np.array([[1, 3, 4, -2, -1],
+                  [1, 1, 1, 0, 0],
+                  [0, 0, 0, 1, 1]])
+    b = np.array([0, 6, 6])
+    n0, vs = solve_diophantines(a, b)
+    xs = get_natural_solutions(n0, vs)
+    vs_opt = get_optimal_basis(n0, vs, xs)
+    d = len(vs)
+    xs_opt = (np.linalg.inv(vs_opt[:, :d]) @ vs[:, :d] @ xs.T).T
+    vs_tab = get_ergodic_vectors(n0, vs_opt, xs_opt)
+    vs_std = np.array([[0, 1, -1, 1, -1],
+                       [-1, 1, 0, 2, -2]])
+    table_tab = np.concatenate([vs_tab, -vs_tab], axis=0)
+    table_tab = np.array(sorted(table_tab.tolist()), dtype=int)
+    table_std = np.concatenate([vs_std, -vs_std], axis=0)
+    table_std = np.array(sorted(table_std.tolist()), dtype=int)
+
+    npt.assert_array_equal(table_tab, table_std)
+
+
+def test_mask():
+    for _ in range(10):
+        vs = np.random.randint(low=-100, high=100, size=(30, 50))
+        table = np.concatenate([(u, -u) for u in vs], axis=0)
+        n = np.random.randint(low=0, high=100, size=50)
+        max_n = np.random.randint(low=100, high=200, size=50)
+        mask = flip_weights_mask(vs, n)
+        assert len(mask) == len(table)
+        assert np.all(np.any(table[~mask, :] + n < 0, axis=-1))
+        assert np.all(np.all(table[mask, :] + n >= 0, axis=-1))
+
+        mask = flip_weights_mask(vs, n, max_n=max_n)
+        assert np.all(np.any(table[~mask, :] + n < 0, axis=-1)
+                      | np.any(table[~mask, :] + n > max_n, axis=-1))
+        assert np.all(np.all(table[mask, :] + n >= 0, axis=-1)
+                      & np.any(table[~mask, :] + n <= max_n, axis=-1))
+
+        mask = flip_weights_mask(vs, n, max_n=280)
+        assert np.all(np.any(table[~mask, :] + n < 0, axis=-1)
+                      | np.any(table[~mask, :] + n > max_n, axis=-1))
+        assert np.all(np.all(table[mask, :] + n >= 0, axis=-1)
+                      & np.any(table[~mask, :] + n <= max_n, axis=-1))
+
+
+def test_choose_sections():
+    counts = Counter()
+    p = [0.1, 0, 0.3, 0.2, 0.1, 0.3]
+    for _ in range(10000):
+        counts[choose_section_from_partition(p)] += 1
+
+    for i in range(len(p)):
+        assert abs(counts[i] / 10000 - p[i]) <= 0.05
+        if i == 1:
+            assert counts[i] <= 1

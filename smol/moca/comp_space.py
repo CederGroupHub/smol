@@ -228,7 +228,7 @@ class CompSpace(MSONable):
         self.dim_ids_nondisc = dim_ids_nondisc
 
         if sl_sizes is None:
-            self.sl_sizes = [1 for i in range(len(self.bits))]
+            self.sl_sizes = [1 for _ in range(len(self.bits))]
         elif len(sl_sizes) == len(bits):
             self.sl_sizes = sl_sizes
         else:
@@ -387,7 +387,7 @@ class CompSpace(MSONable):
                 self._flip_table = get_ergodic_vectors(self.n0
                                                        * self.min_sc_size,
                                                        self.basis,
-                                                       self.min_comp_grid)
+                                                       self.min_sc_grid)
         return self._flip_table
 
     @property
@@ -417,7 +417,7 @@ class CompSpace(MSONable):
         return self._comp_grids[sc_size]
 
     @property
-    def min_comp_grid(self):
+    def min_sc_grid(self):
         """Get the natural number solutions on grid at min_sc_size.
 
         Returns:
@@ -571,17 +571,23 @@ class CompSpace(MSONable):
         comp_grids = {k: v.tolist() for k, v
                       in self._comp_grids.items()}
 
+        def to_list(arr):
+            if arr is not None:
+                return np.array(arr).tolist()
+            else:
+                return None
+
         return {'bits': bits,
                 'sl_sizes': self.sl_sizes,
                 'other_constraints': other_constraints,
                 'charge_balanced': self.charge_balanced,
                 'optimize_basis': self.optimize_basis,
                 'table_ergodic': self.table_ergodic,
-                'min_sc_size': self.min_sc_size,
-                'prim_vertices': self.prim_vertices.tolist(),
-                'n0': self.n0.tolist(),
-                'vs': self.basis.tolist(),
-                'flip_table': self.flip_table.tolist(),
+                'min_sc_size': self._min_sc_size,
+                'prim_vertices': to_list(self._prim_vertices),
+                'n0': to_list(self._n0),
+                'vs': to_list(self._vs),
+                'flip_table': to_list(self._flip_table),
                 'comp_grids': comp_grids,
                 '@module': self.__class__.__module__,
                 '@class': self.__class__.__name__

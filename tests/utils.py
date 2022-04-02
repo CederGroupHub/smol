@@ -8,11 +8,19 @@ import random
 from itertools import chain
 
 import numpy as np
+import numpy.testing as npt
 from monty.json import MontyDecoder, MSONable
 from pymatgen.core import Composition, Element
 
 from smol.cofe.space.domain import Vacancy
 
+
+def assert_array_set_equal(a1, a2):
+    assert len(a1.shape) == 2
+    assert a1.shape == a2.shape
+    a1_set = np.array(sorted([tuple(r) for r in a1]))
+    a2_set = np.array(sorted([tuple(r) for r in a2]))
+    npt.assert_array_equal(a1, a2)
 
 def assert_msonable(obj, test_if_subclass=True):
     """

@@ -1,164 +1,144 @@
-import unittest
+import pytest
 import numpy as np
+import numpy.testing as npt
+import itertools
 
 from smol.moca.comp_space import *
-from pymatgen.core import Species ,Element, Composition
-
 from smol.cofe.space.domain import Vacancy
+from pymatgen.core import Species
 
-vertices_contain = lambda a,b: np.all([np.any(np.all(np.isclose(a_row,b),axis=1)) for a_row in a])
-vertices_equal = lambda a,b: vertices_contain(a,b) and vertices_contain(b,a)
-set_dicts_equal = lambda a,b: all([in_table(f, b) for f in a])
-in_table = lambda f, table: any([flip_equal(f, t) for t in table])
-flip_equal = lambda f, t: (f == t) or (f['from']==t['to'] and f['to']==t['from'])
+from smol.moca.utils.math_utils import gcd_list, NUM_TOL
 
-#Charged test case, without vacancy
-class TestCompSpace1(unittest.TestCase):
-    def setUp(self) -> None:
-        li = Species.from_string('Li+')
-        mn = Species.from_string('Mn3+')
-        ti = Species.from_string('Ti4+')
-        o = Species.from_string('O2-')
-        p = Species.from_string('P3-')
+from tests.utils import assert_msonable
 
-        
-        self.bits = [[li,mn,ti],[p,o]]
-        self.n_bits = [[0,1,2],[0,1]]
-        self.unit_n_excitations = [(0,2,0),(1,2,0),(0,1,1)]
-        self.chg_of_excitations = [-3,-1,-1]
-        self.excitation_ids_by_sublat = [[0,1],[2]]
-        
-        op1 = {'from':{0:{0:1, 2:1}, 1:{1:1}}, \
-               'to':{0:{1:2}, 1:{0:1}}}
-        op2 = {'from':{0:{1:1}, 1:{1:1}}, \
-               'to':{0:{2:1}, 1:{0:1}}}
-        self.flip_table = [op1,op2]
-        
-        visualized_operation_1 = \
-        '1 Li+(0) + 1 Ti4+(0) + 1 O2-(1) -> 2 Mn3+(0) + 1 P3-(1)'
-        visualized_operation_2 = \
-        '1 Mn3+(0) + 1 O2-(1) -> 1 Ti4+(0) + 1 P3-(1)'
-        self.visualized_operations = visualized_operation_1 + \
-                                    '\n'+ \
-                                    visualized_operation_2
 
-        self.A = np.array([[1,1],[-1,1],[0,1],[-1,-2],[1,-1]])
-        self.b = np.array([1/3, 1, 2/3, 0, 0])
-        self.R = np.array([[0,1,-1],[-1,2,1],[-3,-1,-1]])
-        self.t = np.array([2/3,0,0])
+@pytest.fixture(scope="module")
+def comp_space(ensemble):
+    bits = [s.species for s in ensemble.sublattices]
+    sl_sizes = np.array([len(s.sites) for s in ensemble.sublattices])
+    gcd = gcd_list(sl_sizes)
+    sl_sizes = sl_sizes // gcd
+    return CompSpace(bits, sl_sizes)
 
-        self.vertices = np.array([[1/3,0,1],[0,1,1],\
-                                  [1/2,1/2,0],[2/3,0,0]])
 
-        self.min_grid = np.array([[2,0,6],[1,3,6],[0,6,6],\
-                                  [2,1,5],[1,4,5],\
-                                  [2,2,4],[1,5,4],\
-                                  [3,0,3],[2,3,3],\
-                                  [3,1,2],[2,4,2],\
-                                  [3,2,1],\
-                                  [4,0,0],[3,3,0]])
-        self.int_grids_5 = np.array([[3,1,0],[3,0,1],[2,3,1],[2,2,2],\
-                                    [2,1,3],[1,4,3],[2,0,4],[1,3,4],\
-                                    [1,2,5],[0,5,5]])
+@pytest.fixture(scope="module")
+def comp_space_lmtpo():
+    li = Species.from_string('Li+')
+    mn = Species.from_string('Mn3+')
+    ti = Species.from_string('Ti4+')
+    o = Species.from_string('O2-')
+    p = Species.from_string('P3-')
 
-        self.comp_space = CompSpace(self.bits)
+    bits = [[li, mn, ti],[p, o]]
+    sl_sizes = [1, 1]
+    return CompSpace(bits, sl_sizes,
+                     charge_balanced=True,
+                     optimize_basis=True,
+                     table_ergodic=True)
 
-    def test_swps(self):
-        self.assertEqual(self.comp_space.unit_n_excitations,self.unit_n_excitations)
-        self.assertEqual(self.comp_space.chg_of_excitations,self.chg_of_excitations)
-        self.assertEqual(self.comp_space.excitation_ids_by_sublat,self.excitation_ids_by_sublat)
 
-    def test_flip_table(self):
-        print("self.flip_table:",self.flip_table)
-        print("self.comp_space.min_flip_table:",self.comp_space.min_flip_table)
-        self.assertTrue(set_dicts_equal(self.comp_space.min_flip_table, self.flip_table))
-        check_basis = flip_table_to_flip_vecs(self.comp_space.n_bits,
-                                              self.comp_space.min_flip_table)
-        self.assertTrue(np.allclose(self.comp_space.unit_basis, check_basis))
+# A test example with extra constraints.
+@pytest.fixture(scope="module")
+def comp_space_lmntof():
+    li = Species.from_string('Li+')
+    ni = Species.from_string('Ni2+')
+    mn = Species.from_string('Mn3+')
+    ti = Species.from_string('Ti4+')
+    f = Species.from_string('F-')
+    o = Species.from_string('O2-')
 
-    def test_space_specs(self):
-        self.assertEqual(self.comp_space.background_charge,2)
-        self.assertEqual(self.comp_space.unconstr_dim,3)
-        self.assertEqual(self.comp_space.is_charge_constred,True)
-        self.assertEqual(self.comp_space.dim,2)
-        self.assertEqual(self.comp_space.dim_nondisc,5)
+    bits = [[li, ni, mn, ti], [o, f]]
+    sl_sizes = [1, 1]
+    other_constraints = [([0, 1, -1, 0, 0, 0], 0),
+                         ([0, 0, 1, -1, 0, 0], 0)]
+    return CompSpace(bits, sl_sizes,
+                     charge_balanced=True,
+                     optimize_basis=True,
+                     table_ergodic=True)
 
-    def test_vertices(self):
-        self.assertTrue(vertices_equal(self.comp_space.unit_vertices(),
-                                       self.vertices))
-        self.assertTrue(vertices_equal(self.comp_space.int_vertices(sc_size=6),
-                                       self.min_grid[[0,2,12,13]]))
-        #print(self.comp_space.int_vertices(sc_size=5))
-        #print(self.int_grids_5[[0,1,2,6,8,9]])
-        self.assertTrue(vertices_equal(self.comp_space.int_vertices(sc_size=5),
-                                       self.int_grids_5[[0,1,2,6,8,9]]))
 
-    def test_random_point(self):
-        rand_ucoord = self.comp_space.get_random_point_in_unit_space()
-        self.assertTrue(self.comp_space._is_in_subspace(rand_ucoord))
+# Generic attibutes test.
+def test_generic_attributes(comp_space):
+    _ = comp_space.dim_ids
+    species_set = set(itertools.chain(*comp_space.bits))
+    vac_count = 0
+    for sp in comp_space.species:
+        assert sp in species_set
+        if isinstance(sp, Vacancy):
+            vac_count += 1
+    assert vac_count <= 1
 
-    def test_integer_grids(self):
-        self.assertEqual(self.comp_space.min_sc_size,6)
-        self.assertTrue(vertices_equal(self.comp_space.min_grid(),self.min_grid))
-        self.assertTrue(vertices_equal(self.comp_space.int_grids(sc_size=5),\
-                                       self.int_grids_5))
+    for sl_id, dim_ids_sl in enumerate(comp_space.dim_ids_nondisc):
+        for sp_id, d in enumerate(dim_ids_sl):
+            bit = comp_space.bits[sl_id][sp_id]
+            sp = comp_space.species[d]
+            if not isinstance(sp, Vacancy):
+                assert bit == sp
+            else:
+                assert isinstance(bit, Vacancy)
+    assert sorted(comp_space.species) == comp_space.species
 
-    def test_format_translate(self):
-        self.sc_size = 6
-        self.ucoord = [3,1,2]
-        self.comp = [Composition({'Li+':1/2,'Mn3+':1/6,'Ti4+':1/3}),\
-                    Composition({'P3-':1/3,'O2-':2/3})]
-        self.compstat = [[3,1,2],[2,4]]
+    A = comp_space.A
+    b = comp_space.b
+    assert len(A) == 1 + len(comp_space.bits)
+    assert len(b) == len(A)
+    assert b[0] == 0
+    assert np.all(A[1:, :] <= 1)
+    npt.assert_array_equal(b[1:], comp_space.sl_sizes)
+    min_sc = comp_space.min_sc_size
 
-        self.ccoord_t = self.comp_space.translate_format(self.ucoord,from_format='unconstr',to_format='constr',sc_size=6)
-        self.ucoord_t1 = self.comp_space.translate_format(self.ccoord_t,from_format='constr',to_format='unconstr',sc_size=6)
+    prim_verts = comp_space.prim_vertices
+    assert prim_verts.shape[1] == A.shape[1]
+    npt.assert_almost_equal(A @ prim_verts.T - b[:, None],
+                            0, decimal=6)
+    assert np.all(np.any(np.isclose(prim_verts, 0, atol=NUM_TOL), axis=-1))
 
-        self.comp_t = self.comp_space.translate_format(self.ucoord,from_format='unconstr',to_format='composition',sc_size=6)
-        self.ucoord_t2 = self.comp_space.translate_format(self.comp_t,from_format='composition',to_format='unconstr',sc_size=6)
+    if comp_space.n_comps_estimate < 10 ** 6:
+        scs = [1, min_sc // 2, min_sc]
+        for sc in scs:
+            grid = comp_space.get_comp_grid(sc)
+            ns = grid @ comp_space.basis + comp_space.n0
+            npt.assert_array_equal(grid, comp_space._comp_grids[sc])
+            # x-format
+            npt.assert_array_equal(A @ ns.T - b[:, None], 0)
+            assert np.all(ns >= 0)
 
-        self.compstat_t = self.comp_space.translate_format(self.ucoord,from_format='unconstr',to_format='compstat',sc_size=6)
-        self.ucoord_t3 = self.comp_space.translate_format(self.compstat_t,from_format='compstat',to_format='unconstr',sc_size=6)
+    # Flip table not optimized.
+    npt.assert_array_equal(comp_space.flip_table, comp_space.basis)
 
-        self.assertTrue(np.allclose(self.ucoord,self.ucoord_t1))
-        self.assertTrue(np.allclose(self.ucoord,self.ucoord_t2))
-        self.assertTrue(np.allclose(self.ucoord,self.ucoord_t3))
-        self.assertEqual(self.comp,self.comp_t)
-        self.assertEqual(self.compstat,self.compstat_t)
 
-#Uncharged, with vacancy.
-class TestCompSpace2(unittest.TestCase):
-    def setUp(self) -> None:
-        li = Element('Li')
-        ag = Element('Ag')
-        vac = Vacancy()
-        
-        self.bits = [[li,ag,vac]]
-        self.nbits = [[0,1,2]]
-        self.unit_n_excitations = [(0,2,0),(1,2,0)]
-        self.chg_of_excitations = [0,0]
-        self.excitation_ids_by_sublat = [[0,1]]
+def test_serialize(comp_space):
+    _ = comp_space.flip_table
+    if comp_space.n_comps_estimate < 10 ** 6:
+        _ = comp_space.min_sc_grid
+    assert_msonable(comp_space)
+    comp_space_reload = CompSpace.from_dict(comp_space.as_dict())
+    npt.assert_array_equal(comp_space_reload._flip_table,
+                           comp_space._flip_table)
+    npt.assert_array_equal(comp_space_reload._vs,
+                           comp_space._vs)
+    npt.assert_array_equal(comp_space_reload._n0,
+                           comp_space._n0)
+    npt.assert_array_equal(comp_space_reload._min_sc_size,
+                           comp_space._min_sc_size)
+    assert (set(list(comp_space._comp_grids.keys()))
+            == set(list(comp_space_reload._comp_grids.keys())))
+    for k in comp_space.keys():
+        npt.assert_array_equal(comp_space._comp_grids[k],
+                               comp_space_reload._comp_grids[k])
 
-        op1 = {'from':{0:{2:1}}, \
-               'to':{0:{0:1}}}
-        op2 = {'from':{0:{2:1}}, \
-               'to':{0:{1:1}}}
-        self.flip_table = [op1,op2]
-        self.comp_space = CompSpace(self.bits)
 
-    def test_swps(self):
-        self.assertEqual(self.comp_space.unit_n_excitations,self.unit_n_excitations)
-        self.assertEqual(self.comp_space.chg_of_excitations,self.chg_of_excitations)
-        self.assertEqual(self.comp_space.excitation_ids_by_sublat,self.excitation_ids_by_sublat)
+# Pre-computed data test.
+def test_sc_size(comp_space_lmtpo, comp_space_lmntof):
+    assert comp_space_lmtpo.min_sc_size == 6
+    assert comp_space_lmntof.min_sc_size == 6
 
-    def test_space_specs(self):
-        self.assertEqual(self.comp_space.background_charge,0)
-        self.assertEqual(self.comp_space.unconstr_dim,2)
-        self.assertEqual(self.comp_space.is_charge_constred,False)
-        self.assertEqual(self.comp_space.dim,2)
-        self.assertEqual(self.comp_space.dim_nondisc,3)
 
-    def test_flip_table(self):
-        self.assertTrue(set_dicts_equal(self.comp_space.min_flip_table, self.flip_table))
-        check_basis = flip_table_to_flip_vecs(self.comp_space.n_bits,
-                                              self.comp_space.min_flip_table)
-        self.assertTrue(np.allclose(self.comp_space.unit_basis, check_basis))
+def test_n_comps(comp_space_lmtpo, comp_space_lmntof):
+    assert comp_space_lmtpo.n_comps_estimate == 7776
+    assert comp_space_lmntof.n_comps_estimate == 46656
+
+
+# TODO: complete writing CompSpace spacial tests.
+def test_basis(comp_space_lmtpo, comp_space_lmntof):
+    pass

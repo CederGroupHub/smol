@@ -19,13 +19,13 @@ import math
 from smol.utils import derived_class_factory, class_name_from_str
 from ..comp_space import CompSpace
 
-from ..utils.occu_utils import (occu_to_species_list,
+from ..utils.occu_utils import (get_dim_ids_by_sublattice,
+                                get_dim_ids_table,
+                                occu_to_species_list,
                                 occu_to_species_n,
-                                flip_weights_mask,
-                                get_dim_ids_by_sublattice,
                                 delta_n_from_step)
-from ..utils.math_utils import (choose_section_from_partition, GCD_list,
-                                comb)
+from ..utils.math_utils import (choose_section_from_partition, gcd_list,
+                                comb, flip_weights_mask)
 
 
 class MCUsher(ABC):
@@ -267,7 +267,7 @@ class Tableflip(MCUsher):
         self.dim_ids = get_dim_ids_by_sublattice(self.bits)
         self.sl_sizes = np.array([len(sl.sites) for sl in self.sublattices],
                                  dtype=int)
-        self.sc_size = GCD_list(self.sl_sizes)
+        self.sc_size = gcd_list(self.sl_sizes)
         self.sl_sizes = self.sl_sizes // self.sc_size
         self.max_n = [len(sublatt.active_sites)
                       for sublatt in self.sublattices]
@@ -292,7 +292,8 @@ class Tableflip(MCUsher):
                     and len(flip_weights) != len(self.flip_table) * 2):
                 raise ValueError(f"{len(flip_weights)} weights provided. "
                                  "You must provide either 1* or 2* weights "
-                                 f"given {len(self.flip_table)} flip vectors!")
+                                 f"given {len(self.flip_table)} flip "
+                                 "vectors!")
             # Forward and backward directions are assigned equal weights.
             if len(flip_weights) == len(self.flip_table):
                 self.flip_weights = np.repeat(flip_weights, 2)
@@ -300,6 +301,8 @@ class Tableflip(MCUsher):
                 self.flip_weights = np.array(flip_weights)
 
         self._swapper = Swap(self.sublattices)
+        self._dim_ids_table = get_dim_ids_table(self.sublattices,
+                                                active_only=True)
 
     def propose_step(self, occupancy):
         """Propose a single random flip step.
@@ -329,8 +332,7 @@ class Tableflip(MCUsher):
             return self._swapper.propose_step(occupancy)
 
         # We shall only flip active sites.
-        species_list = occu_to_species_list(occupancy, self.sublattices,
-                                            active_only=True)
+        species_list = occu_to_species_list(occupancy, self._dim_ids_table)
         species_n = [len(sites) for sites in species_list]
         mask = flip_weights_mask(self.flip_table,
                                  species_n, self.max_n).astyle(int)
@@ -347,6 +349,7 @@ class Tableflip(MCUsher):
         if idx % 2 == 1:
             u = -1 * u
 
+        # Sub-lattices can not cross.
         step = []
         for sl_id, (sublatt, dim_ids) \
                 in enumerate(zip(self.sublattices, self.dim_ids)):
@@ -365,12 +368,13 @@ class Tableflip(MCUsher):
                 for site_id in random.sample(site_ids, u[d]):
                     step.append((int(site_id), int(code)))
                     site_ids.remove(site_id)
+            assert len(site_ids) == 0
 
         return step
 
     def _get_flip_id(self, occupancy, step):
         """Compute flip id in table from occupancy and step."""
-        dn = delta_n_from_step(occupancy, step, self.sublattices)
+        dn = delta_n_from_step(occupancy, step, self._dim_ids_table)
 
         if np.allclose(dn, 0):
             return -1, 0
@@ -409,8 +413,7 @@ class Tableflip(MCUsher):
 
         u = (-2 * direction + 1) * self.flip_table[fid]
 
-        n_now = occu_to_species_n(occupancy, self.sublattices,
-                                  active_only=True)
+        n_now = occu_to_species_n(occupancy, self._dim_ids_table)
         mask_now = flip_weights_mask(self.flip_table,
                                      n_now, self.max_n).astype(int)
         weights_now = self.flip_weights * mask_now
