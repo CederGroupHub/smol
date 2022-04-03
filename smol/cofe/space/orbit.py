@@ -15,7 +15,6 @@ from pymatgen.core.operations import SymmOp
 from pymatgen.util.coord import coord_list_mapping, is_coord_subset
 
 from smol.exceptions import SYMMETRY_ERROR_MESSAGE, SymmetryError
-from smol.utils import _repr
 
 from .basis import DiscreteBasis, basis_factory
 from .cluster import Cluster
@@ -504,25 +503,27 @@ class Orbit(MSONable):
 
     def __str__(self):
         """Pretty strings for pretty things."""
-        return (
-            f"[Orbit] id: {self.id:<3}"
-            f"orderings: {len(self):<4}"
-            f"multiplicity: {self.multiplicity:<4}"
-            f" no. symops: {len(self.cluster_symops):<4}\n"
-            f"        {self.site_spaces}\n"
-            f"        {str(self.base_cluster)}"
-        )
+        outs = [
+            f"Orbit  {self.id}",
+            f"    Multiplicity : {self.multiplicity:<4}",
+            f"   No. functions : {len(self):<4}",
+            f"No. symmetry ops : {len(self.cluster_symops):<4}",
+            f"Function ids : {list(range(self.bit_id, self.bit_id + len(self)))}",
+            "Base Cluster : ",
+            "  | " + "\n  | ".join(str(self.base_cluster).split("\n")),
+        ]
+        return "\n".join(outs)
 
     def __repr__(self):
         """Get Orbit representation."""
-        return _repr(
-            self,
-            orb_id=self.id,
-            orb_b_id=self.bit_id,
-            radius=self.base_cluster.radius,
-            lattice=self.base_cluster.lattice,
-            basecluster=self.base_cluster,
-        )
+        outs = [
+            f"Orbit {self.id}",
+            f"Multiplicity: {self.multiplicity:<4}  No. functions: {len(self):<4}  "
+            f"No. symmetry ops: {len(self.cluster_symops):<4}",
+            f"Function ids: {list(range(self.bit_id, self.bit_id + len(self)))}",
+            "Base Cluster:\n  " + "\n  ".join(repr(self.base_cluster).split("\n")[1:]),
+        ]
+        return "\n".join(outs)
 
     @classmethod
     def from_dict(cls, d):

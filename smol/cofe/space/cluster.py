@@ -215,22 +215,30 @@ class Cluster(SiteCollection, MSONable):
 
     def __str__(self):
         """Pretty print a cluster."""
+        centroid_str = " ".join(
+            [
+                f"{j:0.6f}".rjust(12)
+                for j in self.lattice.get_cartesian_coords(self.centroid)
+            ]
+        )
+        centroid_str += "  -> " + " ".join(
+            [f"{j:0.6f}".rjust(12) for j in self.centroid]
+        )
         outs = [
-            f"Full Formula ({self.composition.formula})",
-            "Reduced Formula: " + self.composition.reduced_formula,
-            f"Diameter: {self.diameter}",
-            f"Centroid: {self.centroid}",
-            f"Charge = {self.charge}",
+            f"Diameter : {self.diameter}",
+            f"  Charge : {self.charge}",
+            f"Centroid : {centroid_str}",
             f"Sites ({len(self)})",
         ]
+        site_outs = []
         for i, site in enumerate(self):
-            outs.append(
+            site_outs.append(
                 " ".join(
                     [
                         str(i),
                         site.species_string,
                         " ".join([f"{j:0.6f}".rjust(12) for j in site.coords]),
-                        "->",
+                        "  ->",
                         " ".join(
                             [
                                 f"{j:0.6f}".rjust(12)
@@ -240,11 +248,20 @@ class Cluster(SiteCollection, MSONable):
                     ]
                 )
             )
+        width = len(site_outs[0])
+        outs.append(width * "-")
+        outs += site_outs
         return "\n".join(outs)
 
     def __repr__(self):
-        outs = ["Cluster Summary"]
-        outs.append(f"Diameter: {self.diameter} Centroid {self.centroid}")
+        centroid_str = (
+            f"{self.lattice.get_cartesian_coords(self.centroid)} -> {self.centroid}"
+        )
+        outs = [
+            "Cluster",
+            f"No. sites: {len(self._sites)}   Diameter: {self.diameter:<4}",
+            f"Centroid: {centroid_str}",
+        ]
         for s in self:
             outs.append(
                 s.__repr__() + f" -> {self.lattice.get_fractional_coords(s.coords)}"

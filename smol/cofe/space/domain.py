@@ -16,6 +16,7 @@ from collections.abc import Hashable, Mapping
 from monty.json import MSONable
 from pymatgen.core import Composition
 from pymatgen.core.periodic_table import DummySpecie, get_el_sp
+from pymatgen.util.string import formula_double_format
 
 
 def get_allowed_species(structure):
@@ -200,14 +201,21 @@ class SiteSpace(Mapping, Hashable, MSONable):
 
     def __str__(self):
         """Get pretty string."""
-        string = str(self._composition)
-        if len(self._data) > len(self._composition):
-            string += f" {list(self._data.keys())[-1]}" f"{self.__getitem__('Vacancy')}"
-        return string
+
+        return "\n".join(["Site Space", repr(self)])
 
     def __repr__(self):
         """Get repr."""
-        return "SiteSpace: " + self._composition.formula
+        out = str(self._composition) + " "
+        if len(self._data) > len(self._composition):
+            items = list(self._data.items())[len(self._composition) :]
+            out += " ".join(
+                [
+                    f"{str(k)}{formula_double_format(v, ignore_ones=False)}"
+                    for k, v in items
+                ]
+            )
+        return out
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation."""
