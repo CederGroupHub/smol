@@ -7,13 +7,15 @@ random structure supercell being sampled in a Monte Carlo simulation.
 
 __author__ = "Luis Barroso-Luque"
 
+import itertools
+import warnings
 from dataclasses import dataclass, field
+
 import numpy as np
 from monty.json import MSONable
-import warnings
-from smol.cofe.space.domain import SiteSpace, Vacancy
-
 from pymatgen.core import Composition
+
+from smol.cofe.space.domain import SiteSpace, Vacancy
 
 
 @dataclass
@@ -82,12 +84,12 @@ class Sublattice(MSONable):
 
         Once a site is restricted, no Metropolis step can be proposed
         with it, including flipping, swapping, etc.
+
         Args:
             sites (Sequence):
                 indices of sites in the occupancy string to restrict.
         """
-        self.active_sites = np.array([i for i in self.active_sites
-                                      if i not in sites])
+        self.active_sites = np.array([i for i in self.active_sites if i not in sites])
 
     def reset_restricted_sites(self):
         """Reset all restricted sites to active."""
@@ -95,7 +97,7 @@ class Sublattice(MSONable):
         if len(self.site_space) > 1:
             self.active_sites = self.sites.copy()
 
-    def split_by_species(self, occu, codes_in_partitions):
+    def split_by_species(self, occu, species_in_partitions):
         """Split a sub-lattice into multiple by specie.
 
         An example use case might be simulating topotactic Li extraction
@@ -104,8 +106,8 @@ class Sublattice(MSONable):
         Args:
             occu (np.ndarray[int]):
                 An occupancy array to reference with.
-            codes_in_partitions (List[List[int]]):
-                Each sub-list contains a few encodings of species in
+            species_in_partitions (List[List[int|Species|Vacancy|Element|str]]):
+                Each sub-list contains a few species or encodings of species in
                 the site space to be grouped as a new sub-lattice, namely,
                 sites with occu[sites] == specie in the sub-list, will be
                 used to initialize a new sub-lattice.
@@ -115,6 +117,28 @@ class Sublattice(MSONable):
                 List[Sublattice]
         """
         part_sublattices = []
+        # Codes given
+        if all(
+            isinstance(sp, (int, np.int32, np.int64))
+            for sp in itertools.chain(*species_in_partitions)
+        ):
+            codes_in_partitions = species_in_partitions
+        # Species or species strings given.
+        else:
+            # Treat vacancies more carefully. One sub-lattice can only
+            # have one vacancy species.
+            def get_index(sp, species):
+                if isinstance(sp, Vacancy):
+                    for i, sp2 in enumerate(species):
+                        if isinstance(sp2, Vacancy):
+                            return i
+                return species.index(sp)
+
+            codes_in_partitions = [
+                [self.encoding[get_index(sp, self.species)] for sp in partition]
+                for partition in species_in_partitions
+            ]
+
         for species_codes in codes_in_partitions:
             part_comp = {}
             part_sites = []
@@ -125,14 +149,17 @@ class Sublattice(MSONable):
                 sp_id = np.where(self.encoding == code)[0][0]
                 sp = self.species[sp_id]
                 part_comp[sp] = self.site_space[sp]
-                part_sites.extend(self.sites[occu[self.sites] == code]
-                                  .tolist())
-                part_actives.extend(self.active_sites[occu[self.active_sites]
-                                    == code].tolist())
+                part_sites.extend(self.sites[occu[self.sites] == code].tolist())
+                part_actives.extend(
+                    self.active_sites[occu[self.active_sites] == code].tolist()
+                )
             # Re-weighting partitioned site-space
             part_n = sum(list(part_comp.values()))
-            part_comp = {sp: part_comp[sp] / part_n for sp in part_comp
-                         if not isinstance(sp, Vacancy)}
+            part_comp = {
+                sp: part_comp[sp] / part_n
+                for sp in part_comp
+                if not isinstance(sp, Vacancy)
+            }
             part_comp = Composition(part_comp)
             part_space = SiteSpace(part_comp)
             part_sites = np.array(part_sites, dtype=int)
@@ -152,11 +179,13 @@ class Sublattice(MSONable):
         Returns:
             MSONable dict
         """
-        d = {'site_space': self.site_space.as_dict(),
-             'sites': self.sites.tolist(),
-             'encoding': self.encoding.tolist(),
-             'active_sites': self.active_sites.tolist()}
-        return d
+        sl_d = {
+            "site_space": self.site_space.as_dict(),
+            "sites": self.sites.tolist(),
+            "encoding": self.encoding.tolist(),
+            "active_sites": self.active_sites.tolist(),
+        }
+        return sl_d
 
     @classmethod
     def from_dict(cls, d):
@@ -165,8 +194,9 @@ class Sublattice(MSONable):
         Returns:
             Sublattice
         """
-        sublattice = cls(SiteSpace.from_dict(d['site_space']),
-                         sites=np.array(d['sites'], dtype=int))
-        sublattice.active_sites = np.array(d['active_sites'], dtype=int)
-        sublattice.encoding = np.array(d['encoding'], dtype=int)
+        sublattice = cls(
+            SiteSpace.from_dict(d["site_space"]), sites=np.array(d["sites"], dtype=int)
+        )
+        sublattice.active_sites = np.array(d["active_sites"], dtype=int)
+        sublattice.encoding = np.array(d["encoding"], dtype=int)
         return sublattice

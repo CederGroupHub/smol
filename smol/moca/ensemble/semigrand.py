@@ -21,7 +21,7 @@ from .base import Ensemble
 
 
 class SemiGrandEnsemble(Ensemble, MSONable):
-    """Relative chemical potential based SemiGrand Ensemble.
+    """Relative chemical potential based SemiGrand Canonical Ensemble.
 
     A Semi-Grand Canonical Ensemble for Monte Carlo Simulations where species
     relative chemical potentials are predefined. Note that in the SGC Ensemble
@@ -38,12 +38,7 @@ class SemiGrandEnsemble(Ensemble, MSONable):
 
     valid_mcmc_steps = ("flip",)
 
-    def __init__(
-        self,
-        processor,
-        chemical_potentials,
-        sublattices=None
-    ):
+    def __init__(self, processor, chemical_potentials, sublattices=None):
         """Initialize MuSemiGrandEnsemble.
 
         Args:
@@ -56,10 +51,7 @@ class SemiGrandEnsemble(Ensemble, MSONable):
                 List of Sublattice objects representing sites in the processor
                 supercell with same site spaces.
         """
-        super().__init__(
-            processor,
-            sublattices=sublattices
-        )
+        super().__init__(processor, sublattices=sublattices)
         self._params = np.append(self.processor.coefs, -1.0)
         # check that species are valid
         chemical_potentials = {
@@ -67,10 +59,10 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         }
         # Excessive species not appeared on active sub-lattices
         # will be dropped.
-        for sp in self.species:
-            if sp not in chemical_potentials.keys():
+        for spec in self.species:
+            if spec not in chemical_potentials.keys():
                 raise ValueError(
-                    f"Species {sp} was not assigned a chemical "
+                    f"Species {spec} was not assigned a chemical "
                     " potential, a value must be provided."
                 )
 
@@ -78,8 +70,7 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         self._dfeatures = np.empty(len(processor.coefs) + 1)
         self._features = np.empty(len(processor.coefs) + 1)
 
-        self._mus = {k: v for k, v in chemical_potentials.items()
-                     if k in self.species}
+        self._mus = {k: v for k, v in chemical_potentials.items() if k in self.species}
         self._mu_table = self._build_mu_table(self._mus)
         self.thermo_boundaries = {
             "chemical-potentials": {str(k): v for k, v in self._mus.items()}
@@ -101,16 +92,15 @@ class SemiGrandEnsemble(Ensemble, MSONable):
     @chemical_potentials.setter
     def chemical_potentials(self, value):
         """Set the chemical potentials and update table."""
-        for sp, count in Counter(map(get_species, value.keys())).items():
+        for spec, count in Counter(map(get_species, value.keys())).items():
             if count > 1:
                 raise ValueError(
                     f"{count} values of the chemical potential for the same "
-                    f"species {sp} were provided.\n Make sure the dictionary "
+                    f"species {spec} were provided.\n Make sure the dictionary "
                     "you are using has only string keys or only Species "
                     "objects as keys."
                 )
-        value = {get_species(k): v for k, v in value.items()
-                 if k in self.species}
+        value = {get_species(k): v for k, v in value.items() if k in self.species}
         if set(value.keys()) != set(self.species):
             raise ValueError(
                 "Chemical potentials given are missing species. "
@@ -167,8 +157,7 @@ class SemiGrandEnsemble(Ensemble, MSONable):
             self._mu_table[site][species] for site, species in enumerate(occupancy)
         )
 
-    def split_sublattice_by_species(self, sublattice_id, occu,
-                                    codes_in_partitions):
+    def split_sublattice_by_species(self, sublattice_id, occu, species_in_partitions):
         """Split a sub-lattice in system by its occupied species.
 
         An example use case might be simulating topotactic Li extraction
@@ -183,20 +172,17 @@ class SemiGrandEnsemble(Ensemble, MSONable):
                 The index of sub-lattice to split in self.sublattices.
             occu (np.ndarray[int]):
                 An occupancy array to reference with.
-            codes_in_partitions (List[List[int]]):
-                Each sub-list contains a few encodings of species in
+            species_in_partitions (List[List[int|Species|Vacancy|Element|str]]):
+                Each sub-list contains a few species or encodings of species in
                 the site space to be grouped as a new sub-lattice, namely,
                 sites with occu[sites] == specie in the sub-list, will be
                 used to initialize a new sub-lattice.
                 Sub-lists will be pre-sorted to ascending order.
         """
-        super(SemiGrandEnsemble, self)\
-            .split_sublattice_by_species(sublattice_id, occu,
-                                         codes_in_partitions)
+        super().split_sublattice_by_species(sublattice_id, occu, species_in_partitions)
         # Species in active sub-lattices may change after split.
         # Need to reset and rebuild mu table.
-        new_chemical_potentials = {k: self._mus[k] for k in
-                                   self.species}
+        new_chemical_potentials = {spec: self._mus[spec] for spec in self.species}
         self.chemical_potentials = new_chemical_potentials
 
     def _build_mu_table(self, chemical_potentials):
@@ -226,11 +212,11 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         Returns:
             MSONable dict
         """
-        d = super().as_dict()
-        d["chemical_potentials"] = tuple(
+        sgce_d = super().as_dict()
+        sgce_d["chemical_potentials"] = tuple(
             (s.as_dict(), c) for s, c in self.chemical_potentials.items()
         )
-        return d
+        return sgce_d
 
     @classmethod
     def from_dict(cls, d):
@@ -240,19 +226,24 @@ class SemiGrandEnsemble(Ensemble, MSONable):
             CanonicalEnsemble
         """
         chemical_potentials = {}
-        for sp, c in d["chemical_potentials"]:
-            if "oxidation_state" in sp and Element.is_valid_symbol(sp["element"]):
-                sp = Species.from_dict(sp)
-            elif "oxidation_state" in sp:
-                if sp["@class"] == "Vacancy":
-                    sp = Vacancy.from_dict(sp)
+        for spec, chem_pot in d["chemical_potentials"]:
+            if "oxidation_state" in spec and Element.is_valid_symbol(spec["element"]):
+                spec = Species.from_dict(spec)
+            elif "oxidation_state" in spec:
+                if spec["@class"] == "Vacancy":
+                    spec = Vacancy.from_dict(spec)
                 else:
-                    sp = DummySpecies.from_dict(sp)
+                    spec = DummySpecies.from_dict(spec)
             else:
-                sp = Element(sp["element"])
-            chemical_potentials[sp] = c
+                spec = Element(spec["element"])
+            chemical_potentials[spec] = chem_pot
+
+        sublatts = d.get("sublattices")  # keep backwards compatibility
+        if sublatts is not None:
+            sublatts = [Sublattice.from_dict(sl_d) for sl_d in sublatts]
+
         return cls(
             Processor.from_dict(d["processor"]),
             chemical_potentials=chemical_potentials,
-            sublattices=[Sublattice.from_dict(s) for s in d["sublattices"]]
+            sublattices=sublatts,
         )

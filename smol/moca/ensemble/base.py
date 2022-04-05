@@ -137,11 +137,11 @@ class Ensemble(ABC):
 
         These are minimal species required in setting chemical potentials.
         """
-        return list({sp for sublatt in self.active_sublattices
-                     for sp in sublatt.site_space})
+        return list(
+            {sp for sublatt in self.active_sublattices for sp in sublatt.site_space}
+        )
 
-    def split_sublattice_by_species(self, sublattice_id, occu,
-                                    codes_in_partitions):
+    def split_sublattice_by_species(self, sublattice_id, occu, species_in_partitions):
         """Split a sub-lattice in system by its occupied species.
 
         An example use case might be simulating topotactic Li extraction
@@ -153,18 +153,21 @@ class Ensemble(ABC):
                 The index of sub-lattice to split in self.sublattices.
             occu (np.ndarray[int]):
                 An occupancy array to reference with.
-            codes_in_partitions (List[List[int]]):
-                Each sub-list contains a few encodings of species in
+            species_in_partitions (List[List[int|Species|Vacancy|Element|str]]):
+                Each sub-list contains a few species or encodings of species in
                 the site space to be grouped as a new sub-lattice, namely,
                 sites with occu[sites] == specie in the sub-list, will be
                 used to initialize a new sub-lattice.
                 Sub-lists will be pre-sorted to ascending order.
         """
-        splits = (self.sublattices[sublattice_id]
-                  .split_by_species(occu, codes_in_partitions))
-        self._sublattices = (self._sublattices[: sublattice_id]
-                             + splits
-                             + self._sublattices[sublattice_id + 1 :])
+        splits = self.sublattices[sublattice_id].split_by_species(
+            occu, species_in_partitions
+        )
+        self._sublattices = (
+            self._sublattices[:sublattice_id]
+            + splits
+            + self._sublattices[sublattice_id + 1 :]
+        )
 
     @property
     @abstractmethod
@@ -238,11 +241,11 @@ class Ensemble(ABC):
         Returns:
             MSONable dict
         """
-        d = {
+        ensemble_d = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "thermo_boundaries": self.thermo_boundaries,
             "processor": self._processor.as_dict(),
             "sublattices": [s.as_dict() for s in self._sublattices],
         }
-        return d
+        return ensemble_d

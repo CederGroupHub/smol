@@ -56,14 +56,15 @@ def test_constructor(ensemble, step_type, mcusher):
 def test_trace():
     trace = Trace(first=np.ones(10), second=np.zeros(10))
     assert all(isinstance(val, np.ndarray) for _, val in trace.items())
-    trace.third = np.random.random(10)
+    rng = np.random.default_rng()
+    trace.third = rng.random(10)
     assert all(isinstance(val, np.ndarray) for _, val in trace.items())
     names = ["first", "second", "third"]
     assert all(name in names for name in trace.names)
 
     with pytest.raises(TypeError):
         trace.fourth = "blabla"
-        _ = Trace(one=np.zeros(40), two=66)
+        Trace(one=np.zeros(40), two=66)
 
     steptrace = StepTrace(one=np.zeros(10))
     assert isinstance(steptrace.delta_trace, Trace)

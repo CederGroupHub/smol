@@ -100,7 +100,6 @@ def test_build_fu_table(fugacity_bias):
                 assert fugacity_fractions[species] == table[i, j]
 
 
-# TODO: Tests for SquarechargeBias and SquarecompBias
 @pytest.fixture(scope="module")
 def square_charge_bias(all_sublattices):
     return SquarechargeBias(all_sublattices)

@@ -10,6 +10,7 @@ from tests.utils import assert_msonable
 
 @pytest.fixture
 def sublattice():
+    rng = np.random.default_rng()
     composition = Composition(
         {
             DummySpecies("A"): 0.3,
@@ -19,16 +20,18 @@ def sublattice():
         }
     )
     site_space = SiteSpace(composition)
-    sites = np.random.choice(range(100), size=60)
+    sites = rng.choice(range(100), size=60)
     return Sublattice(site_space, sites)
 
 
 def test_restrict_sites(sublattice):
     npt.assert_array_equal(sublattice.sites, np.sort(sublattice.sites))
     npt.assert_array_equal(sublattice.sites, np.unique(sublattice.sites))
-    npt.assert_array_equal(sublattice.encoding,
-                           np.arange(len(sublattice.species), dtype=int))
-    sites = np.random.choice(sublattice.sites, size=min(10, len(sublattice.sites)))
+    npt.assert_array_equal(
+        sublattice.encoding, np.arange(len(sublattice.species), dtype=int)
+    )
+    rng = np.random.default_rng()
+    sites = rng.choice(sublattice.sites, size=min(10, len(sublattice.sites)))
     # test sites properly restricted
     sublattice.restrict_sites(sites)
     assert not any(s in sublattice.active_sites for s in sites)
@@ -41,21 +44,22 @@ def test_restrict_sites(sublattice):
 
 
 def test_split(sublattice):
-    sublattice.restrict_sites(np.random.choice(sublattice.sites,
-                                               size=len(sublattice.sites) // 2))
+    rng = np.random.default_rng()
+    sublattice.restrict_sites(
+        rng.choice(sublattice.sites, size=len(sublattice.sites) // 2)
+    )
     occu = np.zeros(100, dtype=int) - 1
     pool = sublattice.sites.copy()
-    for code, x in zip(sublattice.encoding,
-                       sublattice.site_space.values()):
+    for code, x in zip(sublattice.encoding, sublattice.site_space.values()):
         n = int(round(x * len(sublattice.sites)))
-        select = np.random.choice(pool, size=min(n, len(pool)), replace=False)
+        select = rng.choice(pool, size=min(n, len(pool)), replace=False)
         occu[select] = code
         pool = np.setdiff1d(pool, select)
     if len(pool) > 0:
         occu[pool] = sublattice.encoding[-1]
-    splits = sublattice.split_by_species(occu,
-                                         [sublattice.encoding[0:1],
-                                          sublattice.encoding[1:]])
+    splits = sublattice.split_by_species(
+        occu, [sublattice.encoding[0:1], sublattice.encoding[1:]]
+    )
     assert len(splits) == 2
     assert not splits[0].is_active
     assert set(splits[0].species) == set(sublattice.species[0:1])
@@ -70,47 +74,61 @@ def test_split(sublattice):
     npt.assert_array_equal(comp_spl1, list(splits[1].site_space.values()))
     assert list(splits[0].site_space.values())[0] == 1
 
-    sites_spl0 = sublattice.sites[np.any(occu[sublattice.sites, None]
-                                         == sublattice.encoding[None, 0:1],
-                                         axis=-1)]
-    sites_spl1 = sublattice.sites[np.any(occu[sublattice.sites, None]
-                                         == sublattice.encoding[None, 1:],
-                                         axis=-1)]
-    npt.assert_array_equal(np.sort(splits[0].sites),
-                           np.sort(sites_spl0))
-    npt.assert_array_equal(np.sort(splits[1].sites),
-                           np.sort(sites_spl1))
-    npt.assert_array_equal(np.sort(np.concatenate((sites_spl0, sites_spl1))),
-                           np.sort(sublattice.sites))
+    sites_spl0 = sublattice.sites[
+        np.any(occu[sublattice.sites, None] == sublattice.encoding[None, 0:1], axis=-1)
+    ]
+    sites_spl1 = sublattice.sites[
+        np.any(occu[sublattice.sites, None] == sublattice.encoding[None, 1:], axis=-1)
+    ]
+    npt.assert_array_equal(np.sort(splits[0].sites), np.sort(sites_spl0))
+    npt.assert_array_equal(np.sort(splits[1].sites), np.sort(sites_spl1))
+    npt.assert_array_equal(
+        np.sort(np.concatenate((sites_spl0, sites_spl1))), np.sort(sublattice.sites)
+    )
 
     active_spl0 = np.array([], dtype=int)
-    active_spl0_prev = sublattice.active_sites[np.any(occu[sublattice.active_sites, None]
-                                               == sublattice.encoding[None, 0:1],
-                                               axis=-1)]
-    active_spl1 = sublattice.active_sites[np.any(occu[sublattice.active_sites, None]
-                                          == sublattice.encoding[None, 1:],
-                                          axis=-1)]
-    npt.assert_array_equal(np.sort(splits[0].active_sites),
-                           np.sort(active_spl0))
-    npt.assert_array_equal(np.sort(splits[1].active_sites),
-                           np.sort(active_spl1))
-    npt.assert_array_equal(np.sort(np.concatenate((active_spl0_prev, active_spl1))),
-                           np.sort(sublattice.active_sites))
+    active_spl0_prev = sublattice.active_sites[
+        np.any(
+            occu[sublattice.active_sites, None] == sublattice.encoding[None, 0:1],
+            axis=-1,
+        )
+    ]
+    active_spl1 = sublattice.active_sites[
+        np.any(
+            occu[sublattice.active_sites, None] == sublattice.encoding[None, 1:],
+            axis=-1,
+        )
+    ]
+    npt.assert_array_equal(np.sort(splits[0].active_sites), np.sort(active_spl0))
+    npt.assert_array_equal(np.sort(splits[1].active_sites), np.sort(active_spl1))
+    npt.assert_array_equal(
+        np.sort(np.concatenate((active_spl0_prev, active_spl1))),
+        np.sort(sublattice.active_sites),
+    )
 
     # Test a split when all sites are in split case 1.
     occu = np.zeros(100, dtype=int) - 1
     occu[sublattice.sites] = sublattice.encoding[1]
-    splits = sublattice.split_by_species(occu,
-                                         [sublattice.encoding[0:1],
-                                          sublattice.encoding[1:]])
+    splits = sublattice.split_by_species(
+        occu, [sublattice.encoding[0:1], sublattice.encoding[1:]]
+    )
     assert not splits[0].is_active
     assert len(splits[0].sites) == 0
     assert len(splits[0].active_sites) == 0
     assert splits[1].is_active
-    npt.assert_array_equal(np.sort(splits[1].sites),
-                           np.sort(sublattice.sites))
-    npt.assert_array_equal(np.sort(splits[1].active_sites),
-                           np.sort(sublattice.active_sites))
+    npt.assert_array_equal(np.sort(splits[1].sites), np.sort(sublattice.sites))
+    npt.assert_array_equal(
+        np.sort(splits[1].active_sites), np.sort(sublattice.active_sites)
+    )
+
+    splits_by_species = sublattice.split_by_species(
+        occu, [sublattice.species[0:1], sublattice.species[1:]]
+    )
+    for sublatt1, sublatt2 in zip(splits_by_species, splits):
+        npt.assert_array_equal(sublatt1.sites, sublatt2.sites)
+        npt.assert_array_equal(sublatt1.active_sites, sublatt2.active_sites)
+        assert sublatt1.species == sublatt2.species
+        npt.assert_array_equal(sublatt1.encoding, sublatt2.encoding)
 
 
 def test_msonable(sublattice):
@@ -126,13 +144,15 @@ def test_msonable(sublattice):
 def test_inactiveness(sublattice):
     composition = Composition({DummySpecies("A"): 1})
     site_space = SiteSpace(composition)
-    sites = np.random.choice(range(100), size=60, replace=False)
+    rng = np.random.default_rng()
+    sites = rng.choice(range(100), size=60, replace=False)
     inactive_sublattice = Sublattice(site_space, sites)
-    npt.assert_array_equal(inactive_sublattice.encoding,
-                           np.array([0]))
+    npt.assert_array_equal(inactive_sublattice.encoding, np.array([0]))
     assert len(inactive_sublattice.active_sites) == 0
-    npt.assert_array_equal(np.sort(inactive_sublattice.restricted_sites),
-                           np.sort(inactive_sublattice.sites))
+    npt.assert_array_equal(
+        np.sort(inactive_sublattice.restricted_sites),
+        np.sort(inactive_sublattice.sites),
+    )
     assert not inactive_sublattice.is_active
 
     sublattice.restrict_sites(sublattice.sites)
