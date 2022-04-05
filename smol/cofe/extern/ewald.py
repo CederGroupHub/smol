@@ -87,11 +87,11 @@ class EwaldTerm(MSONable):
         for space, site in zip(site_spaces, structure):
             # allocate array with all -1 for vacancies
             inds = np.zeros(max(nbits) + 1) - 1
-            for i, b in enumerate(space):
-                if isinstance(b, Vacancy):  # skip vacancies
+            for i, spec in enumerate(space):
+                if isinstance(spec, Vacancy):  # skip vacancies
                     continue
                 inds[i] = len(ewald_sites)
-                ewald_sites.append(PeriodicSite(b, site.frac_coords, site.lattice))
+                ewald_sites.append(PeriodicSite(spec, site.frac_coords, site.lattice))
             ewald_inds.append(inds)
         ewald_inds = np.array(ewald_inds, dtype=np.int)
         ewald_structure = Structure.from_sites(ewald_sites)
@@ -181,7 +181,7 @@ class EwaldTerm(MSONable):
         Returns:
             dict: MNSONable dict
         """
-        d = {
+        ewald_d = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "eta": self.eta,
@@ -189,7 +189,7 @@ class EwaldTerm(MSONable):
             "recip_space_cut": self.recip_space_cut,
             "use_term": self.use_term,
         }
-        return d
+        return ewald_d
 
     @classmethod
     def from_dict(cls, d):
