@@ -7,17 +7,19 @@ import numpy.testing as npt
 
 from collections import Counter
 
+from tests.utils import assert_table_set_equal
+
 
 def test_gcd():
     for _ in range(10):
         a = np.random.randint(low=-10000, high=10000, size=100)
-        gcd = gcd_list(a)
-        a_p = a // gcd
-        npt.assert_array_equal(np.round(a % gcd), 0)
+        g = gcd_list(a)
+        a_p = a // g
+        npt.assert_array_equal(np.round(a % g), 0)
         assert gcd_list(a_p) == 1
         a_0 = np.append(a, 0)
-        gcd_0 = gcd_list(a_0)
-        assert gcd_0 == gcd
+        g_0 = gcd_list(a_0)
+        assert g_0 == g
 
 
 def test_comb():
@@ -346,12 +348,8 @@ def test_optimal_basis():
     vs_opt = get_optimal_basis(n0, vs, xs)
     vs_std = np.array([[0, -1, 1, 1, -1],
                        [-1, 1, 0, 2, -2]])
-    table_opt = np.concatenate([vs_opt, -vs_opt], axis=0)
-    table_opt = np.array(sorted(table_opt.tolist()), dtype=int)
-    table_std = np.concatenate([vs_std, -vs_std], axis=0)
-    table_std = np.array(sorted(table_std.tolist()), dtype=int)
 
-    npt.assert_array_equal(table_opt, table_std)
+    assert_table_set_equal(vs_opt, vs_std)
 
 
 def test_ergodic_vectors():
@@ -380,12 +378,8 @@ def test_ergodic_vectors():
     vs_tab = get_ergodic_vectors(n0, vs_opt, xs_opt)
     vs_std = np.array([[0, 1, -1, 1, -1],
                        [-1, 1, 0, 2, -2]])
-    table_tab = np.concatenate([vs_tab, -vs_tab], axis=0)
-    table_tab = np.array(sorted(table_tab.tolist()), dtype=int)
-    table_std = np.concatenate([vs_std, -vs_std], axis=0)
-    table_std = np.array(sorted(table_std.tolist()), dtype=int)
 
-    npt.assert_array_equal(table_tab, table_std)
+    assert_table_set_equal(vs_tab, vs_std)
 
 
 def test_mask():

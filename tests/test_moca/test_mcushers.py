@@ -1,14 +1,18 @@
 import numpy as np
+import numpy.testing as npt
 import pytest
 from pymatgen.core import Composition
+from collections import Counter
 
 from smol.cofe.space.domain import SiteSpace
-from smol.moca.sampler.mcusher import Flip, Swap
+from smol.moca.sampler.mcusher import Flip, Swap, Tableflip
 from smol.moca.sublattice import Sublattice
+from smol.moca.sampler.bias import SquarechargeBias
+from smol.moca.utils.math_utils import comb
 
-from tests.utils import gen_random_occupancy
+from tests.utils import gen_random_occupancy, gen_random_neutral_occupancy
 
-mcmcusher_classes = [Flip, Swap]
+mcmcusher_classes = [Flip, Swap, Tableflip]
 num_sites = 100
 
 
@@ -28,10 +32,30 @@ def all_sublattices():
 
 
 @pytest.fixture
+def all_sublattices_lmtpo():  # Do a test on sampling probabilities.
+    # generate two tests sublattices
+    sites = np.arange(6)
+    sites1 = np.random.choice(sites, size=3, replace=False)
+    sites2 = np.random.choice(np.setdiff1d(sites, sites1))
+    site_space1 = SiteSpace(Composition({"Li+": 2 / 3, "Zr4+": 1 / 6, "Mn3+": 1 / 6}))
+    site_space2 = SiteSpace(Composition({"O2-": 5 / 6, "F-": 1 / 6}))
+    active_sublattices = [Sublattice(site_space1, sites1), Sublattice(site_space2, sites2)]
+    inactive_sublattices = []
+    return active_sublattices, inactive_sublattices
+
+
+@pytest.fixture
 def rand_occu(all_sublattices):
     # generate a random occupancy according to the sublattices
     occu = gen_random_occupancy(all_sublattices[0] + all_sublattices[1])
     return occu, all_sublattices[1][0].sites  # return indices of fixed sites
+
+
+@pytest.fixture
+def rand_occu_lmtpo(all_sublattices_lmtpo):
+    # generate a random occupancy according to the sublattices
+    occu = gen_random_neutral_occupancy(all_sublattices_lmtpo[0] + all_sublattices_lmtpo[1])
+    return occu, []  # return indices of fixed sites
 
 
 @pytest.fixture(params=mcmcusher_classes)
@@ -39,9 +63,13 @@ def mcmcusher(request, all_sublattices):
     # instantiate mcmcushers to test
     return request.param(all_sublattices[0] + all_sublattices[1])
 
+
 @pytest.fixture
-def tableflipper(sublattices_neutral):
-    return Tableflipper(sublattices_neutral, swap_weight = 0)
+def table_flip(all_sublattices_lmtpo):
+    return Tableflip(all_sublattices_lmtpo,
+                     optimize_basis=True,
+                     table_ergodic=True,
+                     swap_weight=0.1)
 
 
 def test_bad_propabilities(mcmcusher):
@@ -115,356 +143,73 @@ def test_propose_step(mcmcusher, rand_occu):
     assert count2 / total == pytest.approx(0.2, abs=1e-2)
 
 
-def get_oxi_state(sp):
-    if 'oxi_state' in dir(sp):
-        return sp.oxi_state
-    else:
-        return 0
+def test_table_flip(table_flip, rand_occu_lmtpo):
 
-def is_neutral(occu,bits,sublat_list):
-    charge = 0
-    for sl_id,sl in enumerate(sublat_list):
-        charge += sum([get_oxi_state(bits[sl_id][sp_id]) for sp_id in occu[sl]])
-    return charge == 0
+    def get_n(occu):
+        n = np.array([(occu[:6] == 0).sum(),
+                      (occu[:6] == 1).sum(),
+                      (occu[:6] == 2).sum(),
+                      (occu[6:] == 0).sum(),
+                      (occu[6:] == 1).sum()],
+                     dtype=int
+                     )
+        return n
 
-def test_flip_neutral(tableflipper, rand_occu_neutral):
+    def get_hash(a):
+        return tuple(a.tolist())
 
-    occu = deepcopy(rand_occu_neutral)
-    sl_list = [[0,1,2,3,4,5],[6,7,8,9,10,11]]
-    bits = tableflipper.bits
+    def get_n_states(n):
+        assert n[:3].sum() == 6
+        assert n[3:].sum() == 6
+        return comb(6, n[0]) * comb(6 - n[0], n[1]) * comb(6, n[3])
 
-    for i in range(10000):
-        assert is_neutral(occu,bits,sl_list)
-        step = tableflipper.propose_step(occu)
-        # With weights mask, we should not propose null steps any more.
+    occu = rand_occu_lmtpo.copy()
+    bias = SquarechargeBias(table_flip.sublattices)
+    o_counter = Counter()
+    n_counter = Counter()
+
+    # Uniformly random kernel.
+    l = 1000000
+    for i in range(l):
+        assert bias.compute_bias(occu) == 0
+        step = table_flip.propose_step(occu)
+        n = get_n(occu)
+        flip_id, direction = table_flip._get_flip_id(occu, step)
+        occu_next = occu.copy()
+        for s_id, code in step:
+            occu_next[s_id] = code
+        dn = get_n(occu_next) - n
+        # Check dn is always correct.
+        if flip_id == -1:
+            assert direction == 0
+            assert len(step) == 2
+            npt.assert_array_equal(dn, 0)
+        else:
+            dd = - 2 * direction + 1
+            npt.assert_array_equal(dd * table_flip.flip_table[flip_id, :],
+                                   dn)
+
+        log_priori = table_flip.compute_log_priori_factor(occu, step)
+        # No null step should be proposed.
         assert len(step) > 0
-        #print('step:',step)
-        for s_id, sp_id in step:
-            occu[s_id] = sp_id
+        if log_priori >= 0 or log_priori >= np.log(np.random.rand()):
+            # Accepted.
+            occu = occu_next.copy()
+        n_counter[get_hash(n)] += 1
+        o_counter[get_hash(occu)] += 1
 
-def test_flip_partial(partialflipper, rand_occu_partial):
-
-    occu = deepcopy(rand_occu_partial)
-    sl_list = [[0,1,2,3,4,5],[6,7,8,9,10,11]]
-    bits = partialflipper.bits
-    print("Bits:", bits)
-
-    for i in range(10000):
-        assert is_neutral(occu,bits,sl_list)
-        step = partialflipper.propose_step(occu)
-        # With weights mask, we should not propose null steps any more.
-        assert len(step) > 0
-        assert not any(i in [0, 3, 6, 9] for i, s in step)
-        #print('step:',step)
-        for s_id, sp_id in step:
-            occu[s_id] = sp_id
-
-def test_flip_deli(deliflipper, rand_occu_deli):
-    occu = deepcopy(rand_occu_deli)
-    sl_list = [[0, 1, 2, 3], [4, 5, 6, 7]]
-    bits = [[Species('Li',1), Species('Mn',2), Species('Mn',3), Species('Mn', 4), Vacancy()],
-            [Species('O', -2), Species('O', -1), Species('F', -1)]]
-    print("Bits:", bits)
-
-    for i in range(20000):
-        assert is_neutral(occu,bits,sl_list)
-        assert not any(b not in [0, 4] for b in occu[deliflipper.all_sublattices[0].sites])
-        assert not any(b not in [1, 2, 3] for b in occu[deliflipper.all_sublattices[1].sites])
-        assert not any(b not in [0, 1] for b in occu[deliflipper.all_sublattices[2].sites])
-        assert not any(b not in [2] for b in occu[deliflipper.all_sublattices[3].sites])
-        step = deliflipper.propose_step(occu)
-        # With weights mask, we should not propose null steps any more.
-        assert len(step) > 0
-        assert not any(i in deliflipper.all_sublattices[3].sites for i, s in step)
-        #print('step:',step)
-        for s_id, sp_id in step:
-            occu[s_id] = sp_id
-
-def test_flip_deli_auto(deliflipper_auto, rand_occu_deli):
-    deliflipper = deliflipper_auto
-
-    occu = deepcopy(rand_occu_deli)
-    sl_list = [[0, 1, 2, 3], [4, 5, 6, 7]]
-    bits = [[Species('Li',1), Species('Mn',2), Species('Mn',3), Species('Mn', 4), Vacancy()],
-            [Species('O', -2), Species('O', -1), Species('F', -1)]]
-    print("Bits:", bits)
-    assert len(deliflipper.flip_table) == 3
-
-    for i in range(20000):
-        assert is_neutral(occu,bits,sl_list)
-        assert not any(b not in [0, 4] for b in occu[deliflipper.all_sublattices[0].sites])
-        assert not any(b not in [1, 2, 3] for b in occu[deliflipper.all_sublattices[1].sites])
-        assert not any(b not in [0, 1] for b in occu[deliflipper.all_sublattices[2].sites])
-        assert not any(b not in [2] for b in occu[deliflipper.all_sublattices[3].sites])
-        step = deliflipper.propose_step(occu)
-        # With weights mask, we should not propose null steps any more.
-        assert len(step) > 0
-        assert not any(i in deliflipper.all_sublattices[3].sites for i, s in step)
-        #print('step:',step)
-        for s_id, sp_id in step:
-            occu[s_id] = sp_id
-
-def is_canonical(occu,step,sublat_list):
-    if len(step)==0:
-        return True
-    if len(step)!=2:
-        return False
-    if (occu[step[0][0]] == step[1][1] and
-        occu[step[1][0]] == step[0][1]):
-        sl_id_0 = None
-        sl_id_1 = None
-        for sl_id, sl in enumerate(sublat_list):
-            if step[0][0] in sl:
-                sl_id_0 = sl_id
-            if step[1][0] in sl:
-                sl_id_1 = sl_id
-        if sl_id_0 == sl_id_1:
-            return True
-    return False
-
-def compstat_to_random_occu(compstat, sl_sizes, sc_size):
-    random_occu = []
-    for sl_comp, sl_size in zip(compstat, sl_sizes):
-        sl_occu = np.zeros(sl_size * sc_size, dtype=np.int64)
-        if sum(sl_comp) != sl_size * sc_size:
-            raise ValueError("Number of sublattice species does\
-                              not sum to sublattice size")
-        shuffled_ids = list(range(sl_size*sc_size))
-        random.shuffle(shuffled_ids)
-        n_assigned = 0
-        for sp, n in enumerate(sl_comp):
-            sl_occu[shuffled_ids[n_assigned: n_assigned + n]] = sp
-            n_assigned += n
-        random_occu.append(sl_occu)
-    return np.array(random_occu, dtype=np.int64).flatten()
-
-def hash_occu(occu):
-    hashed = ''
-    for o in occu:
-        hashed += str(int(round(o)))
-    return hashed
-
-def dehash_occu(hashed):
-    occu = []
-    for i in hashed:
-        occu.append(int(i))
-    return np.array(occu, dtype=np.int64)
-
-# Run MC on a null hamiltonian to check correctness of detail balance.
-# This will take some time.
-def get_all_neutral_occus(compspace):
-    compstats = comp_space.int_grids(sc_size=3, form='compstat')
-    occus = []
-    for c in compstats:
-        occus_an = []
-        occus_ca = []
-        for perm in permutations(range(3)):
-            o = np.zeros(3, dtype=int)
-            o[:] = 2
-            o[:perm[c[0][0]]] = 0
-            o[perm[c[0][0]:(c[0][0]+c[0][1])]] = 1
-            o_hash = hash_occu(o)
-            if o_hash not in occus_ca:
-                occus_ca.append(o_hash)
-        for perm in permutations(range(3)):
-            o = np.zeros(3, dtype=int)
-            o[:] = 1
-            o[:perm[c[1][0]]] = 0
-            o_hash = hash_occu(o)
-            if o_hash not in occus_an:
-                occus_an.append(o_hash)
-        for o_an in occus_an:
-            for o_ca in occus_ca:
-                occus.append(o_ca+o_an)
-    assert len(occus) == 34
-    return occus
-
-
-def test_mask():
-    bits = [[Species('Li',1), Species('Mn',3), Species('Ti',4)],[Species('P',-3), Species('O',-2)]]
-
-    space = CompSpace(bits)
-    # Flip 1: Ti+P -> Mn+O
-    # Flip 2: Li+Ti+O -> 2Mn+P
-    table = space.min_flip_table
-    comp_stats = [[[4,0,2],[0,6]],
-                  [[3,3,0],[0,6]],
-                  [[3,1,2],[2,4]],
-                  [[2,4,0],[2,4]],
-                  [[3,0,3],[3,3]],
-                  [[2,3,1],[3,3]],
-                  [[2,0,4],[6,0]],
-                  [[1,3,2],[6,0]],
-                  [[0,6,0],[6,0]]]
-    masks = [[0,0,1,0],
-             [0,1,0,0],
-             [1,1,1,0],
-             [0,1,0,1],
-             [1,0,1,0],
-             [1,1,1,1],
-             [1,0,0,0],
-             [1,0,0,1],
-             [0,0,0,1]]
-    test_masks = [flip_weights_mask(table, c) for c in comp_stats]
-    assert np.allclose(masks, test_masks)
-
-
-def test_neutral_probabilities():
-
-    space1 = SiteSpace(Composition({'Li+':0.5,'Mn3+':0.3333333,'Ti4+':0.1666667}))
-    space2 = SiteSpace(Composition({'O2-':0.8333333,'P3-':0.1666667}))
-    sl1 = Sublattice(space1,np.array([0,1,2]))
-    sl2 = Sublattice(space2,np.array([3,4,5]))
-
-    tableflipper = Tableflipper([sl1, sl2])
-    comp_space = tableflipper._compspace
-    compstats = comp_space.int_grids(sc_size=3, form='compstat')
-    state_counter = {}
-    comp = random.choice(compstats)
-    occu = compstat_to_random_occu(comp,sl_sizes=[1,1], sc_size=3)
-    print("Initial occupancy:", occu)
-    for i in range(1000000):
-        occu_str = hash_occu(occu)
-        if i > 100000:
-            if occu_str not in state_counter:
-                state_counter[occu_str] = 1
-            else:
-                state_counter[occu_str] += 1
-        step = tableflipper.propose_step(occu)
-        factor = tableflipper.compute_a_priori_factor(occu, step)
-        #factor = 1
-        if np.log(random.random()) < np.log(factor):
-            # Accept step
-            for sid, sp_to in step:
-                occu[sid] = sp_to
-    N = sum(list(state_counter.values()))
-    sorted_counter = sorted(list(state_counter.items()), key=lambda x: x[1])
-    print("Total number of states:", len(state_counter))
-    print("Max frequency:", sorted_counter[-1][1])
-    print("Max frequency occu:", sorted_counter[-1][0])
-    print("Min frequency:", sorted_counter[0][1])
-    print("Min frequency occu:", sorted_counter[0][0])
-    print("Average frequency:", np.average(list(state_counter.values())))
-
-    # Test with zero hamiltonian, assert equal frequency.
-    assert len(state_counter) <= 34  # Total 34 possible states.
-    assert len(state_counter) > 31
-    assert (max(state_counter.values())-min(state_counter.values()))/np.average(list(state_counter.values())) < 0.2
-
-def test_partial_probabilities():
-
-    space1 = SiteSpace(Composition({'Li+':0.5,'Mn3+':0.3333333,'Ti4+':0.1666667}))
-    space2 = SiteSpace(Composition({'O2-':0.8333333,'P3-':0.1666667}))
-    sl1 = Sublattice(space1,np.array([0,1,2]))
-    sl2 = Sublattice(space2,np.array([3,4,5]))
-    sl2.restrict_sites([5])
-
-    tableflipper = Tableflipper([sl1, sl2])
-    comp_space = tableflipper._compspace
-    state_counter = {}
-    print("Bits:", tableflipper.bits)
-
-    occu = np.array([2, 2, 2, 0, 0, 0])
-    print("Initial occupancy:", occu)
-    for i in range(500000):
-        occu_str = hash_occu(occu)
-        if i > 50000:
-            if occu_str not in state_counter:
-                state_counter[occu_str] = 1
-            else:
-                state_counter[occu_str] += 1
-        step = tableflipper.propose_step(occu)
-        factor = tableflipper.compute_a_priori_factor(occu, step)
-        #factor = 1
-        if np.log(random.random()) < np.log(factor):
-            # Accept step
-            for sid, sp_to in step:
-                occu[sid] = sp_to
-    N = sum(list(state_counter.values()))
-    sorted_counter = sorted(list(state_counter.items()), key=lambda x: x[1])
-    print("Total number of states:", len(state_counter))
-    print("Max frequency:", sorted_counter[-1][1])
-    print("Max frequency occu:", sorted_counter[-1][0])
-    print("Min frequency:", sorted_counter[0][1])
-    print("Min frequency occu:", sorted_counter[0][0])
-    print("Average frequency:", np.average(list(state_counter.values())))
-
-    # Test with zero hamiltonian, assert equal frequency.
-    assert len(state_counter) <= 19  # Total 19 possible states.
-    assert len(state_counter) > 17
-    assert (max(state_counter.values())-min(state_counter.values()))/np.average(list(state_counter.values())) < 0.2
-
-
-def test_deli_probabilities(deliflipper, rand_occu_deli):
-
-    tableflipper = deliflipper
-    comp_space = tableflipper._compspace
-    state_counter = {}
-    print("Bits:", tableflipper.bits)
-
-    occu = rand_occu_deli.copy()
-    print("Initial occupancy:", occu)
-    for i in range(500000):
-        occu_str = hash_occu(occu)
-        if i > 50000:
-            if occu_str not in state_counter:
-                state_counter[occu_str] = 1
-            else:
-                state_counter[occu_str] += 1
-        step = tableflipper.propose_step(occu)
-        factor = tableflipper.compute_a_priori_factor(occu, step)
-        #factor = 1
-        if np.log(random.random()) < np.log(factor):
-            # Accept step
-            for sid, sp_to in step:
-                occu[sid] = sp_to
-    N = sum(list(state_counter.values()))
-    sorted_counter = sorted(list(state_counter.items()), key=lambda x: x[1])
-    print("Total number of states:", len(state_counter))
-    print("Max frequency:", sorted_counter[-1][1])
-    print("Max frequency occu:", sorted_counter[-1][0])
-    print("Min frequency:", sorted_counter[0][1])
-    print("Min frequency occu:", sorted_counter[0][0])
-    print("Average frequency:", np.average(list(state_counter.values())))
-
-    # Test with zero hamiltonian, assert equal frequency.
-    assert len(state_counter) <= 17  # Total 17 possible deLi states.
-    assert len(state_counter) > 15
-    assert (max(state_counter.values())-min(state_counter.values()))/np.average(list(state_counter.values())) < 0.2
-
-def test_deli_auto_probabilities(deliflipper_auto, rand_occu_deli):
-
-    tableflipper = deliflipper_auto
-    comp_space = tableflipper._compspace
-    state_counter = {}
-    print("Bits:", tableflipper.bits)
-
-    occu = rand_occu_deli.copy()
-    print("Initial occupancy:", occu)
-    for i in range(500000):
-        occu_str = hash_occu(occu)
-        if i > 50000:
-            if occu_str not in state_counter:
-                state_counter[occu_str] = 1
-            else:
-                state_counter[occu_str] += 1
-        step = tableflipper.propose_step(occu)
-        factor = tableflipper.compute_a_priori_factor(occu, step)
-        #factor = 1
-        if np.log(random.random()) < np.log(factor):
-            # Accept step
-            for sid, sp_to in step:
-                occu[sid] = sp_to
-    N = sum(list(state_counter.values()))
-    sorted_counter = sorted(list(state_counter.items()), key=lambda x: x[1])
-    print("Total number of states:", len(state_counter))
-    print("Max frequency:", sorted_counter[-1][1])
-    print("Max frequency occu:", sorted_counter[-1][0])
-    print("Min frequency:", sorted_counter[0][1])
-    print("Min frequency occu:", sorted_counter[0][0])
-    print("Average frequency:", np.average(list(state_counter.values())))
-
-    # Test with zero hamiltonian, assert equal frequency.
-    assert len(state_counter) <= 17  # Total 17 possible deLi states.
-    assert len(state_counter) > 15
-    assert (max(state_counter.values())-min(state_counter.values()))/np.average(list(state_counter.values())) < 0.2
+    # When finished, see if distribution is correct.
+    assert len(n_counter) == 7
+    n_occus = []
+    for n_hash in n_counter.keys():
+        n = np.array(n_hash, dtype=int)
+        n_occus.append(get_n_states(n))
+    n_occus = np.array(n_occus)
+    assert len(o_counter) == sum(n_occus)
+    o_count_av = l/sum(n_occus)
+    npt.assert_allclose(np.array(list(o_counter.values())) / o_count_av,
+                        1, atol=0.15)
+    n_counts = np.array(list(n_counter.values()))
+    r_counts = n_counts / n_counts.sum()
+    r_occus = n_occus / n_occus.sum()
+    npt.assert_allclose(r_counts, r_occus, atol=0.1)

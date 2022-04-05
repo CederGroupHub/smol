@@ -1,13 +1,15 @@
 """Test all bias terms."""
 
+from copy import deepcopy
+
 import numpy as np
-import random
 import pytest
-from smol.moca.sampler.bias import mcbias_factory
-from smol.moca.sampler.kernel import ALL_BIAS
+
+from smol.moca.sampler.bias import (FugacityBias, SquarechargeBias,
+                                    SquarecompBias, mcbias_factory)
 from tests.utils import gen_random_occupancy
 
-bias_classes = ALL_BIAS
+bias_classes = [FugacityBias, SquarechargeBias, SquarecompBias]
 
 
 @pytest.fixture(scope="module")
@@ -17,53 +19,24 @@ def all_sublattices(ce_processor):
 
 @pytest.fixture(params=bias_classes)
 def mcbias(all_sublattices, request):
+    if request.param == SquarecompBias:
+        n_dims = sum(len(sublatt.species) for sublatt in all_sublattices)
+        n_cons = max(n_dims - 1, 1)
+        a = np.random.randint(low=-10, high=10, size=(n_cons, n_dims))
+        b = np.random.randint(low=-10, high=10, size=n_cons)
+        return request.param(all_sublattices, a, b)
     return request.param(all_sublattices)
 
 
-def get_charge(occupancy, sublattices):
-    n_cols = max(len(s.species) for s in sublattices)
-    n_rows = len(occupancy)
-    oxi_table = np.zeros((n_rows, n_cols))
-    for s in sublattices:
-        for j, sp in enumerate(s.species):
-            oxi_table[s.sites, j] = get_oxi_state(sp)
-    return np.sum([oxi_table[i, o] for i, o in enumerate(occupancy)])
-
-def get_ucoords(occupancy, sublattices):
-    bits = [s.species for s in sublattices]
-    sl_list = [s.sites for s in sublattices]
-
-    occu = np.array(occupancy)
-    compstat = [[(occu[sl_list[sl_id]] == sp_id).sum()
-                for sp_id, sp in enumerate(sl)]
-                for sl_id, sl in enumerate(bits)]
-
-    ucoords = []
-    for sl in compstat:
-        ucoords.extend(sl[:-1])
-    return ucoords
-
-def test_compute_bias(mcmcbias, rand_occu):
-    if mcmcbias.__class__.__name__ == 'Nullbias':
-        assert mcmcbias.compute_bias(rand_occu) == 0
-    if mcmcbias.__class__.__name__ == 'Squarechargebias':
-        assert (mcmcbias.compute_bias(rand_occu) ==
-                0.5 * get_charge(rand_occu, mcmcbias.sublattices)**2)
-    if mcmcbias.__class__.__name__ == 'Squarecompconstraintbias':
-        x = get_ucoords(rand_occu, mcmcbias.sublattices)
-        C = mcmcbias.C
-        b = mcmcbias.b
-        assert (mcmcbias.compute_bias(rand_occu) ==
-                0.5 * np.sum((C@x-b)**2))
-
-def test_compute_bias_change(mcmcbias, rand_occu):
+def test_compute_bias_change(mcbias):
     step = []
     occu = gen_random_occupancy(mcbias.sublattices)
     new_occu = occu.copy()
+    rng = np.random.default_rng()
     for _ in range(50):
-        s = random.choice(list(range(len(mcbias.active_sublattices))))
-        i = random.choice(mcbias.active_sublattices[s].sites)
-        sp = random.choice(list(range(len(mcbias.active_sublattices[s].species))))
+        s = rng.choice(list(range(len(mcbias.active_sublattices))))
+        i = rng.choice(mcbias.active_sublattices[s].sites)
+        sp = rng.choice(list(range(len(mcbias.active_sublattices[s].species))))
         step.append((i, sp))
         if i == 81:
             raise (ValueError, "81!!!!")
@@ -81,7 +54,6 @@ def test_mcbias_factory(all_sublattices):
 
 
 # Tests for FugacityBias
-# Tests for FuSemiGrandEnsemble
 @pytest.fixture(scope="module")
 def fugacity_bias(all_sublattices):
     return FugacityBias(all_sublattices)
@@ -124,3 +96,6 @@ def test_build_fu_table(fugacity_bias):
         for i in sublatt.sites:
             for j, species in zip(sublatt.encoding, sublatt.site_space):
                 assert fugacity_fractions[species] == table[i, j]
+
+
+# TODO: Tests for SquarechargeBias.

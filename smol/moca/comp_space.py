@@ -505,9 +505,6 @@ class CompSpace(MSONable):
         else:
             raise ValueError(f"Composition format {form} not supported!")
 
-        if np.any(n < -NUM_TOL):
-            raise NegativeSpeciesError(n, form="n")
-        # Does not check constraints violation when converting to "n"
         if rounding:
             n_round = np.array(np.round(n), dtype=int)
             if np.any(np.abs(n_round - n) > NUM_TOL):
@@ -516,7 +513,7 @@ class CompSpace(MSONable):
 
         return n
 
-    def _convert_n_to(self, n, form, sc_size, rounding=False):
+    def _convert_n_to(self, n, form, sc_size, rounding):
         n = np.array(n)
         if np.any(n < -NUM_TOL):
             raise NegativeSpeciesError(n, form="n")
