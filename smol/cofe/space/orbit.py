@@ -52,12 +52,12 @@ class Orbit(MSONable):
             underlying structure lattice.
     """
 
-    def __init__(self, frac_coords, lattice, bits, site_bases, structure_symops):
+    def __init__(self, cluster_coords, lattice, bits, site_bases, structure_symops):
         """Initialize an Orbit.
 
         Args:
-            frac_coords (list or ndarray):
-                list of frac coords for the sites
+            cluster_coords (list or ndarray):
+                list of frac coords for the sites in base cluster.
             lattice (pymatgen.Lattice):
                 A lattice object for the given sites
             bits (list of list):
@@ -73,14 +73,14 @@ class Orbit(MSONable):
             structure_symops (list of SymmOp):
                 list of symmetry operations for the base structure
         """
-        if len(frac_coords) != len(bits):
+        if len(cluster_coords) != len(bits):
             raise AttributeError(
-                f"Number of sites {len(frac_coords)} must be equal to number of "
+                f"Number of sites {len(cluster_coords)} must be equal to number of "
                 f"bits {len(bits)}"
             )
-        if len(frac_coords) != len(site_bases):
+        if len(cluster_coords) != len(site_bases):
             raise AttributeError(
-                f"Number of sites {len(frac_coords)} must be equal to number of "
+                f"Number of sites {len(cluster_coords)} must be equal to number of "
                 f"site bases {len(site_bases)}"
             )
 
@@ -104,7 +104,9 @@ class Orbit(MSONable):
 
         # Create basecluster
         self.base_cluster = Cluster(
-            [site_basis.site_space for site_basis in site_bases], frac_coords, lattice
+            [site_basis.site_space for site_basis in site_bases],
+            cluster_coords,
+            lattice,
         )
 
     @property

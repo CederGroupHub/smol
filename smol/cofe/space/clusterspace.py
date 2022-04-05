@@ -1256,6 +1256,18 @@ class ClusterSubspace(MSONable):
         )
         return "\n".join(outs)
 
+    def __repr__(self):
+        """Return a summary of subspace."""
+        outs = [
+            "Cluster Subspace Summary",
+            f"Basis/Orthogonal/Orthonormal : {self.basis_type}/{self.basis_orthogonal}/{self.basis_orthonormal}",
+            f"Unit Cell Composition : {self.structure.composition}",
+            f"Number of Orbits : {self.num_orbits}   No. of Correlation Functions : {self.num_corr_functions}",
+            f"Cluster Cutoffs : {', '.join('{}: {:.2f}'.format(s, c) for s, c in self.cutoffs.items())}",
+            f"External Terms : {self.external_terms}",
+        ]
+        return "\n".join(outs)
+
     @classmethod
     def from_dict(cls, d):
         """Create ClusterSubspace from an MSONable dict."""
