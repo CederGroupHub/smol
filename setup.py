@@ -144,7 +144,7 @@ setup(
             "nb2plots==0.6.0",
         ],
         "tests": [
-            "pytest==7.0.1",
+            "pytest==7.1.1",
             "pytest-cov==3.0.0",
             "scikit-learn>=0.24.2",
             "h5py>=3.5.0",
