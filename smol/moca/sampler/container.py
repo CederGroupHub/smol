@@ -18,14 +18,14 @@ from monty.json import MSONable, jsanitize
 from smol.moca.sampler.kernel import Trace
 from smol.moca.sublattice import Sublattice
 
+h5err = ImportError("'h5py' not found. Please install it.")
+
 try:
     import h5py
 except ImportError:
     h5py = None
-    h5err = ImportError("'h5py' not found. Please install it.")
 
 
-# TODO include inactive_sublattices here too
 class SampleContainer(MSONable):
     """A SampleContainer class stores Monte Carlo simulation samples.
 
@@ -293,13 +293,14 @@ class SampleContainer(MSONable):
                     occupancy[sublattice.sites], return_counts=True
                 )
                 # check for zero counts
-                if len(codes) != len(sublattice.sites):
-                    n = len(sublattice.site_space)
-                    missed = list(set(range(n)) - set(codes))
+                if len(codes) != len(sublattice.site_space):
+                    missed = list(set(sublattice.encoding) - set(codes))
                     codes = np.append(codes, missed)
                     count = np.append(count, len(missed) * [0])
 
-                counts[i][j] = count[codes.argsort()]  # order them accordingly
+                original_codes = sublattice.encoding.tolist()
+                order = [codes.tolist().index(code) for code in original_codes]
+                counts[i][j] = count[order]  # order them accordingly
         if flat:
             counts = self._flatten(counts)
         return counts
@@ -380,7 +381,7 @@ class SampleContainer(MSONable):
             available = len(trace_grp.occupancy) - trace_grp.attrs["nsamples"]
             # this probably fails since maxshape is not set.
             if available < alloc_nsamples:
-                self._grow_backend(backend, alloc_nsamples - available)
+                SampleContainer._grow_backend(backend, alloc_nsamples - available)
         else:
             backend = h5py.File(file_path, "w", libver="latest")
             self._init_backend(backend, alloc_nsamples)
@@ -421,7 +422,8 @@ class SampleContainer(MSONable):
         trace_grp.attrs["nsamples"] = 0
         trace_grp.attrs["total_mc_steps"] = 0
 
-    def _grow_backend(self, backend, nsamples):
+    @staticmethod
+    def _grow_backend(backend, nsamples):
         """Extend space available in a backend file."""
         for name in backend["trace"]:
             backend["trace"][name].resize(nsamples, axis=0)
@@ -429,9 +431,9 @@ class SampleContainer(MSONable):
     @staticmethod
     def _flatten(traced_values):
         """Flatten values in trace values with multiple walkers."""
-        s = list(traced_values.shape[1:])
-        s[0] = np.prod(traced_values.shape[:2])
-        return np.squeeze(traced_values.reshape(s))
+        shape_l = list(traced_values.shape[1:])
+        shape_l[0] = np.prod(traced_values.shape[:2])
+        return np.squeeze(traced_values.reshape(shape_l))
 
     def __len__(self):
         """Return the number of samples."""
@@ -443,7 +445,7 @@ class SampleContainer(MSONable):
         Returns:
             MSONable dict
         """
-        d = {
+        container_d = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "sublattices": [s.as_dict() for s in self.sublattices],
@@ -456,7 +458,7 @@ class SampleContainer(MSONable):
             "aux_checkpoint": self._aux_checkpoint,
         }
         # TODO need to think how to generally serialize the aux checkpoint
-        return d
+        return container_d
 
     @classmethod
     def from_dict(cls, d):

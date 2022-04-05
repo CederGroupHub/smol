@@ -135,10 +135,9 @@ setup(
     ],
     extras_require={
         "docs": [
-            "sphinx==4.4.0",
+            "sphinx==4.5.0",
             "pydata-sphinx-theme==0.8.1",
             "ipython==8.2.0",
-
             "nbsphinx==0.8.8",
             "nbsphinx-link==1.3.0",
             "nb2plots==0.6.0",
