@@ -5,7 +5,7 @@ the same site space. More rigourously it represents a substructure of the
 random structure supercell being sampled in a Monte Carlo simulation.
 """
 
-__author__ = "Luis Barroso-Luque"
+__author__ = "Luis Barroso-Luque, Fengyu Xie"
 
 import itertools
 import warnings

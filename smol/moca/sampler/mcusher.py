@@ -330,7 +330,8 @@ class Tableflip(MCUsher):
         Returns:
              list(tuple): list of tuples each with (idex, code).
         """
-        if random.random() < self.swap_weight:
+        rng = np.random.default_rng()
+        if rng.random() < self.swap_weight:
             return self._swapper.propose_step(occupancy)
 
         # We shall only flip active sites.
@@ -364,13 +365,15 @@ class Tableflip(MCUsher):
             dims_to = dim_ids[u_sl > 0]
             codes_to = sublatt.encoding[u_sl > 0]
             for d in dims_from:
-                site_ids.extend(random.sample(species_list[d],
-                                              -1 * u[d]))
+                site_ids.extend(rng.choice(species_list[d],
+                                           size=-1 * u[d],
+                                           replace=False).tolist())
             for d, code in zip(dims_to, codes_to):
-                for site_id in random.sample(site_ids, u[d]):
+                for site_id in rng.choice(site_ids, size=u[d],
+                                          replace=False):
                     step.append((int(site_id), int(code)))
                     site_ids.remove(site_id)
-            assert len(site_ids) == 0
+            assert len(site_ids) == 0  # Site num conservation.
 
         return step
 

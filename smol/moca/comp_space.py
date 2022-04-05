@@ -526,8 +526,8 @@ class CompSpace(MSONable):
         elif form == "x":
             dn = n - self.n0 * sc_size
             d = len(self.basis)
-            V = self.basis.transpose()[:d, :]
-            c = np.linalg.inv(V) @ dn[:d]
+            vs = self.basis.transpose()[:d, :]
+            c = np.linalg.inv(vs) @ dn[:d]
         elif form == "comp":
             c = []
             for species, sl_size, dim_id in zip(self.bits,

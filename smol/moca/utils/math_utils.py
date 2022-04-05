@@ -835,4 +835,5 @@ def choose_section_from_partition(p):
            int
     """
     p = np.array(p) / np.sum(p)
-    return int(round(np.random.choice(len(p), p=p)))
+    rng = np.random.default_rng()
+    return int(round(rng.choice(len(p), p=p)))
