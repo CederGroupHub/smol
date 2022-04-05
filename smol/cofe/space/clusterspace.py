@@ -1233,13 +1233,28 @@ class ClusterSubspace(MSONable):
 
     def __str__(self):
         """Convert class into pretty string for printing."""
-        class_str = f"ClusterBasis: [Prim Composition] {self.structure.composition}\n"
-        class_str += "    [Size] 0\n      [Orbit] id: 0  orderings: 1\n"
-        for size, orbits in self._orbits.items():
-            class_str += f"    [Size] {size}\n"
+        outs = [
+            f"Basis/Orthogonal/Orthonormal : {self.basis_type}/{self.basis_orthogonal}/{self.basis_orthonormal}",
+            f"       Unit Cell Composition : {self.structure.composition}",
+            f"            Number of Orbits : {self.num_orbits}",
+            f"No. of Correlation Functions : {self.num_corr_functions}",
+            f"             Cluster Cutoffs : {', '.join('{}: {:.2f}'.format(s, c) for s, c in self.cutoffs.items())}",
+            f"              External Terms : {self.external_terms}",
+            "Orbit Summary",
+            " ------------------------------------------------------------------------",
+            " |  ID     Degree    Cluster Diameter    Multiplicity    No. Functions  |",
+            " |   0       0             NA                 0                1        |",
+        ]
+        for degree, orbits in self.orbits_by_size.items():
             for orbit in orbits:
-                class_str += f"      {orbit}\n"
-        return class_str
+                outs.append(
+                    f" |{orbit.id:^7}{degree:^10}{orbit.base_cluster.diameter:^20.4f}"
+                    f"{orbit.multiplicity:^16}{len(orbit):^17}|"
+                )
+        outs.append(
+            " ------------------------------------------------------------------------"
+        )
+        return "\n".join(outs)
 
     @classmethod
     def from_dict(cls, d):

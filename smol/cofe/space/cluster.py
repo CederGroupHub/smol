@@ -225,7 +225,7 @@ class Cluster(SiteCollection, MSONable):
             [f"{j:0.6f}".rjust(12) for j in self.centroid]
         )
         outs = [
-            f"Diameter : {self.diameter}",
+            f"Diameter : {self.diameter:0.4f}",
             f"  Charge : {self.charge}",
             f"Centroid : {centroid_str}",
             f"Sites ({len(self)})",
@@ -254,17 +254,20 @@ class Cluster(SiteCollection, MSONable):
         return "\n".join(outs)
 
     def __repr__(self):
-        centroid_str = (
-            f"{self.lattice.get_cartesian_coords(self.centroid)} -> {self.centroid}"
-        )
+        centroid_str = "({:.4f}, {:.4f}, {:.4f})".format(
+            *self.lattice.get_cartesian_coords(self.centroid)
+        ) + " -> [{:.4f}, {:.4f}, {:.4f}]".format(*self.centroid)
         outs = [
             "Cluster",
-            f"No. sites: {len(self._sites)}   Diameter: {self.diameter:<4}",
+            f"No. sites: {len(self._sites)}   Diameter: {self.diameter:0.4f}",
             f"Centroid: {centroid_str}",
         ]
         for s in self:
             outs.append(
-                s.__repr__() + f" -> {self.lattice.get_fractional_coords(s.coords)}"
+                s.__repr__()
+                + " -> [{:.4f}, {:.4f}, {:.4f}]".format(
+                    *self.lattice.get_fractional_coords(s.coords)
+                )
             )
         return "\n".join(outs)
 

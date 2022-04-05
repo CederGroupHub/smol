@@ -140,9 +140,9 @@ def test_contains(orbit):
     for cluster in orbit.clusters:
         assert cluster in orbit
     rng = np.random.default_rng()
-    new_coords = orbit.base_cluster.sites.copy()
+    new_coords = orbit.base_cluster.frac_coords.copy()
     new_coords += 2 * rng.random(new_coords.shape) - 1
-    cluster = Cluster(new_coords, orbit.base_cluster.lattice)
+    cluster = Cluster(orbit.site_spaces, new_coords, orbit.base_cluster.lattice)
     assert cluster not in orbit
 
 
