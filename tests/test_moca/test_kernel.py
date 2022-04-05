@@ -38,9 +38,7 @@ def mckernel_bias(ensemble, request):
     if issubclass(kernel_class, ThermalKernel):
         kwargs["temperature"] = 5000
     kernel = kernel_class(ensemble, step_type=step_type, **kwargs)
-    kernel.bias = FugacityBias(
-        kernel.mcusher.sublattices, kernel.mcusher.inactive_sublattices
-    )
+    kernel.bias = FugacityBias(kernel.mcusher.sublattices)
     return kernel
 
 
@@ -50,23 +48,22 @@ def test_constructor(ensemble, step_type, mcusher):
     assert isinstance(kernel._usher, mcusher)
     assert isinstance(kernel.trace, StepTrace)
     assert "temperature" in kernel.trace.names
-    kernel.bias = FugacityBias(
-        kernel.mcusher.sublattices, kernel.mcusher.inactive_sublattices
-    )
+    kernel.bias = FugacityBias(kernel.mcusher.sublattices)
     assert "bias" in kernel.trace.delta_trace.names
 
 
 def test_trace():
     trace = Trace(first=np.ones(10), second=np.zeros(10))
     assert all(isinstance(val, np.ndarray) for _, val in trace.items())
-    trace.third = np.random.random(10)
+    rng = np.random.default_rng()
+    trace.third = rng.random(10)
     assert all(isinstance(val, np.ndarray) for _, val in trace.items())
     names = ["first", "second", "third"]
     assert all(name in names for name in trace.names)
 
     with pytest.raises(TypeError):
         trace.fourth = "blabla"
-        trace2 = Trace(one=np.zeros(40), two=66)
+        Trace(one=np.zeros(40), two=66)
 
     steptrace = StepTrace(one=np.zeros(10))
     assert isinstance(steptrace.delta_trace, Trace)
@@ -82,9 +79,7 @@ def test_trace():
 
 
 def test_single_step(mckernel):
-    occu_ = gen_random_occupancy(
-        mckernel._usher.sublattices, mckernel._usher.inactive_sublattices
-    )
+    occu_ = gen_random_occupancy(mckernel._usher.sublattices)
     for _ in range(20):
         trace = mckernel.single_step(occu_.copy())
         if trace.accepted:
@@ -94,9 +89,7 @@ def test_single_step(mckernel):
 
 
 def test_single_step_bias(mckernel_bias):
-    occu = gen_random_occupancy(
-        mckernel_bias._usher.sublattices, mckernel_bias._usher.inactive_sublattices
-    )
+    occu = gen_random_occupancy(mckernel_bias._usher.sublattices)
     for _ in range(20):
         trace = mckernel_bias.single_step(occu.copy())
         # assert delta bias is there and recorded

@@ -10,17 +10,18 @@ from tests.utils import assert_msonable, gen_random_structure
 @pytest.fixture(scope="module")
 def cluster_expansion(cluster_subspace):
     reg = Ridge(alpha=1e-8, fit_intercept=False)
-    n = np.random.randint(50, 100)
+    rng = np.random.default_rng()
+    n = rng.integers(50, 100)
     feat_matrix = np.empty((n, len(cluster_subspace)))
     structures = []
     for i in range(n):
         structure = gen_random_structure(
-            cluster_subspace.structure, size=np.random.randint(2, 5)
+            cluster_subspace.structure, size=rng.integers(2, 5)
         )
         structures.append(structure)
         feat_matrix[i] = cluster_subspace.corr_from_structure(structure)
 
-    prop_vec = -5 * np.random.random(n)
+    prop_vec = -5 * rng.random(n)
     reg.fit(feat_matrix, prop_vec)
     reg_data = RegressionData.from_sklearn(
         reg, feature_matrix=feat_matrix, property_vector=prop_vec
@@ -33,13 +34,14 @@ def cluster_expansion(cluster_subspace):
 
 def test_regression_data(cluster_subspace):
     reg = LinearRegression(fit_intercept=False)
-    n = np.random.randint(10, 100)
-    feat_matrix = np.random.random((n, len(cluster_subspace)))
-    prop_vec = np.random.random(n)
+    rng = np.random.default_rng()
+    n = rng.integers(10, 100)
+    feat_matrix = rng.random((n, len(cluster_subspace)))
+    prop_vec = rng.random(n)
     reg_data = RegressionData.from_sklearn(
         reg, feature_matrix=feat_matrix, property_vector=prop_vec
     )
-    coeffs = np.random.random(len(cluster_subspace))
+    coeffs = rng.random(len(cluster_subspace))
     expansion = ClusterExpansion(cluster_subspace, coeffs, reg_data)
     assert reg_data.estimator_name == reg.__class__.__name__
     assert reg_data.module == reg.__module__
@@ -65,7 +67,8 @@ def test_predict(cluster_expansion):
 
     comps = [s.composition for s in pool]
     all_species = list({b for c in comps for b in c.keys()})
-    mus = np.random.random(len(all_species))
+    rng = np.random.default_rng()
+    mus = rng.random(len(all_species))
 
     def get_energy(structure, species, chempots):
         return np.dot(chempots, [structure.composition[sp] for sp in species])
