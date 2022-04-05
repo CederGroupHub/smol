@@ -138,6 +138,7 @@ setup(
             "sphinx==4.4.0",
             "pydata-sphinx-theme==0.8.0",
             "ipython==8.2.0",
+
             "nbsphinx==0.8.8",
             "nbsphinx-link==1.3.0",
             "nb2plots==0.6.0",
