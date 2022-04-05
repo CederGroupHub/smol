@@ -9,13 +9,12 @@ from smol.cofe.extern import EwaldTerm
 from tests.utils import assert_msonable, gen_fake_training_data, gen_random_structure
 
 
-def test_add_data(structure_wrangler):
+def test_add_data(structure_wrangler, rng):
     for struct, energy in gen_fake_training_data(
-        structure_wrangler.cluster_subspace.structure
+        structure_wrangler.cluster_subspace.structure, rng=rng
     ):
         structure_wrangler.add_data(struct, {"energy": energy}, weights={"random": 2.0})
     struct = gen_random_structure(structure_wrangler.cluster_subspace.structure)
-    rng = np.random.default_rng()
     energy = -len(struct) * rng.random()
     structure_wrangler.add_data(struct, {"energy": energy}, weights={"random": 3.0})
 
@@ -139,12 +138,11 @@ def test_add_data(structure_wrangler):
         structure_wrangler.remove_properties("blab")
 
 
-def test_add_weights(structure_wrangler):
+def test_add_weights(structure_wrangler, rng):
     sc_matrices = structure_wrangler.supercell_matrices
     num_structs = structure_wrangler.num_structures
     structures = structure_wrangler.structures
     energies = structure_wrangler.get_property_vector("energy")
-    rng = np.random.default_rng()
     weights = rng.random(num_structs)
     structure_wrangler.add_weights("comp", weights)
     structure_wrangler.remove_all_data()
@@ -166,7 +164,7 @@ def test_add_weights(structure_wrangler):
         structure_wrangler.add_weights("test", weights[:-2])
 
 
-def test_append_data_items(structure_wrangler):
+def test_append_data_items(structure_wrangler, rng):
     items = structure_wrangler._items
     structure_wrangler.remove_all_data()
     assert len(structure_wrangler.structures) == 0
@@ -187,7 +185,6 @@ def test_append_data_items(structure_wrangler):
 
     structure_wrangler.append_data_items(data_items)
     assert len(structure_wrangler.data_items) == len(items)
-    rng = np.random.default_rng()
     item = deepcopy(
         structure_wrangler.data_items[
             rng.choice(range(structure_wrangler.num_structures))
@@ -208,8 +205,7 @@ def test_append_data_items(structure_wrangler):
         structure_wrangler.append_data_items([item])
 
 
-def test_data_indices(structure_wrangler):
-    rng = np.random.default_rng()
+def test_data_indices(structure_wrangler, rng):
     test = rng.choice(range(structure_wrangler.num_structures), 5)
     train = np.setdiff1d(range(structure_wrangler.num_structures), test)
     structure_wrangler.add_data_indices("test", test)
@@ -245,9 +241,8 @@ def test_properties(structure_wrangler):
         assert size * num_prim_sites == len(occu)
 
 
-def test_remove_structures(structure_wrangler):
+def test_remove_structures(structure_wrangler, rng):
     total = len(structure_wrangler.structures)
-    rng = np.random.default_rng()
     s = structure_wrangler.structures[rng.integers(0, total)]
     structure_wrangler.remove_structure(s)
     assert len(structure_wrangler.structures) == total - 1
@@ -263,13 +258,12 @@ def test_update_features(structure_wrangler):
     structure_wrangler.update_features()
 
 
-def test_get_gram_matrix(structure_wrangler):
+def test_get_gram_matrix(structure_wrangler, rng):
     G = structure_wrangler.get_gram_matrix()
     assert G.shape == 2 * (structure_wrangler.num_features,)
     npt.assert_array_equal(G, G.T)
     npt.assert_array_almost_equal(np.ones(G.shape[0]), G.diagonal())
 
-    rng = np.random.default_rng()
     rows = rng.choice(
         range(structure_wrangler.num_structures), structure_wrangler.num_structures - 2
     )
@@ -282,13 +276,11 @@ def test_get_gram_matrix(structure_wrangler):
     assert not np.allclose(np.ones(G.shape[0]), G.diagonal())
 
 
-def test_get_similarity_matrix(structure_wrangler):
+def test_get_similarity_matrix(structure_wrangler, rng):
     S = structure_wrangler.get_similarity_matrix()
     assert S.shape == 2 * (structure_wrangler.num_features,)
     npt.assert_array_equal(S, S.T)
     npt.assert_array_equal(S.diagonal(), np.ones(S.shape[0]))
-
-    rng = np.random.default_rng()
     rows = rng.choice(
         range(structure_wrangler.num_structures), structure_wrangler.num_structures - 2
     )
@@ -302,9 +294,8 @@ def test_get_similarity_matrix(structure_wrangler):
     npt.assert_array_equal(np.ones(S.shape[0]), S.diagonal())
 
 
-def test_matrix_properties(structure_wrangler):
+def test_matrix_properties(structure_wrangler, rng):
     assert structure_wrangler.get_condition_number() >= 1
-    rng = np.random.default_rng()
     rows = rng.choice(range(structure_wrangler.num_structures), 16)
     cols = rng.choice(range(structure_wrangler.num_features), 10)
     assert structure_wrangler.get_condition_number() >= 1
@@ -314,16 +305,14 @@ def test_matrix_properties(structure_wrangler):
     ) >= structure_wrangler.get_feature_matrix_rank(cols=cols[:-3])
 
 
-def test_get_orbit_rank(structure_wrangler):
-    rng = np.random.default_rng()
+def test_get_orbit_rank(structure_wrangler, rng):
     for _ in range(10):
         oid = rng.choice(range(1, len(structure_wrangler.cluster_subspace.orbits) + 1))
         orb_size = structure_wrangler.cluster_subspace.orbits[oid - 1]
         assert structure_wrangler.get_feature_matrix_orbit_rank(oid) <= len(orb_size)
 
 
-def test_get_duplicate_corr_inds(structure_wrangler):
-    rng = np.random.default_rng()
+def test_get_duplicate_corr_inds(structure_wrangler, rng):
     ind = rng.integers(structure_wrangler.num_structures)
     dup_item = deepcopy(structure_wrangler.data_items[ind])
     with pytest.warns(UserWarning):
@@ -335,8 +324,7 @@ def test_get_duplicate_corr_inds(structure_wrangler):
     ] in structure_wrangler.get_duplicate_corr_indices()
 
 
-def test_get_matching_corr_duplicate_inds(structure_wrangler):
-    rng = np.random.default_rng()
+def test_get_matching_corr_duplicate_inds(structure_wrangler, rng):
     ind = rng.integers(structure_wrangler.num_structures)
     dup_item = deepcopy(structure_wrangler.data_items[ind])
     ind2 = rng.integers(structure_wrangler.num_structures)
@@ -356,8 +344,7 @@ def test_get_matching_corr_duplicate_inds(structure_wrangler):
     )
 
 
-def test_get_constant_features(structure_wrangler):
-    rng = np.random.default_rng()
+def test_get_constant_features(structure_wrangler, rng):
     ind = rng.integers(1, structure_wrangler.num_features)
     for item in structure_wrangler.data_items:
         item["features"][ind] = 3.0  # make constant
