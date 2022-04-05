@@ -69,7 +69,7 @@ def table_flip(all_sublattices_lmtpo):
     return Tableflip(all_sublattices_lmtpo,
                      optimize_basis=True,
                      table_ergodic=True,
-                     swap_weight=0.1)
+                     swap_weight=0.2)
 
 
 def test_bad_propabilities(mcmcusher):
@@ -88,6 +88,8 @@ def test_propose_step(mcmcusher, rand_occu):
     total = 0
     for i in range(iterations):
         step = mcmcusher.propose_step(occu)
+        assert len(step) == len(set([s for s, c in step]))
+        # No duplicate site allowed!
         for flip in step:
             assert flip[1] != occu[flip[0]]
             if flip[0] in mcmcusher.active_sublattices[0].active_sites:
@@ -163,7 +165,7 @@ def test_table_flip(table_flip, rand_occu_lmtpo):
         assert n[3:].sum() == 6
         return comb(6, n[0]) * comb(6 - n[0], n[1]) * comb(6, n[3])
 
-    occu = rand_occu_lmtpo.copy()
+    occu = rand_occu_lmtpo[0].copy()
     bias = SquarechargeBias(table_flip.sublattices)
     o_counter = Counter()
     n_counter = Counter()
@@ -189,14 +191,15 @@ def test_table_flip(table_flip, rand_occu_lmtpo):
             npt.assert_array_equal(dd * table_flip.flip_table[flip_id, :],
                                    dn)
 
+        n_counter[get_hash(n)] += 1
+        o_counter[get_hash(occu)] += 1
+
         log_priori = table_flip.compute_log_priori_factor(occu, step)
         # No null step should be proposed.
         assert len(step) > 0
         if log_priori >= 0 or log_priori >= np.log(np.random.rand()):
             # Accepted.
             occu = occu_next.copy()
-        n_counter[get_hash(n)] += 1
-        o_counter[get_hash(occu)] += 1
 
     # When finished, see if distribution is correct.
     assert len(n_counter) == 7
@@ -206,7 +209,7 @@ def test_table_flip(table_flip, rand_occu_lmtpo):
         n_occus.append(get_n_states(n))
     n_occus = np.array(n_occus)
     assert len(o_counter) == sum(n_occus)
-    o_count_av = l/sum(n_occus)
+    o_count_av = l / sum(n_occus)
     npt.assert_allclose(np.array(list(o_counter.values())) / o_count_av,
                         1, atol=0.15)
     n_counts = np.array(list(n_counter.values()))

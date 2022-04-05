@@ -4,7 +4,7 @@ import pytest
 
 from smol.moca import Sampler
 from smol.moca.sampler.kernel import Metropolis
-from smol.moca.sampler.mcusher import Flip, Swap
+from smol.moca.sampler.mcusher import Flip, Swap, Tableflip
 from tests.utils import gen_random_occupancy
 
 TEMPERATURE = 5000
@@ -24,7 +24,7 @@ def test_from_ensemble(sampler):
     if "Canonical" in sampler.samples.metadata["name"]:
         assert isinstance(sampler.mckernel._usher, Swap)
     else:
-        assert isinstance(sampler.mckernel._usher, Flip)
+        assert isinstance(sampler.mckernel._usher, (Flip, Tableflip))
     assert isinstance(sampler.mckernel, Metropolis)
 
 

@@ -158,7 +158,7 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         self._dfeatures[-1] = sum(
             self._mu_table[f[0]][f[1]] - self._mu_table[f[0]][occupancy[f[0]]]
             for f in step
-        )
+        )  # Can be wrong if step has two same site indices.
         return self._dfeatures
 
     def compute_chemical_work(self, occupancy):

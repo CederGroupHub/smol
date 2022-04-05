@@ -3,10 +3,12 @@
 from copy import deepcopy
 
 import numpy as np
+import numpy.testing as npt
 import pytest
 
 from smol.moca.sampler.bias import (FugacityBias, SquarechargeBias,
                                     SquarecompBias, mcbias_factory)
+from smol.moca.comp_space import get_oxi_state
 from tests.utils import gen_random_occupancy
 
 bias_classes = [FugacityBias, SquarechargeBias, SquarecompBias]
@@ -98,4 +100,39 @@ def test_build_fu_table(fugacity_bias):
                 assert fugacity_fractions[species] == table[i, j]
 
 
-# TODO: Tests for SquarechargeBias.
+# TODO: Tests for SquarechargeBias and SquarecompBias
+@pytest.fixture(scope="module")
+def square_charge_bias(all_sublattices):
+    return SquarechargeBias(all_sublattices)
+
+
+def test_charge_bias(square_charge_bias):
+    table = square_charge_bias._c_table
+    n_species = max(max(s.encoding) for s in square_charge_bias.sublattices) + 1
+    n_sites = sum(len(s.species) for s in square_charge_bias.sublattices)
+    assert table.shape == (n_sites, n_species)
+    # All sites on all sublattices must be included in table
+    for sublatt in square_charge_bias.sublattices:
+        charges = np.array([get_oxi_state(sp) for sp in sublatt.species])
+        npt.assert_array_equal(table[sublatt.sites[:, None], sublatt.encoding],
+                               charges[None, :])
+    # Bias should be implemented as negative.
+    for _ in range(100):
+        occu = gen_random_occupancy(square_charge_bias.sublattices)
+        assert square_charge_bias.compute_bias(occu) <= 1E-6
+
+
+@pytest.fixture(scope="module")
+def square_comp_bias(all_sublattices):
+    n_dims = sum(len(sublatt.species) for sublatt in all_sublattices)
+    n_cons = max(n_dims - 1, 1)
+    a = np.random.randint(low=-10, high=10, size=(n_cons, n_dims))
+    b = np.random.randint(low=-10, high=10, size=n_cons)
+    return SquarecompBias(all_sublattices, a, b)
+
+
+def test_comp_bias(square_comp_bias):
+    # Bias should be implemented as negative.
+    for _ in range(100):
+        occu = gen_random_occupancy(square_comp_bias.sublattices)
+        assert square_comp_bias.compute_bias(occu) <= 1E-6

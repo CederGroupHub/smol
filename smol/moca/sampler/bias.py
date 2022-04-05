@@ -15,7 +15,7 @@ import numpy as np
 from smol.cofe.space.domain import get_species
 from smol.utils import class_name_from_str, derived_class_factory
 from smol.moca.comp_space import get_oxi_state
-from smol.moca.utils.occu_utils import occu_to_species_n
+from smol.moca.utils.occu_utils import get_dim_ids_table, occu_to_species_n
 
 
 class MCBias(ABC):
@@ -184,7 +184,7 @@ class FugacityBias(MCBias):
         delta_log_fu = sum(
             log(self._fu_table[f[0]][f[1]] / self._fu_table[f[0]][occupancy[f[0]]])
             for f in step
-        )
+        )  # Can be wrong if step has two same sites.
         return delta_log_fu
 
     def _build_fu_table(self, fugacity_fractions):
@@ -265,8 +265,8 @@ class SquarechargeBias(MCBias):
             Float, change of bias value after step.
         """
         occu_next = occupancy.copy()
-        step = np.array(step, dtype=int)
-        occu_next[step[:, 0]] = step[:, 1]
+        for site, code in step:
+            occu_next[site] = code
         return (self.compute_bias(occu_next)
                 - self.compute_bias(occupancy))
 
@@ -301,6 +301,7 @@ class SquarecompBias(MCBias):
         self.lam = lam
         self.A = np.array(A, dtype=int)
         self.b = np.array(b, dtype=int)
+        self._dim_ids_table = get_dim_ids_table(self.sublattices)
 
     def compute_bias(self, occupancy):
         """Compute bias from occupancy.
@@ -311,7 +312,7 @@ class SquarecompBias(MCBias):
         Returns:
             Float, bias value.
         """
-        n = occu_to_species_n(occupancy, self.sublattices)
+        n = occu_to_species_n(occupancy, self._dim_ids_table)
         return -self.lam * np.sum((self.A @ n - self.b) ** 2)
 
     def compute_bias_change(self, occupancy, step):
@@ -326,8 +327,8 @@ class SquarecompBias(MCBias):
             Float, change of bias value after step.
         """
         occu_next = occupancy.copy()
-        step = np.array(step, dtype=int)
-        occu_next[step[:, 0]] = step[:, 1]
+        for site, code in step:
+            occu_next[site] = code
         return (self.compute_bias(occu_next)
                 - self.compute_bias(occupancy))
 
