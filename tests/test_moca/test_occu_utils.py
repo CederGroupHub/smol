@@ -38,17 +38,17 @@ def dim_ids_table_all(sublattices):
     return get_dim_ids_table(sublattices, active_only=False)
 
 
-def test_dim_ids(dim_ids):
+def test_dim_ids(dim_ids, bits):
     d = sum(len(species) for species in dim_ids)
     for sl_id, dim_id in enumerate(dim_ids):
-        assert len(dim_id) == bits[sl_id]
-    npt.assert_array_equal(np.arange(d, type=int),
+        assert len(dim_id) == len(bits[sl_id])
+    npt.assert_array_equal(np.arange(d, dtype=int),
                            list(itertools.chain(*dim_ids)))
 
 
 def test_table(sublattices, dim_ids, dim_ids_table_active, dim_ids_table_all):
     # Assert include all sites.
-    n_sites = sum(sublatt.sites for sublatt in sublattices)
+    n_sites = sum(len(sublatt.sites) for sublatt in sublattices)
     n_codes = max(max(sublatt.encoding) for sublatt in sublattices) + 1
     npt.assert_array_equal(np.sort([site for sublatt in sublattices
                                     for site in sublatt.sites]),
@@ -57,14 +57,20 @@ def test_table(sublattices, dim_ids, dim_ids_table_active, dim_ids_table_all):
     assert dim_ids_table_active.shape == (n_sites, n_codes)
     for sublatt, dim_ids_sl in zip(sublattices, dim_ids):
         npt.assert_array_equal(dim_ids_table_all[sublatt.sites[:, None],
-                                                 sublatt.encoding],
-                               np.array(dim_ids_sl, dtype=int)[None, :])
+                                                 sublatt.encoding]
+                               - np.array(dim_ids_sl, dtype=int)[None, :], 0)
+        outer_codes = np.setdiff1d(np.arange(n_codes, dtype=int),
+                                   sublatt.encoding).astype(int)
+        npt.assert_array_equal(dim_ids_table_all[sublatt.sites[:, None],
+                                                 outer_codes], -1)
         if not sublatt.is_active:
-            npt.assert_array_equal(dim_ids_table_all[sublatt.sites, :], -1)
-        npt.assert_array_equal(dim_ids_table_active[sublatt.active_sites
-                                                    [:, None],
-                                                    sublatt.encoding],
-                               np.array(dim_ids_sl, dtype=int)[None, :])
+            npt.assert_array_equal(dim_ids_table_active[sublatt.sites, :], -1)
+        if sublatt.is_active:
+            npt.assert_array_equal(dim_ids_table_active[sublatt.active_sites
+                                                        [:, None],
+                                                        sublatt.encoding]
+                                   - np.array(dim_ids_sl, dtype=int)[None, :],
+                                   0)
         npt.assert_array_equal(dim_ids_table_active
                                [sublatt.restricted_sites, :],
                                -1)
@@ -109,8 +115,8 @@ def test_delta_n(sublattices, dim_ids_table_active):
         site = np.random.choice(active_sites)
         code_ori = occu[site]
         table_site = dim_ids_table_active[site, :]
-        code_nex = np.random.choice(set(np.arange(len(table_site), dtype=int)
-                                    [table_site >= 0]) - {code_ori})
+        code_nex = np.random.choice(list(set(np.arange(len(table_site), dtype=int)
+                                    [table_site >= 0]) - {code_ori}))
         step1 = [(site, code_nex)]
         step2 = [(site, code_nex), (site, code_ori)]
         step3 = [(site, code_nex), (site, code_nex)]

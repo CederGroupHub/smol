@@ -177,9 +177,18 @@ def integerize_multiple(vs, max_denominator=1000, dtol=NUM_TOL):
 
 
 # Integer linear algebra utilities.
+# TODO: This seems not to work well with current sympy version (works with 1.5.1)
+# Check this out!
 def compute_snf(A, domain=ZZ):
     """Compute smith normal form of a matrix.
 
+    In some specific cases, the snf algorithm might not be able
+    to return a result because some matrix elements of either
+    s, m or t might exceed the limit of int32. Therefore, this
+    function does not guarantee a result.
+
+    This is not common in computations associated with real systems,
+    but be careful if you ever come across this.
     Args:
         A(2D Arraylike of int):
             A matrix defined on some domain.

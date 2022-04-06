@@ -38,7 +38,7 @@ def get_dim_ids_table(sublattices, active_only=False):
             sub-lattices only. Default to false, will count
             all sites and sub-lattices.
     """
-    n_row = sum(sublatt.sites for sublatt in sublattices)
+    n_row = sum(len(sublatt.sites) for sublatt in sublattices)
     n_col = max(max(sublatt.encoding) for sublatt in sublattices) + 1
 
     table = np.zeros((n_row, n_col), dtype=int) - 1
@@ -49,6 +49,7 @@ def get_dim_ids_table(sublattices, active_only=False):
                 sites = sublatt.active_sites
             else:
                 sites = sublatt.sites
+            sites = sites.astype(int)  # in case sites are void.
             table[sites, code] = dim_id
             dim_id += 1
     return table
@@ -149,4 +150,3 @@ def delta_n_from_step(occu, step, dim_ids_table):
         occu_now[site] = code
 
     return delta_n
-

@@ -8,6 +8,46 @@ import numpy.testing as npt
 from collections import Counter
 
 from tests.utils import assert_table_set_equal
+from fractions import Fraction
+
+
+a1 = [[1, 3, 4, -3, -2], [1, 1, 1, 0, 0], [0, 0, 0, 1, 1]]
+b1 = [0, 1, 1]  # LMTPO, prim
+
+a2 = [[1, 2, 3, 4, -2, -1],
+      [1, 1, 1, 1, 0, 0],
+      [0, 0, 0, 0, 1, 1],
+      [0, 1, -1, 0, 0, 0],
+      [0, 0, 1, -1, 0, 0]]
+b2 = [0, 1, 1, 0, 0]  # LNMTOF, prim
+
+a3 = [[1, 2, 3, 4, 5, 0, -2, -1, -1],
+      [1, 0, 0, 0, 0, 1, 0, 0, 0],
+      [0, 1, 1, 1, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 1, 1, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 1]]
+b3 = [0, 3, 2, 1, 5, 1]  # L M(234) Nb Vac O(-2-1) F, topotactic, prim.
+
+a4 = [[0, 0, 0, 0],
+      [1, 1, 0, 0],
+      [0, 0, 1, 1]]
+b4 = [0, 1, 2]  # Some random charge neutral alloy of 2 sub-lattices, prim.
+
+all_a = [a1, a2, a3, a4]
+all_b = [b1, b2, b3, b4]
+
+
+@pytest.fixture(scope="module", params=all_a)
+def a(request):
+    # The matrix A in snf.
+    return request.param
+
+
+@pytest.fixture(scope="module", params=all_b)
+def b(request):
+    # The matrix A in snf.
+    return request.param
 
 
 def test_gcd():
@@ -34,12 +74,17 @@ def test_comb():
 
 
 def test_rational():
-    for _ in range(10):
+    for _ in range(500):
         rand_num, rand_den = np.random.randint(low=-1000,
                                                high=1000,
                                                size=2).tolist()
+        g = gcd(rand_num, rand_den)
+        rand_num = rand_num // g
+        rand_den = rand_den // g
         if rand_den < 0:
             rand_den = - rand_den
+        if rand_den == 0:
+            rand_den = 1
         perturbation = np.random.rand() * NUM_TOL * 0.5
         x = float(rand_num) / rand_den + perturbation
         num, den = rationalize_number(x, max_denominator=1000, dtol=NUM_TOL)
@@ -48,31 +93,54 @@ def test_rational():
             assert den == rand_den
 
         rand_num, rand_den = 0, np.random.randint(1000)
+        if rand_den == 0:
+            rand_den = 1
         perturbation = np.random.rand() * NUM_TOL * 0.5
         x = float(rand_num) / rand_den + perturbation
         num, den = rationalize_number(x, max_denominator=1000, dtol=NUM_TOL)
         assert num == 0
         assert den == 1
 
-    # Test a bad case
-    rand_num, rand_den = np.random.randint(low=-1000,
-                                           high=1000,
-                                           size=2).tolist()
-    if rand_den < 0:
-        rand_den = - rand_den
-    perturbation = NUM_TOL * 5
-    x = float(rand_num) / rand_den + perturbation
-    with pytest.raises(ValueError):
-       _, _ = rationalize_number(x, max_denominator=1000, dtol=NUM_TOL)
+    # Test bad cases.
+    for _ in range(500):
+        rand_num, rand_den = np.random.randint(low=-1000,
+                                               high=1000,
+                                               size=2).tolist()
+        if rand_den < 0:
+            rand_den = - rand_den
+        if rand_den == 0:
+            rand_den = 1
+        perturbation = np.random.rand() * NUM_TOL * 10
+        x = float(rand_num) / rand_den + perturbation
+        f = Fraction.from_float(x)
+        f2 = Fraction.from_float(x).limit_denominator(1000)
+        num = f.numerator
+        den = f.denominator
+        num2 = f2.numerator
+        den2 = f2.denominator
+        if abs(num2 / den2 - num / den) > NUM_TOL:
+            with pytest.raises(ValueError):
+                _, _ = rationalize_number(x, max_denominator=1000,
+                                          dtol=NUM_TOL)
 
 
 def test_integerize():
-    for _ in range(10):
+    for _ in range(100):
         a = np.random.randint(low=-10000,
                               high=10000,
                               size=100)
         aa = a.reshape((10, 10))
         den1, den2 = np.random.randint(1000, size=2).tolist()
+        if den1 == 0:
+            den1 = 1
+        if den2 == 0:
+            den2 = 1
+        g1 = gcd(gcd_list(a.tolist()), den1)
+        g2 = gcd(gcd_list(a.tolist()), den2)
+        a = a // g1
+        den1 = den1 // g1
+        aa = aa // g2
+        den2 = den2 // g2
 
         pert = np.random.rand(100) * NUM_TOL * 0.5
         a_t = a / den1 + pert
@@ -95,29 +163,36 @@ def test_integerize():
     assert den_r == 1
 
 
-def test_snf():
-    for _ in range(10):
-        a = np.random.randint(low=-1000, high=1000,
-                              size=(15, 20))
-        rank = np.linalg.matrix_rank(a)
-        s, m, t = compute_snf(a)
-        assert m.shape == (15, 20)
-        npt.assert_array_equal(m, s @ a @ t)
-        m_diag = m.diagonal().copy()
-        m_diag = m_diag[m_diag != 0]
-        assert len(m_diag) == rank
-        npt.assert_array_equal(m_diag, m.diagonal()[:rank])
-        npt.assert_array_equal(m_diag, np.sort(m_diag))
-        npt.assert_array_equal(*np.nonzero(m))
+def test_snf(a):
+    rank = np.linalg.matrix_rank(a)
+    s, m, t = compute_snf(a)
+    assert m.shape == a.shape
+    npt.assert_array_equal(m, s @ a @ t)
+    m_diag = m.diagonal().copy()
+    m_diag = m_diag[m_diag != 0]
+    assert len(m_diag) == rank
+    npt.assert_array_equal(*np.nonzero(m))
 
-        x = np.random.randint(low=-100, high=100,
-                              size=(100, 20 - rank))
+    n, d = a.shape
+    for _ in range(100):
+        x = np.random.randint(low=-10, high=10,
+                              size=(d, d - rank))
         npt.assert_array_equal(a @ (t[:, rank:] @ x.T), 0)
 
+
+def test_snf_specific():
     # Specific test from wikipedia
     a = np.array([[2, 4, 4], [-6, 6, 12], [10, 4, 16]])
     s, m, t = compute_snf(a)
     npt.assert_array_equal(m.diagonal(), [2, 2, 156])
+    npt.assert_array_equal(m, s @ a @ t)
+
+    # Zeros
+    a = np.zeros((50, 100), dtype=int)
+    s, m, t = compute_snf(a)
+    npt.assert_array_equal(m, 0)
+    assert_table_set_equal(s, np.eye(50, dtype=int))
+    assert_table_set_equal(t, np.eye(100, dtype=int))
 
 
 def test_solve_diop():
