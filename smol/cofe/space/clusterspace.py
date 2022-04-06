@@ -1234,11 +1234,13 @@ class ClusterSubspace(MSONable):
     def __str__(self):
         """Convert class into pretty string for printing."""
         outs = [
-            f"Basis/Orthogonal/Orthonormal : {self.basis_type}/{self.basis_orthogonal}/{self.basis_orthonormal}",
+            f"Basis/Orthogonal/Orthonormal : {self.basis_type}/{self.basis_orthogonal}/"
+            "{self.basis_orthonormal}",
             f"       Unit Cell Composition : {self.structure.composition}",
             f"            Number of Orbits : {self.num_orbits}",
             f"No. of Correlation Functions : {self.num_corr_functions}",
-            f"             Cluster Cutoffs : {', '.join('{}: {:.2f}'.format(s, c) for s, c in self.cutoffs.items())}",
+            "             Cluster Cutoffs : "
+            f"{', '.join('{}: {:.2f}'.format(s, c) for s, c in self.cutoffs.items())}",
             f"              External Terms : {self.external_terms}",
             "Orbit Summary",
             " ------------------------------------------------------------------------",
@@ -1260,10 +1262,13 @@ class ClusterSubspace(MSONable):
         """Return a summary of subspace."""
         outs = [
             "Cluster Subspace Summary",
-            f"Basis/Orthogonal/Orthonormal : {self.basis_type}/{self.basis_orthogonal}/{self.basis_orthonormal}",
+            f"Basis/Orthogonal/Orthonormal : {self.basis_type}/{self.basis_orthogonal}/"
+            f"{self.basis_orthonormal}",
             f"Unit Cell Composition : {self.structure.composition}",
-            f"Number of Orbits : {self.num_orbits}   No. of Correlation Functions : {self.num_corr_functions}",
-            f"Cluster Cutoffs : {', '.join('{}: {:.2f}'.format(s, c) for s, c in self.cutoffs.items())}",
+            f"Number of Orbits : {self.num_orbits}   "
+            f"No. of Correlation Functions : {self.num_corr_functions}",
+            "Cluster Cutoffs : "
+            f"{', '.join('{}: {:.2f}'.format(s, c) for s, c in self.cutoffs.items())}",
             f"External Terms : {self.external_terms}",
         ]
         return "\n".join(outs)
@@ -1312,7 +1317,7 @@ class ClusterSubspace(MSONable):
         _supercell_orb_inds = {}
         for scm, indices in d["_supercell_orb_inds"]:
             scm = tuple(tuple(s) for s in scm)
-            if isinstance(indices, tuple):
+            if isinstance(indices[0][0], int) and isinstance(indices[0][1], list):
                 warnings.warn(
                     "This ClusterSubspace was created with a previous version "
                     "of smol. Please resave it to avoid this warning.",
