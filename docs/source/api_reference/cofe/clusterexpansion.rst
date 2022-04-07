@@ -3,8 +3,11 @@ Expansion
 =========
 
 :class:`ClusterExpansion` contains the fitted coefficents of the cluster
-expansion for predicting CE properties of new structures. We provide a
-wrapper for sklearn regression methods in :class:`RegressionData`.
+expansion for predicting CE properties of new structures.
+
+We provide a thin :class:`RegressionData` dataclass to record the specifics of
+the regression used while fitting, for example when using a linear model from
+`scikit-learn <https://scikit-learn.org/stable/modules/linear_model.html#linear-model>`_.
 
 .. _cluster expansion:
 
