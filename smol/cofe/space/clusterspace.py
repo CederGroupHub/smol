@@ -778,14 +778,18 @@ class ClusterSubspace(MSONable):
         return indices
 
     def get_aliased_orbits(self, sc_matrix):
-        """ Get the aliased orbits for a given supercell shape
+        """Get the aliased orbits for a given supercell shape
 
         Detect the orbits that will be aliased due to translational symmetry imposed by
         the supercell lattice. Orbits i and j are aliased when a geometric cluster in
         orbit i is identically mapped to another geometric cluster in orbit j.
-        By a group theoretical argument, any cluster in orbit i then must be identical
-        to a corresponding cluster in orbit j. The correlation functions of these orbits
-        will evaluate to the same value, and are thus "aliased".
+        It can be shown through a group theoretical argument that any cluster in orbit i
+        then must be identical to a corresponding cluster in orbit j.
+
+        The implication of aliasing is that correlation functions of these orbits will
+        evaluate to the same value, leading to feature matrix rank deficiency.
+
+        This method will detect most cases of orbit degeneracy, but not some edge cases.
 
         Args:
             sc_matrix: (array):
