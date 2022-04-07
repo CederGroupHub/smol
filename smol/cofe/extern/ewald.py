@@ -174,6 +174,18 @@ class EwaldTerm(MSONable):
             matrix = np.diag(ewald_summation.point_energy_matrix)
         return matrix
 
+    def __str__(self):
+        """Pretty print EwaldTerm"""
+        prop_str = ""
+        for prop, val in self.__dict__.items():
+            if val is not None:
+                prop_str += f"{prop}={val}"
+        return f"EwaldTerm({prop_str})"
+
+    def __repr__(self):
+        """Get summary"""
+        return f"EwaldTerm({self.use_term})"
+
     def as_dict(self) -> dict:
         """
         Get Json-serialization dict representation.

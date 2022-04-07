@@ -282,12 +282,21 @@ class ClusterExpansion(MSONable):
                 f"Regression Data : estimator={self.regression_data.estimator_name}",
                 f"                  module={self.regression_data.module}",
                 f"                  parameters={self.regression_data.parameters}",
-                f"Target Property : "
+                f"Target Property    : "
                 f"mean={np.mean(self.regression_data.property_vector):0.4f}  "
                 f"std={np.std(self.regression_data.property_vector):0.4f}",
             ]
+        fit_var = sum(
+            self._subspace.function_total_multiplicities[1:] * self.eci[1:] ** 2
+        )
+        outs += [
+            f"ECI-based Property : mean={self.eci[0]:0.4f}  std={np.sqrt(fit_var):0.4f}",
+            "Fit Summary",
+        ]
 
-        outs.append("Fit Summary")
+        for i, term in enumerate(self._subspace.external_terms):
+            outs.append(f"{repr(term)}={self.coefs[len(self.eci) + i]:0.3f}")
+
         if self.regression_data is not None:
             outs += [
                 " ---------------------------------------------------------------------"
@@ -323,6 +332,28 @@ class ClusterExpansion(MSONable):
                     line += "|"
                     outs.append(line)
         outs.append(" " + (len(outs[-1]) - 1) * "-")
+        return "\n".join(outs)
+
+    def __repr__(self):
+        """Return summary of expansion"""
+        outs = ["Cluster Expansion Summary"]
+        outs += repr(self.cluster_subspace).split("\n")[1:]
+
+        if self.regression_data is not None:
+            outs += [
+                f"Regression Data : estimator={self.regression_data.estimator_name}"
+                f"  module={self.regression_data.module}",
+                f"  parameters={self.regression_data.parameters}",
+                f"Target Property    : "
+                f"mean={np.mean(self.regression_data.property_vector):0.4f}  "
+                f"std={np.std(self.regression_data.property_vector):0.4f}",
+            ]
+        fit_var = sum(
+            self._subspace.function_total_multiplicities[1:] * self.eci[1:] ** 2
+        )
+        outs += [
+            f"ECI-based Property : mean={self.eci[0]:0.4f}  std={np.sqrt(fit_var):0.4f}"
+        ]
         return "\n".join(outs)
 
     @classmethod
