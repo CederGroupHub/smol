@@ -312,3 +312,54 @@ class Cluster(SiteCollection, MSONable):
             ],
         }
         return cluster_d
+
+
+# functions to render cluster using crystal-toolkit
+try:
+    from collections import defaultdict
+
+    from crystal_toolkit.core.legend import Legend
+    from crystal_toolkit.core.scene import Scene
+
+    def get_cluster_scene(
+        self,
+        origin=None,
+        legend=None,
+    ) -> Scene:
+        """
+        Create CTK objects for the lattice and sties
+        Args:
+            self:  Structure object
+            origin: coordinate of the origin
+            legend: Legend for the sites
+
+        Returns:
+            CTK scene object to be rendered
+        """
+
+        origin = origin or list(-self.lattice.get_cartesian_coords([0.5, 0.5, 0.5]))
+        legend = legend or Legend(self)
+        primitives = defaultdict(list)
+
+        for site in self:
+            site_scene = site.get_scene(
+                origin=origin,
+                legend=legend,
+            )
+            for scene in site_scene.contents:
+                primitives[scene.name] += scene.contents
+
+        primitives["unit_cell"].append(self.lattice.get_scene())
+
+        return Scene(
+            name="Cluster",
+            origin=origin,
+            contents=[
+                Scene(name=k, contents=v, origin=origin) for k, v in primitives.items()
+            ],
+        )
+
+    Cluster.get_scene = get_cluster_scene
+
+except ImportError:
+    pass
