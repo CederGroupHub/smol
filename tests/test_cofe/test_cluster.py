@@ -11,7 +11,7 @@ from tests.utils import assert_msonable
 @pytest.fixture()
 def cluster(structure, rng):
     num_sites = rng.integers(2, 6)
-    sites = rng.choices(structure, k=num_sites)
+    sites = rng.choice(structure, size=num_sites)
     coords = [site.frac_coords.copy() for site in sites]
     # add random integer multiples
     for coord in coords:
@@ -33,7 +33,7 @@ def test_diameter(cluster):
 
 def test_periodicity(cluster, rng):
     new_coords = cluster.frac_coords.copy()
-    new_coords += rng.randint(-5, 5)
+    new_coords += rng.integers(-5, 5)
     site_spaces = [s.species for s in cluster.sites]
     assert Cluster(site_spaces, new_coords, cluster.lattice) == cluster
     new_coords[0] += 0.005 + rng.random()
