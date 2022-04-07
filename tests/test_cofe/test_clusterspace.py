@@ -139,7 +139,7 @@ def test_site_bases(cluster_subspace, basis_name, orthonormal):
 
 # TODO These can probably be improved to check odd and specific cases we want
 #  to watch out for
-def test_supercell_matrix_from_structure(cluster_subspace):
+def test_supercell_matrix_from_structure(cluster_subspace, rng):
     # Simple scaling
     supercell = cluster_subspace.structure.copy()
     supercell.make_supercell(2)
@@ -157,18 +157,16 @@ def test_supercell_matrix_from_structure(cluster_subspace):
     # Test a slightly distorted structure
     supercell = cluster_subspace.structure.copy()
     # up to 2% strain
-    rng = np.random.default_rng()
     supercell.apply_strain(rng.uniform(-0.02, 0.02, size=3))
     supercell.make_supercell(2)
     sc_matrix = cluster_subspace.scmatrix_from_structure(supercell)
     assert np.linalg.det(sc_matrix) == pytest.approx(8)
 
 
-def test_refine_structure(cluster_subspace):
+def test_refine_structure(cluster_subspace, rng):
     supercell = cluster_subspace.structure.copy()
     supercell.make_supercell(3)
     structure = gen_random_structure(cluster_subspace.structure, size=3)
-    rng = np.random.default_rng()
     structure.apply_strain(rng.uniform(-0.01, 0.01, size=3))
 
     #  TODO this sometimes fails because sc_matrix is not found!!!
@@ -194,9 +192,8 @@ def test_refine_structure(cluster_subspace):
     )
 
 
-def test_remove_orbits(cluster_subspace):
+def test_remove_orbits(cluster_subspace, rng):
     subspace = cluster_subspace.copy()  # make copy
-    rng = np.random.default_rng()
     remove_num = rng.integers(2, subspace.num_orbits - 1)
     ids_to_remove = rng.choice(
         range(1, subspace.num_orbits), size=remove_num, replace=False
@@ -231,9 +228,8 @@ def test_remove_orbits(cluster_subspace):
         subspace.remove_orbits([0])
 
 
-def test_remove_corr_functions(cluster_subspace):
+def test_remove_corr_functions(cluster_subspace, rng):
     subspace = cluster_subspace.copy()  # make copy
-    rng = np.random.default_rng()
     remove_num = rng.integers(2, len(subspace) - 1)
     ids_to_remove = rng.choice(range(1, len(subspace)), size=remove_num, replace=False)
     subspace.remove_corr_functions(ids_to_remove)
@@ -332,22 +328,20 @@ def test_periodicity_and_symmetry(cluster_subspace, supercell_matrix):
         npt.assert_allclose(corr, cluster_subspace.corr_from_structure(structure_op))
 
 
-def test_equality(single_subspace):
+def test_equality(single_subspace, rng):
     subspace = single_subspace.copy()
     assert subspace == single_subspace
     subspace.change_site_bases("legendre")
     assert subspace == single_subspace
-    rng = np.random.default_rng()
     subspace.remove_orbits(rng.choice(range(1, subspace.num_orbits), 2))
     assert subspace != single_subspace
 
 
-def test_contains(single_subspace):
+def test_contains(single_subspace, rng):
     for orbit in single_subspace.orbits:
         assert orbit in single_subspace
 
     subspace = single_subspace.copy()
-    rng = np.random.default_rng()
     orb_ids = rng.choice(range(1, subspace.num_orbits), 2)
     subspace.remove_orbits(orb_ids)
     for i, orbit in enumerate(single_subspace.orbits):
@@ -357,11 +351,10 @@ def test_contains(single_subspace):
             assert orbit in subspace
 
 
-def test_msonable(cluster_subspace_ewald):
+def test_msonable(cluster_subspace_ewald, rng):
     # force caching some orb indices for a few random structures
     _ = repr(cluster_subspace_ewald)  # can probably do better testing than this...
     _ = str(cluster_subspace_ewald)
-    rng = np.random.default_rng()
 
     for _ in range(2):
         size = rng.integers(1, 4)
@@ -434,7 +427,7 @@ def test_site_basis_rotation(cluster_subspace):
             assert np.linalg.det(cs1.site_rotation_matrix) == pytest.approx(1.0)
 
 
-def test_potts_subspace(cluster_subspace):
+def test_potts_subspace(cluster_subspace, rng):
     potts_subspace = PottsSubspace.from_cutoffs(
         cluster_subspace.structure, cluster_subspace.cutoffs
     )
@@ -450,7 +443,6 @@ def test_potts_subspace(cluster_subspace):
             bits_i = np.concatenate([b[:, i] for b in porbit.bit_combos])
             assert all(j in bits_i for j in site_space.codes)
 
-    rng = np.random.default_rng()
     # check decorations
     for _ in range(10):
         i = rng.choice(range(1, potts_subspace.num_corr_functions))
@@ -556,7 +548,7 @@ def test_orbit_hierarchy_fixed(single_subspace):
     assert sorted(hierarchy[-1]) == [6, 7]
 
 
-def test_corr_from_structure(single_subspace):
+def test_corr_from_structure(single_subspace, rng):
     structure = Structure(
         single_subspace.structure.lattice,
         [
@@ -631,7 +623,6 @@ def test_corr_from_structure(single_subspace):
     ]
     assert all(s1 == s2 for s1, s2 in zip(occu, cs.occupancy_from_structure(s)))
 
-    rng = np.random.default_rng()
     # shuffle sites and check correlation still works
     for _ in range(10):
         rng.shuffle(s)

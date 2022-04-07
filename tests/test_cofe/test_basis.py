@@ -83,8 +83,7 @@ def test_standard_basis(standard_basis):
     assert np.allclose(standard_basis._r_array @ standard_basis._f_array, original)
 
 
-def test_rotate(standard_basis):
-    rng = np.random.default_rng()
+def test_rotate(standard_basis, rng):
     f_array = standard_basis._f_array.copy()
     theta = np.pi / rng.integers(2, 10)
 
