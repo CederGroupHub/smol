@@ -20,8 +20,7 @@ DRIFT_TOL = 10 * np.finfo(float).eps  # tolerance of average drift
 
 
 @pytest.fixture
-def ce_processor(cluster_subspace):
-    rng = np.random.default_rng()
+def ce_processor(cluster_subspace, rng):
     coefs = 2 * rng.random(cluster_subspace.num_corr_functions)
     scmatrix = 3 * np.eye(3)
     return ClusterExpansionProcessor(
@@ -30,8 +29,7 @@ def ce_processor(cluster_subspace):
 
 
 @pytest.fixture(params=["real", "reciprocal", "point"])
-def ewald_processor(cluster_subspace, request):
-    rng = np.random.default_rng()
+def ewald_processor(cluster_subspace, rng, request):
     coef = rng.random(1)
     scmatrix = 3 * np.eye(3)
     ewald_term = EwaldTerm(use_term=request.param)
@@ -88,11 +86,11 @@ def test_get_average_drift(composite_processor):
     assert forward <= DRIFT_TOL and reverse <= DRIFT_TOL
 
 
-def test_compute_property_change(composite_processor):
+def test_compute_property_change(composite_processor, rng):
     sublattices = composite_processor.get_sublattices()
     occu = gen_random_occupancy(sublattices)
     active_sublattices = [sublatt for sublatt in sublattices if sublatt.is_active]
-    rng = np.random.default_rng()
+
     for _ in range(100):
         sublatt = rng.choice(active_sublattices)
         site = rng.choice(sublatt.sites)
@@ -138,12 +136,12 @@ def test_structure_occupancy_conversion(ce_processor):
         assert sm.fit(s_init, s_conv)
 
 
-def test_compute_feature_change(composite_processor):
+def test_compute_feature_change(composite_processor, rng):
     sublattices = composite_processor.get_sublattices()
     occu = gen_random_occupancy(sublattices)
     active_sublattices = [sublatt for sublatt in sublattices if sublatt.is_active]
     composite_processor.cluster_subspace.change_site_bases("indicator")
-    rng = np.random.default_rng()
+
     for _ in range(100):
         sublatt = rng.choice(active_sublattices)
         site = rng.choice(sublatt.sites)
@@ -193,15 +191,13 @@ def test_compute_feature_vector(ce_processor):
     )
 
 
-def test_bad_coef_length(cluster_subspace):
-    rng = np.random.default_rng()
+def test_bad_coef_length(cluster_subspace, rng):
     coefs = rng.random(cluster_subspace.num_corr_functions - 1)
     with pytest.raises(ValueError):
         ClusterExpansionProcessor(cluster_subspace, 5 * np.eye(3), coefficients=coefs)
 
 
-def test_bad_composite(cluster_subspace):
-    rng = np.random.default_rng()
+def test_bad_composite(cluster_subspace, rng):
     coefs = 2 * rng.random(cluster_subspace.num_corr_functions)
     scmatrix = 3 * np.eye(3)
     proc = CompositeProcessor(cluster_subspace, supercell_matrix=scmatrix)
@@ -218,7 +214,7 @@ def test_bad_composite(cluster_subspace):
     with pytest.raises(ValueError):
         new_cs = cluster_subspace.copy()
         ids = range(1, new_cs.num_corr_functions)
-        new_cs.remove_orbit_bit_combos(rng.choice(ids, size=10))
+        new_cs.remove_corr_functions(rng.choice(ids, size=10))
         proc.add_processor(
             ClusterExpansionProcessor(new_cs, scmatrix, coefficients=coefs)
         )
