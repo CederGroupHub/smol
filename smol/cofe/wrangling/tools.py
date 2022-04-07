@@ -54,8 +54,7 @@ def unique_corr_vector_indices(
 
     if return_compliment:
         return indices, list(duplicates)
-    else:
-        return indices
+    return indices
 
 
 def max_ewald_energy_indices(wrangler, max_relative_energy, return_compliment=False):
@@ -75,7 +74,9 @@ def max_ewald_energy_indices(wrangler, max_relative_energy, return_compliment=Fa
             Ewald threshold. The maximum Ewald energy relative to the
             minimum energy at a structure's composition (normalized per prim).
         return_compliment (bool): optional
-            if True, will return the complement of the unique indices
+            If True will return the compliment of the unique indices.
+    Returns:
+        indices, compliment
     """
     ewald_energy = None
     for term in wrangler.cluster_subspace.external_terms:
@@ -99,9 +100,9 @@ def max_ewald_energy_indices(wrangler, max_relative_energy, return_compliment=Fa
 
     min_energy_by_comp = defaultdict(lambda: np.inf)
     for energy, item in zip(ewald_energy, wrangler.data_items):
-        c = item["structure"].composition.reduced_composition
-        if energy < min_energy_by_comp[c]:
-            min_energy_by_comp[c] = energy
+        comp = item["structure"].composition.reduced_composition
+        if energy < min_energy_by_comp[comp]:
+            min_energy_by_comp[comp] = energy
 
     indices, compliment = [], []
     for i, (energy, item) in enumerate(zip(ewald_energy, wrangler.data_items)):
@@ -113,10 +114,10 @@ def max_ewald_energy_indices(wrangler, max_relative_energy, return_compliment=Fa
             indices.append(i)
         else:
             compliment.append(i)
+
     if return_compliment:
         return indices, compliment
-    else:
-        return indices
+    return indices
 
 
 def weights_energy_above_composition(structures, energies, temperature=2000):
@@ -162,11 +163,11 @@ def _energies_above_hull(structures, energies, ce_structure):
 
     The hull is constructed from the phase diagram of the given structures.
     """
-    pd = _pd(structures, energies, ce_structure)
+    phase_diagram = _pd(structures, energies, ce_structure)
     e_above_hull = []
-    for s, e in zip(structures, energies):
-        entry = PDEntry(s.composition.element_composition, e)
-        e_above_hull.append(pd.get_e_above_hull(entry))
+    for structure, energy in zip(structures, energies):
+        entry = PDEntry(structure.composition.element_composition, energy)
+        e_above_hull.append(phase_diagram.get_e_above_hull(entry))
     return np.array(e_above_hull)
 
 
@@ -174,13 +175,13 @@ def _pd(structures, energies, cs_structure):
     """Generate a phase diagram with the structures and energies."""
     entries = []
 
-    for s, e in zip(structures, energies):
-        entries.append(PDEntry(s.composition.element_composition, e))
+    for structure, energy in zip(structures, energies):
+        entries.append(PDEntry(structure.composition.element_composition, energy))
 
     max_e = max(entries, key=lambda e: e.energy_per_atom).energy_per_atom
     max_e += 1000
-    for el in cs_structure.composition.keys():
-        entry = PDEntry(Composition({el: 1}).element_composition, max_e)
+    for element in cs_structure.composition.keys():
+        entry = PDEntry(Composition({element: 1}).element_composition, max_e)
         entries.append(entry)
 
     return PhaseDiagram(entries)
@@ -189,12 +190,12 @@ def _pd(structures, energies, cs_structure):
 def _energies_above_composition(structures, energies):
     """Compute structure energies above reduced composition."""
     min_e = defaultdict(lambda: np.inf)
-    for s, e in zip(structures, energies):
-        comp = s.composition.reduced_composition
-        if e / len(s) < min_e[comp]:
-            min_e[comp] = e / len(s)
+    for structure, energy in zip(structures, energies):
+        comp = structure.composition.reduced_composition
+        if energy / len(structure) < min_e[comp]:
+            min_e[comp] = energy / len(structure)
     e_above = []
-    for s, e in zip(structures, energies):
-        comp = s.composition.reduced_composition
-        e_above.append(e / len(s) - min_e[comp])
+    for structure, energy in zip(structures, energies):
+        comp = structure.composition.reduced_composition
+        e_above.append(energy / len(structure) - min_e[comp])
     return np.array(e_above)

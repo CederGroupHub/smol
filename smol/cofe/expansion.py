@@ -174,8 +174,8 @@ class ClusterExpansion(MSONable):
         represent ECI.
         """
         if self._eci is None:
-            n = len(self._subspace.external_terms)  # check for extra terms
-            coefs = self.coefs[:-n] if n else self.coefs[:]
+            num_ext_terms = len(self._subspace.external_terms)  # check for extra terms
+            coefs = self.coefs[:-num_ext_terms] if num_ext_terms else self.coefs[:]
             self._eci = coefs.copy()
             self._eci /= self._subspace.function_total_multiplicities
         return self._eci
@@ -220,20 +220,22 @@ class ClusterExpansion(MSONable):
             else np.eye(len(self.coefs))
         )
 
-    def predict(self, structure, normalize=False):
+    def predict(self, structure, normalize=False, scmatrix=None):
         """Predict the fitted property for a given set of structures.
 
         Args:
             structure (Structure):
                 Structures to predict from
-            normalize (bool):
-                whether to return the predicted property normalized by
-                the prim cell size.
+            normalize (bool): optional
+                Whether to return the predicted property normalized
+                by the prim cell size.
+            scmatrix (Arraylike): optional
+                3 x 3 Supercell matrix of structure.
         Returns:
             float
         """
         corrs = self.cluster_subspace.corr_from_structure(
-            structure, normalized=normalize
+            structure, scmatrix=scmatrix, normalized=normalize
         )
         return np.dot(self.coefs, corrs)
 
@@ -260,7 +262,7 @@ class ClusterExpansion(MSONable):
         """
         coefs = self.eci if with_multiplicity else self.coefs
         bit_ids = [i for i, coef in enumerate(coefs) if abs(coef) < threshold]
-        self.cluster_subspace.remove_orbit_bit_combos(bit_ids)
+        self.cluster_subspace.remove_corr_functions(bit_ids)
         # Update necessary attributes
         ids_complement = list(set(range(len(self.coefs))) - set(bit_ids))
         ids_complement.sort()
@@ -280,13 +282,13 @@ class ClusterExpansion(MSONable):
         # This might need to be redefined to take "expectation" using measure
         feature_avg = np.average(self.feature_matrix, axis=0)
         feature_std = np.std(self.feature_matrix, axis=0)
-        s = (
+        print_str = (
             "ClusterExpansion:\n    Prim Composition: "
             f"{self.structure.composition}\n"
             f"Num corr functions: {self.cluster_subspace.num_corr_functions}\n"
         )
         if self._feat_matrix is None:
-            s += (
+            print_str += (
                 "[Feature matrix used in fit was not provided. Feature "
                 "statistics are meaningless.]\n"
             )
@@ -298,28 +300,28 @@ class ClusterExpansion(MSONable):
             if self.coefs is None
             else self.coefs
         )
-        s += f"    [Orbit]  id: {str(0):<3}\n"
-        s += "        bit       eci\n"
-        s += f'        {"[X]":<10}{ecis[0]:<4.3}\n'
+        print_str += f"    [Orbit]  id: {str(0):<3}\n"
+        print_str += "        bit       eci\n"
+        print_str += f'        {"[X]":<10}{ecis[0]:<4.3}\n'
         for orbit in self.cluster_subspace.orbits:
-            s += (
+            print_str += (
                 f"    [Orbit]  id: {orbit.bit_id:<3} size: "
                 f"{len(orbit.bits):<3} radius: "
                 f"{orbit.base_cluster.diameter:<4.3}\n"
             )
-            s += (
+            print_str += (
                 "        id    bit       eci     feature avg  feature std  " "eci*std\n"
             )
             for i, bits in enumerate(orbit.bit_combos):
                 eci = ecis[orbit.bit_id + i]
                 f_avg = feature_avg[orbit.bit_id + i]
                 f_std = feature_std[orbit.bit_id + i]
-                s += (
+                print_str += (
                     f"        {orbit.bit_id + i:<6}{str(bits[0]):<10}"
                     f"{eci:<8.3f}{f_avg:<13.3f}{f_std:<13.3f}"
                     f"{eci*f_std:<.3f}\n"
                 )
-        return s
+        return print_str
 
     @classmethod
     def from_dict(cls, d):
@@ -336,7 +338,7 @@ class ClusterExpansion(MSONable):
         else:
             reg_data = None
 
-        ce = cls(
+        cluster_expansion = cls(
             ClusterSubspace.from_dict(d["cluster_subspace"]),
             coefficients=np.array(d["coefs"]),
             regression_data=reg_data,
@@ -345,7 +347,7 @@ class ClusterExpansion(MSONable):
         # update copy of feature matrix to keep any changes
         if d["feature_matrix"] is not None:
             cls._feat_matrix = np.array(d["feature_matrix"])
-        return ce
+        return cluster_expansion
 
     def as_dict(self):
         """
@@ -363,7 +365,7 @@ class ClusterExpansion(MSONable):
         else:
             reg_data = None
 
-        d = {
+        ce_d = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "cluster_subspace": self.cluster_subspace.as_dict(),
@@ -371,4 +373,4 @@ class ClusterExpansion(MSONable):
             "regression_data": reg_data,
             "feature_matrix": feature_matrix,
         }
-        return d
+        return ce_d

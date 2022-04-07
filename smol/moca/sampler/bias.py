@@ -22,26 +22,24 @@ class MCBias(ABC):
     Attributes:
         sublattices (List[Sublattice]):
             list of sublattices with active sites.
-        inactive_sublattices (List[InactiveSublattice]):
-            list of inactive sublattices.
     """
 
-    def __init__(self, sublattices, inactive_sublattices, *args, **kwargs):
-        """Initialize Base bias.
+    def __init__(self, sublattices, *args, **kwargs):
+        """Initialize MCBias.
 
         Args:
             sublattices (List[Sublattice]):
                 list of active sublattices, containing species information and
                 site indices in sublattice.
-            inactive_sublattices (List[InactiveSublattice]):
-                list of inactive sublattices
             args:
-                additional arguments buffer.
+                Additional arguments buffer.
             kwargs:
-                additional keyword arguments buffer.
+                Additional keyword arguments buffer.
         """
         self.sublattices = sublattices
-        self.inactive_sublattices = inactive_sublattices
+        self.active_sublattices = [
+            sublatt for sublatt in self.sublattices if sublatt.is_active
+        ]
 
     @abstractmethod
     def compute_bias(self, occupancy):
@@ -87,26 +85,27 @@ class FugacityBias(MCBias):
     potentials can then be calculated.
     """
 
-    def __init__(self, sublattices, inactive_sublattices, fugacity_fractions=None):
-        """Initialize fugacity ratio bias.
+    def __init__(self, sublattices, fugacity_fractions=None):
+        """InitializeFugacity ratio bias.
 
         Args:
             sublattices (List[Sublattice]):
                 list of active sublattices, containing species information and
                 site indices in sublattice.
-            inactive_sublattices (List[InactiveSublattice]):
-                list of inactive sublattices
             fugacity_fractions (sequence of dicts): optional
                 Dictionary of species name and fugacity fraction for each
-                sublattice (i.e. the sublattice concentrations for a random
-                structure). If not given, this will be taken from the
-                prim structure used in the ClusterSubspace. Dictionary keys
-                need to be in the same order as the corresponding sublattice.
+                sublattice (.i.e think of it as the sublattice concentrations
+                for random structure). If not given this will be taken from the
+                prim structure used in the cluster subspace. Needs to be in
+                the same order as the corresponding sublattice.
         """
-        super().__init__(sublattices, inactive_sublattices)
+        super().__init__(sublattices)
         self._fus = None
         self._fu_table = None
-        self._species = [set(sublatt.site_space.keys()) for sublatt in sublattices]
+        # Consider only species on active sub-lattices
+        self._species = [
+            set(sublatt.site_space.keys()) for sublatt in self.active_sublattices
+        ]
 
         if fugacity_fractions is not None:
             # check that species are valid
@@ -116,24 +115,24 @@ class FugacityBias(MCBias):
             ]
         else:
             fugacity_fractions = [
-                dict(sublatt.site_space) for sublatt in self.sublattices
+                dict(sublatt.site_space) for sublatt in self.active_sublattices
             ]
         self.fugacity_fractions = fugacity_fractions
 
     @property
     def fugacity_fractions(self):
-        """Get the fugacity fractions for species in system."""
+        """Get the fugacity fractions for species on active sublatts."""
         return self._fus
 
     @fugacity_fractions.setter
     def fugacity_fractions(self, value):
-        """Set the fugacity fractions and update table."""
+        """Set the fugacity fractions on active sublatts and update table."""
         for sub in value:
-            for sp, count in Counter(map(get_species, sub.keys())).items():
+            for spec, count in Counter(map(get_species, sub.keys())).items():
                 if count > 1:
                     raise ValueError(
                         f"{count} values of the fugacity for the same "
-                        f"species {sp} were provided.\n Make sure the "
+                        f"species {spec} were provided.\n Make sure the "
                         f"dictionaries you are using have only "
                         f"string keys or only Species objects as keys."
                     )
@@ -141,8 +140,8 @@ class FugacityBias(MCBias):
         value = [{get_species(k): v for k, v in sub.items()} for sub in value]
         if not all(sum(fus.values()) == 1 for fus in value):
             raise ValueError("Fugacity ratios must add to one.")
-        for (sp, vals) in zip(self._species, value):
-            if sp != set(vals.keys()):
+        for (spec, vals) in zip(self._species, value):
+            if spec != set(vals.keys()):
                 raise ValueError(
                     f"Fugacity fractions given are missing or not valid "
                     f"species.\n"
@@ -196,17 +195,17 @@ class FugacityBias(MCBias):
         be given values of 1. Also rows representing sites with not partial
         occupancy will have all 1 values and should never be used.
         """
-        sublattices = self.sublattices + self.inactive_sublattices
-        num_cols = max(len(sl.site_space) for sl in sublattices)
-        num_rows = sum(len(sl.sites) for sl in sublattices)
+        num_cols = max(max(sublatt.encoding) for sublatt in self.sublattices) + 1
+        # Sublattice can only be initialized as default, or splitted from default.
+        num_rows = sum(len(sl.sites) for sl in self.sublattices)
         table = np.ones((num_rows, num_cols))
-        for fus, sublatt in zip(fugacity_fractions, sublattices):
-            ordered_fus = [fus[sp] for sp in sublatt.site_space]
-            table[sublatt.sites, : len(ordered_fus)] = ordered_fus
+        for fus, sublatt in zip(fugacity_fractions, self.active_sublattices):
+            ordered_fus = np.array([fus[sp] for sp in sublatt.site_space])
+            table[sublatt.sites[:, None], sublatt.encoding] = ordered_fus[None, :]
         return table
 
 
-def mcbias_factory(bias_type, sublattices, inactive_sublattices, *args, **kwargs):
+def mcbias_factory(bias_type, sublattices, *args, **kwargs):
     """Get a MCMC bias from string name.
 
     Args:
@@ -215,8 +214,6 @@ def mcbias_factory(bias_type, sublattices, inactive_sublattices, *args, **kwargs
         sublattices (List[Sublattice]):
             list of active sublattices, containing species information and
             site indices in sublattice.
-        inactive_sublattices (List[InactiveSublattice]):
-            list of inactive sublattices
         *args:
             positional args to instatiate a bias term.
         *kwargs:
@@ -225,6 +222,4 @@ def mcbias_factory(bias_type, sublattices, inactive_sublattices, *args, **kwargs
     if "bias" not in bias_type and "Bias" not in bias_type:
         bias_type += "-bias"
     bias_name = class_name_from_str(bias_type)
-    return derived_class_factory(
-        bias_name, MCBias, sublattices, inactive_sublattices, *args, **kwargs
-    )
+    return derived_class_factory(bias_name, MCBias, sublattices, *args, **kwargs)

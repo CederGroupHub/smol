@@ -8,19 +8,19 @@ from tests.utils import assert_msonable, gen_random_structure
 
 
 @pytest.fixture(scope="module")
-def cluster_expansion(cluster_subspace):
+def cluster_expansion(cluster_subspace, rng):
     reg = Ridge(alpha=1e-8, fit_intercept=False)
-    n = np.random.randint(50, 100)
+    n = rng.integers(50, 100)
     feat_matrix = np.empty((n, len(cluster_subspace)))
     structures = []
     for i in range(n):
         structure = gen_random_structure(
-            cluster_subspace.structure, size=np.random.randint(2, 5)
+            cluster_subspace.structure, size=rng.integers(2, 5)
         )
         structures.append(structure)
         feat_matrix[i] = cluster_subspace.corr_from_structure(structure)
 
-    prop_vec = -5 * np.random.random(n)
+    prop_vec = -5 * rng.random(n)
     reg.fit(feat_matrix, prop_vec)
     reg_data = RegressionData.from_sklearn(
         reg, feature_matrix=feat_matrix, property_vector=prop_vec
@@ -31,15 +31,15 @@ def cluster_expansion(cluster_subspace):
     return expansion
 
 
-def test_regression_data(cluster_subspace):
+def test_regression_data(cluster_subspace, rng):
     reg = LinearRegression(fit_intercept=False)
-    n = np.random.randint(10, 100)
-    feat_matrix = np.random.random((n, len(cluster_subspace)))
-    prop_vec = np.random.random(n)
+    n = rng.integers(10, 100)
+    feat_matrix = rng.random((n, len(cluster_subspace)))
+    prop_vec = rng.random(n)
     reg_data = RegressionData.from_sklearn(
         reg, feature_matrix=feat_matrix, property_vector=prop_vec
     )
-    coeffs = np.random.random(len(cluster_subspace))
+    coeffs = rng.random(len(cluster_subspace))
     expansion = ClusterExpansion(cluster_subspace, coeffs, reg_data)
     assert reg_data.estimator_name == reg.__class__.__name__
     assert reg_data.module == reg.__module__
@@ -47,18 +47,41 @@ def test_regression_data(cluster_subspace):
     assert_msonable(expansion)
 
 
-# TODO need a realiable test, maybe create energy from a simple species concentration model
-def test_predict(cluster_expansion):
-    """
-    n = len(cluster_expansion.structures)
-    inds = np.random.choice(range(n), size=n//2)
-    structures = [cluster_expansion.structures[i] for i in inds]
-    preds = [cluster_expansion.predict(s, normalize=True) for s in structures]
-    npt.assert_allclose(
-        preds, cluster_expansion.regression_data.property_vector[inds],
-        atol=1E-4
+def test_predict(cluster_expansion, rng):
+    subspace = cluster_expansion.cluster_subspace
+
+    prim = cluster_expansion.structure
+    scmatrix = np.eye(3, dtype=int) * 3
+    scmatrix[0, 1] = 2  # Intentionally made less symmetric
+    scmatrix[1, 2] = 1
+    N = np.abs(np.linalg.det(scmatrix))
+    pool = [gen_random_structure(prim, scmatrix) for _ in range(100)]
+    feature_matrix = np.array(
+        [
+            subspace.corr_from_structure(s, scmatrix=scmatrix, normalized=True)
+            for s in pool
+        ]
     )
-    """
+
+    comps = [s.composition for s in pool]
+    all_species = list({b for c in comps for b in c.keys()})
+    mus = rng.random(len(all_species))
+
+    def get_energy(structure, species, chempots):
+        return np.dot(chempots, [structure.composition[sp] for sp in species])
+
+    energies = np.array([get_energy(s, all_species, mus) for s in pool]) / N
+    reg = LinearRegression(fit_intercept=False)
+    reg.fit(feature_matrix, energies)
+    coefs = reg.coef_
+    expansion_new = ClusterExpansion(subspace, coefs)
+    # Why don't we add a "scmatrix" option into ClusterExpansion.predict?
+    # This will make it safer to structure skew, because pymatgen can't seem
+    # to figure out highly skewed supercell matrix correctly.
+    energies_pred = np.array(
+        [expansion_new.predict(s, scmatrix=scmatrix, normalize=True) for s in pool]
+    )
+    np.testing.assert_almost_equal(energies, energies_pred, decimal=6)
 
 
 def test_prune(cluster_expansion):

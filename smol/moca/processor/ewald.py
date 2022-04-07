@@ -11,6 +11,9 @@ ClusterExpansionProcessor and an EwaldProcessor class.
 
 __author__ = "Luis Barroso-Luque"
 
+import warnings
+from functools import cache, cached_property
+
 import numpy as np
 from pymatgen.analysis.ewald import EwaldSummation
 
@@ -33,7 +36,6 @@ class EwaldProcessor(Processor):
         supercell_matrix,
         ewald_term,
         coefficient=1.0,
-        ewald_summation=None,
     ):
         """Initialize an EwaldProcessor.
 
@@ -46,13 +48,21 @@ class EwaldProcessor(Processor):
             ewald_term (EwaldTerm):
                 an instance of EwaldTerm to compute electrostatic energies.
             coefficient (float):
-                fitting coeficient to scale Ewald energy by.
-            ewald_summation (EwaldSummation): optional
-                pymatgen EwaldSummation instance, make sure this uses the exact
-                same parameters as those used in the EwaldTerm in the
-                ClusterSubspace used in the ClusterExpansion
-                (i.e. same eta, real and recip cut-offs).
+                Fitting coefficient to scale Ewald energy by.
         """
+        contains_ewald = False
+        for term in cluster_subspace.external_terms:
+            if isinstance(term, EwaldTerm):
+                contains_ewald = True
+                break
+
+        if not contains_ewald:
+            cluster_subspace.add_external_term(EwaldTerm())
+            warnings.warn(
+                message="Warning: cluster subspace does not contain "
+                "an Ewald term. Creating a default Ewald "
+                "term and adding to cluster subspace"
+            )
         super().__init__(cluster_subspace, supercell_matrix, coefficient)
 
         self._ewald_term = ewald_term
@@ -60,33 +70,29 @@ class EwaldProcessor(Processor):
         struct, inds = self._ewald_term.get_ewald_structure(self.structure)
         self._ewald_structure = struct
         self._ewald_inds = np.ascontiguousarray(inds)
-        # Lazy set up Ewald Summation since it can be slow
-        self._ewald = ewald_summation
-        self._matrix = None  # to cache matrix for now, the use cached_prop
 
-    @property
+    @cached_property
     def ewald_summation(self):
         """Get the pymatgen EwaldSummation object."""
-        if self._ewald is None:
-            self._ewald = EwaldSummation(
-                self._ewald_structure,
-                real_space_cut=self._ewald_term.real_space_cut,  # noqa
-                recip_space_cut=self._ewald_term.recip_space_cut,  # noqa
-                eta=self._ewald_term.eta,
-            )
-        return self._ewald
+        ewald_summation = EwaldSummation(
+            self._ewald_structure,
+            real_space_cut=self._ewald_term.real_space_cut,
+            recip_space_cut=self._ewald_term.recip_space_cut,
+            eta=self._ewald_term.eta,
+        )
+        return ewald_summation
 
-    @property  # TODO use cached_property (only for python 3.8)
+    @property
+    @cache
     def ewald_matrix(self):
         """Get the electrostatic interaction matrix.
 
         The matrix used is the one set in the EwaldTerm of the given
         ClusterExpansion.
         """
-        if self._matrix is None:
-            matrix = self._ewald_term.get_ewald_matrix(self.ewald_summation)
-            self._matrix = np.ascontiguousarray(matrix)
-        return self._matrix
+        matrix = self._ewald_term.get_ewald_matrix(self.ewald_summation)
+        matrix = np.ascontiguousarray(matrix)
+        return matrix
 
     def compute_property(self, occupancy):
         """Compute the Ewald electrostatic energy for a given occupancy array.
@@ -165,19 +171,21 @@ class EwaldProcessor(Processor):
         Returns:
             MSONable dict
         """
-        d = super().as_dict()
-        d["ewald_summation"] = self.ewald_summation.as_dict()
-        d["ewald_term"] = self._ewald_term.as_dict()
-        return d
+        ewald_d = super().as_dict()
+        ewald_d["ewald_summation"] = self.ewald_summation.as_dict()
+        ewald_d["ewald_term"] = self._ewald_term.as_dict()
+        return ewald_d
 
     @classmethod
     def from_dict(cls, d):
-        """Create an EwaldProcessor from serialized MSONable dict."""
-        pr = cls(
+        """Create a EwaldProcessor from serialized MSONable dict."""
+        # pylint: disable=duplicate-code
+        proc = cls(
             ClusterSubspace.from_dict(d["cluster_subspace"]),
             np.array(d["supercell_matrix"]),
             ewald_term=EwaldTerm.from_dict(d["ewald_term"]),
             coefficient=d["coefficients"],
-            ewald_summation=EwaldSummation.from_dict(d["ewald_summation"]),
         )
-        return pr
+        proc.ewald_summation = EwaldSummation.from_dict(d["ewald_summation"])
+
+        return proc

@@ -18,6 +18,8 @@ from smol.moca import (
 from smol.utils import get_subclasses
 from tests.utils import gen_fake_training_data
 
+SEED = None
+
 # load test data files and set them up as fixtures
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 
@@ -34,7 +36,11 @@ test_structures = [loadfn(os.path.join(DATA_DIR, file)) for file in files]
 basis_iterator_names = list(get_subclasses(BasisIterator))
 ensembles = [CanonicalEnsemble, SemiGrandEnsemble]
 
-# fixture definitions used in several tests
+
+@pytest.fixture(scope="module")
+def rng():
+    """Seed and return an RNG for test reproducibility"""
+    return np.random.default_rng(SEED)
 
 
 @pytest.fixture(scope="package")
@@ -91,8 +97,8 @@ def single_subspace(single_structure):
 
 
 @pytest.fixture(scope="module")
-def ce_processor(cluster_subspace):
-    coefs = 2 * np.random.random(cluster_subspace.num_corr_functions)
+def ce_processor(cluster_subspace, rng):
+    coefs = 2 * rng.random(cluster_subspace.num_corr_functions)
     scmatrix = 3 * np.eye(3)
     return ClusterExpansionProcessor(
         cluster_subspace, supercell_matrix=scmatrix, coefficients=coefs
@@ -100,8 +106,8 @@ def ce_processor(cluster_subspace):
 
 
 @pytest.fixture(scope="module")
-def composite_processor(cluster_subspace_ewald):
-    coefs = 2 * np.random.random(cluster_subspace_ewald.num_corr_functions + 1)
+def composite_processor(cluster_subspace_ewald, rng):
+    coefs = 2 * rng.random(cluster_subspace_ewald.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
     proc = CompositeProcessor(cluster_subspace_ewald, supercell_matrix=scmatrix)
     proc.add_processor(
@@ -120,21 +126,20 @@ def composite_processor(cluster_subspace_ewald):
 @pytest.fixture(params=ensembles, scope="module")
 def ensemble(composite_processor, request):
     if request.param is SemiGrandEnsemble:
-        kwargs = {
-            "chemical_potentials": {
-                sp: 0.3
-                for space in composite_processor.unique_site_spaces
-                for sp in space.keys()
-            }
+        species = {
+            sp
+            for space in composite_processor.active_site_spaces
+            for sp in space.keys()
         }
+        kwargs = {"chemical_potentials": {sp: 0.3 for sp in species}}
     else:
         kwargs = {}
     return request.param(composite_processor, **kwargs)
 
 
 @pytest.fixture(scope="module")
-def single_canonical_ensemble(single_subspace):
-    coefs = np.random.random(single_subspace.num_corr_functions)
+def single_canonical_ensemble(single_subspace, rng):
+    coefs = rng.random(single_subspace.num_corr_functions)
     proc = ClusterExpansionProcessor(single_subspace, 4 * np.eye(3), coefs)
     return CanonicalEnsemble(proc)
 
@@ -145,16 +150,20 @@ def basis_name(request):
 
 
 @pytest.fixture
-def supercell_matrix():
-    m = np.random.randint(-3, 3, size=(3, 3))
+def supercell_matrix(rng):
+    m = rng.integers(-3, 3, size=(3, 3))
     while abs(np.linalg.det(m)) < 1e-6:  # make sure not singular
-        m = np.random.randint(-3, 3, size=(3, 3))
+        m = rng.integers(-3, 3, size=(3, 3))
     return m
 
 
 @pytest.fixture
-def structure_wrangler(single_subspace):
+def structure_wrangler(single_subspace, rng):
     wrangler = StructureWrangler(single_subspace)
-    for struct, energy in gen_fake_training_data(single_subspace.structure, n=10):
+    for struct, energy in gen_fake_training_data(
+        single_subspace.structure, n=10, rng=rng
+    ):
         wrangler.add_data(struct, {"energy": energy}, weights={"random": 2.0})
-    return wrangler
+    yield wrangler
+    # force remove any external terms added in tetts
+    wrangler.cluster_subspace._external_terms = []

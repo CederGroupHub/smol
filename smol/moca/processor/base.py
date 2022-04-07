@@ -12,13 +12,14 @@ can be combined into composite processor for mixed models.
 __author__ = "Luis Barroso-Luque"
 
 from abc import ABCMeta, abstractmethod
+from functools import cache
 
 import numpy as np
 from monty.json import MSONable
 from pymatgen.core import PeriodicSite, Structure
 
 from smol.cofe.space import Vacancy, get_allowed_species, get_site_spaces
-from smol.moca.sublattice import InactiveSublattice, Sublattice
+from smol.moca.sublattice import Sublattice
 from smol.utils import get_subclasses
 
 
@@ -56,12 +57,16 @@ class Processor(MSONable, metaclass=ABCMeta):
         self._scmatrix = np.array(supercell_matrix)
 
         self.coefs = np.array(coefficients)
+        # if scalar force array to have 1 dimension (1,)
+        if len(self.coefs.shape) == 0:
+            self.coefs = self.coefs[np.newaxis]
+
         # this can be used (maybe should) to check if a flip is valid
-        active_site_spaces = set(get_site_spaces(self._subspace.expansion_structure))
-        self.unique_site_spaces = tuple(active_site_spaces)
-        # and keep a record of sites with no DOFs
-        all_site_spaces = set(get_site_spaces(self._subspace.structure))
-        self.inactive_site_spaces = tuple(all_site_spaces - active_site_spaces)
+        site_spaces = set(get_site_spaces(self.structure))
+        self.unique_site_spaces = tuple(site_spaces)
+        self.active_site_spaces = tuple(
+            space for space in self.unique_site_spaces if len(space) > 1
+        )
 
         self.allowed_species = get_allowed_species(self.structure)
         self.size = self._subspace.num_prims_from_matrix(supercell_matrix)
@@ -77,6 +82,7 @@ class Processor(MSONable, metaclass=ABCMeta):
         return self._structure
 
     @property
+    @cache
     def num_sites(self):
         """Get total number of sites in supercell."""
         return len(self.cluster_subspace.structure) * self.size
@@ -157,7 +163,7 @@ class Processor(MSONable, metaclass=ABCMeta):
                 a pymatgen structure (related to the cluster expansion prim
                 by the supercell matrix passed to the processor)
         Returns: encoded occupancy string
-            list
+            np.ndarray[int]
         """
         occu = self._subspace.occupancy_from_structure(
             structure, scmatrix=self.supercell_matrix
@@ -176,9 +182,9 @@ class Processor(MSONable, metaclass=ABCMeta):
         """
         occupancy = self.decode_occupancy(occupancy)
         sites = []
-        for sp, s in zip(occupancy, self.structure):
-            if sp != Vacancy():
-                site = PeriodicSite(sp, s.frac_coords, self.structure.lattice)
+        for spec, site in zip(occupancy, self.structure):
+            if spec != Vacancy():
+                site = PeriodicSite(spec, site.frac_coords, self.structure.lattice)
                 sites.append(site)
         return Structure.from_sites(sites)
 
@@ -186,7 +192,10 @@ class Processor(MSONable, metaclass=ABCMeta):
         """Encode occupancy string of Species object to ints."""
         # TODO check if setting to np.intc improves speed
         return np.array(
-            [species.index(sp) for species, sp in zip(self.allowed_species, occupancy)],
+            [
+                species.index(spec)
+                for species, spec in zip(self.allowed_species, occupancy)
+            ],
             dtype=int,
         )
 
@@ -199,6 +208,11 @@ class Processor(MSONable, metaclass=ABCMeta):
     def get_sublattices(self):
         """Get a list of sublattices from the processor.
 
+        Initialized as the default encoding, but encoding can be changed
+        in Ensemble (for example, when a sub-lattice is split by occupancy,
+        usually seen in a de-lithiation MC). Therefore, these sub-lattices,
+        and self.unique_site_spaces are not always consistent with the
+        sub-lattices in the ensemble. Use them carefully!
         Returns:
             list of Sublattice
         """
@@ -208,32 +222,12 @@ class Processor(MSONable, metaclass=ABCMeta):
                 np.array(
                     [
                         i
-                        for i, sp in enumerate(self.allowed_species)
-                        if sp == list(site_space.keys())
+                        for i, spec in enumerate(self.allowed_species)
+                        if spec == list(site_space.keys())
                     ]
                 ),
             )
             for site_space in self.unique_site_spaces
-        ]
-
-    def get_inactive_sublattices(self):
-        """Get a list of inactive sublattices from the processor.
-
-        Returns:
-            list of InactiveSublattice
-        """
-        return [
-            InactiveSublattice(
-                site_space,
-                np.array(
-                    [
-                        i
-                        for i, sp in enumerate(self.allowed_species)
-                        if sp == list(site_space.keys())
-                    ]
-                ),
-            )
-            for site_space in self.inactive_site_spaces
         ]
 
     def compute_average_drift(self, iterations=1000):
@@ -254,14 +248,15 @@ class Processor(MSONable, metaclass=ABCMeta):
         Returns:
             tuple: (float, float) forward and reverse average property drift
         """
+        rng = np.random.default_rng()
         forward_drift, reverse_drift = 0.0, 0.0
         trajectory = []
-        occu = [np.random.choice(species) for species in self.allowed_species]
+        occu = [rng.choice(species) for species in self.allowed_species]
         occu = self.encode_occupancy(occu)
         for _ in range(iterations):
-            site = np.random.randint(self.size)
+            site = rng.integers(self.size)
             species = set(range(len(self.allowed_species[site]))) - {occu[site]}
-            species = np.random.choice(list(species))
+            species = rng.choice(list(species))
             delta_prop = self.compute_property_change(occu, [(site, species)])
             new_occu = occu.copy()
             new_occu[site] = species
@@ -290,14 +285,14 @@ class Processor(MSONable, metaclass=ABCMeta):
         Returns:
             MSONable dict
         """
-        d = {
+        proc_d = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "cluster_subspace": self.cluster_subspace.as_dict(),
             "supercell_matrix": self.supercell_matrix.tolist(),
             "coefficients": np.array(self.coefs).tolist(),
         }
-        return d
+        return proc_d
 
     @classmethod
     def from_dict(cls, d):
@@ -305,8 +300,8 @@ class Processor(MSONable, metaclass=ABCMeta):
         # is this good design?
         try:
             subclass = get_subclasses(cls)[d["@class"]]
-        except KeyError:
+        except KeyError as err:
             raise NameError(
                 f"{d['@class']} is not implemented or is not a subclass of " f"{cls}."
-            )
+            ) from err
         return subclass.from_dict(d)

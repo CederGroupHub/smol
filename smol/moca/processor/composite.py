@@ -68,13 +68,13 @@ class CompositeProcessor(Processor):
                 "A CompositeProcessor can not be added into "
                 "another CompositeProcessor"
             )
-        elif self.cluster_subspace != processor.cluster_subspace:
+        if self.cluster_subspace != processor.cluster_subspace:
             raise ValueError(
                 "The cluster subspace of the processor to be"
                 " added does not match the one of this "
                 "CompositeProcessor."
             )
-        elif not np.array_equal(self._scmatrix, processor.supercell_matrix):
+        if not np.array_equal(self._scmatrix, processor.supercell_matrix):
             raise ValueError(
                 "The supercell matrix of the processor to be"
                 " added does not match the one of this "
@@ -159,17 +159,18 @@ class CompositeProcessor(Processor):
         Returns:
             MSONable dict
         """
-        d = super().as_dict()
-        d["processors"] = [pr.as_dict() for pr in self._processors]
-        return d
+        proc_d = super().as_dict()
+        proc_d["processors"] = [pr.as_dict() for pr in self._processors]
+        return proc_d
 
     @classmethod
     def from_dict(cls, d):
         """Create a CompositeProcessor from serialized MSONable dict."""
-        pr = cls(
+        # pylint: disable=duplicate-code
+        proc = cls(
             ClusterSubspace.from_dict(d["cluster_subspace"]),
             np.array(d["supercell_matrix"]),
         )
         for prd in d["processors"]:
-            pr.add_processor(Processor.from_dict(prd))
-        return pr
+            proc.add_processor(Processor.from_dict(prd))
+        return proc

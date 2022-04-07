@@ -16,15 +16,15 @@ from tests.utils import assert_msonable
 
 
 @pytest.fixture(params=[(1, 2), (2, 8)])
-def orbit(expansion_structure, request):
-    num_sites = np.random.randint(*request.param)
+def orbit(expansion_structure, rng, request):
+    num_sites = rng.integers(*request.param)
     site_inds = choices(range(len(expansion_structure)), k=num_sites)
     coords = [expansion_structure.frac_coords[i] for i in site_inds]
     # add random integer multiples
     n = 0
     while n < request.param[0]:
         for coord in coords:
-            coord += np.random.randint(-4, 5)
+            coord += rng.integers(-4, 5)
         frac_coords, inds = np.unique(coords, axis=0, return_index=True)
         n = len(frac_coords)
 
@@ -51,7 +51,7 @@ def test_constructor(expansion_structure):
     spaces = get_site_spaces([expansion_structure[i] for i in site_inds])
     bases = [basis_factory("indicator", bit) for bit in spaces]
     with pytest.raises(AttributeError):
-        orbit = Orbit(
+        Orbit(
             coords,
             expansion_structure.lattice,
             [np.arange(len(space) - 1) for space in spaces[:-1]],
@@ -59,7 +59,7 @@ def test_constructor(expansion_structure):
             sg_analyzer.get_symmetry_operations(),
         )
     with pytest.raises(AttributeError):
-        orbit = Orbit(
+        Orbit(
             coords,
             expansion_structure.lattice,
             [np.arange(len(space) - 1) for space in spaces[:-1]],
@@ -94,12 +94,12 @@ def test_cluster_permutations(orbit):
         assert cluster == orbit.base_cluster
 
 
-def test_equality(orbit):
+def test_equality(orbit, rng):
     for _ in range(3):
         frac_coords = orbit.base_cluster.sites.copy()
         other_coords = frac_coords.copy()
-        other_coords[0] += np.random.random()
-        frac_coords += np.random.randint(-4, 4)
+        other_coords[0] += rng.random()
+        frac_coords += rng.integers(-4, 4)
         orbit1 = Orbit(
             frac_coords,
             orbit.base_cluster.lattice,
@@ -108,13 +108,6 @@ def test_equality(orbit):
             orbit.structure_symops,
         )
         orbit2 = Orbit(
-            frac_coords[:-1],
-            orbit.base_cluster.lattice,
-            [np.arange(len(space) - 1) for space in orbit.site_spaces[:-1]],
-            orbit.site_bases[:-1],
-            orbit.structure_symops,
-        )
-        orbit3 = Orbit(
             other_coords,
             orbit.base_cluster.lattice,
             [np.arange(len(space) - 1) for space in orbit.site_spaces],
@@ -124,7 +117,25 @@ def test_equality(orbit):
 
         assert orbit1 == orbit
         assert orbit2 != orbit
-        assert orbit3 != orbit
+        if len(frac_coords) > 1:
+            orbit3 = Orbit(
+                frac_coords[:-1],
+                orbit.base_cluster.lattice,
+                [np.arange(len(space) - 1) for space in orbit.site_spaces[:-1]],
+                orbit.site_bases[:-1],
+                orbit.structure_symops,
+            )
+            assert orbit3 != orbit
+
+
+def test_contains(orbit, rng):
+    for cluster in orbit.clusters:
+        assert cluster in orbit
+
+    new_coords = orbit.base_cluster.sites.copy()
+    new_coords += 2 * rng.random(new_coords.shape) - 1
+    cluster = Cluster(new_coords, orbit.base_cluster.lattice)
+    assert cluster not in orbit
 
 
 def test_bit_combos(orbit):
@@ -170,13 +181,13 @@ def test_remove_bit_combos(orbit):
         orbit.remove_bit_combos_by_inds(range(nbits))
 
 
-def test_is_sub_orbit(expansion_structure):
-    num_sites = np.random.randint(6, 10)
+def test_is_sub_orbit(expansion_structure, rng):
+    num_sites = rng.integers(6, 10)
     site_inds = choices(range(len(expansion_structure)), k=num_sites)
     frac_coords = [expansion_structure.frac_coords[i] for i in site_inds]
     # add random integer multiples
     for coord in frac_coords:
-        coord += np.random.randint(-4, 5)
+        coord += rng.integers(-4, 5)
     frac_coords, inds = np.unique(frac_coords, axis=0, return_index=True)
 
     sg_analyzer = SpacegroupAnalyzer(expansion_structure)
@@ -195,7 +206,7 @@ def test_is_sub_orbit(expansion_structure):
 
     for _ in range(3):
         new_frac_coords = frac_coords.copy()
-        new_frac_coords += np.random.randint(-4, 5)
+        new_frac_coords += rng.integers(-4, 5)
 
         # same orbit but shifted sites
         orbit1 = Orbit(
@@ -229,7 +240,7 @@ def test_is_sub_orbit(expansion_structure):
         assert not orbit.is_sub_orbit(orbit1)
 
         # point suborbit
-        i = np.random.choice(range(len(orbit.base_cluster.sites)))
+        i = rng.choice(range(len(orbit.base_cluster.sites)))
         orbit1 = Orbit(
             [new_frac_coords[i]],
             orbit.base_cluster.lattice,
@@ -250,7 +261,7 @@ def test_is_sub_orbit(expansion_structure):
         assert orbit.is_sub_orbit(orbit1)
 
         # shifted site
-        new_frac_coords[i] += np.random.random()
+        new_frac_coords[i] += rng.random()
         orbit1 = Orbit(
             [new_frac_coords[i]],
             orbit.base_cluster.lattice,
@@ -261,9 +272,10 @@ def test_is_sub_orbit(expansion_structure):
         assert not orbit.is_sub_orbit(orbit1)
 
 
-def test_sub_orbit_mappings(orbit):
+def test_sub_orbit_mappings(orbit, rng):
     frac_coords = orbit.base_cluster.sites.copy()
-    frac_coords[0] += np.random.random()
+
+    frac_coords[0] += rng.random()
     orbit1 = Orbit(
         frac_coords,
         orbit.base_cluster.lattice,
@@ -277,7 +289,7 @@ def test_sub_orbit_mappings(orbit):
     # choose all but one for orbits with 2 or more sites
     size = nsites if nsites == 1 else nsites - 1
     for _ in range(3):
-        inds = np.random.choice(range(nsites), size=size, replace=False)
+        inds = rng.choice(range(nsites), size=size, replace=False)
         orbit1 = Orbit(
             orbit.base_cluster.sites[inds],
             orbit.base_cluster.lattice,
@@ -367,7 +379,7 @@ def test_transform_basis(orbit, basis_name):
     _test_basis_arrs(bases, orbit)
 
 
-def test_msonable(orbit):
+def test_msonable(orbit, rng):
     _ = repr(orbit), str(orbit)
     assert_msonable(orbit)
     orbit1 = Orbit.from_dict(orbit.as_dict())
@@ -375,7 +387,7 @@ def test_msonable(orbit):
     # test remove bit combos are properly reconstructed
     if len(orbit.bit_combos) - 1 > 0:
         orbit1.remove_bit_combos_by_inds(
-            np.random.randint(len(orbit1.bit_combos), size=len(orbit.bit_combos) - 1)
+            rng.integers(len(orbit1.bit_combos), size=len(orbit.bit_combos) - 1)
         )
         orbit2 = Orbit.from_dict(orbit1.as_dict())
         assert all(

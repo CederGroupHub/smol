@@ -97,7 +97,8 @@ html_theme_options = {
     "github_url": "https://github.com/CederGroupHub/smol",
     "use_edit_page_button": True,
     "show_toc_level": 1,
-    # "navbar_align": "left",  # [left, content, right] For testing that the navbar items align properly
+    # "navbar_align": "left",  # [left, content, right] For testing that the navbar
+    # items align properly
     # "navbar_start": ["navbar-logo", "navbar-version"],
     # "navbar_center": ["navbar-nav", "navbar-version"],  # Just for testing
     "navigation_depth": 2,
@@ -107,7 +108,8 @@ html_theme_options = {
     # "footer_items": ["copyright", "sphinx-version", ""]
     "switcher": {
         # "json_url": "/_static/switcher.json",
-        "json_url": "https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json",
+        "json_url": "https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/"
+        "switcher.json",
         "url_template": "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/",
         "version_match": version,
     },

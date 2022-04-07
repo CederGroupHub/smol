@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+*  Sublattice splitting. [#179](https://github.com/CederGroupHub/smol/pull/179)
+  ([qchempku2017](https://github.com/qchempku2017))
 * `StructureWrangler.get_similarity_matrix` to get similarity fractions
   between correlation vectors of training set.
   [\#153](https://github.com/CederGroupHub/smol/pull/153)
@@ -71,6 +73,9 @@ Use this section to keep track of changes in the works.
   ([lbluque](https://github.com/lbluque))
 
 ### Fixed
+* Allow Ewald only MC.
+  [\#141](https://github.com/CederGroupHub/smol/pull/169)
+  ([kamronald](https://github.com/kamronald))
 * Fix [141](https://github.com/CederGroupHub/smol/issues/140) corrected
   implementation of correlation function hierarchy.
   [\#141](https://github.com/CederGroupHub/smol/pull/141)
