@@ -16,8 +16,7 @@ from tests.utils import assert_msonable
 
 
 @pytest.fixture(params=[(1, 2), (2, 8)])
-def orbit(expansion_structure, request):
-    rng = np.random.default_rng()
+def orbit(expansion_structure, rng, request):
     num_sites = rng.integers(*request.param)
     site_inds = choices(range(len(expansion_structure)), k=num_sites)
     coords = [expansion_structure.frac_coords[i] for i in site_inds]
@@ -101,8 +100,7 @@ def test_cluster_permutations(orbit):
         assert cluster == orbit.base_cluster
 
 
-def test_equality(orbit):
-    rng = np.random.default_rng()
+def test_equality(orbit, rng):
     for _ in range(3):
         frac_coords = orbit.base_cluster.frac_coords.copy()
         other_coords = frac_coords.copy()
@@ -136,10 +134,9 @@ def test_equality(orbit):
             assert orbit3 != orbit
 
 
-def test_contains(orbit):
+def test_contains(orbit, rng):
     for cluster in orbit.clusters:
         assert cluster in orbit
-    rng = np.random.default_rng()
     new_coords = orbit.base_cluster.frac_coords.copy()
     new_coords += 2 * rng.random(new_coords.shape) - 1
     cluster = Cluster(orbit.site_spaces, new_coords, orbit.base_cluster.lattice)
@@ -189,8 +186,7 @@ def test_remove_bit_combos(orbit):
         orbit.remove_bit_combos_by_inds(range(nbits))
 
 
-def test_is_sub_orbit(expansion_structure):
-    rng = np.random.default_rng()
+def test_is_sub_orbit(expansion_structure, rng):
     num_sites = rng.integers(6, 10)
     site_inds = choices(range(len(expansion_structure)), k=num_sites)
     frac_coords = [expansion_structure.frac_coords[i] for i in site_inds]
@@ -281,9 +277,8 @@ def test_is_sub_orbit(expansion_structure):
         assert not orbit.is_sub_orbit(orbit1)
 
 
-def test_sub_orbit_mappings(orbit):
+def test_sub_orbit_mappings(orbit, rng):
     frac_coords = orbit.base_cluster.frac_coords.copy()
-    rng = np.random.default_rng()
     frac_coords[0] += rng.random()
     orbit1 = Orbit(
         frac_coords,
@@ -392,11 +387,10 @@ def test_transform_basis(orbit, basis_name):
     _test_basis_arrs(bases, orbit)
 
 
-def test_msonable(orbit):
+def test_msonable(orbit, rng):
     _ = repr(orbit), str(orbit)
     assert_msonable(orbit)
     orbit1 = Orbit.from_dict(orbit.as_dict())
-    rng = np.random.default_rng()
 
     # test remove bit combos are properly reconstructed
     if len(orbit.bit_combos) - 1 > 0:

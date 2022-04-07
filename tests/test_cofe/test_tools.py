@@ -165,9 +165,8 @@ def test_filter_by_ewald(structure_wrangler):
     npt.assert_array_equal(indices, indices2)
 
 
-def test_filter_duplicate_corr_vectors(structure_wrangler):
+def test_filter_duplicate_corr_vectors(structure_wrangler, rng):
     # add some repeat structures with infinite energy
-    rng = np.random.default_rng()
     dup_items = []
     for i in range(5):
         ind = rng.integers(structure_wrangler.num_structures)

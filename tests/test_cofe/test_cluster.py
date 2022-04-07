@@ -1,5 +1,4 @@
 from itertools import combinations
-from random import choices
 
 import numpy as np
 import pytest
@@ -9,10 +8,10 @@ from smol.cofe.space.domain import get_site_spaces
 from tests.utils import assert_msonable
 
 
-@pytest.fixture(scope="package")
-def cluster(structure):
-    num_sites = np.random.randint(2, 6)
-    sites = choices(structure, k=num_sites)
+@pytest.fixture()
+def cluster(structure, rng):
+    num_sites = rng.integers(2, 6)
+    sites = rng.choices(structure, k=num_sites)
     coords = [site.frac_coords.copy() for site in sites]
     # add random integer multiples
     for coord in coords:
@@ -32,12 +31,12 @@ def test_diameter(cluster):
     assert diameter == cluster.diameter
 
 
-def test_periodicity(cluster):
+def test_periodicity(cluster, rng):
     new_coords = cluster.frac_coords.copy()
-    new_coords += np.random.randint(-5, 5)
+    new_coords += rng.randint(-5, 5)
     site_spaces = [s.species for s in cluster.sites]
     assert Cluster(site_spaces, new_coords, cluster.lattice) == cluster
-    new_coords[0] += 0.005 + np.random.random()
+    new_coords[0] += 0.005 + rng.random()
     assert Cluster(site_spaces, new_coords, cluster.lattice) != cluster
 
 
