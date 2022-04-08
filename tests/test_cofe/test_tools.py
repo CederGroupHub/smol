@@ -175,7 +175,7 @@ def test_filter_duplicate_corr_vectors(structure_wrangler, rng):
         dup_items.append(dup_item)
 
     final = structure_wrangler.num_structures
-    structure_wrangler._items += dup_items
+    structure_wrangler._entries += dup_items
     n_structs = structure_wrangler.num_structures
 
     assert structure_wrangler.num_structures == final + len(dup_items)

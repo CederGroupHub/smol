@@ -13,10 +13,12 @@ def test_add_data(structure_wrangler, rng):
     for struct, energy in gen_fake_training_data(
         structure_wrangler.cluster_subspace.structure, rng=rng
     ):
-        structure_wrangler.add_data(struct, {"energy": energy}, weights={"random": 2.0})
+        structure_wrangler.add_entry(
+            struct, {"energy": energy}, weights={"random": 2.0}
+        )
     struct = gen_random_structure(structure_wrangler.cluster_subspace.structure)
     energy = -len(struct) * rng.random()
-    structure_wrangler.add_data(struct, {"energy": energy}, weights={"random": 3.0})
+    structure_wrangler.add_entry(struct, {"energy": energy}, weights={"random": 3.0})
 
     assert all(w == 2.0 for w in structure_wrangler.get_weights("random")[:-1])
     assert (
@@ -31,10 +33,10 @@ def test_add_data(structure_wrangler, rng):
     struct = struct.copy()
     struct.apply_strain(0.2)
     with pytest.raises(Exception):
-        structure_wrangler.add_data(struct, {"energy": energy}, raise_failed=True)
+        structure_wrangler.add_entry(struct, {"energy": energy}, raise_failed=True)
 
     with pytest.warns(UserWarning):
-        structure_wrangler.add_data(struct, {"energy": energy}, raise_failed=False)
+        structure_wrangler.add_entry(struct, {"energy": energy}, raise_failed=False)
 
     with pytest.raises(AttributeError):
         structure_wrangler.add_properties("test", structure_wrangler.sizes[:-2])
@@ -52,7 +54,7 @@ def test_add_data(structure_wrangler, rng):
 
     with pytest.raises(ValueError):
         item["properties"].update({"foo": 10})
-        structure_wrangler.add_data(
+        structure_wrangler.add_entry(
             item["structure"],
             item["properties"],
             weights=item["weights"],
@@ -61,7 +63,7 @@ def test_add_data(structure_wrangler, rng):
         )
     with pytest.raises(ValueError):
         _ = item["properties"].pop("energy")
-        structure_wrangler.add_data(
+        structure_wrangler.add_entry(
             item["structure"],
             item["properties"],
             weights=item["weights"],
@@ -70,7 +72,7 @@ def test_add_data(structure_wrangler, rng):
         )
     with pytest.raises(ValueError):
         item["weights"].update({"foo": 10})
-        structure_wrangler.add_data(
+        structure_wrangler.add_entry(
             item["structure"],
             item["properties"],
             weights=item["weights"],
@@ -79,7 +81,7 @@ def test_add_data(structure_wrangler, rng):
         )
     with pytest.raises(ValueError):
         _ = item["weights"].pop("random")
-        structure_wrangler.add_data(
+        structure_wrangler.add_entry(
             item["structure"],
             item["properties"],
             weights=item["weights"],
@@ -87,13 +89,13 @@ def test_add_data(structure_wrangler, rng):
             site_mapping=item["mapping"],
         )
 
-    items = structure_wrangler._items
+    items = structure_wrangler._entries
     structure_wrangler.remove_all_data()
     assert len(structure_wrangler.structures) == 0
 
     # Test passing supercell matrices
     for item in items:
-        structure_wrangler.add_data(
+        structure_wrangler.add_entry(
             item["structure"], item["properties"], supercell_matrix=item["scmatrix"]
         )
     assert len(structure_wrangler.structures) == len(items)
@@ -102,15 +104,15 @@ def test_add_data(structure_wrangler, rng):
 
     # Test passing site mappings
     for item in items:
-        structure_wrangler.add_data(
+        structure_wrangler.add_entry(
             item["structure"], item["properties"], site_mapping=item["mapping"]
         )
 
-    assert len(structure_wrangler._items) == len(items)
+    assert len(structure_wrangler._entries) == len(items)
     structure_wrangler.remove_all_data()
     # test passing both
     for item in items:
-        structure_wrangler.add_data(
+        structure_wrangler.add_entry(
             item["structure"],
             item["properties"],
             supercell_matrix=item["scmatrix"],
@@ -150,7 +152,7 @@ def test_add_weights(structure_wrangler, rng):
     for struct, energy, weight, matrix in zip(
         structures, energies, weights, sc_matrices
     ):
-        structure_wrangler.add_data(
+        structure_wrangler.add_entry(
             struct,
             {"energy": energy},
             weights={"comp": weight},
@@ -165,16 +167,16 @@ def test_add_weights(structure_wrangler, rng):
 
 
 def test_append_data_items(structure_wrangler, rng):
-    items = structure_wrangler._items
+    items = structure_wrangler._entries
     structure_wrangler.remove_all_data()
     assert len(structure_wrangler.structures) == 0
     with pytest.raises(ValueError):
-        structure_wrangler.append_data_items([{"b": 1}])
+        structure_wrangler.append_entries([{"b": 1}])
 
     data_items = []
     for item in items:
         data_items.append(
-            structure_wrangler.process_data(
+            structure_wrangler.process_entry(
                 item["structure"],
                 item["properties"],
                 weights=item["weights"],
@@ -183,7 +185,7 @@ def test_append_data_items(structure_wrangler, rng):
             )
         )
 
-    structure_wrangler.append_data_items(data_items)
+    structure_wrangler.append_entries(data_items)
     assert len(structure_wrangler.data_items) == len(items)
     item = deepcopy(
         structure_wrangler.data_items[
@@ -193,16 +195,16 @@ def test_append_data_items(structure_wrangler, rng):
 
     with pytest.raises(ValueError):
         item["properties"].update({"foo": 10})
-        structure_wrangler.append_data_items([item])
+        structure_wrangler.append_entries([item])
     with pytest.raises(ValueError):
         _ = item["properties"].pop("energy")
-        structure_wrangler.append_data_items([item])
+        structure_wrangler.append_entries([item])
     with pytest.raises(ValueError):
         item["weights"].update({"foo": 10})
-        structure_wrangler.append_data_items([item])
+        structure_wrangler.append_entries([item])
     with pytest.raises(ValueError):
         _ = item["weights"].pop("random")
-        structure_wrangler.append_data_items([item])
+        structure_wrangler.append_entries([item])
 
 
 def test_data_indices(structure_wrangler, rng):
@@ -316,7 +318,7 @@ def test_get_duplicate_corr_inds(structure_wrangler, rng):
     ind = rng.integers(structure_wrangler.num_structures)
     dup_item = deepcopy(structure_wrangler.data_items[ind])
     with pytest.warns(UserWarning):
-        structure_wrangler.add_data(dup_item["structure"], dup_item["properties"])
+        structure_wrangler.add_entry(dup_item["structure"], dup_item["properties"])
 
     assert [
         ind,
@@ -333,7 +335,7 @@ def test_get_matching_corr_duplicate_inds(structure_wrangler, rng):
     dup_item2["structure"] = rng.choice(
         [s for s in structure_wrangler.structures if s != dup_item2["structure"]]
     )
-    structure_wrangler.append_data_items([dup_item, dup_item2])
+    structure_wrangler.append_entries([dup_item, dup_item2])
     expected_matches = [[ind, structure_wrangler.num_structures - 2]]
     assert all(
         i in matches
@@ -378,7 +380,7 @@ def test_msonable(structure_wrangler):
     assert sw.metadata == structure_wrangler.metadata
     assert all(
         i1["mapping"] == i1["mapping"]
-        for i1, i2 in zip(structure_wrangler._items, sw._items)
+        for i1, i2 in zip(structure_wrangler._entries, sw._entries)
     )
     assert all(
         np.array_equal(m1, m2)

@@ -163,7 +163,7 @@ def structure_wrangler(single_subspace, rng):
     for struct, energy in gen_fake_training_data(
         single_subspace.structure, n=10, rng=rng
     ):
-        wrangler.add_data(struct, {"energy": energy}, weights={"random": 2.0})
+        wrangler.add_entry(struct, {"energy": energy}, weights={"random": 2.0})
     yield wrangler
     # force remove any external terms added in tetts
     wrangler.cluster_subspace._external_terms = []
