@@ -34,11 +34,11 @@ class Cluster(SiteCollection, MSONable):
     ClusterSubspace to create orbits and clusters necessary for a CE.
 
     Attributes:
-        frac_coords (list): list of fractional coordinates of each site.
-        lattice (Lattice): underlying lattice of cluster.
-        centroid (float): goemetric centroid of included sites.
-        id (int): id of cluster.
-            Used to identify the cluster in a given ClusterSubspace.
+        frac_coords (ndarray): fractional coordinates of each site.
+        lattice (Lattice): Underlying lattice of cluster.
+        centroid (float): Geometric centroid of included sites.
+        id (int): ID of cluster.
+            Used to identify the Cluster in a given ClusterSubspace.
     """
 
     def __init__(self, site_spaces, frac_coords, lattice):
@@ -78,14 +78,14 @@ class Cluster(SiteCollection, MSONable):
 
     @cached_property
     def diameter(self):
-        """Get maximum distance between 2 sites in cluster."""
+        """Get maximum distance between any 2 sites in the cluster."""
         coords = self.lattice.get_cartesian_coords(self.frac_coords)
         all_d2 = np.sum((coords[None, :, :] - coords[:, None, :]) ** 2, axis=-1)
         return np.max(all_d2) ** 0.5
 
     @property
     def radius(self):
-        """Get half the maximum distance between 2 sites in cluster."""
+        """Get half the maximum distance between any 2 sites in the cluster."""
         return self.diameter / 2.0
 
     @property
@@ -110,7 +110,7 @@ class Cluster(SiteCollection, MSONable):
         return self[i].distance(self[j])
 
     def assign_ids(self, cluster_id):
-        """Recursively assign ids to clusters after initialization."""
+        """Recursively assign IDs to clusters after initialization."""
         self.id = cluster_id
         return cluster_id + 1
 
@@ -273,7 +273,7 @@ class Cluster(SiteCollection, MSONable):
 
     @classmethod
     def from_dict(cls, d):
-        """Create a cluster from serialized dict."""
+        """Create a Cluster from serialized dict."""
         sites = [Site.from_dict(item) for item in d["sites"]]
         # Force vacancies back to vacancies
         for symbols, site in zip(d["vacancy_symbols"], sites):

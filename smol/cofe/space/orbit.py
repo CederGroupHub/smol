@@ -33,23 +33,23 @@ class Orbit(MSONable):
     functions) for the given orbit.
 
     An orbit usually includes translational and structure symmetry of the
-    underlying lattice. But this is not a hard requirement any set of symmetry
-    operations can be passed to the constructor (regardless an orbit should at
-    a minimum have translational symmetry).
+    underlying lattice. But this is not a hard requirement, and any set of
+    symmetry operations can be passed to the constructor. Regardless, an orbit
+    should at a minimum have translational symmetry.
 
     You probably never need to instantiate this class directly. Look at
     ClusterSubspace to create orbits and clusters necessary for a CE.
 
     Attributes:
         bits (list of list):
-            list of lists describing the posible non-constant site function
+            List of lists describing the possible non-constant site function
             indices at each site of a cluster in the orbit.
         site_bases (list of DiscreteBasis):
-            list of the SiteBasis for each site.
+            List of the SiteBasis for each site.
         structure_symops (list of Symmops):
-            list of underlying structure symmetry operations.
+            List of underlying structure symmetry operations.
         lattice (Lattice):
-            underlying structure lattice.
+            Underlying Structure's lattice.
     """
 
     def __init__(self, cluster_coords, lattice, bits, site_bases, structure_symops):
@@ -59,12 +59,12 @@ class Orbit(MSONable):
             cluster_coords (list or ndarray):
                 list of frac coords for the sites in base cluster.
             lattice (pymatgen.Lattice):
-                A lattice object for the given sites
+                a Lattice object for the given sites
             bits (list of list):
                 list describing the possible site function indices for
                 each site in cluster. Should be the number of possible
-                occupancies minus one. i.e. for a 3 site cluster, each of which
-                having one of Li, TM, or Vac, bits are [[0, 1], [0, 1], [0, 1]]
+                occupancies minus one. For a 3 site cluster, each of which
+                can have one of Li, TM, or Vac, bits are [[0, 1], [0, 1], [0, 1]]
                 This is ensures the expansion is not "over-complete" by
                 implicitly enforcing that all sites have a site basis function
                 phi_0 = 1.
@@ -154,12 +154,12 @@ class Orbit(MSONable):
 
     @property
     def site_spaces(self):
-        """Get the site spaces for the site basis associate with each site."""
+        """Get the site spaces for the site basis associated with each site."""
         return [site_basis.site_space for site_basis in self.site_bases]
 
     @property
     def bit_combo_multiplicities(self):
-        """Get the multiplicites of the symmetrically distinct bit ordering."""
+        """Get the multiplicities of the symmetrically distinct bit ordering."""
         return [bcombo.shape[0] for bcombo in self.bit_combos]
 
     @property
@@ -222,7 +222,7 @@ class Orbit(MSONable):
         The correlations array is a multidimensional array with each dimension
         corresponding to each site space.
 
-        First dimension is for bit combos, the remainding dimensions correspond
+        First dimension is for bit_combos, and the remaining dimensions correspond
         to site spaces.
 
         i.e. correlation_tensors[0, 1, 0, 2] gives the value of the
@@ -301,7 +301,7 @@ class Orbit(MSONable):
     def remove_bit_combo(self, bits):  # seems like this is no longer used?
         """Remove bit_combos from orbit.
 
-        Only a single set bits in the bit combo (symmetrically equivalent bit
+        Only a single set of bits in the bit combo (symmetrically equivalent bit
         orderings) needs to be passed.
         """
         bit_combos = []
@@ -337,7 +337,7 @@ class Orbit(MSONable):
         self.reset_bases()
 
     def transform_site_bases(self, basis_name, orthonormal=False):
-        """Transform the Orbits site bases to new basis set.
+        """Transform the Orbits site bases into new basis set.
 
         Args:
             basis_name (str):
@@ -359,9 +359,10 @@ class Orbit(MSONable):
         """Check if given orbits clusters are subclusters.
 
         Note this does not consider bit_combos
+
         Args:
             orbit (Orbit):
-                Orbit object to check if
+                Orbit object to check if its clusters are subclusters
         Returns:
             bool: True if the clusters of given orbit are subclusters.
         """
@@ -465,15 +466,15 @@ class Orbit(MSONable):
         self._flat_corr_tensors = None
 
     def assign_ids(self, orbit_id, orbit_bit_id, start_cluster_id):
-        """Assign unique orbit and cluster ids.
+        """Assign unique orbit and cluster ID's.
 
         This should be called iteratively for a list of orbits to get a proper
-        set of unique id's for the orbits.
+        set of unique ID's for the orbits.
 
         Args:
             orbit_id (int): orbit id
-            orbit_bit_id (int): start bit ordering id
-            start_cluster_id (int): start cluster id
+            orbit_bit_id (int): starting bit ordering id
+            start_cluster_id (int): starting cluster id
 
         Returns:
             (int, int, int):

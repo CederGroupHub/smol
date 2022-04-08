@@ -23,12 +23,11 @@ jobs:
         run: pre-commit autoupdate
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v4.0.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: update/pre-commit-autoupdate
           title: auto-update pre-commit hooks
           commit-message: auto-update pre-commit hooks
-          body: Update versions of tools in pre-commit config to latest versions.
+          body: Update versions of tools in pre-commit hooks to latest versions.
           labels: dependencies
-          body: Update versions of pre-commit hooks to latest version.
