@@ -69,7 +69,9 @@ def test_constructor(expansion_structure):
 
 
 def test_cluster(orbit):
-    base_cluster = Cluster(orbit.base_cluster.sites, orbit.base_cluster.lattice)
+    base_cluster = Cluster(
+        orbit.site_spaces, orbit.base_cluster.frac_coords, orbit.base_cluster.lattice
+    )
     assert orbit.base_cluster == base_cluster
     assert base_cluster in orbit.clusters
     for cluster in orbit.clusters[1:]:
@@ -81,7 +83,9 @@ def test_cluster_symops(orbit):
 
     for symop in orbit.cluster_symops:
         cluster = Cluster(
-            symop.operate_multi(orbit.base_cluster.sites), orbit.base_cluster.lattice
+            orbit.site_spaces,
+            symop.operate_multi(orbit.base_cluster.frac_coords),
+            orbit.base_cluster.lattice,
         )
         assert cluster == orbit.base_cluster
 
@@ -89,14 +93,16 @@ def test_cluster_symops(orbit):
 def test_cluster_permutations(orbit):
     for permutation in orbit.cluster_permutations:
         cluster = Cluster(
-            orbit.base_cluster.sites[permutation], orbit.base_cluster.lattice
+            orbit.site_spaces,
+            orbit.base_cluster.frac_coords[permutation],
+            orbit.base_cluster.lattice,
         )
         assert cluster == orbit.base_cluster
 
 
 def test_equality(orbit, rng):
     for _ in range(3):
-        frac_coords = orbit.base_cluster.sites.copy()
+        frac_coords = orbit.base_cluster.frac_coords.copy()
         other_coords = frac_coords.copy()
         other_coords[0] += rng.random()
         frac_coords += rng.integers(-4, 4)
@@ -131,10 +137,9 @@ def test_equality(orbit, rng):
 def test_contains(orbit, rng):
     for cluster in orbit.clusters:
         assert cluster in orbit
-
-    new_coords = orbit.base_cluster.sites.copy()
+    new_coords = orbit.base_cluster.frac_coords.copy()
     new_coords += 2 * rng.random(new_coords.shape) - 1
-    cluster = Cluster(new_coords, orbit.base_cluster.lattice)
+    cluster = Cluster(orbit.site_spaces, new_coords, orbit.base_cluster.lattice)
     assert cluster not in orbit
 
 
@@ -240,7 +245,7 @@ def test_is_sub_orbit(expansion_structure, rng):
         assert not orbit.is_sub_orbit(orbit1)
 
         # point suborbit
-        i = rng.choice(range(len(orbit.base_cluster.sites)))
+        i = rng.choice(range(len(orbit.base_cluster.frac_coords)))
         orbit1 = Orbit(
             [new_frac_coords[i]],
             orbit.base_cluster.lattice,
@@ -273,8 +278,7 @@ def test_is_sub_orbit(expansion_structure, rng):
 
 
 def test_sub_orbit_mappings(orbit, rng):
-    frac_coords = orbit.base_cluster.sites.copy()
-
+    frac_coords = orbit.base_cluster.frac_coords.copy()
     frac_coords[0] += rng.random()
     orbit1 = Orbit(
         frac_coords,
@@ -285,13 +289,13 @@ def test_sub_orbit_mappings(orbit, rng):
     )
     assert len(orbit.sub_orbit_mappings(orbit1)) == 0
 
-    nsites = len(orbit.base_cluster.sites)
+    nsites = len(orbit.base_cluster.frac_coords)
     # choose all but one for orbits with 2 or more sites
     size = nsites if nsites == 1 else nsites - 1
     for _ in range(3):
         inds = rng.choice(range(nsites), size=size, replace=False)
         orbit1 = Orbit(
-            orbit.base_cluster.sites[inds],
+            orbit.base_cluster.frac_coords[inds],
             orbit.base_cluster.lattice,
             [np.arange(len(orbit.site_spaces[i])) for i in inds],
             [orbit.site_bases[i] for i in inds],
@@ -299,13 +303,15 @@ def test_sub_orbit_mappings(orbit, rng):
         )
         mappings = orbit.sub_orbit_mappings(orbit1)
         cluster = Cluster(
-            orbit.base_cluster.sites[mappings][0], orbit.base_cluster.lattice
+            orbit.site_spaces,
+            orbit.base_cluster.frac_coords[mappings][0],
+            orbit.base_cluster.lattice,
         )
         assert cluster in orbit1.clusters
 
     for i in range(nsites):
         orbit1 = Orbit(
-            [orbit.base_cluster.sites[i]],
+            [orbit.base_cluster.frac_coords[i]],
             orbit.base_cluster.lattice,
             [np.arange(len(orbit.site_spaces[i]))],
             [orbit.site_bases[i]],
@@ -313,7 +319,9 @@ def test_sub_orbit_mappings(orbit, rng):
         )
         mappings = orbit.sub_orbit_mappings(orbit1)
         cluster = Cluster(
-            orbit.base_cluster.sites[mappings][0], orbit.base_cluster.lattice
+            orbit.site_spaces,
+            orbit.base_cluster.frac_coords[mappings][0],
+            orbit.base_cluster.lattice,
         )
         assert cluster in orbit1.clusters
 
@@ -326,7 +334,7 @@ def test_basis_orthonormal(orbit):
         b.orthonormalize()
         assert b.is_orthonormal
     orbit1 = Orbit(
-        orbit.base_cluster.sites,
+        orbit.base_cluster.frac_coords,
         orbit.base_cluster.lattice,
         orbit.bits,
         bases,
@@ -425,14 +433,14 @@ def test_fixed_values(licabr_orbit):
 
 def test_equal_fixed(licabr_orbit):
     orbit1 = Orbit(
-        licabr_orbit.base_cluster.sites[:3],
+        licabr_orbit.base_cluster.frac_coords[:3],
         licabr_orbit.base_cluster.lattice,
         [[0, 1], [0, 1], [0, 1]],
         licabr_orbit.site_bases,
         licabr_orbit.structure_symops,
     )
     orbit2 = Orbit(
-        licabr_orbit.base_cluster.sites[:2],
+        licabr_orbit.base_cluster.frac_coords[:2],
         licabr_orbit.base_cluster.lattice,
         [[0, 1], [0, 1]],
         licabr_orbit.site_bases[:2],
@@ -447,7 +455,7 @@ def test_bit_combos_fixed(licabr_orbit):
     assert len(licabr_orbit) == 6
 
     orbit1 = Orbit(
-        licabr_orbit.base_cluster.sites[1:3],
+        licabr_orbit.base_cluster.frac_coords[1:3],
         licabr_orbit.base_cluster.lattice,
         [[0, 1], [0, 1]],
         licabr_orbit.site_bases[:2],
@@ -460,7 +468,7 @@ def test_bit_combos_fixed(licabr_orbit):
 def test_suborbits_fixed(licabr_orbit):
     # same orbit
     orbit = Orbit(
-        licabr_orbit.base_cluster.sites[:3],
+        licabr_orbit.base_cluster.frac_coords[:3],
         licabr_orbit.base_cluster.lattice,
         [[0, 1], [0, 1], [0, 1]],
         licabr_orbit.site_bases,
@@ -469,7 +477,7 @@ def test_suborbits_fixed(licabr_orbit):
     assert not licabr_orbit.is_sub_orbit(orbit)
     # point orbits with site in original
     orbit = Orbit(
-        [licabr_orbit.base_cluster.sites[0]],
+        [licabr_orbit.base_cluster.frac_coords[0]],
         licabr_orbit.base_cluster.lattice,
         [[0, 1]],
         [licabr_orbit.site_bases[0]],
@@ -477,7 +485,7 @@ def test_suborbits_fixed(licabr_orbit):
     )
     assert licabr_orbit.is_sub_orbit(orbit)
     orbit = Orbit(
-        [licabr_orbit.base_cluster.sites[1]],
+        [licabr_orbit.base_cluster.frac_coords[1]],
         licabr_orbit.base_cluster.lattice,
         [[0, 1]],
         [licabr_orbit.site_bases[1]],
@@ -486,7 +494,7 @@ def test_suborbits_fixed(licabr_orbit):
     assert licabr_orbit.is_sub_orbit(orbit)
     # pair suborbit
     orbit = Orbit(
-        licabr_orbit.base_cluster.sites[:2],
+        licabr_orbit.base_cluster.frac_coords[:2],
         licabr_orbit.base_cluster.lattice,
         [[0, 1], [0, 1]],
         licabr_orbit.site_bases[:2],
@@ -504,7 +512,7 @@ def test_suborbits_fixed(licabr_orbit):
     assert not licabr_orbit.is_sub_orbit(orbit)
     # pair orbit with site not in original
     orbit = Orbit(
-        [licabr_orbit.base_cluster.sites[0], [0, 0, 0]],
+        [licabr_orbit.base_cluster.frac_coords[0], [0, 0, 0]],
         licabr_orbit.base_cluster.lattice,
         [[0, 1], [0, 1]],
         licabr_orbit.site_bases[:2],
@@ -515,7 +523,7 @@ def test_suborbits_fixed(licabr_orbit):
 
 def test_suborbit_mappings_fixed(licabr_orbit):
     orbit = Orbit(
-        np.vstack([licabr_orbit.base_cluster.sites[1:], [0, 0, 0]]),
+        np.vstack([licabr_orbit.base_cluster.frac_coords[1:], [0, 0, 0]]),
         licabr_orbit.base_cluster.lattice,
         [[0, 1], [0, 1], [0, 1]],
         licabr_orbit.site_bases,
@@ -525,7 +533,7 @@ def test_suborbit_mappings_fixed(licabr_orbit):
     assert len(licabr_orbit.sub_orbit_mappings(orbit)) == 0
 
     orbit = Orbit(
-        licabr_orbit.base_cluster.sites[:2],
+        licabr_orbit.base_cluster.frac_coords[:2],
         licabr_orbit.base_cluster.lattice,
         [[0, 1], [0, 1]],
         licabr_orbit.site_bases[:2],
@@ -534,7 +542,7 @@ def test_suborbit_mappings_fixed(licabr_orbit):
     npt.assert_array_equal(licabr_orbit.sub_orbit_mappings(orbit), [[0, 1]])
 
     orbit = Orbit(
-        [licabr_orbit.base_cluster.sites[2]],
+        [licabr_orbit.base_cluster.frac_coords[2]],
         licabr_orbit.base_cluster.lattice,
         [[0, 1]],
         [licabr_orbit.site_bases[2]],
