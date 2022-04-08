@@ -29,6 +29,5 @@ jobs:
           branch: update/pre-commit-autoupdate
           title: auto-update pre-commit hooks
           commit-message: auto-update pre-commit hooks
-          body: Update versions of tools in pre-commit config to latest versions.
+          body: Update versions of tools in pre-commit hooks to latest versions.
           labels: dependencies
-          body: Update versions of pre-commit hooks to latest version.
