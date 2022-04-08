@@ -1190,12 +1190,14 @@ class ClusterSubspace(MSONable):
 
                 for neighbor in neighbors:
                     if is_coord_subset(
-                        [neighbor.frac_coords], orbit.base_cluster.sites, atol=SITE_TOL
+                        [neighbor.frac_coords],
+                        orbit.base_cluster.frac_coords,
+                        atol=SITE_TOL,
                     ):
                         continue
 
                     new_sites = np.concatenate(
-                        [orbit.base_cluster.sites, [neighbor.frac_coords]]
+                        [orbit.base_cluster.frac_coords, [neighbor.frac_coords]]
                     )
                     new_orbit = Orbit(
                         new_sites,
@@ -1234,7 +1236,7 @@ class ClusterSubspace(MSONable):
         pts = lattice_points_in_supercell(scmatrix)
         orbit_indices = []
         for orbit in self.orbits:
-            prim_fcoords = np.array([c.sites for c in orbit.clusters])
+            prim_fcoords = np.array([c.frac_coords for c in orbit.clusters])
             fcoords = np.dot(prim_fcoords, prim_to_supercell)
             # tcoords contains all the coordinates of the symmetrically
             # equivalent clusters the indices are: [equivalent cluster
@@ -1282,13 +1284,45 @@ class ClusterSubspace(MSONable):
 
     def __str__(self):
         """Convert class into pretty string for printing."""
-        class_str = f"ClusterBasis: [Prim Composition] {self.structure.composition}\n"
-        class_str += "    [Size] 0\n      [Orbit] id: 0  orderings: 1\n"
-        for size, orbits in self._orbits.items():
-            class_str += f"    [Size] {size}\n"
+        outs = [
+            f"Basis/Orthogonal/Orthonormal : {self.basis_type}/{self.basis_orthogonal}/"
+            "{self.basis_orthonormal}",
+            f"       Unit Cell Composition : {self.structure.composition}",
+            f"            Number of Orbits : {self.num_orbits}",
+            f"No. of Correlation Functions : {self.num_corr_functions}",
+            "             Cluster Cutoffs : "
+            f"{', '.join('{}: {:.2f}'.format(s, c) for s, c in self.cutoffs.items())}",
+            f"              External Terms : {self.external_terms}",
+            "Orbit Summary",
+            " ------------------------------------------------------------------------",
+            " |  ID     Degree    Cluster Diameter    Multiplicity    No. Functions  |",
+            " |   0       0             NA                 0                1        |",
+        ]
+        for degree, orbits in self.orbits_by_size.items():
             for orbit in orbits:
-                class_str += f"      {orbit}\n"
-        return class_str
+                outs.append(
+                    f" |{orbit.id:^7}{degree:^10}{orbit.base_cluster.diameter:^20.4f}"
+                    f"{orbit.multiplicity:^16}{len(orbit):^17}|"
+                )
+        outs.append(
+            " ------------------------------------------------------------------------"
+        )
+        return "\n".join(outs)
+
+    def __repr__(self):
+        """Return a summary of subspace."""
+        outs = [
+            "Cluster Subspace Summary",
+            f"Basis/Orthogonal/Orthonormal : {self.basis_type}/{self.basis_orthogonal}/"
+            f"{self.basis_orthonormal}",
+            f"Unit Cell Composition : {self.structure.composition}",
+            f"Number of Orbits : {self.num_orbits}   "
+            f"No. of Correlation Functions : {self.num_corr_functions}",
+            "Cluster Cutoffs : "
+            f"{', '.join('{}: {:.2f}'.format(s, c) for s, c in self.cutoffs.items())}",
+            f"External Terms : {self.external_terms}",
+        ]
+        return "\n".join(outs)
 
     @classmethod
     def from_dict(cls, d):
@@ -1334,7 +1368,7 @@ class ClusterSubspace(MSONable):
         _supercell_orb_inds = {}
         for scm, indices in d["_supercell_orb_inds"]:
             scm = tuple(tuple(s) for s in scm)
-            if isinstance(indices, tuple):
+            if isinstance(indices[0][0], int) and isinstance(indices[0][1], list):
                 warnings.warn(
                     "This ClusterSubspace was created with a previous version "
                     "of smol. Please resave it to avoid this warning.",
