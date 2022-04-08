@@ -9,8 +9,7 @@ from tests.utils import assert_msonable
 
 
 @pytest.fixture
-def sublattice():
-    rng = np.random.default_rng()
+def sublattice(rng):
     composition = Composition(
         {
             DummySpecies("A"): 0.3,
@@ -24,13 +23,12 @@ def sublattice():
     return Sublattice(site_space, sites)
 
 
-def test_restrict_sites(sublattice):
+def test_restrict_sites(sublattice, rng):
     npt.assert_array_equal(sublattice.sites, np.sort(sublattice.sites))
     npt.assert_array_equal(sublattice.sites, np.unique(sublattice.sites))
     npt.assert_array_equal(
         sublattice.encoding, np.arange(len(sublattice.species), dtype=int)
     )
-    rng = np.random.default_rng()
     sites = rng.choice(sublattice.sites, size=min(10, len(sublattice.sites)))
     # test sites properly restricted
     sublattice.restrict_sites(sites)
@@ -43,8 +41,7 @@ def test_restrict_sites(sublattice):
     assert len(sublattice.restricted_sites) == 0
 
 
-def test_split(sublattice):
-    rng = np.random.default_rng()
+def test_split(sublattice, rng):
     sublattice.restrict_sites(
         rng.choice(sublattice.sites, size=len(sublattice.sites) // 2)
     )
@@ -141,10 +138,9 @@ def test_msonable(sublattice):
     assert_msonable(sublattice)
 
 
-def test_inactiveness(sublattice):
+def test_inactiveness(sublattice, rng):
     composition = Composition({DummySpecies("A"): 1})
     site_space = SiteSpace(composition)
-    rng = np.random.default_rng()
     sites = rng.choice(range(100), size=60, replace=False)
     inactive_sublattice = Sublattice(site_space, sites)
     npt.assert_array_equal(inactive_sublattice.encoding, np.array([0]))

@@ -133,11 +133,11 @@ class Orbit(MSONable):
 
     @property
     def bit_combos(self):
-        """Get tuple of site bit orderings.
+        """Get tuple representing the multi-index for site function ordering.
 
         tuple of ndarrays, each array is a set of symmetrically equivalent bit
-        orderings represented by row. Bit combos represent non-constant site
-        function orderings.
+        orderings represented by each row. Bit combos represent non-constant site
+        function orderings, i.e. contracted multi-indices
         """
         if self._bit_combos is None:
             # get all the bit symmetry operations
@@ -480,15 +480,14 @@ class Orbit(MSONable):
         return len(self.bit_combos)
 
     def __eq__(self, other):
-        """Check equality of orbits."""
+        """Check equality of orbits (only compares crystallographic equivalence)."""
         # when performing orbit in list, this ordering stops the
         # equivalent structures from generating
-        # NOTE: does not compare bit_combos!
         return self.base_cluster in other.clusters
 
-    def __neq__(self, other):
-        """Check negation of orbit equality."""
-        return not self.__eq__(other)
+    def __contains__(self, cluster):
+        """Check if a cluster is included in orbit."""
+        return cluster in self.clusters
 
     def __str__(self):
         """Pretty strings for pretty things."""

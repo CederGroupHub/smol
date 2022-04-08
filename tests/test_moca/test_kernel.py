@@ -53,10 +53,10 @@ def test_constructor(ensemble, step_type, mcusher):
     assert "bias" in kernel.trace.delta_trace.names
 
 
-def test_trace():
+def test_trace(rng):
     trace = Trace(first=np.ones(10), second=np.zeros(10))
     assert all(isinstance(val, np.ndarray) for _, val in trace.items())
-    rng = np.random.default_rng()
+
     trace.third = rng.random(10)
     assert all(isinstance(val, np.ndarray) for _, val in trace.items())
     names = ["first", "second", "third"]
