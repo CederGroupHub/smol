@@ -832,13 +832,12 @@ class ClusterSubspace(MSONable):
         # Clear the cached supercell orbit mappings
         self._supercell_orb_inds = {}
 
-    def remove_orbit_bit_combos(self, bit_ids):
-        """Remove orbit bit combos by their ids.
+    def remove_corr_functions(self, corr_ids):
+        """Remove correlation functions by their ids.
 
-        Removes a specific bit combo from an orbit. This allows more granular
-        removal of terms involved in fitting/evaluating a cluster expansion.
-        Similar to remove_orbits this is useful to prune a cluster expansion
-        and actually allows to remove a single term (ie one with small
+        This allows more granular removal of terms involved in fitting/evaluating a
+        cluster expansion. Similar to remove_orbits this is useful to prune a cluster
+        expansion and actually allows to remove a single term (ie one with small
         associated coefficient/ECI).
 
         This procedure is perfectly well posed mathematically. The resultant
@@ -850,16 +849,16 @@ class ClusterSubspace(MSONable):
         does anyway...
 
         Args:
-            bit_ids (list):
-                list of orbit bit ids to remove
+            corr_ids (list):
+                list of correlation function ids to remove
         """
         empty_orbit_ids = []
-        bit_ids = np.array(bit_ids, dtype=int)
+        corr_ids = np.array(corr_ids, dtype=int)
 
         for orbit in self.orbits:
             first_id = orbit.bit_id
             last_id = orbit.bit_id + len(orbit)
-            to_remove = bit_ids[bit_ids >= first_id]
+            to_remove = corr_ids[corr_ids >= first_id]
             to_remove = to_remove[to_remove < last_id] - first_id
             if to_remove.size > 0:
                 try:
@@ -1137,11 +1136,13 @@ class ClusterSubspace(MSONable):
             for orbit in orbits[size - 1]:
                 if orbit.base_cluster.diameter > diameter:
                     continue
+
                 for neighbor in neighbors:
                     if is_coord_subset(
                         [neighbor.frac_coords], orbit.base_cluster.sites, atol=SITE_TOL
                     ):
                         continue
+
                     new_sites = np.concatenate(
                         [orbit.base_cluster.sites, [neighbor.frac_coords]]
                     )
@@ -1155,6 +1156,7 @@ class ClusterSubspace(MSONable):
 
                     if new_orbit.base_cluster.diameter > diameter + 1e-8:
                         continue
+
                     if new_orbit not in new_orbits:
                         new_orbits.append(new_orbit)
 
@@ -1218,6 +1220,10 @@ class ClusterSubspace(MSONable):
             return False
         # does not check if basis functions are the same.
         return all(o1 == o2 for o1, o2 in zip(other.orbits, self.orbits))
+
+    def __contains__(self, orbit):
+        """Check if subspace contains orbit."""
+        return orbit in self.orbits
 
     def __len__(self):
         """Get number of correlation functions and ext terms in subspace."""

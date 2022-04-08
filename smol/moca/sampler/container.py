@@ -13,12 +13,11 @@ import warnings
 from collections import defaultdict
 
 import numpy as np
+from monty.dev import requires
 from monty.json import MSONable, jsanitize
 
 from smol.moca.sampler.kernel import Trace
 from smol.moca.sublattice import Sublattice
-
-h5err = ImportError("'h5py' not found. Please install it.")
 
 try:
     import h5py
@@ -353,6 +352,7 @@ class SampleContainer(MSONable):
         self._total_steps = 0
         self._nsamples = 0
 
+    @requires(h5py is not None, "'h5py' not found. Please install it.")
     def get_backend(self, file_path, alloc_nsamples=0, swmr_mode=False):
         """Get a backend file object.
 
@@ -372,9 +372,6 @@ class SampleContainer(MSONable):
         Returns:
             h5.File object
         """
-        if h5py is None:
-            raise h5err
-
         if os.path.isfile(file_path):
             backend = self._check_backend(file_path)
             trace_grp = backend["trace"]
@@ -501,6 +498,7 @@ class SampleContainer(MSONable):
         backend.close()
 
     @classmethod
+    @requires(h5py is not None, "'h5py' not found. Please install it.")
     def from_hdf5(cls, file_path, swmr_mode=True):
         """Instantiate a SampleContainer from an hdf5 file.
 
@@ -514,9 +512,6 @@ class SampleContainer(MSONable):
         Returns:
             SampleContainer
         """
-        if h5py is None:
-            raise h5err
-
         with h5py.File(file_path, "r", swmr=swmr_mode) as f:
             # Check if written states matches the size of datasets
             nsamples = f["trace"].attrs["nsamples"]

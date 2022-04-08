@@ -35,8 +35,7 @@ def mugrand_ensemble(composite_processor):
 
 # Test with composite processors to cover more ground
 @pytest.mark.parametrize("ensemble_cls", ensembles)
-def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_cls):
-    rng = np.random.default_rng()
+def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_cls, rng):
     coefs = rng.random(cluster_subspace_ewald.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
     proc = CompositeProcessor(cluster_subspace_ewald, scmatrix)
@@ -87,8 +86,7 @@ def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_cls):
         occu[site] = spec
 
 
-def test_restrict_sites(ensemble):
-    rng = np.random.default_rng()
+def test_restrict_sites(ensemble, rng):
     sites = rng.choice(range(ensemble.processor.num_sites), size=5)
     ensemble.restrict_sites(sites)
     for sublatt in ensemble.sublattices:
@@ -182,7 +180,7 @@ def test_split_ensemble(ensemble):
 
 
 # Canonical Ensemble tests
-def test_compute_feature_vector_canonical(canonical_ensemble):
+def test_compute_feature_vector_canonical(canonical_ensemble, rng):
     processor = canonical_ensemble.processor
     occu = gen_random_occupancy(canonical_ensemble.sublattices)
     assert np.dot(
@@ -193,7 +191,6 @@ def test_compute_feature_vector_canonical(canonical_ensemble):
         canonical_ensemble.compute_feature_vector(occu),
         canonical_ensemble.processor.compute_feature_vector(occu),
     )
-    rng = np.random.default_rng()
     for _ in range(50):  # test a few flips
         sublatt = np.random.choice(canonical_ensemble.active_sublattices)
         site = rng.choice(sublatt.sites)
@@ -242,7 +239,7 @@ def test_compute_feature_vector_canonical(canonical_ensemble):
 
 
 # MuSemigrandEnsemble Tests
-def test_compute_feature_vector_sgc(mugrand_ensemble):
+def test_compute_feature_vector_sgc(mugrand_ensemble, rng):
     proc = mugrand_ensemble.processor
     occu = gen_random_occupancy(mugrand_ensemble.sublattices)
     assert np.dot(
@@ -255,7 +252,6 @@ def test_compute_feature_vector_sgc(mugrand_ensemble):
         mugrand_ensemble.compute_feature_vector(occu)[:-1],
         mugrand_ensemble.processor.compute_feature_vector(occu),
     )
-    rng = np.random.default_rng()
     for _ in range(50):  # test a few flips
         sublatt = rng.choice(mugrand_ensemble.active_sublattices)
         site = rng.choice(sublatt.sites)

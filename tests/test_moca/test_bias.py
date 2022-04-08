@@ -2,7 +2,6 @@
 
 from copy import deepcopy
 
-import numpy as np
 import pytest
 
 from smol.moca.sampler.bias import FugacityBias, mcbias_factory
@@ -21,11 +20,10 @@ def mcbias(all_sublattices, request):
     return request.param(all_sublattices)
 
 
-def test_compute_bias_change(mcbias):
+def test_compute_bias_change(mcbias, rng):
     step = []
     occu = gen_random_occupancy(mcbias.sublattices)
     new_occu = occu.copy()
-    rng = np.random.default_rng()
     for _ in range(50):
         s = rng.choice(list(range(len(mcbias.active_sublattices))))
         i = rng.choice(mcbias.active_sublattices[s].sites)

@@ -21,11 +21,10 @@ SUBLATTICE_COMPOSITIONS = [1.0 / 3.0, 1.0 / 2.0]
 
 
 @pytest.fixture(params=[1, 5])
-def container(request):
+def container(request, rng):
     natural_parameters = np.zeros(10)
     natural_parameters[[0, -1]] = -1  # make first and last 1
     num_energy_coefs = 9
-    rng = np.random.default_rng()
     sites = rng.choice(range(NUM_SITES), size=300, replace=False)
     site_space = SiteSpace(Composition({"A": 0.2, "B": 0.5, "C": 0.3}))
     sublatt1 = Sublattice(site_space, sites)
@@ -51,13 +50,12 @@ def container(request):
 
 
 @pytest.fixture
-def fake_traces(container):
+def fake_traces(container, rng):
     nwalkers = container.shape[0]
     occus = np.empty((NSAMPLES, nwalkers, NUM_SITES))
     enths = -5 * np.ones((NSAMPLES, nwalkers, 1))
     temps = -300.56 * np.ones((NSAMPLES, nwalkers, 1))
     feats = np.zeros((NSAMPLES, nwalkers, len(container.natural_parameters)))
-    rng = np.random.default_rng()
     accepted = rng.integers(2, size=(NSAMPLES, nwalkers, 1))
     sites1 = container.sublattices[0].sites
     sites2 = container.sublattices[1].sites
@@ -96,7 +94,7 @@ def add_samples(sample_container, fake_traces, thinned_by=1):
         sample_container.save_sampled_trace(trace, thinned_by=thinned_by)
 
 
-def test_allocate_and_save(container, fake_traces):
+def test_allocate_and_save(container, fake_traces, rng):
     nwalkers = container.shape[0]
     assert len(container) == 0
     assert container._trace.occupancy.shape == (0, nwalkers, NUM_SITES)
@@ -115,7 +113,6 @@ def test_allocate_and_save(container, fake_traces):
     assert container._total_steps == NSAMPLES
     container.clear()
 
-    rng = np.random.default_rng()
     thinned = rng.integers(50)
     add_samples(container, fake_traces, thinned_by=thinned)
     assert len(container) == NSAMPLES
@@ -293,9 +290,8 @@ def test_means_and_variances(container, fake_traces, discard, thin):
         )
 
 
-def test_get_mins(container, fake_traces):
+def test_get_mins(container, fake_traces, rng):
     add_samples(container, fake_traces)
-    rng = np.random.default_rng()
     i = rng.choice(range(NSAMPLES))
     nwalkers = container.shape[0]
     container._trace.enthalpy[i, :] = -10
