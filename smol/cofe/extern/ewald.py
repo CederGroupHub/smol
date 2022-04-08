@@ -18,10 +18,10 @@ from smol.cofe.space.domain import Vacancy, get_allowed_species
 
 
 class EwaldTerm(MSONable):
-    """EwaldTerm Class that can be added to a ClusterSubspace.
+    """EwaldTerm class that can be added to a ClusterSubspace.
 
     This class can be used as an external term added to a ClusterSubspace
-    using the add_external_term method. Doing so allows to introduce Ewald
+    using the add_external_term method. Doing so introduces Ewald
     electrostatic interaction energies as an additional feature to include
     when fitting a cluster expansion. This usually helps to increase accuracy
     and reduce complexity (number of orbits) required to fit ionic materials.
@@ -39,13 +39,13 @@ class EwaldTerm(MSONable):
 
         Args:
             eta (float):
-                Parameter to override the EwaldSummation default screening
+                parameter to override the EwaldSummation default screening
                 parameter eta. If not given it is determined automatically.
             real_space_cut (float):
-                Real space cutoff radius. Determined automagically if not
+                real space cutoff radius. Determined automatically if not
                 given.
             recip_space_cut (float):
-                Reciprocal space cutoff radius. Determined automagically if not
+                reciprocal space cutoff radius. Determined automatically if not
                 given.
             use_term (str): optional
                 the Ewald expansion term to use as an additional term in the
@@ -68,7 +68,7 @@ class EwaldTerm(MSONable):
         Creates a structure with overlapping sites for each species in the
         corresponding site space. This is used to construct single Ewald
         matrices for all possible configurations. The ewald_inds array is a
-        2D array where the firse element is the index of the site in a
+        2D array where the first element is the index of the site in a
         supercell and the second is the encoded species occupancy
 
         Removes vacancies and the corresponding indices to those sites from the
@@ -100,20 +100,20 @@ class EwaldTerm(MSONable):
 
     @staticmethod
     def get_ewald_occu(occu, num_ewald_sites, ewald_inds):
-        """Get the ewald indices from a given encoded occupancy string.
+        """Get the Ewald indices from a given encoded occupancy string.
 
-        The ewald indices indicate matrix elements (ie species) corresponding
+        The Ewald indices indicate matrix elements (i.e. species) corresponding
         to the given occupancy.
 
         Args:
             occu (ndarray):
-                encoded encoded occupancy string
+                encoded occupancy string
             num_ewald_sites (int):
-                number of total ewald sites. This is the size of the ewald
+                number of total Ewald sites. This is the size of the Ewald
                 matrix, the sum of the size of all site spaces for all sites
                 in the cell.
             ewald_inds (ndarray):
-                ewald indices for the corresponding species in the occupancy
+                Ewald indices for the corresponding species in the occupancy
                 array.
 
         Returns:
@@ -131,7 +131,7 @@ class EwaldTerm(MSONable):
     def value_from_occupancy(self, occu, structure):
         """Obtain the Ewald interaction energy.
 
-        The size of the given structure in terms of prims.
+        The size of the given structure is in terms of prims.
         The computed electrostatic interactions do not include the charged
         cell energy (which is only important for charged structures). See
         the pymatgen EwaldSummation class for further details.
@@ -143,7 +143,7 @@ class EwaldTerm(MSONable):
                 occupation vector for the given structure
             structure (Structure):
                 pymatgen Structure for which to compute the electrostatic
-                interactions,
+                interactions
         Returns:
             float
         """
@@ -179,7 +179,7 @@ class EwaldTerm(MSONable):
         Get Json-serialization dict representation.
 
         Returns:
-            dict: MNSONable dict
+            dict: MSONable dict
         """
         ewald_d = {
             "@module": self.__class__.__module__,
@@ -193,7 +193,7 @@ class EwaldTerm(MSONable):
 
     @classmethod
     def from_dict(cls, d):
-        """Create EwaldTerm from msonable dict.
+        """Create EwaldTerm from MSONable dict.
 
         (Over-kill here since only EwaldSummation params are saved).
         """

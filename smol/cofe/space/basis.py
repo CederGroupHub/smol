@@ -2,8 +2,8 @@
 
 The product of single site functions make up a cluster/orbit function used to
 obtain correlation vectors. The domain of a site function is a site space,
-which is defined by the allowed species at the site and their measures, which
-is concentration of the species in the random structure)
+which is defined by the allowed species at the site and their measures, i.e.
+the concentration of the species in the random structure.
 """
 # pylint: disable=invalid-name, too-few-public-methods
 
@@ -40,16 +40,16 @@ class DiscreteBasis(MSONable, metaclass=ABCMeta):
         """Initialize a StandardBasis.
 
         Currently also accepts an OrderedDict but if you find yourself
-        creating one like so for use in production and not debuging know that
+        creating one like so for use in production and not debugging, know that
         it will break MSONable methods in classes that use these, and at any
-        point I could change this to not allow OrderedDicts.
+        point, compatibility with OrderedDicts could be removed.
 
         Args:
             site_space (OrderedDict or SiteSpace):
                 Dict representing site space (Specie, measure) or a SiteSpace
                 object.
             basis_functions (BasisIterator):
-                A BasisIterator for the nonconstant basis functions. Must take
+                a BasisIterator for the nonconstant basis functions. Must take
                 the values of species in the site space as input.
         """
         if isinstance(site_space, OrderedDict):
@@ -168,7 +168,8 @@ class StandardBasis(DiscreteBasis):
     implicitly when computing bit_combos using total no. species - 1 in the
     Orbit class. As such a StandardBasis as implemented here represents a
     Standard and/or Fourier site basis (the standard basis using indicator
-    functions is not a Fourier basis but can be used as "cluster site basis")
+    functions is not a Fourier basis but can be used as a"cluster site
+    basis").
 
     The particular basis set is set by giving an iterable of basis functions.
     See BasisIterator classes for details.
@@ -178,16 +179,16 @@ class StandardBasis(DiscreteBasis):
         """Initialize a StandardBasis.
 
         Currently also accepts an OrderedDict but if you find yourself creating
-        one like so for use in production and not debugging know that it will
-        break MSONable methods in classes that use these, and at any point I
-        could change this to not allow OrderedDicts.
+        one like so for use in production and not debugging, know that it will
+        break MSONable methods in classes that use these, and at any
+        point, compatibility with OrderedDicts could be removed.
 
         Args:
             site_space (OrderedDict or SiteSpace):
                 Dict representing site space (Specie, measure) or a SiteSpace
                 object.
             basis_functions (BasisIterator):
-                A BasisIterator for the nonconstant basis functions. Must take
+                a BasisIterator for the nonconstant basis functions. Must take
                 the values of species in the site space as input.
         """
         super().__init__(site_space, basis_functions)
@@ -219,10 +220,10 @@ class StandardBasis(DiscreteBasis):
         """Orthonormalizes basis function set based on initial basis set.
 
         Functions are orthonormal w.r.t the measure given.
-        (basis functions are also orthogonal to phi_0 = 1).
+        (Basis functions are also orthogonal to phi_0 = 1).
 
-        Modified GS-QR factorization of function array (here we are using
-        row vectors as opposed to the correct way of doing QR using columns.
+        Modified GS-QR factorization of function array. (Here we are using
+        row vectors as opposed to the correct way of doing QR using columns.)
         Due to how the func_arr is saved (rows are vectors/functions) this
         allows us to not sprinkle so many transposes.
         """
@@ -238,7 +239,7 @@ class StandardBasis(DiscreteBasis):
         self._f_array = q_mat.T / q_mat[:, 0]  # make first row constant = 1
 
     def rotate(self, angle, index1=0, index2=1):
-        """Rotate basis functions about subspace spaned by 2 vectors.
+        """Rotate basis functions about subspace spanned by two vectors.
 
         This operation will rotate the two selected basis vectors about a
         subspace spanned by them. This implies a rotation orthogonal to
@@ -248,7 +249,7 @@ class StandardBasis(DiscreteBasis):
         for non-uniform measures.
 
         SECOND WARNING: I haven't really thought through what happens if basis
-        vectors are not orthogonal to the constant (ie indicator basis) use
+        vectors are not orthogonal to the constant (i.e. indicator basis); use
         at your own peril with non-orthogonal basis sets.
 
         THIRD WARNING: When rotating a binary space basis this will only
@@ -339,18 +340,18 @@ class StandardBasis(DiscreteBasis):
 class IndicatorBasis(DiscreteBasis, MSONable):
     """Class that represents a full indicator basis for a site space.
 
-    This class represents the "trivial" indicator basis, wich includes an
+    This class represents the "trivial" indicator basis, wihch includes an
     indicator function for every species in the site space, and does NOT
     include a contant function.
-    NOT to be confuse with a cluster indicator basis used for a Cluster
-    Expansion (that is represented in smol by a StandardBasis with a
+    NOT to be confused with a cluster indicator basis used for a Cluster
+    Expansion (that is represented in smol by a StandardBasis with an
     IndicatorIterator).
 
-    @lbluque takes full responsibility for the confusing terminilogy...
+    @lbluque takes full responsibility for the confusing terminology...
     """
 
     def __init__(self, site_space):
-        """Initialize an indicator basis for give site space.
+        """Initialize an indicator basis for given site space.
 
         Args:
             site_space (OrderedDict or SiteSpace):
@@ -381,9 +382,9 @@ class IndicatorBasis(DiscreteBasis, MSONable):
 class BasisIterator(Iterator, metaclass=ABCMeta):
     r"""Abstract basis iterator class.
 
-    A basis iterator iterates through all non-constant site basis functions.
+    A basis iterator iterates through all non-constant site basis functions,
     i.e. for basis :math:`\phi_0 = 1, \phi_1, ..., \phi_{n-1}`,
-    the iterator will just iterate through :math:`\phi_1, ..., \phi_{n-1}`
+    the iterator will iterate through :math:`\phi_1, ..., \phi_{n-1}`
 
     Attributes:
         flavor (str):
@@ -533,7 +534,7 @@ def indicator(s, sp):
 
 
 def sinusoid_factory(n, m):
-    """Sine or cosine based on AVvW sinusoid site basis."""
+    """Sine or cosine based on AVdW sinusoid site basis."""
     a = -(-n // 2)  # ceiling division
     return partial(sin_f, a=a, m=m) if n % 2 == 0 else partial(cos_f, a=a, m=m)
 
@@ -571,9 +572,9 @@ def basis_factory(basis_name, site_space):
 
     Args:
         basis_name (str):
-            Name of the basis.
+            name of the basis.
         site_space (Sequence or OrderedDict):
-            Site space over which the basis set is defined.
+            SiteSpace over which the basis set is defined.
 
     Returns:
         StandardBasis
