@@ -1,9 +1,9 @@
-"""Implementation of base processor classes for a fixed size super cell.
+"""Implementation of base processor classes for a fixed size supercell.
 
 Processor classes are used to represent a configuration domain for a fixed
-sized supercell and should implement a "fast" way to compute the property
-they represent or changes in said property from site flips. Things necessary
-to run Monte Carlo sampling.
+size supercell and should implement a "fast" way to compute the property
+they represent or changes in said property from site flips. The processor
+also contains other things necessary to run Monte Carlo sampling.
 
 Processor classes should inherit from the BaseProcessor class. Processors
 can be combined into composite processor for mixed models.
@@ -44,9 +44,9 @@ class Processor(MSONable, metaclass=ABCMeta):
 
         Args:
             cluster_subspace (ClusterSubspace):
-                A cluster subspace
+                a cluster subspace
             supercell_matrix (ndarray):
-                An array representing the supercell matrix with respect to the
+                an array representing the supercell matrix with respect to the
                 ClusterExpansion prim structure.
             coefficients:
                 single or array of fit coefficients.
@@ -78,7 +78,7 @@ class Processor(MSONable, metaclass=ABCMeta):
 
     @property
     def structure(self):
-        """Get the underlying supercell disordered structure."""
+        """Get the underlying disordered supercell structure."""
         return self._structure
 
     @property
@@ -89,7 +89,7 @@ class Processor(MSONable, metaclass=ABCMeta):
 
     @property
     def supercell_matrix(self):
-        """Get the give supercell matrix."""
+        """Get the supercell matrix."""
         return self._scmatrix
 
     @abstractmethod
@@ -145,10 +145,10 @@ class Processor(MSONable, metaclass=ABCMeta):
             occupancy (ndarray):
                 encoded occupancy array
             flips (list):
-                list of tuples for (index of site, specie code to set)
+                list of (index of site, specie code to set) tuples
 
         Returns:
-            float:  property difference between inital and final states
+            float:  property difference between initial and final states
         """
         return np.dot(self.coefs, self.compute_feature_vector_change(occupancy, flips))
 
@@ -160,7 +160,7 @@ class Processor(MSONable, metaclass=ABCMeta):
 
         Args:
             structure (Structure):
-                A pymatgen structure (related to the cluster-expansion prim
+                a pymatgen structure (related to the cluster expansion prim
                 by the supercell matrix passed to the processor)
         Returns: encoded occupancy string
             np.ndarray[int]
@@ -189,7 +189,7 @@ class Processor(MSONable, metaclass=ABCMeta):
         return Structure.from_sites(sites)
 
     def encode_occupancy(self, occupancy):
-        """Encode occupancy string of species str to ints."""
+        """Encode occupancy string of Species object to ints."""
         # TODO check if setting to np.intc improves speed
         return np.array(
             [
@@ -200,13 +200,13 @@ class Processor(MSONable, metaclass=ABCMeta):
         )
 
     def decode_occupancy(self, encoded_occupancy):
-        """Decode an encoded occupancy string of int to species str."""
+        """Decode an encoded occupancy string of int to Species object."""
         return [
             species[i] for i, species in zip(encoded_occupancy, self.allowed_species)
         ]
 
     def get_sublattices(self):
-        """Get a list of sublattices from a processor.
+        """Get a list of sublattices from the processor.
 
         Initialized as the default encoding, but encoding can be changed
         in Ensemble (for example, when a sub-lattice is split by occupancy,
@@ -234,9 +234,9 @@ class Processor(MSONable, metaclass=ABCMeta):
         """Compute average forward and reverse drift for the given property.
 
         This is a sanity check function. The drift value should be very, very,
-        very small, the smaller the better...think machine precision values.
+        very small, the smaller the better (think machine precision values).
 
-        The average drift is the difference between the quick routine for used
+        The average drift is the difference between the quick routine used
         for MC to get a property difference from a single flip and the
         change in that property from explicitly calculating it fully for the
         initial state and the flipped state.

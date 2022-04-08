@@ -7,8 +7,8 @@
    getting_started
    user_guide/index
    api_reference/index
-   developer_guide/index
    citing
+   developer_guide/index
 
 =================================
 Statistical Mechanics on Lattices
@@ -67,7 +67,7 @@ If you find **smol** useful please cite the following publication,
     **smol**--- Yet another cluster expansion method python package.
     (in preparation)
 
-Please also cite this publication,
+Since **smol** is based on **pymatgen**, please also cite this publication,
 
     Ong, S. P. et al. Python Materials Genomics (pymatgen):
     `A robust, open-source python library for materials analysis

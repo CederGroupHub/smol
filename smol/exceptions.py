@@ -12,7 +12,7 @@ SYMMETRY_ERROR_MESSAGE = (
 
 
 class NotFittedError(ValueError, AttributeError):
-    """Exception class to raise if learn is used before fitting.
+    """Exception if sklearn regression function is used before fitting.
 
     This class inherits from both ValueError and AttributeError to help with
     exception handling and backward compatibility.

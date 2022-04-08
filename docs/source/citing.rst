@@ -5,7 +5,7 @@ Citing
 If you use **smol** for your work please cite the following publication,
 
     Barroso-Luque, L., Yang, J.H., Xie, F., Chen T., Zhong, P. & Ceder, G.
-    **smol**--- Yet another cluster expansion method python package.
+    **smol**: A Python package for cluster expansions and beyond.
     (in preparation)
 
 Since many core objects are used extensively, please also consider citing the
@@ -32,8 +32,8 @@ Orbit group wise regularized fits
 =================================
 
 If you use **smol** or any of the other great CE packages to fit an expansion
-using orbit group wise regularization with Group Lasso or related regression
-models, please cite the following,
+using orbit group wise regularization with Group Lasso or any related regression
+model, please cite the following,
 
     Yang, J.H., Chen, T., Barroso-Luque, L., Jadidi, Z. & Ceder, G.
     Approaches for handling high-dimensional cluster expansions of ionic
