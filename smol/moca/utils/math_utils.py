@@ -13,7 +13,6 @@ from fractions import Fraction
 
 import cvxpy as cp
 import polytope as pc
-from sympy import Matrix, eye, ZZ
 from scipy.spatial import KDTree
 
 
@@ -40,6 +39,18 @@ class NaturalInfeasibleError(Exception):
 def gcd(a, b):
     """Euclidean Algorithm, giving positive GCD's."""
     return math.gcd(a, b)
+
+
+def gcdex(a, b):
+    """Extended Euclidean Algorithm"""
+    if a == 0:
+        return 0, 1, b
+
+    x1, y1, g = gcdex(b % a, a)
+    x = y1 - (b // a) * x1
+    y = x1
+
+    return x, y, g
 
 
 def gcd_list(l):
@@ -177,57 +188,48 @@ def integerize_multiple(vs, max_denominator=1000, dtol=NUM_TOL):
 
 
 # Integer linear algebra utilities.
-# TODO: This seems not to work well with current sympy version (works with 1.5.1)
-# Check this out!
-def compute_snf(A, domain=ZZ):
+# Note: don't use sympy anymore. In sympy 1.9,
+# a matrix m full of 0 will give is_zero=False,
+# while in 1.5.1, it will give is_zero=True!
+# Try to remove sympy dependency!
+def compute_snf(a):
     """Compute smith normal form of a matrix.
 
-    In some specific cases, the snf algorithm might not be able
-    to return a result because some matrix elements of either
-    s, m or t might exceed the limit of int32. Therefore, this
-    function does not guarantee a result.
-
-    This is not common in computations associated with real systems,
-    but be careful if you ever come across this.
     Args:
-        A(2D Arraylike of int):
+        a(2D arraylike of int):
             A matrix defined on some domain.
-        domain(sympy.domain):
-            The domain on which matrix m is defined. By default,
-            is sympy.ZZ (the integer domain).
 
     Returns:
-        s, m, t, m = s a t is the SNF:
-            np.ndarray[int]
+        s, m, t (np.ndarray of int):
+            Smith decomposition of a, such that:
+            m is the smith normal form and m = s a t.
     """
-
     # Matrix pivoting operations.
     def leftmult(m, i0, i1, a, b, c, d):
-        for j in range(m.cols):
+        for j in range(m.shape[1]):
             x, y = m[i0, j], m[i1, j]
             m[i0, j] = a * x + b * y
             m[i1, j] = c * x + d * y
 
     def rightmult(m, j0, j1, a, b, c, d):
-        for i in range(m.rows):
+        for i in range(m.shape[0]):
             x, y = m[i, j0], m[i, j1]
             m[i, j0] = a * x + c * y
             m[i, j1] = b * x + d * y
 
     # Must convert to a sympy.Matrix.
-    m = np.array(A).astype(int).copy()
-    m = Matrix(m)
-    s = eye(m.rows)
-    t = eye(m.cols)
+    m = np.array(a).astype(int).copy()
+    s = np.eye(m.shape[0]).astype(int)
+    t = np.eye(m.shape[1]).astype(int)
     last_j = -1
-    for i in range(m.rows):
-        for j in range(last_j + 1, m.cols):
-            if not m.col(j).is_zero:
+    for i in range(m.shape[0]):
+        for j in range(last_j + 1, m.shape[1]):
+            if not np.all(m[:, j] == 0):
                 break
         else:
             break
         if m[i, j] == 0:
-            for ii in range(m.rows):
+            for ii in range(m.shape[0]):
                 if m[ii, j] != 0:
                     break
             leftmult(m, i, ii, 0, 1, 1, 0)
@@ -238,44 +240,41 @@ def compute_snf(A, domain=ZZ):
         upd = True
         while upd:
             upd = False
-            for ii in range(i + 1, m.rows):
+            for ii in range(i + 1, m.shape[0]):
                 if m[ii, j] == 0:
                     continue
                 upd = True
-                if domain.rem(m[ii, j], m[i, j]) != 0:
-                    coef1, coef2, g = domain.gcdex(int(m[i, j]),
-                                                   int(m[ii, j]))
-                    coef3 = domain.quo(m[ii, j], g)
-                    coef4 = domain.quo(m[i, j], g)
+                if m[ii, j] % m[i, j] != 0:
+                    coef1, coef2, g = gcdex(m[i, j], m[ii, j])
+                    coef3 = m[ii, j] // g
+                    coef4 = m[i, j] // g
                     leftmult(m, i, ii, coef1, coef2, -coef3, coef4)
                     leftmult(s, i, ii, coef1, coef2, -coef3, coef4)
-                coef5 = domain.quo(m[ii, j], m[i, j])
+                coef5 = m[ii, j] // m[i, j]
                 leftmult(m, i, ii, 1, 0, -coef5, 1)
                 leftmult(s, i, ii, 1, 0, -coef5, 1)
-            for jj in range(j + 1, m.cols):
+            for jj in range(j + 1, m.shape[1]):
                 if m[i, jj] == 0:
                     continue
                 upd = True
-                if domain.rem(m[i, jj], m[i, j]) != 0:
-                    coef1, coef2, g = domain.gcdex(int(m[i, j]),
-                                                   int(m[i, jj]))
-                    coef3 = domain.quo(m[i, jj], g)
-                    coef4 = domain.quo(m[i, j], g)
+                if m[i, jj] % m[i, j] != 0:
+                    coef1, coef2, g = gcdex(m[i, j], int(m[i, jj]))
+                    coef3 = m[i, jj] // g
+                    coef4 = m[i, j] // g
                     rightmult(m, j, jj, coef1, -coef3, coef2, coef4)
                     rightmult(t, j, jj, coef1, -coef3, coef2, coef4)
-                coef5 = domain.quo(m[i, jj], m[i, j])
+                coef5 = m[i, jj] // m[i, j]
                 rightmult(m, j, jj, 1, -coef5, 0, 1)
                 rightmult(t, j, jj, 1, -coef5, 0, 1)
         last_j = j
 
-    for i1 in range(min(m.rows, m.cols)):
+    for i1 in range(min(m.shape)):
         for i0 in reversed(range(i1)):
-            coef1, coef2, g = domain.gcdex(int(m[i0, i0]),
-                                           int(m[i1, i1]))
+            coef1, coef2, g = gcdex(m[i0, i0], m[i1, i1])
             if g == 0:
                 continue
-            coef3 = domain.quo(m[i1, i1], g)
-            coef4 = domain.quo(m[i0, i0], g)
+            coef3 = m[i1, i1] // g
+            coef4 = m[i0, i0] // g
             leftmult(m, i0, i1, 1, coef2, coef3, coef2 * coef3 - 1)
             leftmult(s, i0, i1, 1, coef2, coef3, coef2 * coef3 - 1)
             rightmult(m, i0, i1, coef1, 1 - coef1 * coef4, 1, -coef4)
@@ -293,6 +292,12 @@ def solve_diophantines(A, b=None):
     We use Smith normal form to solve equations.
     If equation is not solvable, we will throw an
     error.
+    Note: If A decomposes to snf with large matrix
+    elements, the numerical accuracy might have an
+    issue! When this is the case, even if An=b has
+    an integer solution, our function is not
+    guaranteed to find it! But for most application
+    uses, the numerical accuracy here should be enough.
 
     Args:
         A(2D ArrayLike[int]):
@@ -323,6 +328,13 @@ def solve_diophantines(A, b=None):
     # Check feasibility
     for i in range(k):
         if c[i] % B[i, i] != 0:
+            print("index:", i)
+            print("c[i]:", c[i])
+            print("b[ii]:", B[i, i])
+            print("U:", U)
+            print("B:", B)
+            print("V:", V)
+            assert np.allclose(B, U @ A @ V)
             raise DiopInfeasibleError
 
     # Get base solution
@@ -392,7 +404,11 @@ def get_natural_centroid(n0, vs):
     constraints = [n0[i] + vs[:, i] @ x >= 0 for i in range(d)]
     prob = cp.Problem(cp.Minimize(cp.sum_squares(x - centroid)),
                       constraints)
-    _ = prob.solve()
+    # Use gurobi if present.
+    if "GUROBI" in cp.installed_solvers():
+        _ = prob.solve(solver=cp.GUROBI)
+    else:
+        _ = prob.solve(solver=cp.ECOS_BB)
     if x.value is None:
         raise NaturalInfeasibleError
 
@@ -434,6 +450,8 @@ def get_one_dim_solutions(n0, v, integer_tol=NUM_TOL):
             if n0[i] < 0:  # Dim i not feasible.
                 return np.array([], dtype=int)
 
+    if x_min <= - np.inf or x_max >= np.inf:
+        raise ValueError("Inequalities are not bounded!")
     # If close to an integer, shift to it.
     # This is to prevent error in floor and ceil.
     x_min = (round(x_min)
@@ -451,6 +469,39 @@ def get_one_dim_solutions(n0, v, integer_tol=NUM_TOL):
         return np.arange(n_min, n_max + 1, dtype=int)
 
 
+def get_first_dim_extremes(a, b):
+    """Solve extremes for x0 under ax<=b.
+    Args:
+        a, b (ArrayLike[int]):
+            Constraints ax<=b. ax<=b must be feasible and
+            bounded.
+    Return:
+        float, float:
+            min x0 and max x0 when ax<=b is feasible.
+    """
+    a = np.array(a)
+    b = np.array(b)
+    n, d = a.shape
+    if len(b) != n:
+        raise ValueError(f"Constraint matrix {a} and "
+                         f"vector {b} does not match!")
+    x1 = cp.Variable(d)
+    prob1 = cp.Problem(cp.Minimize(x1[0]), [a @ x1 <= b])
+    _ = prob1.solve()
+    if x1.value is None:
+        raise ValueError(f"Polytope a: {a}, b:{b} is empty or not bounded!")
+    assert abs(prob1.value - x1.value[0]) <= NUM_TOL
+
+    x2 = cp.Variable(d)
+    prob2 = cp.Problem(cp.Maximize(x2[0]), [a @ x2 <= b])
+    _ = prob2.solve()
+    if x1.value is None:
+        raise ValueError(f"Polytope a: {a}, b:{b} is empty or not bounded!")
+    assert abs(prob2.value - x2.value[0]) <= NUM_TOL
+
+    return prob1.value, prob2.value
+
+
 def get_natural_solutions(n0, vs, integer_tol=NUM_TOL):
     """Enumerate all natural number solutions.
 
@@ -462,8 +513,10 @@ def get_natural_solutions(n0, vs, integer_tol=NUM_TOL):
     Recurse until all solutions are enumerated.
 
     Notice:
-        This function is very costly! Do not
+        1, This function is very costly! Do not
     use it with a large super-cell size!
+        2, This function does not apply to any n0
+    and vs. It only applys to bounded polytopes!
 
     Args:
         n0(1D ArrayLike[int]):
@@ -492,11 +545,12 @@ def get_natural_solutions(n0, vs, integer_tol=NUM_TOL):
 
         return sols
 
-    p = pc.Polytope(-1 * vs.transpose(), n0)
-    verts = pc.extreme(p)
+    x_min, x_max = get_first_dim_extremes(-1 * vs.transpose(), n0)
+    if x_min <= - np.inf or x_max >= np.inf:
+        raise ValueError("Inequalities are not bounded!")
+    # Do not use polytope module here. A polytope cannot be take extreme
+    # if it is not feasible or has 0 volume.
     # Always branch the 1st dimension.
-    x_min = np.min(verts[:, 0])
-    x_max = np.max(verts[:, 0])
 
     x_min = (round(x_min)
              if abs(x_min - round(x_min)) <= integer_tol
@@ -698,15 +752,15 @@ def get_optimal_basis(n0, vs, xs, max_loops=100):
     for _ in range(max_loops):
         V = vs_opt.copy()
         for i1, i2 in combinations(list(range(n)), 2):
-            np.concatenate(V, [V[i1] + V[i2], V[i1] - V[i2]],
-                           axis=0)
+            V = np.concatenate((V, [V[i1] + V[i2], V[i1] - V[i2]]),
+                               axis=0)
 
         V = np.array(sorted(V, key=key_func), dtype=int)
         vs_new = np.array([], dtype=int).reshape(0, d)
         for i in range(len(V)):
             if len(vs_new) == n:
                 break
-            vs_current = np.concatenate(vs_new, [V[i]], axis=0)
+            vs_current = np.concatenate((vs_new, [V[i]]), axis=0)
             if np.linalg.matrix_rank(vs_current) \
                     == min(vs_current.shape):
                 # Full rank.
@@ -727,7 +781,8 @@ def get_ergodic_vectors(n0, vs, xs, k=3):
         an ergodic flip table.
         It will also try to prioritize adding flip directions
         with  minimal flip sizes, but global optimality is not
-        guaranteed.
+        guaranteed. Currently also does not guarantee graph
+        connectivity, if graphs can be divided as parts.
         2, This algorithm does not guarantee finding the
         fewest number of directions to satisfy ergodicity at all.
         2, This process is NP-hard. Do not use it when the
@@ -745,7 +800,8 @@ def get_ergodic_vectors(n0, vs, xs, k=3):
         k(int): optional
             Find k-nearest neighbor of non-ergodic points,
             add those of them with minimal flip size to ensure
-            ergodicity. Default is 3.
+            ergodicity. Default is 3. k>1 is required, otherwise
+            will always return self.
 
     Returns:
         Basis + Flip directions added to guarantee ergodicity:
@@ -764,18 +820,21 @@ def get_ergodic_vectors(n0, vs, xs, k=3):
     ns = xs @ vs + n0
     connected = test_connected(vs, ns, ns)
     ns_disconnected = ns[~ connected]
+    if len(ns_disconnected) == 0:
+        return vs
 
     tree = KDTree(ns)
     candidate_vectors = []
-    connections_made = []
     # Get k nearest neighbors in Euclidean distance.
     for n in ns_disconnected:
-        dists, points = tree.query(n, k=k)
-        points = np.array(np.round(points), dtype=int)
+        dists, point_ids = tree.query(n, k=k)
+        if dists[0] == 0:
+            point_ids = point_ids[1:]
+        points = ns[point_ids, :]
         for point in points:
             u = point - n
             if (tuple(u.tolist()) in candidate_vectors
-                    or tuple(-u.tolist()) in candidate_vectors):
+                    or tuple((-u).tolist()) in candidate_vectors):
                 continue
             candidate_vectors.append(tuple(u.tolist()))
 
@@ -785,7 +844,7 @@ def get_ergodic_vectors(n0, vs, xs, k=3):
     selected_vectors = vs.copy()
     ns_rem = ns_disconnected.copy()
     for u in candidate_vectors:
-        vs_current = np.concatenate(selected_vectors, [u], axis=0)
+        vs_current = np.concatenate((selected_vectors, [u]), axis=0)
         connected = test_connected(vs_current, ns_rem, ns)
         selected_vectors = vs_current.copy()
         ns_rem = ns_rem[~ connected]

@@ -230,7 +230,7 @@ class CompSpace(MSONable):
         if sl_sizes is None:
             self.sl_sizes = [1 for _ in range(len(self.bits))]
         elif len(sl_sizes) == len(bits):
-            self.sl_sizes = sl_sizes
+            self.sl_sizes = np.array(sl_sizes, dtype=int).tolist()
         else:
             raise ValueError("Sub-lattice number is not the same "
                              "in parameters bits and sl_sizes.")
@@ -494,11 +494,16 @@ class CompSpace(MSONable):
             for species, sl_size, comp in zip(self.bits, self.sl_sizes, c):
                 if comp.num_atoms > 1 or comp.num_atoms < 0:
                     raise CompUnNormalizedError(comp)
+                vac_counted = False
                 for specie in species:
                     if isinstance(specie, Vacancy):
+                        if vac_counted:
+                            raise ValueError("More than one Vacancy species "
+                                             "appear in a sub-lattice!")
                         comp_novac = Composition({k: v for k, v in comp.items()
                                                   if not isinstance(k, Vacancy)})
                         n.append((1 - comp_novac.num_atoms) * sl_size * sc_size)
+                        vac_counted = True
                     else:
                         n.append(comp[specie] * sl_size * sc_size)
             n = np.array(n)
@@ -525,9 +530,7 @@ class CompSpace(MSONable):
             c = n.copy()
         elif form == "x":
             dn = n - self.n0 * sc_size
-            d = len(self.basis)
-            vs = self.basis.transpose()[:d, :]
-            c = np.linalg.inv(vs) @ dn[:d]
+            c = np.linalg.pinv(self.basis.T) @ dn
         elif form == "comp":
             c = []
             for species, sl_size, dim_id in zip(self.bits,
@@ -609,8 +612,11 @@ class CompSpace(MSONable):
         optimize_basis = d.get('optimize_basis', False)
         table_ergodic = d.get('table_ergodic', False)
 
-        obj = cls(bits, sl_sizes, other_constraints,
-                  charge_balanced, optimize_basis, table_ergodic)
+        obj = cls(bits, sl_sizes,
+                  other_constraints=other_constraints,
+                  charge_balanced=charge_balanced,
+                  optimize_basis=optimize_basis,
+                  table_ergodic=table_ergodic)
 
         obj._min_sc_size = d.get('min_sc_size')
 
