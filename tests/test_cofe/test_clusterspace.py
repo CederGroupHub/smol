@@ -274,7 +274,7 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix):
             assert orb.base_cluster.diameter + 1e-7 > pbc_radius
             found = False
             for equiv in orb.clusters:
-                if is_coord_subset_pbc(equiv.sites, new_fc, atol=SITE_TOL):
+                if is_coord_subset_pbc(equiv.frac_coords, new_fc, atol=SITE_TOL):
                     found = True
                     break
             assert found

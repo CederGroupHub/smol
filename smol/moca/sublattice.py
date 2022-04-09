@@ -1,8 +1,9 @@
 """Implementation of Sublattice class.
 
-A sublattice represents a set of sites in a supercell that have all have
-the same site space. More rigourously it represents a substructure of the
-random structure supercell being sampled in a Monte Carlo simulation.
+A sublattice represents a set of sites in a supercell that all have
+the same domain/site space. More rigourously it represents a substructure
+of the random structure supercell being sampled in a Monte Carlo
+simulation.
 """
 
 __author__ = "Luis Barroso-Luque, Fengyu Xie"
