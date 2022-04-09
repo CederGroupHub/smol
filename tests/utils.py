@@ -25,7 +25,7 @@ def assert_table_set_equal(a1, a2):
     npt.assert_array_equal(a1_set, a2_set)
 
 
-def assert_msonable(obj, test_if_subclass=True):
+def assert_msonable(obj, skip_keys=None, test_if_subclass=True):
     """
     Tests if obj is MSONable and tries to verify whether the contract is
     fulfilled.
