@@ -11,7 +11,6 @@ More complex steps can be defined simply by deriving from the MCUsher
 __author__ = "Luis Barroso-Luque, Fengyu Xie"
 
 from abc import ABC, abstractmethod
-import random
 import numpy as np
 import warnings
 import math
@@ -205,7 +204,7 @@ class Tableflip(MCUsher):
                  other_constraints=None,
                  optimize_basis=False,
                  table_ergodic=False,
-                 flip_weights=None, swap_weight=0):
+                 flip_weights=None, swap_weight=0.1):
         """Initialize Tableflip.
 
         Args:
@@ -253,7 +252,7 @@ class Tableflip(MCUsher):
             swap_weight(float): optional
                 Percentage of canonical swaps to attempt. Should be a
                 positive value, but smaller than 1.
-                Default to 0.
+                Default to 0.1.
             flip_weights(1D Arraylike): optional
                 Weights to adjust probability of each flip. If
                 None given, will assign equal weights to each
@@ -272,7 +271,9 @@ class Tableflip(MCUsher):
         self.sc_size = gcd_list(self.sl_sizes)
         self.sl_sizes = self.sl_sizes // self.sc_size
         self.max_n = [len(sublatt.active_sites)
-                      for sublatt in self.sublattices]
+                      for sublatt in self.sublattices
+                      for _ in sublatt.species]
+        self.d = len(self.max_n)
 
         self._compspace = CompSpace(self.bits, self.sl_sizes,
                                     charge_balanced=charge_balanced,
@@ -335,10 +336,11 @@ class Tableflip(MCUsher):
             return self._swapper.propose_step(occupancy)
 
         # We shall only flip active sites.
-        species_list = occu_to_species_list(occupancy, self._dim_ids_table)
+        species_list = occu_to_species_list(occupancy, self.d,
+                                            self._dim_ids_table)
         species_n = [len(sites) for sites in species_list]
         mask = flip_weights_mask(self.flip_table,
-                                 species_n, self.max_n).astyle(int)
+                                 species_n, self.max_n).astype(int)
         masked_weights = self.flip_weights * mask
         # Mask out impossible selections.
         if masked_weights.sum() == 0:
@@ -359,7 +361,7 @@ class Tableflip(MCUsher):
             if not sublatt.is_active:
                 continue
             site_ids = []
-            dim_ids = np.array(dim_ids, type=int)
+            dim_ids = np.array(dim_ids, dtype=int)
             u_sl = u[dim_ids]
             dims_from = dim_ids[u_sl < 0]
             dims_to = dim_ids[u_sl > 0]
@@ -379,7 +381,8 @@ class Tableflip(MCUsher):
 
     def _get_flip_id(self, occupancy, step):
         """Compute flip id in table from occupancy and step."""
-        dn = delta_n_from_step(occupancy, step, self._dim_ids_table)
+        dn = delta_n_from_step(occupancy, step, self.d,
+                               self._dim_ids_table)
 
         if np.allclose(dn, 0):
             return -1, 0
@@ -418,7 +421,8 @@ class Tableflip(MCUsher):
 
         u = (-2 * direction + 1) * self.flip_table[fid]
 
-        n_now = occu_to_species_n(occupancy, self._dim_ids_table)
+        n_now = occu_to_species_n(occupancy, self.d,
+                                  self._dim_ids_table)
         mask_now = flip_weights_mask(self.flip_table,
                                      n_now, self.max_n).astype(int)
         weights_now = self.flip_weights * mask_now
@@ -427,7 +431,7 @@ class Tableflip(MCUsher):
 
         n_next = n_now + u
         mask_next = flip_weights_mask(self.flip_table,
-                                      n_next, self.max_n).astyle(int)
+                                      n_next, self.max_n).astype(int)
         weights_next = self.flip_weights * mask_next
         p_next = ((1 - self.swap_weight)
                   * weights_next[fid * 2 + (1 - direction)]
@@ -435,7 +439,7 @@ class Tableflip(MCUsher):
 
         # Combinatorial factor.
         log_factor = np.log(p_next / p_now)
-        dim_ids = np.arange(len(u), type=int)
+        dim_ids = np.arange(len(u), dtype=int)
         dims_from = dim_ids[u < 0]
         dims_to = dim_ids[u > 0]
 

@@ -36,7 +36,7 @@ class SemiGrandEnsemble(Ensemble, MSONable):
             dict of chemical potentials.
     """
 
-    valid_mcmc_steps = ("flip",)
+    valid_mcmc_steps = ("flip", "tableflip")
 
     def __init__(self, processor, chemical_potentials, sublattices=None):
         """Initialize MuSemiGrandEnsemble.

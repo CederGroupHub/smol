@@ -56,7 +56,7 @@ def get_dim_ids_table(sublattices, active_only=False):
 
 
 # Utilities for parsing occupation to composition.
-def occu_to_species_list(occupancy, dim_ids_table):
+def occu_to_species_list(occupancy, d, dim_ids_table):
     """Get occupancy status of each sub-lattice.
 
     Get table of the indices of sites that are occupied by each specie on
@@ -65,6 +65,10 @@ def occu_to_species_list(occupancy, dim_ids_table):
     Args:
         occupancy(1d Arraylike[int]):
             An array representing encoded occupancy, can be list.
+        d (int):
+            Number of components in the "n"-representation. This must
+            be provided because the maximum component index is not always
+            in the table.
         dim_ids_table(2D arrayLike[int]):
             Dimension indices of each site and code in n-representation.
             Rows correspond to site index, while columns correspond to
@@ -79,13 +83,12 @@ def occu_to_species_list(occupancy, dim_ids_table):
     if len(occu) != len(dim_ids_table):
         raise ValueError(f"Occupancy size {len(occu)} does not match "
                          f"table size {len(dim_ids_table)}!")
-    d = np.max(dim_ids_table) + 1
     dim_ids = dim_ids_table[np.arange(len(occu), dtype=int), occu]
     all_sites = np.arange(len(occu), dtype=int)
     return [all_sites[dim_ids == i].tolist() for i in range(d)]
 
 
-def occu_to_species_n(occupancy, dim_ids_table):
+def occu_to_species_n(occupancy, d, dim_ids_table):
     """Count number of species from occupation array.
 
     Get the count of each species on sub-lattices from an encoded
@@ -93,6 +96,10 @@ def occu_to_species_n(occupancy, dim_ids_table):
     Args:
         occupancy(1d Arraylike[int]):
             An array representing encoded occupancy, can be list.
+        d (int):
+            Number of components in the "n"-representation. This must
+            be provided because the maximum component index is not always
+            in the table.
         dim_ids_table(2D arrayLike[int]):
             Dimension indices of each site and code in n-representation.
             Rows correspond to site index, while columns correspond to
@@ -107,7 +114,6 @@ def occu_to_species_n(occupancy, dim_ids_table):
     if len(occu) != len(dim_ids_table):
         raise ValueError(f"Occupancy size {len(occu)} does not match "
                          f"table size {len(dim_ids_table)}!")
-    d = np.max(dim_ids_table) + 1
     dim_ids = dim_ids_table[np.arange(len(occu), dtype=int), occu]
     n = np.zeros(d, dtype=int)
     dims, counts = np.unique(dim_ids, return_counts=True)
@@ -115,7 +121,7 @@ def occu_to_species_n(occupancy, dim_ids_table):
     return n
 
 
-def delta_n_from_step(occu, step, dim_ids_table):
+def delta_n_from_step(occu, step, d, dim_ids_table):
     """Get the change of species amounts from MC step.
 
     Args:
@@ -124,6 +130,10 @@ def delta_n_from_step(occu, step, dim_ids_table):
         step(List[tuple(int,int)]):
             List of tuples recording (site_id, code_of_species_to
             _replace_with).
+        d (int):
+            Number of components in the "n"-representation. This must
+            be provided because the maximum component index is not always
+            in the table.
         dim_ids_table(2D arrayLike[int]):
             Dimension indices of each site and code in n-representation.
             Rows correspond to site index, while columns correspond to
@@ -135,7 +145,6 @@ def delta_n_from_step(occu, step, dim_ids_table):
     """
     occu_now = np.array(occu, dtype=int)
     dim_ids_table = np.array(dim_ids_table, dtype=int)
-    d = np.max(dim_ids_table) + 1
     delta_n = np.zeros(d, dtype=int)
     # A step may involve a site multiple times.
     for site, code in step:

@@ -235,7 +235,7 @@ class SquarechargeBias(MCBias):
         self.lam = lam
         num_cols = max(max(sl.encoding) for sl in self.sublattices) + 1
         num_rows = sum(len(sl.sites) for sl in self.sublattices)
-        table = np.zeros((num_cols, num_rows))
+        table = np.zeros((num_rows, num_cols))
         for cs, sublatt in zip(charges, self.sublattices):
             cs = np.array(cs)
             table[sublatt.sites[:, None], sublatt.encoding] = cs[None, :]
@@ -303,6 +303,7 @@ class SquarecompBias(MCBias):
         self.A = np.array(A, dtype=int)
         self.b = np.array(b, dtype=int)
         self._dim_ids_table = get_dim_ids_table(self.sublattices)
+        self.d = sum(len(sublatt.species) for sublatt in sublattices)
 
     def compute_bias(self, occupancy):
         """Compute bias from occupancy.
@@ -313,7 +314,7 @@ class SquarecompBias(MCBias):
         Returns:
             Float, bias value.
         """
-        n = occu_to_species_n(occupancy, self._dim_ids_table)
+        n = occu_to_species_n(occupancy, self.d, self._dim_ids_table)
         return -self.lam * np.sum((self.A @ n - self.b) ** 2)
 
     def compute_bias_change(self, occupancy, step):

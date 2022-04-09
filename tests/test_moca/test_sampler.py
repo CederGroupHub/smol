@@ -15,7 +15,8 @@ def sampler(ensemble, request):
     sampler = Sampler.from_ensemble(
         ensemble, temperature=TEMPERATURE, nwalkers=request.param
     )
-    # fix this additional attribute to sampler to access in gen occus for tests
+    # fix this additional attribute to sampler to access in gen occus
+    # for tests
     sampler.num_sites = ensemble.num_sites
     return sampler
 
@@ -74,11 +75,11 @@ def test_anneal(sampler):
     expected = []
     for T in temperatures:
         expected += (
-            steps
-            * sampler.samples.shape[0]
-            * [
-                T,
-            ]
+                steps
+                * sampler.samples.shape[0]
+                * [
+                    T,
+                ]
         )
     npt.assert_array_equal(sampler.samples.get_trace_value("temperature"), expected)
     # test temp error

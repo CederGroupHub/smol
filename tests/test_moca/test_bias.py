@@ -52,7 +52,16 @@ def test_compute_bias_change(mcbias):
 
 def test_mcbias_factory(all_sublattices):
     for bias in bias_classes:
-        assert isinstance(mcbias_factory(bias.__name__, all_sublattices), bias)
+        if bias == SquarecompBias:
+            n_dims = sum(len(sublatt.species) for sublatt in all_sublattices)
+            n_cons = max(n_dims - 1, 1)
+            a = np.random.randint(low=-10, high=10, size=(n_cons, n_dims))
+            b = np.random.randint(low=-10, high=10, size=n_cons)
+            kwargs = {"A": a, "b": b}
+        else:
+            kwargs = {}
+        assert isinstance(mcbias_factory(bias.__name__, all_sublattices,
+                                         **kwargs), bias)
 
 
 # Tests for FugacityBias
@@ -108,13 +117,13 @@ def square_charge_bias(all_sublattices):
 def test_charge_bias(square_charge_bias):
     table = square_charge_bias._c_table
     n_species = max(max(s.encoding) for s in square_charge_bias.sublattices) + 1
-    n_sites = sum(len(s.species) for s in square_charge_bias.sublattices)
+    n_sites = sum(len(s.sites) for s in square_charge_bias.sublattices)
     assert table.shape == (n_sites, n_species)
     # All sites on all sublattices must be included in table
     for sublatt in square_charge_bias.sublattices:
         charges = np.array([get_oxi_state(sp) for sp in sublatt.species])
-        npt.assert_array_equal(table[sublatt.sites[:, None], sublatt.encoding],
-                               charges[None, :])
+        npt.assert_array_equal(table[sublatt.sites[:, None], sublatt.encoding]
+                               - charges[None, :], 0)
     # Bias should be implemented as negative.
     for _ in range(100):
         occu = gen_random_occupancy(square_charge_bias.sublattices)

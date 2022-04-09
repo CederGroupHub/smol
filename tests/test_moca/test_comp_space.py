@@ -207,7 +207,7 @@ def test_convert_formats(comp_space):
         print("n0:", comp_space.n0)
         print("x_std:", x_std)
         n = comp_space.basis.T @ x_std + comp_space.n0 * sc_size
-        npt.assert_array_equal(a @ n - b, 0)
+        npt.assert_almost_equal(a @ n - b, 0, decimal=6)
         assert np.all(n >= -NUM_TOL)
 
         n2 = comp_space.translate_format(n, sc_size,
@@ -231,10 +231,10 @@ def test_convert_formats(comp_space):
         assert len(c) == len(comp_space.bits)
         assert all(isinstance(sl_c, Composition) for sl_c in c)
         assert all(0 <= sl_c.num_atoms <= 1 for sl_c in c)
-        npt.assert_array_equal(comp_space.translate_format(c, sc_size,
+        npt.assert_almost_equal(comp_space.translate_format(c, sc_size,
                                                            from_format="comp",
                                                            to_format="n"),
-                               n)
+                               n, decimal=6)
         nd = comp_space.translate_format(n, sc_size,
                                          from_format="n",
                                          to_format="nondisc")

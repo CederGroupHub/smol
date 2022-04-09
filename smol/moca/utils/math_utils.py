@@ -369,6 +369,13 @@ def get_nonneg_float_vertices(A, b):
     poly = pc.Polytope(-1 * vs.transpose(), n0)
 
     verts = pc.extreme(poly)
+    if len(verts) == 0:
+        if pc.is_empty(poly):
+            raise ValueError("Provided equation An=b is not feasible "
+                             "under n>=0.")
+        else:
+            raise ValueError("Provided equation An=b is not fill "
+                             "dimensional under n>=0.")
     verts = verts @ vs + n0
     return verts
 
