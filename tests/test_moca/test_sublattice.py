@@ -133,7 +133,7 @@ def test_msonable(sublattice):
     d = sublattice.as_dict()
     slatt = Sublattice.from_dict(d)
     assert sublattice.site_space == slatt.site_space
-    npt.assert_array_equal(sublattice.sites, slatt.sites)
+    npt.assert_array_equal(sublattice.sites, slatt.frac_coords)
     npt.assert_array_equal(sublattice.active_sites, slatt.active_sites)
     assert_msonable(sublattice)
 

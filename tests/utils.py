@@ -12,7 +12,7 @@ from pymatgen.core import Composition, Element
 from smol.cofe.space.domain import Vacancy
 
 
-def assert_msonable(obj, test_if_subclass=True):
+def assert_msonable(obj, skip_keys=None, test_if_subclass=True):
     """
     Tests if obj is MSONable and tries to verify whether the contract is
     fulfilled.
@@ -21,7 +21,14 @@ def assert_msonable(obj, test_if_subclass=True):
     """
     if test_if_subclass:
         assert isinstance(obj, MSONable)
-    assert obj.as_dict() == obj.__class__.from_dict(obj.as_dict()).as_dict()
+
+    skip_keys = [] if skip_keys is None else skip_keys
+    d1 = obj.as_dict()
+    d2 = obj.__class__.from_dict(obj.as_dict()).as_dict()
+    for key in d1.keys():
+        if key in skip_keys:
+            continue
+        assert d1[key] == d2[key]
     _ = json.loads(obj.to_json(), cls=MontyDecoder)
 
 
