@@ -1,5 +1,7 @@
-"""Functions to filter data in a StructureWrangler and calculate weight,
-e.g. by energy above hull or energy by composition."""
+"""Functions to filter data in a StructureWrangler and calculate fitting weights.
+
+For example, weights can be calculated by energy above hull or energy by composition.
+"""
 
 from collections import defaultdict
 

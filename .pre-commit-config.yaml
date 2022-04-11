@@ -66,6 +66,12 @@ repos:
     # - flake8-rst-docstrings==0.2.3
     - flake8-rst==0.8.0
 
+- repo: https://github.com/pycqa/pydocstyle
+  rev: 6.0.0  # pick a git hash / tag to point to
+  hooks:
+  - id: pydocstyle
+    files: ^smol/
+
 - repo: https://github.com/pre-commit/pygrep-hooks
   rev: v1.9.0
   hooks:
