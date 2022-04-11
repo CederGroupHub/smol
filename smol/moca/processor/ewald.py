@@ -12,7 +12,7 @@ ClusterExpansionProcessor and an EwaldProcessor class.
 __author__ = "Luis Barroso-Luque"
 
 import warnings
-from functools import cache, cached_property
+from functools import cached_property, lru_cache
 
 import numpy as np
 from pymatgen.analysis.ewald import EwaldSummation
@@ -83,7 +83,7 @@ class EwaldProcessor(Processor):
         return ewald_summation
 
     @property
-    @cache
+    @lru_cache(maxsize=None)
     def ewald_matrix(self):
         """Get the electrostatic interaction matrix.
 

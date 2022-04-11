@@ -12,7 +12,7 @@ can be combined into composite processor for mixed models.
 __author__ = "Luis Barroso-Luque"
 
 from abc import ABCMeta, abstractmethod
-from functools import cache
+from functools import lru_cache
 
 import numpy as np
 from monty.json import MSONable
@@ -82,7 +82,7 @@ class Processor(MSONable, metaclass=ABCMeta):
         return self._structure
 
     @property
-    @cache
+    @lru_cache(maxsize=None)
     def num_sites(self):
         """Get total number of sites in supercell."""
         return len(self.cluster_subspace.structure) * self.size
