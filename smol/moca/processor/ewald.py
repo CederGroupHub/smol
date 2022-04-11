@@ -1,4 +1,4 @@
-"""Implementation of Ewald processor class for a fixed size super cell.
+"""Implementation of Ewald processor class for a fixed size supercell.
 
 An Ewald processor is optimized to compute electrostatic interaction energy
 and changes in electrostatic energy from a list of local flips for use in
@@ -17,8 +17,8 @@ from functools import cached_property, lru_cache
 import numpy as np
 from pymatgen.analysis.ewald import EwaldSummation
 
-from smol.cofe import ClusterSubspace
-from smol.cofe.extern import EwaldTerm
+from smol.cofe.extern.ewald import EwaldTerm
+from smol.cofe.space.clusterspace import ClusterSubspace
 from smol.moca.processor.base import Processor
 from src.mc_utils import delta_ewald_single_flip
 
@@ -41,12 +41,12 @@ class EwaldProcessor(Processor):
 
         Args:
             cluster_subspace (ClusterSubspace):
-                A cluster subspace.
+                a cluster subspace.
             supercell_matrix (ndarray):
-                An array representing the supercell matrix with respect to the
+                an array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
             ewald_term (EwaldTerm):
-                An instance of EwaldTerm to compute electrostatic energies.
+                an instance of EwaldTerm to compute electrostatic energies.
             coefficient (float):
                 Fitting coefficient to scale Ewald energy by.
         """

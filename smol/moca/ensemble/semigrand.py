@@ -1,7 +1,7 @@
-"""Implementation of Semi-Grand Canonical Ensemble Classes.
+"""Implementation of Semi-Grand Canonical Ensemble classes.
 
-These are used to run Monte Carlo sampling for fixed number of sites but
-variable concentration of species.
+These are used to run Monte Carlo sampling for systems with
+a fixed number of sites but variable concentration of species.
 """
 
 __author__ = "Luis Barroso-Luque"
@@ -21,15 +21,14 @@ from .base import Ensemble
 
 
 class SemiGrandEnsemble(Ensemble, MSONable):
-    """Relative chemical potential based SemiGrand Canonical Ensemble.
+    """Relative chemical potential-based SemiGrand Ensemble.
 
-    A Semi-Grand Canonical Ensemble for Monte Carlo Simulations where species
+    A Semi-Grand Canonical Ensemble for Monte Carlo simulations where species'
     relative chemical potentials are predefined. Note that in the SGC Ensemble
     implemented here, only the differences in chemical potentials with
     respect to a reference species on each sublattice are fixed, and not the
     absolute values. To obtain the absolute values you must calculate the
-    reference chemical potential and then simply subtract it from the given
-    values.
+    reference chemical potential and then subtract it from the given values.
 
     Attributes:
         thermo_boundaries (dict):
@@ -43,12 +42,12 @@ class SemiGrandEnsemble(Ensemble, MSONable):
 
         Args:
             processor (Processor):
-                A processor that can compute the change in a property given
+                a processor that can compute the change in property given
                 a set of flips.
             chemical_potentials (dict):
                 Dictionary with species and chemical potentials.
             sublattices (list of Sublattice): optional
-                List of Sublattice objects representing sites in the processor
+                list of Sublattice objects representing sites in the processor
                 supercell with same site spaces.
         """
         super().__init__(processor, sublattices=sublattices)
@@ -80,13 +79,14 @@ class SemiGrandEnsemble(Ensemble, MSONable):
     def natural_parameters(self):
         """Get the vector of natural parameters.
 
-        For SGC an extra -1 is added for the chemical part of the LT.
+        For SGC an extra -1 is added for the chemical part of the Legendre
+        transform.
         """
         return self._params
 
     @property
     def chemical_potentials(self):
-        """Get the chemical potentials for species in system."""
+        """Get the chemical potentials for species in the system."""
         return self._mus
 
     @chemical_potentials.setter
@@ -114,7 +114,7 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         }
 
     def compute_feature_vector(self, occupancy):
-        """Compute the feature vector for a given occupancy.
+        """Compute the relevant feature vector for a given occupancy.
 
         In the semigrand case it is the feature vector and the chemical work
         term.
@@ -137,7 +137,7 @@ class SemiGrandEnsemble(Ensemble, MSONable):
             occupancy (ndarray):
                 encoded occupancy string.
             step (list of tuple):
-                A sequence of flips given my the MCUsher.propose_step
+                a sequence of flips given by MCUsher.propose_step
 
         Returns:
             ndarray: difference in feature vector
@@ -220,7 +220,7 @@ class SemiGrandEnsemble(Ensemble, MSONable):
 
     @classmethod
     def from_dict(cls, d):
-        """Instantiate a MuSemiGrandEnsemble from dict representation.
+        """Instantiate a SemiGrandEnsemble from dict representation.
 
         Returns:
             CanonicalEnsemble

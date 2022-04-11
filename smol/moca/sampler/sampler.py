@@ -22,21 +22,21 @@ class Sampler:
     A sampler is used to run MCMC sampling simulations.
 
     The specific MCMC algorithm is defined by the given MCKernel.
-    The default will use a a simple Metropolis random walk kernel.
+    The default will use a simple Metropolis random walk kernel.
     """
 
     def __init__(self, kernel, container, seed=None):
         """Initialize BaseSampler.
 
         It is recommended to initialize a sampler with the from_ensemble
-        method, unless you need more control.
+        method, unless you need more control over the sampling kernel,
+        mcusher, etc.
 
         Args:
             kernel (MCKernel):
-                An MCKernel instance.
+                an MCKernel instance.
             container (SampleContainer):
-                A sampler containter to store samples. If given num_walkers is
-                taken from the container.
+                a sampler container to store samples.
             seed (int): optional
                 seed for random number generator.
         """
@@ -61,31 +61,31 @@ class Sampler:
         **kwargs,
     ):
         """
-        Create a sampler based on an Ensemble instances.
+        Create a sampler based on an Ensemble instance.
 
-        This is the easier way to spin up a Sampler. This will
+        This is the easier way to set up a Sampler. This will
         automatically populate and create an appropriate SampleContainer.
 
         Args:
             ensemble (Ensemble):
-                An Ensemble class to obtain sample probabilities from.
+                an Ensemble class to obtain sample probabilities from.
             step_type (str): optional
                 type of step to run MCMC with. If not given the default is the
                 first entry in the Ensemble.valid_mcmc_steps.
             *args:
-                Positional arguments to pass to the MCKernel constructor.
+                positional arguments to pass to the MCKernel constructor.
                 More often than not you want to specify the temperature!
             kernel_type (str): optional
                 string specifying the specific MCMC transition kernel. This
                 represents the underlying MC algorithm. Currently only
                 Metropolis is supported.
             seed (int): optional
-                Seed for the PRNG.
+                seed for the PRNG.
             nwalkers (int): optional
-                Number of walkers/chains to sampler. Default is 1. More than 1
+                number of walkers/chains to sampler. Default is 1. More than 1
                 is still experimental...
             **kwargs:
-                Keyword arguments to pass to the MCKernel constructor.
+                keyword arguments to pass to the MCKernel constructor.
                 More often than not you want to specify the temperature!
 
         Returns:
@@ -161,11 +161,11 @@ class Sampler:
 
         Args:
             nsteps (int):
-                Number of iterations to run.
+                number of iterations to run.
             initial_occupancies (ndarray):
                 array of occupancies
             thin_by (int): optional
-                Number to thin iterations by and provide samples.
+                number to thin iterations by and provide samples.
             progress (bool):
                 If true will show a progress bar.
 
@@ -239,15 +239,15 @@ class Sampler:
             thin_by (int): optional
                 the amount to thin by for saving samples.
             progress (bool): optional
-                If true will show a progress bar.
+                if true will show a progress bar.
             stream_chunk (int): optional
-                Chunk of samples to stream into a file. If > 0 samples will
+                chunk of samples to stream into a file. If > 0 samples will
                 be flushed to backend file in stream_chucks
             stream_file (str): optional
                 file name to use as backend. If file already exists will try
                 to append to datasets. If not given will create a new file.
             swmr_mode (bool): optional
-                If true allows to read file from other processes. Single Writer
+                if true allows to read file from other processes. Single Writer
                 Multiple Readers.
         """
         if initial_occupancies is None:
@@ -317,7 +317,7 @@ class Sampler:
 
         Args:
             temperatures (Sequence):
-               Sequence of temperatures to anneal, should be strictly
+               sequence of temperatures to anneal, should be strictly
                decreasing.
             mcmc_steps (int):
                number of Monte Carlo steps to run at each temperature.
@@ -325,9 +325,9 @@ class Sampler:
                 array of occupancies. If None, the last sample will be taken.
                 You should only provide this the first time you call run.
             thin_by (int): optional
-                the amount to thin by for saving samples.
+                amount to thin by for saving samples.
             progress (bool):
-                If true will show a progress bar.
+                if true will show a progress bar.
         """
         if temperatures[0] < temperatures[-1]:
             raise ValueError(

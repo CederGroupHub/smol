@@ -1,4 +1,4 @@
-"""Definitions of global constants used in cofe.cofigspace module."""
+"""Definitions of global constants used in cofe.space module."""
 
 
 # site tolerance is the absolute tolerance passed to the pymatgen coord utils

@@ -2,10 +2,10 @@
 
 An usher is used to generate step proposals for MC Monte Carlo sampling.
 For example a Flipper simply proposes a change of the identity of a species
-at a site, for use in a SemiGrand ensemble. A Swapper will propose a swap
+at a site for use in a SemiGrand ensemble. A Swapper will propose a swap
 between species at two sites for use in Canonical ensemble simulations.
 
-More complex steps can be defined simply by deriving from the MCUsher
+More complex steps can be defined simply by deriving from the MCUsher.
 """
 
 __author__ = "Luis Barroso-Luque"
@@ -28,11 +28,11 @@ class MCUsher(ABC):
             sublattices (list of Sublattice):
                 list of active Sublattices to propose steps for. Active
                 sublattices are those that include sites with configuration
-                DOFs, only occupancy on active sub-lattices' active sites
+                degrees of freedom DOFs, only occupancy on active sub-lattices' active sites
                 are allowed to change.
             sublattice_probabilities (list of float): optional
-                list of probability to pick a site from a specific active
-                sublattice.
+                list of probabilities to pick a site from specific active
+                sublattices.
         """
         self.sublattices = sublattices
         self.active_sublattices = [
@@ -87,7 +87,7 @@ class MCUsher(ABC):
                 encoded occupancy string.
 
         Returns:
-            list(tuple): tuple of tuples each with (idex, code)
+            list(tuple): tuple of tuples each with (index, code)
         """
         return []
 
@@ -95,7 +95,7 @@ class MCUsher(ABC):
         """Update any auxiliary state information based on an accepted step."""
 
     def set_aux_state(self, state, *args, **kwargs):
-        """Set the auxiliary state from a checkpoint values."""
+        """Set the auxiliary state from a checkpoint value."""
 
     def get_random_sublattice(self):
         """Return a random sublattice based on given probabilities."""
@@ -140,7 +140,7 @@ class Swap(MCUsher):
                 encoded occupancy string.
 
         Returns:
-            list(tuple): list of tuples each with (idex, code)
+            list(tuple): list of tuples each with (index, code)
         """
         rng = np.random.default_rng()
         sublattice = self.get_random_sublattice()
@@ -168,7 +168,7 @@ def mcusher_factory(usher_type, sublattices, *args, **kwargs):
         *args:
             positional arguments passed to class constructor
         **kwargs:
-            Keyword arguments passed to class constructor
+            keyword arguments passed to class constructor
 
     Returns:
         MCUsher: instance of derived class.
