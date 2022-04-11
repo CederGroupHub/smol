@@ -5,208 +5,157 @@ __author__ = "Fengyu Xie"
 import numpy as np
 
 
-# Utilities for parsing occupation, used in charge-neutral semigrand flip table
-def occu_to_species_stat(occupancy, all_sublattices, active_only=False):
-    """Make compstat format from occupation array.
+def get_dim_ids_by_sublattice(bits):
+    """Get the component index of each species in vector n.
 
-    Get a statistics table of each specie on sublattices from an encoded
-    occupancy array.
     Args:
-        occupancy(np.ndarray like):
-            An array representing encoded occupancy, can be list.
-        all_sublattices(smol.moca.Sublattice):
-            All sublattices in the super cell, regardless of activeness.
-        active_only(Boolean):
-            If true, will count un-restricted sites only. Default to false.
-
-    Return:
-        species_stat(2D list of ints/floats)
-            Is a statistics of number of species on each sublattice.
-            1st dimension: sublattices
-            2nd dimension: number of each specie on that specific sublattice.
-            Dimensions same as moca.sampler.mcushers.CorrelatedUsher.bits.
+        bits(List[List[Specie|Vacancy|Element]]):
+           Species on each sub-lattice.
+    Returns:
+        Component index of each species on each sublattice in vector n:
+           List[List[int]]
     """
-    occu = np.array(occupancy)
+    dim_ids = []
+    dim_id = 0
+    for species in bits:
+        dim_ids.append(list(range(dim_id, dim_id + len(species))))
+        dim_id += len(species)
+    return dim_ids
 
-    return [[int(round((occu[s.active_sites if active_only else s.sites]
-                        == sp_id).sum()))
-            for sp_id in range(len(s.species))]
-            for s in all_sublattices]
+
+# Parsing will be faster based on table.
+def get_dim_ids_table(sublattices, active_only=False):
+    """Get the dimension indices of all (site, code) in n-representation.
+
+    This will be used to efficiently map occupancy to n-representation.
+    Args:
+        sublattices(smol.moca.Sublattice):
+            All sub-lattices, active or not. The union
+            of all sub-lattices' sites must be
+            range(number of sites).
+        active_only(bool): optional
+            If true, will count un-restricted sites on all
+            sub-lattices only. Default to false, will count
+            all sites and sub-lattices.
+    """
+    n_row = sum(len(sublatt.sites) for sublatt in sublattices)
+    n_col = max(max(sublatt.encoding) for sublatt in sublattices) + 1
+
+    table = np.zeros((n_row, n_col), dtype=int) - 1
+    dim_id = 0
+    for sl_id, sublatt in enumerate(sublattices):
+        for code in sublatt.encoding:
+            if active_only:
+                sites = sublatt.active_sites
+            else:
+                sites = sublatt.sites
+            sites = sites.astype(int)  # in case sites are void.
+            table[sites, code] = dim_id
+            dim_id += 1
+    return table
 
 
-def occu_to_species_list(occupancy, all_sublattices, active_only=False):
-    """Get occupation status of each sublattice.
+# Utilities for parsing occupation to composition.
+def occu_to_species_list(occupancy, d, dim_ids_table):
+    """Get occupancy status of each sub-lattice.
 
     Get table of the indices of sites that are occupied by each specie on
-    sublattices, from an encoded occupancy array.
+    sub-lattices, from an encoded occupancy array.
 
     Args:
-        occupancy(np.ndarray like):
+        occupancy(1d Arraylike[int]):
             An array representing encoded occupancy, can be list.
-        all_sublattices(smol.moca.Sublattice):
-            All sublattices in the super cell, regardless of activeness.
-        active_only(Boolean):
-            If true, will count un-restricted sites only. Default to false.
+        d (int):
+            Number of components in the "n"-representation. This must
+            be provided because the maximum component index is not always
+            in the table.
+        dim_ids_table(2D arrayLike[int]):
+            Dimension indices of each site and code in n-representation.
+            Rows correspond to site index, while columns correspond to
+            species code. if a site is not active, all codes (columns)
+            will give -1.
 
     Return:
-        species_list(3d list of ints):
-            Is a statistics of indices of sites occupied by each specie.
-            1st dimension: sublattices
-            2nd dimension: species on a sublattice
-            3rd dimension: site ids occupied by that specie
+        Index of sites occupied by each species, sublattices concatenated:
+            List[List[int]]
     """
-    occu = np.array(occupancy)
-
-    if active_only:
-        species_list = [[s.active_sites[occu[s.active_sites] == sp_id].tolist()
-                         for sp_id in range(len(s.species))]
-                        for s in all_sublattices]
-    else:
-        species_list = [[s.sites[occu[s.sites] == sp_id].tolist()
-                         for sp_id in range(len(s.species))]
-                        for s in all_sublattices]
-    return species_list
+    occu = np.array(occupancy, dtype=int)
+    if len(occu) != len(dim_ids_table):
+        raise ValueError(f"Occupancy size {len(occu)} does not match "
+                         f"table size {len(dim_ids_table)}!")
+    dim_ids = dim_ids_table[np.arange(len(occu), dtype=int), occu]
+    all_sites = np.arange(len(occu), dtype=int)
+    return [all_sites[dim_ids == i].tolist() for i in range(d)]
 
 
-def delta_ucoords_from_step(occu, step, comp_space, all_sublattices):
-    """Get the change of unconstrained coordinates from mcmcusher step.
+def occu_to_species_n(occupancy, d, dim_ids_table):
+    """Count number of species from occupation array.
+
+    Get the count of each species on sub-lattices from an encoded
+    occupancy array.
+    Args:
+        occupancy(1d Arraylike[int]):
+            An array representing encoded occupancy, can be list.
+        d (int):
+            Number of components in the "n"-representation. This must
+            be provided because the maximum component index is not always
+            in the table.
+        dim_ids_table(2D arrayLike[int]):
+            Dimension indices of each site and code in n-representation.
+            Rows correspond to site index, while columns correspond to
+            species code. if a site is not active, all codes (columns)
+            will give -1.
+
+    Return:
+        Amount of each species, sublattices concatenated:
+            1D np.ndarray[int]
+    """
+    occu = np.array(occupancy, dtype=int)
+    if len(occu) != len(dim_ids_table):
+        raise ValueError(f"Occupancy size {len(occu)} does not match "
+                         f"table size {len(dim_ids_table)}!")
+    dim_ids = dim_ids_table[np.arange(len(occu), dtype=int), occu]
+    n = np.zeros(d, dtype=int)
+    dims, counts = np.unique(dim_ids, return_counts=True)
+    n[dims[dims >= 0]] = counts[dims >= 0]
+    return n
+
+
+def delta_n_from_step(occu, step, d, dim_ids_table):
+    """Get the change of species amounts from MC step.
 
     Args:
-        occu(1D arrayLike):
+        occu(1D arrayLike[int]):
             Encoded occupation array.
-        step(List[type(int.int)]):
-            List of tuples corresponding to single flips
-            in a step.
-        bits(List[List[Specie]]):
-            A list specifying the species that can occupy
-            each sublattice.
-        comp_space(smol.CompSpace):
-            composition space object.
-        all_sublattices(smol.moca.Sublattice):
-            All sublattices in the super cell, regardless of activeness.
-
-        Note: comp_space and all_sublattices must match.
-    Return:
-        np.ndarray, change of constrained coordinates.
-    """
-    if len(step) == 0:
-        return np.zeros(comp_space.unconstr_dim)
-
-    occu_0 = occu.copy()
-    occu_1 = occu.copy()
-    step = np.array(step, dtype=int)
-    occu_1[step[:, 0]] = step[:, 1]
-
-    sc_size = len(all_sublattices[0].sites) // comp_space.sl_sizes[0]
-    compstat_0 = occu_to_species_stat(occu_0, all_sublattices)
-    ucoords_0 = comp_space.translate_format(compstat_0,
-                                            from_format='compstat',
-                                            to_format='unconstr',
-                                            sc_size=sc_size)
-    compstat_1 = occu_to_species_stat(occu_1, all_sublattices)
-    ucoords_1 = comp_space.translate_format(compstat_1,
-                                            from_format='compstat',
-                                            to_format='unconstr',
-                                            sc_size=sc_size)
-    return np.array(ucoords_1) - np.array(ucoords_0)
-
-
-def delta_ccoords_from_step(occu, step, comp_space, all_sublattices):
-    """Get the change of constrained coordinates from mcmcusher step.
-
-    Args:
-        occu(1D arrayLike):
-            Encoded occupation array.
-        step(List[type(int.int)]):
-            List of tuples corresponding to single flips
-            in a step.
-        bits(List[List[Specie]]):
-            A list specifying the species that can occupy
-            each sublattice.
-        comp_space(smol.CompSpace):
-            composition space object.
-        all_sublattices(smol.moca.Sublattice):
-            All sublattices in the super cell, regardless of activeness.
-
-        Note: comp_space and all_sublattices must match.
-    Return:
-        np.ndarray, change of constrained coordinates.
-    """
-    if len(step) == 0:
-        return np.zeros(comp_space.dim)
-
-    occu_0 = occu.copy()
-    occu_1 = occu.copy()
-    step = np.array(step, dtype=int)
-    occu_1[step[:, 0]] = step[:, 1]
-
-    sc_size = len(all_sublattices[0].sites) // comp_space.sl_sizes[0]
-    compstat_0 = occu_to_species_stat(occu_0, all_sublattices)
-    ccoords_0 = comp_space.translate_format(compstat_0,
-                                            from_format='compstat',
-                                            to_format='constr',
-                                            sc_size=sc_size)
-    compstat_1 = occu_to_species_stat(occu_1, all_sublattices)
-    ccoords_1 = comp_space.translate_format(compstat_1,
-                                            from_format='compstat',
-                                            to_format='constr',
-                                            sc_size=sc_size)
-    return np.array(ccoords_1) - np.array(ccoords_0)
-
-
-def flip_weights_mask(flip_table, comp_stat):
-    """Mask pre-assiged flip weights.
-
-    On the edge or surface of constrained composition space, some flip
-    directions may not be possible. We shall re-adjust their weights to
-    0 to improve efficiency of step proposal.
-
-    Will be used by Tableflipper.
-
-    Args:
-        flip_table(list[dict]):
-            The flip table.
-        comp_stat(list[list[int]]):
-            Number of each specie on each sublattice. Generated
-            by occu_to_species_stat.
+        step(List[tuple(int,int)]):
+            List of tuples recording (site_id, code_of_species_to
+            _replace_with).
+        d (int):
+            Number of components in the "n"-representation. This must
+            be provided because the maximum component index is not always
+            in the table.
+        dim_ids_table(2D arrayLike[int]):
+            Dimension indices of each site and code in n-representation.
+            Rows correspond to site index, while columns correspond to
+            species code.
 
     Return:
-        np.array: Weights mask of each flip direction, length =
-                  2 * len(flip_table). Impossible directions
-                  will be masked out with 0.
+        Change of species amounts (delta_n):
+            1D np.ndarray[int]
     """
-    mask = []
+    occu_now = np.array(occu, dtype=int)
+    dim_ids_table = np.array(dim_ids_table, dtype=int)
+    delta_n = np.zeros(d, dtype=int)
+    # A step may involve a site multiple times.
+    for site, code in step:
+        code_ori = occu_now[site]
+        dim_ori = dim_ids_table[site, code_ori]
+        dim_nex = dim_ids_table[site, code]
+        if dim_ori < 0 or dim_nex < 0:
+            raise ValueError(f"Inactive sites or impossible codes "
+                             f"involved in step {step}!")
+        delta_n[dim_ori] -= 1
+        delta_n[dim_nex] += 1
+        occu_now[site] = code
 
-    for idx in range(2*len(flip_table)):
-        fid = idx // 2
-        direction = idx % 2
-        flip = flip_table[fid]
-
-        # Forward direction.
-        allowed = 1
-        if direction == 0:
-            for sl_id in flip['from']:
-                for sp_id in flip['from'][sl_id]:
-                    dn = flip['from'][sl_id][sp_id]
-                    n0 = comp_stat[sl_id][sp_id]
-                    if n0 < dn:
-                        allowed = 0
-                        break
-                if allowed == 0:
-                    break
-
-        # Backward direction.
-        if direction == 1:
-            for sl_id in flip['to']:
-                for sp_id in flip['to'][sl_id]:
-                    dn = flip['to'][sl_id][sp_id]
-                    n0 = comp_stat[sl_id][sp_id]
-                    if n0 < dn:
-                        allowed = 0
-                        break
-                if allowed == 0:
-                    break
-
-        mask.append(allowed)
-
-    return np.array(mask)
+    return delta_n

@@ -8,87 +8,182 @@ __author__ = "Luis Barroso-Luque"
 
 from abc import ABC, abstractmethod
 from math import log
-from random import random
+from types import SimpleNamespace
+
 import numpy as np
 
 from smol.constants import kB
-from smol.utils import derived_class_factory
-from smol.moca.sampler.mcusher import mcusher_factory
-from smol.moca.sampler.bias import mcbias_factory
+from smol.moca.sampler.bias import MCBias, mcbias_factory
+from smol.moca.sampler.mcusher import MCUsher, mcusher_factory
+from smol.utils import class_name_from_str, derived_class_factory, get_subclasses
+
+ALL_MCUSHERS = list(get_subclasses(MCUsher).keys())
+ALL_BIAS = list(get_subclasses(MCBias).keys())
 
 
-class MCMCKernel(ABC):
-    """Abtract base class for transition kernels.
+class Trace(SimpleNamespace):
+    """Simple Trace class.
 
-    A kernel is used to implement a specific MCMC algorithm used to sampler
-    the ensemble classes. For an illustrtive example of how to derive from this
-    and write a specific sampler see the MetropolisSampler.
+    A Trace is a simple namespace to hold states and values to be recorded
+    during MC sampling.
     """
 
-    valid_mcushers = None  # set this in derived kernels
-    valid_bias = None  # set this in derived kernels
+    def __init__(self, /, **kwargs):  # noqa
+        if not all(isinstance(val, np.ndarray) for val in kwargs.values()):
+            raise TypeError("Trace only supports attributes of type ndarray.")
+        super().__init__(**kwargs)
 
-    def __init__(self, ensemble, temperature, step_type, bias_type,
-                 *args, **kwargs):
-        """Initialize MCMCKernel.
+    @property
+    def names(self):
+        """Get all attribute names."""
+        return tuple(self.__dict__.keys())
+
+    def items(self):
+        """Return generator for (name, attribute)."""
+        yield from self.__dict__.items()
+
+    def __setattr__(self, name, value):
+        """Set only ndarrays as attributes."""
+        if isinstance(value, (float, int)):
+            value = np.array([value])
+
+        if not isinstance(value, np.ndarray):
+            raise TypeError("Trace only supports attributes of type ndarray.")
+        self.__dict__[name] = value
+
+    def as_dict(self):
+        """Return copy of underlying dictionary."""
+        return self.__dict__.copy()
+
+
+class StepTrace(Trace):
+    """StepTrace class.
+
+    Same as Trace above but holds a default "delta_trace" inner trace to hold
+    trace values that represent changes from previous values, to be handled
+    similarly to delta_features and delta_energy.
+
+    A StepTrace object is set as an MCKernel's attribute to record
+    kernel specific values during sampling.
+    """
+
+    def __init__(self, /, **kwargs):  # noqa
+        super().__init__(**kwargs)
+        super(Trace, self).__setattr__("delta_trace", Trace())
+
+    @property
+    def names(self):
+        """Get all field names. Removes delta_trace from field names."""
+        return tuple(name for name in super().names if name != "delta_trace")
+
+    def items(self):
+        """Return generator for (name, attribute). Skips delta_trace."""
+        for name, value in self.__dict__.items():
+            if name == "delta_trace":
+                continue
+            yield name, value
+
+    def __setattr__(self, name, value):
+        """Set only ndarrays as attributes."""
+        if name == "delta_trace":
+            raise ValueError("Attribute name 'delta_trace' is reserved.")
+        if not isinstance(value, np.ndarray):
+            raise TypeError("Trace only supports attributes of type ndarray.")
+        self.__dict__[name] = value
+
+    def as_dict(self):
+        """Return copy of serializable dictionary."""
+        step_trace_d = self.__dict__.copy()
+        step_trace_d["delta_trace"] = step_trace_d["delta_trace"].as_dict()
+        return step_trace_d
+
+
+class MCKernel(ABC):
+    """Abtract base class for transition kernels.
+
+    A kernel is used to implement a specific MC algorithm used to sample
+    the ensemble classes. For an illustrative example of how to derive from this
+    and write a specific kernel see the Metropolis kernel.
+    """
+
+    # Lists of valid helper classes, set these in derived kernels
+    valid_mcushers = None
+    valid_bias = None
+
+    def __init__(
+        self, ensemble, step_type, *args, bias_type=None, bias_kwargs=None, **kwargs
+    ):
+        """Initialize MCKernel.
 
         Args:
             ensemble (Ensemble):
-                An Ensemble instance to obtain the feautures and parameters
+                an Ensemble instance to obtain the features and parameters
                 used in computing log probabilities.
-            temperature (float):
-                Temperature at which the MCMC sampling will be carried out.
             step_type (str):
-                String specifying the MCMC step type.
-            bias_type (str|List[str]):
-                String specifying the bias term type. If null, no bias sampling
-                will be used.
+                string specifying the MCMC step type.
+            bias (MCBias):
+                a bias instance.
+            bias_kwargs (dict):
+                dictionary of keyword arguments to pass to the bias
+                constructor.
             args:
-                positional arguments to instantiate the mcusher for the
+                positional arguments to instantiate the MCUsher for the
                 corresponding step size.
             kwargs:
-                Keyword arguments to instantiate the mcusher for the
-                corresponding step size, or to instantiate the bias term.
-        Note that passing values in args will not be used toinstantiate
-        bias terms, so when you intend to pass parameters tobias terms,
-        be sure to specify argument name so it goes into kwargs.
+                keyword arguments to instantiate the MCUsher for the
+                corresponding step size.
         """
         self.natural_params = ensemble.natural_parameters
-        self.feature_fun = ensemble.compute_feature_vector
+        self._compute_features = ensemble.compute_feature_vector
         self._feature_change = ensemble.compute_feature_vector_change
-        self.temperature = temperature
+        self.trace = StepTrace(accepted=np.array([True]))
+        self._usher, self._bias = None, None
 
-        try:
-            if step_type in ['table-flip']:
-                sublattices = ensemble.all_sublattices
-            else:
-                sublattices = ensemble.sublattices
+        mcusher_name = class_name_from_str(step_type)
+        self.mcusher = mcusher_factory(
+            mcusher_name,
+            ensemble.sublattices,
+            *args,
+            **kwargs,
+        )
 
-            self._usher = mcusher_factory(self.valid_mcushers[step_type],
-                                          sublattices,
-                                          *args, **kwargs)
-        except KeyError:
-            raise ValueError(f"Step type {step_type} is not valid for a "
-                             f"{type(self)} MCMCKernel.")
+        if bias_type is not None:
+            bias_name = class_name_from_str(bias_type)
+            bias_kwargs = {} if bias_kwargs is None else bias_kwargs
+            self.bias = mcbias_factory(
+                bias_name,
+                ensemble.sublattices,
+                **bias_kwargs,
+            )
 
-        try:
-            self._bias = mcbias_factory(self.valid_bias[bias_type],
-                                        ensemble.all_sublattices,
-                                        **kwargs)
-        except KeyError:
-            raise ValueError(f"Step type {bias_type} is not valid for a "
-                             f"{type(self)} MCMCKernel.")
+        # run a initial step to populate trace values
+        _ = self.single_step(np.zeros(ensemble.num_sites, dtype=int))
 
     @property
-    def temperature(self):
-        """Get the temperature of kernel."""
-        return self._temperature
+    def mcusher(self):
+        """Get the MCUsher."""
+        return self._usher
 
-    @temperature.setter
-    def temperature(self, temperature):
-        """Set the temperature and beta accordingly."""
-        self._temperature = temperature
-        self.beta = 1.0 / (kB * temperature)
+    @mcusher.setter
+    def mcusher(self, usher):
+        """Set the MCUsher."""
+        if usher.__class__.__name__ not in self.valid_mcushers:
+            raise ValueError(f"{type(usher)} is not a valid MCUsher for this kernel.")
+        self._usher = usher
+
+    @property
+    def bias(self):
+        """Get the bias."""
+        return self._bias
+
+    @bias.setter
+    def bias(self, bias):
+        """Set the bias."""
+        if bias.__class__.__name__ not in self.valid_bias:
+            raise ValueError(f"{type(bias)} is not a valid MCBias for this kernel.")
+        if "bias" not in self.trace.delta_trace.names:
+            self.trace.delta_trace.bias = np.zeros(1)
+        self._bias = bias
 
     def set_aux_state(self, state, *args, **kwargs):
         """Set the auxiliary state from initial or checkpoint values."""
@@ -106,22 +201,147 @@ class MCMCKernel(ABC):
                 encoded occupancy.
 
         Returns:
-            tuple: (acceptance, occupancy, enthalpy change, features change)
+            StepTrace: a step trace for states and traced values for a single
+                       step
         """
-        return tuple()
+        return self.trace
+
+    def compute_initial_trace(self, occupancy):
+        """Compute inital values for sample trace given an occupancy.
+
+        Args:
+            occupancy (ndarray):
+                Initial occupancy
+
+        Returns:
+            Trace
+        """
+        trace = Trace()
+        trace.occupancy = occupancy
+        trace.features = self._compute_features(occupancy)
+        # set scalar values into shape (1,) array for sampling consistency.
+        trace.enthalpy = np.array([np.dot(self.natural_params, trace.features)])
+        if self.bias is not None:
+            trace.bias = np.array([self.bias.compute_bias(occupancy)])
+        trace.accepted = np.array([True])
+        return trace
 
 
-class Metropolis(MCMCKernel):
+class ThermalKernel(MCKernel):
+    """Abtract base class for transition kernels with a set temperature.
+
+    Basically all kernels should derive from this with the exception of those
+    for multicanonical sampling and related methods
+    """
+
+    def __init__(self, ensemble, step_type, temperature, *args, **kwargs):
+        """Initialize ThermalKernel.
+
+        Args:
+            ensemble (Ensemble):
+                an Ensemble instance to obtain the features and parameters
+                used in computing log probabilities.
+            step_type (str):
+                string specifying the MCMC step type.
+            temperature (float):
+                temperature at which the MCMC sampling will be carried out.
+            args:
+                positional arguments to instantiate the MCUsher for the
+                corresponding step size.
+            kwargs:
+                keyword arguments to instantiate the MCUsher for the
+                corresponding step size.
+        """
+        # hacky for initialization single_step to run
+        self.beta = 1.0 / (kB * temperature)
+        super().__init__(ensemble, step_type, *args, **kwargs)
+        self.temperature = temperature
+
+    @property
+    def temperature(self):
+        """Get the temperature of kernel."""
+        return self.trace.temperature
+
+    @temperature.setter
+    def temperature(self, temperature):
+        """Set the temperature and beta accordingly."""
+        self.trace.temperature = np.array(temperature)
+        self.beta = 1.0 / (kB * temperature)
+
+    def compute_initial_trace(self, occupancy):
+        """Compute inital values for sample trace given occupancy.
+
+        Args:
+            occupancy (ndarray):
+                Initial occupancy
+
+        Returns:
+            Trace
+        """
+        trace = super().compute_initial_trace(occupancy)
+        trace.temperature = self.trace.temperature
+        return trace
+
+
+class UniformlyRandom(MCKernel):
+    """A Kernel that accepts all proposed steps.
+
+    This kernel samples the random limit distribution where all states have the
+    same probability (corresponding to an infinite temperature). If a
+    bias is added then the corresponding distribution will be biased
+    accordingly.
+    """
+
+    valid_mcushers = ALL_MCUSHERS
+    valid_bias = ALL_BIAS
+
+    def single_step(self, occupancy):
+        """Attempt an MCMC step.
+
+        Returns the next state in the chain and if the attempted step was
+        successful.
+
+        Args:
+            occupancy (ndarray):
+                encoded occupancy.
+
+        Returns:
+            StepTrace
+        """
+        rng = np.random.default_rng()
+        step = self._usher.propose_step(occupancy)
+        log_factor = self._usher.compute_log_priori_factor(occupancy, step)
+        self.trace.delta_trace.features = self._feature_change(occupancy, step)
+        self.trace.delta_trace.enthalpy = np.array(
+            np.dot(self.natural_params, self.trace.delta_trace.features)
+        )
+
+        if self._bias is not None:
+            self.trace.delta_trace.bias = np.array(
+                self._bias.compute_bias_change(occupancy, step)
+            )
+            exponent = self.trace.delta_trace.bias + log_factor
+            self.trace.accepted = np.array(
+                True if exponent >= 0 else exponent > log(rng.random())
+            )
+
+        if self.trace.accepted:
+            for tup in step:
+                occupancy[tup[0]] = tup[1]
+            self._usher.update_aux_state(step)
+
+        self.trace.occupancy = occupancy
+        return self.trace
+
+
+class Metropolis(ThermalKernel):
     """A Metropolis-Hastings kernel.
 
     The classic and nothing but the classic.
     """
 
-    valid_mcushers = {'flip': 'Flipper', 'swap': 'Swapper',
-                      'table-flip': 'Tableflipper'}
-    valid_bias = {'null': 'Nullbias',
-                  'square-charge': 'Squarechargebias',
-                  'square-comp-constraint': 'Squarecompconstraintbias'}
+    valid_mcushers = ALL_MCUSHERS
+    valid_bias = ALL_BIAS
 
     def single_step(self, occupancy):
         """Attempt an MC step.
@@ -134,52 +354,63 @@ class Metropolis(MCMCKernel):
                 encoded occupancy.
 
         Returns:
-            tuple: (acceptance, occupancy, bias, dt, features change,
-                    enthalpy change)
+            StepTrace
         """
+        rng = np.random.default_rng()
         step = self._usher.propose_step(occupancy)
-        factor = self._usher.compute_a_priori_factor(occupancy, step)
-        delta_features = self._feature_change(occupancy, step)
-        delta_enthalpy = np.dot(self.natural_params, delta_features)
-        delta_bias = self._bias.compute_bias_change(occupancy, step)
-        bias = self._bias.compute_bias(occupancy)
-        accept = ((-self.beta * delta_enthalpy - delta_bias) +
-                  log(factor)
-                  > log(random()))
-        if accept:
-            for f in step:
-                occupancy[f[0]] = f[1]
+        log_factor = self._usher.compute_log_priori_factor(occupancy, step)
+        self.trace.delta_trace.features = self._feature_change(occupancy, step)
+        self.trace.delta_trace.enthalpy = np.array(
+            np.dot(self.natural_params, self.trace.delta_trace.features)
+        )
+
+        if self._bias is not None:
+            self.trace.delta_trace.bias = np.array(
+                self._bias.compute_bias_change(occupancy, step)
+            )
+            exponent = (
+                -self.beta * self.trace.delta_trace.enthalpy
+                + self.trace.delta_trace.bias + log_factor
+            )
+            self.trace.accepted = np.array(
+                True if exponent >= 0 else exponent > log(rng.random())
+            )
+        else:
+            self.trace.accepted = np.array(
+                True
+                if self.trace.delta_trace.enthalpy <= 0
+                else -self.beta * self.trace.delta_trace.enthalpy
+                > log(rng.random())  # noqa
+            )
+
+        if self.trace.accepted:
+            for tup in step:
+                occupancy[tup[0]] = tup[1]
             self._usher.update_aux_state(step)
-            bias += delta_bias
+        self.trace.occupancy = occupancy
 
-        # Record the current bias term.
-        return (accept, occupancy, bias, delta_enthalpy,
-                delta_features)
+        return self.trace
 
 
-def mcmckernel_factory(kernel_type, ensemble, temperature, step_type,
-                       bias_type, *args, **kwargs):
+def mckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs):
     """Get a MCMC Kernel from string name.
 
     Args:
         kernel_type (str):
-            String specifying step to instantiate.
+            string specifying kernel type to instantiate.
         ensemble (Ensemble)
-            An Ensemble object to create the MCMC kernel from.
-        temperature (float)
-            Temperature at which the MCMC sampling will be carried out.
+            an Ensemble object to create the MCMC kernel from.
         step_type (str):
-            String specifying the step type (ie key to mcusher type).
-        bias_type (str):
-            String specifying MCMCBias type.
+            string specifying the proposal type (i.e. key for MCUsher type)
         *args:
-            Positional arguments passed to class constructor
+            positional arguments passed to class constructor
         **kwargs:
-            Keyword arguments passed to class constructor
+            keyword arguments passed to class constructor
 
     Returns:
-        MCMCKernel: instance of derived class.
+        MCKernel: instance of derived class.
     """
-    return derived_class_factory(kernel_type.capitalize(), MCMCKernel,
-                                 ensemble, temperature, step_type, bias_type,
-                                 *args, **kwargs)
+    kernel_name = class_name_from_str(kernel_type)
+    return derived_class_factory(
+        kernel_name, MCKernel, ensemble, step_type, *args, **kwargs
+    )

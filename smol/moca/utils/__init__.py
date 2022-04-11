@@ -1,1 +1,1 @@
-"""Mathematics and occupancy treatment utilties for moca."""
+"""Mathematics and occupancy treatment utilities for moca."""

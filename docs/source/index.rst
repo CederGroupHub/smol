@@ -1,23 +1,32 @@
+:notoc:
 
-.. title:: smol documentation
+.. toctree::
+   :maxdepth: 1
+   :hidden:
 
-.. figure:: ../images/logo.png
-   :alt: server
-   :align: left
-   :width: 600px
+   getting_started
+   user_guide/index
+   api_reference/index
+   citing
+   developer_guide/index
 
+=================================
 Statistical Mechanics on Lattices
 =================================
 
 *Lighthweight but caffeinated Python implementations of computational methods
-for statistical mechanical calculations of configurational states for
+for statistical mechanical calculations of configurational states in
 crystalline material systems.*
 
-.. image:: https://img.shields.io/circleci/build/gh/CederGroupHub/smol/master?logo=circleci&style=for-the-badge&token=96d0d7a959e1e12044ff45daa43218ae7fa4303e
-.. image:: https://img.shields.io/codacy/coverage/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge
-.. image:: https://img.shields.io/codacy/grade/4b527a2fd9ad40f59195f1f8dc1ac542?style=for-the-badge
+.. image:: https://github.com/CederGroupHub/smol/actions/workflows/test.yml/badge.svg
+      :alt: Test Status
+      :target: https://github.com/CederGroupHub/smol/actions/workflows/test.yml
 
 -------------------------------------------------------------------------------
+
+.. warning::
+    **smol** is still under substantial development and may possibly include
+    changes that break backwards compatibility for the near future.
 
 **smol** is a minimal implementation of computational methods to calculate
 statistical mechanical and thermodynamic properties of crystalline
@@ -29,100 +38,42 @@ easily extend existing methods or implement and test new ones. Finally,
 although conceived mainly for method development, **smol** can (and is being)
 used in production for materials science reasearch applications.
 
-Installation
-============
-1.  Clone the repository.
-2.  Go to the top level directory of the cloned repo and type::
+Functionality
+=============
+**smol** currently includes the following functionality:
 
-        pip install .
+- Defining cluster expansion terms for a given disordered structure using a
+  variety of available site basis functions with and without explicit
+  redundancy.
+- Option to include explicit electrostatics using the Ewald summation method.
+- Computing correlation vectors for a set of training structures with a variety
+  of functionality to inspect the resulting feature matrix.
+- Defining cluster expansions for subsequent property prediction.
+- Fast evaluation of correlation vectors and differences in correlation vectors
+  from local updates in order to quickly compute properties and changes in
+  properties for specified supercells.
+- Flexible toolset to sample cluster expansions using Monte Carlo with
+  Canonical and Semigrand Canonical ensembles using a Metropolis sampler.
 
-Basic Usage
-===========
-**smol** is designed to be simple and intuitive to use. Here is the most
-basic example of creating a Cluster Expansion for a binary alloy and
-subsequently using it to run Monte Carlo sampling::
+**smol** is built on top of `pymatgen <https://pymatgen.org/>`_ so any pre/post
+structure analysis can be done seamlessly using the various functionality
+supported there.
 
-    from sklearn.linear_model import LinearRegression
-    from monty.serialization import loadfn
-    from pymatgen import Structure
-    from pymatgen.transformations.standard_transformations import \
-        OrderDisorderedStructureTransformation
-    from smol.cofe import ClusterSubspace, StructureWrangler, ClusterExpansion
-    from smol.moca import CanonicalEnsemble, Sampler
-    from smol.io import save_work
+Citing
+======
+If you find **smol** useful please cite the following publication,
 
-    # load some dataset with structures and corresponding energies
-    data = loadfn("path_to_file.json")
+    Barroso-Luque, L., Yang, J.H., Xie, F., Chen T., Zhong, P. & Ceder, G.
+    **smol**--- Yet another cluster expansion method python package.
+    (in preparation)
 
-    # create a disordered primitice structure
-    species = {"Au": 0.5, "Cu": 0.5}
-    prim = Structure.from_spacegroup("Fm-3m",
-                                     Lattice.cubic(3.6),
-                                     [species], [[0, 0, 0]])
+Since **smol** is based on **pymatgen**, please also cite this publication,
 
-    # create a clustersubspace
-    cutoffs = {2: 6, 3: 5, 4: 4}
-    subspace = ClusterSubspace.from_cutoffs(prim, cutoffs=cutoffs)
+    Ong, S. P. et al. Python Materials Genomics (pymatgen):
+    `A robust, open-source python library for materials analysis
+    <https://doi.org/10.1016/j.commatsci.2012.10.028>`_.
+    ComputationalMaterials Science 68, 314–319 (2013).
 
-    # prepare fit data
-    wrangler = StructureWrangler(subspace)
-    for structure, energy in data:
-        wrangler.add_data(structure, properties={"energy": energy})
-
-    # fit the expansion with OLS
-    reg = LinearRegression(fit_intercept=False)
-    reg.fit(wrangler.feature_matrix, wrangler.get_property_vector("energy"))
-
-    expansion = ClusterExpansion(subspace, coefficients=reg.coef_,
-                                 feature_matrix=wrangler.feature_matrix)
-
-    # define a supercell and ensemble for MC sampling
-    sc_matrix = [[5, 0, 0], [0, 5, 0], [0, 0, 5]]
-    ensemble.from_cluster_expansion(expansion, supercell_matrix=sc_matrix,
-                                    temperature=500)
-
-    sampler = Sampler.from_ensemble(ensemble)
-
-    # Get an initial ordered structure for 5x5x5 supercell using pymatge
-    transformation = OrderDisorderedStructureTransformation()
-    structure = expansion.cluster_subspace.structure.copy()
-    structure.make_supercell(sc_matrix)
-    structure = transformation.apply_transformation(structure)
-
-    # Create initial occupancy and run MCMC
-    init_occu = ensemble.processor.occupancy_from_structure(structure)
-    sampler.run(1000000, initial_occupancy=init_occu)
-
-    save_work("CuAu_ce_mc.json", wrangler, expansion, ensemble,
-              sampler.samples)
-
-
-API Documentation
-=================
-See the :doc:`api` documentation page for in depth reference to core classes
-and functions.
-
-Detailed Examples
-=================
-You can find more in-depth and advanced usage examples in the
-:doc:`examples` page.
-
-==============
-Recent Changes
-==============
-You can find updates and the most recent changes in the
-`Changelog <https://github.com/CederGroupHub/smol/blob/master/CHANGES.md>`_.
-
-=====================
-Help, Issues, Support
-=====================
-To get immediate help ask in the #cluster-expansion slack channel. For more
-detailed issues, bug reports and requests please submit a
-`Github issue <https://github.com/CederGroupHub/smol/issues>`_.
-
-============
-Contributing
-============
-To contribute bug fixes or new code please refer to the contributing
-`guidelines <https://github.com/CederGroupHub/smol/blob/master/CONTRIBUTING.md>`_.
-
+Additionally, several of the functionality included in **smol** is based on
+methodology developed by various researchers. Please see the
+:doc:`citing page </citing>` for additional refrences.

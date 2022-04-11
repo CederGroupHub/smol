@@ -3,13 +3,11 @@ name: lint
 on:
   push:
     branches:
-      - master
-      - experimental
+      - main
 
   pull_request:
     branches:
-      - master
-      - experimental
+      - main
 
 jobs:
   lint:
@@ -18,9 +16,9 @@ jobs:
       max-parallel: 6
 
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v3
       - name: Set up Python 3.8
-        uses: actions/setup-python@v2.2.2
+        uses: actions/setup-python@v3
         with:
           python-version: 3.8
       - name: Install dependencies
@@ -28,15 +26,28 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
+      - name: pre-commit
+        run: pre-commit run --all-files --show-diff-on-failure
       - name: flake8
         run: |
+            flake8 --version
             flake8 --count --show-source --statistics smol
             # exit-zero treats all errors as warnings.
             flake8 --count --exit-zero --max-complexity=20 --statistics smol
+      - name: black
+        run: |
+          black --version
+          black --check --diff --color smol
+      - name: pydocstyle
+        run: |
+          pydocstyle --version
+          pydocstyle --count smol
       # Not in shape for this yet
       # - name: pylint
       #  run: |
       #     pylint smol
-      - name: pydocstyle
-        run: |
-            pydocstyle --count smol
+      #- name: mypy
+       #   run: |
+        #    mypy --version
+         #   rm -rf .mypy_cache
+          #  mypy smol
