@@ -90,7 +90,7 @@ class FugacityBias(MCBias):
     """
 
     def __init__(self, sublattices, fugacity_fractions=None):
-        """InitializeFugacity ratio bias.
+        """Initialize fugacity ratio bias.
 
         Args:
             sublattices (List[Sublattice]):
@@ -214,6 +214,7 @@ class SquarechargeBias(MCBias):
 
     This bias penalizes energy on square of the system net charge.
     """
+
     def __init__(self, sublattices, lam=0.5):
         """Square charge bias.
 
@@ -280,6 +281,7 @@ class SquarecompBias(MCBias):
     (See CompSpace document), and matrix A and b define constraints
     to n.
     """
+
     def __init__(self, sublattices, A, b, lam=0.5):
         """Square composition bias.
 

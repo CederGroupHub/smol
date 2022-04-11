@@ -18,54 +18,70 @@ from .utils.occu_utils import get_dim_ids_by_sublattice
 
 
 class NegativeSpeciesError(Exception):
+    """Raises when count of species is negative."""
+
     def __init__(self, c, form,
                  message="Composition results in "
                          "negative species count!"):
+        """Initialize exception class."""
         self.c = c
         self.form = form
         self.message = message
         super(NegativeSpeciesError, self).__init__(self.message)
 
     def __str__(self):
+        """Represent."""
         return f"Composition: {self.c}, format: {self.form} " \
                f"-> {self.message}"
 
 
 class RoundingError(Exception):
+    """Raises when count of species can not be rounded to integers."""
+
     def __init__(self, c, form,
                  message="Composition can not be rounded "
                          "to integer!"):
+        """Initialize exception class."""
         self.c = c
         self.form = form
         self.message = message
         super(RoundingError, self).__init__(self.message)
 
     def __str__(self):
+        """Represent."""
         return f"Composition: {self.c}, format: {self.form}, " \
                f"tolerance: {NUM_TOL} -> {self.message}"
 
 
 class ConstraintViolationError(Exception):
+    """Raises when count of species violate constraints."""
+
     def __init__(self, c, form,
                  message="Composition violates constraints!"):
+        """Initialize exception class."""
         self.c = c
         self.form = form
         self.message = message
         super(ConstraintViolationError, self).__init__(self.message)
 
     def __str__(self):
+        """Represent."""
         return f"Composition: {self.c}, format: {self.form}, " \
                f"tolerance: {NUM_TOL} -> {self.message}"
 
 
 class CompUnNormalizedError(Exception):
+    """Raises when pymatgen Composition is not normalized to 1."""
+
     def __init__(self, c,
                  message="Composition in comp format but not normalized!"):
+        """Initialize exception class."""
         self.c = c
         self.message = message
         super(CompUnNormalizedError, self).__init__(self.message)
 
     def __str__(self):
+        """Represent."""
         return f"Composition: {self.c} -> {self.message}"
 
 
@@ -366,7 +382,7 @@ class CompSpace(MSONable):
 
     @property
     def flip_table(self):
-        """The flip table vectors.
+        """Give flip table vectors.
 
         If self.table_ergodic is true, will add flips if basis
         is not ergodic.
@@ -427,7 +443,7 @@ class CompSpace(MSONable):
         return self.get_comp_grid(sc_size=self.min_sc_size)
 
     def get_centroid_composition(self, sc_size=None):
-        """A composition close to the centroid of polytope.
+        """Get a composition close to the centroid of polytope.
 
         Args:
             sc_size(int): optional

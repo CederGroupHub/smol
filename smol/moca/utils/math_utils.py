@@ -24,6 +24,7 @@ class DiopInfeasibleError(Exception):
     """Diophantine equations have no integer solution."""
 
     def __init__(self):
+        """Initialize exception."""
         message = "Diophantine equations have no integer solution!"
         super(DiopInfeasibleError, self).__init__(message)
 
@@ -32,6 +33,7 @@ class NaturalInfeasibleError(Exception):
     """Diophantine equations have no natural number solution."""
 
     def __init__(self):
+        """Initialize exception."""
         message = "Diophantine equations have no natural number solution!"
         super(NaturalInfeasibleError, self).__init__(message)
 
@@ -42,7 +44,7 @@ def gcd(a, b):
 
 
 def gcdex(a, b):
-    """Extended Euclidean Algorithm"""
+    """Extend Euclidean Algorithm."""
     if a == 0:
         return 0, 1, b
 
@@ -53,14 +55,14 @@ def gcdex(a, b):
     return x, y, g
 
 
-def gcd_list(l):
+def gcd_list(lst):
     """Find GCD of a list of numbers."""
-    if len(l) < 1:
+    if len(lst) < 1:
         return None
-    elif len(l) == 1:
-        return l[0]
+    elif len(lst) == 1:
+        return lst[0]
     else:
-        return reduce(lambda a, b: gcd(a, b), l)
+        return reduce(lambda a, b: gcd(a, b), lst)
 
 
 def lcm(a, b):
@@ -75,14 +77,14 @@ def lcm(a, b):
         return a * b // gcd(a, b)
 
 
-def lcm_list(l):
+def lcm_list(lst):
     """Find LCM of a list of numbers."""
-    if len(l) < 1:
+    if len(lst) < 1:
         return None
-    elif len(l) == 1:
-        return l[0]
+    elif len(lst) == 1:
+        return lst[0]
     else:
-        return reduce(lcm, l)
+        return reduce(lcm, lst)
 
 
 # Combinatoric and intergerization
@@ -180,8 +182,7 @@ def integerize_multiple(vs, max_denominator=1000, dtol=NUM_TOL):
     shp = vs.shape
     vs_flatten = vs.flatten()
     vs_flat_int, mul = integerize_vector(vs_flatten,
-                                         max_denominator=
-                                         max_denominator,
+                                         max_denominator=max_denominator,
                                          dtol=dtol)
     vs_int = np.reshape(vs_flat_int, shp)
     return vs_int, mul
@@ -478,6 +479,7 @@ def get_one_dim_solutions(n0, v, integer_tol=NUM_TOL):
 
 def get_first_dim_extremes(a, b):
     """Solve extremes for x0 under ax<=b.
+
     Args:
         a, b (ArrayLike[int]):
             Constraints ax<=b. ax<=b must be feasible and
