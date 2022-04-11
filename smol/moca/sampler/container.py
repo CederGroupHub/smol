@@ -37,21 +37,21 @@ class SampleContainer(MSONable):
     args are:
 
         discard (int): optional
-            Number of samples to discard to obtain the value requested.
+            number of samples to discard to obtain the value requested.
         thin_by (int): optional
-            Use every thin by sample to obtain the value requested.
+            use every thin_by sample to obtain the value requested.
         flat (bool): optional
-            If more than 1 walkers are used flattening will flatten all
+            if more than 1 walker is used, flattening will flatten all
             chains into one. Defaults to True.
 
     Attributes:
         num_sites (int):
             Size of system (usually in number of prims in supercell, but
-            can be anything representative i.e. number of sites)
+            can be anything representative, i.e. number of sites)
         sublattices (list of Sublattice)
             Sublattices of the ensemble sampled.
         natural_parameters (ndarray):
-                array of natural parameters used in the ensemble.
+                Array of natural parameters used in the ensemble.
         metadata (dict):
             Dictionary of metadata from the MC run that generated the samples.
     """
@@ -75,9 +75,9 @@ class SampleContainer(MSONable):
                 the number of coefficients in the natural parameters that
                 correspond to the energy only.
             sample_trace (Trace):
-                A trace object for the traced values during MC sampling
+                a trace object for the traced values during MC sampling
             sampling_metadata (Ensemble):
-                Sampling metadata (i.e. ensemble name, mckernel type, etc)
+                sampling metadata (i.e. ensemble name, mckernel type, etc)
         """
         self.sublattices = sublattices
         self.natural_parameters = natural_parameters
@@ -134,11 +134,11 @@ class SampleContainer(MSONable):
         return self.get_trace_value(name, discard, thin_by, flat).var(axis=0)
 
     def get_occupancies(self, discard=0, thin_by=1, flat=True):
-        """Get an occupancy chain from samples."""
+        """Get the occupancy chain of the samples."""
         return self.get_trace_value("occupancy", discard, thin_by, flat)
 
     def get_enthalpies(self, discard=0, thin_by=1, flat=True):
-        """Get the generalized entalpy changes from samples in chain."""
+        """Get the generalized enthalpy changes from samples in chain."""
         return self.get_trace_value("enthalpy", discard, thin_by, flat)
 
     def get_feature_vectors(self, discard=0, thin_by=1, flat=True):
@@ -234,7 +234,7 @@ class SampleContainer(MSONable):
     def sublattice_composition_variance(
         self, sublattice, discard=0, thin_by=1, flat=True
     ):
-        """Get the varience in composition of a specific sublattice."""
+        """Get the variance in composition of a specific sublattice."""
         return self.get_sublattice_compositions(sublattice, discard, thin_by, flat).var(
             axis=0
         )
@@ -288,8 +288,8 @@ class SampleContainer(MSONable):
         """Get the counts of each species in a sublattices.
 
         Returns:
-            ndarray: where last axis is the count for each species in same
-                     order as the underlying site space.
+            ndarray: where last axis is the count for each species in the
+            same order as the underlying site space.
         """
         if sublattice not in self.sublattices:
             raise ValueError(
@@ -496,7 +496,7 @@ class SampleContainer(MSONable):
         return container
 
     def to_hdf5(self, file_path):
-        """Save a sample container as an HDF5 file.
+        """Save SampleContainer as an HDF5 file.
 
         Args:
             file_path (str):

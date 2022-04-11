@@ -1,4 +1,4 @@
-"""A few random utilities that have no place to go."""
+"""A few general utilities functions."""
 
 __author__ = "Luis Barroso-Luque"
 
@@ -31,8 +31,8 @@ def class_name_from_str(class_str):
     Assumes all class names are properly named with Camel Caps.
 
     Used to generalize how classes can be identified by also allowing
-    capitalized words in class name to be separated by a hyphen and also allow
-    to ignore capitalization.
+    capitalized words in class name to be separated by a hyphen and also
+    allowing capitalization to be ignored.
 
     i.e. all of the following are valid strings for class TheBestClass:
     'TheBestClass', 'The-Best-Class', 'the-best-class', 'The-best-Class', etc
@@ -96,16 +96,16 @@ def get_subclasses(base_class: object) -> Dict[str, object]:
 def progress_bar(display, total, description):
     """Get a tqdm progress bar interface.
 
-    If the tqdm library is not installed, this will an empty progress bar that
-    does nothing.
+    If the tqdm library is not installed, this will be an empty progress bar
+    that does nothing.
 
     Args:
         display (bool):
-            If true a real progress bar will be returned.
+            if true, a real progress bar will be returned.
         total (int):
-            The total size of the progress bar.
+            the total size of the progress bar.
         description (str):
-            Description to print in progress bar.
+            description to print in progress bar.
     """
     try:
         # pylint: disable=import-outside-toplevel
