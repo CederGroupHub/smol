@@ -446,7 +446,7 @@ class SampleContainer(MSONable):
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "sublattices": [s.as_dict() for s in self.sublattices],
-            "natural_parameters": self.natural_parameters,
+            "natural_parameters": jsanitize(self.natural_parameters),
             "metadata": self.metadata,
             "num_energy_coefs": self._num_energy_coefs,
             "total_mc_steps": self._total_steps,
