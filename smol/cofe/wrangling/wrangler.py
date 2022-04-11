@@ -27,7 +27,6 @@ from pymatgen.entries.computed_entries import ComputedStructureEntry
 from smol.exceptions import StructureMatchError
 
 
-# TODO make properties cached_properties
 class StructureWrangler(MSONable):
     """Class to create fitting data to fit a cluster expansion.
 
@@ -619,15 +618,16 @@ class StructureWrangler(MSONable):
             except KeyError:
                 warnings.warn(f"Propertiy {key} does not exist.", RuntimeWarning)
 
-    def remove_structure(self, structure):
+    def remove_entry(self, entry):
         """Remove a given structure and associated data."""
         try:
-            index = self.structures.index(structure)
+            index = self._entries.index(entry)
             del self._entries[index]
-        except ValueError as value_error:
-            raise ValueError(
-                f"Structure {structure} was not found. Nothing has been " "removed."
-            ) from value_error
+        except ValueError:
+            warnings.warn(
+                f"Entry {entry} was not found. Nothing has been removed.",
+                RuntimeWarning,
+            )
 
     def change_subspace(self, cluster_subspace):
         """Change the underlying ClusterSubspace.

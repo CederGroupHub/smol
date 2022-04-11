@@ -260,13 +260,13 @@ def test_properties(structure_wrangler):
         assert size * num_prim_sites == len(occu)
 
 
-def test_remove_structures(structure_wrangler, rng):
+def test_remove_entry(structure_wrangler, rng):
     total = len(structure_wrangler.structures)
-    s = structure_wrangler.structures[rng.integers(0, total)]
-    structure_wrangler.remove_structure(s)
+    entry = structure_wrangler.entries[rng.integers(0, total)]
+    structure_wrangler.remove_entry(entry)
     assert len(structure_wrangler.structures) == total - 1
-    with pytest.raises(ValueError):
-        structure_wrangler.remove_structure(s)
+    with pytest.warns(RuntimeWarning):
+        structure_wrangler.remove_entry(entry)
 
 
 def test_update_features(structure_wrangler):
