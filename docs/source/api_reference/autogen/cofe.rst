@@ -1,5 +1,5 @@
-smol.moca package
-=================
+cofe package
+============
 
 Subpackages
 -----------
@@ -7,17 +7,17 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   smol.moca.ensemble
-   smol.moca.processor
-   smol.moca.sampler
+   cofe.extern
+   cofe.space
+   cofe.wrangling
 
 Submodules
 ----------
 
-smol.moca.sublattice module
----------------------------
+cofe.expansion module
+---------------------
 
-.. automodule:: smol.moca.sublattice
+.. automodule:: cofe.expansion
    :members:
    :undoc-members:
    :show-inheritance:
@@ -25,7 +25,7 @@ smol.moca.sublattice module
 Module contents
 ---------------
 
-.. automodule:: smol.moca
+.. automodule:: cofe
    :members:
    :undoc-members:
    :show-inheritance:

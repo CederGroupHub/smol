@@ -1,16 +1,13 @@
-"""Implementation of a StructureWrangler and functions to obtain fit weights.
+"""Implementation of a StructureWrangler.
 
 A StructureWrangler is used to generate and organize training data to fit a
-cluster expansion using the terms defined in a ClusterSubpace. It takes care
+cluster expansion using the terms defined in a ClusterSubspace. It takes care
 of computing the training features (correlations) to construct a feature matrix
 to be used along with a target property vector to obtain the coefficients for
 a cluster expansion using some linear regression model.
 
 Includes functions used to preprocess and check (wrangling) fitting data of
 structures and properties.
-
-Also functions to obtain weights by energy above hull or energy above
-composition for a given set of structures.
 """
 
 __author__ = "Luis Barroso-Luque"
@@ -42,17 +39,14 @@ class StructureWrangler(MSONable):
     This class is meant to take all input training data in the form of
     (structure, properties) where the properties represent the target
     material property for the given structure that will be used to train
-    the cluster expansion.
-
-    The class takes care of returning the fitting data as a cluster
-    correlation feature matrix (orbit basis function values). Weights for each
-    structure can also be provided see the above functions to weight by energy
-    above hull or energy above composition.
+    the cluster expansion, and returns the fitting data as a cluster
+    correlation feature matrix (orbit basis function values).
 
     This class also has methods to check/prepare/filter the data. A metadata
     dictionary is used to keep track of applied filters, but users can also use
     it to save any other pertinent information that will be saved with using
-    :code:`StructureWrangler.as_dict` for future reference.
+    :code:`StructureWrangler.as_dict` for future reference. Other preprocessing
+    and filtering methods are available in tools.py and select.py.
     """
 
     def __init__(self, cluster_subspace):
@@ -60,7 +54,7 @@ class StructureWrangler(MSONable):
 
         Args:
             cluster_subspace (ClusterSubspace):
-                A ClusterSubspace object that will be used to fit a
+                a ClusterSubspace object that will be used to fit a
                 ClusterExpansion with the provided data.
         """
         self._subspace = cluster_subspace
@@ -116,7 +110,7 @@ class StructureWrangler(MSONable):
     def feature_matrix(self):
         """Get feature matrix.
 
-        Rows are structures, Columns are correlations.
+        Rows are structures, and columns are correlation vectors.
         """
         return np.array([entry.data["correlations"] for entry in self._entries])
 
@@ -127,7 +121,7 @@ class StructureWrangler(MSONable):
 
     @property
     def occupancy_strings(self):
-        """Get occupancy strings for each of the structures in the wrangler."""
+        """Get occupancy strings for each structure in the StructureWrangler."""
         occupancies = [
             self._subspace.occupancy_from_structure(
                 entry.structure,
@@ -185,7 +179,7 @@ class StructureWrangler(MSONable):
             orbit_id (int):
                 Orbit id to obtain sub feature matrix rank of.
             rows (list): optional
-                List of row indices corresponding to structures to include.
+                list of row indices corresponding to structures to include.
 
         Returns:
             int: rank of orbit sub feature matrix
@@ -211,7 +205,7 @@ class StructureWrangler(MSONable):
                 indices of features (correlations) to include in feature matrix
             norm_p : (optional)
                 the type of norm to use when computing condition number.
-                see the numpy docs for np.linalg.cond for options.
+                See the numpy docs for np.linalg.cond for options.
 
         Returns:
             float: matrix condition number
@@ -223,11 +217,11 @@ class StructureWrangler(MSONable):
     def get_gram_matrix(self, rows=None, cols=None, normalize=True):
         r"""Compute the Gram matrix for the feature matrix or a submatrix.
 
-        The Gram matrix, :math:`G = X^TX`, or each entry
+        The Gram matrix, :math:`G = X^TX`, where each entry is
         :math:`G_{ij} = X_i \cdot X_j`. By default, G will have each column
         (feature vector) normalized. This makes it possible to compare Gram
         matrices for different feature matrix size or using different basis
-        sets. This ensures every entry: :math:`-1 \le G_{ij} \le 1'.
+        sets. This ensures every entry satisfies :math:`-1 \le G_{ij} \le 1`.
 
         Args:
             rows (list):
@@ -235,7 +229,7 @@ class StructureWrangler(MSONable):
             cols (list):
                 indices of features (correlations) to include in feature matrix
             normalize:
-                If true (default) will normalize each feature vector in the
+                if True (default), will normalize each feature vector in the
                 feature matrix.
         Returns:
             ndarray: Gram matrix
@@ -258,12 +252,12 @@ class StructureWrangler(MSONable):
                 functions to consider in correlation vectors.
             decimals (int): optional
                 number of decimals to round correlations in order to allow
-                some numerical tolerance for finding duplicates. If None is
-                given no rounding will be done. Beware that orthogonal basis
-                will likeley be off by some numerical tolerance so rounding is
-                recommended.
+                some numerical tolerance for finding duplicates. If None,
+                no rounding will be done. Beware that using a ClusterSubspace
+                with an orthogonal site basis will likely be off by some
+                numerical tolerance so rounding is recommended.
             rm_external_terms (bool) : optional
-                If true will not consider external terms and only consider
+                if True, will not consider external terms and only consider
                 correlations proper when looking for duplicates.
         Returns:
             list: list containing lists of indices of rows in feature_matrix
@@ -305,14 +299,14 @@ class StructureWrangler(MSONable):
                 number of decimals to round correlations in order to allow
                 some numerical tolerance for finding duplicates.
             structure_matcher (StructureMatcher): optional
-                A StructureMatcher object to use for matching structures.
+                StructureMatcher object to use for matching structures.
             **matcher_kwargs:
-                Keyword arguments to use when initializing a structure matcher
+                keyword arguments to use when initializing a StructureMatcher
                 if not given
 
         Returns:
             list: list of lists of equivalent structures (that match) and have
-                  duplicate correlation vectors.
+            duplicate correlation vectors.
         """
         matcher = (
             structure_matcher
@@ -368,7 +362,7 @@ class StructureWrangler(MSONable):
         vectors (columns) in the feature matrix. Matrix element a(i,j)
         represents the fraction of equivalent corresponding values in feature
         vectors i and j.
-        This construction is analogous to the gram matrix, but instead of an
+        This construction is analogous to the Gram matrix, but instead of an
         inner product, it counts the number of identical corresponding elements
         in feature vectors i and j.
 
@@ -382,7 +376,7 @@ class StructureWrangler(MSONable):
 
         Returns:
             ndarray:
-                (n x n) Similarity matrix
+                (n x n) similarity matrix
         """
         rows = rows if rows is not None else range(self.num_structures)
         cols = cols if cols is not None else range(self.num_features)
@@ -404,16 +398,16 @@ class StructureWrangler(MSONable):
     def get_property_vector(self, key, normalize=True):
         """Get the property target vector.
 
-        The property targent vector that be used to fit the corresponding
+        The property target vector to be used to fit the corresponding
         correlation feature matrix to obtain coefficients for a cluster
         expansion. It should always be properly/consistently normalized when
         used for a fit.
 
         Args:
             key (str):
-                Name of the property
+                name of the property
             normalize (bool): optional
-                To normalize by prim size. If the property sought is not
+                if True, normalizes by prim size. If the property sought is not
                 already normalized, you need to normalize before fitting a CE.
         """
         if key in self.available_properties:
@@ -438,7 +432,7 @@ class StructureWrangler(MSONable):
     def add_data_indices(self, key, indices):
         """Add a set of data indices.
 
-        Fore example use this for saving test/training splits or separating
+        For example, use this for saving test/training splits or separating
         duplicates.
         """
         if not isinstance(indices, (Sequence, np.ndarray)):
@@ -453,7 +447,7 @@ class StructureWrangler(MSONable):
 
         Args:
             key (str):
-                Name of corresponding weights
+                name of corresponding weights
         """
         return np.array([entry.data["weights"][key] for entry in self._entries])
 
@@ -472,42 +466,42 @@ class StructureWrangler(MSONable):
         The energy and properties need to be extensive (i.e. not normalized per atom
         or unit cell, directly from DFT).
 
-        An attempt to computes correlation vector is made and if successful the
-        structure is succesfully added otherwise it ignores that structure.
-        Usually failures are caused by the Structure Matcher in the given
-        ClusterSubspace failing to match structures to the primitive structure.
+        An attempt to compute the correlation vector is made and if successful the
+        structure is succesfully added. Otherwise the structure is ignored.
+        Usually failures are caused by the StructureMatcher in the given
+        ClusterSubspace failing to map structures to the primitive structure.
 
         Args:
             entry (ComputedStructureEntry):
                 A ComputedStructureEntry with a training structure, energy and
                 properties
             properties (dict):
-                A dictionary with a key describing the property and the target
+                Dictionary with a key describing the property and the target
                 value for the corresponding structure. For example if only a
                 single property {'energy': value} but can also add more than
-                one i.e. {'total_energy': value1, 'formation_energy': value2}.
+                one, i.e. {'total_energy': value1, 'formation_energy': value2}.
                 You are free to make up the keys for each property but make
                 sure you are consistent for all structures that you add.
             weights (dict):
-                The weight given to the structure when doing the fit. The key
+                the weight given to the structure when doing the fit. The key
                 must match at least one of the given properties.
             supercell_matrix (ndarray): optional
-                If the corresponding structure has already been matched to the
-                clustersubspace prim structure, passing the supercell_matrix
-                will use that instead of trying to re-match. If using this
-                the user is responsible to have the correct supercell_matrix,
+                if the corresponding structure has already been matched to the
+                ClusterSubspace prim structure, passing the supercell_matrix
+                will use that instead of trying to re-match. If using this,
+                the user is responsible for having the correct supercell_matrix.
                 Here you are the cause of your own bugs.
             site_mapping (list): optional
-                Site mapping as obtained by StructureMatcher.get_mapping
+                site mapping as obtained by StructureMatcher.get_mapping
                 such that the elements of site_mapping represent the indices
-                of the matching sites to the prim structure. I you pass this
-                option you are fully responsible that the mappings are correct!
+                of the matching sites to the prim structure. If you pass this
+                option, you are fully responsible that the mappings are correct!
             verbose (bool): optional
-                if True then warn structures that fail in StructureMatcher, and
-                structures that have duplicate corr vectors.
+                if True, will raise warning regarding  structures that fail in
+                StructureMatcher, and structures that have duplicate corr vectors.
             raise_failed (bool): optional
-                If true will raise the thrown error when adding a structure
-                fails. This can be helpful to keep a list of structures that
+                if True, will raise the thrown error when adding a structure
+                that  fails. This can be helpful to keep a list of structures that
                 fail for further inspection.
         """
         processed_entry = self.process_entry(
@@ -570,16 +564,16 @@ class StructureWrangler(MSONable):
             self._corr_duplicate_warning(self.num_structures - 1)
 
     def add_weights(self, key, weights):
-        """Add weights to structures already in the wrangler.
+        """Add weights to structures already in the StructureWrangler.
 
         The length of the given weights must match the number of structures
         contained, and should be in the same order.
 
         Args:
             key (str):
-                Name describing weights
+                name describing weights
             weights (ndarray):
-                Array with the weight for each structure
+                array with the weight for each structure
         """
         if self.num_structures != len(weights):
             raise AttributeError(
@@ -590,17 +584,17 @@ class StructureWrangler(MSONable):
             entry.data["weights"][key] = weight
 
     def add_properties(self, key, property_vector):
-        """Add another property vector to structures already in the wrangler.
+        """Add another property vector to structures already in the StructureWrangler.
 
         The length of the property vector must match the number of structures
-        contained, and should be in the same order such that the property
+        contained, and should be in the same order so that the property
         corresponds to the correct structure.
 
         Args:
             key (str):
-                Name of property
+                name of property
             property_vector (ndarray):
-                Array with the property for each structure
+                array with the property for each structure
         """
         if self.num_structures != len(property_vector):
             raise AttributeError(
@@ -612,7 +606,7 @@ class StructureWrangler(MSONable):
             entry.data["properties"][key] = prop
 
     def remove_properties(self, *property_keys):
-        """Remove properties from given keys.
+        """Remove properties with given keys.
 
         Args:
             *property_keys (str):
@@ -636,15 +630,15 @@ class StructureWrangler(MSONable):
             ) from value_error
 
     def change_subspace(self, cluster_subspace):
-        """Change the underlying cluster subspace.
+        """Change the underlying ClusterSubspace.
 
-        Will swap out the cluster subspace and update features accordingly.
+        Will swap out the ClusterSubspace and update features accordingly.
         This is a faster operation than creating a new one. Can also be useful
-        to create a copy and the change the subspace.
+        to create a copy and then change the subspace.
 
         Args:
             cluster_subspace:
-                New subspace to be used for determining features.
+                New ClusterSubspace to be used for determining features.
         """
         self._subspace = cluster_subspace
         self.update_features()
@@ -652,9 +646,10 @@ class StructureWrangler(MSONable):
     def update_features(self):
         """Update the features/feature matrix for the data held.
 
-        This is useful when something is changed in the cluster_subspace after
-        creating the Wrangler, for example added an Ewald term after creating
-        the Wrangler. This will prevent having to match structures and such.
+        This is useful when something is changed in the ClusterSubspace after
+        creating the StructureWrangler, for example when adding an Ewald term
+        after the StructureWrangler has already been created. This will prevent
+        having to re-match structures and such.
         """
         for entry in self._entries:
             structure = entry.structure
@@ -665,7 +660,7 @@ class StructureWrangler(MSONable):
             )
 
     def remove_all_data(self):
-        """Remove all data from Wrangler."""
+        """Remove all data from the StructureWrangler."""
         self._entries = []
 
     def process_entry(
@@ -678,10 +673,10 @@ class StructureWrangler(MSONable):
         verbose=False,
         raise_failed=False,
     ):
-        """Process a ComputedStructureEntry to be added to wrangler.
+        """Process a ComputedStructureEntry to be added to StructureWrangler.
 
         Checks if the structure for this entry can be matched to the
-        cluster subspace prim structure to obtain its supercell matrix,
+        ClusterSubspace prim structure to obtain its supercell matrix,
         correlation, and refined structure. If so, the entry will be updated by adding
         these to its data dictionary.
 
@@ -700,23 +695,23 @@ class StructureWrangler(MSONable):
                 The weight given to the structure when doing the fit. The key
                 must match at least one of the given properties.
             supercell_matrix (ndarray): optional
-                If the corresponding structure has already been matched to the
-                clustersubspace prim structure, passing the supercell_matrix
+                if the corresponding structure has already been matched to the
+                ClusterSubspace prim structure, passing the supercell_matrix
                 will use that instead of trying to re-match. If using this
-                the user is responsible to have the correct supercell_matrix,
+                the user is responsible to have the correct supercell_matrix.
                 Here you are the cause of your own bugs.
             site_mapping (list): optional
-                Site mapping as obtained by
+                site mapping as obtained by
                 :code:`StructureMatcher.get_mapping`
                 such that the elements of site_mapping represent the indices
                 of the matching sites to the prim structure. If you pass this
-                option you are fully responsible that the mappings are correct!
+                option, you are fully responsible that the mappings are correct!
             verbose (bool):
-                if True then warn structures that fail in StructureMatcher, and
-                structures that have duplicate corr vectors.
+                if True, will raise warning for structures that fail in
+                StructureMatcher, and structures that have duplicate corr vectors.
             raise_failed (bool): optional
-                If true will raise the thrown error when adding a structure
-                fails. This can be helpful to keep a list of structures that
+                if True, will raise the thrown error when adding a structure
+                that fails. This can be helpful to keep a list of structures that
                 fail for further inspection.
 
         Returns:
@@ -824,7 +819,7 @@ class StructureWrangler(MSONable):
                 energy property key, for legacy files
 
         Returns:
-
+            StructureWrangler
         """
         module = import_module(d["_subspace"]["@module"])
         subspace_cls = getattr(module, d["_subspace"]["@class"])

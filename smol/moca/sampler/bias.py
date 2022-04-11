@@ -25,11 +25,11 @@ class MCBias(ABC):
     """
 
     def __init__(self, sublattices, *args, **kwargs):
-        """Initialize Basebias.
+        """Initialize MCBias.
 
         Args:
             sublattices (List[Sublattice]):
-                List of active sublattices, containing species information and
+                list of active sublattices, containing species information and
                 site indices in sublattice.
             args:
                 Additional arguments buffer.
@@ -47,7 +47,7 @@ class MCBias(ABC):
 
         Args:
             occupancy(np.ndarray):
-                Encoded occupancy string.
+                encoded occupancy string.
         Returns:
             Float, bias value.
         """
@@ -58,14 +58,14 @@ class MCBias(ABC):
         """Compute bias change from step.
 
         The returned value needs to be the difference of bias logs,
-        log(bias_f) - log(bias_i) when the bias terms would directly multiply
-        the ensemble probability. (i.e. exp(-beta * E) * bias).
+        log(bias_f) - log(bias_i), when the bias terms would directly multiply
+        the ensemble probability (i.e. exp(-beta * E) * bias).
 
         Args:
             occupancy: (ndarray):
-                Encoded occupancy array.
+                encoded occupancy array.
             step: (List[tuple(int,int)]):
-                Step returned by MCUsher.
+                step returned by MCUsher.
         Return:
             Float, change of bias value after step.
         """
@@ -76,21 +76,21 @@ class FugacityBias(MCBias):
     """Fugacity fraction bias.
 
     This bias corresponds directly to using a composition bias. Using this
-    for with a CanonicalEnsemble keeps fugacity fractions constant, which
+    with a CanonicalEnsemble keeps fugacity fractions constant, which
     implicitly sets the chemical potentials, albeit for a specific temperature.
     Since one species per sublattice is the reference species, to calculate
-    actual fugacities the reference fugacity must be computed as an ensemble
+    actual fugacities, the reference fugacity must be computed as an ensemble
     average and all other fugacities can then be calculated.
-    From the fugacities and the set temperature the corresponding chemical
+    From the fugacities and the set temperature, the corresponding chemical
     potentials can then be calculated.
     """
 
     def __init__(self, sublattices, fugacity_fractions=None):
-        """Fugacity ratio bias.
+        """Initialize fugacity ratio bias.
 
         Args:
             sublattices (List[Sublattice]):
-                List of active sublattices, containing species information and
+                list of active sublattices, containing species information and
                 site indices in sublattice.
             fugacity_fractions (sequence of dicts): optional
                 Dictionary of species name and fugacity fraction for each
@@ -168,16 +168,16 @@ class FugacityBias(MCBias):
         """Compute bias change from step.
 
         The returned value needs to be the difference of bias logs,
-        log(bias_f) - log(bias_i) when the bias terms would directly multiply
-        the ensemble probability. (i.e. exp(-beta * E) * bias).
+        log(bias_f) - log(bias_i), when the bias terms would directly multiply
+        the ensemble probability (i.e. exp(-beta * E) * bias).
 
         Args:
             occupancy: (ndarray):
-                Encoded occupancy array.
+                encoded occupancy array.
             step: (List[tuple(int,int)]):
-                Step returned by MCUsher.
+                step returned by MCUsher.
         Return:
-            Float, change of bias value after step.
+            float, change of bias value after step.
         """
         delta_log_fu = sum(
             log(self._fu_table[f[0]][f[1]] / self._fu_table[f[0]][occupancy[f[0]]])
@@ -210,14 +210,14 @@ def mcbias_factory(bias_type, sublattices, *args, **kwargs):
 
     Args:
         bias_type (str):
-            string specyting bias name to instantiate.
+            string specifying bias name to instantiate.
         sublattices (List[Sublattice]):
             list of active sublattices, containing species information and
             site indices in sublattice.
         *args:
             positional args to instatiate a bias term.
         *kwargs:
-            Keyword argument to instantiate a bias term.
+            keyword argument to instantiate a bias term.
     """
     if "bias" not in bias_type and "Bias" not in bias_type:
         bias_type += "-bias"

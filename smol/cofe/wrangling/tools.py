@@ -1,4 +1,7 @@
-"""Functions to filter data in a StructureWrangler."""
+"""Functions to filter data in a StructureWrangler and calculate fitting weights.
+
+For example, weights can be calculated by energy above hull or energy by composition.
+"""
 
 from collections import defaultdict
 
@@ -16,29 +19,29 @@ from smol.constants import kB
 def unique_corr_vector_indices(
     wrangler, property_key, filter_by="min", cutoffs=None, return_compliment=False
 ):
-    """Return index set of structures with unique correlation vectors.
+    """Return set of indices of structures with unique correlation vectors.
 
     Keep structures with the min or max value of the given property.
     Note correlation vectors exclude external terms such that even if the
     external term is different for the structure but all correlations are
-    the same the structures will be considered duplicates.
+    the same, the structures will be considered duplicates.
 
     Args:
         wrangler (StructureWrangler):
-            A StructureWrangler containing data to be filtered.
+            a StructureWrangler containing data to be filtered.
         property_key (str):
-            Name of property to consider when returning structure indices
+            name of property to consider when returning structure indices
             for the feature matrix with duplicate corr vectors removed.
         filter_by (str)
-            The criteria for the property value to keep. Options are min
+            the criteria for the property value to keep. Options are min
             or max.
         cutoffs (dict): optional
-            dictionary with cluster diameter cutoffs for correlation
+            Dictionary with cluster diameter cutoffs for correlation
             functions to consider in correlation vectors.
         return_compliment (bool): optional
-            If True will return the compliment of the unique indices
+            if True, will return the complement of the unique indices
     Returns:
-        indices, compliment
+        indices, complement
     """
     if filter_by not in ("max", "min"):
         raise ValueError(f"Filtering by {filter_by} is not an option.")
@@ -57,9 +60,9 @@ def unique_corr_vector_indices(
 
 
 def max_ewald_energy_indices(wrangler, max_relative_energy, return_compliment=False):
-    """Return index set of structures by electrostatic interaction energy.
+    """Return set of indices of structures by electrostatic interaction energy.
 
-    Filter the input structures to only use those with low electrostatic
+    Filter the input structures to remove those with low electrostatic
     energies (no large charge separation in cell). This energy is
     referenced to the lowest value at that composition. Note that this is
     before the division by the relative dielectric constant and is per
@@ -68,10 +71,10 @@ def max_ewald_energy_indices(wrangler, max_relative_energy, return_compliment=Fa
 
     Args:
         wrangler (StructureWrangler):
-            A StructureWrangler containing data to be filtered.
+            a StructureWrangler containing data to be filtered.
         max_relative_energy (float):
-            Ewald threshold. The maximum Ewald energy relative to minumum
-            energy at composition of structure (normalized by prim).
+            Ewald threshold. The maximum Ewald energy relative to the
+            minimum energy at a structure's composition (normalized per prim).
         return_compliment (bool): optional
             If True will return the compliment of the unique indices.
     Returns:
@@ -124,11 +127,11 @@ def weights_energy_above_composition(structures, energies, temperature=2000):
 
     Args:
         structures (list):
-            list of pymatgen.Structures
+            list of pymatgen Structures
         energies (ndarray):
-            energies of corresponding structures.
+            energies of corresponding Structures
         temperature (float):
-            temperature to used in boltzmann weight
+            temperature to use in Boltzmann weight
 
     Returns: weights for each structure.
         array
@@ -142,13 +145,13 @@ def weights_energy_above_hull(structures, energies, cs_structure, temperature=20
 
     Args:
         structures (list):
-            list of pymatgen.Structures
+            list of pymatgen Structures
         energies (ndarray):
-            energies of corresponding structures.
+            energies of corresponding Structures.
         cs_structure (Structure):
-            The pymatgen.Structure used to define the cluster subspace
+            The pymatgen Structure used to define the ClusterSubspace
         temperature (float):
-            temperature to used in boltzmann weight.
+            temperature to use in Boltzmann weight.
 
     Returns: weights for each structure.
         array
@@ -160,7 +163,7 @@ def weights_energy_above_hull(structures, energies, cs_structure, temperature=20
 def _energies_above_hull(structures, energies, ce_structure):
     """Compute energies above hull.
 
-    Hull is constructed from phase diagram of the given structures.
+    The hull is constructed from the phase diagram of the given structures.
     """
     phase_diagram = _pd(structures, energies, ce_structure)
     e_above_hull = []
