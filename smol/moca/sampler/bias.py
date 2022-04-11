@@ -86,7 +86,7 @@ class FugacityBias(MCBias):
     """
 
     def __init__(self, sublattices, fugacity_fractions=None):
-        """InitializeFugacity ratio bias.
+        """Initialize fugacity ratio bias.
 
         Args:
             sublattices (List[Sublattice]):

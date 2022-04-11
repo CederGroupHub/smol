@@ -115,8 +115,7 @@ class StructureWrangler(MSONable):
 
     @property
     def occupancy_strings(self):
-        """Get occupancy strings for each structure in the
-        StructureWrangler."""
+        """Get occupancy strings for each structure in the StructureWrangler."""
         occupancies = [
             self._subspace.occupancy_from_structure(
                 i["structure"], i["scmatrix"], i["mapping"]
@@ -570,8 +569,7 @@ class StructureWrangler(MSONable):
             item["weights"][key] = weight
 
     def add_properties(self, key, property_vector, normalized=False):
-        """Add another property vector to structures already in the
-        StructureWrangler.
+        """Add another property vector to structures already in the StructureWrangler.
 
         The length of the property vector must match the number of structures
         contained, and should be in the same order so that the property
