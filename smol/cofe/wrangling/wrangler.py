@@ -22,6 +22,7 @@ import numpy as np
 from monty.json import MSONable, jsanitize
 from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.core.structure import Structure
+from pymatgen.entries.computed_entries import ComputedStructureEntry
 
 from smol.exceptions import StructureMatchError
 
@@ -56,7 +57,7 @@ class StructureWrangler(MSONable):
                 ClusterExpansion with the provided data.
         """
         self._subspace = cluster_subspace
-        self._items = []
+        self._entries = []
         self._ind_sets = {}  # data indices for test/training splits etc
         self._metadata = {"applied_filters": []}
 
@@ -68,7 +69,7 @@ class StructureWrangler(MSONable):
     @property
     def num_structures(self):
         """Get number of structures added (correctly matched to prim)."""
-        return len(self._items)
+        return len(self._entries)
 
     @property
     def num_features(self):
@@ -78,7 +79,9 @@ class StructureWrangler(MSONable):
     @property
     def available_properties(self):
         """Get list of properties that have been added."""
-        return list({p for i in self._items for p in i["properties"].keys()})
+        return list(
+            {p for entry in self._entries for p in entry.data["properties"].keys()}
+        )
 
     @property
     def available_indices(self):
@@ -88,17 +91,19 @@ class StructureWrangler(MSONable):
     @property
     def available_weights(self):
         """Get list of weights that have been added."""
-        return list({p for i in self._items for p in i["weights"].keys()})
+        return list(
+            {p for entry in self._entries for p in entry.data["weights"].keys()}
+        )
 
     @property
     def structures(self):
         """Get list of included structures."""
-        return [i["structure"] for i in self._items]
+        return [entry.structure for entry in self._entries]
 
     @property
     def refined_structures(self):
         """Get list of refined structures."""
-        return [i["ref_structure"] for i in self._items]
+        return [entry.data["refined_structure"] for entry in self._entries]
 
     @property
     def feature_matrix(self):
@@ -106,38 +111,44 @@ class StructureWrangler(MSONable):
 
         Rows are structures, and columns are correlation vectors.
         """
-        return np.array([i["features"] for i in self._items])
+        return np.array([entry.data["correlations"] for entry in self._entries])
 
     @property
     def sizes(self):
         """Get sizes of each structure in terms of number of prims."""
-        return np.array([i["size"] for i in self._items])
+        return np.array([entry.data["size"] for entry in self._entries])
 
     @property
     def occupancy_strings(self):
         """Get occupancy strings for each structure in the StructureWrangler."""
         occupancies = [
             self._subspace.occupancy_from_structure(
-                i["structure"], i["scmatrix"], i["mapping"]
+                entry.structure,
+                entry.data["supercell_matrix"],
+                entry.data["site_mapping"],
             )
-            for i in self._items
+            for entry in self._entries
         ]
         return occupancies
 
     @property
     def supercell_matrices(self):
         """Get list of supercell matrices relating each structure to prim."""
-        return np.array([i["scmatrix"] for i in self._items])
+        return np.array([entry.data["supercell_matrix"] for entry in self._entries])
 
     @property
     def structure_site_mappings(self):
         """Get list of site mappings for each structure to prim."""
-        return [i["mapping"] for i in self._items]
+        return [entry.data["site_mapping"] for entry in self._entries]
 
     @property
-    def data_items(self):
-        """Get a list of the data item dictionaries."""
-        return self._items
+    def entries(self):
+        """Get a list of the entry dictionaries."""
+        return self._entries
+
+    def data_indices(self, key):
+        """Get a specific data index set."""
+        return self._ind_sets[key]
 
     @property
     def metadata(self):
@@ -398,15 +409,24 @@ class StructureWrangler(MSONable):
                 if True, normalizes by prim size. If the property sought is not
                 already normalized, you need to normalize before fitting a CE.
         """
-        properties = np.array([i["properties"][key] for i in self._items])
+        if key in self.available_properties:
+            properties = np.array(
+                [entry.data["properties"][key] for entry in self._entries]
+            )
+        else:
+            try:
+                properties = np.array([getattr(entry, key) for entry in self._entries])
+            except AttributeError as error:
+                raise ValueError(
+                    f"{key} is not a valid property. The property must be a valid "
+                    f"ComputedStructureEntry property or one of "
+                    f"{self.available_properties}"
+                ) from error
+
         if normalize:
             properties /= self.sizes
 
         return properties
-
-    def data_indices(self, key):
-        """Get a specific data index set."""
-        return self._ind_sets[key]
 
     def add_data_indices(self, key, indices):
         """Add a set of data indices.
@@ -428,13 +448,12 @@ class StructureWrangler(MSONable):
             key (str):
                 name of corresponding weights
         """
-        return np.array([i["weights"][key] for i in self._items])
+        return np.array([entry.data["weights"][key] for entry in self._entries])
 
-    def add_data(
+    def add_entry(
         self,
-        structure,
-        properties,
-        normalized=False,
+        entry,
+        properties=None,
         weights=None,
         supercell_matrix=None,
         site_mapping=None,
@@ -443,11 +462,8 @@ class StructureWrangler(MSONable):
     ):
         """Add a structure and measured property to the StructureWrangler.
 
-        The properties are usually extensive (i.e. not normalized per atom
-        or unit cell, directly from DFT). If the properties have already been
-        normalized then set normalized to True. Users need to make sure their
-        normalization is consistent. (Default normalization is per the
-        primititive structure of the given ClusterSubspace)
+        The energy and properties need to be extensive (i.e. not normalized per atom
+        or unit cell, directly from DFT).
 
         An attempt to compute the correlation vector is made and if successful the
         structure is succesfully added. Otherwise the structure is ignored.
@@ -455,17 +471,16 @@ class StructureWrangler(MSONable):
         ClusterSubspace failing to map structures to the primitive structure.
 
         Args:
-            structure (Structure):
-                a fit structure
+            entry (ComputedStructureEntry):
+                A ComputedStructureEntry with a training structure, energy and
+                properties
             properties (dict):
                 Dictionary with a key describing the property and the target
                 value for the corresponding structure. For example if only a
                 single property {'energy': value} but can also add more than
                 one, i.e. {'total_energy': value1, 'formation_energy': value2}.
                 You are free to make up the keys for each property but make
-                sure you are consistent for all structures that added.
-            normalized (bool):
-                whether the given properties have already been normalized.
+                sure you are consistent for all structures that you add.
             weights (dict):
                 the weight given to the structure when doing the fit. The key
                 must match at least one of the given properties.
@@ -488,64 +503,63 @@ class StructureWrangler(MSONable):
                 that  fails. This can be helpful to keep a list of structures that
                 fail for further inspection.
         """
-        item = self.process_data(
-            structure,
+        processed_entry = self.process_entry(
+            entry,
             properties,
-            normalized,
             weights,
             supercell_matrix,
             site_mapping,
             verbose,
             raise_failed,
         )
-        if item is not None:
-            self._items.append(item)
+        if processed_entry is not None:
+            self._entries.append(processed_entry)
         if verbose:
             self._corr_duplicate_warning(self.num_structures - 1)
 
-    def append_data_items(self, data_items):
-        """Append a list of data items.
+    def append_entries(self, entries):
+        """Append a list of entrys.
 
-        Each data item must have all necessary fields. A data item can be
+        Each entry must have all necessary fields. A entry can be
         obtained using the process_structure method.
 
         Args:
-            data_items (list of dict):
-                list of data items with all necessary information
+            entries (list of ComputedStructureEntry):
+                list of entrys with all necessary information
         """
-        keys = [
-            "structure",
-            "ref_structure",
-            "properties",
-            "weights",
-            "scmatrix",
-            "mapping",
-            "features",
+        required_keys = [
+            "refined_structure",
+            "supercell_matrix",
+            "site_mapping",
+            "correlations",
             "size",
         ]
-        for i, item in enumerate(data_items):
-            if not all(key in keys for key in item.keys()):
+
+        for i, entry in enumerate(entries):
+            if not all(key in entry.data.keys() for key in required_keys):
                 raise ValueError(
-                    f"Data item {i} is missing required keys. Make sure"
+                    f"entry {i} is missing required keys. Make sure"
                     " they were obtained with the process_structure method."
                 )
-            if len(self._items) > 0:
-                if set(item["properties"].keys()) != set(self.available_properties):
+            if len(self._entries) > 0:
+                if set(entry.data["properties"].keys()) != set(
+                    self.available_properties
+                ):
                     raise ValueError(
-                        f"The properties in the data item being added do not match all "
+                        f"The properties in the entry being added do not match all "
                         f"the properties that have already been added: "
-                        f"{self.available_properties}.\n Additional items must include "
+                        f"{self.available_properties}.\n Additional entrys must include "
                         f"the same properties included."
                     )
 
-                if set(item["weights"].keys()) != set(self.available_weights):
+                if set(entry.data["weights"].keys()) != set(self.available_weights):
                     raise ValueError(
-                        f"The properties in the data item being added do not match all "
+                        f"The properties in the entry being added do not match all "
                         f"the weights that have already been added: "
-                        f"{self.available_weights}.\n Additional items must include the"
+                        f"{self.available_weights}.\n Additional entrys must include the"
                         f" same weights included."
                     )
-            self._items.append(item)
+            self._entries.append(entry)
             self._corr_duplicate_warning(self.num_structures - 1)
 
     def add_weights(self, key, weights):
@@ -565,10 +579,10 @@ class StructureWrangler(MSONable):
                 "Length of weights must match number of structures "
                 f"{len(weights)} != {self.num_structures}."
             )
-        for weight, item in zip(weights, self._items):
-            item["weights"][key] = weight
+        for weight, entry in zip(weights, self._entries):
+            entry.data["weights"][key] = weight
 
-    def add_properties(self, key, property_vector, normalized=False):
+    def add_properties(self, key, property_vector):
         """Add another property vector to structures already in the StructureWrangler.
 
         The length of the property vector must match the number of structures
@@ -580,20 +594,15 @@ class StructureWrangler(MSONable):
                 name of property
             property_vector (ndarray):
                 array with the property for each structure
-            normalized (bool): (optional)
-                whether the given properties have already been normalized.
         """
         if self.num_structures != len(property_vector):
             raise AttributeError(
                 "Length of property_vector must match number of structures"
                 f" {len(property_vector)} != {self.num_structures}."
             )
-        if normalized:
-            # make copy
-            property_vector = self.sizes * property_vector.copy()
 
-        for prop, item in zip(property_vector, self._items):
-            item["properties"][key] = prop
+        for prop, entry in zip(property_vector, self._entries):
+            entry.data["properties"][key] = prop
 
     def remove_properties(self, *property_keys):
         """Remove properties with given keys.
@@ -604,20 +613,21 @@ class StructureWrangler(MSONable):
         """
         for key in property_keys:
             try:
-                for item in self._items:
-                    del item["properties"][key]
+                for entry in self._entries:
+                    del entry.data["properties"][key]
             except KeyError:
                 warnings.warn(f"Propertiy {key} does not exist.", RuntimeWarning)
 
-    def remove_structure(self, structure):
+    def remove_entry(self, entry):
         """Remove a given structure and associated data."""
         try:
-            index = self.structures.index(structure)
-            del self._items[index]
-        except ValueError as value_error:
-            raise ValueError(
-                f"Structure {structure} was not found. Nothing has been " "removed."
-            ) from value_error
+            index = self._entries.index(entry)
+            del self._entries[index]
+        except ValueError:
+            warnings.warn(
+                f"Entry {entry} was not found. Nothing has been removed.",
+                RuntimeWarning,
+            )
 
     def change_subspace(self, cluster_subspace):
         """Change the underlying ClusterSubspace.
@@ -641,49 +651,48 @@ class StructureWrangler(MSONable):
         after the StructureWrangler has already been created. This will prevent
         having to re-match structures and such.
         """
-        for item in self._items:
-            struct = item["structure"]
-            mat = item["scmatrix"]
-            mapp = item["mapping"]
-            item["features"] = self._subspace.corr_from_structure(
-                struct, scmatrix=mat, site_mapping=mapp
+        for entry in self._entries:
+            structure = entry.structure
+            scmatrix = entry.data["supercell_matrix"]
+            mapping = entry.data["site_mapping"]
+            entry.data["correlations"] = self._subspace.corr_from_structure(
+                structure, scmatrix=scmatrix, site_mapping=mapping
             )
 
     def remove_all_data(self):
         """Remove all data from the StructureWrangler."""
-        self._items = []
+        self._entries = []
 
-    def process_data(
+    def process_entry(
         self,
-        structure,
-        properties,
-        normalized=False,
+        entry,
+        properties=None,
         weights=None,
         supercell_matrix=None,
         site_mapping=None,
         verbose=False,
         raise_failed=False,
     ):
-        """Process a data item to be added to StructureWrangler.
+        """Process a ComputedStructureEntry to be added to StructureWrangler.
 
-        Checks if the structure for this data item can be matched to the
+        Checks if the structure for this entry can be matched to the
         ClusterSubspace prim structure to obtain its supercell matrix,
-        correlation, and refined structure.
+        correlation, and refined structure. If so, the entry will be updated by adding
+        these to its data dictionary.
 
         Args:
-            structure (Structure):
-                a structure corresponding to the given properties
-            properties (dict):
-                Dictionary with a key describing the property and the target
-                value for the corresponding structure. For example, if only a
-                single property {'energy': value}; for multiple properties,
-                 e.g. {'total_energy': value1, 'formation_energy': value2}.
+            entry (ComputedStructureEntry):
+                A ComputedStructureEntry corresponding to a training strucutre and
+                properties
+            properties (dict): optional
+                A dictionary with a keys describing the property and the target
+                value for the corresponding structure. Energy and corrected energy
+                should already be in the ComputedStructureEntry so there is no need
+                to pass it here.
                 You are free to make up the keys for each property but make
-                sure you are consistent for all structures added.
-            normalized (bool):
-                whether the given properties have already been normalized.
-            weights (dict):
-                the weight given to the structure when doing the fit. The key
+                sure you are consistent for all structures that you add.
+            weights (dict): optional
+                The weight given to the structure when doing the fit. The key
                 must match at least one of the given properties.
             supercell_matrix (ndarray): optional
                 if the corresponding structure has already been matched to the
@@ -706,53 +715,56 @@ class StructureWrangler(MSONable):
                 fail for further inspection.
 
         Returns:
-            dict: data item dict of the structure
+            ComputedStructureEntry: entry with CE pertinent properties
         """
-        if len(self._items) > 0:
-            if set(properties.keys()) != set(self.available_properties):
-                raise ValueError(
-                    f"The properties in the data item being added do not match all the"
-                    f"properties that have already been added: "
-                    f"{self.available_properties}.\n Additional items must include the "
-                    f"same properties included."
-                )
+        if len(self._entries) > 0:
+            if properties is not None and len(self.available_properties) > 0:
+                if set(properties.keys()) != set(self.available_properties):
+                    print(set(properties.keys()))
+                    raise ValueError(
+                        f"The properties entry being added do not match all "
+                        f"the properties that have already been added: "
+                        f"{self.available_properties}.\n Additional entries must "
+                        f"include the same properties included."
+                    )
 
-            if weights is not None and set(weights.keys()) != set(
-                self.available_weights
-            ):
-                raise ValueError(
-                    f"The properties in the data item being added do not match all the"
-                    f"weights that have already been added: {self.available_weights}."
-                    f"\n Additional items must include the same weights included."
-                )
+            if weights is not None and len(self.available_properties) > 0:
+                if set(weights.keys()) != set(self.available_weights):
+                    raise ValueError(
+                        f"The properties in the entry being added do not match all the"
+                        f"weights that have already been added: "
+                        f"{self.available_weights}.\n Additional entries must include "
+                        f"the same weights included."
+                    )
+
+        properties = {} if properties is None else properties
+        weights = {} if weights is None else weights
 
         try:
             if supercell_matrix is None:
-                supercell_matrix = self._subspace.scmatrix_from_structure(structure)
+                supercell_matrix = self._subspace.scmatrix_from_structure(
+                    entry.structure
+                )
 
             size = self._subspace.num_prims_from_matrix(supercell_matrix)
             if site_mapping is None:
                 supercell = self._subspace.structure.copy()
                 supercell.make_supercell(supercell_matrix)
                 site_mapping = self._subspace.structure_site_mapping(
-                    supercell, structure
+                    supercell, entry.structure
                 )
 
             fm_row = self._subspace.corr_from_structure(
-                structure, scmatrix=supercell_matrix, site_mapping=site_mapping
+                entry.structure, scmatrix=supercell_matrix, site_mapping=site_mapping
             )
             refined_struct = self._subspace.refine_structure(
-                structure, supercell_matrix
+                entry.structure, supercell_matrix
             )
-
-            if normalized:
-                properties = {key: val * size for key, val in properties.items()}
-            weights = {} if weights is None else weights
 
         except StructureMatchError as s_match_error:
             if verbose:
                 warnings.warn(
-                    f"Unable to match {structure.composition} with "
+                    f"Unable to match {entry.composition} with "
                     f"properties {properties} to supercell_structure. "
                     f"Throwing out.\n Error Message: {str(s_match_error)}",
                     UserWarning,
@@ -761,24 +773,32 @@ class StructureWrangler(MSONable):
                 raise s_match_error
             return None
 
-        return {
-            "structure": structure,
-            "ref_structure": refined_struct,
-            "properties": properties,
-            "weights": weights,
-            "scmatrix": supercell_matrix,
-            "mapping": site_mapping,
-            "features": fm_row,
-            "size": size,
-        }
+        entry.data["refined_structure"] = refined_struct
+        entry.data["supercell_matrix"] = supercell_matrix
+        entry.data["site_mapping"] = site_mapping
+        entry.data["correlations"] = fm_row
+        entry.data["size"] = size
+        property_dict = entry.data.get("properties")
+        if property_dict is not None:
+            property_dict.update(properties)
+        else:
+            entry.data["properties"] = properties
+
+        weight_dict = entry.data.get("weights")
+        if weight_dict is not None:
+            weight_dict.update(weights)
+        else:
+            entry.data["weights"] = weights
+
+        return entry
 
     def _corr_duplicate_warning(self, index):
-        """Warn if corr vector of item with given index is duplicated."""
+        """Warn if corr vector of entry with given index is duplicated."""
         for duplicate_inds in self.get_duplicate_corr_indices():
             if index in duplicate_inds:
                 duplicates = "".join(
-                    f"Index {i} - {self._items[i]['structure'].composition}"
-                    f"{self._items[i]['properties']}\n"
+                    f"Index {i} - {self._entries[i].structure.composition} "
+                    f"energy={self._entries[i].energy}\n"
                     for i in duplicate_inds
                 )
                 warnings.warn(
@@ -789,26 +809,57 @@ class StructureWrangler(MSONable):
                 )
 
     @classmethod
-    def from_dict(cls, d):
-        """Create StructureWrangler from an MSONable dict."""
+    def from_dict(cls, d, energy_key=None):
+        """Create Structure Wrangler from an MSONable dict.
+
+        Args:
+            d (dict):
+                MSON dict of StructureWrangler
+            energy_key (str): optional
+                energy property key, for legacy files
+
+        Returns:
+            StructureWrangler
+        """
         module = import_module(d["_subspace"]["@module"])
         subspace_cls = getattr(module, d["_subspace"]["@class"])
         wrangler = cls(cluster_subspace=subspace_cls.from_dict(d["_subspace"]))
-        items = []
-        for item in d["_items"]:
-            items.append(
-                {
-                    "properties": item["properties"],
-                    "structure": Structure.from_dict(item["structure"]),
-                    "ref_structure": Structure.from_dict(item["ref_structure"]),
-                    "scmatrix": np.array(item["scmatrix"]),
-                    "mapping": item["mapping"],
-                    "features": np.array(item["features"]),
-                    "size": item["size"],
-                    "weights": item["weights"],
-                }
+
+        # check for legacy files
+        if "_items" in d.keys():
+            warnings.warn(
+                "This StructureWrangler was created with a previous version of smol.\n"
+                "Please re-save it to prevent this warning.",
+                FutureWarning,
             )
-        wrangler._items = items
+            if energy_key is None:
+                raise RuntimeWarning(
+                    "Please load using from_dict method and provide the key used for "
+                    "the energy property to correctly load this StructureWrangler."
+                )
+            entries = []
+            for item in d["_items"]:
+                energy = item["properties"].pop(energy_key)
+                data = {
+                    "properties": item["properties"],
+                    "weights": item["weights"],
+                    "supercell_matrix": np.array(item["scmatrix"]),
+                    "correlations": np.array(item["features"]),
+                    "size": item["size"],
+                    "site_mapping": item["mapping"],
+                    "refined_structure": Structure.from_dict(item["ref_structure"]),
+                }
+                entries.append(
+                    ComputedStructureEntry(
+                        Structure.from_dict(item["structure"]), energy, data=data
+                    )
+                )
+        else:
+            entries = [
+                ComputedStructureEntry.from_dict(entry_d) for entry_d in d["_entries"]
+            ]
+
+        wrangler._entries = entries
         wrangler._metadata = d["metadata"]
         wrangler._ind_sets = d.get("_ind_sets") or {}
         return wrangler
@@ -819,25 +870,11 @@ class StructureWrangler(MSONable):
         Returns:
             MSONable dict
         """
-        s_items = []
-        for item in self._items:
-            s_items.append(
-                {
-                    "properties": item["properties"],
-                    "structure": item["structure"].as_dict(),
-                    "ref_structure": item["ref_structure"].as_dict(),
-                    "scmatrix": item["scmatrix"].tolist(),
-                    "features": item["features"].tolist(),
-                    "mapping": item["mapping"],
-                    "size": item["size"],
-                    "weights": item["weights"],
-                }
-            )
         wrangler_dict = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "_subspace": self._subspace.as_dict(),
-            "_items": s_items,
+            "_entries": [entry.as_dict() for entry in self._entries],
             "_ind_sets": jsanitize(self._ind_sets),  # jic for np.int's
             "metadata": self.metadata,
         }

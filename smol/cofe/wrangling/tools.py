@@ -83,15 +83,17 @@ def max_ewald_energy_indices(wrangler, max_relative_energy, return_compliment=Fa
     ewald_energy = None
     for term in wrangler.cluster_subspace.external_terms:
         if isinstance(term, EwaldTerm):
-            ewald_energy = [i["features"][-1] for i in wrangler.data_items]
+            ewald_energy = [
+                entry.data["correlations"][-1] for entry in wrangler.entries
+            ]
     if ewald_energy is None:
         ewald_energy = []
-        for item in wrangler.data_items:
-            struct = item["structure"]
-            matrix = item["scmatrix"]
-            mapp = item["mapping"]
+        for entry in wrangler.entries:
+            struct = entry.structure
+            matrix = entry.data["supercell_matrix"]
+            mapping = entry.data["site_mapping"]
             occu = wrangler.cluster_subspace.occupancy_from_structure(
-                struct, encode=True, scmatrix=matrix, site_mapping=mapp
+                struct, encode=True, scmatrix=matrix, site_mapping=mapping
             )
 
             supercell = wrangler.cluster_subspace.structure.copy()
@@ -101,16 +103,14 @@ def max_ewald_energy_indices(wrangler, max_relative_energy, return_compliment=Fa
             ewald_energy.append(term)
 
     min_energy_by_comp = defaultdict(lambda: np.inf)
-    for energy, item in zip(ewald_energy, wrangler.data_items):
-        comp = item["structure"].composition.reduced_composition
+    for energy, entry in zip(ewald_energy, wrangler.entries):
+        comp = entry.structure.composition.reduced_composition
         if energy < min_energy_by_comp[comp]:
             min_energy_by_comp[comp] = energy
 
     indices, compliment = [], []
-    for i, (energy, item) in enumerate(zip(ewald_energy, wrangler.data_items)):
-        min_energy = min_energy_by_comp[
-            item["structure"].composition.reduced_composition
-        ]
+    for i, (energy, entry) in enumerate(zip(ewald_energy, wrangler.entries)):
+        min_energy = min_energy_by_comp[entry.structure.composition.reduced_composition]
         rel_energy = energy - min_energy
         if rel_energy < max_relative_energy:
             indices.append(i)
