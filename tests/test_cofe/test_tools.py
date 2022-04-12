@@ -3,6 +3,7 @@ from copy import deepcopy
 
 import numpy as np
 import numpy.testing as npt
+from pymatgen.entries.computed_entries import ComputedStructureEntry
 
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.wrangling import (
@@ -43,14 +44,14 @@ def test_ewald_energy_indices(structure_wrangler):
         ewald_energy = None
         for term in wrangler.cluster_subspace.external_terms:
             if isinstance(term, EwaldTerm):
-                ewald_energy = [i["features"][-1] for i in wrangler.data_items]
+                ewald_energy = [i["features"][-1] for i in wrangler.entries]
 
         if ewald_energy is None:
             ewald_energy = []
-            for item in wrangler.data_items:
-                struct = item["structure"]
-                matrix = item["scmatrix"]
-                mapp = item["mapping"]
+            for entry in wrangler.entries:
+                struct = entry.structure
+                matrix = entry.data["supercell_matrix"]
+                mapp = entry.data["site_mapping"]
                 occu = wrangler.cluster_subspace.occupancy_from_structure(
                     struct, encode=True, scmatrix=matrix, site_mapping=mapp
                 )
@@ -70,8 +71,8 @@ def test_ewald_energy_indices(structure_wrangler):
     }
 
     comps = [
-        item["structure"].composition.reduced_composition
-        for item in structure_wrangler.data_items
+        entry.structure.composition.reduced_composition
+        for entry in structure_wrangler.entries
     ]
     energies = np.array(get_ewald_energies(structure_wrangler))
     comp_min_energies = defaultdict(lambda: np.inf)
@@ -167,22 +168,25 @@ def test_filter_by_ewald(structure_wrangler):
 
 def test_filter_duplicate_corr_vectors(structure_wrangler, rng):
     # add some repeat structures with infinite energy
-    dup_items = []
+    dup_entries = []
     for i in range(5):
         ind = rng.integers(structure_wrangler.num_structures)
-        dup_item = deepcopy(structure_wrangler.data_items[ind])
-        dup_item["properties"]["energy"] = np.inf
-        dup_items.append(dup_item)
+        dup_entry = ComputedStructureEntry(
+            structure_wrangler.structures[ind].copy(),
+            np.inf,
+            data=deepcopy(structure_wrangler.entries[ind].data),
+        )
+        dup_entries.append(dup_entry)
 
     final = structure_wrangler.num_structures
-    structure_wrangler._items += dup_items
+    structure_wrangler._entries += dup_entries
     n_structs = structure_wrangler.num_structures
 
-    assert structure_wrangler.num_structures == final + len(dup_items)
+    assert structure_wrangler.num_structures == final + len(dup_entries)
     assert np.inf in structure_wrangler.get_property_vector("energy")
     indices = unique_corr_vector_indices(structure_wrangler, property_key="energy")
     assert len(indices) < n_structs
-    assert len(indices) == n_structs - len(dup_items)
+    assert len(indices) == n_structs - len(dup_entries)
     assert np.inf not in structure_wrangler.get_property_vector("energy")[indices]
     indices, compliment = unique_corr_vector_indices(
         structure_wrangler, property_key="energy", return_compliment=True

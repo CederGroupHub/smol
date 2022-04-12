@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+* Cluster as pymatgen.SiteCollection, str and repr methods for Cluster, Orbit,
+  ClusterSubspace and ClusterExpansion akin to pymatgen, and functionality to render
+  Clusters with crystal-toolkit. [#181](https://github.com/CederGroupHub/smol/pull/181)
+  ([lbluque](https://github.com/lbluque))
 *  Sublattice splitting. [#179](https://github.com/CederGroupHub/smol/pull/179)
   ([qchempku2017](https://github.com/qchempku2017))
 * `StructureWrangler.get_similarity_matrix` to get similarity fractions

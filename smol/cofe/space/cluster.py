@@ -90,7 +90,7 @@ class Cluster(SiteCollection, MSONable):
 
     @property
     def lattice(self):
-        """Return the underlying lattice"""
+        """Return the underlying lattice."""
         return self._lattice
 
     @property
@@ -99,7 +99,7 @@ class Cluster(SiteCollection, MSONable):
         return self._sites
 
     def get_distance(self, i: int, j: int) -> float:
-        """Returns distance between sites at index i and j.
+        """Return distance between sites at index i and j.
 
         Args:
             i: Index of first site
@@ -116,7 +116,7 @@ class Cluster(SiteCollection, MSONable):
 
     def to(self, fmt: str = None, filename: str = None):
         """
-        Outputs the cluster  to a file or string.
+        Output the cluster  to a file or string.
 
         this is basically a watered down version of pymatgen.Molecule.to
 
@@ -155,7 +155,7 @@ class Cluster(SiteCollection, MSONable):
     @classmethod
     def from_str(cls, input_string: str, fmt):
         """
-        Reads acluster from a string.
+        Read a cluster from a string.
 
         Args:
             input_string (str): String to parse.
@@ -165,7 +165,6 @@ class Cluster(SiteCollection, MSONable):
         Returns:
             Cluster
         """
-
         if fmt == "json":
             d = json.loads(input_string)
             return cls.from_dict(d)
@@ -179,7 +178,7 @@ class Cluster(SiteCollection, MSONable):
     @classmethod
     def from_file(cls, filename: str):
         """
-        Reads a cluster from a file. Supported formats are json and yaml only.
+        Read a cluster from a file. Supported formats are json and yaml only.
 
         Args:
             filename (str): The filename to read from.
@@ -254,6 +253,7 @@ class Cluster(SiteCollection, MSONable):
         return "\n".join(outs)
 
     def __repr__(self):
+        """Get cluster summary."""
         centroid_str = "({:.4f}, {:.4f}, {:.4f})".format(
             *self.lattice.get_cartesian_coords(self.centroid)
         ) + " -> [{:.4f}, {:.4f}, {:.4f}]".format(*self.centroid)
@@ -327,7 +327,8 @@ try:
         legend=None,
     ) -> Scene:
         """
-        Create CTK objects for the lattice and sties
+        Create CTK objects for the lattice and sties.
+
         Args:
             self:  Structure object
             origin: coordinate of the origin
@@ -336,7 +337,6 @@ try:
         Returns:
             CTK scene object to be rendered
         """
-
         origin = origin or list(-self.lattice.get_cartesian_coords([0.5, 0.5, 0.5]))
         legend = legend or Legend(self)
         primitives = defaultdict(list)
