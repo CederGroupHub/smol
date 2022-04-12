@@ -336,7 +336,7 @@ class ClusterExpansion(MSONable):
         return "\n".join(outs)
 
     def __repr__(self):
-        """Return summary of expansion"""
+        """Return summary of expansion."""
         outs = ["Cluster Expansion Summary"]
         outs += repr(self.cluster_subspace).split("\n")[1:]
 

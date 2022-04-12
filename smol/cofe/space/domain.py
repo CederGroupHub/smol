@@ -202,7 +202,6 @@ class SiteSpace(Mapping, Hashable, MSONable):
 
     def __str__(self):
         """Get pretty string."""
-
         return "\n".join(["Site Space", repr(self)])
 
     def __repr__(self):

@@ -175,7 +175,7 @@ class EwaldTerm(MSONable):
         return matrix
 
     def __str__(self):
-        """Pretty print EwaldTerm"""
+        """Pretty print EwaldTerm."""
         prop_str = ""
         for prop, val in self.__dict__.items():
             if val is not None:
@@ -183,7 +183,7 @@ class EwaldTerm(MSONable):
         return f"EwaldTerm({prop_str})"
 
     def __repr__(self):
-        """Get summary"""
+        """Get EwaldTerm summary."""
         return f"EwaldTerm({self.use_term})"
 
     def as_dict(self) -> dict:
