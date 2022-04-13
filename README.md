@@ -5,7 +5,7 @@ Statistical Mechanics on Lattices
 
 ![test](https://github.com/CederGroupHub/smol/actions/workflows/test.yml/badge.svg)
 
-*Lighthweight but caffeinated Python implementations of computational methods
+*Lighthweight but caffeinated Python implementation of computational methods
 for statistical mechanical calculations of configurational states in
 crystalline material systems.*
 
