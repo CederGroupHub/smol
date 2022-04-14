@@ -38,8 +38,8 @@ from smol.cofe.space import (
 )
 from smol.cofe.space.basis import IndicatorBasis
 from smol.cofe.space.constants import SITE_TOL
+from smol.correlations import corr_from_occupancy
 from smol.exceptions import SYMMETRY_ERROR_MESSAGE, StructureMatchError, SymmetryError
-from src.mc_utils import corr_from_occupancy
 
 __author__ = "Luis Barroso-Luque, William Davidson Richards"
 

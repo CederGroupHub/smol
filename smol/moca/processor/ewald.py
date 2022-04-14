@@ -12,15 +12,15 @@ ClusterExpansionProcessor and an EwaldProcessor class.
 __author__ = "Luis Barroso-Luque"
 
 import warnings
-from functools import cache, cached_property
+from functools import cached_property, lru_cache
 
 import numpy as np
 from pymatgen.analysis.ewald import EwaldSummation
 
 from smol.cofe.extern.ewald import EwaldTerm
 from smol.cofe.space.clusterspace import ClusterSubspace
+from smol.correlations import delta_ewald_single_flip
 from smol.moca.processor.base import Processor
-from src.mc_utils import delta_ewald_single_flip
 
 
 class EwaldProcessor(Processor):
@@ -83,7 +83,7 @@ class EwaldProcessor(Processor):
         return ewald_summation
 
     @property
-    @cache
+    @lru_cache(maxsize=None)
     def ewald_matrix(self):
         """Get the electrostatic interaction matrix.
 

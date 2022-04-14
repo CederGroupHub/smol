@@ -14,6 +14,7 @@ __author__ = "Luis Barroso-Luque"
 
 from copy import deepcopy
 from dataclasses import asdict, dataclass
+from functools import cached_property
 
 import numpy as np
 from monty.json import MSONable, jsanitize
@@ -163,9 +164,8 @@ class ClusterExpansion(MSONable):
             if regression_data is not None
             else None
         )
-        self._eci = None
 
-    @property
+    @cached_property
     def eci(self):
         """Get the ECI for the cluster expansion.
 
@@ -173,12 +173,11 @@ class ClusterExpansion(MSONable):
         External terms are dropped since their fitted coefficients do not
         represent ECI.
         """
-        if self._eci is None:
-            num_ext_terms = len(self._subspace.external_terms)  # check for extra terms
-            coefs = self.coefs[:-num_ext_terms] if num_ext_terms else self.coefs[:]
-            self._eci = coefs.copy()
-            self._eci /= self._subspace.function_total_multiplicities
-        return self._eci
+        num_ext_terms = len(self._subspace.external_terms)  # check for extra terms
+        coefs = self.coefs[:-num_ext_terms] if num_ext_terms else self.coefs[:]
+        eci = coefs.copy()
+        eci /= self._subspace.function_total_multiplicities
+        return eci
 
     @property
     def structure(self):
@@ -313,7 +312,8 @@ class ClusterExpansion(MSONable):
         self.coefs = self.coefs[ids_complement]
         if self._feat_matrix is not None:
             self._feat_matrix = self._feat_matrix[:, ids_complement]
-        self._eci = None  # Reset
+        if hasattr(self, "eci"):  # reset cache
+            del self.eci
 
     def copy(self):
         """Return a copy of self."""
@@ -384,7 +384,7 @@ class ClusterExpansion(MSONable):
         return "\n".join(outs)
 
     def __repr__(self):
-        """Return summary of expansion"""
+        """Return summary of expansion."""
         outs = ["Cluster Expansion Summary"]
         outs += repr(self.cluster_subspace).split("\n")[1:]
 

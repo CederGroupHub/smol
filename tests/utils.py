@@ -8,6 +8,7 @@ import json
 import numpy as np
 from monty.json import MontyDecoder, MSONable
 from pymatgen.core import Composition, Element
+from pymatgen.entries.computed_entries import ComputedStructureEntry
 
 from smol.cofe.space.domain import Vacancy
 
@@ -136,5 +137,5 @@ def gen_fake_training_data(prim_structure, n=10, rng=None):
     for energy in rng.random(n):
         struct = gen_random_structure(prim_structure, size=rng.integers(2, 6), rng=rng)
         energy *= -len(struct)
-        training_data.append((struct, energy))
+        training_data.append(ComputedStructureEntry(struct, energy))
     return training_data
