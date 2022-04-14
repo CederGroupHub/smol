@@ -38,7 +38,7 @@ repos:
     - --profile=black
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v2.31.1
+  rev: v2.32.0
   hooks:
     - id: pyupgrade
       args: [--py38-plus]
@@ -67,7 +67,7 @@ repos:
     - flake8-rst==0.8.0
 
 - repo: https://github.com/pycqa/pydocstyle
-  rev: 6.0.0  # pick a git hash / tag to point to
+  rev: 6.1.1  # pick a git hash / tag to point to
   hooks:
   - id: pydocstyle
     files: ^smol/
