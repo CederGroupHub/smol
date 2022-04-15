@@ -779,7 +779,7 @@ class ClusterSubspace(MSONable):
         return indices
 
     def get_aliased_orbits(self, sc_matrix):
-        """Get the aliased orbits for a given supercell shape
+        """Get the aliased orbits for a given supercell shape.
 
         Detect the orbits that will be aliased due to translational symmetry imposed by
         the supercell lattice. Orbits i and j are aliased when a geometric cluster in
