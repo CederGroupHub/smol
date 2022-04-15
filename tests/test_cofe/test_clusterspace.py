@@ -286,7 +286,7 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix):
     ] is cluster_subspace.supercell_orbit_mappings(supercell_matrix)
 
 
-def test_get_aliased_orbits_sc(cluster_subspace, supercell_matrix):
+def test_get_aliased_orbits(cluster_subspace, supercell_matrix):
     # Verify that
     # 1) site mappings for aliased orbits are indeed an identical set,
     # 2) each orbit is counted only once,
