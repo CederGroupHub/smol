@@ -778,6 +778,56 @@ class ClusterSubspace(MSONable):
 
         return indices
 
+    def get_aliased_orbits(self, sc_matrix):
+        """Get the aliased orbits for a given supercell shape
+
+        Detect the orbits that will be aliased due to translational symmetry imposed by
+        the supercell lattice. Orbits i and j are aliased when a geometric cluster in
+        orbit i is identically mapped to another geometric cluster in orbit j.
+        It can be shown through a group theoretical argument that any cluster in orbit i
+        then must be identical to a corresponding cluster in orbit j.
+
+        The implication of aliasing is that correlation functions of these orbits will
+        evaluate to the same value, leading to feature matrix rank deficiency and
+        potentially unphysical ECI.
+
+        This method will detect most cases of orbit degeneracy, but not some edge cases.
+
+        Args:
+            sc_matrix: (array):
+                array relating a supercell with the primitive matrix
+
+        Returns:
+            list of tuples:
+                (orbit_id i, orbit_id j, ...) list of tuples containing the orbits
+                that are aliased.
+
+        """
+        sc_orb_map = self.supercell_orbit_mappings(sc_matrix)
+        aliased_orbits = []
+        for orb_i, orb_map_i in enumerate(sc_orb_map):
+            orb_i_id = orb_i + 1
+            aliased = False
+            orbit_i_aliased = [orb_i_id]
+            sorted_orb_map_i = {tuple(sorted(c_map)) for c_map in orb_map_i}
+
+            for orb_j, orb_map_j in enumerate(sc_orb_map):
+                if orb_i == orb_j:
+                    continue
+                orb_j_id = orb_j + 1
+                sorted_orb_map_j = {tuple(sorted(c_map)) for c_map in orb_map_j}
+
+                if sorted_orb_map_i == sorted_orb_map_j:
+                    aliased = True
+                    orbit_i_aliased.append(orb_j_id)
+
+            orbit_i_aliased = tuple(sorted(orbit_i_aliased))
+            if aliased:
+                aliased_orbits.append(orbit_i_aliased)
+
+        aliased_orbits = sorted(list(set(aliased_orbits)), key=lambda x: x[0])
+        return aliased_orbits
+
     def change_site_bases(self, new_basis, orthonormal=False):
         """Change the type of site basis used in the site basis functions.
 
