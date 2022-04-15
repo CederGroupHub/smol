@@ -286,6 +286,27 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix):
     ] is cluster_subspace.supercell_orbit_mappings(supercell_matrix)
 
 
+def test_get_aliased_orbits(cluster_subspace, supercell_matrix):
+    # Verify that
+    # 1) site mappings for aliased orbits are indeed an identical set,
+    # 2) each orbit is counted only once,
+    aliased_orbs = cluster_subspace.get_aliased_orbits_sc(supercell_matrix)
+    sc_orbit_maps = cluster_subspace.supercell_orbit_mappings(supercell_matrix)
+    accounted_orbs = []
+    for orb_tup in aliased_orbs:
+        assert sum([o in accounted_orbs for o in orb_tup]) == 0
+        accounted_orbs.extend(orb_tup)
+        for i, orb_id_i in enumerate(orb_tup[:-1]):
+            orbit_map_i = tuple(
+                tuple(sorted(inds_i)) for inds_i in sc_orbit_maps[orb_id_i-1]
+            )
+            for orb_id_j in orb_tup[i+1:]:
+                orbit_map_j = tuple(
+                    tuple(sorted(inds_j)) for inds_j in sc_orbit_maps[orb_id_j-1]
+                )
+                assert set(orbit_map_i) == set(orbit_map_j)
+
+
 def test_periodicity_and_symmetry(cluster_subspace, supercell_matrix):
 
     structure = gen_random_structure(cluster_subspace.structure, size=2)
