@@ -788,7 +788,8 @@ class ClusterSubspace(MSONable):
         then must be identical to a corresponding cluster in orbit j.
 
         The implication of aliasing is that correlation functions of these orbits will
-        evaluate to the same value, leading to feature matrix rank deficiency.
+        evaluate to the same value, leading to feature matrix rank deficiency and
+        potentially unphysical ECI.
 
         This method will detect most cases of orbit degeneracy, but not some edge cases.
 
