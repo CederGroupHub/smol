@@ -8,9 +8,6 @@ from pymatgen.analysis.structure_matcher import (
     OrderDisorderElementComparator,
     StructureMatcher,
 )
-from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-from pymatgen.transformations.standard_transformations import \
-    OrderDisorderedStructureTransformation
 from pymatgen.core import Species, Structure
 from pymatgen.util.coord import is_coord_subset_pbc
 
