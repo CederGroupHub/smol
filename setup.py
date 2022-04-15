@@ -81,9 +81,7 @@ else:
 
 ext = ".pyx" if USE_CYTHON else ".c"
 ext_modules = [
-    Extension(
-        "src.mc_utils", ["src/mc_utils" + ext], language="c", include_dirs=["src/"]
-    )
+    Extension("smol.correlations", ["smol/correlations" + ext], language="c")
 ]
 
 if USE_CYTHON:

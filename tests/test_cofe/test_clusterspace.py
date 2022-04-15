@@ -15,8 +15,8 @@ from smol.cofe import ClusterSubspace, PottsSubspace
 from smol.cofe.space.clusterspace import get_complete_mapping, invert_mapping
 from smol.cofe.space.constants import SITE_TOL
 from smol.cofe.space.domain import Vacancy, get_allowed_species
+from smol.correlations import corr_from_occupancy
 from smol.exceptions import StructureMatchError
-from src.mc_utils import corr_from_occupancy
 from tests.utils import assert_msonable, gen_random_structure
 
 

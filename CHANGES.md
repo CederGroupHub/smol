@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
-* Cluster as pymatgen.SiteCollection, str and repr methods for Cluster, Orbit,
+* `Cluster` as `pymatgen.SiteCollection`, str and repr methods for Cluster, Orbit,
   ClusterSubspace and ClusterExpansion akin to pymatgen, and functionality to render
   Clusters with crystal-toolkit. [#181](https://github.com/CederGroupHub/smol/pull/181)
   ([lbluque](https://github.com/lbluque))
@@ -52,6 +52,9 @@ Use this section to keep track of changes in the works.
   ([lbluque](https://github.com/lbluque))
 
 ### Changed
+* `StructureWrangler` based on pymatheg `ComputedStructureEntry`.
+  [\#189](https://github.com/CederGroupHub/smol/pull/189)
+  ([lbluque](https://github.com/lbluque))
 * unittests for `smol.cofe` using `pytest`.
   [\#159](https://github.com/CederGroupHub/smol/pull/159)
   ([lbluque](https://github.com/lbluque))
