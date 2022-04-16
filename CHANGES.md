@@ -7,8 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+* Method to detect and identify orbit degeneracies based on supercell shape. #184 (kamronald)
 ### Changed
 ### Fixed
+* Fix importing numpy in setup.py
 ### Removed
 ### Deprecated
 
