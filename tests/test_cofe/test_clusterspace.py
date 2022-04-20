@@ -15,8 +15,8 @@ from smol.cofe import ClusterSubspace, PottsSubspace
 from smol.cofe.space.clusterspace import get_complete_mapping, invert_mapping
 from smol.cofe.space.constants import SITE_TOL
 from smol.cofe.space.domain import Vacancy, get_allowed_species
+from smol.correlations import corr_from_occupancy
 from smol.exceptions import StructureMatchError
-from src.mc_utils import corr_from_occupancy
 from tests.utils import assert_msonable, gen_random_structure
 
 
@@ -284,6 +284,27 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix):
     assert cluster_subspace._supercell_orb_inds[
         m_hash
     ] is cluster_subspace.supercell_orbit_mappings(supercell_matrix)
+
+
+def test_get_aliased_orbits(cluster_subspace, supercell_matrix):
+    # Verify that
+    # 1) site mappings for aliased orbits are indeed an identical set,
+    # 2) each orbit is counted only once,
+    aliased_orbs = cluster_subspace.get_aliased_orbits(supercell_matrix)
+    sc_orbit_maps = cluster_subspace.supercell_orbit_mappings(supercell_matrix)
+    accounted_orbs = []
+    for orb_tup in aliased_orbs:
+        assert sum(o in accounted_orbs for o in orb_tup) == 0
+        accounted_orbs.extend(orb_tup)
+        for i, orb_id_i in enumerate(orb_tup[:-1]):
+            orbit_map_i = tuple(
+                tuple(sorted(inds_i)) for inds_i in sc_orbit_maps[orb_id_i - 1]
+            )
+            for orb_id_j in orb_tup[i + 1 :]:
+                orbit_map_j = tuple(
+                    tuple(sorted(inds_j)) for inds_j in sc_orbit_maps[orb_id_j - 1]
+                )
+                assert set(orbit_map_i) == set(orbit_map_j)
 
 
 def test_periodicity_and_symmetry(cluster_subspace, supercell_matrix):

@@ -5,7 +5,7 @@ Statistical Mechanics on Lattices
 
 ![test](https://github.com/CederGroupHub/smol/actions/workflows/test.yml/badge.svg)
 
-*Lighthweight but caffeinated Python implementations of computational methods
+*Lighthweight but caffeinated Python implementation of computational methods
 for statistical mechanical calculations of configurational states in
 crystalline material systems.*
 
@@ -60,14 +60,15 @@ Go to the top level directory of the cloned repo and type:
 Usage
 -----
 Refer to the [documentation](http://amox.lbl.gov/smol) (requires lbl vpn) for details on using
-**smol**. The [example notebooks](https://github.com/CederGroupHub/smol/tree/master/examples)
-can help you get started.
+**smol**. Going through the [example notebooks](https://github.com/CederGroupHub/smol/tree/master/examples)
+will also help you get started.
 
 Contributing
 ------------
-We welcome all your contributions with open arms! Please see the
+We welcome all your contributions with open arms! Please fork and pull request any contributions.
+See the
 [contributing](https://github.com/CederGroupHub/smol/blob/master/CONTRIBUTING.md)
-page for how to contribute.
+page in the documentation for how to contribute.
 
 
 Changes

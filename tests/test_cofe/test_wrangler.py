@@ -315,13 +315,17 @@ def test_get_similarity_matrix(structure_wrangler, rng):
 
 def test_matrix_properties(structure_wrangler, rng):
     assert structure_wrangler.get_condition_number() >= 1
-    rows = rng.choice(range(structure_wrangler.num_structures), 16)
-    cols = rng.choice(range(structure_wrangler.num_features), 10)
+    rows = rng.choice(
+        range(structure_wrangler.num_structures), structure_wrangler.num_structures // 3
+    )
+    cols = rng.choice(
+        range(structure_wrangler.num_features), structure_wrangler.num_features // 3
+    )
     assert structure_wrangler.get_condition_number() >= 1
     assert structure_wrangler.get_condition_number(rows, cols) >= 1
     assert structure_wrangler.get_feature_matrix_rank(
         rows, cols
-    ) >= structure_wrangler.get_feature_matrix_rank(cols=cols[:-3])
+    ) >= structure_wrangler.get_feature_matrix_rank(rows=rows, cols=cols[:-3])
 
 
 def test_get_orbit_rank(structure_wrangler, rng):
@@ -357,13 +361,11 @@ def test_get_matching_corr_duplicate_inds(structure_wrangler, rng):
         weights=structure_wrangler.entries[ind2].data["weights"],
     )
     structure_wrangler.append_entries([dup_entry, dup_entry2])
-    expected_matches = [[ind, structure_wrangler.num_structures - 2]]
-    assert all(
-        i in matches
-        for matches, expected in zip(
-            structure_wrangler.get_matching_corr_duplicate_indices(), expected_matches
-        )
-        for i in expected
+    expected_matches = [ind, structure_wrangler.num_structures - 2]
+    print(structure_wrangler.get_matching_corr_duplicate_indices(), expected_matches)
+    assert any(
+        expected_matches == sorted(matches)
+        for matches in structure_wrangler.get_matching_corr_duplicate_indices()
     )
 
 

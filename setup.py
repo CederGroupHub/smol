@@ -20,9 +20,12 @@ test new ones. Finally, although conceived mainly for method development, smol c
 
 import sys
 
-import numpy
-from setuptools import Extension, find_packages, setup
+from setuptools import Extension, dist, find_packages, setup
 from setuptools.command.build_ext import build_ext
+
+# get numpy to include headers
+dist.Distribution().fetch_build_eggs(["numpy>=1.20"])
+import numpy
 
 COMPILE_OPTIONS = {
     "msvc": [
@@ -81,9 +84,7 @@ else:
 
 ext = ".pyx" if USE_CYTHON else ".c"
 ext_modules = [
-    Extension(
-        "src.mc_utils", ["src/mc_utils" + ext], language="c", include_dirs=["src/"]
-    )
+    Extension("smol.correlations", ["smol/correlations" + ext], language="c")
 ]
 
 if USE_CYTHON:
