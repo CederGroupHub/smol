@@ -99,6 +99,7 @@ if USE_CYTHON:
 
 
 setup(
+    use_scm_version={"version_scheme": "python-simplified-semver"},
     packages=find_packages(),
     ext_modules=ext_modules,
     cmdclass={"build_ext": build_ext_subclass},
