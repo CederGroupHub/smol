@@ -8,11 +8,12 @@ import json
 import numpy as np
 from monty.json import MontyDecoder, MSONable
 from pymatgen.core import Composition, Element
+from pymatgen.entries.computed_entries import ComputedStructureEntry
 
 from smol.cofe.space.domain import Vacancy
 
 
-def assert_msonable(obj, test_if_subclass=True):
+def assert_msonable(obj, skip_keys=None, test_if_subclass=True):
     """
     Tests if obj is MSONable and tries to verify whether the contract is
     fulfilled.
@@ -21,16 +22,25 @@ def assert_msonable(obj, test_if_subclass=True):
     """
     if test_if_subclass:
         assert isinstance(obj, MSONable)
-    assert obj.as_dict() == obj.__class__.from_dict(obj.as_dict()).as_dict()
+
+    skip_keys = [] if skip_keys is None else skip_keys
+    d1 = obj.as_dict()
+    d2 = obj.__class__.from_dict(obj.as_dict()).as_dict()
+    for key in d1.keys():
+        if key in skip_keys:
+            continue
+        assert d1[key] == d2[key]
     _ = json.loads(obj.to_json(), cls=MontyDecoder)
 
 
-def gen_random_occupancy(sublattices):
+def gen_random_occupancy(sublattices, rng=None):
     """Generate a random encoded occupancy according to a list of sublattices.
 
     Args:
         sublattices (Sequence of Sublattice):
             A sequence of sublattices
+        rng (optional): {None, int, array_like[ints], SeedSequence, BitGenerator, Generator}
+            A RNG, seed or otherwise to initialize defauly_rng
 
     Returns:
         ndarray: encoded occupancy
@@ -38,7 +48,7 @@ def gen_random_occupancy(sublattices):
 
     num_sites = sum(len(sl.sites) for sl in sublattices)
     rand_occu = np.zeros(num_sites, dtype=int)
-    rng = np.random.default_rng()
+    rng = np.random.default_rng(rng)
     for sublatt in sublattices:
         rand_occu[sublatt.sites] = rng.choice(
             sublatt.encoding, size=len(sublatt.sites), replace=True
@@ -46,17 +56,19 @@ def gen_random_occupancy(sublattices):
     return rand_occu
 
 
-def gen_random_neutral_occupancy(sublattices, lam=10):
+def gen_random_neutral_occupancy(sublattices, lam=10, rng=None):
     """Generate a random encoded occupancy according to a list of sublattices.
 
     Args:
         sublattices (Sequence of Sublattice):
             A sequence of sublattices
+        rng (optional): {None, int, array_like[ints], SeedSequence, BitGenerator, Generator},
+            A RNG, seed or otherwise to initialize defauly_rng
 
     Returns:
         ndarray: encoded occupancy
     """
-    rng = np.random.default_rng()
+    rng = np.random.default_rng(rng)
 
     def get_charge(sp):
         if isinstance(sp, (Element, Vacancy)):
@@ -96,7 +108,7 @@ def gen_random_neutral_occupancy(sublattices, lam=10):
     raise TimeoutError("Can not generate a neutral occupancy in 10000 flips!")
 
 
-def gen_random_structure(prim, size=3):
+def gen_random_structure(prim, size=3, rng=None):
     """Generate an random ordered structure from a disordered prim
 
     Args:
@@ -104,11 +116,13 @@ def gen_random_structure(prim, size=3):
             disordered primitive structure:
         size (optional):
             size argument to structure.make_supercell
+        rng (optional): {None, int, array_like[ints], SeedSequence, BitGenerator, Generator},
+            A RNG, seed or otherwise to initialize defauly_rng
 
     Returns:
         ordered structure
     """
-    rng = np.random.default_rng()
+    rng = np.random.default_rng(rng)
     structure = prim.copy()
     structure.make_supercell(size)
     for site in structure:
@@ -116,12 +130,12 @@ def gen_random_structure(prim, size=3):
     return structure
 
 
-def gen_fake_training_data(prim_structure, n=10):
+def gen_fake_training_data(prim_structure, n=10, rng=None):
     """Generate a fake structure, energy training set."""
-    rng = np.random.default_rng()
+    rng = np.random.default_rng(rng)
     training_data = []
     for energy in rng.random(n):
-        struct = gen_random_structure(prim_structure, size=rng.integers(2, 6))
+        struct = gen_random_structure(prim_structure, size=rng.integers(2, 6), rng=rng)
         energy *= -len(struct)
-        training_data.append((struct, energy))
+        training_data.append(ComputedStructureEntry(struct, energy))
     return training_data

@@ -7,14 +7,14 @@
    getting_started
    user_guide/index
    api_reference/index
-   developer_guide/index
    citing
+   developer_guide/index
 
 =================================
 Statistical Mechanics on Lattices
 =================================
 
-*Lighthweight but caffeinated Python implementations of computational methods
+*Lighthweight but caffeinated Python implementation of computational methods
 for statistical mechanical calculations of configurational states in
 crystalline material systems.*
 
@@ -64,10 +64,10 @@ Citing
 If you find **smol** useful please cite the following publication,
 
     Barroso-Luque, L., Yang, J.H., Xie, F., Chen T., Zhong, P. & Ceder, G.
-    **smol**--- Yet another cluster expansion method python package.
+    **smol**: A Python package for cluster expansions and beyond
     (in preparation)
 
-Please also cite this publication,
+Since **smol** is based on **pymatgen**, please also cite this publication,
 
     Ong, S. P. et al. Python Materials Genomics (pymatgen):
     `A robust, open-source python library for materials analysis

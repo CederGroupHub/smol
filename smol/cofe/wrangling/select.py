@@ -12,17 +12,17 @@ __author__ = "Luis Barroso-Luque"
 def full_row_rank_select(feature_matrix, tol=1e-15, nrows=None):
     """Choose a (maximally) full rank subset of rows in a feature matrix.
 
-    This method is for underdetermined systems.
-    columns/features > rows/structures
+    This method is for underdetermined systems, i.e., where
+    columns (i.e. features) > rows (i.e. structures)
 
     Args:
         feature_matrix (ndarray):
-            feature matrix to select rows/structure from.
+            feature matrix to select rows/structures from.
         tol (float): optional
             tolerance to use to determine the pivots in upper triangular matrix
             of the LU decomposition.
         nrows (int): optional
-            Number of rows to include. If None given, will include the maximum
+            number of rows to include. If None, will include the maximum
             possible number of rows.
     Returns:
         list of int: list with indices of rows that form a full rank system.
@@ -42,7 +42,7 @@ def full_row_rank_select(feature_matrix, tol=1e-15, nrows=None):
 def gaussian_select(feature_matrix, num_samples, orthogonalize=False):
     """V. Vanilla structure selection to increase incoherence.
 
-    Sequentially pick samples with feature vector that most closely aligns
+    Sequentially picks samples with feature vectors that most closely aligns
     with a sampled random gaussian vector on the unit sphere.
 
     This works much better when the number of rows in the feature matrix
@@ -50,11 +50,11 @@ def gaussian_select(feature_matrix, num_samples, orthogonalize=False):
 
     Args:
         feature_matrix (ndarray):
-            feature matrix to select rows/structure from.
+            feature matrix to select rows/structures from.
         num_samples (int):
             number of samples/rows/structures to select.
         orthogonalize (bool):
-            If true will orthogonalize the generated random vectors
+            if true, will orthogonalize the generated random vectors
     Returns:
         list of int: list with indices of rows that align with Gaussian samples
     """
@@ -85,11 +85,11 @@ def composition_select(composition_vector, composition, cell_sizes, num_samples)
         composition (ndarray):
             array for the center composition to sample around.
         cell_sizes (int or Sequence):
-            size of unit cell sizes or size of supercells used to set the
+            mumber of unit cells or size of supercells used to set the
             number of variables in the multinomial distribution.
         num_samples (int):
             number of samples to return. Note that if the number is too high
-            compared to the total number of samples (or coverage of the space)
+            compared to the total number of samples (or coverage of the space),
             it may take very long to return if at all, and the samples will not
             be very representative of the multinomial distributions.
     Returns:

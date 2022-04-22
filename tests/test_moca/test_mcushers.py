@@ -12,10 +12,9 @@ num_sites = 100
 
 
 @pytest.fixture
-def all_sublattices():
+def all_sublattices(rng):
     # generate two tests sublattices
     sites = np.arange(num_sites)
-    rng = np.random.default_rng()
     sites1 = rng.choice(sites, size=num_sites // 3)
     sites2 = rng.choice(np.setdiff1d(sites, sites1), size=num_sites // 4)
     sites3 = np.setdiff1d(sites, np.concatenate((sites1, sites2)))

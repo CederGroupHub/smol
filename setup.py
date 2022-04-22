@@ -20,9 +20,12 @@ test new ones. Finally, although conceived mainly for method development, smol c
 
 import sys
 
-import numpy
-from setuptools import Extension, find_packages, setup
+from setuptools import Extension, dist, find_packages, setup
 from setuptools.command.build_ext import build_ext
+
+# get numpy to include headers
+dist.Distribution().fetch_build_eggs(["numpy>=1.20"])
+import numpy
 
 COMPILE_OPTIONS = {
     "msvc": [
@@ -81,9 +84,7 @@ else:
 
 ext = ".pyx" if USE_CYTHON else ".c"
 ext_modules = [
-    Extension(
-        "src.mc_utils", ["src/mc_utils" + ext], language="c", include_dirs=["src/"]
-    )
+    Extension("smol.correlations", ["smol/correlations" + ext], language="c")
 ]
 
 if USE_CYTHON:
@@ -98,76 +99,9 @@ if USE_CYTHON:
 
 
 setup(
-    name="smol",
-    version="v0.0.0",
-    author="Luis Barroso-Luque",
-    author_email="lbluque@berkeley.edu",
-    maintainer="Luis Barroso-Luque",
-    maintainer_email="lbluque@berkeley.edu",
-    url="https://ceder.berkeley.edu/",
-    license="MIT",
-    description="Lighthweight but caffeinated Python implementations of computational"
-    " methods for statistical mechanical calculations of configurational states in "
-    "crystalline material systems.",
-    long_description_content_type="text/markdown",
-    keywords=[
-        "materials",
-        "science",
-        "structure",
-        "analysis",
-        "phase",
-        "diagrams",
-        "crystal",
-        "clusters",
-        "Monte Carlo",
-        "inference",
-    ],
+    use_scm_version={"version_scheme": "python-simplified-semver"},
     packages=find_packages(),
-    cmdclass={"build_ext": build_ext_subclass},
-    setup_requires=["numpy>=1.18.1", "setuptools>=18.0"],
-    python_requires=">=3.8",
-    tests_require=["pytest"],
-    install_requires=[
-        "setuptools",
-        "numpy>=1.18.1",
-        "pymatgen>=2022.0.2",
-        "monty>=3.0.1",
-    ],
-    extras_require={
-        "docs": [
-            "sphinx==4.5.0",
-            "pydata-sphinx-theme==0.8.1",
-            "ipython==8.2.0",
-            "nbsphinx==0.8.8",
-            "nbsphinx-link==1.3.0",
-            "nb2plots==0.6.0",
-        ],
-        "tests": [
-            "pytest==7.1.1",
-            "pytest-cov==3.0.0",
-            "scikit-learn>=0.24.2",
-            "h5py>=3.5.0",
-        ],
-        "dev": ["pre-commit>=2.12.1", "cython>=0.29.24"],
-    },
-    classifiers=[
-        "Development Status :: 3 - Alpha",
-        "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-        "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
-        "Topic :: Scientific/Engineering :: Information Analysis",
-        "Topic :: Scientific/Engineering :: Physics",
-        "Topic :: Scientific/Engineering :: Chemistry",
-        "Topic :: Software Development :: Libraries :: Python Modules",
-    ],
-    project_urls={
-        "Source": "https://github.com/CederGroupHub/smol",
-        "Bug Reports": "https://github.com/CederGroupHub/smol/issues",
-    },
     ext_modules=ext_modules,
+    cmdclass={"build_ext": build_ext_subclass},
     include_dirs=numpy.get_include(),
 )

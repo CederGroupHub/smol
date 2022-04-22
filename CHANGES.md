@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+### Changed
+### Fixed
+### Removed
+### Deprecated
+
+# [v0.0.1](https://github.com/CederGroupHub/smol/releases/tag/v0.0.1) (2022-04-22)
+### Added
+* Method to detect and identify orbit degeneracies based on supercell shape. #184 (kamronald)
+* Automatic github release.
+### Changed
+* Moved cython code for computing correlations to smol/correlations.pyx and imports as smol.correlations #190 (lbluque)
+### Fixed
+* Fix importing numpy in setup.py
+
+# [v0.0.0](https://github.com/CederGroupHub/smol/releases/tag/v0.0.0) (2022-04-13)
+#### [Full Changelog](https://github.com/CederGroupHub/smol/compare/alpha1.0.1...v0.0.0)
+### Added
+* `Cluster` as `pymatgen.SiteCollection`, str and repr methods for Cluster, Orbit,
+  ClusterSubspace and ClusterExpansion akin to pymatgen, and functionality to render
+  Clusters with crystal-toolkit. [#181](https://github.com/CederGroupHub/smol/pull/181)
+  ([lbluque](https://github.com/lbluque))
+*  Sublattice splitting. [#179](https://github.com/CederGroupHub/smol/pull/179)
+  ([qchempku2017](https://github.com/qchempku2017))
 * `StructureWrangler.get_similarity_matrix` to get similarity fractions
   between correlation vectors of training set.
   [\#153](https://github.com/CederGroupHub/smol/pull/153)
@@ -46,6 +69,9 @@ Use this section to keep track of changes in the works.
   ([lbluque](https://github.com/lbluque))
 
 ### Changed
+* `StructureWrangler` based on pymatgen `ComputedStructureEntry`.
+  [\#189](https://github.com/CederGroupHub/smol/pull/189)
+  ([lbluque](https://github.com/lbluque))
 * unittests for `smol.cofe` using `pytest`.
   [\#159](https://github.com/CederGroupHub/smol/pull/159)
   ([lbluque](https://github.com/lbluque))
@@ -91,8 +117,7 @@ Use this section to keep track of changes in the works.
   orbits from cutoffs. [#138](https://github.com/CederGroupHub/smol/pull/125)
   ([qchempku2017](https://github.com/qchempku2017))
 
-
-### Deprecated
+### Removed
 * `optimize_indicator` in `ClusterExpansionProcessor` and corresponding cython
    function.
   [\#156](https://github.com/CederGroupHub/smol/pull/156)

@@ -6,7 +6,7 @@
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.1.0
+  rev: v4.2.0
   hooks:
   - id: check-yaml
   - id: fix-encoding-pragma
@@ -18,7 +18,7 @@ repos:
     args: ['--maxkb=600']
 
 - repo: https://github.com/psf/black
-  rev: 22.1.0
+  rev: 22.3.0
   hooks:
   - id: black
 
@@ -38,7 +38,7 @@ repos:
     - --profile=black
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v2.31.0
+  rev: v2.32.0
   hooks:
     - id: pyupgrade
       args: [--py38-plus]
@@ -65,6 +65,12 @@ repos:
     # - flake8-docstrings==1.6.0  # fix these
     # - flake8-rst-docstrings==0.2.3
     - flake8-rst==0.8.0
+
+- repo: https://github.com/pycqa/pydocstyle
+  rev: 6.1.1  # pick a git hash / tag to point to
+  hooks:
+  - id: pydocstyle
+    files: ^smol/
 
 - repo: https://github.com/pre-commit/pygrep-hooks
   rev: v1.9.0

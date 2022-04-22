@@ -1,4 +1,4 @@
-"""Implementation of CE processor class for a fixed size super cell.
+"""Implementation of CE processor class for a fixed size supercell.
 
 If you are using a Hamiltonian with an Ewald summation electrostatic term, you
 should use the CompositeProcessor with a ClusterExpansionProcessor and an
@@ -11,28 +11,27 @@ from collections import defaultdict
 
 import numpy as np
 
-from smol.cofe import ClusterSubspace
+from smol.cofe.space.clusterspace import ClusterSubspace
+from smol.correlations import corr_from_occupancy, delta_corr_single_flip
 from smol.moca.processor.base import Processor
-from src.mc_utils import corr_from_occupancy, delta_corr_single_flip
 
 
 class ClusterExpansionProcessor(Processor):
     """ClusterExpansionProcessor class to use a ClusterExpansion in MC.
 
     A CE processor is optimized to compute correlation vectors and local
-    changes in correlation vectors. This class allows the use a cluster
-    expansion Hamiltonian to run Monte Carlo based simulations.
+    changes in correlation vectors. This class allows the use of a CE
+    Hamiltonian to run Monte Carlo-based simulations
 
-    A processor allows an ensemble class to generate a Markov chain
-    for sampling thermodynamic properties from a cluster expansion
-    Hamiltonian.
+    A processor that allows an Ensemble class to generate a Markov chain
+    for sampling thermodynamic properties from a CE Hamiltonian.
 
     Attributes:
         coefs (ndarray):
             Fitted coefficients from the cluster expansion.
         num_corr_functions (int):
             Total number of orbit basis functions (correlation functions).
-            This includes all possible labellings/orderings for all orbits.
+            This includes all possible labelings/orderings for all orbits.
             Same as :code:`ClusterSubspace.n_bit_orderings`.
     """
 
@@ -41,12 +40,12 @@ class ClusterExpansionProcessor(Processor):
 
         Args:
             cluster_subspace (ClusterSubspace):
-                A cluster subspace
+                a cluster subspace
             supercell_matrix (ndarray):
-                An array representing the supercell matrix with respect to the
+                an array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
             coefficients (ndarray):
-                Fit coefficients for the represented cluster expansion.
+                fit coefficients for the represented cluster expansion.
         """
         super().__init__(cluster_subspace, supercell_matrix, coefficients)
 

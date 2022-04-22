@@ -1,0 +1,36 @@
+name: release
+
+on:
+  workflow_run:
+    workflows: [test]
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+
+  release-github:
+
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && startsWith(github.event.workflow_run.head_branch, 'v') }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      - name: Write release info  # CHANGES.md must be edited with the correct version being released.
+        run: awk 'BEGIN {p = 0} {a = 0 }; /\[v([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?\]/ { p += 1; a = 1}; p + a == 1 { print } ' CHANGES.md | sed  -e '/./,$!d' -e :a -e '/^\n*$/{$d;N;ba' -e '}' > release.txt
+
+      - name: Release
+        uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.event.workflow_run.head_branch }}
+          release_name: ${{ github.event.workflow_run.head_branch }}
+          body_path: release.txt
+          draft: false
+          prerelease: false
