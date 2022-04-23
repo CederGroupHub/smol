@@ -5,8 +5,6 @@ on:
     workflows: [test]
     types:
       - completed
-    branches:
-      - main
 
 jobs:
 
