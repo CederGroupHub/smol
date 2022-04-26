@@ -12,7 +12,7 @@ Use this section to keep track of changes in the works.
 ### Removed
 ### Deprecated
 
-# [v0.0.1](https://github.com/CederGroupHub/smol/releases/tag/v0.0.1) (2022-04-22)
+# [v0.0.1](https://github.com/CederGroupHub/smol/releases/tag/v0.0.1) (2022-04-26)
 ### Added
 * Method to detect and identify orbit degeneracies based on supercell shape. #184 (kamronald)
 * Automatic github release.
