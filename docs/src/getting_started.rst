@@ -6,13 +6,11 @@ Getting Started
 Installation
 ============
 **smol** is purposedly light on dependencies which should make the installation
-process headache free. For now you will need to do an old-school install,
-pending a PyPi realease.
+process headache free.
 
-1.  Clone the repository.
-2.  Go to the top level directory of the cloned repo and type::
+        pip install statmech-on-lattices
 
-        pip install .
+(unfortunately PyPi hates fun so we could use "smol".)
 
 Basic Usage
 ===========

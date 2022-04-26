@@ -49,11 +49,15 @@ supported there.
 
 Installation
 ----------
-`Clone` the repository. The latest tag in the `master` branch is the stable version of the
-code. The `master` branch has the newest tested features, but may have more
-lingering bugs.
+From pypi:
 
-Go to the top level directory of the cloned repo and type:
+    pip install statmech-on-lattices
+
+From source:
+
+`Clone` the repository. The latest tag in the `main` branch is the stable version of the
+code. The `main` branch has the newest tested features, but may have more
+lingering bugs. From the top level directory
 
     pip install .
 
