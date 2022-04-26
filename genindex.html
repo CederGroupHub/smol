@@ -1,0 +1,2230 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index &#8212; smol 0.0.1 documentation</title>
+    
+    <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  
+    
+    <link rel="stylesheet"
+      href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+    
+      
+  
+    
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/pydata-sphinx-theme.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/smol.css" />
+    
+    <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+
+<a class="navbar-brand" href="index.html">
+  <img src="_static/logo.png" class="logo" alt="logo">
+</a>
+
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="getting_started.html">
+  Getting Started
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="user_guide/index.html">
+  User Guide
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="api_reference/index.html">
+  API Reference
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="citing.html">
+  Citing
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="developer_guide/index.html">
+  Developing
+ </a>
+</li>
+
+    
+    <li class="nav-item">
+        <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">Changes<i class="fas fa-external-link-alt"></i></a>
+    </li>
+    
+    <li class="nav-item">
+        <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">Issues<i class="fas fa-external-link-alt"></i></a>
+    </li>
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <div class="dropdown" id="version_switcher">
+    <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
+        0.0.1  <!-- this text may get changed later by javascript -->
+        <span class="caret"></span>
+    </button>
+    <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+</div>
+
+<!-- NOTE: this JS must live here (not in our global JS file) because it relies
+     on being processed by Jinja before it is run (specifically for replacing
+     variables genindex and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1'}.
+-->
+
+<script type="text/javascript">
+// Construct the target URL from the JSON components
+function buildURL(entry) {
+    var template = "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/";  // supplied by jinja
+    template = template.replace("{version}", entry.version);
+    return template;
+}
+
+// Check if corresponding page path exists in other version of docs
+// and, if so, go there instead of the homepage of the other docs version
+function checkPageExistsAndRedirect(event) {
+    const currentFilePath = "genindex.html",
+          tryUrl = event.target.getAttribute("href");
+    let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
+    $.ajax({
+        type: 'HEAD',
+        url: tryUrl,
+        // if the page exists, go there
+        success: function() {
+            location.href = tryUrl;
+        }
+    }).fail(function() {
+        location.href = otherDocsHomepage;
+    });
+    // this prevents the browser from following the href of the clicked node
+    // (which is fine because this function takes care of redirecting)
+    return false;
+}
+
+// Populate the version switcher from the JSON config file
+(function () {
+    $.getJSON("https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json", function(data, textStatus, jqXHR) {
+        const currentFilePath = "genindex.html";
+        // create links to the corresponding page in the other docs versions
+        $.each(data, function(index, entry) {
+            // if no custom name specified (e.g., "latest"), use version string
+            if (!("name" in entry)) {
+                entry.name = entry.version;
+            }
+            // create the node
+            const node = document.createElement("a");
+            node.setAttribute("class", "list-group-item list-group-item-action py-1");
+            node.textContent = `${entry.name}`;
+            // get the base URL for that doc version, add the current page's
+            // path to it, and set as `href`
+            entry.url = buildURL(entry);
+            node.setAttribute("href", `${entry.url}${currentFilePath}`);
+            // on click, AJAX calls will check if the linked page exists before
+            // trying to redirect, and if not, will redirect to the homepage
+            // for that version of the docs.
+            node.onclick = checkPageExistsAndRedirect;
+            $("#version_switcher_menu").append(node);
+            // replace dropdown button text with the preferred display name of
+            // this version, rather than using sphinx's 0.0.1 variable.
+            // also highlight the dropdown entry for the currently-viewed
+            // version's entry
+            if (entry.version == "0.0.1") {
+                node.classList.add("active");
+                $("#version_switcher_button").text(entry.name);
+            }
+        });
+    });
+})();
+</script>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/CederGroupHub/smol" rel="noopener" target="_blank" title="GitHub"><span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    
+  </div>
+</nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+
+<h1 id="index">Index</h1>
+
+<div class="genindex-jumpbox">
+ <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
+ | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
+ | <a href="#W"><strong>W</strong></a>
+ 
+</div>
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/moca.html#id0">active_sites (Sublattice attribute)</a>, <a href="api_reference/autogen/moca.html#moca.sublattice.Sublattice.active_sites">[1]</a>, <a href="api_reference/moca/sublattice.html#id0">[2]</a>, <a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice.active_sites">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.active_sublattices">active_sublattices (Ensemble property)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.active_sublattices">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.add_data_indices">add_data_indices() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.add_data_indices">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.add_data_indices">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.add_entry">add_entry() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.add_entry">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.add_entry">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.add_external_term">add_external_term() (ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.add_external_term">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.add_external_term">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.CompositeProcessor.add_processor">add_processor() (CompositeProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.CompositeProcessor.add_processor">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.composite.CompositeProcessor.add_processor">[2]</a>, <a href="api_reference/moca/processors.composite.html#smol.moca.processor.composite.CompositeProcessor.add_processor">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.add_properties">add_properties() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.add_properties">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.add_properties">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.add_weights">add_weights() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.add_weights">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.add_weights">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.allocate">allocate() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.allocate">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.allocate">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.allocate">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.allowed_species">allowed_species (Processor attribute)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.allowed_species">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.Sampler.anneal">anneal() (Sampler method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.sampler.Sampler.anneal">[1]</a>, <a href="api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.anneal">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.append_entries">append_entries() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.append_entries">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.append_entries">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.as_dict">as_dict() (Cluster method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.as_dict">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.as_dict">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.html#cofe.ClusterExpansion.as_dict">(ClusterExpansion method)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.ClusterExpansion.as_dict">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.as_dict">[2]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.as_dict">(ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.as_dict">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.as_dict">[2]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.CompositeProcessor.as_dict">(CompositeProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.CompositeProcessor.as_dict">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.composite.CompositeProcessor.as_dict">[2]</a>, <a href="api_reference/moca/processors.composite.html#smol.moca.processor.composite.CompositeProcessor.as_dict">[3]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.DiscreteBasis.as_dict">(DiscreteBasis method)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.DiscreteBasis.as_dict">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.as_dict">(Ensemble method)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.as_dict">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.EwaldProcessor.as_dict">(EwaldProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.EwaldProcessor.as_dict">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.ewald.EwaldProcessor.as_dict">[2]</a>, <a href="api_reference/moca/processors.ewald.html#smol.moca.processor.ewald.EwaldProcessor.as_dict">[3]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.extern.html#cofe.extern.EwaldTerm.as_dict">(EwaldTerm method)</a>, <a href="api_reference/autogen/cofe.extern.html#cofe.extern.ewald.EwaldTerm.as_dict">[1]</a>, <a href="api_reference/cofe/extern.ewald.html#smol.cofe.extern.ewald.EwaldTerm.as_dict">[2]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.as_dict">(Orbit method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.as_dict">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.as_dict">[2]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.html#cofe.PottsSubspace.as_dict">(PottsSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.PottsSubspace.as_dict">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace.as_dict">[2]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.as_dict">(Processor method)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.as_dict">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.as_dict">(SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.as_dict">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.as_dict">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.as_dict">[3]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.as_dict">(SemiGrandEnsemble method)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.as_dict">[1]</a>, <a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble.as_dict">[2]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.domain.SiteSpace.as_dict">(SiteSpace method)</a>, <a href="api_reference/cofe/space.domain.html#smol.cofe.space.domain.SiteSpace.as_dict">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.StandardBasis.as_dict">(StandardBasis method)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.StandardBasis.as_dict">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.StepTrace.as_dict">(StepTrace method)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.StepTrace.as_dict">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.as_dict">(StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.as_dict">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.as_dict">[2]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.sublattice.Sublattice.as_dict">(Sublattice method)</a>, <a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice.as_dict">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.Trace.as_dict">(Trace method)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.Trace.as_dict">[1]</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.assign_ids">assign_ids() (Cluster method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.assign_ids">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.assign_ids">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.assign_ids">(Orbit method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.assign_ids">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.assign_ids">[2]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.available_indices">available_indices (StructureWrangler property)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.available_indices">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.available_indices">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.available_properties">available_properties (StructureWrangler property)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.available_properties">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.available_properties">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.available_weights">available_weights (StructureWrangler property)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.available_weights">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.available_weights">[2]</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.basis_arrays">basis_arrays (Orbit property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.basis_arrays">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.basis_arrays">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis_factory">basis_factory() (in module cofe.space)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.basis_factory">(in module cofe.space.basis)</a>
+</li>
+        <li><a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.basis_factory">(in module smol.cofe.space.basis)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.basis_orthogonal">basis_orthogonal (ClusterSubspace property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.basis_orthogonal">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.basis_orthogonal">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.basis_orthogonal">(Orbit property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.basis_orthogonal">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.basis_orthogonal">[2]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.basis_orthonormal">basis_orthonormal (ClusterSubspace property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.basis_orthonormal">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.basis_orthonormal">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.basis_orthonormal">(Orbit property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.basis_orthonormal">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.basis_orthonormal">[2]</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.basis_type">basis_type (ClusterSubspace property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.basis_type">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.basis_type">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.basis_type">(Orbit property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.basis_type">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.basis_type">[2]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.BasisIterator">BasisIterator (class in cofe.space.basis)</a>
+
+      <ul>
+        <li><a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.BasisIterator">(class in smol.cofe.space.basis)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.MCKernel.bias">bias (MCKernel property)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.MCKernel.bias">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.bit_combo_multiplicities">bit_combo_multiplicities (Orbit property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.bit_combo_multiplicities">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.bit_combo_multiplicities">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.bit_combos">bit_combos (Orbit property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.bit_combos">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.bit_combos">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.bits">bits (Orbit attribute)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.bits">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.bits">[2]</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/moca.html#moca.CanonicalEnsemble">CanonicalEnsemble (class in moca)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.canonical.CanonicalEnsemble">(class in moca.ensemble.canonical)</a>
+</li>
+        <li><a href="api_reference/moca/ensembles.canonical.html#smol.moca.ensemble.canonical.CanonicalEnsemble">(class in smol.moca.ensemble.canonical)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.centroid">centroid (Cluster attribute)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.centroid">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.centroid">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#id1">(Cluster property)</a>, <a href="api_reference/autogen/cofe.space.html#id4">[1]</a>, <a href="api_reference/cofe/space.cluster.html#id0">[2]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.change_site_bases">change_site_bases() (ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.change_site_bases">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.change_site_bases">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.change_subspace">change_subspace() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.change_subspace">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.change_subspace">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.ChebyshevIterator">ChebyshevIterator (class in cofe.space.basis)</a>
+
+      <ul>
+        <li><a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.ChebyshevIterator">(class in smol.cofe.space.basis)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.chemical_potentials">chemical_potentials (SemiGrandEnsemble property)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.chemical_potentials">[1]</a>, <a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble.chemical_potentials">[2]</a>
+</li>
+      <li><a href="api_reference/utils.html#smol.utils.class_name_from_str">class_name_from_str() (in module smol.utils)</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.clear">clear() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.clear">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.clear">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.clear">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.Sampler.clear_samples">clear_samples() (Sampler method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.sampler.Sampler.clear_samples">[1]</a>, <a href="api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.clear_samples">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster">Cluster (class in cofe.space)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster">(class in cofe.space.cluster)</a>
+</li>
+        <li><a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster">(class in smol.cofe.space.cluster)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.cluster_permutations">cluster_permutations (Orbit property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.cluster_permutations">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.cluster_permutations">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterExpansion.cluster_subspace">cluster_subspace (ClusterExpansion property)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.ClusterExpansion.cluster_subspace">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.cluster_subspace">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.cluster_subspace">(Processor property)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.cluster_subspace">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.cluster_subspace">(StructureWrangler property)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.cluster_subspace">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.cluster_subspace">[2]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.cluster_symops">cluster_symops (Orbit property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.cluster_symops">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.cluster_symops">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterExpansion">ClusterExpansion (class in cofe)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.html#cofe.expansion.ClusterExpansion">(class in cofe.expansion)</a>
+</li>
+        <li><a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion">(class in smol.cofe.expansion)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.html#moca.ClusterExpansionProcessor">ClusterExpansionProcessor (class in moca)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.processor.html#moca.processor.ClusterExpansionProcessor">(class in moca.processor)</a>
+</li>
+        <li><a href="api_reference/autogen/moca.processor.html#moca.processor.expansion.ClusterExpansionProcessor">(class in moca.processor.expansion)</a>
+</li>
+        <li><a href="api_reference/moca/processors.expansion.html#smol.moca.processor.expansion.ClusterExpansionProcessor">(class in smol.moca.processor.expansion)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.clusters">clusters (Orbit property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.clusters">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.clusters">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace">ClusterSubspace (class in cofe)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace">(class in cofe.space.clusterspace)</a>
+</li>
+        <li><a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace">(class in smol.cofe.space.clusterspace)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.domain.SiteSpace.codes">codes (SiteSpace property)</a>, <a href="api_reference/cofe/space.domain.html#smol.cofe.space.domain.SiteSpace.codes">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterExpansion.coefficients">coefficients (ClusterExpansion attribute)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.ClusterExpansion.coefficients">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.coefficients">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.ClusterExpansionProcessor.coefs">coefs (ClusterExpansionProcessor attribute)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.ClusterExpansionProcessor.coefs">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.expansion.ClusterExpansionProcessor.coefs">[2]</a>, <a href="api_reference/moca/processors.expansion.html#smol.moca.processor.expansion.ClusterExpansionProcessor.coefs">[3]</a>
+</li>
+      <li>
+    cofe
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.html#module-cofe">module</a>
+</li>
+      </ul></li>
+      <li>
+    cofe.expansion
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.html#module-cofe.expansion">module</a>
+</li>
+      </ul></li>
+      <li>
+    cofe.extern
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.extern.html#module-cofe.extern">module</a>
+</li>
+      </ul></li>
+      <li>
+    cofe.extern.ewald
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.extern.html#module-cofe.extern.ewald">module</a>
+</li>
+      </ul></li>
+      <li>
+    cofe.space
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#module-cofe.space">module</a>
+</li>
+      </ul></li>
+      <li>
+    cofe.space.basis
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#module-cofe.space.basis">module</a>
+</li>
+      </ul></li>
+      <li>
+    cofe.space.cluster
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#module-cofe.space.cluster">module</a>
+</li>
+      </ul></li>
+      <li>
+    cofe.space.clusterspace
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#module-cofe.space.clusterspace">module</a>
+</li>
+      </ul></li>
+      <li>
+    cofe.space.constants
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#module-cofe.space.constants">module</a>
+</li>
+      </ul></li>
+      <li>
+    cofe.space.domain
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#module-cofe.space.domain">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    cofe.space.orbit
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#module-cofe.space.orbit">module</a>
+</li>
+      </ul></li>
+      <li>
+    cofe.wrangling
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.wrangling.html#module-cofe.wrangling">module</a>
+</li>
+      </ul></li>
+      <li>
+    cofe.wrangling.select
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.wrangling.html#module-cofe.wrangling.select">module</a>
+</li>
+      </ul></li>
+      <li>
+    cofe.wrangling.tools
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.wrangling.html#module-cofe.wrangling.tools">module</a>
+</li>
+      </ul></li>
+      <li>
+    cofe.wrangling.wrangler
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.wrangling.html#module-cofe.wrangling.wrangler">module</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.html#moca.CompositeProcessor">CompositeProcessor (class in moca)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.processor.html#moca.processor.CompositeProcessor">(class in moca.processor)</a>
+</li>
+        <li><a href="api_reference/autogen/moca.processor.html#moca.processor.composite.CompositeProcessor">(class in moca.processor.composite)</a>
+</li>
+        <li><a href="api_reference/moca/processors.composite.html#smol.moca.processor.composite.CompositeProcessor">(class in smol.moca.processor.composite)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.domain.SiteSpace.composition">composition (SiteSpace property)</a>, <a href="api_reference/cofe/space.domain.html#smol.cofe.space.domain.SiteSpace.composition">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.composition_select">composition_select() (in module cofe.wrangling)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.select.composition_select">(in module cofe.wrangling.select)</a>
+</li>
+        <li><a href="api_reference/cofe/wrangling.select.html#smol.cofe.wrangling.select.composition_select">(in module smol.cofe.wrangling.select)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.composition_variance">composition_variance() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.composition_variance">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.composition_variance">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.composition_variance">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.compute_average_drift">compute_average_drift() (Processor method)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.compute_average_drift">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.FugacityBias.compute_bias">compute_bias() (FugacityBias method)</a>, <a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.FugacityBias.compute_bias">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.MCBias.compute_bias">(MCBias method)</a>, <a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.MCBias.compute_bias">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.FugacityBias.compute_bias_change">compute_bias_change() (FugacityBias method)</a>, <a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.FugacityBias.compute_bias_change">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.MCBias.compute_bias_change">(MCBias method)</a>, <a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.MCBias.compute_bias_change">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.compute_chemical_work">compute_chemical_work() (SemiGrandEnsemble method)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.compute_chemical_work">[1]</a>, <a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble.compute_chemical_work">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.canonical.CanonicalEnsemble.compute_feature_vector">compute_feature_vector() (CanonicalEnsemble method)</a>, <a href="api_reference/autogen/moca.html#moca.CanonicalEnsemble.compute_feature_vector">[1]</a>, <a href="api_reference/moca/ensembles.canonical.html#smol.moca.ensemble.canonical.CanonicalEnsemble.compute_feature_vector">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.html#moca.ClusterExpansionProcessor.compute_feature_vector">(ClusterExpansionProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.ClusterExpansionProcessor.compute_feature_vector">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector">[2]</a>, <a href="api_reference/moca/processors.expansion.html#smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector">[3]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.CompositeProcessor.compute_feature_vector">(CompositeProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.CompositeProcessor.compute_feature_vector">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.composite.CompositeProcessor.compute_feature_vector">[2]</a>, <a href="api_reference/moca/processors.composite.html#smol.moca.processor.composite.CompositeProcessor.compute_feature_vector">[3]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.compute_feature_vector">(Ensemble method)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.compute_feature_vector">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.EwaldProcessor.compute_feature_vector">(EwaldProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.EwaldProcessor.compute_feature_vector">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.ewald.EwaldProcessor.compute_feature_vector">[2]</a>, <a href="api_reference/moca/processors.ewald.html#smol.moca.processor.ewald.EwaldProcessor.compute_feature_vector">[3]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.compute_feature_vector">(Processor method)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.compute_feature_vector">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.compute_feature_vector">(SemiGrandEnsemble method)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.compute_feature_vector">[1]</a>, <a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble.compute_feature_vector">[2]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.canonical.CanonicalEnsemble.compute_feature_vector_change">compute_feature_vector_change() (CanonicalEnsemble method)</a>, <a href="api_reference/autogen/moca.html#moca.CanonicalEnsemble.compute_feature_vector_change">[1]</a>, <a href="api_reference/moca/ensembles.canonical.html#smol.moca.ensemble.canonical.CanonicalEnsemble.compute_feature_vector_change">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.html#moca.ClusterExpansionProcessor.compute_feature_vector_change">(ClusterExpansionProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.ClusterExpansionProcessor.compute_feature_vector_change">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector_change">[2]</a>, <a href="api_reference/moca/processors.expansion.html#smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector_change">[3]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.CompositeProcessor.compute_feature_vector_change">(CompositeProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.CompositeProcessor.compute_feature_vector_change">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.composite.CompositeProcessor.compute_feature_vector_change">[2]</a>, <a href="api_reference/moca/processors.composite.html#smol.moca.processor.composite.CompositeProcessor.compute_feature_vector_change">[3]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.compute_feature_vector_change">(Ensemble method)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.compute_feature_vector_change">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.EwaldProcessor.compute_feature_vector_change">(EwaldProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.EwaldProcessor.compute_feature_vector_change">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.ewald.EwaldProcessor.compute_feature_vector_change">[2]</a>, <a href="api_reference/moca/processors.ewald.html#smol.moca.processor.ewald.EwaldProcessor.compute_feature_vector_change">[3]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.compute_feature_vector_change">(Processor method)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.compute_feature_vector_change">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.compute_feature_vector_change">(SemiGrandEnsemble method)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.compute_feature_vector_change">[1]</a>, <a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble.compute_feature_vector_change">[2]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.MCKernel.compute_initial_trace">compute_initial_trace() (MCKernel method)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.MCKernel.compute_initial_trace">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.ThermalKernel.compute_initial_trace">(ThermalKernel method)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.ThermalKernel.compute_initial_trace">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.html#moca.CompositeProcessor.compute_property">compute_property() (CompositeProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.CompositeProcessor.compute_property">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.composite.CompositeProcessor.compute_property">[2]</a>, <a href="api_reference/moca/processors.composite.html#smol.moca.processor.composite.CompositeProcessor.compute_property">[3]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.html#moca.EwaldProcessor.compute_property">(EwaldProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.EwaldProcessor.compute_property">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.ewald.EwaldProcessor.compute_property">[2]</a>, <a href="api_reference/moca/processors.ewald.html#smol.moca.processor.ewald.EwaldProcessor.compute_property">[3]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.compute_property">(Processor method)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.compute_property">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.html#moca.CompositeProcessor.compute_property_change">compute_property_change() (CompositeProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.CompositeProcessor.compute_property_change">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.composite.CompositeProcessor.compute_property_change">[2]</a>, <a href="api_reference/moca/processors.composite.html#smol.moca.processor.composite.CompositeProcessor.compute_property_change">[3]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.html#moca.EwaldProcessor.compute_property_change">(EwaldProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.EwaldProcessor.compute_property_change">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.ewald.EwaldProcessor.compute_property_change">[2]</a>, <a href="api_reference/moca/processors.ewald.html#smol.moca.processor.ewald.EwaldProcessor.compute_property_change">[3]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.compute_property_change">(Processor method)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.compute_property_change">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterExpansion.copy">copy() (ClusterExpansion method)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.ClusterExpansion.copy">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.copy">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.copy">(ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.copy">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.copy">[2]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.corr_from_structure">corr_from_structure() (ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.corr_from_structure">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.corr_from_structure">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.correlation_tensors">correlation_tensors (Orbit property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.correlation_tensors">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.correlation_tensors">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.cos_f">cos_f() (in module cofe.space.basis)</a>
+
+      <ul>
+        <li><a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.cos_f">(in module smol.cofe.space.basis)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.cutoffs">cutoffs (ClusterSubspace property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.cutoffs">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.cutoffs">[2]</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.data_indices">data_indices() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.data_indices">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.data_indices">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.decode_occupancy">decode_occupancy() (Processor method)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.decode_occupancy">[1]</a>
+</li>
+      <li><a href="api_reference/utils.html#smol.utils.derived_class_factory">derived_class_factory() (in module smol.utils)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.diameter">diameter (Cluster property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.diameter">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.diameter">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.DiscreteBasis">DiscreteBasis (class in cofe.space.basis)</a>
+
+      <ul>
+        <li><a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.DiscreteBasis">(class in smol.cofe.space.basis)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterExpansion.eci">eci (ClusterExpansion property)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.ClusterExpansion.eci">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.eci">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterExpansion.eci_orbit_ids">eci_orbit_ids (ClusterExpansion property)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.ClusterExpansion.eci_orbit_ids">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.eci_orbit_ids">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.Sampler.efficiency">efficiency() (Sampler method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.sampler.Sampler.efficiency">[1]</a>, <a href="api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.efficiency">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.encode_domain">encode_domain() (in module cofe.space.basis)</a>
+
+      <ul>
+        <li><a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.encode_domain">(in module smol.cofe.space.basis)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.encode_occupancy">encode_occupancy() (Processor method)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.encode_occupancy">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#id1">encoding (Sublattice attribute)</a>, <a href="api_reference/autogen/moca.html#moca.sublattice.Sublattice.encoding">[1]</a>, <a href="api_reference/moca/sublattice.html#id1">[2]</a>, <a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice.encoding">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.energy_variance">energy_variance() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.energy_variance">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.energy_variance">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.energy_variance">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble">Ensemble (class in moca.ensemble.base)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble">(class in smol.moca.ensemble.base)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.enthalpy_variance">enthalpy_variance() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.enthalpy_variance">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.enthalpy_variance">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.enthalpy_variance">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.entries">entries (StructureWrangler property)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.entries">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.entries">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.RegressionData.estimator_name">estimator_name (RegressionData attribute)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.RegressionData.estimator_name">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.RegressionData.estimator_name">[2]</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/moca.html#moca.EwaldProcessor.ewald_matrix">ewald_matrix (EwaldProcessor property)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.EwaldProcessor.ewald_matrix">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.ewald.EwaldProcessor.ewald_matrix">[2]</a>, <a href="api_reference/moca/processors.ewald.html#smol.moca.processor.ewald.EwaldProcessor.ewald_matrix">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.EwaldProcessor.ewald_summation">ewald_summation (EwaldProcessor property)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.EwaldProcessor.ewald_summation">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.ewald.EwaldProcessor.ewald_summation">[2]</a>, <a href="api_reference/moca/processors.ewald.html#smol.moca.processor.ewald.EwaldProcessor.ewald_summation">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.extern.html#cofe.extern.EwaldTerm.ewald_term_options">ewald_term_options (EwaldTerm attribute)</a>, <a href="api_reference/autogen/cofe.extern.html#cofe.extern.ewald.EwaldTerm.ewald_term_options">[1]</a>, <a href="api_reference/cofe/extern.ewald.html#smol.cofe.extern.ewald.EwaldTerm.ewald_term_options">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.EwaldProcessor">EwaldProcessor (class in moca)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.processor.html#moca.processor.EwaldProcessor">(class in moca.processor)</a>
+</li>
+        <li><a href="api_reference/autogen/moca.processor.html#moca.processor.ewald.EwaldProcessor">(class in moca.processor.ewald)</a>
+</li>
+        <li><a href="api_reference/moca/processors.ewald.html#smol.moca.processor.ewald.EwaldProcessor">(class in smol.moca.processor.ewald)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.extern.html#cofe.extern.EwaldTerm">EwaldTerm (class in cofe.extern)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.extern.html#cofe.extern.ewald.EwaldTerm">(class in cofe.extern.ewald)</a>
+</li>
+        <li><a href="api_reference/cofe/extern.ewald.html#smol.cofe.extern.ewald.EwaldTerm">(class in smol.cofe.extern.ewald)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterExpansion.expansion_structure">expansion_structure (ClusterExpansion property)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.ClusterExpansion.expansion_structure">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.expansion_structure">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.expansion_structure">(ClusterSubspace property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.expansion_structure">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.expansion_structure">[2]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.external_terms">external_terms (ClusterSubspace property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.external_terms">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.external_terms">[2]</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterExpansion.feature_matrix">feature_matrix (ClusterExpansion property)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.ClusterExpansion.feature_matrix">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.feature_matrix">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.html#cofe.RegressionData.feature_matrix">(RegressionData attribute)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.RegressionData.feature_matrix">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.RegressionData.feature_matrix">[2]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.feature_matrix">(StructureWrangler property)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.feature_matrix">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.feature_matrix">[2]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.feature_vector_variance">feature_vector_variance() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.feature_vector_variance">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.feature_vector_variance">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.feature_vector_variance">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.flat_correlation_tensors">flat_correlation_tensors (Orbit property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.flat_correlation_tensors">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.flat_correlation_tensors">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.flat_tensor_indices">flat_tensor_indices (Orbit property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.flat_tensor_indices">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.flat_tensor_indices">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.BasisIterator.flavor">flavor (BasisIterator attribute)</a>, <a href="api_reference/autogen/cofe.space.html#id0">[1]</a>, <a href="api_reference/cofe/space.basis.html#id0">[2]</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.BasisIterator.flavor">[3]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.ChebyshevIterator.flavor">(ChebyshevIterator attribute)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.ChebyshevIterator.flavor">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.IndicatorIterator.flavor">(IndicatorIterator attribute)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.IndicatorIterator.flavor">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.LegendreIterator.flavor">(LegendreIterator attribute)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.LegendreIterator.flavor">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.NumpyPolyIterator.flavor">(NumpyPolyIterator attribute)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.NumpyPolyIterator.flavor">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.PolynomialIterator.flavor">(PolynomialIterator attribute)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.PolynomialIterator.flavor">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.SinusoidIterator.flavor">(SinusoidIterator attribute)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.SinusoidIterator.flavor">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.Flip">Flip (class in moca.sampler.mcusher)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.Flip">(class in smol.moca.sampler.mcusher)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.flush_to_backend">flush_to_backend() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.flush_to_backend">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.flush_to_backend">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.flush_to_backend">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.frac_coords">frac_coords (Cluster attribute)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.frac_coords">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.frac_coords">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#id2">(Cluster property)</a>, <a href="api_reference/autogen/cofe.space.html#id5">[1]</a>, <a href="api_reference/cofe/space.cluster.html#id1">[2]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.from_cluster_expansion">from_cluster_expansion() (Ensemble class method)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.from_cluster_expansion">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.from_cutoffs">from_cutoffs() (ClusterSubspace class method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.from_cutoffs">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.from_cutoffs">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.html#cofe.PottsSubspace.from_cutoffs">(PottsSubspace class method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.PottsSubspace.from_cutoffs">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace.from_cutoffs">[2]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.canonical.CanonicalEnsemble.from_dict">from_dict() (CanonicalEnsemble class method)</a>, <a href="api_reference/autogen/moca.html#moca.CanonicalEnsemble.from_dict">[1]</a>, <a href="api_reference/moca/ensembles.canonical.html#smol.moca.ensemble.canonical.CanonicalEnsemble.from_dict">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.from_dict">(Cluster class method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.from_dict">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.from_dict">[2]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.html#cofe.ClusterExpansion.from_dict">(ClusterExpansion class method)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.ClusterExpansion.from_dict">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.from_dict">[2]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.ClusterExpansionProcessor.from_dict">(ClusterExpansionProcessor class method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.ClusterExpansionProcessor.from_dict">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.expansion.ClusterExpansionProcessor.from_dict">[2]</a>, <a href="api_reference/moca/processors.expansion.html#smol.moca.processor.expansion.ClusterExpansionProcessor.from_dict">[3]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.from_dict">(ClusterSubspace class method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.from_dict">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.from_dict">[2]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.CompositeProcessor.from_dict">(CompositeProcessor class method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.CompositeProcessor.from_dict">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.composite.CompositeProcessor.from_dict">[2]</a>, <a href="api_reference/moca/processors.composite.html#smol.moca.processor.composite.CompositeProcessor.from_dict">[3]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.DiscreteBasis.from_dict">(DiscreteBasis class method)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.DiscreteBasis.from_dict">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.EwaldProcessor.from_dict">(EwaldProcessor class method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.EwaldProcessor.from_dict">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.ewald.EwaldProcessor.from_dict">[2]</a>, <a href="api_reference/moca/processors.ewald.html#smol.moca.processor.ewald.EwaldProcessor.from_dict">[3]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.extern.html#cofe.extern.EwaldTerm.from_dict">(EwaldTerm class method)</a>, <a href="api_reference/autogen/cofe.extern.html#cofe.extern.ewald.EwaldTerm.from_dict">[1]</a>, <a href="api_reference/cofe/extern.ewald.html#smol.cofe.extern.ewald.EwaldTerm.from_dict">[2]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.IndicatorBasis.from_dict">(IndicatorBasis class method)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.IndicatorBasis.from_dict">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.from_dict">(Orbit class method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.from_dict">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.from_dict">[2]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.html#cofe.PottsSubspace.from_dict">(PottsSubspace class method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.PottsSubspace.from_dict">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace.from_dict">[2]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.from_dict">(Processor class method)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.from_dict">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.from_dict">(SampleContainer class method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.from_dict">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.from_dict">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.from_dict">[3]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.from_dict">(SemiGrandEnsemble class method)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.from_dict">[1]</a>, <a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble.from_dict">[2]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.domain.SiteSpace.from_dict">(SiteSpace class method)</a>, <a href="api_reference/cofe/space.domain.html#smol.cofe.space.domain.SiteSpace.from_dict">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.StandardBasis.from_dict">(StandardBasis class method)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.StandardBasis.from_dict">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.from_dict">(StructureWrangler class method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.from_dict">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.from_dict">[2]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.sublattice.Sublattice.from_dict">(Sublattice class method)</a>, <a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice.from_dict">[1]</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/moca.html#moca.Sampler.from_ensemble">from_ensemble() (Sampler class method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.sampler.Sampler.from_ensemble">[1]</a>, <a href="api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.from_ensemble">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.from_file">from_file() (Cluster class method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.from_file">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.from_file">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.from_hdf5">from_hdf5() (SampleContainer class method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.from_hdf5">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.from_hdf5">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.from_hdf5">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.RegressionData.from_object">from_object() (RegressionData class method)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.RegressionData.from_object">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.RegressionData.from_object">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.from_sites">from_sites() (Cluster class method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.from_sites">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.from_sites">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.RegressionData.from_sklearn">from_sklearn() (RegressionData class method)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.RegressionData.from_sklearn">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.RegressionData.from_sklearn">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.from_str">from_str() (Cluster class method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.from_str">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.from_str">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.FugacityBias.fugacity_fractions">fugacity_fractions (FugacityBias property)</a>, <a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.FugacityBias.fugacity_fractions">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.FugacityBias">FugacityBias (class in moca.sampler.bias)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.FugacityBias">(class in smol.moca.sampler.bias)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.full_row_rank_select">full_row_rank_select() (in module cofe.wrangling)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.select.full_row_rank_select">(in module cofe.wrangling.select)</a>
+</li>
+        <li><a href="api_reference/cofe/wrangling.select.html#smol.cofe.wrangling.select.full_row_rank_select">(in module smol.cofe.wrangling.select)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.DiscreteBasis.function_array">function_array (DiscreteBasis property)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.DiscreteBasis.function_array">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.StandardBasis.function_array">(StandardBasis property)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.StandardBasis.function_array">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.function_hierarchy">function_hierarchy() (ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.function_hierarchy">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.function_hierarchy">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.function_inds_by_size">function_inds_by_size (ClusterSubspace property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.function_inds_by_size">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_size">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.function_inds_from_cutoffs">function_inds_from_cutoffs() (ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.function_inds_from_cutoffs">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_from_cutoffs">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.function_orbit_ids">function_orbit_ids (ClusterSubspace property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.function_orbit_ids">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.function_orbit_ids">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.function_ordering_multiplicities">function_ordering_multiplicities (ClusterSubspace property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.function_ordering_multiplicities">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.function_ordering_multiplicities">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.function_total_multiplicities">function_total_multiplicities (ClusterSubspace property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.function_total_multiplicities">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.function_total_multiplicities">[2]</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.gaussian_select">gaussian_select() (in module cofe.wrangling)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.select.gaussian_select">(in module cofe.wrangling.select)</a>
+</li>
+        <li><a href="api_reference/cofe/wrangling.select.html#smol.cofe.wrangling.select.gaussian_select">(in module smol.cofe.wrangling.select)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.get_aliased_orbits">get_aliased_orbits() (ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.get_aliased_orbits">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.get_aliased_orbits">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.get_allowed_species">get_allowed_species() (in module cofe.space)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.domain.get_allowed_species">(in module cofe.space.domain)</a>
+</li>
+        <li><a href="api_reference/cofe/space.domain.html#smol.cofe.space.domain.get_allowed_species">(in module smol.cofe.space.domain)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.get_backend">get_backend() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.get_backend">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_backend">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.get_backend">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.get_complete_mapping">get_complete_mapping() (in module cofe.space.clusterspace)</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.get_compositions">get_compositions() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.get_compositions">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_compositions">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.get_compositions">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.get_condition_number">get_condition_number() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_condition_number">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_condition_number">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.get_constant_features">get_constant_features() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_constant_features">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_constant_features">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.get_distance">get_distance() (Cluster method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.get_distance">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.get_distance">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.get_duplicate_corr_indices">get_duplicate_corr_indices() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_duplicate_corr_indices">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_duplicate_corr_indices">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.get_energies">get_energies() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.get_energies">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_energies">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.get_energies">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.get_enthalpies">get_enthalpies() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.get_enthalpies">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_enthalpies">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.get_enthalpies">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.extern.html#cofe.extern.EwaldTerm.get_ewald_matrix">get_ewald_matrix() (EwaldTerm method)</a>, <a href="api_reference/autogen/cofe.extern.html#cofe.extern.ewald.EwaldTerm.get_ewald_matrix">[1]</a>, <a href="api_reference/cofe/extern.ewald.html#smol.cofe.extern.ewald.EwaldTerm.get_ewald_matrix">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.extern.html#cofe.extern.EwaldTerm.get_ewald_occu">get_ewald_occu() (EwaldTerm static method)</a>, <a href="api_reference/autogen/cofe.extern.html#cofe.extern.ewald.EwaldTerm.get_ewald_occu">[1]</a>, <a href="api_reference/cofe/extern.ewald.html#smol.cofe.extern.ewald.EwaldTerm.get_ewald_occu">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.extern.html#cofe.extern.EwaldTerm.get_ewald_structure">get_ewald_structure() (EwaldTerm static method)</a>, <a href="api_reference/autogen/cofe.extern.html#cofe.extern.ewald.EwaldTerm.get_ewald_structure">[1]</a>, <a href="api_reference/cofe/extern.ewald.html#smol.cofe.extern.ewald.EwaldTerm.get_ewald_structure">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.get_feature_matrix_orbit_rank">get_feature_matrix_orbit_rank() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_feature_matrix_orbit_rank">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_feature_matrix_orbit_rank">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.get_feature_matrix_rank">get_feature_matrix_rank() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_feature_matrix_rank">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_feature_matrix_rank">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.get_feature_vectors">get_feature_vectors() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.get_feature_vectors">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_feature_vectors">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.get_feature_vectors">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.PottsSubspace.get_function_decoration">get_function_decoration() (PottsSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.PottsSubspace.get_function_decoration">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace.get_function_decoration">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.get_gram_matrix">get_gram_matrix() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_gram_matrix">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_gram_matrix">[2]</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.get_matching_corr_duplicate_indices">get_matching_corr_duplicate_indices() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_matching_corr_duplicate_indices">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_matching_corr_duplicate_indices">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.get_minimum_energy">get_minimum_energy() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.get_minimum_energy">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_minimum_energy">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.get_minimum_energy">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.get_minimum_energy_occupancy">get_minimum_energy_occupancy() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.get_minimum_energy_occupancy">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_minimum_energy_occupancy">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.get_minimum_energy_occupancy">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.get_minimum_enthalpy">get_minimum_enthalpy() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.get_minimum_enthalpy">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_minimum_enthalpy">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.get_minimum_enthalpy">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.get_minimum_enthalpy_occupancy">get_minimum_enthalpy_occupancy() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.get_minimum_enthalpy_occupancy">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_minimum_enthalpy_occupancy">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.get_minimum_enthalpy_occupancy">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.get_occupancies">get_occupancies() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.get_occupancies">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_occupancies">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.get_occupancies">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.PottsSubspace.get_orbit_decorations">get_orbit_decorations() (PottsSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.PottsSubspace.get_orbit_decorations">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace.get_orbit_decorations">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.get_property_vector">get_property_vector() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_property_vector">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_property_vector">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.MCUsher.get_random_sublattice">get_random_sublattice() (MCUsher method)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.MCUsher.get_random_sublattice">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.get_similarity_matrix">get_similarity_matrix() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_similarity_matrix">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_similarity_matrix">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.get_site_spaces">get_site_spaces() (in module cofe.space)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.domain.get_site_spaces">(in module cofe.space.domain)</a>
+</li>
+        <li><a href="api_reference/cofe/space.domain.html#smol.cofe.space.domain.get_site_spaces">(in module smol.cofe.space.domain)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.get_species">get_species() (in module cofe.space)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.domain.get_species">(in module cofe.space.domain)</a>
+</li>
+        <li><a href="api_reference/cofe/space.domain.html#smol.cofe.space.domain.get_species">(in module smol.cofe.space.domain)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.get_species_counts">get_species_counts() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.get_species_counts">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_species_counts">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.get_species_counts">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.get_sub_function_ids">get_sub_function_ids() (ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.get_sub_function_ids">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.get_sub_function_ids">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.get_sub_orbits">get_sub_orbits() (ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.get_sub_orbits">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.get_sub_orbits">[2]</a>
+</li>
+      <li><a href="api_reference/utils.html#smol.utils.get_subclasses">get_subclasses() (in module smol.utils)</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.get_sublattice_compositions">get_sublattice_compositions() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.get_sublattice_compositions">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_sublattice_compositions">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.get_sublattice_compositions">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.get_sublattice_species_counts">get_sublattice_species_counts() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.get_sublattice_species_counts">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_sublattice_species_counts">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.get_sublattice_species_counts">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.get_sublattices">get_sublattices() (Processor method)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.get_sublattices">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.get_trace_value">get_trace_value() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.get_trace_value">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_trace_value">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.get_trace_value">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.get_weights">get_weights() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_weights">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_weights">[2]</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.id">id (Cluster attribute)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.id">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.id">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.indicator">indicator() (in module cofe.space.basis)</a>
+
+      <ul>
+        <li><a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.indicator">(in module smol.cofe.space.basis)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.IndicatorBasis">IndicatorBasis (class in cofe.space.basis)</a>
+
+      <ul>
+        <li><a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.IndicatorBasis">(class in smol.cofe.space.basis)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.IndicatorIterator">IndicatorIterator (class in cofe.space.basis)</a>
+
+      <ul>
+        <li><a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.IndicatorIterator">(class in smol.cofe.space.basis)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.invert_mapping">invert_mapping() (in module cofe.space.clusterspace)</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.sublattice.Sublattice.is_active">is_active (Sublattice property)</a>, <a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice.is_active">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.DiscreteBasis.is_orthogonal">is_orthogonal (DiscreteBasis property)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.DiscreteBasis.is_orthogonal">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.DiscreteBasis.is_orthonormal">is_orthonormal (DiscreteBasis property)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.DiscreteBasis.is_orthonormal">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.is_sub_orbit">is_sub_orbit() (Orbit method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.is_sub_orbit">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.is_sub_orbit">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.StepTrace.items">items() (StepTrace method)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.StepTrace.items">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.Trace.items">(Trace method)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.Trace.items">[1]</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.lattice">lattice (Cluster attribute)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.lattice">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.lattice">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#id3">(Cluster property)</a>, <a href="api_reference/autogen/cofe.space.html#id6">[1]</a>, <a href="api_reference/cofe/space.cluster.html#id2">[2]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.lattice">(Orbit attribute)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.lattice">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.lattice">[2]</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.LegendreIterator">LegendreIterator (class in cofe.space.basis)</a>
+
+      <ul>
+        <li><a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.LegendreIterator">(class in smol.cofe.space.basis)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/io.html#smol.io.load_work">load_work() (in module smol.io)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.max_ewald_energy_indices">max_ewald_energy_indices() (in module cofe.wrangling)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.tools.max_ewald_energy_indices">(in module cofe.wrangling.tools)</a>
+</li>
+        <li><a href="api_reference/cofe/wrangling.tools.html#smol.cofe.wrangling.tools.max_ewald_energy_indices">(in module smol.cofe.wrangling.tools)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.MCBias">MCBias (class in moca.sampler.bias)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.MCBias">(class in smol.moca.sampler.bias)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.mcbias_factory">mcbias_factory() (in module moca.sampler.bias)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.mcbias_factory">(in module smol.moca.sampler.bias)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.MCKernel">MCKernel (class in moca.sampler.kernel)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.MCKernel">(class in smol.moca.sampler.kernel)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.html#moca.Sampler.mckernel">mckernel (Sampler property)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.sampler.Sampler.mckernel">[1]</a>, <a href="api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.mckernel">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.mckernel_factory">mckernel_factory() (in module moca.sampler.kernel)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.mckernel_factory">(in module smol.moca.sampler.kernel)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.MCUsher">MCUsher (class in moca.sampler.mcusher)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.MCUsher">(class in smol.moca.sampler.mcusher)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.MCKernel.mcusher">mcusher (MCKernel property)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.MCKernel.mcusher">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.mcusher_factory">mcusher_factory() (in module moca.sampler.mcusher)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.mcusher_factory">(in module smol.moca.sampler.mcusher)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.mean_composition">mean_composition() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.mean_composition">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.mean_composition">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.mean_composition">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.mean_energy">mean_energy() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.mean_energy">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.mean_energy">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.mean_energy">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.mean_enthalpy">mean_enthalpy() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.mean_enthalpy">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.mean_enthalpy">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.mean_enthalpy">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.mean_feature_vector">mean_feature_vector() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.mean_feature_vector">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.mean_feature_vector">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.mean_feature_vector">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.mean_sublattice_composition">mean_sublattice_composition() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.mean_sublattice_composition">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.mean_sublattice_composition">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.mean_sublattice_composition">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.mean_trace_value">mean_trace_value() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.mean_trace_value">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.mean_trace_value">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.mean_trace_value">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.DiscreteBasis.measure_array">measure_array (DiscreteBasis property)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.DiscreteBasis.measure_array">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.DiscreteBasis.measure_vector">measure_vector (DiscreteBasis property)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.DiscreteBasis.measure_vector">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterExpansion.metadata">metadata (ClusterExpansion attribute)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.ClusterExpansion.metadata">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.metadata">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.metadata">(SampleContainer attribute)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.metadata">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.metadata">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.metadata">[3]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.metadata">(StructureWrangler property)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.metadata">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.metadata">[2]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.Metropolis">Metropolis (class in moca.sampler.kernel)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.Metropolis">(class in smol.moca.sampler.kernel)</a>
+</li>
+      </ul></li>
+      <li>
+    moca
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.html#module-moca">module</a>
+</li>
+      </ul></li>
+      <li>
+    moca.ensemble
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.ensemble.html#module-moca.ensemble">module</a>
+</li>
+      </ul></li>
+      <li>
+    moca.ensemble.base
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.ensemble.html#module-moca.ensemble.base">module</a>
+</li>
+      </ul></li>
+      <li>
+    moca.ensemble.canonical
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.ensemble.html#module-moca.ensemble.canonical">module</a>
+</li>
+      </ul></li>
+      <li>
+    moca.ensemble.semigrand
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.ensemble.html#module-moca.ensemble.semigrand">module</a>
+</li>
+      </ul></li>
+      <li>
+    moca.processor
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.processor.html#module-moca.processor">module</a>
+</li>
+      </ul></li>
+      <li>
+    moca.processor.base
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.processor.html#module-moca.processor.base">module</a>
+</li>
+      </ul></li>
+      <li>
+    moca.processor.composite
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.processor.html#module-moca.processor.composite">module</a>
+</li>
+      </ul></li>
+      <li>
+    moca.processor.ewald
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.processor.html#module-moca.processor.ewald">module</a>
+</li>
+      </ul></li>
+      <li>
+    moca.processor.expansion
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.processor.html#module-moca.processor.expansion">module</a>
+</li>
+      </ul></li>
+      <li>
+    moca.sampler
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#module-moca.sampler">module</a>
+</li>
+      </ul></li>
+      <li>
+    moca.sampler.bias
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#module-moca.sampler.bias">module</a>
+</li>
+      </ul></li>
+      <li>
+    moca.sampler.container
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#module-moca.sampler.container">module</a>
+</li>
+      </ul></li>
+      <li>
+    moca.sampler.kernel
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#module-moca.sampler.kernel">module</a>
+</li>
+      </ul></li>
+      <li>
+    moca.sampler.mcusher
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#module-moca.sampler.mcusher">module</a>
+</li>
+      </ul></li>
+      <li>
+    moca.sampler.sampler
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#module-moca.sampler.sampler">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    moca.sublattice
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.html#module-moca.sublattice">module</a>
+</li>
+      </ul></li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.html#module-cofe">cofe</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.html#module-cofe.expansion">cofe.expansion</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.extern.html#module-cofe.extern">cofe.extern</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.extern.html#module-cofe.extern.ewald">cofe.extern.ewald</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#module-cofe.space">cofe.space</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#module-cofe.space.basis">cofe.space.basis</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#module-cofe.space.cluster">cofe.space.cluster</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#module-cofe.space.clusterspace">cofe.space.clusterspace</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#module-cofe.space.constants">cofe.space.constants</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#module-cofe.space.domain">cofe.space.domain</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#module-cofe.space.orbit">cofe.space.orbit</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.wrangling.html#module-cofe.wrangling">cofe.wrangling</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.wrangling.html#module-cofe.wrangling.select">cofe.wrangling.select</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.wrangling.html#module-cofe.wrangling.tools">cofe.wrangling.tools</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.wrangling.html#module-cofe.wrangling.wrangler">cofe.wrangling.wrangler</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#module-moca">moca</a>
+</li>
+        <li><a href="api_reference/autogen/moca.ensemble.html#module-moca.ensemble">moca.ensemble</a>
+</li>
+        <li><a href="api_reference/autogen/moca.ensemble.html#module-moca.ensemble.base">moca.ensemble.base</a>
+</li>
+        <li><a href="api_reference/autogen/moca.ensemble.html#module-moca.ensemble.canonical">moca.ensemble.canonical</a>
+</li>
+        <li><a href="api_reference/autogen/moca.ensemble.html#module-moca.ensemble.semigrand">moca.ensemble.semigrand</a>
+</li>
+        <li><a href="api_reference/autogen/moca.processor.html#module-moca.processor">moca.processor</a>
+</li>
+        <li><a href="api_reference/autogen/moca.processor.html#module-moca.processor.base">moca.processor.base</a>
+</li>
+        <li><a href="api_reference/autogen/moca.processor.html#module-moca.processor.composite">moca.processor.composite</a>
+</li>
+        <li><a href="api_reference/autogen/moca.processor.html#module-moca.processor.ewald">moca.processor.ewald</a>
+</li>
+        <li><a href="api_reference/autogen/moca.processor.html#module-moca.processor.expansion">moca.processor.expansion</a>
+</li>
+        <li><a href="api_reference/autogen/moca.sampler.html#module-moca.sampler">moca.sampler</a>
+</li>
+        <li><a href="api_reference/autogen/moca.sampler.html#module-moca.sampler.bias">moca.sampler.bias</a>
+</li>
+        <li><a href="api_reference/autogen/moca.sampler.html#module-moca.sampler.container">moca.sampler.container</a>
+</li>
+        <li><a href="api_reference/autogen/moca.sampler.html#module-moca.sampler.kernel">moca.sampler.kernel</a>
+</li>
+        <li><a href="api_reference/autogen/moca.sampler.html#module-moca.sampler.mcusher">moca.sampler.mcusher</a>
+</li>
+        <li><a href="api_reference/autogen/moca.sampler.html#module-moca.sampler.sampler">moca.sampler.sampler</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#module-moca.sublattice">moca.sublattice</a>
+</li>
+        <li><a href="api_reference/cofe/extern.ewald.html#module-smol.cofe.extern.ewald">smol.cofe.extern.ewald</a>
+</li>
+        <li><a href="api_reference/cofe/space.basis.html#module-smol.cofe.space.basis">smol.cofe.space.basis</a>
+</li>
+        <li><a href="api_reference/cofe/space.cluster.html#module-smol.cofe.space.cluster">smol.cofe.space.cluster</a>
+</li>
+        <li><a href="api_reference/cofe/space.constants.html#module-smol.cofe.space.constants">smol.cofe.space.constants</a>
+</li>
+        <li><a href="api_reference/cofe/space.domain.html#module-smol.cofe.space.domain">smol.cofe.space.domain</a>
+</li>
+        <li><a href="api_reference/cofe/space.orbit.html#module-smol.cofe.space.orbit">smol.cofe.space.orbit</a>
+</li>
+        <li><a href="api_reference/cofe/wrangling.select.html#module-smol.cofe.wrangling.select">smol.cofe.wrangling.select</a>
+</li>
+        <li><a href="api_reference/cofe/wrangling.tools.html#module-smol.cofe.wrangling.tools">smol.cofe.wrangling.tools</a>
+</li>
+        <li><a href="api_reference/cofe/wrangling.sw.html#module-smol.cofe.wrangling.wrangler">smol.cofe.wrangling.wrangler</a>
+</li>
+        <li><a href="api_reference/constants.html#module-smol.constants">smol.constants</a>
+</li>
+        <li><a href="api_reference/exceptions.html#module-smol.exceptions">smol.exceptions</a>
+</li>
+        <li><a href="api_reference/io.html#module-smol.io">smol.io</a>
+</li>
+        <li><a href="api_reference/moca/ensembles.base.html#module-smol.moca.ensemble.base">smol.moca.ensemble.base</a>
+</li>
+        <li><a href="api_reference/moca/ensembles.canonical.html#module-smol.moca.ensemble.canonical">smol.moca.ensemble.canonical</a>
+</li>
+        <li><a href="api_reference/moca/ensembles.semigrand.html#module-smol.moca.ensemble.semigrand">smol.moca.ensemble.semigrand</a>
+</li>
+        <li><a href="api_reference/moca/processors.base.html#module-smol.moca.processor.base">smol.moca.processor.base</a>
+</li>
+        <li><a href="api_reference/moca/processors.composite.html#module-smol.moca.processor.composite">smol.moca.processor.composite</a>
+</li>
+        <li><a href="api_reference/moca/processors.ewald.html#module-smol.moca.processor.ewald">smol.moca.processor.ewald</a>
+</li>
+        <li><a href="api_reference/moca/processors.expansion.html#module-smol.moca.processor.expansion">smol.moca.processor.expansion</a>
+</li>
+        <li><a href="api_reference/moca/sampler.bias.html#module-smol.moca.sampler.bias">smol.moca.sampler.bias</a>
+</li>
+        <li><a href="api_reference/moca/sampler.kernel.html#module-smol.moca.sampler.kernel">smol.moca.sampler.kernel</a>
+</li>
+        <li><a href="api_reference/moca/sampler.mcusher.html#module-smol.moca.sampler.mcusher">smol.moca.sampler.mcusher</a>
+</li>
+        <li><a href="api_reference/moca/sublattice.html#module-smol.moca.sublattice">smol.moca.sublattice</a>
+</li>
+        <li><a href="api_reference/utils.html#module-smol.utils">smol.utils</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.RegressionData.module">module (RegressionData attribute)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.RegressionData.module">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.RegressionData.module">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.multiplicity">multiplicity (Orbit property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.multiplicity">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.multiplicity">[2]</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.StepTrace.names">names (StepTrace property)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.StepTrace.names">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.Trace.names">(Trace property)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.Trace.names">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.canonical.CanonicalEnsemble.natural_parameters">natural_parameters (CanonicalEnsemble property)</a>, <a href="api_reference/autogen/moca.html#moca.CanonicalEnsemble.natural_parameters">[1]</a>, <a href="api_reference/moca/ensembles.canonical.html#smol.moca.ensemble.canonical.CanonicalEnsemble.natural_parameters">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.natural_parameters">(Ensemble property)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.natural_parameters">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.natural_parameters">(SampleContainer attribute)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.natural_parameters">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.natural_parameters">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.natural_parameters">[3]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.natural_parameters">(SemiGrandEnsemble property)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.natural_parameters">[1]</a>, <a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble.natural_parameters">[2]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/exceptions.html#smol.exceptions.NotFittedError">NotFittedError</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.num_clusters">num_clusters (ClusterSubspace attribute)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.num_clusters">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.num_clusters">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.ClusterExpansionProcessor.num_corr_functions">num_corr_functions (ClusterExpansionProcessor attribute)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.ClusterExpansionProcessor.num_corr_functions">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.expansion.ClusterExpansionProcessor.num_corr_functions">[2]</a>, <a href="api_reference/moca/processors.expansion.html#smol.moca.processor.expansion.ClusterExpansionProcessor.num_corr_functions">[3]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.num_corr_functions">(ClusterSubspace attribute)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.num_corr_functions">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.num_corr_functions">[2]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.num_energy_coefs">num_energy_coefs (Ensemble attribute)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.num_energy_coefs">[1]</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.num_features">num_features (StructureWrangler property)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.num_features">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.num_features">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.num_functions_per_orbit">num_functions_per_orbit (ClusterSubspace property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.num_functions_per_orbit">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.num_functions_per_orbit">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.num_orbits">num_orbits (ClusterSubspace attribute)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.num_orbits">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.num_orbits">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.num_prims_from_matrix">num_prims_from_matrix() (ClusterSubspace static method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.num_prims_from_matrix">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.num_prims_from_matrix">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.num_samples">num_samples (SampleContainer property)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.num_samples">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.num_samples">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.num_samples">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.num_sites">num_sites (Ensemble property)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.num_sites">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.num_sites">(Processor property)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.num_sites">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.num_sites">(SampleContainer attribute)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.num_sites">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.num_sites">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.num_sites">[3]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.num_structures">num_structures (StructureWrangler property)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.num_structures">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.num_structures">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.NumpyPolyIterator">NumpyPolyIterator (class in cofe.space.basis)</a>
+
+      <ul>
+        <li><a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.NumpyPolyIterator">(class in smol.cofe.space.basis)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.occupancy_from_structure">occupancy_from_structure() (ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.occupancy_from_structure">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.occupancy_from_structure">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.occupancy_from_structure">(Processor method)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.occupancy_from_structure">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.occupancy_strings">occupancy_strings (StructureWrangler property)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.occupancy_strings">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.occupancy_strings">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit">Orbit (class in cofe.space)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit">(class in cofe.space.orbit)</a>
+</li>
+        <li><a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit">(class in smol.cofe.space.orbit)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.orbit_hierarchy">orbit_hierarchy() (ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.orbit_hierarchy">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.orbit_hierarchy">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.orbit_multiplicities">orbit_multiplicities (ClusterSubspace property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.orbit_multiplicities">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.orbit_multiplicities">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.orbits">orbits (ClusterSubspace property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.orbits">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.orbits">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.orbits_by_size">orbits_by_size (ClusterSubspace property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.orbits_by_size">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_size">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.orbits_from_cutoffs">orbits_from_cutoffs() (ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.orbits_from_cutoffs">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.orbits_from_cutoffs">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.StandardBasis.orthonormalization_array">orthonormalization_array (StandardBasis property)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.StandardBasis.orthonormalization_array">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.StandardBasis.orthonormalize">orthonormalize() (StandardBasis method)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.StandardBasis.orthonormalize">[1]</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.html#cofe.RegressionData.parameters">parameters (RegressionData attribute)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.RegressionData.parameters">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.RegressionData.parameters">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.PolynomialIterator">PolynomialIterator (class in cofe.space.basis)</a>
+
+      <ul>
+        <li><a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.PolynomialIterator">(class in smol.cofe.space.basis)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.ChebyshevIterator.polyval">polyval (ChebyshevIterator property)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.ChebyshevIterator.polyval">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.LegendreIterator.polyval">(LegendreIterator property)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.LegendreIterator.polyval">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.NumpyPolyIterator.polyval">(NumpyPolyIterator property)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.NumpyPolyIterator.polyval">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.PolynomialIterator.polyval">(PolynomialIterator property)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.PolynomialIterator.polyval">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.PottsSubspace">PottsSubspace (class in cofe)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.PottsSubspace">(class in cofe.space.clusterspace)</a>
+</li>
+        <li><a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace">(class in smol.cofe.space.clusterspace)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterExpansion.predict">predict() (ClusterExpansion method)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.ClusterExpansion.predict">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.predict">[2]</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.process_entry">process_entry() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.process_entry">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.process_entry">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor">Processor (class in moca.processor.base)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor">(class in smol.moca.processor.base)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.processor">processor (Ensemble property)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.processor">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.CompositeProcessor.processors">processors (CompositeProcessor property)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.CompositeProcessor.processors">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.composite.CompositeProcessor.processors">[2]</a>, <a href="api_reference/moca/processors.composite.html#smol.moca.processor.composite.CompositeProcessor.processors">[3]</a>
+</li>
+      <li><a href="api_reference/utils.html#smol.utils.progress_bar">progress_bar() (in module smol.utils)</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.RegressionData.property_vector">property_vector (RegressionData attribute)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.RegressionData.property_vector">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.RegressionData.property_vector">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.Flip.propose_step">propose_step() (Flip method)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.Flip.propose_step">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.MCUsher.propose_step">(MCUsher method)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.MCUsher.propose_step">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.Swap.propose_step">(Swap method)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.Swap.propose_step">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterExpansion.prune">prune() (ClusterExpansion method)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.ClusterExpansion.prune">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.prune">[2]</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.radius">radius (Cluster property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.radius">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.radius">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.refine_structure">refine_structure() (ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.refine_structure">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.refine_structure">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.refined_structures">refined_structures (StructureWrangler property)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.refined_structures">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.refined_structures">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.RegressionData">RegressionData (class in cofe)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.html#cofe.expansion.RegressionData">(class in cofe.expansion)</a>
+</li>
+        <li><a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.RegressionData">(class in smol.cofe.expansion)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.remove_all_data">remove_all_data() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.remove_all_data">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.remove_all_data">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.remove_bit_combo">remove_bit_combo() (Orbit method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.remove_bit_combo">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.remove_bit_combo">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.remove_bit_combos_by_inds">remove_bit_combos_by_inds() (Orbit method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.remove_bit_combos_by_inds">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.remove_bit_combos_by_inds">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.remove_corr_functions">remove_corr_functions() (ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.remove_corr_functions">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.remove_corr_functions">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.remove_entry">remove_entry() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.remove_entry">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.remove_entry">[2]</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.remove_orbits">remove_orbits() (ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.remove_orbits">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.remove_orbits">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.remove_properties">remove_properties() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.remove_properties">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.remove_properties">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.reset_bases">reset_bases() (Orbit method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.reset_bases">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.reset_bases">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.reset_restricted_sites">reset_restricted_sites() (Ensemble method)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.reset_restricted_sites">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.html#moca.sublattice.Sublattice.reset_restricted_sites">(Sublattice method)</a>, <a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice.reset_restricted_sites">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.restrict_sites">restrict_sites() (Ensemble method)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.restrict_sites">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.html#moca.sublattice.Sublattice.restrict_sites">(Sublattice method)</a>, <a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice.restrict_sites">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.restricted_sites">restricted_sites (Ensemble property)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.restricted_sites">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.html#moca.sublattice.Sublattice.restricted_sites">(Sublattice property)</a>, <a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice.restricted_sites">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.StandardBasis.rotate">rotate() (StandardBasis method)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.StandardBasis.rotate">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.rotation_array">rotation_array (Orbit property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.rotation_array">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.rotation_array">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.Sampler.run">run() (Sampler method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.sampler.Sampler.run">[1]</a>, <a href="api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.run">[2]</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/moca.html#moca.Sampler.sample">sample() (Sampler method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.sampler.Sampler.sample">[1]</a>, <a href="api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.sample">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer">SampleContainer (class in moca)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer">(class in moca.sampler)</a>
+</li>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer">(class in moca.sampler.container)</a>
+</li>
+        <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer">(class in smol.moca.sampler)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.html#moca.Sampler">Sampler (class in moca)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.sampler.Sampler">(class in moca.sampler.sampler)</a>
+</li>
+        <li><a href="api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler">(class in smol.moca.sampler.sampler)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.html#moca.Sampler.samples">samples (Sampler property)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.sampler.Sampler.samples">[1]</a>, <a href="api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.samples">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.sampling_efficiency">sampling_efficiency() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.sampling_efficiency">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.sampling_efficiency">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.sampling_efficiency">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.save_sampled_trace">save_sampled_trace() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.save_sampled_trace">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.save_sampled_trace">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.save_sampled_trace">[3]</a>
+</li>
+      <li><a href="api_reference/io.html#smol.io.save_work">save_work() (in module smol.io)</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.scmatrix_from_structure">scmatrix_from_structure() (ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.scmatrix_from_structure">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.scmatrix_from_structure">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.Sampler.seed">seed (Sampler property)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.sampler.Sampler.seed">[1]</a>, <a href="api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.seed">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble">SemiGrandEnsemble (class in moca)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble">(class in moca.ensemble.semigrand)</a>
+</li>
+        <li><a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble">(class in smol.moca.ensemble.semigrand)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.MCKernel.set_aux_state">set_aux_state() (MCKernel method)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.MCKernel.set_aux_state">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.MCUsher.set_aux_state">(MCUsher method)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.MCUsher.set_aux_state">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.shape">shape (SampleContainer property)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.shape">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.shape">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.shape">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.sin_f">sin_f() (in module cofe.space.basis)</a>
+
+      <ul>
+        <li><a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.sin_f">(in module smol.cofe.space.basis)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.MCKernel.single_step">single_step() (MCKernel method)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.MCKernel.single_step">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.Metropolis.single_step">(Metropolis method)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.Metropolis.single_step">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.UniformlyRandom.single_step">(UniformlyRandom method)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.UniformlyRandom.single_step">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.sinusoid_factory">sinusoid_factory() (in module cofe.space.basis)</a>
+
+      <ul>
+        <li><a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.sinusoid_factory">(in module smol.cofe.space.basis)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.SinusoidIterator">SinusoidIterator (class in cofe.space.basis)</a>
+
+      <ul>
+        <li><a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.SinusoidIterator">(class in smol.cofe.space.basis)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.site_bases">site_bases (Orbit attribute)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.site_bases">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.site_bases">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.DiscreteBasis.site_space">site_space (DiscreteBasis property)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.DiscreteBasis.site_space">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.html#id2">(Sublattice attribute)</a>, <a href="api_reference/autogen/moca.html#moca.sublattice.Sublattice.site_space">[1]</a>, <a href="api_reference/moca/sublattice.html#id2">[2]</a>, <a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice.site_space">[3]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.site_spaces">site_spaces (Orbit property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.site_spaces">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.site_spaces">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.sites">sites (Cluster property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.sites">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.sites">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.html#id3">(Sublattice attribute)</a>, <a href="api_reference/autogen/moca.html#moca.sublattice.Sublattice.sites">[1]</a>, <a href="api_reference/moca/sublattice.html#id3">[2]</a>, <a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice.sites">[3]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.domain.SiteSpace">SiteSpace (class in cofe.space.domain)</a>
+
+      <ul>
+        <li><a href="api_reference/cofe/space.domain.html#smol.cofe.space.domain.SiteSpace">(class in smol.cofe.space.domain)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.size">size (Processor attribute)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.size">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.sizes">sizes (StructureWrangler property)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.sizes">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.sizes">[2]</a>
+</li>
+      <li>
+    smol.cofe.extern.ewald
+
+      <ul>
+        <li><a href="api_reference/cofe/extern.ewald.html#module-smol.cofe.extern.ewald">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.cofe.space.basis
+
+      <ul>
+        <li><a href="api_reference/cofe/space.basis.html#module-smol.cofe.space.basis">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.cofe.space.cluster
+
+      <ul>
+        <li><a href="api_reference/cofe/space.cluster.html#module-smol.cofe.space.cluster">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.cofe.space.constants
+
+      <ul>
+        <li><a href="api_reference/cofe/space.constants.html#module-smol.cofe.space.constants">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.cofe.space.domain
+
+      <ul>
+        <li><a href="api_reference/cofe/space.domain.html#module-smol.cofe.space.domain">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.cofe.space.orbit
+
+      <ul>
+        <li><a href="api_reference/cofe/space.orbit.html#module-smol.cofe.space.orbit">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.cofe.wrangling.select
+
+      <ul>
+        <li><a href="api_reference/cofe/wrangling.select.html#module-smol.cofe.wrangling.select">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.cofe.wrangling.tools
+
+      <ul>
+        <li><a href="api_reference/cofe/wrangling.tools.html#module-smol.cofe.wrangling.tools">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.cofe.wrangling.wrangler
+
+      <ul>
+        <li><a href="api_reference/cofe/wrangling.sw.html#module-smol.cofe.wrangling.wrangler">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.constants
+
+      <ul>
+        <li><a href="api_reference/constants.html#module-smol.constants">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.exceptions
+
+      <ul>
+        <li><a href="api_reference/exceptions.html#module-smol.exceptions">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.io
+
+      <ul>
+        <li><a href="api_reference/io.html#module-smol.io">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    smol.moca.ensemble.base
+
+      <ul>
+        <li><a href="api_reference/moca/ensembles.base.html#module-smol.moca.ensemble.base">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.moca.ensemble.canonical
+
+      <ul>
+        <li><a href="api_reference/moca/ensembles.canonical.html#module-smol.moca.ensemble.canonical">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.moca.ensemble.semigrand
+
+      <ul>
+        <li><a href="api_reference/moca/ensembles.semigrand.html#module-smol.moca.ensemble.semigrand">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.moca.processor.base
+
+      <ul>
+        <li><a href="api_reference/moca/processors.base.html#module-smol.moca.processor.base">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.moca.processor.composite
+
+      <ul>
+        <li><a href="api_reference/moca/processors.composite.html#module-smol.moca.processor.composite">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.moca.processor.ewald
+
+      <ul>
+        <li><a href="api_reference/moca/processors.ewald.html#module-smol.moca.processor.ewald">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.moca.processor.expansion
+
+      <ul>
+        <li><a href="api_reference/moca/processors.expansion.html#module-smol.moca.processor.expansion">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.moca.sampler.bias
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.bias.html#module-smol.moca.sampler.bias">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.moca.sampler.kernel
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.kernel.html#module-smol.moca.sampler.kernel">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.moca.sampler.mcusher
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.mcusher.html#module-smol.moca.sampler.mcusher">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.moca.sublattice
+
+      <ul>
+        <li><a href="api_reference/moca/sublattice.html#module-smol.moca.sublattice">module</a>
+</li>
+      </ul></li>
+      <li>
+    smol.utils
+
+      <ul>
+        <li><a href="api_reference/utils.html#module-smol.utils">module</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.DiscreteBasis.species">species (DiscreteBasis property)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.DiscreteBasis.species">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.species">(Ensemble property)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.species">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.sublattice.Sublattice.species">(Sublattice property)</a>, <a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice.species">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.html#moca.sublattice.Sublattice.split_by_species">split_by_species() (Sublattice method)</a>, <a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice.split_by_species">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.split_sublattice_by_species">split_sublattice_by_species() (Ensemble method)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.split_sublattice_by_species">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.split_sublattice_by_species">(SemiGrandEnsemble method)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.split_sublattice_by_species">[1]</a>, <a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble.split_sublattice_by_species">[2]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.StandardBasis">StandardBasis (class in cofe.space.basis)</a>
+
+      <ul>
+        <li><a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.StandardBasis">(class in smol.cofe.space.basis)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.StepTrace">StepTrace (class in moca.sampler.kernel)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.StepTrace">(class in smol.moca.sampler.kernel)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterExpansion.structure">structure (ClusterExpansion property)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.ClusterExpansion.structure">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.structure">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.structure">(ClusterSubspace property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.structure">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.structure">[2]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.structure">(Processor property)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.structure">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.structure_from_occupancy">structure_from_occupancy() (Processor method)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.structure_from_occupancy">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.structure_site_mapping">structure_site_mapping() (ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.structure_site_mapping">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.structure_site_mapping">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.structure_site_mappings">structure_site_mappings (StructureWrangler property)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.structure_site_mappings">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.structure_site_mappings">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.structure_symops">structure_symops (Orbit attribute)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.structure_symops">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.structure_symops">[2]</a>
+</li>
+      <li><a href="api_reference/exceptions.html#smol.exceptions.StructureMatchError">StructureMatchError</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.structures">structures (StructureWrangler property)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.structures">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.structures">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler">StructureWrangler (class in cofe)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler">(class in cofe.wrangling.wrangler)</a>
+</li>
+        <li><a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler">(class in smol.cofe.wrangling.wrangler)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.sub_orbit_mappings">sub_orbit_mappings() (Orbit method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.sub_orbit_mappings">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.sub_orbit_mappings">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.sublattice.Sublattice">Sublattice (class in moca.sublattice)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice">(class in smol.moca.sublattice)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.sublattice_composition_variance">sublattice_composition_variance() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.sublattice_composition_variance">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.sublattice_composition_variance">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.sublattice_composition_variance">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.MCUsher.sublattice_probabilities">sublattice_probabilities (MCUsher property)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.MCUsher.sublattice_probabilities">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.sublattices">sublattices (Ensemble property)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.sublattices">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.MCBias.sublattices">(MCBias attribute)</a>, <a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.MCBias.sublattices">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.sublattices">(SampleContainer attribute)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.sublattices">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.sublattices">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.sublattices">[3]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.supercell_matrices">supercell_matrices (StructureWrangler property)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.supercell_matrices">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.supercell_matrices">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.supercell_matrix">supercell_matrix (Processor property)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.supercell_matrix">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.supercell_orbit_mappings">supercell_orbit_mappings() (ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.supercell_orbit_mappings">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.supercell_orbit_mappings">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.Swap">Swap (class in moca.sampler.mcusher)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.Swap">(class in smol.moca.sampler.mcusher)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/exceptions.html#smol.exceptions.SymmetryError">SymmetryError</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.symops">symops (ClusterSubspace attribute)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.symops">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.symops">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.system_size">system_size (Ensemble property)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.system_size">[1]</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.ThermalKernel.temperature">temperature (ThermalKernel property)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.ThermalKernel.temperature">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.ThermalKernel">ThermalKernel (class in moca.sampler.kernel)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.ThermalKernel">(class in smol.moca.sampler.kernel)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.thermo_boundaries">thermo_boundaries (Ensemble attribute)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.thermo_boundaries">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.thermo_boundaries">(SemiGrandEnsemble attribute)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.thermo_boundaries">[1]</a>, <a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble.thermo_boundaries">[2]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.to">to() (Cluster method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.to">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.to">[2]</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.to_hdf5">to_hdf5() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.to_hdf5">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.to_hdf5">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.to_hdf5">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.total_mc_steps">total_mc_steps (SampleContainer property)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.total_mc_steps">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.total_mc_steps">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.total_mc_steps">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.Trace">Trace (class in moca.sampler.kernel)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.Trace">(class in smol.moca.sampler.kernel)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.trace_value_variance">trace_value_variance() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.trace_value_variance">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.trace_value_variance">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.trace_value_variance">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.traced_values">traced_values (SampleContainer property)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.traced_values">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.traced_values">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.traced_values">[3]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.transform_site_bases">transform_site_bases() (Orbit method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.transform_site_bases">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.transform_site_bases">[2]</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.UniformlyRandom">UniformlyRandom (class in moca.sampler.kernel)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.UniformlyRandom">(class in smol.moca.sampler.kernel)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.unique_corr_vector_indices">unique_corr_vector_indices() (in module cofe.wrangling)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.tools.unique_corr_vector_indices">(in module cofe.wrangling.tools)</a>
+</li>
+        <li><a href="api_reference/cofe/wrangling.tools.html#smol.cofe.wrangling.tools.unique_corr_vector_indices">(in module smol.cofe.wrangling.tools)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.unique_site_spaces">unique_site_spaces (Processor attribute)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.unique_site_spaces">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.MCUsher.update_aux_state">update_aux_state() (MCUsher method)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.MCUsher.update_aux_state">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.update_features">update_features() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.update_features">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.update_features">[2]</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Vacancy">Vacancy (class in cofe.space)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.domain.Vacancy">(class in cofe.space.domain)</a>
+</li>
+        <li><a href="api_reference/cofe/space.domain.html#smol.cofe.space.domain.Vacancy">(class in smol.cofe.space.domain)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.MCKernel.valid_bias">valid_bias (MCKernel attribute)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.MCKernel.valid_bias">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.Metropolis.valid_bias">(Metropolis attribute)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.Metropolis.valid_bias">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.UniformlyRandom.valid_bias">(UniformlyRandom attribute)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.UniformlyRandom.valid_bias">[1]</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.canonical.CanonicalEnsemble.valid_mcmc_steps">valid_mcmc_steps (CanonicalEnsemble attribute)</a>, <a href="api_reference/autogen/moca.html#moca.CanonicalEnsemble.valid_mcmc_steps">[1]</a>, <a href="api_reference/moca/ensembles.canonical.html#smol.moca.ensemble.canonical.CanonicalEnsemble.valid_mcmc_steps">[2]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.ensemble.html#id0">(Ensemble attribute)</a>, <a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.valid_mcmc_steps">[1]</a>, <a href="api_reference/moca/ensembles.base.html#id0">[2]</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.valid_mcmc_steps">[3]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.valid_mcmc_steps">(SemiGrandEnsemble attribute)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.valid_mcmc_steps">[1]</a>, <a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble.valid_mcmc_steps">[2]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.MCKernel.valid_mcushers">valid_mcushers (MCKernel attribute)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.MCKernel.valid_mcushers">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.Metropolis.valid_mcushers">(Metropolis attribute)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.Metropolis.valid_mcushers">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.UniformlyRandom.valid_mcushers">(UniformlyRandom attribute)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.UniformlyRandom.valid_mcushers">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/cofe.extern.html#cofe.extern.EwaldTerm.value_from_occupancy">value_from_occupancy() (EwaldTerm method)</a>, <a href="api_reference/autogen/cofe.extern.html#cofe.extern.ewald.EwaldTerm.value_from_occupancy">[1]</a>, <a href="api_reference/cofe/extern.ewald.html#smol.cofe.extern.ewald.EwaldTerm.value_from_occupancy">[2]</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.weights_energy_above_composition">weights_energy_above_composition() (in module cofe.wrangling)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.tools.weights_energy_above_composition">(in module cofe.wrangling.tools)</a>
+</li>
+        <li><a href="api_reference/cofe/wrangling.tools.html#smol.cofe.wrangling.tools.weights_energy_above_composition">(in module smol.cofe.wrangling.tools)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.weights_energy_above_hull">weights_energy_above_hull() (in module cofe.wrangling)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.tools.weights_energy_above_hull">(in module cofe.wrangling.tools)</a>
+</li>
+        <li><a href="api_reference/cofe/wrangling.tools.html#smol.cofe.wrangling.tools.weights_energy_above_hull">(in module smol.cofe.wrangling.tools)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+    <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2022-2022, Ceder Group.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>

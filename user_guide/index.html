@@ -1,0 +1,562 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>User Guide &#8212; smol 0.0.1 documentation</title>
+    
+    <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  
+    
+    <link rel="stylesheet"
+      href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+    
+      
+  
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/pydata-sphinx-theme.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/smol.css" />
+    
+    <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API Reference" href="../api_reference/index.html" />
+    <link rel="prev" title="Getting Started" href="../getting_started.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+
+<a class="navbar-brand" href="../index.html">
+  <img src="../_static/logo.png" class="logo" alt="logo">
+</a>
+
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../getting_started.html">
+  Getting Started
+ </a>
+</li>
+
+<li class="toctree-l1 current active nav-item">
+ <a class="current reference internal nav-link" href="#">
+  User Guide
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../api_reference/index.html">
+  API Reference
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../citing.html">
+  Citing
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../developer_guide/index.html">
+  Developing
+ </a>
+</li>
+
+    
+    <li class="nav-item">
+        <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">Changes<i class="fas fa-external-link-alt"></i></a>
+    </li>
+    
+    <li class="nav-item">
+        <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">Issues<i class="fas fa-external-link-alt"></i></a>
+    </li>
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <div class="dropdown" id="version_switcher">
+    <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
+        0.0.1  <!-- this text may get changed later by javascript -->
+        <span class="caret"></span>
+    </button>
+    <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+</div>
+
+<!-- NOTE: this JS must live here (not in our global JS file) because it relies
+     on being processed by Jinja before it is run (specifically for replacing
+     variables user_guide/index and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1'}.
+-->
+
+<script type="text/javascript">
+// Construct the target URL from the JSON components
+function buildURL(entry) {
+    var template = "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/";  // supplied by jinja
+    template = template.replace("{version}", entry.version);
+    return template;
+}
+
+// Check if corresponding page path exists in other version of docs
+// and, if so, go there instead of the homepage of the other docs version
+function checkPageExistsAndRedirect(event) {
+    const currentFilePath = "user_guide/index.html",
+          tryUrl = event.target.getAttribute("href");
+    let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
+    $.ajax({
+        type: 'HEAD',
+        url: tryUrl,
+        // if the page exists, go there
+        success: function() {
+            location.href = tryUrl;
+        }
+    }).fail(function() {
+        location.href = otherDocsHomepage;
+    });
+    // this prevents the browser from following the href of the clicked node
+    // (which is fine because this function takes care of redirecting)
+    return false;
+}
+
+// Populate the version switcher from the JSON config file
+(function () {
+    $.getJSON("https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json", function(data, textStatus, jqXHR) {
+        const currentFilePath = "user_guide/index.html";
+        // create links to the corresponding page in the other docs versions
+        $.each(data, function(index, entry) {
+            // if no custom name specified (e.g., "latest"), use version string
+            if (!("name" in entry)) {
+                entry.name = entry.version;
+            }
+            // create the node
+            const node = document.createElement("a");
+            node.setAttribute("class", "list-group-item list-group-item-action py-1");
+            node.textContent = `${entry.name}`;
+            // get the base URL for that doc version, add the current page's
+            // path to it, and set as `href`
+            entry.url = buildURL(entry);
+            node.setAttribute("href", `${entry.url}${currentFilePath}`);
+            // on click, AJAX calls will check if the linked page exists before
+            // trying to redirect, and if not, will redirect to the homepage
+            // for that version of the docs.
+            node.onclick = checkPageExistsAndRedirect;
+            $("#version_switcher_menu").append(node);
+            // replace dropdown button text with the preferred display name of
+            // this version, rather than using sphinx's 0.0.1 variable.
+            // also highlight the dropdown entry for the currently-viewed
+            // version's entry
+            if (entry.version == "0.0.1") {
+                node.classList.add("active");
+                $("#version_switcher_button").text(entry.name);
+            }
+        });
+    });
+})();
+</script>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/CederGroupHub/smol" rel="noopener" target="_blank" title="GitHub"><span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    
+  </div>
+</nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   User Guide
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol-cofe">
+   smol.cofe
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#cluster-subspace">
+     Cluster subspace
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#structure-wrangler">
+     Structure wrangler
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#cluster-expansion">
+     Cluster expansion
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol-moca">
+   smol.moca
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#processors">
+     Processors
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ensembles">
+     Ensembles
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#sampler">
+     Sampler
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#samplecontainer">
+     SampleContainer
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+
+<div class="tocsection editthispage">
+    <a href="https://github.com/CederGroupHub/smol/edit/master/docs/user_guide/index.rst">
+        <i class="fas fa-pencil-alt"></i> Edit this page
+    </a>
+</div>
+
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <section id="user-guide">
+<h1>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h1>
+<p><strong>smol</strong> implements functionality and extensions of CE-MC methodology. It includes tools
+to define, generate and fit a cluster expansion (or more generally an applied lattice
+model). Additionally, it includes tools to run Monte Carlo simulations to sample
+thermodynamic properties based on a fitted lattice model. The package is organized in
+two main submodules:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#smol-cofe-ug"><span class="std std-ref">smol.cofe</span></a> (Cluster Orbit Function Expansions) includes classes and
+functions to define, train, and test cluster expansions.</p></li>
+<li><p><a class="reference internal" href="#smol-moca-ug"><span class="std std-ref">smol.moca</span></a> (Monte Carlo) includes classes and functions to run
+Markov Chain Monte Carlo (MCMC) sampling based on a cluster expansion
+Hamiltonian (and a few other Hamiltonian models).</p></li>
+</ul>
+<p>Below is a general description of the core classes in each submodule, to help understand
+the design, usage and capabilities of <strong>smol</strong>. You can also refer to the <a class="reference internal" href="../api_reference/index.html#api-ref"><span class="std std-ref">API Reference</span></a>
+for full documentation of all classes and functions in the package.</p>
+<hr class="docutils" />
+</section>
+<section id="smol-cofe">
+<span id="smol-cofe-ug"></span><h1>smol.cofe<a class="headerlink" href="#smol-cofe" title="Permalink to this headline">¶</a></h1>
+<p>This module includes the necessary classes to define, train, and test cluster
+expansions. A cluster expansion is essentially a way to fit a function of
+configurational degrees of freedom using a specific set of basis functions that
+allow a sparse representation of that function (which resides in a high
+dimensional function space). For a more thorough treatment of the formalism of
+cluster expansions refer to this document or any of following references
+[<a class="reference external" href="https://doi.org/10.1103/PhysRevB.48.14013">Sanchez et al., 1993</a>,
+<a class="reference external" href="https://doi.org/10.1103/PhysRevB.51.11257">Ceder et al., 1995</a>,
+<a class="reference external" href="https://doi.org/10.1016/j.calphad.2008.12.005">van de Walle et al., 2009</a>].</p>
+<p>The core classes are:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#cluster-subspace-ug"><span class="std std-ref">Cluster subspace</span></a></p></li>
+<li><p><a class="reference internal" href="#structure-wrangler-ug"><span class="std std-ref">Structure wrangler</span></a></p></li>
+<li><p><a class="reference internal" href="#cluster-expansion-ug"><span class="std std-ref">Cluster expansion</span></a></p></li>
+</ul>
+<section id="cluster-subspace">
+<span id="cluster-subspace-ug"></span><h2>Cluster subspace<a class="headerlink" href="#cluster-subspace" title="Permalink to this headline">¶</a></h2>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code> contains the finite set of orbits and orbit basis
+functions to be included in the cluster expansion.
+In general, a cluster expansion is created by first generating a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code>, which uses a provided primitive cell of the
+pymatgen <a class="reference external" href="https://pymatgen.org/pymatgen.core.structure.html">Structure</a>
+class to build the orbits of the cluster expansion. Because orbits generally
+decrease in importance with length, it is recommended to use the convenience
+method <code class="xref py py-meth docutils literal notranslate"><span class="pre">from_cutoffs()</span></code> to specify the cutoffs of different size
+orbits (pairs, triplets, quadruplets, etc.) In addition to specifying the
+type of site basis functions and their orthonormality,
+<code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code> also has capabilities for matching fitting structures
+and determining site mappings to compute correlation vectors. A variety of options
+for commonly used site basis sets are readily available, including:</p>
+<ul class="simple">
+<li><p>Polynomial [<a class="reference external" href="https://doi.org/10.1103/PhysRevB.48.14013">Sanchez et al., 1993</a>]</p></li>
+<li><p>Sinusoid [<a class="reference external" href="https://doi.org/10.1016/j.calphad.2008.12.005">van de Walle et al., 2009</a>]</p></li>
+<li><p>Species indicator (aka lattice gas) [<a class="reference external" href="https://doi.org/10.1007/s11669-015-0427-x">Zhang et al. 2015</a>]</p></li>
+</ul>
+<p>Additionally, the subclass <code class="xref py py-class docutils literal notranslate"><span class="pre">PottsSubspace</span></code> implements the terms to build a
+redundant (frame) expansion using site indicator functions
+[<a class="reference external" href="https://doi.org/10.1103/PhysRevB.104.224203">Barroso-Luque et al., 2021</a>]</p>
+<p>Full documentation of the class is available here, <a class="reference internal" href="../api_reference/cofe/clusterspace.html#cluster-space"><span class="std std-ref">Cluster Spaces</span></a>.</p>
+</section>
+<section id="structure-wrangler">
+<span id="structure-wrangler-ug"></span><h2>Structure wrangler<a class="headerlink" href="#structure-wrangler" title="Permalink to this headline">¶</a></h2>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">StructureWrangler</span></code> handles input data structures and properties
+to fit to the cluster expansion.
+Once a set of structures and their relevant properties (for example, their
+volume or energies) have been obtained (e.g., through first-principles
+calculations), <code class="xref py py-class docutils literal notranslate"><span class="pre">StructureWrangler</span></code> can be used to process this data.
+Specifically, based on a given <code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code>,
+<code class="xref py py-class docutils literal notranslate"><span class="pre">StructureWrangler</span></code> can to compute correlation vectors and convert
+the input structure data into a feature matrix for fitting to the property
+vector. Additional methods are available to help process the input data,
+including methods for checking, preparing, and filtering the data.</p>
+<p>Full documentation of the class is available here: <a class="reference internal" href="../api_reference/cofe/wrangling.sw.html#structure-wrangler"><span class="std std-ref">Structure Wrangler</span></a>.</p>
+</section>
+<section id="cluster-expansion">
+<span id="cluster-expansion-ug"></span><h2>Cluster expansion<a class="headerlink" href="#cluster-expansion" title="Permalink to this headline">¶</a></h2>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterExpansion</span></code> contains the fitted coefficents of the cluster
+expansion for predicting CE properties of new structures.
+Based on the feature matrix from the <code class="xref py py-class docutils literal notranslate"><span class="pre">StructureWrangler</span></code>, one can fit
+fit the data to the properties using any fitting method they like (e.g.,
+linear regression, regularized regression, etc). <code class="code docutils literal notranslate"><span class="pre">smol.cofe</span></code>
+contains wrapper class <code class="xref py py-class docutils literal notranslate"><span class="pre">RegressionData</span></code> to save important information from
+the regression method used (optionally including the feature matrix, target vector,
+regression class, and hyperparameters). Specifically a convenience constructure to
+extract information from regression methods in
+<a class="reference external" href="https://scikit-learn.org/stable/">sklearn</a> or those following their API is included.
+The fitted coefficients and</p>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code> objects are then given to <code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterExpansion</span></code>.
+The <code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterExpansion</span></code> object can be used to predict the properties
+of new structures but more importantly can be used along with the <a class="reference internal" href="#smol-moca-ug"><span class="std std-ref">smol.moca</span></a>
+classes for MC sampling.</p>
+<p>Full documentation of the class is available here: <a class="reference internal" href="../api_reference/cofe/clusterexpansion.html#cluster-expansion"><span class="std std-ref">ClusterExpansion</span></a>.</p>
+<hr class="docutils" />
+</section>
+</section>
+<section id="smol-moca">
+<span id="smol-moca-ug"></span><h1>smol.moca<a class="headerlink" href="#smol-moca" title="Permalink to this headline">¶</a></h1>
+<p>This module includes classes and functions to run Markov Chain Monte Carlo
+sampling of statistical mechanical ensembles represented by a cluster expansion
+Hamiltonian (there is also support to run MCMC with simple pair interaction
+models, such as Ewald electrostatic interactions). MCMC sampling is done for a
+specific supercell size. In theory the larger the supercell the better the
+results, but in practice there are many other nuances for picking the right
+supercell size that are beyond the scope of this documentation. Our general
+suggestion is to use the minimum supercell size that ensures convergence of
+the property of interest at equilibrium. Note that for extensive properties,
+the property of interest is usually the normalized property (e.g. energy per
+prim).</p>
+<p>The core classes are:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#processors-ug"><span class="std std-ref">Processors</span></a></p>
+<ul>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterExpansionProcessor</span></code></p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">EwaldProcessor</span></code></p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">CompositeProcessor</span></code></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#ensembles-ug"><span class="std std-ref">Ensembles</span></a></p>
+<ul>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">CanonicalEnsemle</span></code></p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">SemiGrandEnsemble</span></code></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#sampler-ug"><span class="std std-ref">Sampler</span></a></p></li>
+<li><p><a class="reference internal" href="#samplecontainer-ug"><span class="std std-ref">SampleContainer</span></a></p></li>
+</ul>
+<section id="processors">
+<span id="processors-ug"></span><h2>Processors<a class="headerlink" href="#processors" title="Permalink to this headline">¶</a></h2>
+<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">Processor</span></code> is used to optimally compute correlation vectors, energy,
+and differences in these from variations in site occupancies. Processors
+compute values only for a specific supercell specified by a given supercell
+matrix.</p>
+<p>Users will rarely need to directly instantiate a processor, and it is recommended
+to simply create an ensemble using the <code class="xref py py-meth docutils literal notranslate"><span class="pre">from_cluster_expansion()</span></code> which
+will automatically instantiate the appropriate processor. Then, accessing the
+processor can be done simply by the corresponding attribute (i.e.
+<code class="code docutils literal notranslate"><span class="pre">ensemble.processor</span></code>). Many methods and attributes of a processor are
+very useful for setting up and analysing MCMC sampling runs. For more advanced or
+specific use cases, users will need to instantiate the appropriate processor directly.</p>
+<p>Full documentation of the class and its subclasses available here: <a class="reference internal" href="../api_reference/moca/processors.html#processors"><span class="std std-ref">Processors</span></a>.</p>
+</section>
+<section id="ensembles">
+<span id="ensembles-ug"></span><h2>Ensembles<a class="headerlink" href="#ensembles" title="Permalink to this headline">¶</a></h2>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">Ensemble</span></code> classes represent the specific statistical mechanics ensemble
+by defining the relevant thermodynamic boundary conditions in order to compute
+the appropriate ensemble probability ratios. For example,
+<code class="xref py py-class docutils literal notranslate"><span class="pre">CanonicalEnsemble</span></code> is used for systems at constant temperature and
+constant composition, while <code class="xref py py-class docutils literal notranslate"><span class="pre">SemiGrandEnsemble</span></code> is used for systems at
+constant temperature and constant chemical potential. Ensembles also hold
+information of the underlying set of <code class="xref py py-class docutils literal notranslate"><span class="pre">Sublattice</span></code> for the configuration
+space to be sampled. Note that as implemented, an ensemble applies to any
+temperature, but the specific temperature to generate samples at is set in kernel used
+when sampling using a <code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code>.</p>
+<p>Full documentation of the class and its subclasses are available here: <a class="reference internal" href="../api_reference/moca/ensembles.html#ensembles"><span class="std std-ref">Ensembles</span></a>.</p>
+</section>
+<section id="sampler">
+<span id="sampler-ug"></span><h2>Sampler<a class="headerlink" href="#sampler" title="Permalink to this headline">¶</a></h2>
+<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code> takes care of running MCMC sampling for a given ensemble.
+The easiest way to create a sampler (which suffices for most use cases) is to
+use the <code class="xref py py-meth docutils literal notranslate"><span class="pre">from_ensemble()</span></code> class method, which is sufficient for most cases using
+only a Metropolis algorithm and simple state transitions. For more advanced use cases
+and elaborate MCMC sampling more knowledge of the underlying classes (especially
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Metropolis</span></code> which applies the <a class="reference external" href="https://doi.org/10.1093/biomet/57.1.97">Metropolis-Hastings algorithm</a> and
+<code class="xref py py-class docutils literal notranslate"><span class="pre">MCUsher</span></code> which proposes relevant flips) is necessary.</p>
+<p>Full documentation of the class is available here: <a class="reference internal" href="../api_reference/moca/sampler.sampler.html#sampler"><span class="std std-ref">Sampler</span></a>.</p>
+</section>
+<section id="samplecontainer">
+<span id="samplecontainer-ug"></span><h2>SampleContainer<a class="headerlink" href="#samplecontainer" title="Permalink to this headline">¶</a></h2>
+<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">SampleContainer</span></code> stores data from Monte Carlo sampling simulations,
+especially the occupancies and feature vectors. For lenghty MC simulations a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">SampleContainer</span></code> allows streaming directly to an
+<a class="reference external" href="https://www.hdfgroup.org/solutions/hdf5/">HDF5</a> file, and so minimize
+computer memory requirements. It also includes some minimal methods and properties
+useful to begin analysing the raw samples, including methods to obtain the
+mean/variance/minimum of energies, enthalpies, and composition.</p>
+<p>Full documentation of the class is available here: <a class="reference internal" href="../api_reference/moca/sampler.container.html#sample-container"><span class="std std-ref">Sample Container</span></a>.</p>
+</section>
+</section>
+
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="../getting_started.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Getting Started</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="../api_reference/index.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">API Reference</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+    <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2022-2022, Ceder Group.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>

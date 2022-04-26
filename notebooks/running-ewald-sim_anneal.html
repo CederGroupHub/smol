@@ -1,0 +1,788 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>&lt;no title&gt; &#8212; smol 0.0.1 documentation</title>
+    
+    <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  
+    
+    <link rel="stylesheet"
+      href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+    
+      
+  
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/pydata-sphinx-theme.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/smol.css" />
+    
+    <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+
+<a class="navbar-brand" href="../index.html">
+  <img src="../_static/logo.png" class="logo" alt="logo">
+</a>
+
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../getting_started.html">
+  Getting Started
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../user_guide/index.html">
+  User Guide
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../api_reference/index.html">
+  API Reference
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../citing.html">
+  Citing
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../developer_guide/index.html">
+  Developing
+ </a>
+</li>
+
+    
+    <li class="nav-item">
+        <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">Changes<i class="fas fa-external-link-alt"></i></a>
+    </li>
+    
+    <li class="nav-item">
+        <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">Issues<i class="fas fa-external-link-alt"></i></a>
+    </li>
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <div class="dropdown" id="version_switcher">
+    <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
+        0.0.1  <!-- this text may get changed later by javascript -->
+        <span class="caret"></span>
+    </button>
+    <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+</div>
+
+<!-- NOTE: this JS must live here (not in our global JS file) because it relies
+     on being processed by Jinja before it is run (specifically for replacing
+     variables notebooks/running-ewald-sim_anneal and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1'}.
+-->
+
+<script type="text/javascript">
+// Construct the target URL from the JSON components
+function buildURL(entry) {
+    var template = "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/";  // supplied by jinja
+    template = template.replace("{version}", entry.version);
+    return template;
+}
+
+// Check if corresponding page path exists in other version of docs
+// and, if so, go there instead of the homepage of the other docs version
+function checkPageExistsAndRedirect(event) {
+    const currentFilePath = "notebooks/running-ewald-sim_anneal.html",
+          tryUrl = event.target.getAttribute("href");
+    let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
+    $.ajax({
+        type: 'HEAD',
+        url: tryUrl,
+        // if the page exists, go there
+        success: function() {
+            location.href = tryUrl;
+        }
+    }).fail(function() {
+        location.href = otherDocsHomepage;
+    });
+    // this prevents the browser from following the href of the clicked node
+    // (which is fine because this function takes care of redirecting)
+    return false;
+}
+
+// Populate the version switcher from the JSON config file
+(function () {
+    $.getJSON("https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json", function(data, textStatus, jqXHR) {
+        const currentFilePath = "notebooks/running-ewald-sim_anneal.html";
+        // create links to the corresponding page in the other docs versions
+        $.each(data, function(index, entry) {
+            // if no custom name specified (e.g., "latest"), use version string
+            if (!("name" in entry)) {
+                entry.name = entry.version;
+            }
+            // create the node
+            const node = document.createElement("a");
+            node.setAttribute("class", "list-group-item list-group-item-action py-1");
+            node.textContent = `${entry.name}`;
+            // get the base URL for that doc version, add the current page's
+            // path to it, and set as `href`
+            entry.url = buildURL(entry);
+            node.setAttribute("href", `${entry.url}${currentFilePath}`);
+            // on click, AJAX calls will check if the linked page exists before
+            // trying to redirect, and if not, will redirect to the homepage
+            // for that version of the docs.
+            node.onclick = checkPageExistsAndRedirect;
+            $("#version_switcher_menu").append(node);
+            // replace dropdown button text with the preferred display name of
+            // this version, rather than using sphinx's 0.0.1 variable.
+            // also highlight the dropdown entry for the currently-viewed
+            // version's entry
+            if (entry.version == "0.0.1") {
+                node.classList.add("active");
+                $("#version_switcher_button").text(entry.name);
+            }
+        });
+    });
+})();
+</script>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/CederGroupHub/smol" rel="noopener" target="_blank" title="GitHub"><span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    
+  </div>
+</nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="simple visible nav section-nav flex-column">
+</ul>
+
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+
+<div class="tocsection editthispage">
+    <a href="https://github.com/CederGroupHub/smol/edit/master/docs/notebooks/running-ewald-sim_anneal.ipynb">
+        <i class="fas fa-pencil-alt"></i> Edit this page
+    </a>
+</div>
+
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <dl>
+<dt>{</dt><dd><dl>
+<dt>“cells”: [</dt><dd><dl>
+<dt>{</dt><dd><p>“cell_type”: “markdown”,
+“id”: “af82fe4e-4620-404a-9292-4f19d1a79b13”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“# Running Canonical Monte Carlo Simulated Annealing on an Ewald Hamiltoniann”,
+“When generating a set of structures to sample, it may be useful to enumerate them through a Monte Carlo (MC) simulation. A MC with only Ewald electrostatic energies can be especially useful for the initial training set, when there are no DFT energies to parametrize a cluster expansion and run MC. “</p>
+</div></blockquote>
+<p>]</p>
+</dd>
+</dl>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“id”: “6c14105b-7395-41f5-a71c-153e3365fe3d”,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“import copyn”,
+“n”,
+“import numpy as npn”,
+“import matplotlib.pyplot as pltn”,
+“from monty.serialization import loadfn, dumpfnn”,
+“from pymatgen.analysis.ewald import EwaldSummationn”,
+“from pymatgen.core import Structuren”,
+“n”,
+“from smol.cofe import ClusterSubspacen”,
+“from smol.cofe.extern import EwaldTerm”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“id”: “56fc6b3e-906e-404e-921d-05e315c6d224”,
+“metadata”: {</p>
+<blockquote>
+<div><p>“tags”: []</p>
+</div></blockquote>
+<p>},
+“source”: [</p>
+<blockquote>
+<div><p>“### (0) Create a Cluster Subspace based on the disordered structure with only the empty cluster and Ewald term”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“id”: “67445a5c-d9fc-4df1-953c-84ee8b99165c”,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“lno = loadfn(‘data/lno_prim.json’) “</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“id”: “95e6c5a5-999c-4aa8-91c1-13d5a5e4ff0f”,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“empty_cutoff = {} # Defining the cut-offs as an empty dictionary will generate a subspace with only the empty clustern”,
+“n”,
+“subspace = ClusterSubspace.from_cutoffs(structure=lno, n”,
+”                                        cutoffs=empty_cutoff, n”,
+”                                        supercell_size=’O2-‘)n”,
+“n”,
+“subspace.add_external_term(EwaldTerm(eta=None)) # Add the external Ewald Term”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“id”: “6c69f572-2721-45b7-98c0-d5e94eeaa5f7”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“### (1) Create an Ewald Processorn”,
+“An Ewald Processor handles changes in electrostatic interaction energies among different configurational states, using an Ewald Summation term.”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“id”: “bd341c34-7c57-411c-8ce1-5f9371e62fe0”,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“from smol.moca import EwaldProcessor”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“id”: “6d9abcde-4c58-447b-93aa-acc754748bad”,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“# The supercell with which we will run MC onn”,
+“sc_matrix = np.array([[4, 0, 0],n”,
+”                      [0, 4, 0],n”,
+”                      [0, 0, 2]])n”,
+“n”,
+“# Specifying the dielectric constant, the inverse of which is parametrized when fitting a CE with electrostatics (Example 1-1). n”,
+“dielectric = 5 n”,
+“n”,
+“# Creating the Ewald Processorn”,
+“ewald_proc = EwaldProcessor(cluster_subspace=subspace,n”,
+”                            supercell_matrix=sc_matrix,n”,
+”                            ewald_term=EwaldTerm(),n”,
+”                            coefficient=1/dielectric)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“id”: “b5e396c3-7d0f-4cca-ad8e-7296ccd5dfab”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“### (2) Create a Canonical Ensemble”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“id”: “52ed793e-44a4-447d-97cb-276b09d5148d”,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“from smol.moca import CanonicalEnsemblen”,
+“n”,
+“# Create the canonical ensemble directly from the Ewald Processor, without creating a Cluster Expansion.n”,
+“ensemble = CanonicalEnsemble(processor=ewald_proc)n”,
+“n”,
+“# If the goal is to enumerate new structures for DFT calculations, it may be wise to limit the size ofn”,
+“# your supercell such that a relaxation calculation is feasible.n”,
+“# The thermodynamics may not be the most realistic, but you can generate training structuresn”,
+“# that have relatively low electrostatic energies, which may translate to lower DFT energies.n”,
+“print(f’The supercell size for the processor is {ensemble.processor.size} prims.’)n”,
+“print(f’The ensemble has a total of {ensemble.num_sites} sites.’)n”,
+“print(f’The active sublattices are:’)n”,
+“for sublattice in ensemble.sublattices:n”,
+”    print(sublattice)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“id”: “cc393d4c-3d1f-4fcc-93b1-ef5c2f828792”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“### (3) Create the Sampler”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“id”: “d5cabb0e-7f51-419a-a8d6-5c25fcdb4447”,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“from smol.moca import Samplern”,
+“n”,
+“sampler = Sampler.from_ensemble(ensemble, temperature=10000)n”,
+“print(f&quot;Sampling information: {sampler.samples.metadata}&quot;)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“id”: “125e984f-e29c-4209-80e4-f66c0b5339dd”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“### (4) Generate an initial ordered structure to start the MC simulation.”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“id”: “8d306f48-4627-4448-98a5-c2ca063bd6f9”,
+“metadata”: {</p>
+<blockquote>
+<div><p>“tags”: []</p>
+</div></blockquote>
+<p>},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“from pymatgen.transformations.standard_transformations import OrderDisorderedStructureTransformationn”,
+“n”,
+“# Here we will just use the order disordered transformation fromn”,
+“# pymatgen to get an ordered version of a prim supercell.n”,
+“# The structure will have the same composition set in the prim.n”,
+“transformation = OrderDisorderedStructureTransformation(algo=2)n”,
+“n”,
+“supercell = lno.copy()n”,
+“supercell.make_supercell(sc_matrix)n”,
+“n”,
+“test_struct = transformation.apply_transformation(supercell)n”,
+“print(test_struct.composition)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“id”: “6c777175-9959-417a-88af-3f4601171ba5”,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“# Obtain the initial occupancy string from then”,
+“# test structure created above.n”,
+“init_occu = ensemble.processor.occupancy_from_structure(test_struct)n”,
+“n”,
+“# The occupancy strings created by the processorn”,
+“# are by default &quot;encoded&quot; by the indices of the speciesn”,
+“# for each given site. You can always see the actualn”,
+“# species in the occupancy string by decoding it.n”,
+“print(f’The encoded occupancy is:\n{init_occu}’)n”,
+“print(f’The initial occupancy is:\n {ensemble.processor.decode_occupancy(init_occu)}’)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“id”: “b4b14a59-249b-4499-af4e-159feecc5a7d”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“### (5) Run MC simulated annealing”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“id”: “bc08f83b-b6fe-4eda-9b15-6fad24bcf0c2”,
+“metadata”: {</p>
+<blockquote>
+<div><p>“tags”: []</p>
+</div></blockquote>
+<p>},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“# Setting up the range of temperatures for simulated annealing. We start at very n”,
+“# high temperatures to approach the random limit. At each temperature, a MC simulation is performed. n”,
+“# At the lowest temperatures, you may find that you converge to a ground state.n”,
+“temps = np.logspace(4, 2, 10)n”,
+“n”,
+“mc_steps = 100000 # Defining number of MC steps at each temperaturen”,
+“n_thin_by = 10 # Number to thin byn”,
+“n”,
+“# Start simulated annealing.n”,
+“sampler.anneal(temperatures=temps, n”,
+”               mcmc_steps=mc_steps,n”,
+”               initial_occupancies=init_occu,n”,
+”               thin_by=n_thin_by, # Saving every 10 samplesn”,
+”               progress=True # Show the progress bar to know how far along you aren”,
+”              )”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“id”: “650f2894-d1c6-4462-9067-967f737d74cc”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“### (6) Analyzing MC sampling at each temperature”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“id”: “8499d137-00c0-41a9-9fa6-70a87fc2dec9”,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“n = int(mc_steps/10) # number of samples saved for the MC at each temperaturen”,
+“energies = sampler.samples.get_energies()n”,
+“mc_temps = list() # Create list of temperatures that correspond to the energiesn”,
+“n”,
+“for t in temps:n”,
+”    mc_temps.extend([t for i in range(n)]) “</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“id”: “eb153726-cbe6-46a3-bd06-1cf8f50ccce6”,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“# Obtain the average and standard deviation of energy at each temperature.n”,
+“for t in temps:n”,
+”    plot_inds = np.where(mc_temps == t)[0]n”,
+”    energies_t = np.array([energies[ind] for ind in plot_inds]) / ewald_proc.sizen”,
+”    avg_en = round(np.average(energies_t), 3)n”,
+”    std_en = round(np.std(energies_t), 4)n”,
+”    print(f’At T = {round(t, 2)} K \nAverage energy = {avg_en} eV/prim \nStd dev = {std_en} eV/prim \n’)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“id”: “ad328c2f-6852-42d0-a6f6-0b507617f41a”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“#### Obtaining the ground state”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“id”: “2aa3da94-7e88-4936-a4da-52803acf24c1”,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“lowest_en = sampler.samples.get_minimum_energy() / ewald_proc.sizen”,
+“lowest_en_occu = sampler.samples.get_minimum_energy_occupancy()n”,
+“n”,
+“print(f’The ground state energy is {lowest_en} eV/prim’)n”,
+“print(f’Ground state occupancy is {lowest_en_occu}’)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“id”: “ae67c361-ed8c-49bc-8553-b477186ded26”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“### (7) Plotting the results”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“id”: “77a36dee-0308-4000-91f8-5aff64078da2”,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“x_ind = 0 # To keep track of x axis indexingn”,
+“n”,
+“for i, t in enumerate(temps):n”,
+”    plot_inds = np.where(mc_temps == t)[0]n”,
+”    energies_t = np.array([energies[ind] for ind in plot_inds]) / ewald_proc.size # Obtain normalized energies at this temperaturen”,
+”    col = plt.cm.plasma(i/len(temps)) # Set the colorn”,
+”    num_samples = len(energies_t) n”,
+”    plt.plot(np.arange(x_ind, x_ind + num_samples), energies_t, color=col,   n”,
+”             label=f’{round(t, 2)} K’)n”,
+”    x_ind += num_samplesn”,
+”    n”,
+“plt.legend()n”,
+“plt.title(‘Simulated annealing on an \n Ewald Hamiltonian’, fontsize=16)n”,
+“plt.ylabel(‘Ewald Energy (eV/prim)’, fontsize=14)n”,
+“plt.xlabel(‘MC samples’, fontsize=14)n”,
+“plt.xticks(fontsize=12)n”,
+“plt.yticks(fontsize=12)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>],
+“metadata”: {</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“kernelspec”: {</dt><dd><p>“display_name”: “matx_dev”,
+“language”: “python”,
+“name”: “matx_dev”</p>
+</dd>
+</dl>
+<p>},
+“language_info”: {</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“codemirror_mode”: {</dt><dd><p>“name”: “ipython”,
+“version”: 3</p>
+</dd>
+</dl>
+<p>},
+“file_extension”: “.py”,
+“mimetype”: “text/x-python”,
+“name”: “python”,
+“nbconvert_exporter”: “python”,
+“pygments_lexer”: “ipython3”,
+“version”: “3.9.5”</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>},
+“nbformat”: 4,
+“nbformat_minor”: 5</p>
+</dd>
+</dl>
+<p>}</p>
+
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+    <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2022-2022, Ceder Group.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>
