@@ -127,7 +127,7 @@ html_theme_options = {
 html_context = {
     "github_user": "CederGroupHub",
     "github_repo": "smol",
-    "github_version": "master",
+    "github_version": "main",
     "doc_path": "docs",
     "source_suffix": source_suffix,
 }
