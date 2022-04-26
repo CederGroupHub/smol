@@ -23,7 +23,7 @@ sys.path.insert(0, os.path.abspath("../../examples"))
 # -- Project information -----------------------------------------------------
 
 project = "smol"
-copyright = f"2020-{date.today().year}, Ceder Group"
+copyright = f"2022-{date.today().year}, Ceder Group"
 author = "Luis Barroso-Luque"
 
 # The full version, including alpha/beta/rc tags
@@ -91,7 +91,7 @@ pygments_style = "sphinx"
 
 html_theme = "pydata_sphinx_theme"
 
-html_logo = "../_static/banner.svg"
+html_logo = "../_static/logo.png" # banner.svg needs text as paths to avoid font missing
 
 html_theme_options = {
     "github_url": "https://github.com/CederGroupHub/smol",
