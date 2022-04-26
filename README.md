@@ -4,6 +4,9 @@ Statistical Mechanics on Lattices
 =================================
 
 ![test](https://github.com/CederGroupHub/smol/actions/workflows/test.yml/badge.svg)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/CederGroupHub/smol/main.svg)](https://results.pre-commit.ci/latest/github/CederGroupHub/smol/main)
+[![pypi version](https://img.shields.io/pypi/v/statmech-on-lattices?color=blue)](https://pypi.org/project/statmech-on-lattices)
+![python versions](https://img.shields.io/pypi/pyversions/statmech-on-lattices)
 
 *Lighthweight but caffeinated Python implementation of computational methods
 for statistical mechanical calculations of configurational states in
