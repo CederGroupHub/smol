@@ -63,7 +63,7 @@ lingering bugs. From the top level directory
 
 Usage
 -----
-Refer to the [documentation](http://amox.lbl.gov/smol) (requires lbl vpn) for details on using
+Refer to the [documentation](https://cedergrouphub.github.io/smol/) for details on using
 **smol**. Going through the [example notebooks](https://github.com/CederGroupHub/smol/tree/master/examples)
 will also help you get started.
 
