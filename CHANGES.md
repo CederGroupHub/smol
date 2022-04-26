@@ -16,6 +16,7 @@ Use this section to keep track of changes in the works.
 ### Added
 * Method to detect and identify orbit degeneracies based on supercell shape. #184 (kamronald)
 * Automatic github release.
+* PyPi install as `statmech-on-lattices` (arghhh)
 ### Changed
 * Moved cython code for computing correlations to smol/correlations.pyx and imports as smol.correlations #190 (lbluque)
 ### Fixed
