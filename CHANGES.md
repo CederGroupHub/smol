@@ -9,6 +9,7 @@ Use this section to keep track of changes in the works.
 ### Added
 ### Changed
 ### Fixed
+* version dunder with pypi project rename.
 ### Removed
 ### Deprecated
 
