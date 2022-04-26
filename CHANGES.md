@@ -7,12 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
-* Method to detect and identify orbit degeneracies based on supercell shape. #184 (kamronald)
 ### Changed
 ### Fixed
-* Fix importing numpy in setup.py
 ### Removed
 ### Deprecated
+
+# [v0.0.1](https://github.com/CederGroupHub/smol/releases/tag/v0.0.1) (2022-04-22)
+### Added
+* Method to detect and identify orbit degeneracies based on supercell shape. #184 (kamronald)
+* Automatic github release.
+### Changed
+* Moved cython code for computing correlations to smol/correlations.pyx and imports as smol.correlations #190 (lbluque)
+### Fixed
+* Fix importing numpy in setup.py
 
 # [v0.0.0](https://github.com/CederGroupHub/smol/releases/tag/v0.0.0) (2022-04-13)
 #### [Full Changelog](https://github.com/CederGroupHub/smol/compare/alpha1.0.1...v0.0.0)
@@ -62,7 +69,7 @@ Use this section to keep track of changes in the works.
   ([lbluque](https://github.com/lbluque))
 
 ### Changed
-* `StructureWrangler` based on pymatheg `ComputedStructureEntry`.
+* `StructureWrangler` based on pymatgen `ComputedStructureEntry`.
   [\#189](https://github.com/CederGroupHub/smol/pull/189)
   ([lbluque](https://github.com/lbluque))
 * unittests for `smol.cofe` using `pytest`.

@@ -105,17 +105,19 @@ def test_weights_above_composition(structure_wrangler):
     #             0.6080223 , 0.94848913, 0.92135297, 0.92326977, 0.83995635,
     #             1., 0.94663979, 1., 0.9414506, 1.])
     # assert np.allclose(expected, structure_wrangler.get_weights('comp'))
-    energies = structure_wrangler.get_property_vector("energy", False)
-    sizes = np.array(list(map(len, structure_wrangler.structures)))
-    e_above = (
-        _energies_above_composition(structure_wrangler.structures, energies) * sizes
+    # sizes = np.array(list(map(len, structure_wrangler.structures)))
+    sizes = structure_wrangler.sizes * len(
+        structure_wrangler.cluster_subspace.structure
     )
+    energies = structure_wrangler.get_property_vector("energy", False)
+
+    e_above = _energies_above_composition(structure_wrangler.structures, energies)
     comp_min_energies = defaultdict(lambda: np.inf)
     for i in range(len(energies)):
-        if energies[i] < comp_min_energies[comps[i]]:
-            comp_min_energies[comps[i]] = energies[i]
+        if energies[i] / sizes[i] < comp_min_energies[comps[i]]:
+            comp_min_energies[comps[i]] = energies[i] / sizes[i]
     e_comps = np.array([comp_min_energies[comps[i]] for i in range(len(energies))])
-    npt.assert_almost_equal(energies, e_comps + e_above, decimal=8)
+    npt.assert_almost_equal(energies / sizes, e_comps + e_above, decimal=8)
 
 
 def test_weights_above_hull(structure_wrangler):

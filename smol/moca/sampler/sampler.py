@@ -252,20 +252,17 @@ class Sampler:
         """
         if initial_occupancies is None:
             try:
-                initial_occupancies = self.samples.get_occupancies(flat=False)[
-                    -1
-                ]  # noqa
+                initial_occupancies = self.samples.get_occupancies(flat=False)[-1]
                 # auxiliary states from kernels should be set here
             except IndexError as ind_error:
                 raise RuntimeError(
-                    "There are no saved samples to obtain the "
-                    "initial occupancies. These must be "
-                    "provided."
+                    "There are no saved samples to obtain the initial occupancies."
+                    "These must be provided."
                 ) from ind_error
         elif self.samples.num_samples > 0:
             warn(
-                "Initial occupancies where provided with a pre-existing "
-                "set of samples.\n Make real sure that is what you want. "
+                "Initial occupancies where provided with a pre-existing set of samples."
+                "\n Make real sure that is what you want. "
                 "If not, reset the samples in the sampler.",
                 RuntimeWarning,
             )
