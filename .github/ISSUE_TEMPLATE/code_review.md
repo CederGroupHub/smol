@@ -8,8 +8,8 @@ assignees: lbluque, qchempku2017
 ---
 
 <!--
-Thank you for contributing a source file to smol! You are a sensei dev!
-Please make sure that a code review issue for the source file you are about to create
+Thank you for contributing a src file to smol! You are a sensei dev!
+Please make sure that a code review issue for the src file you are about to create
 one does not already exist. Please edit this template based on the file you
 are opening this issue for.
 -->

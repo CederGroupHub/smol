@@ -70,14 +70,14 @@ napoleon_custom_sections = None
 # Add any paths that contain templates here, relative to this directory.
 source_suffix = [".rst", ".ipynb"]
 
-# The encoding of source files.
+# The encoding of src files.
 source_encoding = "utf-8"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
-# List of patterns, relative to source directory, that match files and
-# directories to ignore when looking for source files.
+# List of patterns, relative to src directory, that match files and
+# directories to ignore when looking for src files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
