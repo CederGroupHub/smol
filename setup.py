@@ -20,7 +20,7 @@ test new ones. Finally, although conceived mainly for method development, smol c
 
 import sys
 
-from setuptools import Extension, dist, find_packages, setup
+from setuptools import Extension, dist, setup
 from setuptools.command.build_ext import build_ext
 
 # get numpy to include headers
@@ -100,7 +100,6 @@ if USE_CYTHON:
 
 setup(
     use_scm_version={"version_scheme": "python-simplified-semver"},
-    packages=find_packages(),
     ext_modules=ext_modules,
     cmdclass={"build_ext": build_ext_subclass},
     include_dirs=numpy.get_include(),
