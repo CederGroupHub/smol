@@ -416,8 +416,8 @@ class Tableflip(MCUsher):
             raise ValueError(f"Step {step} is not in flip table.")
 
         if fid < 0:
-            # Canonical swap
-            return 1
+            # Canonical swap, priori factor is always 1, log is 0.
+            return 0
 
         u = (-2 * direction + 1) * self.flip_table[fid]
 
