@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Exceptions &#8212; smol 0.0.1 documentation</title>
+    <title>Exceptions &#8212; smol v0.0.1 documentation</title>
     
     <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -123,7 +123,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.1  <!-- this text may get changed later by javascript -->
+        v0.0.1  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -133,7 +133,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables api_reference/exceptions and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1'}.
+     variables api_reference/exceptions and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': 'v0.0.1'}.
 -->
 
 <script type="text/javascript">
@@ -189,10 +189,10 @@ function checkPageExistsAndRedirect(event) {
             node.onclick = checkPageExistsAndRedirect;
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.1 variable.
+            // this version, rather than using sphinx's v0.0.1 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.1") {
+            if (entry.version == "v0.0.1") {
                 node.classList.add("active");
                 $("#version_switcher_button").text(entry.name);
             }
@@ -351,7 +351,7 @@ function checkPageExistsAndRedirect(event) {
                 
 
 <div class="tocsection editthispage">
-    <a href="https://github.com/CederGroupHub/smol/edit/master/docs/api_reference/exceptions.rst">
+    <a href="https://github.com/CederGroupHub/smol/edit/main/docs/api_reference/exceptions.rst">
         <i class="fas fa-pencil-alt"></i> Edit this page
     </a>
 </div>
@@ -375,7 +375,7 @@ function checkPageExistsAndRedirect(event) {
 <p>Definitions of specific exceptions raised elsewhere.</p>
 <dl class="py exception">
 <dt class="sig sig-object py" id="smol.exceptions.NotFittedError">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-name descname"><span class="pre">NotFittedError</span></span><a class="headerlink" href="#smol.exceptions.NotFittedError" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">NotFittedError</span></span><a class="headerlink" href="#smol.exceptions.NotFittedError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeError</span></code></p>
 <p>Exception if sklearn regression function is used before fitting.</p>
 <p>This class inherits from both ValueError and AttributeError to help with
@@ -384,14 +384,14 @@ exception handling and backward compatibility.</p>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="smol.exceptions.StructureMatchError">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-name descname"><span class="pre">StructureMatchError</span></span><a class="headerlink" href="#smol.exceptions.StructureMatchError" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">StructureMatchError</span></span><a class="headerlink" href="#smol.exceptions.StructureMatchError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
 <p>Raised when a pymatgen StructureMatcher returns None.</p>
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="smol.exceptions.SymmetryError">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-name descname"><span class="pre">SymmetryError</span></span><a class="headerlink" href="#smol.exceptions.SymmetryError" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SymmetryError</span></span><a class="headerlink" href="#smol.exceptions.SymmetryError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></p>
 <p>Exception for incompatibility between structure and given symops.</p>
 <p>Exception to raise when symmetry of a structure is not compatible with a
@@ -440,7 +440,7 @@ set of given symops.</p>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
 </p>
     </div>
     

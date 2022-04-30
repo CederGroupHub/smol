@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>&lt;no title&gt; &#8212; smol 0.0.1 documentation</title>
+    <title>Creating a basic Cluster Expansion &#8212; smol v0.0.1 documentation</title>
     
     <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -34,6 +34,8 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -121,7 +123,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.1  <!-- this text may get changed later by javascript -->
+        v0.0.1  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -131,7 +133,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables notebooks/creating-a-ce and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1'}.
+     variables notebooks/creating-a-ce and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': 'v0.0.1'}.
 -->
 
 <script type="text/javascript">
@@ -187,10 +189,10 @@ function checkPageExistsAndRedirect(event) {
             node.onclick = checkPageExistsAndRedirect;
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.1 variable.
+            // this version, rather than using sphinx's v0.0.1 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.1") {
+            if (entry.version == "v0.0.1") {
                 node.classList.add("active");
                 $("#version_switcher_button").text(entry.name);
             }
@@ -247,7 +249,53 @@ function checkPageExistsAndRedirect(event) {
 </div>
 
 <nav id="bd-toc-nav">
-    <ul class="simple visible nav section-nav flex-column">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#0)-The-prim-structure">
+   0) The prim structure
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#1)-The-cluster-subspace">
+   1) The cluster subspace
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#1.1)-Computing-a-correlation-vector.">
+     1.1) Computing a correlation vector.
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#2)-The-structure-wrangler">
+   2) The structure wrangler
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#3.1)-Check-the-quality-of-the-fit">
+     3.1) Check the quality of the fit
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#4)-The-cluster-expansion">
+   4) The cluster expansion
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#5)-Saving-your-work">
+   5) Saving your work
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#5.1)-Loading-previously-saved-work">
+     5.1) Loading previously saved work
+    </a>
+   </li>
+  </ul>
+ </li>
 </ul>
 
 </nav>
@@ -257,7 +305,7 @@ function checkPageExistsAndRedirect(event) {
                 
 
 <div class="tocsection editthispage">
-    <a href="https://github.com/CederGroupHub/smol/edit/master/docs/notebooks/creating-a-ce.ipynb">
+    <a href="https://github.com/CederGroupHub/smol/edit/main/docs/notebooks/creating-a-ce.ipynb">
         <i class="fas fa-pencil-alt"></i> Edit this page
     </a>
 </div>
@@ -276,409 +324,624 @@ function checkPageExistsAndRedirect(event) {
               
               <div>
                 
-  <dl>
-<dt>{</dt><dd><dl>
-<dt>“cells”: [</dt><dd><dl>
-<dt>{</dt><dd><p>“cell_type”: “markdown”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“# Creating a basic Cluster Expansion”</p>
-</div></blockquote>
-<p>]</p>
-</dd>
-</dl>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“import randomn”,
-“import numpy as npn”,
-“from monty.serialization import loadfn, dumpfnn”,
-“from pymatgen.core.structure import Structuren”,
-“from smol.cofe import ClusterSubspace, StructureWrangler, ClusterExpansion, RegressionData”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“# load the prim structuren”,
-“lno_prim = loadfn(‘data/lno_prim.json’)n”,
-”    n”,
-“# load the fitting datan”,
-“lno_entries = loadfn(&quot;data/lno_entries.json&quot;)”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“### 0) The prim structuren”,
-“The prim structure defines the <strong>configurational space</strong> for the Cluster Expansion. n”,
-“The <strong>configurational space</strong> is defined by the site <strong>compositional spaces</strong> and the crystal symetries of the prim structure.n”,
-“The occupancy of the sites determine site <strong>compositional spaces</strong>. Sites are <strong>active</strong> if they have compositional degrees of freedom.n”,
-“n”,
-“n”,
-“Active sites have fractional compositions. Vacancies are allowed in sites where the composition does not sum to one.n”,
-“n”,
-“0. Is active. The allowed species are: Li+ and vacancies.n”,
-“1. Is active. The allowed species are: Ni3+ and Ni4+.n”,
-“2. Is not active. Only O2- is allowed.n”,
-“3. Is not active. Only O2- is allowed.”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“print(lno_prim)”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“### 1) The cluster subspacen”,
-“The <cite>ClusterSubspace</cite> represents all the orbits (groups of equivalent clusters) that will be considered when fitting the cluster expansion. Its main purpose is to compute the <strong>correlations functions</strong> for each included orbit given a structure in the compositional space defined by the prim.n”,
-“n”,
-“In order to do be able to compute the correlation functions, the given structure must match the prim structure in a &quot;crystallographic&quot; sense but allowing for compositional degrees of freedom in the &quot;active&quot; sites.n”,
-“n”,
-“A cluster subspace most easily created by providing:n”,
-“1. The prim structure representing the configurational space.n”,
-“2. A set of diameter cutoffs for each size of orbit we want to consider.n”,
-“3. A type of site basis function to use.n”,
-“n”,
-“There are more options allowed by the code to fine grain and tune. See other notebooks for advanced use cases.”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“subspace = ClusterSubspace.from_cutoffs(lno_prim,n”,
-”                                        cutoffs={2: 5, 3: 4.1}, # will include orbits of 2 and 3 sites.n”,
-”                                        basis=’sinusoid’, # sets the site basis type, default is indicatorn”,
-”                                        supercell_size=’O2-‘)n”,
-“n”,
-“# supercell_size specifies the method to determine the supercell sizen”,
-“# when trying to match a structure.n”,
-“# (See pymatgen.structure_matcher.StructureMatcher for more info)n”,
-“n”,
-“print(subspace) # single site and empty orbits are always included.”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“#### 1.1) Computing a correlation vector.n”,
-“A correlation vector for a specific structure (represents the feature vector) used to train and predict target values.”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“structure = lno_entries[1].structuren”,
-“corr = subspace.corr_from_structure(structure)n”,
-“n”,
-“print(f’The correlation vector for a structure with’n”,
-”      f’ composition {structure.composition} is: ‘n”,
-”      f’\n{corr}’)”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“### 2) The structure wranglern”,
-“The <cite>StructureWrangler</cite> is a class that will is used to create and organize the data that will be used to train (and possibly test) the cluster expansion. It makes sure that all the supplied structures appropriately match the prim structure, and obtains the necessary information to correctly normalize target properties (such as energy) necessary for training.n”,
-“n”,
-“Training data is added to a <cite>StructureWrangler</cite> using <cite>ComputedStructureEntry</cite> instances from <cite>pymatgen</cite>.n”,
-“n”,
-“Matching relaxed structures can be a tricky problem, especially for ionic systems with vacancies. See the notebook on structure matching for tips on how to tweak parameters.”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“wrangler = StructureWrangler(subspace)n”,
-“n”,
-“# the energy is taken directly from the ComputedStructureEntryn”,
-“# any additional properties can also be added, see notebook onn”,
-“# training data preparation for an example.n”,
-“for entry in lno_entries:n”,
-”    wrangler.add_entry(entry, verbose=True)n”,
-“# The verbose flag will print structures that fail to match.n”,
-“n”,
-“print(f’\nTotal structures that match {wrangler.num_structures}/{len(lno_entries)}’)”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“## 3) Trainingn”,
-“n”,
-“Training a cluster expansion is one of the most critical steps. This is how you get <strong>effective cluster interactions (ECI’s)</strong>. To do so you need an estimator class that implements some form of regression model. In this case we will use simple least squares regression using the <cite>LinearRegression</cite> estimator from <cite>scikit-learn</cite>.n”,
-“n”,
-“In <cite>smol</cite> the coefficients from the fit are not exactly the ECI’s but the ECI times the multiplicity of their orbit.n”,
-“n”,
-“Currently we also have the old l1regs estimator from pyabinitio in <cite>theorytoolkit.regression</cite> as <cite>WDRLasso</cite>, but it will likely be deprecated and removed at some point…”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“from sklearn.linear_model import LinearRegressionn”,
-“# Set fit_intercept to False because we already do this usingn”,
-“# the empty cluster.n”,
-“estimator = LinearRegression(fit_intercept=False)n”,
-“estimator.fit(wrangler.feature_matrix,n”,
-”              wrangler.get_property_vector(‘energy’))n”,
-“coefs = <a href="#id1"><span class="problematic" id="id2">estimator.coef_</span></a>”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“#### 3.1) Check the quality of the fitn”,
-“There are many ways to evaluate the quality of a fit. The simplest involve stadard training set prediction error metrics. But when evaluating a CE more seriously we need to consider further metrics and how the CE will be used.n”,
-“Here we will just look at in sample mean squared error and max error.”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“from sklearn.metrics import mean_squared_error, max_errorn”,
-“n”,
-“train_predictions = np.dot(wrangler.feature_matrix, coefs)n”,
-“n”,
-“rmse = mean_squared_error(wrangler.get_property_vector(‘energy’),n”,
-”                          train_predictions, squared=False)n”,
-“maxer = max_error(wrangler.get_property_vector(‘energy’),n”,
-”                  train_predictions)n”,
-“n”,
-“print(f’RMSE {1E3 * rmse} meV/prim’)n”,
-“print(f’MAX {1E3 * maxer} meV/prim’)”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“### 4) The cluster expansionn”,
-“Now we can use the above work to create the <cite>ClusterExpansion</cite>. The cluster expansion can be used to predict the fitted property for new structures, either for testing quality or for simulations such as in Monte Carlo.n”,
-“Note that when using the <cite>predict</cite> function, the cluster expansion will have to match the given structure if it has not seen it before.n”,
-“We will also store the details of the regression model used to fit the cluster expansion by using a <cite>RegressionData</cite> object.”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“reg_data = RegressionData.from_sklearn(n”,
-”    estimator, wrangler.feature_matrix,n”,
-”    wrangler.get_property_vector(‘energy’))n”,
-“n”,
-“n”,
-“expansion = ClusterExpansion(subspace,n”,
-”                             coefficients=coefs,n”,
-”                             regression_data=reg_data)n”,
-“n”,
-“structure = random.choice(wrangler.structures)n”,
-“prediction = expansion.predict(structure, normalize=True)n”,
-“n”,
-“print(f’The predicted energy for a structure with composition ‘n”,
-”      f’{structure.composition} is {prediction} eV/prim.\n’)n”,
-“print(f’The fitted coefficients are:\n{expansion.coefs}\n’)n”,
-“print(f’The effective cluster interactions are:\n{expansion.eci}\n’)n”,
-“print(expansion)”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“### 5) Saving your workn”,
-“All core classes in <cite>smol</cite> are <cite>MSONables</cite> and so can be saved using their <cite>as_dict</cite> methods or better yet with <cite>monty.serialization.dumpfn</cite>.n”,
-“n”,
-“Currently there is also a convenience function in <cite>smol</cite> that will nicely save all of your work for you in a standardized way. Work saved with the <cite>save_work</cite> function is saved as a dictionary with standardized names for the classes. Since a work flow should only contain 1 of each core classes the function will complain if you give it two of the same class (i.e. two wranglers)”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“from smol.io import save_workn”,
-“n”,
-“file_path = ‘data/basic_ce.mson’n”,
-“# we can save the subspace as well, but since both the wranglern”,
-“# and the expansion have it, there is no need to do so.n”,
-“save_work(file_path, wrangler, expansion)”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“#### 5.1) Loading previously saved work”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“from smol.io import load_workn”,
-“n”,
-“work = load_work(file_path)n”,
-“for name, obj in work.items():n”,
-”    print(f’{name}: {type(obj)}\n’)”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>}</p>
-</dd>
-</dl>
-<p>],
-“metadata”: {</p>
-<blockquote>
-<div><dl class="simple">
-<dt>“kernelspec”: {</dt><dd><p>“display_name”: “matx_dev”,
-“language”: “python”,
-“name”: “matx_dev”</p>
-</dd>
-</dl>
-<p>},
-“language_info”: {</p>
-<blockquote>
-<div><dl class="simple">
-<dt>“codemirror_mode”: {</dt><dd><p>“name”: “ipython”,
-“version”: 3</p>
-</dd>
-</dl>
-<p>},
-“file_extension”: “.py”,
-“mimetype”: “text/x-python”,
-“name”: “python”,
-“nbconvert_exporter”: “python”,
-“pygments_lexer”: “ipython3”,
-“version”: “3.9.5”</p>
-</div></blockquote>
-<p>}</p>
-</div></blockquote>
-<p>},
-“nbformat”: 4,
-“nbformat_minor”: 4</p>
-</dd>
-</dl>
-<p>}</p>
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<section id="Creating-a-basic-Cluster-Expansion">
+<h1>Creating a basic Cluster Expansion<a class="headerlink" href="#Creating-a-basic-Cluster-Expansion" title="Permalink to this headline">¶</a></h1>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">monty.serialization</span> <span class="kn">import</span> <span class="n">loadfn</span><span class="p">,</span> <span class="n">dumpfn</span>
+<span class="kn">from</span> <span class="nn">pymatgen.core.structure</span> <span class="kn">import</span> <span class="n">Structure</span>
+<span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">ClusterSubspace</span><span class="p">,</span> <span class="n">StructureWrangler</span><span class="p">,</span> <span class="n">ClusterExpansion</span><span class="p">,</span> <span class="n">RegressionData</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># load the prim structure</span>
+<span class="n">lno_prim</span> <span class="o">=</span> <span class="n">loadfn</span><span class="p">(</span><span class="s1">&#39;data/lno_prim.json&#39;</span><span class="p">)</span>
+
+<span class="c1"># load the fitting data</span>
+<span class="n">lno_entries</span> <span class="o">=</span> <span class="n">loadfn</span><span class="p">(</span><span class="s2">&quot;data/lno_entries.json&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<section id="0)-The-prim-structure">
+<h2>0) The prim structure<a class="headerlink" href="#0)-The-prim-structure" title="Permalink to this headline">¶</a></h2>
+<p>The prim structure defines the <strong>configurational space</strong> for the Cluster Expansion. The <strong>configurational space</strong> is defined by the site <strong>compositional spaces</strong> and the crystal symetries of the prim structure. The occupancy of the sites determine site <strong>compositional spaces</strong>. Sites are <strong>active</strong> if they have compositional degrees of freedom.</p>
+<p>Active sites have fractional compositions. Vacancies are allowed in sites where the composition does not sum to one.</p>
+<ol class="arabic simple" start="0">
+<li><p>Is active. The allowed species are: Li+ and vacancies.</p></li>
+<li><p>Is active. The allowed species are: Ni3+ and Ni4+.</p></li>
+<li><p>Is not active. Only O2- is allowed.</p></li>
+<li><p>Is not active. Only O2- is allowed.</p></li>
+</ol>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">lno_prim</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Full Formula (Li0.5 Ni1 O2)
+Reduced Formula: Li0.5Ni1O2
+abc   :   2.969848   2.969848   5.143928
+angles:  73.221350  73.221347  60.000002
+Sites (4)
+  #  SP                         a     b     c
+---  ----------------------  ----  ----  ----
+  0  Li+:0.500               0     0     0
+  1  Ni3+:0.500, Ni4+:0.500  0.5   0.5   0.5
+  2  O2-                     0.75  0.75  0.75
+  3  O2-                     0.25  0.25  0.25
+</pre></div></div>
+</div>
+</section>
+<section id="1)-The-cluster-subspace">
+<h2>1) The cluster subspace<a class="headerlink" href="#1)-The-cluster-subspace" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">ClusterSubspace</span></code> represents all the orbits (groups of equivalent clusters) that will be considered when fitting the cluster expansion. Its main purpose is to compute the <strong>correlations functions</strong> for each included orbit given a structure in the compositional space defined by the prim.</p>
+<p>In order to do be able to compute the correlation functions, the given structure must match the prim structure in a “crystallographic” sense but allowing for compositional degrees of freedom in the “active” sites.</p>
+<p>A cluster subspace most easily created by providing: 1. The prim structure representing the configurational space. 2. A set of diameter cutoffs for each size of orbit we want to consider. 3. A type of site basis function to use.</p>
+<p>There are more options allowed by the code to fine grain and tune. See other notebooks for advanced use cases.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">subspace</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_cutoffs</span><span class="p">(</span><span class="n">lno_prim</span><span class="p">,</span>
+                                        <span class="n">cutoffs</span><span class="o">=</span><span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mf">4.1</span><span class="p">},</span> <span class="c1"># will include orbits of 2 and 3 sites.</span>
+                                        <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;sinusoid&#39;</span><span class="p">,</span> <span class="c1"># sets the site basis type, default is indicator</span>
+                                        <span class="n">supercell_size</span><span class="o">=</span><span class="s1">&#39;O2-&#39;</span><span class="p">)</span>
+
+<span class="c1"># supercell_size specifies the method to determine the supercell size</span>
+<span class="c1"># when trying to match a structure.</span>
+<span class="c1"># (See pymatgen.structure_matcher.StructureMatcher for more info)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">subspace</span><span class="p">)</span> <span class="c1"># single site and empty orbits are always included.</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Basis/Orthogonal/Orthonormal : sinusoid/True/{self.basis_orthonormal}
+       Unit Cell Composition : Li+0.5 Ni3+0.5 Ni4+0.5 O2-2
+            Number of Orbits : 11
+No. of Correlation Functions : 11
+             Cluster Cutoffs : 2: 4.20, 3: 2.97
+              External Terms : []
+Orbit Summary
+ ------------------------------------------------------------------------
+ |  ID     Degree    Cluster Diameter    Multiplicity    No. Functions  |
+ |   0       0             NA                 0                1        |
+ |   1       1            0.0000              1                1        |
+ |   2       1            0.0000              1                1        |
+ |   3       2            2.9698              6                1        |
+ |   4       2            2.9698              3                1        |
+ |   5       2            2.9698              3                1        |
+ |   6       2            4.2000              6                1        |
+ |   7       3            2.9698              6                1        |
+ |   8       3            2.9698              6                1        |
+ |   9       3            2.9698              2                1        |
+ |  10       3            2.9698              2                1        |
+ ------------------------------------------------------------------------
+</pre></div></div>
+</div>
+<section id="1.1)-Computing-a-correlation-vector.">
+<h3>1.1) Computing a correlation vector.<a class="headerlink" href="#1.1)-Computing-a-correlation-vector." title="Permalink to this headline">¶</a></h3>
+<p>A correlation vector for a specific structure (represents the feature vector) used to train and predict target values.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">structure</span> <span class="o">=</span> <span class="n">lno_entries</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">structure</span>
+<span class="n">corr</span> <span class="o">=</span> <span class="n">subspace</span><span class="o">.</span><span class="n">corr_from_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The correlation vector for a structure with&#39;</span>
+      <span class="sa">f</span><span class="s1">&#39; composition </span><span class="si">{</span><span class="n">structure</span><span class="o">.</span><span class="n">composition</span><span class="si">}</span><span class="s1"> is: &#39;</span>
+      <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{</span><span class="n">corr</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+The correlation vector for a structure with composition Li+1 Ni4+5 Ni3+1 O2-12 is:
+[1.         0.66666667 0.66666667 0.44444444 0.55555556 0.55555556
+ 0.55555556 0.44444444 0.44444444 0.66666667 0.66666667]
+</pre></div></div>
+</div>
+</section>
+</section>
+<section id="2)-The-structure-wrangler">
+<h2>2) The structure wrangler<a class="headerlink" href="#2)-The-structure-wrangler" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> is a class that will is used to create and organize the data that will be used to train (and possibly test) the cluster expansion. It makes sure that all the supplied structures appropriately match the prim structure, and obtains the necessary information to correctly normalize target properties (such as energy) necessary for training.</p>
+<p>Training data is added to a <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> using <code class="docutils literal notranslate"><span class="pre">ComputedStructureEntry</span></code> instances from <code class="docutils literal notranslate"><span class="pre">pymatgen</span></code>.</p>
+<p>Matching relaxed structures can be a tricky problem, especially for ionic systems with vacancies. See the notebook on structure matching for tips on how to tweak parameters.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">wrangler</span> <span class="o">=</span> <span class="n">StructureWrangler</span><span class="p">(</span><span class="n">subspace</span><span class="p">)</span>
+
+<span class="c1"># the energy is taken directly from the ComputedStructureEntry</span>
+<span class="c1"># any additional properties can also be added, see notebook on</span>
+<span class="c1"># training data preparation for an example.</span>
+<span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">lno_entries</span><span class="p">:</span>
+    <span class="n">wrangler</span><span class="o">.</span><span class="n">add_entry</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># The verbose flag will print structures that fail to match.</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Total structures that match </span><span class="si">{</span><span class="n">wrangler</span><span class="o">.</span><span class="n">num_structures</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">lno_entries</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/lbluque/Develop/smol/smol/cofe/wrangling/wrangler.py:766: UserWarning: Unable to match Ni4+6 O2-12 with properties {} to supercell_structure. Throwing out.
+ Error Message: Supercell could not be found from structure
+  warnings.warn(
+/home/lbluque/Develop/smol/smol/cofe/wrangling/wrangler.py:766: UserWarning: Unable to match Li+2 Ni4+4 Ni3+2 O2-12 with properties {} to supercell_structure. Throwing out.
+ Error Message: Mapping could not be found from structure.
+  warnings.warn(
+/home/lbluque/Develop/smol/smol/cofe/wrangling/wrangler.py:766: UserWarning: Unable to match Li+2 Ni3+2 Ni4+4 O2-12 with properties {} to supercell_structure. Throwing out.
+ Error Message: Mapping could not be found from structure.
+  warnings.warn(
+/home/lbluque/Develop/smol/smol/cofe/wrangling/wrangler.py:766: UserWarning: Unable to match Li+3 Ni4+4 Ni2+1 Ni3+1 O2-12 with properties {} to supercell_structure. Throwing out.
+ Error Message: Supercell could not be found from structure
+  warnings.warn(
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Total structures that match 27/31
+</pre></div></div>
+</div>
+<p>Training a cluster expansion is one of the most critical steps. This is how you get <strong>effective cluster interactions (ECI’s)</strong>. To do so you need an estimator class that implements some form of regression model. In this case we will use simple least squares regression using the <code class="docutils literal notranslate"><span class="pre">LinearRegression</span></code> estimator from <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code>.</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">smol</span></code> the coefficients from the fit are not exactly the ECI’s but the ECI times the multiplicity of their orbit.</p>
+<p>Currently we also have the old l1regs estimator from pyabinitio in <code class="docutils literal notranslate"><span class="pre">theorytoolkit.regression</span></code> as <code class="docutils literal notranslate"><span class="pre">WDRLasso</span></code>, but it will likely be deprecated and removed at some point…</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
+<span class="c1"># Set fit_intercept to False because we already do this using</span>
+<span class="c1"># the empty cluster.</span>
+<span class="n">estimator</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">fit_intercept</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">estimator</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span>
+              <span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">))</span>
+<span class="n">coefs</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">coef_</span>
+</pre></div>
+</div>
+</div>
+<section id="3.1)-Check-the-quality-of-the-fit">
+<h3>3.1) Check the quality of the fit<a class="headerlink" href="#3.1)-Check-the-quality-of-the-fit" title="Permalink to this headline">¶</a></h3>
+<p>There are many ways to evaluate the quality of a fit. The simplest involve stadard training set prediction error metrics. But when evaluating a CE more seriously we need to consider further metrics and how the CE will be used. Here we will just look at in sample mean squared error and max error.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">max_error</span>
+
+<span class="n">train_predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span> <span class="n">coefs</span><span class="p">)</span>
+
+<span class="n">rmse</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">),</span>
+                          <span class="n">train_predictions</span><span class="p">,</span> <span class="n">squared</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">maxer</span> <span class="o">=</span> <span class="n">max_error</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">),</span>
+                  <span class="n">train_predictions</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RMSE </span><span class="si">{</span><span class="mf">1E3</span> <span class="o">*</span> <span class="n">rmse</span><span class="si">}</span><span class="s1"> meV/prim&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MAX </span><span class="si">{</span><span class="mf">1E3</span> <span class="o">*</span> <span class="n">maxer</span><span class="si">}</span><span class="s1"> meV/prim&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+RMSE 11.030076908761288 meV/prim
+MAX 22.82618658175295 meV/prim
+</pre></div></div>
+</div>
+</section>
+</section>
+<section id="4)-The-cluster-expansion">
+<h2>4) The cluster expansion<a class="headerlink" href="#4)-The-cluster-expansion" title="Permalink to this headline">¶</a></h2>
+<p>Now we can use the above work to create the <code class="docutils literal notranslate"><span class="pre">ClusterExpansion</span></code>. The cluster expansion can be used to predict the fitted property for new structures, either for testing quality or for simulations such as in Monte Carlo. Note that when using the <code class="docutils literal notranslate"><span class="pre">predict</span></code> function, the cluster expansion will have to match the given structure if it has not seen it before. We will also store the details of the regression model used to fit the cluster expansion by using a <code class="docutils literal notranslate"><span class="pre">RegressionData</span></code> object.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">reg_data</span> <span class="o">=</span> <span class="n">RegressionData</span><span class="o">.</span><span class="n">from_sklearn</span><span class="p">(</span>
+    <span class="n">estimator</span><span class="p">,</span> <span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span>
+    <span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">))</span>
+
+
+<span class="n">expansion</span> <span class="o">=</span> <span class="n">ClusterExpansion</span><span class="p">(</span><span class="n">subspace</span><span class="p">,</span>
+                             <span class="n">coefficients</span><span class="o">=</span><span class="n">coefs</span><span class="p">,</span>
+                             <span class="n">regression_data</span><span class="o">=</span><span class="n">reg_data</span><span class="p">)</span>
+
+<span class="n">structure</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">structures</span><span class="p">)</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">expansion</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The predicted energy for a structure with composition &#39;</span>
+      <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">structure</span><span class="o">.</span><span class="n">composition</span><span class="si">}</span><span class="s1"> is </span><span class="si">{</span><span class="n">prediction</span><span class="si">}</span><span class="s1"> eV/prim.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The fitted coefficients are:</span><span class="se">\n</span><span class="si">{</span><span class="n">expansion</span><span class="o">.</span><span class="n">coefs</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The effective cluster interactions are:</span><span class="se">\n</span><span class="si">{</span><span class="n">expansion</span><span class="o">.</span><span class="n">eci</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">expansion</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+The predicted energy for a structure with composition Li+3 Ni3+3 Ni4+3 O2-12 is -34.47050332516923 eV/prim.
+
+The fitted coefficients are:
+[-3.44424307e+01  1.52944807e+00  1.52944807e+00 -7.11937730e-02
+  1.45252212e-01  4.23347433e-02 -9.28828072e-02  1.51736904e-02
+ -5.89723850e-02  2.69095444e-02  1.10210719e-02]
+
+The effective cluster interactions are:
+[-3.44424307e+01  1.52944807e+00  1.52944807e+00 -1.18656288e-02
+  4.84174038e-02  1.41115811e-02 -1.54804679e-02  2.52894839e-03
+ -9.82873083e-03  1.34547722e-02  5.51053597e-03]
+
+Basis/Orthogonal/Orthonormal : sinusoid/True/{self.basis_orthonormal}
+       Unit Cell Composition : Li+0.5 Ni3+0.5 Ni4+0.5 O2-2
+            Number of Orbits : 11
+No. of Correlation Functions : 11
+             Cluster Cutoffs : 2: 4.20, 3: 2.97
+              External Terms : []
+Regression Data : estimator=LinearRegression
+                  module=sklearn.linear_model._base
+                  parameters={&#39;copy_X&#39;: True, &#39;fit_intercept&#39;: False, &#39;n_jobs&#39;: None, &#39;normalize&#39;: False, &#39;positive&#39;: False}
+Target Property    : mean=-34.6449  std=1.2993
+ECI-based Property : mean=-34.4424  std=2.1655
+Fit Summary
+ ----------------------------------------------------------------------------------------------------
+ |  ID    Orbit ID    Degree    Cluster Diameter    ECI    Feature AVG    Feature STD    ECI * STD  |
+ |  0        0          0              NA         -34.442     1.000          0.000        -0.000    |
+ |  1        1          1            0.0000        1.529     -0.062          0.426         0.651    |
+ |  2        2          1            0.0000        1.529     -0.062          0.426         0.651    |
+ |  3        3          2            2.9698       -0.012      0.230          0.310        -0.004    |
+ |  4        4          2            2.9698        0.048      0.218          0.442         0.021    |
+ |  5        5          2            2.9698        0.014      0.111          0.342         0.005    |
+ |  6        6          2            4.2000       -0.015      0.337          0.325        -0.005    |
+ |  7        7          3            2.9698        0.003     -0.070          0.357         0.001    |
+ |  8        8          3            2.9698       -0.010     -0.029          0.350        -0.003    |
+ |  9        9          3            2.9698        0.013     -0.062          0.385         0.005    |
+ |  10       10         3            2.9698        0.006     -0.111          0.416         0.002    |
+ ----------------------------------------------------------------------------------------------------
+</pre></div></div>
+</div>
+</section>
+<section id="5)-Saving-your-work">
+<h2>5) Saving your work<a class="headerlink" href="#5)-Saving-your-work" title="Permalink to this headline">¶</a></h2>
+<p>All core classes in <code class="docutils literal notranslate"><span class="pre">smol</span></code> are <code class="docutils literal notranslate"><span class="pre">MSONables</span></code> and so can be saved using their <code class="docutils literal notranslate"><span class="pre">as_dict</span></code> methods or better yet with <code class="docutils literal notranslate"><span class="pre">monty.serialization.dumpfn</span></code>.</p>
+<p>Currently there is also a convenience function in <code class="docutils literal notranslate"><span class="pre">smol</span></code> that will nicely save all of your work for you in a standardized way. Work saved with the <code class="docutils literal notranslate"><span class="pre">save_work</span></code> function is saved as a dictionary with standardized names for the classes. Since a work flow should only contain 1 of each core classes the function will complain if you give it two of the same class (i.e. two wranglers)</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">smol.io</span> <span class="kn">import</span> <span class="n">save_work</span>
+
+<span class="n">file_path</span> <span class="o">=</span> <span class="s1">&#39;data/basic_ce.mson&#39;</span>
+<span class="c1"># we can save the subspace as well, but since both the wrangler</span>
+<span class="c1"># and the expansion have it, there is no need to do so.</span>
+<span class="n">save_work</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">wrangler</span><span class="p">,</span> <span class="n">expansion</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<section id="5.1)-Loading-previously-saved-work">
+<h3>5.1) Loading previously saved work<a class="headerlink" href="#5.1)-Loading-previously-saved-work" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">smol.io</span> <span class="kn">import</span> <span class="n">load_work</span>
+
+<span class="n">work</span> <span class="o">=</span> <span class="n">load_work</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">work</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+StructureWrangler: &lt;class &#39;smol.cofe.wrangling.wrangler.StructureWrangler&#39;&gt;
+
+ClusterExpansion: &lt;class &#39;smol.cofe.expansion.ClusterExpansion&#39;&gt;
+
+</pre></div></div>
+</div>
+</section>
+</section>
+</section>
 
 
               </div>
@@ -706,7 +969,7 @@ function checkPageExistsAndRedirect(event) {
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
 </p>
     </div>
     

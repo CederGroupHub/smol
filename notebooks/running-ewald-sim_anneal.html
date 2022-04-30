@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>&lt;no title&gt; &#8212; smol 0.0.1 documentation</title>
+    <title>Running Canonical Monte Carlo Simulated Annealing on an Ewald Hamiltonian &#8212; smol v0.0.1 documentation</title>
     
     <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -34,6 +34,8 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -121,7 +123,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.1  <!-- this text may get changed later by javascript -->
+        v0.0.1  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -131,7 +133,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables notebooks/running-ewald-sim_anneal and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1'}.
+     variables notebooks/running-ewald-sim_anneal and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': 'v0.0.1'}.
 -->
 
 <script type="text/javascript">
@@ -187,10 +189,10 @@ function checkPageExistsAndRedirect(event) {
             node.onclick = checkPageExistsAndRedirect;
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.1 variable.
+            // this version, rather than using sphinx's v0.0.1 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.1") {
+            if (entry.version == "v0.0.1") {
                 node.classList.add("active");
                 $("#version_switcher_button").text(entry.name);
             }
@@ -247,7 +249,54 @@ function checkPageExistsAndRedirect(event) {
 </div>
 
 <nav id="bd-toc-nav">
-    <ul class="simple visible nav section-nav flex-column">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#(0)-Create-a-Cluster-Subspace-based-on-the-disordered-structure-with-only-the-empty-cluster-and-Ewald-term">
+   (0) Create a Cluster Subspace based on the disordered structure with only the empty cluster and Ewald term
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#(1)-Create-an-Ewald-Processor">
+   (1) Create an Ewald Processor
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#(2)-Create-a-Canonical-Ensemble">
+   (2) Create a Canonical Ensemble
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#(3)-Create-the-Sampler">
+   (3) Create the Sampler
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#(4)-Generate-an-initial-ordered-structure-to-start-the-MC-simulation.">
+   (4) Generate an initial ordered structure to start the MC simulation.
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#(5)-Run-MC-simulated-annealing">
+   (5) Run MC simulated annealing
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#(6)-Analyzing-MC-sampling-at-each-temperature">
+   (6) Analyzing MC sampling at each temperature
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#Obtaining-the-ground-state">
+     Obtaining the ground state
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#(7)-Plotting-the-results">
+   (7) Plotting the results
+  </a>
+ </li>
 </ul>
 
 </nav>
@@ -257,7 +306,7 @@ function checkPageExistsAndRedirect(event) {
                 
 
 <div class="tocsection editthispage">
-    <a href="https://github.com/CederGroupHub/smol/edit/master/docs/notebooks/running-ewald-sim_anneal.ipynb">
+    <a href="https://github.com/CederGroupHub/smol/edit/main/docs/notebooks/running-ewald-sim_anneal.ipynb">
         <i class="fas fa-pencil-alt"></i> Edit this page
     </a>
 </div>
@@ -276,481 +325,673 @@ function checkPageExistsAndRedirect(event) {
               
               <div>
                 
-  <dl>
-<dt>{</dt><dd><dl>
-<dt>“cells”: [</dt><dd><dl>
-<dt>{</dt><dd><p>“cell_type”: “markdown”,
-“id”: “af82fe4e-4620-404a-9292-4f19d1a79b13”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“# Running Canonical Monte Carlo Simulated Annealing on an Ewald Hamiltoniann”,
-“When generating a set of structures to sample, it may be useful to enumerate them through a Monte Carlo (MC) simulation. A MC with only Ewald electrostatic energies can be especially useful for the initial training set, when there are no DFT energies to parametrize a cluster expansion and run MC. “</p>
-</div></blockquote>
-<p>]</p>
-</dd>
-</dl>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“id”: “6c14105b-7395-41f5-a71c-153e3365fe3d”,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“import copyn”,
-“n”,
-“import numpy as npn”,
-“import matplotlib.pyplot as pltn”,
-“from monty.serialization import loadfn, dumpfnn”,
-“from pymatgen.analysis.ewald import EwaldSummationn”,
-“from pymatgen.core import Structuren”,
-“n”,
-“from smol.cofe import ClusterSubspacen”,
-“from smol.cofe.extern import EwaldTerm”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“id”: “56fc6b3e-906e-404e-921d-05e315c6d224”,
-“metadata”: {</p>
-<blockquote>
-<div><p>“tags”: []</p>
-</div></blockquote>
-<p>},
-“source”: [</p>
-<blockquote>
-<div><p>“### (0) Create a Cluster Subspace based on the disordered structure with only the empty cluster and Ewald term”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“id”: “67445a5c-d9fc-4df1-953c-84ee8b99165c”,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“lno = loadfn(‘data/lno_prim.json’) “</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“id”: “95e6c5a5-999c-4aa8-91c1-13d5a5e4ff0f”,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“empty_cutoff = {} # Defining the cut-offs as an empty dictionary will generate a subspace with only the empty clustern”,
-“n”,
-“subspace = ClusterSubspace.from_cutoffs(structure=lno, n”,
-”                                        cutoffs=empty_cutoff, n”,
-”                                        supercell_size=’O2-‘)n”,
-“n”,
-“subspace.add_external_term(EwaldTerm(eta=None)) # Add the external Ewald Term”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“id”: “6c69f572-2721-45b7-98c0-d5e94eeaa5f7”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“### (1) Create an Ewald Processorn”,
-“An Ewald Processor handles changes in electrostatic interaction energies among different configurational states, using an Ewald Summation term.”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“id”: “bd341c34-7c57-411c-8ce1-5f9371e62fe0”,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“from smol.moca import EwaldProcessor”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“id”: “6d9abcde-4c58-447b-93aa-acc754748bad”,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“# The supercell with which we will run MC onn”,
-“sc_matrix = np.array([[4, 0, 0],n”,
-”                      [0, 4, 0],n”,
-”                      [0, 0, 2]])n”,
-“n”,
-“# Specifying the dielectric constant, the inverse of which is parametrized when fitting a CE with electrostatics (Example 1-1). n”,
-“dielectric = 5 n”,
-“n”,
-“# Creating the Ewald Processorn”,
-“ewald_proc = EwaldProcessor(cluster_subspace=subspace,n”,
-”                            supercell_matrix=sc_matrix,n”,
-”                            ewald_term=EwaldTerm(),n”,
-”                            coefficient=1/dielectric)”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“id”: “b5e396c3-7d0f-4cca-ad8e-7296ccd5dfab”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“### (2) Create a Canonical Ensemble”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“id”: “52ed793e-44a4-447d-97cb-276b09d5148d”,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“from smol.moca import CanonicalEnsemblen”,
-“n”,
-“# Create the canonical ensemble directly from the Ewald Processor, without creating a Cluster Expansion.n”,
-“ensemble = CanonicalEnsemble(processor=ewald_proc)n”,
-“n”,
-“# If the goal is to enumerate new structures for DFT calculations, it may be wise to limit the size ofn”,
-“# your supercell such that a relaxation calculation is feasible.n”,
-“# The thermodynamics may not be the most realistic, but you can generate training structuresn”,
-“# that have relatively low electrostatic energies, which may translate to lower DFT energies.n”,
-“print(f’The supercell size for the processor is {ensemble.processor.size} prims.’)n”,
-“print(f’The ensemble has a total of {ensemble.num_sites} sites.’)n”,
-“print(f’The active sublattices are:’)n”,
-“for sublattice in ensemble.sublattices:n”,
-”    print(sublattice)”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“id”: “cc393d4c-3d1f-4fcc-93b1-ef5c2f828792”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“### (3) Create the Sampler”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“id”: “d5cabb0e-7f51-419a-a8d6-5c25fcdb4447”,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“from smol.moca import Samplern”,
-“n”,
-“sampler = Sampler.from_ensemble(ensemble, temperature=10000)n”,
-“print(f&quot;Sampling information: {sampler.samples.metadata}&quot;)”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“id”: “125e984f-e29c-4209-80e4-f66c0b5339dd”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“### (4) Generate an initial ordered structure to start the MC simulation.”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“id”: “8d306f48-4627-4448-98a5-c2ca063bd6f9”,
-“metadata”: {</p>
-<blockquote>
-<div><p>“tags”: []</p>
-</div></blockquote>
-<p>},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“from pymatgen.transformations.standard_transformations import OrderDisorderedStructureTransformationn”,
-“n”,
-“# Here we will just use the order disordered transformation fromn”,
-“# pymatgen to get an ordered version of a prim supercell.n”,
-“# The structure will have the same composition set in the prim.n”,
-“transformation = OrderDisorderedStructureTransformation(algo=2)n”,
-“n”,
-“supercell = lno.copy()n”,
-“supercell.make_supercell(sc_matrix)n”,
-“n”,
-“test_struct = transformation.apply_transformation(supercell)n”,
-“print(test_struct.composition)”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“id”: “6c777175-9959-417a-88af-3f4601171ba5”,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“# Obtain the initial occupancy string from then”,
-“# test structure created above.n”,
-“init_occu = ensemble.processor.occupancy_from_structure(test_struct)n”,
-“n”,
-“# The occupancy strings created by the processorn”,
-“# are by default &quot;encoded&quot; by the indices of the speciesn”,
-“# for each given site. You can always see the actualn”,
-“# species in the occupancy string by decoding it.n”,
-“print(f’The encoded occupancy is:\n{init_occu}’)n”,
-“print(f’The initial occupancy is:\n {ensemble.processor.decode_occupancy(init_occu)}’)”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“id”: “b4b14a59-249b-4499-af4e-159feecc5a7d”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“### (5) Run MC simulated annealing”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“id”: “bc08f83b-b6fe-4eda-9b15-6fad24bcf0c2”,
-“metadata”: {</p>
-<blockquote>
-<div><p>“tags”: []</p>
-</div></blockquote>
-<p>},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“# Setting up the range of temperatures for simulated annealing. We start at very n”,
-“# high temperatures to approach the random limit. At each temperature, a MC simulation is performed. n”,
-“# At the lowest temperatures, you may find that you converge to a ground state.n”,
-“temps = np.logspace(4, 2, 10)n”,
-“n”,
-“mc_steps = 100000 # Defining number of MC steps at each temperaturen”,
-“n_thin_by = 10 # Number to thin byn”,
-“n”,
-“# Start simulated annealing.n”,
-“sampler.anneal(temperatures=temps, n”,
-”               mcmc_steps=mc_steps,n”,
-”               initial_occupancies=init_occu,n”,
-”               thin_by=n_thin_by, # Saving every 10 samplesn”,
-”               progress=True # Show the progress bar to know how far along you aren”,
-”              )”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“id”: “650f2894-d1c6-4462-9067-967f737d74cc”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“### (6) Analyzing MC sampling at each temperature”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“id”: “8499d137-00c0-41a9-9fa6-70a87fc2dec9”,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“n = int(mc_steps/10) # number of samples saved for the MC at each temperaturen”,
-“energies = sampler.samples.get_energies()n”,
-“mc_temps = list() # Create list of temperatures that correspond to the energiesn”,
-“n”,
-“for t in temps:n”,
-”    mc_temps.extend([t for i in range(n)]) “</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“id”: “eb153726-cbe6-46a3-bd06-1cf8f50ccce6”,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“# Obtain the average and standard deviation of energy at each temperature.n”,
-“for t in temps:n”,
-”    plot_inds = np.where(mc_temps == t)[0]n”,
-”    energies_t = np.array([energies[ind] for ind in plot_inds]) / ewald_proc.sizen”,
-”    avg_en = round(np.average(energies_t), 3)n”,
-”    std_en = round(np.std(energies_t), 4)n”,
-”    print(f’At T = {round(t, 2)} K \nAverage energy = {avg_en} eV/prim \nStd dev = {std_en} eV/prim \n’)”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“id”: “ad328c2f-6852-42d0-a6f6-0b507617f41a”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“#### Obtaining the ground state”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“id”: “2aa3da94-7e88-4936-a4da-52803acf24c1”,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“lowest_en = sampler.samples.get_minimum_energy() / ewald_proc.sizen”,
-“lowest_en_occu = sampler.samples.get_minimum_energy_occupancy()n”,
-“n”,
-“print(f’The ground state energy is {lowest_en} eV/prim’)n”,
-“print(f’Ground state occupancy is {lowest_en_occu}’)”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“id”: “ae67c361-ed8c-49bc-8553-b477186ded26”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“### (7) Plotting the results”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“id”: “77a36dee-0308-4000-91f8-5aff64078da2”,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“x_ind = 0 # To keep track of x axis indexingn”,
-“n”,
-“for i, t in enumerate(temps):n”,
-”    plot_inds = np.where(mc_temps == t)[0]n”,
-”    energies_t = np.array([energies[ind] for ind in plot_inds]) / ewald_proc.size # Obtain normalized energies at this temperaturen”,
-”    col = plt.cm.plasma(i/len(temps)) # Set the colorn”,
-”    num_samples = len(energies_t) n”,
-”    plt.plot(np.arange(x_ind, x_ind + num_samples), energies_t, color=col,   n”,
-”             label=f’{round(t, 2)} K’)n”,
-”    x_ind += num_samplesn”,
-”    n”,
-“plt.legend()n”,
-“plt.title(‘Simulated annealing on an \n Ewald Hamiltonian’, fontsize=16)n”,
-“plt.ylabel(‘Ewald Energy (eV/prim)’, fontsize=14)n”,
-“plt.xlabel(‘MC samples’, fontsize=14)n”,
-“plt.xticks(fontsize=12)n”,
-“plt.yticks(fontsize=12)”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>}</p>
-</dd>
-</dl>
-<p>],
-“metadata”: {</p>
-<blockquote>
-<div><dl class="simple">
-<dt>“kernelspec”: {</dt><dd><p>“display_name”: “matx_dev”,
-“language”: “python”,
-“name”: “matx_dev”</p>
-</dd>
-</dl>
-<p>},
-“language_info”: {</p>
-<blockquote>
-<div><dl class="simple">
-<dt>“codemirror_mode”: {</dt><dd><p>“name”: “ipython”,
-“version”: 3</p>
-</dd>
-</dl>
-<p>},
-“file_extension”: “.py”,
-“mimetype”: “text/x-python”,
-“name”: “python”,
-“nbconvert_exporter”: “python”,
-“pygments_lexer”: “ipython3”,
-“version”: “3.9.5”</p>
-</div></blockquote>
-<p>}</p>
-</div></blockquote>
-<p>},
-“nbformat”: 4,
-“nbformat_minor”: 5</p>
-</dd>
-</dl>
-<p>}</p>
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<section id="Running-Canonical-Monte-Carlo-Simulated-Annealing-on-an-Ewald-Hamiltonian">
+<h1>Running Canonical Monte Carlo Simulated Annealing on an Ewald Hamiltonian<a class="headerlink" href="#Running-Canonical-Monte-Carlo-Simulated-Annealing-on-an-Ewald-Hamiltonian" title="Permalink to this headline">¶</a></h1>
+<p>When generating a set of structures to sample, it may be useful to enumerate them through a Monte Carlo (MC) simulation. A MC with only Ewald electrostatic energies can be especially useful for the initial training set, when there are no DFT energies to parametrize a cluster expansion and run MC.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">monty.serialization</span> <span class="kn">import</span> <span class="n">loadfn</span><span class="p">,</span> <span class="n">dumpfn</span>
+<span class="kn">from</span> <span class="nn">pymatgen.analysis.ewald</span> <span class="kn">import</span> <span class="n">EwaldSummation</span>
+<span class="kn">from</span> <span class="nn">pymatgen.core</span> <span class="kn">import</span> <span class="n">Structure</span>
+
+<span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">ClusterSubspace</span>
+<span class="kn">from</span> <span class="nn">smol.cofe.extern</span> <span class="kn">import</span> <span class="n">EwaldTerm</span>
+</pre></div>
+</div>
+</div>
+<section id="(0)-Create-a-Cluster-Subspace-based-on-the-disordered-structure-with-only-the-empty-cluster-and-Ewald-term">
+<h2>(0) Create a Cluster Subspace based on the disordered structure with only the empty cluster and Ewald term<a class="headerlink" href="#(0)-Create-a-Cluster-Subspace-based-on-the-disordered-structure-with-only-the-empty-cluster-and-Ewald-term" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">lno</span> <span class="o">=</span> <span class="n">loadfn</span><span class="p">(</span><span class="s1">&#39;data/lno_prim.json&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">empty_cutoff</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># Defining the cut-offs as an empty dictionary will generate a subspace with only the empty cluster</span>
+
+<span class="n">subspace</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_cutoffs</span><span class="p">(</span><span class="n">structure</span><span class="o">=</span><span class="n">lno</span><span class="p">,</span>
+                                        <span class="n">cutoffs</span><span class="o">=</span><span class="n">empty_cutoff</span><span class="p">,</span>
+                                        <span class="n">supercell_size</span><span class="o">=</span><span class="s1">&#39;O2-&#39;</span><span class="p">)</span>
+
+<span class="n">subspace</span><span class="o">.</span><span class="n">add_external_term</span><span class="p">(</span><span class="n">EwaldTerm</span><span class="p">(</span><span class="n">eta</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span> <span class="c1"># Add the external Ewald Term</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="(1)-Create-an-Ewald-Processor">
+<h2>(1) Create an Ewald Processor<a class="headerlink" href="#(1)-Create-an-Ewald-Processor" title="Permalink to this headline">¶</a></h2>
+<p>An Ewald Processor handles changes in electrostatic interaction energies among different configurational states, using an Ewald Summation term.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">EwaldProcessor</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># The supercell with which we will run MC on</span>
+<span class="n">sc_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>
+
+<span class="c1"># Specifying the dielectric constant, the inverse of which is parametrized when fitting a CE with electrostatics (Example 1-1).</span>
+<span class="n">dielectric</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="c1"># Creating the Ewald Processor</span>
+<span class="n">ewald_proc</span> <span class="o">=</span> <span class="n">EwaldProcessor</span><span class="p">(</span><span class="n">cluster_subspace</span><span class="o">=</span><span class="n">subspace</span><span class="p">,</span>
+                            <span class="n">supercell_matrix</span><span class="o">=</span><span class="n">sc_matrix</span><span class="p">,</span>
+                            <span class="n">ewald_term</span><span class="o">=</span><span class="n">EwaldTerm</span><span class="p">(),</span>
+                            <span class="n">coefficient</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">dielectric</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="(2)-Create-a-Canonical-Ensemble">
+<h2>(2) Create a Canonical Ensemble<a class="headerlink" href="#(2)-Create-a-Canonical-Ensemble" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">CanonicalEnsemble</span>
+
+<span class="c1"># Create the canonical ensemble directly from the Ewald Processor, without creating a Cluster Expansion.</span>
+<span class="n">ensemble</span> <span class="o">=</span> <span class="n">CanonicalEnsemble</span><span class="p">(</span><span class="n">processor</span><span class="o">=</span><span class="n">ewald_proc</span><span class="p">)</span>
+
+<span class="c1"># If the goal is to enumerate new structures for DFT calculations, it may be wise to limit the size of</span>
+<span class="c1"># your supercell such that a relaxation calculation is feasible.</span>
+<span class="c1"># The thermodynamics may not be the most realistic, but you can generate training structures</span>
+<span class="c1"># that have relatively low electrostatic energies, which may translate to lower DFT energies.</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The supercell size for the processor is </span><span class="si">{</span><span class="n">ensemble</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s1"> prims.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The ensemble has a total of </span><span class="si">{</span><span class="n">ensemble</span><span class="o">.</span><span class="n">num_sites</span><span class="si">}</span><span class="s1"> sites.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The active sublattices are:&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">sublattice</span> <span class="ow">in</span> <span class="n">ensemble</span><span class="o">.</span><span class="n">sublattices</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">sublattice</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+The supercell size for the processor is 32 prims.
+The ensemble has a total of 128 sites.
+The active sublattices are:
+Sublattice(site_space=Ni3+0.5 Ni4+0.5 , sites=array([32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48,
+       49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63]), active_sites=array([32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48,
+       49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63]), encoding=array([0, 1]))
+Sublattice(site_space=O2-1 , sites=array([ 64,  65,  66,  67,  68,  69,  70,  71,  72,  73,  74,  75,  76,
+        77,  78,  79,  80,  81,  82,  83,  84,  85,  86,  87,  88,  89,
+        90,  91,  92,  93,  94,  95,  96,  97,  98,  99, 100, 101, 102,
+       103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115,
+       116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127]), active_sites=array([], dtype=float64), encoding=array([0]))
+Sublattice(site_space=Li+0.5 vacA0+0.5, sites=array([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
+       17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]), active_sites=array([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
+       17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]), encoding=array([0, 1]))
+</pre></div></div>
+</div>
+</section>
+<section id="(3)-Create-the-Sampler">
+<h2>(3) Create the Sampler<a class="headerlink" href="#(3)-Create-the-Sampler" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">Sampler</span>
+
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">Sampler</span><span class="o">.</span><span class="n">from_ensemble</span><span class="p">(</span><span class="n">ensemble</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sampling information: </span><span class="si">{</span><span class="n">sampler</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">metadata</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Sampling information: {&#39;name&#39;: &#39;CanonicalEnsemble&#39;, &#39;kernel&#39;: &#39;Metropolis&#39;, &#39;step&#39;: &#39;swap&#39;, &#39;seed&#39;: None}
+</pre></div></div>
+</div>
+</section>
+<section id="(4)-Generate-an-initial-ordered-structure-to-start-the-MC-simulation.">
+<h2>(4) Generate an initial ordered structure to start the MC simulation.<a class="headerlink" href="#(4)-Generate-an-initial-ordered-structure-to-start-the-MC-simulation." title="Permalink to this headline">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pymatgen.transformations.standard_transformations</span> <span class="kn">import</span> <span class="n">OrderDisorderedStructureTransformation</span>
+
+<span class="c1"># Here we will just use the order disordered transformation from</span>
+<span class="c1"># pymatgen to get an ordered version of a prim supercell.</span>
+<span class="c1"># The structure will have the same composition set in the prim.</span>
+<span class="n">transformation</span> <span class="o">=</span> <span class="n">OrderDisorderedStructureTransformation</span><span class="p">(</span><span class="n">algo</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">supercell</span> <span class="o">=</span> <span class="n">lno</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">supercell</span><span class="o">.</span><span class="n">make_supercell</span><span class="p">(</span><span class="n">sc_matrix</span><span class="p">)</span>
+
+<span class="n">test_struct</span> <span class="o">=</span> <span class="n">transformation</span><span class="o">.</span><span class="n">apply_transformation</span><span class="p">(</span><span class="n">supercell</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">test_struct</span><span class="o">.</span><span class="n">composition</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Li+16 Ni3+16 Ni4+16 O2-64
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Obtain the initial occupancy string from the</span>
+<span class="c1"># test structure created above.</span>
+<span class="n">init_occu</span> <span class="o">=</span> <span class="n">ensemble</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">occupancy_from_structure</span><span class="p">(</span><span class="n">test_struct</span><span class="p">)</span>
+
+<span class="c1"># The occupancy strings created by the processor</span>
+<span class="c1"># are by default &quot;encoded&quot; by the indices of the species</span>
+<span class="c1"># for each given site. You can always see the actual</span>
+<span class="c1"># species in the occupancy string by decoding it.</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The encoded occupancy is:</span><span class="se">\n</span><span class="si">{</span><span class="n">init_occu</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The initial occupancy is:</span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">ensemble</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">decode_occupancy</span><span class="p">(</span><span class="n">init_occu</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+The encoded occupancy is:
+[0 0 1 1 0 0 1 1 1 1 0 0 1 1 0 0 0 0 1 1 0 0 1 1 1 1 0 0 1 1 0 0 1 1 0 0 1
+ 1 0 0 0 0 1 1 0 0 1 1 1 1 0 0 1 1 0 0 0 0 1 1 0 0 1 1 0 0 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+The initial occupancy is:
+ [Species Li+, Species Li+, Vacancy vacA0+, Vacancy vacA0+, Species Li+, Species Li+, Vacancy vacA0+, Vacancy vacA0+, Vacancy vacA0+, Vacancy vacA0+, Species Li+, Species Li+, Vacancy vacA0+, Vacancy vacA0+, Species Li+, Species Li+, Species Li+, Species Li+, Vacancy vacA0+, Vacancy vacA0+, Species Li+, Species Li+, Vacancy vacA0+, Vacancy vacA0+, Vacancy vacA0+, Vacancy vacA0+, Species Li+, Species Li+, Vacancy vacA0+, Vacancy vacA0+, Species Li+, Species Li+, Species Ni4+, Species Ni4+, Species Ni3+, Species Ni3+, Species Ni4+, Species Ni4+, Species Ni3+, Species Ni3+, Species Ni3+, Species Ni3+, Species Ni4+, Species Ni4+, Species Ni3+, Species Ni3+, Species Ni4+, Species Ni4+, Species Ni4+, Species Ni4+, Species Ni3+, Species Ni3+, Species Ni4+, Species Ni4+, Species Ni3+, Species Ni3+, Species Ni3+, Species Ni3+, Species Ni4+, Species Ni4+, Species Ni3+, Species Ni3+, Species Ni4+, Species Ni4+, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-, Species O2-]
+</pre></div></div>
+</div>
+</section>
+<section id="(5)-Run-MC-simulated-annealing">
+<h2>(5) Run MC simulated annealing<a class="headerlink" href="#(5)-Run-MC-simulated-annealing" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Setting up the range of temperatures for simulated annealing. We start at very</span>
+<span class="c1"># high temperatures to approach the random limit. At each temperature, a MC simulation is performed.</span>
+<span class="c1"># At the lowest temperatures, you may find that you converge to a ground state.</span>
+<span class="n">temps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+<span class="n">mc_steps</span> <span class="o">=</span> <span class="mi">100000</span> <span class="c1"># Defining number of MC steps at each temperature</span>
+<span class="n">n_thin_by</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1"># Number to thin by</span>
+
+<span class="c1"># Start simulated annealing.</span>
+<span class="n">sampler</span><span class="o">.</span><span class="n">anneal</span><span class="p">(</span><span class="n">temperatures</span><span class="o">=</span><span class="n">temps</span><span class="p">,</span>
+               <span class="n">mcmc_steps</span><span class="o">=</span><span class="n">mc_steps</span><span class="p">,</span>
+               <span class="n">initial_occupancies</span><span class="o">=</span><span class="n">init_occu</span><span class="p">,</span>
+               <span class="n">thin_by</span><span class="o">=</span><span class="n">n_thin_by</span><span class="p">,</span> <span class="c1"># Saving every 10 samples</span>
+               <span class="n">progress</span><span class="o">=</span><span class="kc">True</span> <span class="c1"># Show the progress bar to know how far along you are</span>
+              <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Sampling 1 chain(s) from a cell with 128 sites...: 100%|██████████| 100000/100000 [00:24&lt;00:00, 4049.65it/s]
+Sampling 1 chain(s) from a cell with 128 sites...: 100%|██████████| 100000/100000 [00:24&lt;00:00, 4036.97it/s]
+Sampling 1 chain(s) from a cell with 128 sites...: 100%|██████████| 100000/100000 [00:24&lt;00:00, 4138.69it/s]
+Sampling 1 chain(s) from a cell with 128 sites...: 100%|██████████| 100000/100000 [00:23&lt;00:00, 4206.24it/s]
+Sampling 1 chain(s) from a cell with 128 sites...: 100%|██████████| 100000/100000 [00:23&lt;00:00, 4265.49it/s]
+Sampling 1 chain(s) from a cell with 128 sites...: 100%|██████████| 100000/100000 [00:23&lt;00:00, 4175.66it/s]
+Sampling 1 chain(s) from a cell with 128 sites...: 100%|██████████| 100000/100000 [00:23&lt;00:00, 4225.40it/s]
+Sampling 1 chain(s) from a cell with 128 sites...: 100%|██████████| 100000/100000 [00:23&lt;00:00, 4317.89it/s]
+Sampling 1 chain(s) from a cell with 128 sites...: 100%|██████████| 100000/100000 [00:23&lt;00:00, 4216.13it/s]
+Sampling 1 chain(s) from a cell with 128 sites...: 100%|██████████| 100000/100000 [00:23&lt;00:00, 4258.17it/s]
+</pre></div></div>
+</div>
+</section>
+<section id="(6)-Analyzing-MC-sampling-at-each-temperature">
+<h2>(6) Analyzing MC sampling at each temperature<a class="headerlink" href="#(6)-Analyzing-MC-sampling-at-each-temperature" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mc_steps</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span> <span class="c1"># number of samples saved for the MC at each temperature</span>
+<span class="n">energies</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">get_energies</span><span class="p">()</span>
+<span class="n">mc_temps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span> <span class="c1"># Create list of temperatures that correspond to the energies</span>
+
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">temps</span><span class="p">:</span>
+    <span class="n">mc_temps</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">t</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)])</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Obtain the average and standard deviation of energy at each temperature.</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">temps</span><span class="p">:</span>
+    <span class="n">plot_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mc_temps</span> <span class="o">==</span> <span class="n">t</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">energies_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">energies</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">plot_inds</span><span class="p">])</span> <span class="o">/</span> <span class="n">ewald_proc</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">avg_en</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">energies_t</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">std_en</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">energies_t</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;At T = </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s1"> K </span><span class="se">\n</span><span class="s1">Average energy = </span><span class="si">{</span><span class="n">avg_en</span><span class="si">}</span><span class="s1"> eV/prim </span><span class="se">\n</span><span class="s1">Std dev = </span><span class="si">{</span><span class="n">std_en</span><span class="si">}</span><span class="s1"> eV/prim </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+At T = 10000.0 K
+Average energy = -22.112 eV/prim
+Std dev = 0.032 eV/prim
+
+At T = 5994.84 K
+Average energy = -22.133 eV/prim
+Std dev = 0.0263 eV/prim
+
+At T = 3593.81 K
+Average energy = -22.155 eV/prim
+Std dev = 0.0199 eV/prim
+
+At T = 2154.43 K
+Average energy = -22.176 eV/prim
+Std dev = 0.0151 eV/prim
+
+At T = 1291.55 K
+Average energy = -22.197 eV/prim
+Std dev = 0.0122 eV/prim
+
+At T = 774.26 K
+Average energy = -22.257 eV/prim
+Std dev = 0.0181 eV/prim
+
+At T = 464.16 K
+Average energy = -22.266 eV/prim
+Std dev = 0.0 eV/prim
+
+At T = 278.26 K
+Average energy = -22.266 eV/prim
+Std dev = 0.0 eV/prim
+
+At T = 166.81 K
+Average energy = -22.266 eV/prim
+Std dev = 0.0 eV/prim
+
+At T = 100.0 K
+Average energy = -22.266 eV/prim
+Std dev = 0.0 eV/prim
+
+</pre></div></div>
+</div>
+<section id="Obtaining-the-ground-state">
+<h3>Obtaining the ground state<a class="headerlink" href="#Obtaining-the-ground-state" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">lowest_en</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">get_minimum_energy</span><span class="p">()</span> <span class="o">/</span> <span class="n">ewald_proc</span><span class="o">.</span><span class="n">size</span>
+<span class="n">lowest_en_occu</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">get_minimum_energy_occupancy</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The ground state energy is </span><span class="si">{</span><span class="n">lowest_en</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Ground state occupancy is </span><span class="si">{</span><span class="n">lowest_en_occu</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+The ground state energy is -22.2657575304729 eV/prim
+Ground state occupancy is [1 1 1 1 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 0
+ 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 1 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+</pre></div></div>
+</div>
+</section>
+</section>
+<section id="(7)-Plotting-the-results">
+<h2>(7) Plotting the results<a class="headerlink" href="#(7)-Plotting-the-results" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">x_ind</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># To keep track of x axis indexing</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">temps</span><span class="p">):</span>
+    <span class="n">plot_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mc_temps</span> <span class="o">==</span> <span class="n">t</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">energies_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">energies</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">plot_inds</span><span class="p">])</span> <span class="o">/</span> <span class="n">ewald_proc</span><span class="o">.</span><span class="n">size</span> <span class="c1"># Obtain normalized energies at this temperature</span>
+    <span class="n">col</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">plasma</span><span class="p">(</span><span class="n">i</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">temps</span><span class="p">))</span> <span class="c1"># Set the color</span>
+    <span class="n">num_samples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">energies_t</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">x_ind</span><span class="p">,</span> <span class="n">x_ind</span> <span class="o">+</span> <span class="n">num_samples</span><span class="p">),</span> <span class="n">energies_t</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+             <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s1"> K&#39;</span><span class="p">)</span>
+    <span class="n">x_ind</span> <span class="o">+=</span> <span class="n">num_samples</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Simulated annealing on an </span><span class="se">\n</span><span class="s1"> Ewald Hamiltonian&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Ewald Energy (eV/prim)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;MC samples&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(array([-22.3 , -22.25, -22.2 , -22.15, -22.1 , -22.05, -22.  , -21.95,
+        -21.9 ]),
+ [Text(0, 0, &#39;&#39;),
+  Text(0, 0, &#39;&#39;),
+  Text(0, 0, &#39;&#39;),
+  Text(0, 0, &#39;&#39;),
+  Text(0, 0, &#39;&#39;),
+  Text(0, 0, &#39;&#39;),
+  Text(0, 0, &#39;&#39;),
+  Text(0, 0, &#39;&#39;),
+  Text(0, 0, &#39;&#39;)])
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_running-ewald-sim_anneal_23_1.png" src="../_images/notebooks_running-ewald-sim_anneal_23_1.png" />
+</div>
+</div>
+</section>
+</section>
 
 
               </div>
@@ -778,7 +1019,7 @@ function checkPageExistsAndRedirect(event) {
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
 </p>
     </div>
     

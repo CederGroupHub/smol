@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>&lt;no title&gt; &#8212; smol 0.0.1 documentation</title>
+    <title>Visualizing Clusters with Crystal-Toolkit &#8212; smol v0.0.1 documentation</title>
     
     <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -34,6 +34,8 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -121,7 +123,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.1  <!-- this text may get changed later by javascript -->
+        v0.0.1  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -131,7 +133,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables notebooks/cluster-visualization and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1'}.
+     variables notebooks/cluster-visualization and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': 'v0.0.1'}.
 -->
 
 <script type="text/javascript">
@@ -187,10 +189,10 @@ function checkPageExistsAndRedirect(event) {
             node.onclick = checkPageExistsAndRedirect;
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.1 variable.
+            // this version, rather than using sphinx's v0.0.1 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.1") {
+            if (entry.version == "v0.0.1") {
                 node.classList.add("active");
                 $("#version_switcher_button").text(entry.name);
             }
@@ -247,7 +249,27 @@ function checkPageExistsAndRedirect(event) {
 </div>
 
 <nav id="bd-toc-nav">
-    <ul class="simple visible nav section-nav flex-column">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#Load-a-cluster-expansion">
+   Load a cluster expansion
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#Visualize-the-primitive-structure">
+   Visualize the primitive structure
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#Visualize-a-pair-cluster">
+   Visualize a pair cluster
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#Visualize-a-triplet-cluster">
+   Visualize a triplet cluster
+  </a>
+ </li>
 </ul>
 
 </nav>
@@ -257,7 +279,7 @@ function checkPageExistsAndRedirect(event) {
                 
 
 <div class="tocsection editthispage">
-    <a href="https://github.com/CederGroupHub/smol/edit/master/docs/notebooks/cluster-visualization.ipynb">
+    <a href="https://github.com/CederGroupHub/smol/edit/main/docs/notebooks/cluster-visualization.ipynb">
         <i class="fas fa-pencil-alt"></i> Edit this page
     </a>
 </div>
@@ -276,198 +298,450 @@ function checkPageExistsAndRedirect(event) {
               
               <div>
                 
-  <dl>
-<dt>{</dt><dd><dl>
-<dt>“cells”: [</dt><dd><dl>
-<dt>{</dt><dd><p>“cell_type”: “markdown”,
-“id”: “f279d556-786b-42ef-bfca-7948ceb5bbcd”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“# Visualizing Clusters with Crystal-Toolkit”</p>
-</div></blockquote>
-<p>]</p>
-</dd>
-</dl>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“id”: “9edf2a21-3e0e-4523-8898-ef2871799ba5”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“Visualizing clusters can be quite helpful when creating or analysing a cluster expansion.n”,
-“n”,
-“This can be done seamlessly by relying on [Crystal-Toolkit](<a class="reference external" href="https://docs.crystaltoolkit.org/">https://docs.crystaltoolkit.org/</a>). Simply install <cite>crystal-toolkit</cite> and make sure to also install the <cite>crystaltoolkit-extension</cite> and setup jupyter integration as detailed in the docs.n”,
-“n”,
-“Then to visualize simply import <cite>crystal-toolkit</cite>, and thats it!”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“id”: “6273e1c5-b2e1-42b5-a3b0-040b38d06ec6”,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“from smol.io import load_workn”,
-“import crystal_toolkit”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“id”: “43a64bb1-48ac-411c-a4d6-982a69d0072d”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“### Load a cluster expansion”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“id”: “80dc35ad-98ba-4bd1-8446-76fc1ce27b26”,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“file_path = ‘data/basic_ce.mson’n”,
-“expansion = load_work(file_path)[‘ClusterExpansion’]”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“id”: “0c150564-7ad8-4aba-a05c-a9c0910b6710”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“### Visualize the primitive structuren”,
-“To visualize using crystal toolkit simply type the name of the object instance you want to see”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“id”: “0ef16364-e616-4eda-9206-b846bcedbdc9”,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“print(expansion.cluster_subspace.structure)  # print out detailsn”,
-“expansion.cluster_subspace.structure  # visualization”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“id”: “6083f496-0741-4767-b112-cf05cbef3fd6”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“### Visualize a pair clustern”,
-“To visualize clusters in <cite>smol</cite> simply look at the <cite>base_cluster</cite> for a given orbit”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“id”: “118079e9-25bd-416f-a53c-cc8e891a88e0”,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“cluster = expansion.cluster_subspace.orbits_by_size[2][0].base_clustern”,
-“print(cluster)n”,
-“cluster”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “markdown”,
-“id”: “e1c8e2d2-638d-4a34-bf1c-a4377866006a”,
-“metadata”: {},
-“source”: [</p>
-<blockquote>
-<div><p>“### Visualize a triplet cluster”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-{</p>
-<blockquote>
-<div><p>“cell_type”: “code”,
-“execution_count”: null,
-“id”: “975d2cc0-3ae2-4735-869c-46ada4b9794c”,
-“metadata”: {},
-“outputs”: [],
-“source”: [</p>
-<blockquote>
-<div><p>“cluster = expansion.cluster_subspace.orbits_by_size[3][0].base_clustern”,
-“print(cluster)n”,
-“cluster”</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>}</p>
-</dd>
-</dl>
-<p>],
-“metadata”: {</p>
-<blockquote>
-<div><dl class="simple">
-<dt>“kernelspec”: {</dt><dd><p>“display_name”: “matx_dev”,
-“language”: “python”,
-“name”: “matx_dev”</p>
-</dd>
-</dl>
-<p>},
-“language_info”: {</p>
-<blockquote>
-<div><dl class="simple">
-<dt>“codemirror_mode”: {</dt><dd><p>“name”: “ipython”,
-“version”: 3</p>
-</dd>
-</dl>
-<p>},
-“file_extension”: “.py”,
-“mimetype”: “text/x-python”,
-“name”: “python”,
-“nbconvert_exporter”: “python”,
-“pygments_lexer”: “ipython3”,
-“version”: “3.9.5”</p>
-</div></blockquote>
-<p>}</p>
-</div></blockquote>
-<p>},
-“nbformat”: 4,
-“nbformat_minor”: 5</p>
-</dd>
-</dl>
-<p>}</p>
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<section id="Visualizing-Clusters-with-Crystal-Toolkit">
+<h1>Visualizing Clusters with Crystal-Toolkit<a class="headerlink" href="#Visualizing-Clusters-with-Crystal-Toolkit" title="Permalink to this headline">¶</a></h1>
+<p>Visualizing clusters can be quite helpful when creating or analysing a cluster expansion.</p>
+<p>This can be done seamlessly by relying on <a class="reference external" href="https://docs.crystaltoolkit.org/">Crystal-Toolkit</a>. Simply install <code class="docutils literal notranslate"><span class="pre">crystal-toolkit</span></code> and make sure to also install the <code class="docutils literal notranslate"><span class="pre">crystaltoolkit-extension</span></code> and setup jupyter integration as detailed in the docs.</p>
+<p>Then to visualize simply import <code class="docutils literal notranslate"><span class="pre">crystal-toolkit</span></code>, and thats it!</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">smol.io</span> <span class="kn">import</span> <span class="n">load_work</span>
+<span class="kn">import</span> <span class="nn">crystal_toolkit</span>
+</pre></div>
+</div>
+</div>
+<section id="Load-a-cluster-expansion">
+<h2>Load a cluster expansion<a class="headerlink" href="#Load-a-cluster-expansion" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">file_path</span> <span class="o">=</span> <span class="s1">&#39;data/basic_ce.mson&#39;</span>
+<span class="n">expansion</span> <span class="o">=</span> <span class="n">load_work</span><span class="p">(</span><span class="n">file_path</span><span class="p">)[</span><span class="s1">&#39;ClusterExpansion&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Visualize-the-primitive-structure">
+<h2>Visualize the primitive structure<a class="headerlink" href="#Visualize-the-primitive-structure" title="Permalink to this headline">¶</a></h2>
+<p>To visualize using crystal toolkit simply type the name of the object instance you want to see</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">expansion</span><span class="o">.</span><span class="n">cluster_subspace</span><span class="o">.</span><span class="n">structure</span><span class="p">)</span>  <span class="c1"># print out details</span>
+<span class="n">expansion</span><span class="o">.</span><span class="n">cluster_subspace</span><span class="o">.</span><span class="n">structure</span>  <span class="c1"># visualization</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Full Formula (Li0.5 Ni1 O2)
+Reduced Formula: Li0.5Ni1O2
+abc   :   2.969848   2.969848   5.143928
+angles:  73.221350  73.221347  60.000002
+Sites (4)
+  #  SP                         a     b     c
+---  ----------------------  ----  ----  ----
+  0  Li+:0.500               0     0     0
+  1  Ni3+:0.500, Ni4+:0.500  0.5   0.5   0.5
+  2  O2-                     0.75  0.75  0.75
+  3  O2-                     0.25  0.25  0.25
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+If you see this text, the Crystal Toolkit Jupyter Lab
+
+extension is not installed. You can install it by running
+
+&#34;pip install crystaltoolkit-extension&#34;
+
+from the same environment you run &#34;jupyter lab&#34;.
+
+This only works in Jupyter Lab 3.x or above.
+
+
+Structure Summary
+Lattice
+    abc : 2.969848 2.9698481608006304 5.143928079443783
+ angles : 73.22134967468278 73.22134665054797 60.00000177324646
+ volume : 37.04398870365559
+      A : 2.843413003724563 -0.0 0.8573211961418291
+      B : 1.5509524920968607 -2.532695099191652 1.046778248525726e-07
+      C : 2.843413003724563 -0.0 -4.2866068838581715
+PeriodicSite: Li+:0.500 (0.0000, 0.0000, 0.0000) [0.0000, 0.0000, 0.0000]
+PeriodicSite: Ni3+:0.500, Ni4+:0.500 (3.6189, -1.2663, -1.7146) [0.5000, 0.5000, 0.5000]
+PeriodicSite: O2- (5.4283, -1.8995, -2.5720) [0.7500, 0.7500, 0.7500]
+PeriodicSite: O2- (1.8094, -0.6332, -0.8573) [0.2500, 0.2500, 0.2500]
+</pre></div></div>
+</div>
+</section>
+<section id="Visualize-a-pair-cluster">
+<h2>Visualize a pair cluster<a class="headerlink" href="#Visualize-a-pair-cluster" title="Permalink to this headline">¶</a></h2>
+<p>To visualize clusters in <code class="docutils literal notranslate"><span class="pre">smol</span></code> simply look at the <code class="docutils literal notranslate"><span class="pre">base_cluster</span></code> for a given orbit</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">cluster</span> <span class="o">=</span> <span class="n">expansion</span><span class="o">.</span><span class="n">cluster_subspace</span><span class="o">.</span><span class="n">orbits_by_size</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">base_cluster</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
+<span class="n">cluster</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Diameter : 2.9698
+  Charge : 4.0
+Centroid :     4.652858    -0.633174    -2.571964  -&gt;     0.750000     0.250000     0.750000
+Sites (2)
+------------------------------------------------------------------------------------------------------------
+0 vacA0+:0.500, Li+:0.500     5.686826     0.000000    -3.429286   -&gt;     1.000000     0.000000     1.000000
+1 Ni3+:0.500, Ni4+:0.500     3.618889    -1.266348    -1.714643   -&gt;     0.500000     0.500000     0.500000
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+If you see this text, the Crystal Toolkit Jupyter Lab
+
+extension is not installed. You can install it by running
+
+&#34;pip install crystaltoolkit-extension&#34;
+
+from the same environment you run &#34;jupyter lab&#34;.
+
+This only works in Jupyter Lab 3.x or above.
+
+
+Cluster
+No. sites: 2   Diameter: 2.9698
+Centroid: (4.6529, -0.6332, -2.5720) -&gt; [0.7500, 0.2500, 0.7500]
+Site: vacA0+:0.500, Li+:0.500 (5.6868, 0.0000, -3.4293) -&gt; [1.0000, 0.0000, 1.0000]
+Site: Ni3+:0.500, Ni4+:0.500 (3.6189, -1.2663, -1.7146) -&gt; [0.5000, 0.5000, 0.5000]
+</pre></div></div>
+</div>
+</section>
+<section id="Visualize-a-triplet-cluster">
+<h2>Visualize a triplet cluster<a class="headerlink" href="#Visualize-a-triplet-cluster" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">cluster</span> <span class="o">=</span> <span class="n">expansion</span><span class="o">.</span><span class="n">cluster_subspace</span><span class="o">.</span><span class="n">orbits_by_size</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">base_cluster</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
+<span class="n">cluster</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Diameter : 2.9698
+  Charge : 7.5
+Centroid :     2.412593    -0.844232    -2.857738  -&gt;     0.000000     0.333333     0.666667
+Sites (3)
+------------------------------------------------------------------------------------------------------------
+0 vacA0+:0.500, Li+:0.500     2.843413     0.000000    -4.286607   -&gt;    -0.000000     0.000000     1.000000
+1 Ni3+:0.500, Ni4+:0.500     0.775476    -1.266348    -2.571964   -&gt;    -0.500000     0.500000     0.500000
+2 Ni3+:0.500, Ni4+:0.500     3.618889    -1.266348    -1.714643   -&gt;     0.500000     0.500000     0.500000
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+If you see this text, the Crystal Toolkit Jupyter Lab
+
+extension is not installed. You can install it by running
+
+&#34;pip install crystaltoolkit-extension&#34;
+
+from the same environment you run &#34;jupyter lab&#34;.
+
+This only works in Jupyter Lab 3.x or above.
+
+
+Cluster
+No. sites: 3   Diameter: 2.9698
+Centroid: (2.4126, -0.8442, -2.8577) -&gt; [0.0000, 0.3333, 0.6667]
+Site: vacA0+:0.500, Li+:0.500 (2.8434, 0.0000, -4.2866) -&gt; [-0.0000, 0.0000, 1.0000]
+Site: Ni3+:0.500, Ni4+:0.500 (0.7755, -1.2663, -2.5720) -&gt; [-0.5000, 0.5000, 0.5000]
+Site: Ni3+:0.500, Ni4+:0.500 (3.6189, -1.2663, -1.7146) -&gt; [0.5000, 0.5000, 0.5000]
+</pre></div></div>
+</div>
+</section>
+</section>
 
 
               </div>
@@ -495,7 +769,7 @@ function checkPageExistsAndRedirect(event) {
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
 </p>
     </div>
     

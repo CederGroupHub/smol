@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Orbits &#8212; smol 0.0.1 documentation</title>
+    <title>Orbits &#8212; smol v0.0.1 documentation</title>
     
     <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -123,7 +123,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.1  <!-- this text may get changed later by javascript -->
+        v0.0.1  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -133,7 +133,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables api_reference/cofe/space.orbit and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1'}.
+     variables api_reference/cofe/space.orbit and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': 'v0.0.1'}.
 -->
 
 <script type="text/javascript">
@@ -189,10 +189,10 @@ function checkPageExistsAndRedirect(event) {
             node.onclick = checkPageExistsAndRedirect;
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.1 variable.
+            // this version, rather than using sphinx's v0.0.1 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.1") {
+            if (entry.version == "v0.0.1") {
                 node.classList.add("active");
                 $("#version_switcher_button").text(entry.name);
             }
@@ -351,7 +351,7 @@ function checkPageExistsAndRedirect(event) {
                 
 
 <div class="tocsection editthispage">
-    <a href="https://github.com/CederGroupHub/smol/edit/master/docs/api_reference/cofe/space.orbit.rst">
+    <a href="https://github.com/CederGroupHub/smol/edit/main/docs/api_reference/cofe/space.orbit.rst">
         <i class="fas fa-pencil-alt"></i> Edit this page
     </a>
 </div>
@@ -377,7 +377,7 @@ function checkPageExistsAndRedirect(event) {
 symmetry) clusters.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Orbit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure_symops</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Orbit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure_symops</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Orbit set of symmetrically equivalent clusters.</p>
 <p>An Orbit represents a set of clusters that are symmetrically equivalent
@@ -490,37 +490,37 @@ set of unique ID’s for the orbits.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.basis_arrays">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">basis_arrays</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.basis_arrays" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">basis_arrays</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.basis_arrays" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a tuple of all site function arrays for each site in orbit.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.basis_orthogonal">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">basis_orthogonal</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.basis_orthogonal" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">basis_orthogonal</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.basis_orthogonal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test if the Orbit bases are orthogonal.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.basis_orthonormal">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">basis_orthonormal</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.basis_orthonormal" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">basis_orthonormal</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.basis_orthonormal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test if the orbit bases are orthonormal.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.basis_type">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">basis_type</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.basis_type" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">basis_type</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.basis_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the name of basis set used.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.bit_combo_multiplicities">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">bit_combo_multiplicities</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.bit_combo_multiplicities" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bit_combo_multiplicities</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.bit_combo_multiplicities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the multiplicities of the symmetrically distinct bit ordering.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.bit_combos">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">bit_combos</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.bit_combos" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bit_combos</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.bit_combos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get tuple representing the multi-index for site function ordering.</p>
 <p>tuple of ndarrays, each array is a set of symmetrically equivalent bit
 orderings represented by each row. Bit combos represent non-constant site
@@ -529,7 +529,7 @@ function orderings, i.e. contracted multi-indices</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.cluster_permutations">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cluster_permutations</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.cluster_permutations" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cluster_permutations</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.cluster_permutations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the symmetrical site permutations that map a cluster to itself.</p>
 <p>A permutation is a mapping such that for a give symop in cluster_symops
 Symop.operate(sites) = sites[mapping] (after translation back to unit
@@ -538,20 +538,20 @@ cell)</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.cluster_symops">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cluster_symops</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.cluster_symops" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cluster_symops</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.cluster_symops" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get symmetry operations that map a cluster to its periodic image.</p>
 <p>Each element is a pymatgen.core.operations.Symop.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.clusters">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">clusters</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.clusters" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">clusters</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.clusters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get symmetrically equivalent clusters.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.correlation_tensors">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">correlation_tensors</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.correlation_tensors" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">correlation_tensors</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.correlation_tensors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the array of correlation functions for all possible configs.</p>
 <p>Array of stacked correlation arrays for each symetrically distinct
 set of bit combos.</p>
@@ -566,19 +566,19 @@ occupancy [1, 0, 2]</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.flat_correlation_tensors">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">flat_correlation_tensors</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.flat_correlation_tensors" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">flat_correlation_tensors</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.flat_correlation_tensors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get correlation_tensors flattened to 2D for fast cython.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.flat_tensor_indices">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">flat_tensor_indices</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.flat_tensor_indices" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">flat_tensor_indices</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.flat_tensor_indices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Index multipliers to read data easier from flat corr tensors.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.from_dict">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create Orbit from serialized MSONable dict.</p>
 </dd></dl>
 
@@ -602,7 +602,7 @@ occupancy [1, 0, 2]</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.multiplicity">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">multiplicity</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.multiplicity" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">multiplicity</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.multiplicity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get number of clusters in orbit.</p>
 <p>Number of clusters in the given sites of the lattice object that are in
 the orbit.</p>
@@ -630,14 +630,14 @@ orderings) needs to be passed.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.rotation_array">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">rotation_array</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.rotation_array" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rotation_array</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.rotation_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the rotation array.</p>
 <p>The rotation array is of size len(bit combos) x len(bit combos)</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.orbit.Orbit.site_spaces">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">site_spaces</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.site_spaces" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">site_spaces</span></span><a class="headerlink" href="#smol.cofe.space.orbit.Orbit.site_spaces" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the site spaces for the site basis associated with each site.</p>
 </dd></dl>
 
@@ -723,7 +723,7 @@ functions associated with each site.</p>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
 </p>
     </div>
     

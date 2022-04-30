@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Sampling Bias &#8212; smol 0.0.1 documentation</title>
+    <title>Sampling Bias &#8212; smol v0.0.1 documentation</title>
     
     <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -123,7 +123,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.1  <!-- this text may get changed later by javascript -->
+        v0.0.1  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -133,7 +133,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables api_reference/moca/sampler.bias and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1'}.
+     variables api_reference/moca/sampler.bias and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': 'v0.0.1'}.
 -->
 
 <script type="text/javascript">
@@ -189,10 +189,10 @@ function checkPageExistsAndRedirect(event) {
             node.onclick = checkPageExistsAndRedirect;
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.1 variable.
+            // this version, rather than using sphinx's v0.0.1 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.1") {
+            if (entry.version == "v0.0.1") {
                 node.classList.add("active");
                 $("#version_switcher_button").text(entry.name);
             }
@@ -351,7 +351,7 @@ function checkPageExistsAndRedirect(event) {
                 
 
 <div class="tocsection editthispage">
-    <a href="https://github.com/CederGroupHub/smol/edit/master/docs/api_reference/moca/sampler.bias.rst">
+    <a href="https://github.com/CederGroupHub/smol/edit/main/docs/api_reference/moca/sampler.bias.rst">
         <i class="fas fa-pencil-alt"></i> Edit this page
     </a>
 </div>
@@ -377,7 +377,7 @@ function checkPageExistsAndRedirect(event) {
 biased accordingly.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.bias.FugacityBias">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">FugacityBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fugacity_fractions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.bias.FugacityBias" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FugacityBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fugacity_fractions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.bias.FugacityBias" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.bias.MCBias" title="smol.moca.sampler.bias.MCBias"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.bias.MCBias</span></code></a></p>
 <p>Fugacity fraction bias.</p>
 <p>This bias corresponds directly to using a composition bias. Using this
@@ -441,7 +441,7 @@ step returned by MCUsher.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.sampler.bias.FugacityBias.fugacity_fractions">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">fugacity_fractions</span></span><a class="headerlink" href="#smol.moca.sampler.bias.FugacityBias.fugacity_fractions" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fugacity_fractions</span></span><a class="headerlink" href="#smol.moca.sampler.bias.FugacityBias.fugacity_fractions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the fugacity fractions for species on active sublatts.</p>
 </dd></dl>
 
@@ -449,7 +449,7 @@ step returned by MCUsher.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.bias.MCBias">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MCBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.bias.MCBias" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MCBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.bias.MCBias" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Base bias term class.</p>
 <dl class="py attribute">
@@ -476,7 +476,7 @@ site indices in sublattice.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.sampler.bias.MCBias.compute_bias">
-<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">compute_bias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.bias.MCBias.compute_bias" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compute_bias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.bias.MCBias.compute_bias" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute bias from occupancy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -490,7 +490,7 @@ site indices in sublattice.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.sampler.bias.MCBias.compute_bias_change">
-<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">compute_bias_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.bias.MCBias.compute_bias_change" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compute_bias_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.bias.MCBias.compute_bias_change" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute bias change from step.</p>
 <p>The returned value needs to be the difference of bias logs,
 log(bias_f) - log(bias_i), when the bias terms would directly multiply
@@ -571,7 +571,7 @@ site indices in sublattice.</p></li>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
 </p>
     </div>
     

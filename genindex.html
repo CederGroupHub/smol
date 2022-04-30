@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; smol 0.0.1 documentation</title>
+    <title>Index &#8212; smol v0.0.1 documentation</title>
     
     <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -120,7 +120,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.1  <!-- this text may get changed later by javascript -->
+        v0.0.1  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -130,7 +130,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables genindex and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1'}.
+     variables genindex and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': 'v0.0.1'}.
 -->
 
 <script type="text/javascript">
@@ -186,10 +186,10 @@ function checkPageExistsAndRedirect(event) {
             node.onclick = checkPageExistsAndRedirect;
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.1 variable.
+            // this version, rather than using sphinx's v0.0.1 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.1") {
+            if (entry.version == "v0.0.1") {
                 node.classList.add("active");
                 $("#version_switcher_button").text(entry.name);
             }
@@ -980,6 +980,12 @@ function checkPageExistsAndRedirect(event) {
       </ul></li>
       <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.get_backend">get_backend() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.get_backend">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_backend">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.get_backend">[3]</a>
 </li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.get_cluster_scene">get_cluster_scene() (in module cofe.space.cluster)</a>
+
+      <ul>
+        <li><a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.get_cluster_scene">(in module smol.cofe.space.cluster)</a>
+</li>
+      </ul></li>
       <li><a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.get_complete_mapping">get_complete_mapping() (in module cofe.space.clusterspace)</a>
 </li>
       <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.get_compositions">get_compositions() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.get_compositions">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_compositions">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.get_compositions">[3]</a>
@@ -1031,6 +1037,8 @@ function checkPageExistsAndRedirect(event) {
       <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.get_property_vector">get_property_vector() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_property_vector">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_property_vector">[2]</a>
 </li>
       <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.MCUsher.get_random_sublattice">get_random_sublattice() (MCUsher method)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.MCUsher.get_random_sublattice">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.get_scene">get_scene() (Cluster method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.get_scene">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.get_scene">[2]</a>
 </li>
       <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.get_similarity_matrix">get_similarity_matrix() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_similarity_matrix">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_similarity_matrix">[2]</a>
 </li>
@@ -2220,7 +2228,7 @@ function checkPageExistsAndRedirect(event) {
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
 </p>
     </div>
     

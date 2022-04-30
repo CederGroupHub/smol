@@ -3,11 +3,13 @@
 # ### Installation
 #
 # **smol** is purposedly light on dependencies which should make the installation
-# process headache free.
+# process headache free. Using `pip`:
 #
-# > pip install statmech-on-lattices
+# ```
+# pip install statmech-on-lattices
+# ```
 #
-# (unfortunately PyPi hates fun so we could use “smol”.)
+# (unfortunately PyPi hates fun so we can’t use “smol” for now.)
 #
 # ### Basic Usage
 #
@@ -36,14 +38,15 @@ subspace = ClusterSubspace.from_cutoffs(prim, cutoffs=cutoffs)
 # # Preparing training data
 #
 # Load and use data computed for a training set of ordered structures to
-# generate the necessary fitting data—formation energy and correlation vector
-# for each training point.
+# generate the necessary fitting data (formation energy and correlation vector
+# for each training structure). Training data is added as instances of
+# [ComputedStructureEntry](https://pymatgen.org/pymatgen.entries.computed_entries.html?highlight=computedstructureentry#pymatgen.entries.computed_entries.ComputedStructureEntry)
 
 from monty.serialization import loadfn
 from smol.cofe import StructureWrangler
-data = loadfn("path_to_file.json")
+entries = loadfn("path_to_file.json")
 wrangler = StructureWrangler(subspace)
-for structure, energy in data:
+for entry in entries:
 
 # # Fitting and creating a cluster expansion
 #
@@ -114,18 +117,22 @@ save_work(
 #
 # # Basic Examples
 #
-# * [Creating a basic cluster expansion](notebooks/1-creating-a-ce.ipynb)
+# * Creating a basic cluster expansion
 #
-# * [Creating a cluster expansion with electrostatics](notebooks/1-1-creating-a-ce-w-electrostatics.ipynb)
+# * Creating a cluster expansion with electrostatics
 #
-# * [Running Canonical Monte Carlo](notebooks/2-running-canonical-mc.ipynb)
+# * Visualizing clusters
 #
-# * [Running Semi-Grand Canonical Monte Carlo](notebooks/2-1-running-semigrand-mc.ipynb)
+# * Running Canonical Monte Carlo
 #
-# * [Preparing cluster expansion training data](notebooks/3-training-data-preparation.ipynb)
+# * Running Semi-Grand Canonical Monte Carlo
 #
-# * [Adding structures to a StructureWrangler in parallel](notebooks/4-adding-structures-in-parallel.ipynb)
+# * Preparing cluster expansion training data
 #
 # # Advanced Examples
 #
-# Soon to come…
+# * Adding structures to a StructureWrangler in parallel
+#
+# * Simulated annealing with point electrostatics
+#
+# More to come…
