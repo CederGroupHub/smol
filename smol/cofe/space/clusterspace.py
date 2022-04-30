@@ -534,7 +534,7 @@ class ClusterSubspace(MSONable):
 
         Adds an external term (e.g. an Ewald term) to the cluster expansion
         terms. External term classes must be MSONable and implement a method
-        to obtain a "correlation". See smol.cofe.extern for examples.
+        to obtain a "correlation". See smol.cofe.extern for notebooks.
 
         Args:
             term (ExternalTerm):

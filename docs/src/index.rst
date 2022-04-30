@@ -22,11 +22,20 @@ crystalline material systems.*
       :alt: Test Status
       :target: https://github.com/CederGroupHub/smol/actions/workflows/test.yml
 
--------------------------------------------------------------------------------
+.. image:: https://app.codacy.com/project/badge/Coverage/f6180b5223f346d2ac9dcf9a4bcc62d9
+      :alt: Coverage
+      :target: https://www.codacy.com/gh/CederGroupHub/smol/dashboard?utm_source=github.com&utm_medium=referral&utm_content=CederGroupHub/smol&utm_campaign=Badge_Coverage
 
-.. warning::
-    **smol** is still under substantial development and may possibly include
-    changes that break backwards compatibility for the near future.
+.. image:: https://img.shields.io/pypi/v/statmech-on-lattices?color=blue
+      :alt: PyPi Version
+      :target: https://pypi.org/project/statmech-on-lattices
+
+.. image:: https://img.shields.io/pypi/pyversions/statmech-on-lattices
+      :alt: Python Versions
+      :target: https://img.shields.io/pypi/pyversions/statmech-on-lattices
+
+
+-------------------------------------------------------------------------------
 
 **smol** is a minimal implementation of computational methods to calculate
 statistical mechanical and thermodynamic properties of crystalline

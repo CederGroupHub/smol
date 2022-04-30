@@ -18,7 +18,7 @@ from datetime import date
 import smol
 
 sys.path.insert(0, os.path.abspath("../../smol"))
-sys.path.insert(0, os.path.abspath("../../examples"))
+sys.path.insert(0, os.path.abspath("notebooks"))
 
 # -- Project information -----------------------------------------------------
 
@@ -68,7 +68,7 @@ napoleon_use_ivar = False
 napoleon_custom_sections = None
 
 # Add any paths that contain templates here, relative to this directory.
-source_suffix = [".rst", ".ipynb"]
+source_suffix = [".rst"]
 
 # The encoding of src files.
 source_encoding = "utf-8"
@@ -150,7 +150,7 @@ html_sidebars = {
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static"]
+# html_static_path = ["_static"]
 
 html_css_files = [
     "css/smol.css",
