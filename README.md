@@ -1,9 +1,13 @@
-<img src="docs/_static/logo.png" width="500px" alt="smol">
+<img src="docs/_static/logo.png" width="500px" alt=" ">
 
 Statistical Mechanics on Lattices
 =================================
 
 ![test](https://github.com/CederGroupHub/smol/actions/workflows/test.yml/badge.svg)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/f6180b5223f346d2ac9dcf9a4bcc62d9)](https://www.codacy.com/gh/CederGroupHub/smol/dashboard?utm_source=github.com&utm_medium=referral&utm_content=CederGroupHub/smol&utm_campaign=Badge_Coverage)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/CederGroupHub/smol/main.svg)](https://results.pre-commit.ci/latest/github/CederGroupHub/smol/main)
+[![pypi version](https://img.shields.io/pypi/v/statmech-on-lattices?color=blue)](https://pypi.org/project/statmech-on-lattices)
+![python versions](https://img.shields.io/pypi/pyversions/statmech-on-lattices)
 
 *Lighthweight but caffeinated Python implementation of computational methods
 for statistical mechanical calculations of configurational states in
@@ -49,17 +53,21 @@ supported there.
 
 Installation
 ----------
-`Clone` the repository. The latest tag in the `master` branch is the stable version of the
-code. The `master` branch has the newest tested features, but may have more
-lingering bugs.
+From pypi:
 
-Go to the top level directory of the cloned repo and type:
+    pip install statmech-on-lattices
+
+From source:
+
+`Clone` the repository. The latest tag in the `main` branch is the stable version of the
+code. The `main` branch has the newest tested features, but may have more
+lingering bugs. From the top level directory
 
     pip install .
 
 Usage
 -----
-Refer to the [documentation](http://amox.lbl.gov/smol) (requires lbl vpn) for details on using
+Refer to the [documentation](https://cedergrouphub.github.io/smol/) for details on using
 **smol**. Going through the [example notebooks](https://github.com/CederGroupHub/smol/tree/master/examples)
 will also help you get started.
 

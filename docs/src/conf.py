@@ -23,7 +23,7 @@ sys.path.insert(0, os.path.abspath("../../examples"))
 # -- Project information -----------------------------------------------------
 
 project = "smol"
-copyright = f"2020-{date.today().year}, Ceder Group"
+copyright = f"2022-{date.today().year}, Ceder Group"
 author = "Luis Barroso-Luque"
 
 # The full version, including alpha/beta/rc tags
@@ -70,14 +70,14 @@ napoleon_custom_sections = None
 # Add any paths that contain templates here, relative to this directory.
 source_suffix = [".rst", ".ipynb"]
 
-# The encoding of source files.
+# The encoding of src files.
 source_encoding = "utf-8"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
-# List of patterns, relative to source directory, that match files and
-# directories to ignore when looking for source files.
+# List of patterns, relative to src directory, that match files and
+# directories to ignore when looking for src files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
@@ -91,7 +91,9 @@ pygments_style = "sphinx"
 
 html_theme = "pydata_sphinx_theme"
 
-html_logo = "../_static/banner.svg"
+html_logo = (
+    "../_static/logo.png"  # banner.svg needs text as paths to avoid font missing
+)
 
 html_theme_options = {
     "github_url": "https://github.com/CederGroupHub/smol",
@@ -125,7 +127,7 @@ html_theme_options = {
 html_context = {
     "github_user": "CederGroupHub",
     "github_repo": "smol",
-    "github_version": "master",
+    "github_version": "main",
     "doc_path": "docs",
     "source_suffix": source_suffix,
 }

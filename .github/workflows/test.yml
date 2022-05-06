@@ -13,7 +13,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 6
+      max-parallel: 10
       matrix:
         python_version: [3.8, 3.9, 3]
 
@@ -33,17 +33,19 @@ jobs:
             ${{ runner.os }}-pip-
             ${{ runner.os }}-
 
-      - name: Install Python dependencies
+      - name: Install dependencies and package
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements-dev.txt
           pip install -r requirements.txt
-      - name: Install Package
-        run: |
-          pip install -e .
-          # --install-option="--use-cython" errors bc dataclasses is for some
-          # odd reason built with this too.
+          pip install -e .[tests]
 
       - name: Test with pytest
         run: |
-          pytest tests --cov=smol --cov-report=xml tests/
+          pytest tests --cov=smol --cov-report=xml
+
+      - name: codacy-coverage-reporter
+        if: ${{ matrix.python_version == 3.9 }}
+        uses: codacy/codacy-coverage-reporter-action@v1
+        with:
+            project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+            coverage-reports: coverage.xml
