@@ -125,10 +125,11 @@ html_theme_options = {
 }
 
 html_context = {
+    "github_url": "https://github.com",  # or your GitHub Enterprise interprise
     "github_user": "CederGroupHub",
     "github_repo": "smol",
     "github_version": "main",
-    "doc_path": "docs",
+    "doc_path": "docs/src",
     "source_suffix": source_suffix,
 }
 
