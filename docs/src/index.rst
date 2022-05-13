@@ -72,9 +72,9 @@ Citing
 ======
 If you find **smol** useful please cite the following publication,
 
-    Barroso-Luque, L., Yang, J.H., Xie, F., Chen T., Zhong, P. & Ceder, G.
-    **smol**: A Python package for cluster expansions and beyond
-    (submitted)
+    Barroso-Luque, L., et al.
+    `smol: A Python package for cluster expansions and beyond. (submitted)
+    <https://joss.theoj.org/papers/e96a568ca53ee9d14548d7b8bed69b25>`_
 
 Since **smol** is based on **pymatgen**, please also cite this publication,
 
