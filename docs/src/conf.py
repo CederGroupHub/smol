@@ -180,3 +180,10 @@ html_copy_source = False
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = "smol"
+
+# nbsphinx_prolog = """
+# Notebook file
+# `here. https://raw.githubusercontent.com/CederGroupHub/smol/main/docs/src/{{ env.doc2path(env.docname, base=None) }}
+
+# ----
+# """
