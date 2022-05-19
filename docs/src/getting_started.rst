@@ -10,7 +10,7 @@ process headache free. Using ``pip``::
 
         pip install statmech-on-lattices
 
-(unfortunately PyPi hates fun so we could use "smol".)
+(unfortunately someone is name-squatting so we can't use "smol" for now.)
 
 Basic Usage
 ===========
@@ -28,7 +28,7 @@ Start by creating a disordered primitive structure.
 
 .. nbplot::
 
-    >>> from pymatgen.core.structure import Structure
+    >>> from pymatgen.core.structure import Structure, Lattice
     >>> species = {"Au": 0.5, "Cu": 0.5}
     >>> prim = Structure.from_spacegroup(
             "Fm-3m", Lattice.cubic(3.6), [species], [[0, 0, 0]])
@@ -161,6 +161,7 @@ Basic Examples
 
 - `Creating a basic cluster expansion`_
 - `Creating a cluster expansion with electrostatics`_
+- `Visualizing clusters`_
 - `Running Canonical Monte Carlo`_
 - `Running Semi-Grand Canonical Monte Carlo`_
 - `Preparing cluster expansion training data`_
@@ -168,6 +169,8 @@ Basic Examples
 .. _Creating a basic cluster expansion: notebooks/creating-a-ce.ipynb
 
 .. _Creating a cluster expansion with electrostatics: notebooks/creating-a-ce-w-electrostatics.ipynb
+
+.. _Visualizing clusters: notebooks/cluster-visualization.ipynb
 
 .. _Running Canonical Monte Carlo: notebooks/running-canonical-mc.ipynb
 
@@ -179,7 +182,10 @@ Advanced Examples
 -----------------
 
 - `Adding structures to a StructureWrangler in parallel`_
+- `Simulated annealing with point electrostatics`_
 
 .. _Adding structures to a StructureWrangler in parallel: notebooks/adding-structures-in-parallel.ipynb
+
+.. _Simulated annealing with point electrostatics: notebooks/running-ewald-sim_anneal.ipynb
 
 More to come...
