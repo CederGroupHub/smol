@@ -9,7 +9,7 @@
 # pip install statmech-on-lattices
 # ```
 #
-# (unfortunately PyPi hates fun so we can’t use “smol” for now.)
+# (unfortunately someone is name-squatting so we can’t use “smol” for now.)
 #
 # ### Basic Usage
 #
@@ -24,7 +24,7 @@
 #
 # Start by creating a disordered primitive structure.
 
-from pymatgen.core.structure import Structure
+from pymatgen.core.structure import Structure, Lattice
 species = {"Au": 0.5, "Cu": 0.5}
 prim = Structure.from_spacegroup(
 
