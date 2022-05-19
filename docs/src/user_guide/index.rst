@@ -14,6 +14,19 @@ two main submodules:
   Markov Chain Monte Carlo (MCMC) sampling based on a cluster expansion
   Hamiltonian (and a few other Hamiltonian models).
 
+Overview diagram
+----------------
+
+An overview diagram of the main classes and data inputs necessary to build and sample
+a lattice model is shown below. The workflow shown is sufficient for the majority of
+applications, for more advanced use and custom calculations a more detailed description
+of the package is given in the :doc:`Developing </developer_guide/index>` section.
+
+
+.. image:: ../../_static/use_workflow.png
+   :width: 800px
+
+
 Below is a general description of the core classes in each submodule, to help understand
 the design, usage and capabilities of **smol**. You can also refer to the :ref:`api ref`
 for full documentation of all classes and functions in the package.
