@@ -10,7 +10,7 @@ process headache free. Using ``pip``::
 
         pip install statmech-on-lattices
 
-(unfortunately PyPi hates fun so we can't use "smol" for now.)
+(unfortunately someone is name-squatting so we can't use "smol" for now.)
 
 Basic Usage
 ===========

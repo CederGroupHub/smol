@@ -5,7 +5,7 @@
    :hidden:
 
    getting_started
-   user_guide/index
+   user_guide
    api_reference/index
    citing
    developer_guide/index
