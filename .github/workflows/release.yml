@@ -1,22 +1,53 @@
 name: release
 
 on:
-  workflow_run:
-    workflows: [test]
-    types:
-      - completed
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
 
-  release-github:
-
-    if: ${{ github.event.workflow_run.conclusion == 'success' && startsWith(github.event.workflow_run.head_branch, 'v') }}
+  release-docs:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Install pandoc
+        run: sudo apt-get install pandoc
+
+      - uses: actions/setup-python@v3
         with:
-          ref: ${{ github.event.workflow_run.head_branch }}
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-optional.txt
+          pip install -e .[docs]
+
+      - name: Build docs
+        run: sphinx-build docs/src docs_build
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          publish_dir: ./docs_build
+
+  release-github:
+
+    runs-on: ubuntu-latest
+    needs:
+      - release-docs
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
 
       - name: Write release info  # CHANGES.md must be edited with the correct version being released.
         run: awk 'BEGIN {p = 0} {a = 0 }; /\[v([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?\]/ { p += 1; a = 1}; p + a == 1 { print } ' CHANGES.md | sed  -e '/./,$!d' -e :a -e '/^\n*$/{$d;N;ba' -e '}' > release.txt
@@ -27,8 +58,34 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.event.workflow_run.head_branch }}
-          release_name: ${{ github.event.workflow_run.head_branch }}
+          tag_name: ${{ steps.get_version.outputs.VERSION }}
+          release_name: ${{ steps.get_version.outputs.VERSION }}
           body_path: release.txt
           draft: false
           prerelease: false
+
+  release-pypi:
+
+    runs-on: ubuntu-latest
+    needs:
+      - release-github
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v3
+        with:
+           python-version: 3.9
+
+      - name: Build
+        run: |
+          pip install setuptools setuptools_scm numpy build
+          python -m build
+
+      - name: Publish package
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          verbose: true
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}

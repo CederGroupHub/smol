@@ -1,4 +1,4 @@
-# Compiled source #
+# Compiled src #
 ###################
 *.com
 *.class
@@ -9,7 +9,7 @@
 
 # Packages #
 ############
-# it's better to unpack these files and commit the raw source
+# it's better to unpack these files and commit the raw src
 # git has its own built in compression methods
 *.7z
 *.dmg
