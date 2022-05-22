@@ -117,7 +117,7 @@ class Sampler:
             sample_trace,
             sampling_metadata,
         )
-        return cls(mckernel, container, seed=seed)
+        return cls(mckernel, container)
 
     @property
     def mckernel(self):
