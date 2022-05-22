@@ -25,7 +25,7 @@ class Sampler:
     The default will use a simple Metropolis random walk kernel.
     """
 
-    def __init__(self, kernel, container, seed=None):
+    def __init__(self, kernel, container):
         """Initialize BaseSampler.
 
         It is recommended to initialize a sampler with the from_ensemble
@@ -37,17 +37,11 @@ class Sampler:
                 an MCKernel instance.
             container (SampleContainer):
                 a sampler container to store samples.
-            seed (int): optional
-                seed for random number generator.
         """
         self._kernel = kernel
         self._container = container
-        # Set and save the seed for random. This allows reproducible results.
-        if seed is None:
-            seed = np.random.seed()
         #  Save the seed for reproducibility
-        self._container.metadata["seed"] = seed
-        self._seed = seed
+        self._container.metadata["seed"] = kernel.seed
 
     @classmethod
     def from_ensemble(
@@ -133,12 +127,7 @@ class Sampler:
     @property
     def seed(self):
         """Seed for the random number generator."""
-        return self._seed
-
-    @seed.setter
-    def seed(self, seed):
-        """Set the seed for the PRNG."""
-        self._seed = seed
+        return self._kernel.seed
 
     @property
     def samples(self):
