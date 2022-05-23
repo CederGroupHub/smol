@@ -911,6 +911,10 @@ def choose_section_from_partition(p):
         The index of randomly chosen element:
            int
     """
+    if np.allclose(p, 0):
+        p = np.ones(len(p))
+    if not np.all(p >= NUM_TOL):
+        raise ValueError("Probabilities contain negative number.")
     p = np.array(p) / np.sum(p)
     rng = np.random.default_rng()
     return int(round(rng.choice(len(p), p=p)))
