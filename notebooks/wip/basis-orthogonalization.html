@@ -34,7 +34,7 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -515,7 +515,7 @@ div.nboutput.container div.output_area > div[class^='highlight']{
 }
 
 /* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt a.copybtn {
+.prompt .copybtn {
     display: none;
 }
 
@@ -574,8 +574,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">monty.serialization</span> <span class="kn">import</span> <span class="n">loadfn</span>
@@ -601,8 +600,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Create a cluster subspace with orthonormal basis functions</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a cluster subspace with orthonormal basis functions</span>
 <span class="n">cs_or</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_cutoffs</span><span class="p">(</span><span class="n">structure</span><span class="o">=</span><span class="n">lno_prim</span><span class="p">,</span>
                                     <span class="n">cutoffs</span><span class="o">=</span><span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mf">4.1</span><span class="p">},</span>
                                     <span class="n">ltol</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">stol</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">angle_tol</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
@@ -636,8 +634,7 @@ True False
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Put data in a structure Wranger for later</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Put data in a structure Wranger for later</span>
 
 <span class="n">wrangler_or</span> <span class="o">=</span> <span class="n">StructureWrangler</span><span class="p">(</span><span class="n">cs_or</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">lno_entries</span><span class="p">:</span>
@@ -656,8 +653,7 @@ True False
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
 
 <span class="c1"># for orthonormal basis</span>
 <span class="n">estimator_or</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">fit_intercept</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -689,8 +685,7 @@ True False
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">max_error</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">max_error</span>
 
 <span class="n">train_predictions_or</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">wrangler_or</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span>
                            <span class="n">expansion_or</span><span class="o">.</span><span class="n">coefs</span><span class="p">)</span>
@@ -718,8 +713,7 @@ True False
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RMSE (non-orthogonal) </span><span class="si">{</span><span class="n">rmse</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MAX (non-orthogonal) </span><span class="si">{</span><span class="n">maxer</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Fitted dielectric constant (non-orthogonal) </span><span class="si">{</span><span class="mi">1</span><span class="o">/</span><span class="n">expansion_nor</span><span class="o">.</span><span class="n">coefs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -746,8 +740,7 @@ Fitted dielectric constant (non-orthogonal) 38.431411030417244
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">i</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">wrangler_or</span><span class="o">.</span><span class="n">structures</span><span class="p">))</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">wrangler_or</span><span class="o">.</span><span class="n">structures</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">cs_or</span><span class="o">.</span><span class="n">corr_from_structure</span><span class="p">(</span><span class="n">wrangler_or</span><span class="o">.</span><span class="n">structures</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="s1">&#39;s&#39;</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">cs_nor</span><span class="o">.</span><span class="n">corr_from_structure</span><span class="p">(</span><span class="n">wrangler_nor</span><span class="o">.</span><span class="n">structures</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="s1">&#39;o&#39;</span><span class="p">)</span>
@@ -782,8 +775,7 @@ Fitted dielectric constant (non-orthogonal) 38.431411030417244
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pymatgen.transformations.standard_transformations</span> <span class="kn">import</span> <span class="n">OrderDisorderedStructureTransformation</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pymatgen.transformations.standard_transformations</span> <span class="kn">import</span> <span class="n">OrderDisorderedStructureTransformation</span>
 
 
 <span class="c1"># Create a supercell matrix</span>
@@ -802,9 +794,7 @@ Fitted dielectric constant (non-orthogonal) 38.431411030417244
 <span class="c1"># this can take a bit of time....</span>
 <span class="n">test_struct</span> <span class="o">=</span> <span class="n">transformation</span><span class="o">.</span><span class="n">apply_transformation</span><span class="p">(</span><span class="n">supercell</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">test_struct</span><span class="o">.</span><span class="n">composition</span><span class="p">)</span>
-
-
-</pre></div>
+<br/><br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -819,8 +809,7 @@ Li+4 Ni3+4 Ni4+4 O2-16
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">Sampler</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">Sampler</span>
 
 <span class="c1"># this convenience method will take care of creating the appropriate</span>
 <span class="c1"># processor for the given cluster expansion.</span>
@@ -858,8 +847,7 @@ Li+4 Ni3+4 Ni4+4 O2-16
             <span class="n">initial_occupancies</span><span class="o">=</span><span class="n">init_occu_nor</span><span class="p">,</span>
             <span class="n">thin_by</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="c1"># thin_by will save every 100th sample only</span>
             <span class="n">progress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># progress will show progress bar</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -875,8 +863,7 @@ Sampling 1 chain(s) from a cell with 32 sites...: 100%|████████�
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Samples are saved in a sample container</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Samples are saved in a sample container</span>
 <span class="n">samples_or</span> <span class="o">=</span> <span class="n">sampler_or</span><span class="o">.</span><span class="n">samples</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&quot;Details of the MC run for orthonormal basis&quot;&#39;</span><span class="p">)</span>
@@ -900,8 +887,7 @@ Sampling 1 chain(s) from a cell with 32 sites...: 100%|████████�
 <span class="c1"># by using the ensemble processor</span>
 <span class="n">curr_s_nor</span> <span class="o">=</span> <span class="n">ensemble_nor</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">structure_from_occupancy</span><span class="p">(</span><span class="n">samples_nor</span><span class="o">.</span><span class="n">get_occupancies</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 <span class="n">min_s_nor</span> <span class="o">=</span> <span class="n">ensemble_nor</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">structure_from_occupancy</span><span class="p">(</span><span class="n">samples_nor</span><span class="o">.</span><span class="n">get_minimum_energy_occupancy</span><span class="p">())</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -924,8 +910,7 @@ The minimum energy (for non-orthogonal) in trajectory is -276.5632651124954 eV
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">energies_or</span> <span class="o">=</span> <span class="n">samples_or</span><span class="o">.</span><span class="n">get_energies</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">energies_or</span> <span class="o">=</span> <span class="n">samples_or</span><span class="o">.</span><span class="n">get_energies</span><span class="p">()</span>
 <span class="n">energies_nor</span> <span class="o">=</span> <span class="n">samples_nor</span><span class="o">.</span><span class="n">get_energies</span><span class="p">()</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">energies_or</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
@@ -961,8 +946,7 @@ The minimum energy (for non-orthogonal) in trajectory is -276.5632651124954 eV
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># The prim is set to sites concentrations (Li+: 0.5, Vacancy: 0.5), (Ni+: 0.5, Ni: 40.5).</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># The prim is set to sites concentrations (Li+: 0.5, Vacancy: 0.5), (Ni+: 0.5, Ni: 40.5).</span>
 <span class="c1"># You can see this from printing it.</span>
 <span class="c1"># This is equivalent to a uniform concentration. So it is not different then standard orthonormalization.</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">lno_prim</span><span class="p">)</span>
@@ -1009,8 +993,7 @@ True True
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">wrangler_onc</span> <span class="o">=</span> <span class="n">StructureWrangler</span><span class="p">(</span><span class="n">cs_onc</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">wrangler_onc</span> <span class="o">=</span> <span class="n">StructureWrangler</span><span class="p">(</span><span class="n">cs_onc</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">lno_entries</span><span class="p">:</span>
     <span class="n">wrangler_onc</span><span class="o">.</span><span class="n">add_entry</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
@@ -1024,8 +1007,7 @@ True True
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">print</span><span class="p">(</span><span class="n">cs_onc</span><span class="o">.</span><span class="n">corr_from_structure</span><span class="p">(</span><span class="n">wrangler_onc</span><span class="o">.</span><span class="n">structures</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">cs_onc</span><span class="o">.</span><span class="n">corr_from_structure</span><span class="p">(</span><span class="n">wrangler_onc</span><span class="o">.</span><span class="n">structures</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">cs_on</span><span class="o">.</span><span class="n">corr_from_structure</span><span class="p">(</span><span class="n">wrangler_on</span><span class="o">.</span><span class="n">structures</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
 </pre></div>
 </div>
@@ -1045,8 +1027,7 @@ True True
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>
 </div>
@@ -1079,7 +1060,7 @@ True True
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
     </div>
     

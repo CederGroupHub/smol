@@ -34,7 +34,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -518,7 +518,7 @@ div.nboutput.container div.output_area > div[class^='highlight']{
 }
 
 /* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt a.copybtn {
+.prompt .copybtn {
     display: none;
 }
 
@@ -577,8 +577,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">monty.serialization</span> <span class="kn">import</span> <span class="n">loadfn</span>
 <span class="kn">from</span> <span class="nn">pymatgen.core.structure</span> <span class="kn">import</span> <span class="n">Structure</span>
@@ -590,13 +589,12 @@ div.rendered_html tbody tr:hover {
 <section id="1)-Preparing-a-StructureWrangler">
 <h2>1) Preparing a <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code><a class="headerlink" href="#1)-Preparing-a-StructureWrangler" title="Permalink to this headline">¶</a></h2>
 <p>Training structures and target data are handled by the <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> class. The class obtains the features and corresponding feature matrix based on the underlying <code class="docutils literal notranslate"><span class="pre">ClusterSubspace</span></code> provided.</p>
-<p>In the most simply settings we just use the feature matrix our supplied total energy from DFT to fit a cluster expansion. But it many cases we may want to improve our fit quality or reduce the model complexity by modifying the target property (i.e. using a reference energy or the energy of mixing) and/or by weighing structures based on some importance metric (i.e. by energy above hull). Using the <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> we can create this modified fitting data.</p>
+<p>In the most simply settings we just use the feature matrix our supplied total energy from DFT to fit a cluster expansion. But it many cases we may want to improve our fit quality or reduce the model complexity by modifying the target property (i.e. using a reference energy or the energy of mixing) and/or by weighing structures based on some importance metric (i.e. by energy above hull). Using the <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> we can create this modified fitting data.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Load the raw data</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load the raw data</span>
 <span class="c1"># load the prim structure</span>
 <span class="n">lno_prim</span> <span class="o">=</span> <span class="n">loadfn</span><span class="p">(</span><span class="s1">&#39;data/lno_prim.json&#39;</span><span class="p">)</span>
 
@@ -639,8 +637,7 @@ Total structures that match 27/31
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># obtain the minimum energy. Calling the get_property_vector</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># obtain the minimum energy. Calling the get_property_vector</span>
 <span class="c1"># will by default give you the property normalized per prim</span>
 <span class="c1"># (you should always used consistently normalized data when fitting)</span>
 <span class="n">min_energy</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">))</span>
@@ -677,8 +674,7 @@ Total structures that match 27/31
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">e_Ni2O3</span> <span class="o">=</span> <span class="o">-</span><span class="mf">12.48</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">e_Ni2O3</span> <span class="o">=</span> <span class="o">-</span><span class="mf">12.48</span>
 
 <span class="c1"># we can obtain the fully lithiated structure in the dataset by searching</span>
 <span class="c1"># through the occupancy strings.</span>
@@ -726,8 +722,7 @@ Total structures that match 27/31
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">smol.cofe.wrangling</span> <span class="kn">import</span> <span class="n">weights_energy_above_hull</span><span class="p">,</span> <span class="n">weights_energy_above_composition</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smol.cofe.wrangling</span> <span class="kn">import</span> <span class="n">weights_energy_above_hull</span><span class="p">,</span> <span class="n">weights_energy_above_composition</span>
 
 <span class="n">above_compostion</span> <span class="o">=</span> <span class="n">weights_energy_above_composition</span><span class="p">(</span>
     <span class="n">wrangler</span><span class="o">.</span><span class="n">structures</span><span class="p">,</span> <span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
@@ -773,8 +768,7 @@ LinearRegression(fit_intercept=False)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># filter by maximum ewald energy</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># filter by maximum ewald energy</span>
 <span class="c1"># all structures with ewald energy above the cutoff</span>
 <span class="c1"># will be removed</span>
 <span class="kn">from</span> <span class="nn">smol.cofe.wrangling</span> <span class="kn">import</span> <span class="n">max_ewald_energy_indices</span>
@@ -802,8 +796,7 @@ Saved indices are [&#39;low_electrostat_energy&#39;]
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># you can use the indices for selected structures to</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># you can use the indices for selected structures to</span>
 <span class="c1"># obtain only the corresponding values for those structures</span>
 <span class="n">feature_matrix</span> <span class="o">=</span> <span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
 <span class="n">prop_vector</span> <span class="o">=</span> <span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)[</span><span class="n">indices</span><span class="p">]</span>
@@ -851,7 +844,7 @@ Property vector shape (26,)
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
     </div>
     

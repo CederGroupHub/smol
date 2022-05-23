@@ -340,7 +340,7 @@ function checkPageExistsAndRedirect(event) {
 biased accordingly.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.sampler.bias.FugacityBias">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FugacityBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fugacity_fractions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.bias.FugacityBias" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FugacityBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fugacity_fractions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.bias.FugacityBias" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#moca.sampler.bias.MCBias" title="moca.sampler.bias.MCBias"><code class="xref py py-class docutils literal notranslate"><span class="pre">moca.sampler.bias.MCBias</span></code></a></p>
 <p>Fugacity fraction bias.</p>
 <p>This bias corresponds directly to using a composition bias. Using this
@@ -412,7 +412,7 @@ step returned by MCUsher.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.sampler.bias.MCBias">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MCBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.bias.MCBias" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MCBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.bias.MCBias" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Base bias term class.</p>
 <dl class="py attribute">
@@ -432,6 +432,9 @@ step returned by MCUsher.</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>sublattices</strong> (<em>List</em><em>[</em><a class="reference internal" href="moca.html#moca.sublattice.Sublattice" title="moca.sublattice.Sublattice"><em>Sublattice</em></a><em>]</em>) – list of active sublattices, containing species information and
 site indices in sublattice.</p></li>
+<li><p><strong>rng</strong> (<em>np.Generator</em>) – optional
+The given PRNG must be the same instance as that used by the kernel and
+any bias terms, otherwise reproducibility will be compromised.</p></li>
 <li><p><strong>args</strong> – Additional arguments buffer.</p></li>
 <li><p><strong>kwargs</strong> – Additional keyword arguments buffer.</p></li>
 </ul>
@@ -896,7 +899,7 @@ match samples will be appended.</p>
 to generate states for sampling an MCMC chain.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.sampler.kernel.MCKernel">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MCKernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.kernel.MCKernel" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MCKernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.kernel.MCKernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Abtract base class for transition kernels.</p>
 <p>A kernel is used to implement a specific MC algorithm used to sample
@@ -909,8 +912,12 @@ and write a specific kernel see the Metropolis kernel.</p>
 <li><p><strong>ensemble</strong> (<a class="reference internal" href="moca.ensemble.html#moca.ensemble.base.Ensemble" title="moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – an Ensemble instance to obtain the features and parameters
 used in computing log probabilities.</p></li>
 <li><p><strong>step_type</strong> (<em>str</em>) – string specifying the MCMC step type.</p></li>
-<li><p><strong>bias</strong> (<a class="reference internal" href="#moca.sampler.bias.MCBias" title="moca.sampler.bias.MCBias"><em>MCBias</em></a>) – a bias instance.</p></li>
-<li><p><strong>bias_kwargs</strong> (<em>dict</em>) – dictionary of keyword arguments to pass to the bias
+<li><p><strong>seed</strong> (<em>int</em>) – optional
+non-negative integer to seed the PRNG</p></li>
+<li><p><strong>bias_type</strong> (<em>str</em>) – optional
+name for bias type instance.</p></li>
+<li><p><strong>bias_kwargs</strong> (<em>dict</em>) – optional
+dictionary of keyword arguments to pass to the bias
 constructor.</p></li>
 <li><p><strong>args</strong> – positional arguments to instantiate the MCUsher for the
 corresponding step size.</p></li>
@@ -943,6 +950,12 @@ corresponding step size.</p></li>
 <dt class="sig sig-object py" id="moca.sampler.kernel.MCKernel.mcusher">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mcusher</span></span><a class="headerlink" href="#moca.sampler.kernel.MCKernel.mcusher" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the MCUsher.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.sampler.kernel.MCKernel.seed">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">seed</span></span><a class="headerlink" href="#moca.sampler.kernel.MCKernel.seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get seed for PRNG.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1138,7 +1151,7 @@ during MC sampling.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.sampler.kernel.UniformlyRandom">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">UniformlyRandom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.kernel.UniformlyRandom" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">UniformlyRandom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.kernel.UniformlyRandom" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#moca.sampler.kernel.MCKernel" title="moca.sampler.kernel.MCKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">moca.sampler.kernel.MCKernel</span></code></a></p>
 <p>A Kernel that accepts all proposed steps.</p>
 <p>This kernel samples the random limit distribution where all states have the
@@ -1152,8 +1165,12 @@ accordingly.</p>
 <li><p><strong>ensemble</strong> (<a class="reference internal" href="moca.ensemble.html#moca.ensemble.base.Ensemble" title="moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – an Ensemble instance to obtain the features and parameters
 used in computing log probabilities.</p></li>
 <li><p><strong>step_type</strong> (<em>str</em>) – string specifying the MCMC step type.</p></li>
-<li><p><strong>bias</strong> (<a class="reference internal" href="#moca.sampler.bias.MCBias" title="moca.sampler.bias.MCBias"><em>MCBias</em></a>) – a bias instance.</p></li>
-<li><p><strong>bias_kwargs</strong> (<em>dict</em>) – dictionary of keyword arguments to pass to the bias
+<li><p><strong>seed</strong> (<em>int</em>) – optional
+non-negative integer to seed the PRNG</p></li>
+<li><p><strong>bias_type</strong> (<em>str</em>) – optional
+name for bias type instance.</p></li>
+<li><p><strong>bias_kwargs</strong> (<em>dict</em>) – optional
+dictionary of keyword arguments to pass to the bias
 constructor.</p></li>
 <li><p><strong>args</strong> – positional arguments to instantiate the MCUsher for the
 corresponding step size.</p></li>
@@ -1224,7 +1241,7 @@ between species at two sites for use in Canonical ensemble simulations.</p>
 <p>More complex steps can be defined simply by deriving from the MCUsher.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.sampler.mcusher.Flip">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Flip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.mcusher.Flip" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Flip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.mcusher.Flip" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#moca.sampler.mcusher.MCUsher" title="moca.sampler.mcusher.MCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">moca.sampler.mcusher.MCUsher</span></code></a></p>
 <p>Implementation of a simple flip step at a random site.</p>
 <p>Initialize MCMCStep.</p>
@@ -1238,6 +1255,9 @@ are allowed to change.</p></li>
 <li><p><strong>sublattice_probabilities</strong> (<em>list of float</em>) – optional
 list of probabilities to pick a site from specific active
 sublattices.</p></li>
+<li><p><strong>rng</strong> (<em>np.Generator</em>) – optional
+The given PRNG must be the same instance as that used by the kernel and
+any bias terms, otherwise reproducibility will be compromised.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1264,7 +1284,7 @@ form (site index, species code to set)</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.sampler.mcusher.MCUsher">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MCUsher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.mcusher.MCUsher" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MCUsher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.mcusher.MCUsher" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Abstract base class for MC usher classes.</p>
 <p>Initialize MCMCStep.</p>
@@ -1278,6 +1298,9 @@ are allowed to change.</p></li>
 <li><p><strong>sublattice_probabilities</strong> (<em>list of float</em>) – optional
 list of probabilities to pick a site from specific active
 sublattices.</p></li>
+<li><p><strong>rng</strong> (<em>np.Generator</em>) – optional
+The given PRNG must be the same instance as that used by the kernel and
+any bias terms, otherwise reproducibility will be compromised.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1328,7 +1351,7 @@ form (site index, species code to set)</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.sampler.mcusher.Swap">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Swap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.mcusher.Swap" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Swap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.mcusher.Swap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#moca.sampler.mcusher.MCUsher" title="moca.sampler.mcusher.MCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">moca.sampler.mcusher.MCUsher</span></code></a></p>
 <p>Implementation of a simple swap step for two random sites.</p>
 <p>Initialize MCMCStep.</p>
@@ -1342,6 +1365,9 @@ are allowed to change.</p></li>
 <li><p><strong>sublattice_probabilities</strong> (<em>list of float</em>) – optional
 list of probabilities to pick a site from specific active
 sublattices.</p></li>
+<li><p><strong>rng</strong> (<em>np.Generator</em>) – optional
+The given PRNG must be the same instance as that used by the kernel and
+any bias terms, otherwise reproducibility will be compromised.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1396,7 +1422,7 @@ form (site index, species code to set)</p>
 by the corresponding ensemble to generate Monte Carlo samples.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.sampler.sampler.Sampler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">container</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.sampler.Sampler" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">container</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.sampler.Sampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A sampler is used to run MCMC sampling simulations.</p>
 <p>The specific MCMC algorithm is defined by the given MCKernel.
@@ -1410,8 +1436,6 @@ mcusher, etc.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>kernel</strong> (<a class="reference internal" href="#moca.sampler.kernel.MCKernel" title="moca.sampler.kernel.MCKernel"><em>MCKernel</em></a>) – an MCKernel instance.</p></li>
 <li><p><strong>container</strong> (<a class="reference internal" href="moca.html#moca.SampleContainer" title="moca.SampleContainer"><em>SampleContainer</em></a>) – a sampler container to store samples.</p></li>
-<li><p><strong>seed</strong> (<em>int</em>) – optional
-seed for random number generator.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1984,7 +2008,7 @@ match samples will be appended.</p>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
     </div>
     

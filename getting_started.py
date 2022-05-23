@@ -135,4 +135,6 @@ save_work(
 #
 # * Simulated annealing with point electrostatics
 #
+# * Li-Mn-O DRX cluster expansion and sampling
+#
 # More to come…

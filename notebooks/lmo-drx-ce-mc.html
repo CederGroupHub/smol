@@ -1,0 +1,1173 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>LiMnO DRX Cluster Expansion &#8212; smol 0.0.1 documentation</title>
+    
+    <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  
+    
+    <link rel="stylesheet"
+      href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+    
+      
+  
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/pydata-sphinx-theme.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/smol.css" />
+    
+    <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+
+<a class="navbar-brand" href="../index.html">
+  <img src="../_static/logo.png" class="logo" alt="logo">
+</a>
+
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../getting_started.html">
+  Getting Started
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../user_guide.html">
+  User Guide
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../api_reference/index.html">
+  API Reference
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../citing.html">
+  Citing
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../developer_guide/index.html">
+  Developing
+ </a>
+</li>
+
+    
+    <li class="nav-item">
+        <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">Changes<i class="fas fa-external-link-alt"></i></a>
+    </li>
+    
+    <li class="nav-item">
+        <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">Issues<i class="fas fa-external-link-alt"></i></a>
+    </li>
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <div class="dropdown" id="version_switcher">
+    <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
+        0.0.1  <!-- this text may get changed later by javascript -->
+        <span class="caret"></span>
+    </button>
+    <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+</div>
+
+<!-- NOTE: this JS must live here (not in our global JS file) because it relies
+     on being processed by Jinja before it is run (specifically for replacing
+     variables notebooks/lmo-drx-ce-mc and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1'}.
+-->
+
+<script type="text/javascript">
+// Construct the target URL from the JSON components
+function buildURL(entry) {
+    var template = "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/";  // supplied by jinja
+    template = template.replace("{version}", entry.version);
+    return template;
+}
+
+// Check if corresponding page path exists in other version of docs
+// and, if so, go there instead of the homepage of the other docs version
+function checkPageExistsAndRedirect(event) {
+    const currentFilePath = "notebooks/lmo-drx-ce-mc.html",
+          tryUrl = event.target.getAttribute("href");
+    let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
+    $.ajax({
+        type: 'HEAD',
+        url: tryUrl,
+        // if the page exists, go there
+        success: function() {
+            location.href = tryUrl;
+        }
+    }).fail(function() {
+        location.href = otherDocsHomepage;
+    });
+    // this prevents the browser from following the href of the clicked node
+    // (which is fine because this function takes care of redirecting)
+    return false;
+}
+
+// Populate the version switcher from the JSON config file
+(function () {
+    $.getJSON("https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json", function(data, textStatus, jqXHR) {
+        const currentFilePath = "notebooks/lmo-drx-ce-mc.html";
+        // create links to the corresponding page in the other docs versions
+        $.each(data, function(index, entry) {
+            // if no custom name specified (e.g., "latest"), use version string
+            if (!("name" in entry)) {
+                entry.name = entry.version;
+            }
+            // create the node
+            const node = document.createElement("a");
+            node.setAttribute("class", "list-group-item list-group-item-action py-1");
+            node.textContent = `${entry.name}`;
+            // get the base URL for that doc version, add the current page's
+            // path to it, and set as `href`
+            entry.url = buildURL(entry);
+            node.setAttribute("href", `${entry.url}${currentFilePath}`);
+            // on click, AJAX calls will check if the linked page exists before
+            // trying to redirect, and if not, will redirect to the homepage
+            // for that version of the docs.
+            node.onclick = checkPageExistsAndRedirect;
+            $("#version_switcher_menu").append(node);
+            // replace dropdown button text with the preferred display name of
+            // this version, rather than using sphinx's 0.0.1 variable.
+            // also highlight the dropdown entry for the currently-viewed
+            // version's entry
+            if (entry.version == "0.0.1") {
+                node.classList.add("active");
+                $("#version_switcher_button").text(entry.name);
+            }
+        });
+    });
+})();
+</script>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/CederGroupHub/smol" rel="noopener" target="_blank" title="GitHub"><span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    
+  </div>
+</nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#0)-Load-all-data">
+   0) Load all data
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#1)-Define-a-cluster-expansion">
+   1) Define a cluster expansion
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#Load-and-inspect-the-lattice-primitive-cell-with-multi-site-disorder">
+     Load and inspect the lattice primitive cell with multi-site disorder
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#Specify-cluster-subspace-information">
+     Specify cluster subspace information
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#2.-Fit-a-cluster-expansion">
+   2. Fit a cluster expansion
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#Generate-the-Cluster-Expansion-object">
+     Generate the Cluster Expansion object
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#3)-Run-Canonical-Monte-Carlo">
+   3) Run Canonical Monte Carlo
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#First-load-the-spinel-structure">
+     First load the spinel structure
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#Generate-an-ensemble-for-a-given-transformation-of-the-starting-spinel-structure-and-convert-the-spinel-structure-into-an-initial-occupancy">
+     Generate an ensemble for a given transformation of the starting spinel structure and convert the spinel structure into an initial occupancy
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#Generate-sampler-for-canonical-MC-disordering-from-T_0-=-300-K-to-T_f-=-500-K-in-steps-of-50-K-as-a-mini-simulation">
+     Generate sampler for canonical MC disordering from
+     <span class="math notranslate nohighlight">
+      \(T_0 = 300 K\)
+     </span>
+     to
+     <span class="math notranslate nohighlight">
+      \(T_f = 500 K\)
+     </span>
+     in steps of
+     <span class="math notranslate nohighlight">
+      \(50 K\)
+     </span>
+     as a mini simulation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#Now-save-the-data">
+     Now save the data
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+
+<div class="tocsection editthispage">
+    <a href="https://github.com/CederGroupHub/smol/edit/main/docs/src/notebooks/lmo-drx-ce-mc.ipynb">
+        <i class="fas fa-pencil-alt"></i> Edit this page
+    </a>
+</div>
+
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt .copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<div class="admonition note">
+  This page was generated from
+  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/0.0.1/docs/src/notebooks/lmo-drx-ce-mc.ipynb">docs/src/notebooks/lmo-drx-ce-mc.ipynb</a>.<br>
+  <script>
+    if (document.location.host) {
+      $(document.currentScript).replaceWith(
+        '<a class="reference external" ' +
+        'href="https://nbviewer.jupyter.org/url' +
+        (window.location.protocol == 'https:' ? 's/' : '/') +
+        window.location.host +
+        window.location.pathname.slice(0, -4) +
+        'ipynb">View & download notebook in <em>nbviewer</em></a>.'
+      );
+    }
+  </script>
+</div><section id="LiMnO-DRX-Cluster-Expansion">
+<h1>LiMnO DRX Cluster Expansion<a class="headerlink" href="#LiMnO-DRX-Cluster-Expansion" title="Permalink to this headline">¶</a></h1>
+<p>This example shows a more in depth example of how to generate, fit and sample a cluster expansion for a slightly more complex scenario.</p>
+<section id="0)-Load-all-data">
+<h2>0) Load all data<a class="headerlink" href="#0)-Load-all-data" title="Permalink to this headline">¶</a></h2>
+<p>Load the structures with oxidation state assignments and prepare the target vector for learning. Target vector is usually a vector of total energies.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load the training structures with oxidation state assigned</span>
+<span class="kn">from</span> <span class="nn">monty.serialization</span> <span class="kn">import</span> <span class="n">loadfn</span>
+
+<span class="n">entries</span> <span class="o">=</span> <span class="n">loadfn</span><span class="p">(</span><span class="s2">&quot;data/lmo_drx_entries.json&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="1)-Define-a-cluster-expansion">
+<h2>1) Define a cluster expansion<a class="headerlink" href="#1)-Define-a-cluster-expansion" title="Permalink to this headline">¶</a></h2>
+<section id="Load-and-inspect-the-lattice-primitive-cell-with-multi-site-disorder">
+<h3>Load and inspect the lattice primitive cell with multi-site disorder<a class="headerlink" href="#Load-and-inspect-the-lattice-primitive-cell-with-multi-site-disorder" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prim</span> <span class="o">=</span> <span class="n">loadfn</span><span class="p">(</span><span class="s2">&quot;data/lmo_drx_prim.json&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>See that the primitive cell is randomly disordered. When occupancies on a site (#) do not add to 1, it means vacancies are considered.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">crystal_toolkit</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">prim</span><span class="p">)</span>
+<span class="n">prim</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Full Formula (Li0.7 Mn1.1 O1)
+Reduced Formula: Li0.7Mn1.1O1
+abc   :   2.969850   2.969850   2.969850
+angles:  60.000000  60.000000  60.000000
+Overall Charge: +1.5
+Sites (4)
+  #  SP                                                a     b     c
+---  ---------------------------------------------  ----  ----  ----
+  0  Li+:0.250, Mn2+:0.250                          0.75  0.75  0.75
+  1  Li+:0.250, Mn2+:0.250                          0.25  0.25  0.25
+  2  Li+:0.200, Mn2+:0.200, Mn3+:0.200, Mn4+:0.200  0     0     0
+  3  O2-                                            0.5   0.5   0.5
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+If you see this text, the Crystal Toolkit Jupyter Lab
+
+extension is not installed. You can install it by running
+
+&#34;pip install crystaltoolkit-extension&#34;
+
+from the same environment you run &#34;jupyter lab&#34;.
+
+This only works in Jupyter Lab 3.x or above.
+
+
+Structure Summary
+Lattice
+    abc : 2.96985 2.9698500000000005 2.96985
+ angles : 60.00000000000001 59.99999999999999 60.00000000000001
+ volume : 18.522028420882272
+      A : 2.571965545429215 0.0 1.4849250000000003
+      B : 0.8573218484764051 2.4248723708682074 1.4849250000000003
+      C : 0.0 0.0 2.96985
+Overall Charge: +1.5
+PeriodicSite: Li+:0.250, Mn2+:0.250 (2.5720, 1.8187, 4.4548) [0.7500, 0.7500, 0.7500]
+PeriodicSite: Li+:0.250, Mn2+:0.250 (0.8573, 0.6062, 1.4849) [0.2500, 0.2500, 0.2500]
+PeriodicSite: Li+:0.200, Mn2+:0.200, Mn3+:0.200, Mn4+:0.200 (0.0000, 0.0000, 0.0000) [0.0000, 0.0000, 0.0000]
+PeriodicSite: O2- (1.7146, 1.2124, 2.9699) [0.5000, 0.5000, 0.5000]
+</pre></div></div>
+</div>
+</section>
+<section id="Specify-cluster-subspace-information">
+<h3>Specify cluster subspace information<a class="headerlink" href="#Specify-cluster-subspace-information" title="Permalink to this headline">¶</a></h3>
+<p>We will include an electrostatic term in the subspace as well</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">ClusterSubspace</span>
+<span class="kn">from</span> <span class="nn">smol.cofe.extern</span> <span class="kn">import</span> <span class="n">EwaldTerm</span>
+
+<span class="n">CLUSTERCUTOFFS</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span><span class="mi">2</span><span class="p">}</span>
+<span class="n">LTOL</span><span class="p">,</span> <span class="n">STOL</span><span class="p">,</span> <span class="n">ATOL</span> <span class="o">=</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.20</span><span class="p">,</span> <span class="mi">15</span>
+<span class="n">BASIS</span> <span class="o">=</span> <span class="s1">&#39;sinusoid&#39;</span>
+
+<span class="n">cs</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_cutoffs</span><span class="p">(</span><span class="n">structure</span><span class="o">=</span><span class="n">prim</span><span class="p">,</span>
+                                  <span class="n">cutoffs</span> <span class="o">=</span> <span class="n">CLUSTERCUTOFFS</span><span class="p">,</span>
+                                  <span class="n">ltol</span> <span class="o">=</span> <span class="n">LTOL</span><span class="p">,</span>
+                                  <span class="n">stol</span> <span class="o">=</span> <span class="n">STOL</span><span class="p">,</span>
+                                  <span class="n">angle_tol</span> <span class="o">=</span> <span class="n">ATOL</span><span class="p">,</span>
+                                  <span class="n">supercell_size</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;O2-&#39;</span><span class="p">),</span>
+                                  <span class="n">basis</span> <span class="o">=</span> <span class="n">BASIS</span><span class="p">,</span>
+                                  <span class="n">orthonormal</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">cs</span><span class="o">.</span><span class="n">add_external_term</span><span class="p">(</span><span class="n">EwaldTerm</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<p>Print some information about the subspace, such as the number of correlation functions for the random structure <span class="math notranslate nohighlight">\(\langle \Phi_\beta \rangle\)</span>, number of function clusters <span class="math notranslate nohighlight">\(\alpha\)</span>, number of orbits <span class="math notranslate nohighlight">\(\textbf{B}\)</span>, and the orbit ids for all correlation functions <span class="math notranslate nohighlight">\(B\)</span> which describes how correlation functions are grouped together.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">cs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Basis/Orthogonal/Orthonormal : sinusoid/True/{self.basis_orthonormal}
+       Unit Cell Composition : Li+0.7 Mn2+0.7 Mn3+0.2 Mn4+0.2 O2-1
+            Number of Orbits : 40
+No. of Correlation Functions : 386
+             Cluster Cutoffs : 2: 5.94, 3: 3.64
+              External Terms : [EwaldTerm(total)]
+Orbit Summary
+ ------------------------------------------------------------------------
+ |  ID     Degree    Cluster Diameter    Multiplicity    No. Functions  |
+ |   0       0             NA                 0                1        |
+ |   1       1            0.0000              2                2        |
+ |   2       1            0.0000              1                4        |
+ |   3       2            1.8187              8                8        |
+ |   4       2            2.1000              6                3        |
+ |   5       2            2.9698              12               3        |
+ |   6       2            2.9699              6               10        |
+ |   7       2            3.4825              24               8        |
+ |   8       2            3.6373              4                3        |
+ |   9       2            3.6373              4                3        |
+ |  10       2            4.2000              6                3        |
+ |  11       2            4.2000              3               10        |
+ |  12       2            4.5768              24               8        |
+ |  13       2            4.6957              24               3        |
+ |  14       2            5.1439              24               4        |
+ |  15       2            5.1439              12              10        |
+ |  16       2            5.4560              24               8        |
+ |  17       2            5.4560              8                8        |
+ |  18       2            5.9397              12               3        |
+ |  19       2            5.9397              6               10        |
+ |  20       3            2.1000              12              12        |
+ |  21       3            2.9699              24               6        |
+ |  22       3            2.9699              12              12        |
+ |  23       3            2.9699              12              20        |
+ |  24       3            2.9699              8                4        |
+ |  25       3            2.9699              8                4        |
+ |  26       3            2.9699              8               20        |
+ |  27       3            3.4825              48              32        |
+ |  28       3            3.4825              48              16        |
+ |  29       3            3.4825              24              16        |
+ |  30       3            3.4825              24              12        |
+ |  31       3            3.4825              24              12        |
+ |  32       3            3.4825              24              20        |
+ |  33       3            3.4825              12              12        |
+ |  34       3            3.4825              12              20        |
+ |  35       3            3.6373              24              16        |
+ |  36       3            3.6373              24               8        |
+ |  37       3            3.6373              24               8        |
+ |  38       3            3.6373              24              12        |
+ |  39       3            3.6373              4               12        |
+ ------------------------------------------------------------------------
+</pre></div></div>
+</div>
+<p>Load structure data into the StructureWrangler, which is used later for fitting</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">StructureWrangler</span>
+
+<span class="n">sw</span> <span class="o">=</span> <span class="n">StructureWrangler</span><span class="p">(</span><span class="n">cs</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
+    <span class="n">sw</span><span class="o">.</span><span class="n">add_entry</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>This next step may take a few minutes to complete.</p>
+<p>Our final feature matrix for fitting has shape <span class="math notranslate nohighlight">\(n \times p\)</span> where <span class="math notranslate nohighlight">\(n\)</span> is the number of structures and <span class="math notranslate nohighlight">\(p\)</span> is the number of correlation functions for our training structure and the Ewald energy.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Our feature matrix has the following dimensions:&#39;</span><span class="p">,</span>
+       <span class="n">sw</span><span class="o">.</span><span class="n">feature_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Our feature matrix has the following dimensions: (238, 387)
+</pre></div></div>
+</div>
+</section>
+</section>
+<section id="2.-Fit-a-cluster-expansion">
+<h2>2. Fit a cluster expansion<a class="headerlink" href="#2.-Fit-a-cluster-expansion" title="Permalink to this headline">¶</a></h2>
+<p>Here we are fitting $E(<span class="math">\sigma</span>) = <span class="math">\sum</span><em>:nbsphinx-math:`beta `m</em><span class="math">\beta `J\_:nbsphinx-math:</span>beta <cite>:nbsphinx-math:</cite>langle <cite>:nbsphinx-math:</cite>Phi <cite>(:nbsphinx-math:</cite>sigma`)<em>:nbsphinx-math:`alpha `:nbsphinx-math:`rangle`</em><span class="math">\beta `+ :nbsphinx-math:</span>frac{1}{epsilon}`E_{Ewald}(<span class="math">\sigma</span>) $ and we will do with various compressive sensing techniques because the system is under-determined because <span class="math notranslate nohighlight">\(n\)</span> &lt;
+<span class="math notranslate nohighlight">\(p\)</span>. Our feature matrix <span class="math notranslate nohighlight">\(\textbf{X}\)</span> is the matrix of all correlation functions and Ewald energy for our structures. We are interested in finding $ m_:nbsphinx-math:<cite>beta `J_:nbsphinx-math:</cite>beta`$ and <span class="math notranslate nohighlight">\(\frac{1}{\epsilon}\)</span> which together form vector <span class="math notranslate nohighlight">\(\vec w\)</span>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span> <span class="k">as</span> <span class="n">mse</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+</pre></div>
+</div>
+</div>
+<p>We will use L1-regularization, which is to minimize the following objective function with a penalty parameter <span class="math notranslate nohighlight">\(\lambda\)</span> (note that in sklearn this is called <span class="math notranslate nohighlight">\(\alpha\)</span>, but we have already used this to define our function cluster). <span class="math">\begin{equation}
+\frac{1}{2n}||E-\textbf{X}\vec w||_2^2 + \lambda ||\vec w||_1
+\end{equation}</span></p>
+<p>We will optimize the hyperparameter using only a single fit with a train/test split. However, improved results can be obtained from doing a proper cross validation optimization.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">Lasso</span>
+<span class="kn">from</span> <span class="nn">sklearn.exceptions</span> <span class="kn">import</span> <span class="n">ConvergenceWarning</span>
+
+<span class="n">TRIALS</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">TEST_SIZE</span> <span class="o">=</span> <span class="mf">0.20</span>
+<span class="n">PROPERTY</span> <span class="o">=</span> <span class="s1">&#39;energy&#39;</span>
+
+<span class="c1"># we will supress convergence warnings for now</span>
+<span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">ConvergenceWarning</span><span class="p">)</span>
+
+    <span class="n">all_rmse</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">alpha</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">rmse_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">TRIALS</span><span class="p">):</span>
+            <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+                <span class="n">sw</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span> <span class="n">sw</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">PROPERTY</span><span class="p">),</span>
+                <span class="n">test_size</span><span class="o">=</span><span class="n">TEST_SIZE</span>
+            <span class="p">)</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">Lasso</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">fit_intercept</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="c1"># remove the constant correlation since we are fitting</span>
+            <span class="c1"># the intercept</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:],</span> <span class="n">y_train</span><span class="p">)</span>
+            <span class="n">wvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">model</span><span class="o">.</span><span class="n">intercept_</span><span class="p">]),</span>
+                                   <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">),</span>
+                                  <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">y_predict</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">wvec</span><span class="p">)</span>
+            <span class="n">rmse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mse</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_predict</span><span class="p">))</span>
+            <span class="n">rmse_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rmse</span><span class="p">)</span>
+        <span class="n">all_rmse</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rmse_list</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<p>Load plotting tools to examine how the fitting is going.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="n">all_rmse</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.0009</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="mf">0.0002</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;black&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Penalty hyper-parameter $\alpha$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Average RMSE (eV/prim) in 50 trials&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Text(0, 0.5, &#39;Average RMSE (eV/prim) in 50 trials&#39;)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_lmo-drx-ce-mc_23_1.png" src="../_images/notebooks_lmo-drx-ce-mc_23_1.png" />
+</div>
+</div>
+<p>Although we sampled a large space of penalties, <span class="math notranslate nohighlight">\(10^{-5}\)</span> to <span class="math notranslate nohighlight">\(10^{-2}\)</span>, it turns out that the relevant space of hyperparameters is <span class="math notranslate nohighlight">\(10^{-5}\)</span> to <span class="math notranslate nohighlight">\(10^{-4}\)</span>.</p>
+<p>We choose the penalty of <span class="math notranslate nohighlight">\(\lambda=0.0002\)</span> as the regularization parameter. So, we settle on our final model and show the out-of-sample and in-sample RMSE.</p>
+<p>The weights <span class="math notranslate nohighlight">\(\vec w\)</span> are also plotted.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">LAMBDA</span> <span class="o">=</span> <span class="mf">0.0002</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+    <span class="n">sw</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span> <span class="n">sw</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">PROPERTY</span><span class="p">),</span>
+    <span class="n">test_size</span><span class="o">=</span><span class="n">TEST_SIZE</span>
+<span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Lasso</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="n">LAMBDA</span><span class="p">,</span> <span class="n">fit_intercept</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:],</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">wvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">model</span><span class="o">.</span><span class="n">intercept_</span><span class="p">]),</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">),</span>
+    <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
+
+<span class="n">y_predict</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">wvec</span><span class="p">)</span>
+<span class="n">y_train_predict</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">wvec</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Out-of-sample RMSE is: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mse</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_predict</span><span class="p">))</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;In-sample RMSE is: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mse</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_train_predict</span><span class="p">))</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Number of Features &gt; 1E-5: </span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">wvec</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1E-5</span><span class="p">)</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">wvec</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="n">first_pair</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">orbits_by_size</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bit_id</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Point correlation coeficients: </span><span class="si">{</span><span class="n">wvec</span><span class="p">[:</span><span class="n">first_pair</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="c1"># plot the coefficients (excluding those for points))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">wvec</span><span class="p">)</span> <span class="o">-</span> <span class="n">first_pair</span><span class="p">),</span> <span class="n">wvec</span><span class="p">[</span><span class="n">first_pair</span><span class="p">:],</span>
+         <span class="n">linefmt</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">markerfmt</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="c1">#, basefmt=&#39; &#39;)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Coefficient index (i in $w_i$)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Magnitude |$w_i$| eV/prim&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Out-of-sample RMSE is: 0.1542109191827612 eV/prim
+In-sample RMSE is: 0.02426213156609966 eV/prim
+Number of Features &gt; 1E-5: 41/387
+Point correlation coeficients: [-20.88771952  -2.04993158   0.           0.           1.18082107
+  -1.78346928   0.        ]
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/lbluque/miniconda3/envs/matx_dev/lib/python3.8/site-packages/sklearn/linear_model/_coordinate_descent.py:530: ConvergenceWarning: Objective did not converge. You might want to increase the number of iterations. Duality gap: 0.16306747608609712, tolerance: 0.05853817658209538
+  model = cd_fast.enet_coordinate_descent(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Text(0, 0.5, &#39;Magnitude |$w_i$| eV/prim&#39;)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_lmo-drx-ce-mc_25_3.png" src="../_images/notebooks_lmo-drx-ce-mc_25_3.png" />
+</div>
+</div>
+<section id="Generate-the-Cluster-Expansion-object">
+<h3>Generate the Cluster Expansion object<a class="headerlink" href="#Generate-the-Cluster-Expansion-object" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">RegressionData</span><span class="p">,</span> <span class="n">ClusterExpansion</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choice</span>
+
+<span class="n">reg_data</span> <span class="o">=</span> <span class="n">RegressionData</span><span class="o">.</span><span class="n">from_sklearn</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span> <span class="n">sw</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span> <span class="n">sw</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">PROPERTY</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">expansion</span> <span class="o">=</span> <span class="n">ClusterExpansion</span><span class="p">(</span>
+    <span class="n">cs</span><span class="p">,</span> <span class="n">coefficients</span><span class="o">=</span><span class="n">wvec</span><span class="p">,</span> <span class="n">regression_data</span><span class="o">=</span><span class="n">reg_data</span>
+<span class="p">)</span>
+
+
+<span class="n">structure</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="n">sw</span><span class="o">.</span><span class="n">structures</span><span class="p">)</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">expansion</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Structure with composition </span><span class="si">{</span><span class="n">structure</span><span class="o">.</span><span class="n">composition</span><span class="si">}</span><span class="s2"> has predicted energy </span><span class="si">{</span><span class="n">prediction</span><span class="si">}</span><span class="s2"> eV/prim&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Structure with composition Li+10 Mn4+12 Mn3+2 O2-32 has predicted energy -18.959213889450854 eV/prim
+</pre></div></div>
+</div>
+</section>
+</section>
+<section id="3)-Run-Canonical-Monte-Carlo">
+<h2>3) Run Canonical Monte Carlo<a class="headerlink" href="#3)-Run-Canonical-Monte-Carlo" title="Permalink to this headline">¶</a></h2>
+<p>Now let’s run a canonical MC disordering of spinel LiMn2O4.</p>
+<section id="First-load-the-spinel-structure">
+<h3>First load the spinel structure<a class="headerlink" href="#First-load-the-spinel-structure" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load the spinel structure first and determine its supercell matrix</span>
+
+<span class="n">spinel</span> <span class="o">=</span> <span class="n">loadfn</span><span class="p">(</span><span class="s1">&#39;data/LiMn2O4_drx_tutorial.json&#39;</span><span class="p">)</span>
+<span class="n">starting_matrix</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">cluster_subspace</span><span class="o">.</span><span class="n">scmatrix_from_structure</span><span class="p">(</span><span class="n">spinel</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Generate-an-ensemble-for-a-given-transformation-of-the-starting-spinel-structure-and-convert-the-spinel-structure-into-an-initial-occupancy">
+<h3>Generate an ensemble for a given transformation of the starting spinel structure and convert the spinel structure into an initial occupancy<a class="headerlink" href="#Generate-an-ensemble-for-a-given-transformation-of-the-starting-spinel-structure-and-convert-the-spinel-structure-into-an-initial-occupancy" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">CanonicalEnsemble</span>
+<span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">Sampler</span>
+
+<span class="n">transformation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+
+<span class="n">sc_matrix</span> <span class="o">=</span> <span class="n">starting_matrix</span> <span class="o">@</span> <span class="n">transformation</span>
+
+<span class="c1"># Create a CanonicalEnsemble as</span>
+<span class="n">ensemble</span> <span class="o">=</span> <span class="n">CanonicalEnsemble</span><span class="o">.</span><span class="n">from_cluster_expansion</span><span class="p">(</span><span class="n">expansion</span><span class="p">,</span> <span class="n">sc_matrix</span><span class="p">)</span>
+<span class="c1"># Since computing the Ewald matrix is very time consuming make sure to</span>
+<span class="c1"># save/load the ensemble or processor</span>
+<span class="c1"># ensemble = dumpfn(ensemble, &quot;data/lmo_drx_ensemble.json&quot;)</span>
+
+<span class="n">spinel</span> <span class="o">=</span> <span class="n">spinel</span><span class="o">.</span><span class="fm">__mul__</span><span class="p">(</span><span class="n">transformation</span><span class="p">)</span>
+<span class="n">init_occu</span> <span class="o">=</span> <span class="n">ensemble</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">occupancy_from_structure</span><span class="p">(</span><span class="n">spinel</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Generate-sampler-for-canonical-MC-disordering-from-T_0-=-300-K-to-T_f-=-500-K-in-steps-of-50-K-as-a-mini-simulation">
+<h3>Generate sampler for canonical MC disordering from <span class="math notranslate nohighlight">\(T_0 = 300 K\)</span> to <span class="math notranslate nohighlight">\(T_f = 500 K\)</span> in steps of <span class="math notranslate nohighlight">\(50 K\)</span> as a mini simulation<a class="headerlink" href="#Generate-sampler-for-canonical-MC-disordering-from-T_0-=-300-K-to-T_f-=-500-K-in-steps-of-50-K-as-a-mini-simulation" title="Permalink to this headline">¶</a></h3>
+<p>Computing the ewald matrix necessary for fast MC evaluation for large supercells with multi-component structures such as this example can take a long time. Since this is done lazily in the code it will seem like the first step of MC is unbearibly long. It is suggested to save the ensemble or processor used such that the Ewald matrix does not need to be reconstructed at runtime.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">Sampler</span>
+
+<span class="n">T0</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">TF</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="n">STEP</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">PROPOSALS</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1E5</span><span class="p">)</span>
+<span class="n">current_occu</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">save_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="k">for</span> <span class="n">T</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T0</span><span class="p">,</span> <span class="n">TF</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">STEP</span><span class="p">):</span>
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">Sampler</span><span class="o">.</span><span class="n">from_ensemble</span><span class="p">(</span><span class="n">ensemble</span><span class="o">=</span><span class="n">ensemble</span><span class="p">,</span>
+                                    <span class="n">kernel_type</span><span class="o">=</span><span class="s1">&#39;Metropolis&#39;</span><span class="p">,</span>
+                                    <span class="n">temperature</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">current_occu</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">current_occu</span> <span class="o">=</span> <span class="n">init_occu</span>
+
+    <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">PROPOSALS</span><span class="p">,</span>
+                <span class="n">initial_occupancies</span><span class="o">=</span><span class="n">current_occu</span><span class="p">,</span>
+                <span class="n">thin_by</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                <span class="n">progress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">current_occu</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">get_occupancies</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># now save some data such as occupancies</span>
+    <span class="n">save_data</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">T</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;occupancies&#39;</span><span class="p">:</span> <span class="n">sampler</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">get_occupancies</span><span class="p">(),</span>
+                         <span class="s1">&#39;energies_total&#39;</span><span class="p">:</span> <span class="n">sampler</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">get_energies</span><span class="p">(),</span>
+                         <span class="s1">&#39;features_unnormalized&#39;</span><span class="p">:</span> <span class="n">sampler</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">get_feature_vectors</span><span class="p">()}</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Sampling 1 chain(s) from a cell with 3456 sites...: 100%|██████████| 100000/100000 [00:53&lt;00:00, 1873.63it/s]
+Sampling 1 chain(s) from a cell with 3456 sites...: 100%|██████████| 100000/100000 [00:51&lt;00:00, 1947.93it/s]
+Sampling 1 chain(s) from a cell with 3456 sites...: 100%|██████████| 100000/100000 [00:51&lt;00:00, 1950.93it/s]
+Sampling 1 chain(s) from a cell with 3456 sites...: 100%|██████████| 100000/100000 [00:51&lt;00:00, 1955.61it/s]
+Sampling 1 chain(s) from a cell with 3456 sites...: 100%|██████████| 100000/100000 [00:51&lt;00:00, 1956.76it/s]
+</pre></div></div>
+</div>
+</section>
+<section id="Now-save-the-data">
+<h3>Now save the data<a class="headerlink" href="#Now-save-the-data" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">monty.serialization</span> <span class="kn">import</span> <span class="n">dumpfn</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;canonical_MC_LiMn2O4_</span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">.json&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">T0</span><span class="p">,</span> <span class="n">TF</span><span class="p">,</span> <span class="n">STEP</span><span class="p">)</span>
+<span class="n">dumpfn</span><span class="p">(</span><span class="n">save_data</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+    <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2022-2022, Ceder Group.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>

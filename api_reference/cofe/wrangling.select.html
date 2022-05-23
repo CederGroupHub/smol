@@ -375,7 +375,7 @@ function checkPageExistsAndRedirect(event) {
 <p>Tools for training structure selection.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.select.composition_select">
-<span class="sig-name descname"><span class="pre">composition_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">composition_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_sizes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.select.composition_select" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">composition_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">composition_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_sizes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.wrangling.select.composition_select" title="Permalink to this definition">¶</a></dt>
 <dd><p>Structure selection based on composition multinomial probability.</p>
 <p>Note: this function is needs quite a bit of tweaking to get nice samples.</p>
 <dl class="field-list simple">
@@ -390,6 +390,8 @@ number of variables in the multinomial distribution.</p></li>
 compared to the total number of samples (or coverage of the space),
 it may take very long to return if at all, and the samples will not
 be very representative of the multinomial distributions.</p></li>
+<li><p><strong>rng</strong> (<em>np.Generator</em>) – optional
+numpy seed, Generator, SeedSequence, etc</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -501,7 +503,7 @@ is much larger than the number of samples requested.</p>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
     </div>
     

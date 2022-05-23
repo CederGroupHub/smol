@@ -377,7 +377,7 @@ function checkPageExistsAndRedirect(event) {
 to generate states for sampling an MCMC chain.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.kernel.MCKernel">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MCKernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.MCKernel" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MCKernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.MCKernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Abtract base class for transition kernels.</p>
 <p>A kernel is used to implement a specific MC algorithm used to sample
@@ -390,8 +390,12 @@ and write a specific kernel see the Metropolis kernel.</p>
 <li><p><strong>ensemble</strong> (<a class="reference internal" href="../autogen/moca.ensemble.html#moca.ensemble.base.Ensemble" title="moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – an Ensemble instance to obtain the features and parameters
 used in computing log probabilities.</p></li>
 <li><p><strong>step_type</strong> (<em>str</em>) – string specifying the MCMC step type.</p></li>
-<li><p><strong>bias</strong> (<a class="reference internal" href="../autogen/moca.sampler.html#moca.sampler.bias.MCBias" title="moca.sampler.bias.MCBias"><em>MCBias</em></a>) – a bias instance.</p></li>
-<li><p><strong>bias_kwargs</strong> (<em>dict</em>) – dictionary of keyword arguments to pass to the bias
+<li><p><strong>seed</strong> (<em>int</em>) – optional
+non-negative integer to seed the PRNG</p></li>
+<li><p><strong>bias_type</strong> (<em>str</em>) – optional
+name for bias type instance.</p></li>
+<li><p><strong>bias_kwargs</strong> (<em>dict</em>) – optional
+dictionary of keyword arguments to pass to the bias
 constructor.</p></li>
 <li><p><strong>args</strong> – positional arguments to instantiate the MCUsher for the
 corresponding step size.</p></li>
@@ -424,6 +428,12 @@ corresponding step size.</p></li>
 <dt class="sig sig-object py" id="smol.moca.sampler.kernel.MCKernel.mcusher">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mcusher</span></span><a class="headerlink" href="#smol.moca.sampler.kernel.MCKernel.mcusher" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the MCUsher.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.moca.sampler.kernel.MCKernel.seed">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">seed</span></span><a class="headerlink" href="#smol.moca.sampler.kernel.MCKernel.seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get seed for PRNG.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -619,7 +629,7 @@ during MC sampling.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.kernel.UniformlyRandom">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">UniformlyRandom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.UniformlyRandom" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">UniformlyRandom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.UniformlyRandom" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.kernel.MCKernel" title="smol.moca.sampler.kernel.MCKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.kernel.MCKernel</span></code></a></p>
 <p>A Kernel that accepts all proposed steps.</p>
 <p>This kernel samples the random limit distribution where all states have the
@@ -633,8 +643,12 @@ accordingly.</p>
 <li><p><strong>ensemble</strong> (<a class="reference internal" href="../autogen/moca.ensemble.html#moca.ensemble.base.Ensemble" title="moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – an Ensemble instance to obtain the features and parameters
 used in computing log probabilities.</p></li>
 <li><p><strong>step_type</strong> (<em>str</em>) – string specifying the MCMC step type.</p></li>
-<li><p><strong>bias</strong> (<a class="reference internal" href="../autogen/moca.sampler.html#moca.sampler.bias.MCBias" title="moca.sampler.bias.MCBias"><em>MCBias</em></a>) – a bias instance.</p></li>
-<li><p><strong>bias_kwargs</strong> (<em>dict</em>) – dictionary of keyword arguments to pass to the bias
+<li><p><strong>seed</strong> (<em>int</em>) – optional
+non-negative integer to seed the PRNG</p></li>
+<li><p><strong>bias_type</strong> (<em>str</em>) – optional
+name for bias type instance.</p></li>
+<li><p><strong>bias_kwargs</strong> (<em>dict</em>) – optional
+dictionary of keyword arguments to pass to the bias
 constructor.</p></li>
 <li><p><strong>args</strong> – positional arguments to instantiate the MCUsher for the
 corresponding step size.</p></li>
@@ -736,7 +750,7 @@ successful.</p>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
     </div>
     

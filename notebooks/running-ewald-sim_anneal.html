@@ -34,7 +34,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -535,7 +535,7 @@ div.nboutput.container div.output_area > div[class^='highlight']{
 }
 
 /* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt a.copybtn {
+.prompt .copybtn {
     display: none;
 }
 
@@ -595,8 +595,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">copy</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -615,8 +614,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">lno</span> <span class="o">=</span> <span class="n">loadfn</span><span class="p">(</span><span class="s1">&#39;data/lno_prim.json&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lno</span> <span class="o">=</span> <span class="n">loadfn</span><span class="p">(</span><span class="s1">&#39;data/lno_prim.json&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -624,8 +622,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">empty_cutoff</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># Defining the cut-offs as an empty dictionary will generate a subspace with only the empty cluster</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">empty_cutoff</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># Defining the cut-offs as an empty dictionary will generate a subspace with only the empty cluster</span>
 
 <span class="n">subspace</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_cutoffs</span><span class="p">(</span><span class="n">structure</span><span class="o">=</span><span class="n">lno</span><span class="p">,</span>
                                         <span class="n">cutoffs</span><span class="o">=</span><span class="n">empty_cutoff</span><span class="p">,</span>
@@ -643,8 +640,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">EwaldProcessor</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">EwaldProcessor</span>
 </pre></div>
 </div>
 </div>
@@ -652,8 +648,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># The supercell with which we will run MC on</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># The supercell with which we will run MC on</span>
 <span class="n">sc_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
                       <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
                       <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>
@@ -676,8 +671,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">CanonicalEnsemble</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">CanonicalEnsemble</span>
 
 <span class="c1"># Create the canonical ensemble directly from the Ewald Processor, without creating a Cluster Expansion.</span>
 <span class="n">ensemble</span> <span class="o">=</span> <span class="n">CanonicalEnsemble</span><span class="p">(</span><span class="n">processor</span><span class="o">=</span><span class="n">ewald_proc</span><span class="p">)</span>
@@ -722,8 +716,7 @@ Sublattice(site_space=Li+0.5 vacA0+0.5, sites=array([ 0,  1,  2,  3,  4,  5,  6,
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">Sampler</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">Sampler</span>
 
 <span class="n">sampler</span> <span class="o">=</span> <span class="n">Sampler</span><span class="o">.</span><span class="n">from_ensemble</span><span class="p">(</span><span class="n">ensemble</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sampling information: </span><span class="si">{</span><span class="n">sampler</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">metadata</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -745,8 +738,7 @@ Sampling information: {&#39;name&#39;: &#39;CanonicalEnsemble&#39;, &#39;kernel&
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pymatgen.transformations.standard_transformations</span> <span class="kn">import</span> <span class="n">OrderDisorderedStructureTransformation</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pymatgen.transformations.standard_transformations</span> <span class="kn">import</span> <span class="n">OrderDisorderedStructureTransformation</span>
 
 <span class="c1"># Here we will just use the order disordered transformation from</span>
 <span class="c1"># pymatgen to get an ordered version of a prim supercell.</span>
@@ -773,8 +765,7 @@ Li+16 Ni3+16 Ni4+16 O2-64
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Obtain the initial occupancy string from the</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Obtain the initial occupancy string from the</span>
 <span class="c1"># test structure created above.</span>
 <span class="n">init_occu</span> <span class="o">=</span> <span class="n">ensemble</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">occupancy_from_structure</span><span class="p">(</span><span class="n">test_struct</span><span class="p">)</span>
 
@@ -808,8 +799,7 @@ The initial occupancy is:
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Setting up the range of temperatures for simulated annealing. We start at very</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Setting up the range of temperatures for simulated annealing. We start at very</span>
 <span class="c1"># high temperatures to approach the random limit. At each temperature, a MC simulation is performed.</span>
 <span class="c1"># At the lowest temperatures, you may find that you converge to a ground state.</span>
 <span class="n">temps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
@@ -851,8 +841,7 @@ Sampling 1 chain(s) from a cell with 128 sites...: 100%|████████
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mc_steps</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span> <span class="c1"># number of samples saved for the MC at each temperature</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mc_steps</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span> <span class="c1"># number of samples saved for the MC at each temperature</span>
 <span class="n">energies</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">get_energies</span><span class="p">()</span>
 <span class="n">mc_temps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span> <span class="c1"># Create list of temperatures that correspond to the energies</span>
 
@@ -865,8 +854,7 @@ Sampling 1 chain(s) from a cell with 128 sites...: 100%|████████
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Obtain the average and standard deviation of energy at each temperature.</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Obtain the average and standard deviation of energy at each temperature.</span>
 <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">temps</span><span class="p">:</span>
     <span class="n">plot_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mc_temps</span> <span class="o">==</span> <span class="n">t</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">energies_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">energies</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">plot_inds</span><span class="p">])</span> <span class="o">/</span> <span class="n">ewald_proc</span><span class="o">.</span><span class="n">size</span>
@@ -929,8 +917,7 @@ Std dev = 0.0 eV/prim
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">lowest_en</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">get_minimum_energy</span><span class="p">()</span> <span class="o">/</span> <span class="n">ewald_proc</span><span class="o">.</span><span class="n">size</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lowest_en</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">get_minimum_energy</span><span class="p">()</span> <span class="o">/</span> <span class="n">ewald_proc</span><span class="o">.</span><span class="n">size</span>
 <span class="n">lowest_en_occu</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">get_minimum_energy_occupancy</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The ground state energy is </span><span class="si">{</span><span class="n">lowest_en</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
@@ -958,8 +945,7 @@ Ground state occupancy is [1 1 1 1 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 1 0
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">x_ind</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># To keep track of x axis indexing</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_ind</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># To keep track of x axis indexing</span>
 
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">temps</span><span class="p">):</span>
     <span class="n">plot_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mc_temps</span> <span class="o">==</span> <span class="n">t</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -1034,7 +1020,7 @@ Ground state occupancy is [1 1 1 1 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 1 0
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
     </div>
     

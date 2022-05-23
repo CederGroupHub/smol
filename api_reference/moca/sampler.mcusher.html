@@ -380,7 +380,7 @@ between species at two sites for use in Canonical ensemble simulations.</p>
 <p>More complex steps can be defined simply by deriving from the MCUsher.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.mcusher.Flip">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Flip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Flip" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Flip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Flip" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.mcusher.MCUsher" title="smol.moca.sampler.mcusher.MCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.mcusher.MCUsher</span></code></a></p>
 <p>Implementation of a simple flip step at a random site.</p>
 <p>Initialize MCMCStep.</p>
@@ -394,6 +394,9 @@ are allowed to change.</p></li>
 <li><p><strong>sublattice_probabilities</strong> (<em>list of float</em>) – optional
 list of probabilities to pick a site from specific active
 sublattices.</p></li>
+<li><p><strong>rng</strong> (<em>np.Generator</em>) – optional
+The given PRNG must be the same instance as that used by the kernel and
+any bias terms, otherwise reproducibility will be compromised.</p></li>
 </ul>
 </dd>
 </dl>
@@ -420,7 +423,7 @@ form (site index, species code to set)</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.mcusher.MCUsher">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MCUsher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCUsher" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MCUsher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCUsher" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Abstract base class for MC usher classes.</p>
 <p>Initialize MCMCStep.</p>
@@ -434,6 +437,9 @@ are allowed to change.</p></li>
 <li><p><strong>sublattice_probabilities</strong> (<em>list of float</em>) – optional
 list of probabilities to pick a site from specific active
 sublattices.</p></li>
+<li><p><strong>rng</strong> (<em>np.Generator</em>) – optional
+The given PRNG must be the same instance as that used by the kernel and
+any bias terms, otherwise reproducibility will be compromised.</p></li>
 </ul>
 </dd>
 </dl>
@@ -484,7 +490,7 @@ form (site index, species code to set)</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.mcusher.Swap">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Swap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Swap" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Swap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Swap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.mcusher.MCUsher" title="smol.moca.sampler.mcusher.MCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.mcusher.MCUsher</span></code></a></p>
 <p>Implementation of a simple swap step for two random sites.</p>
 <p>Initialize MCMCStep.</p>
@@ -498,6 +504,9 @@ are allowed to change.</p></li>
 <li><p><strong>sublattice_probabilities</strong> (<em>list of float</em>) – optional
 list of probabilities to pick a site from specific active
 sublattices.</p></li>
+<li><p><strong>rng</strong> (<em>np.Generator</em>) – optional
+The given PRNG must be the same instance as that used by the kernel and
+any bias terms, otherwise reproducibility will be compromised.</p></li>
 </ul>
 </dd>
 </dl>
@@ -586,7 +595,7 @@ form (site index, species code to set)</p>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
     </div>
     

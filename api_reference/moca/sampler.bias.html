@@ -377,7 +377,7 @@ function checkPageExistsAndRedirect(event) {
 biased accordingly.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.bias.FugacityBias">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FugacityBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fugacity_fractions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.bias.FugacityBias" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FugacityBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fugacity_fractions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.bias.FugacityBias" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.bias.MCBias" title="smol.moca.sampler.bias.MCBias"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.bias.MCBias</span></code></a></p>
 <p>Fugacity fraction bias.</p>
 <p>This bias corresponds directly to using a composition bias. Using this
@@ -449,7 +449,7 @@ step returned by MCUsher.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.bias.MCBias">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MCBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.bias.MCBias" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MCBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.bias.MCBias" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Base bias term class.</p>
 <dl class="py attribute">
@@ -469,6 +469,9 @@ step returned by MCUsher.</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>sublattices</strong> (<em>List</em><em>[</em><a class="reference internal" href="../autogen/moca.html#moca.sublattice.Sublattice" title="moca.sublattice.Sublattice"><em>Sublattice</em></a><em>]</em>) – list of active sublattices, containing species information and
 site indices in sublattice.</p></li>
+<li><p><strong>rng</strong> (<em>np.Generator</em>) – optional
+The given PRNG must be the same instance as that used by the kernel and
+any bias terms, otherwise reproducibility will be compromised.</p></li>
 <li><p><strong>args</strong> – Additional arguments buffer.</p></li>
 <li><p><strong>kwargs</strong> – Additional keyword arguments buffer.</p></li>
 </ul>
@@ -571,7 +574,7 @@ site indices in sublattice.</p></li>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
     </div>
     

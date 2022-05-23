@@ -34,7 +34,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -273,14 +273,14 @@ function checkPageExistsAndRedirect(event) {
   </a>
   <ul class="visible nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href='#3.1)-Check-the-quality-of-the-fit-and-the-"dielectric"-constant'>
+    <a class="reference internal nav-link" href="#3.1)-Check-the-quality-of-the-fit-and-the-“dielectric”-constant">
      3.1) Check the quality of the fit and the “dielectric” constant
     </a>
    </li>
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href='#4)-Constraining-the-value-of-the-"dielectric"-constant'>
+  <a class="reference internal nav-link" href="#4)-Constraining-the-value-of-the-“dielectric”-constant">
    4) Constraining the value of the “dielectric” constant
   </a>
   <ul class="visible nav section-nav flex-column">
@@ -534,7 +534,7 @@ div.nboutput.container div.output_area > div[class^='highlight']{
 }
 
 /* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt a.copybtn {
+.prompt .copybtn {
     display: none;
 }
 
@@ -594,8 +594,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">monty.serialization</span> <span class="kn">import</span> <span class="n">loadfn</span>
 <span class="kn">from</span> <span class="nn">pymatgen.core.structure</span> <span class="kn">import</span> <span class="n">Structure</span>
@@ -607,8 +606,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># load the prim structure</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load the prim structure</span>
 <span class="n">lno_prim</span> <span class="o">=</span> <span class="n">loadfn</span><span class="p">(</span><span class="s1">&#39;data/lno_prim.json&#39;</span><span class="p">)</span>
 
 <span class="c1"># load the fitting data</span>
@@ -622,8 +620,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">subspace</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_cutoffs</span><span class="p">(</span><span class="n">lno_prim</span><span class="p">,</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subspace</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_cutoffs</span><span class="p">(</span><span class="n">lno_prim</span><span class="p">,</span>
                                         <span class="n">cutoffs</span><span class="o">=</span><span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mf">4.1</span><span class="p">},</span>
                                         <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;sinusoid&#39;</span><span class="p">,</span>
                                         <span class="n">supercell_size</span><span class="o">=</span><span class="s1">&#39;O2-&#39;</span><span class="p">)</span>
@@ -638,8 +635,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">smol.cofe.extern</span> <span class="kn">import</span> <span class="n">EwaldTerm</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smol.cofe.extern</span> <span class="kn">import</span> <span class="n">EwaldTerm</span>
 
 <span class="c1"># eta is the screening parameter used in computing</span>
 <span class="c1"># real/reciprocal space parts in the Ewald summation</span>
@@ -655,8 +651,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">structure</span> <span class="o">=</span> <span class="n">lno_entries</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">structure</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">structure</span> <span class="o">=</span> <span class="n">lno_entries</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">structure</span>
 <span class="n">corr</span> <span class="o">=</span> <span class="n">subspace</span><span class="o">.</span><span class="n">corr_from_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The Ewald interaction for a structure with&#39;</span>
@@ -683,8 +678,7 @@ The Ewald interaction for a structure with composition Li+1 Ni4+5 Ni3+1 O2-12 is
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
 
 <span class="c1"># create and add data to the wrangler</span>
 <span class="n">wrangler</span> <span class="o">=</span> <span class="n">StructureWrangler</span><span class="p">(</span><span class="n">subspace</span><span class="p">)</span>
@@ -707,16 +701,15 @@ The Ewald interaction for a structure with composition Li+1 Ni4+5 Ni3+1 O2-12 is
 </pre></div>
 </div>
 </div>
-<section id="3.1)-Check-the-quality-of-the-fit-and-the-&quot;dielectric&quot;-constant">
-<h3>3.1) Check the quality of the fit and the “dielectric” constant<a class="headerlink" href="#3.1)-Check-the-quality-of-the-fit-and-the-"dielectric"-constant" title="Permalink to this headline">¶</a></h3>
+<section id="3.1)-Check-the-quality-of-the-fit-and-the-“dielectric”-constant">
+<h3>3.1) Check the quality of the fit and the “dielectric” constant<a class="headerlink" href="#3.1)-Check-the-quality-of-the-fit-and-the-“dielectric”-constant" title="Permalink to this headline">¶</a></h3>
 <p>We will check the quality of the fit with the simple methods from before.</p>
 <p>It is also useful to look at the value of the fit coefficient obtained for the Ewald interaction, since its inverse can be intepreted as a dielectric constant.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">max_error</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">max_error</span>
 
 <span class="n">train_predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span>
                            <span class="n">expansion</span><span class="o">.</span><span class="n">coefs</span><span class="p">)</span>
@@ -743,27 +736,26 @@ Fitted dielectric constant 9.413114998056717
 </div>
 </section>
 </section>
-<section id="4)-Constraining-the-value-of-the-&quot;dielectric&quot;-constant">
-<h2>4) Constraining the value of the “dielectric” constant<a class="headerlink" href="#4)-Constraining-the-value-of-the-"dielectric"-constant" title="Permalink to this headline">¶</a></h2>
+<section id="4)-Constraining-the-value-of-the-“dielectric”-constant">
+<h2>4) Constraining the value of the “dielectric” constant<a class="headerlink" href="#4)-Constraining-the-value-of-the-“dielectric”-constant" title="Permalink to this headline">¶</a></h2>
 <p>Sometimes we want to constrain the obtained value of the dielectric constant, when it is too large or when it is negative (which would mean higher electrostatic interaction energy is more favorable?)</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">theorytoolkit.regression</span> <span class="kn">import</span> <span class="n">constrain_dielectric</span>
-<span class="c1"># to use the constrain_dielectric function the subspace used MUST contain an EwaldTerm</span>
-<span class="c1"># this is a parametrized decorator to the usage is:</span>
-<span class="c1"># constrain_dielectric(max_dielectric)(the fit method we want)(fitting data)</span>
-<span class="c1"># the fit method must return the fitted coefficients</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sparselm.tools</span> <span class="kn">import</span> <span class="n">constrain_coefficients</span>
+
+<span class="n">max_dielectric</span> <span class="o">=</span> <span class="mf">5.0</span>
 
 <span class="c1"># since the sklearn LinearRegression.fit does not return the coefs, we can do this:</span>
 <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
     <span class="n">estimator</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">estimator</span><span class="o">.</span><span class="n">coef_</span>
 
-<span class="n">coefs</span> <span class="o">=</span> <span class="n">constrain_dielectric</span><span class="p">(</span><span class="n">max_dielectric</span><span class="o">=</span><span class="mi">5</span><span class="p">)(</span><span class="n">fit</span><span class="p">)(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span>
-                                                    <span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">))</span>
+<span class="n">coefs</span> <span class="o">=</span> <span class="n">constrain_coefficients</span><span class="p">(</span>
+    <span class="n">indices</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,],</span> <span class="n">low</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">max_dielectric</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)(</span><span class="n">fit</span><span class="p">)(</span>
+    <span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span> <span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="p">)</span>
 <span class="n">train_predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span>
                            <span class="n">expansion</span><span class="o">.</span><span class="n">coefs</span><span class="p">)</span>
 <span class="n">rmse</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">),</span>
@@ -793,8 +785,7 @@ Fitted dielectric constant 5.0
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nd">@constrain_dielectric</span><span class="p">(</span><span class="n">max_dielectric</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@constrain_coefficients</span><span class="p">(</span><span class="n">indices</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,],</span> <span class="n">low</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">max_dielectric</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
     <span class="n">estimator</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">estimator</span><span class="o">.</span><span class="n">coef_</span>
@@ -831,11 +822,10 @@ Fitted dielectric constant 5.0
 <section id="5)-Save-work">
 <h2>5) Save work<a class="headerlink" href="#5)-Save-work" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">smol.io</span> <span class="kn">import</span> <span class="n">save_work</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smol.io</span> <span class="kn">import</span> <span class="n">save_work</span>
 
 <span class="n">file_path</span> <span class="o">=</span> <span class="s1">&#39;data/basic_ce_ewald.mson&#39;</span>
 <span class="c1"># we can save the subspace as well, but since both the wrangler</span>
@@ -873,7 +863,7 @@ Fitted dielectric constant 5.0
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
     </div>
     
