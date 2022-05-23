@@ -98,7 +98,7 @@ html_logo = (
 html_theme_options = {
     "github_url": "https://github.com/CederGroupHub/smol",
     "use_edit_page_button": True,
-    "show_toc_level": 1,
+    "show_toc_level": 2,
     # "navbar_align": "left",  # [left, content, right] For testing that the navbar
     # items align properly
     # "navbar_start": ["navbar-logo", "navbar-version"],
@@ -125,10 +125,11 @@ html_theme_options = {
 }
 
 html_context = {
+    "github_url": "https://github.com",  # or your GitHub Enterprise interprise
     "github_user": "CederGroupHub",
     "github_repo": "smol",
     "github_version": "main",
-    "doc_path": "docs",
+    "doc_path": "docs/src",
     "source_suffix": source_suffix,
 }
 
@@ -179,3 +180,33 @@ html_copy_source = False
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = "smol"
+
+# This is processed by Jinja2 and inserted before each notebook
+nbsphinx_prolog = r"""
+{% set docname = 'docs/src/' + env.doc2path(env.docname, base=None) %}
+
+.. raw:: html
+
+    <div class="admonition note">
+      This page was generated from
+      <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/{{ env.config.release|e }}/{{ docname|e }}">{{ docname|e }}</a>.<br>
+      <script>
+        if (document.location.host) {
+          $(document.currentScript).replaceWith(
+            '<a class="reference external" ' +
+            'href="https://nbviewer.jupyter.org/url' +
+            (window.location.protocol == 'https:' ? 's/' : '/') +
+            window.location.host +
+            window.location.pathname.slice(0, -4) +
+            'ipynb">View & download notebook in <em>nbviewer</em></a>.'
+          );
+        }
+      </script>
+    </div>
+
+.. raw:: latex
+
+    \nbsphinxstartnotebook{\scriptsize\noindent\strut
+    \textcolor{gray}{The following section was generated from
+    \sphinxcode{\sphinxupquote{\strut {{ docname | escape_latex }}}} \dotfill}}
+"""

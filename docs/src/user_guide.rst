@@ -14,17 +14,32 @@ two main submodules:
   Markov Chain Monte Carlo (MCMC) sampling based on a cluster expansion
   Hamiltonian (and a few other Hamiltonian models).
 
+Overview diagram
+----------------
+
+An overview diagram of the main classes and data inputs necessary to build and sample
+a lattice model is shown below. The workflow shown is sufficient for the majority of
+applications, for more advanced use and custom calculations a more detailed description
+of the package is given in the :doc:`Developing </developer_guide/index>` section.
+
+
+.. image:: ../../_static/use_workflow.png
+   :width: 800px
+
+----------------------------------------------------------------------------------------
+
+============
+Main classes
+============
+
 Below is a general description of the core classes in each submodule, to help understand
 the design, usage and capabilities of **smol**. You can also refer to the :ref:`api ref`
 for full documentation of all classes and functions in the package.
 
-----------------------------------------------------------------------------------------
-
 .. _smol.cofe ug:
 
-=========
 smol.cofe
-=========
+---------
 
 This module includes the necessary classes to define, train, and test cluster
 expansions. A cluster expansion is essentially a way to fit a function of
@@ -45,7 +60,7 @@ The core classes are:
 .. _cluster subspace ug:
 
 Cluster subspace
-----------------
+^^^^^^^^^^^^^^^^
 :class:`ClusterSubspace` contains the finite set of orbits and orbit basis
 functions to be included in the cluster expansion.
 In general, a cluster expansion is created by first generating a
@@ -73,7 +88,7 @@ Full documentation of the class is available here, :ref:`cluster space`.
 .. _structure wrangler ug:
 
 Structure wrangler
-------------------
+^^^^^^^^^^^^^^^^^^
 :class:`StructureWrangler` handles input data structures and properties
 to fit to the cluster expansion.
 Once a set of structures and their relevant properties (for example, their
@@ -90,7 +105,7 @@ Full documentation of the class is available here: :ref:`structure wrangler`.
 .. _cluster expansion ug:
 
 Cluster expansion
------------------
+^^^^^^^^^^^^^^^^^
 :class:`ClusterExpansion` contains the fitted coefficents of the cluster
 expansion for predicting CE properties of new structures.
 Based on the feature matrix from the :class:`StructureWrangler`, one can fit
@@ -115,9 +130,8 @@ Full documentation of the class is available here: :ref:`cluster expansion`.
 
 .. _smol.moca ug:
 
-=========
 smol.moca
-=========
+---------
 
 This module includes classes and functions to run Markov Chain Monte Carlo
 sampling of statistical mechanical ensembles represented by a cluster expansion
@@ -150,7 +164,7 @@ The core classes are:
 .. _processors ug:
 
 Processors
-----------
+^^^^^^^^^^
 A :class:`Processor` is used to optimally compute correlation vectors, energy,
 and differences in these from variations in site occupancies. Processors
 compute values only for a specific supercell specified by a given supercell
@@ -169,7 +183,7 @@ Full documentation of the class and its subclasses available here: :ref:`process
 .. _ensembles ug:
 
 Ensembles
----------
+^^^^^^^^^
 :class:`Ensemble` classes represent the specific statistical mechanics ensemble
 by defining the relevant thermodynamic boundary conditions in order to compute
 the appropriate ensemble probability ratios. For example,
@@ -186,7 +200,7 @@ Full documentation of the class and its subclasses are available here: :ref:`ens
 .. _sampler ug:
 
 Sampler
--------
+^^^^^^^
 A :class:`Sampler` takes care of running MCMC sampling for a given ensemble.
 The easiest way to create a sampler (which suffices for most use cases) is to
 use the :meth:`from_ensemble` class method, which is sufficient for most cases using
@@ -201,7 +215,7 @@ Full documentation of the class is available here: :ref:`sampler`.
 .. _samplecontainer ug:
 
 SampleContainer
----------------
+^^^^^^^^^^^^^^^
 A :class:`SampleContainer` stores data from Monte Carlo sampling simulations,
 especially the occupancies and feature vectors. For lenghty MC simulations a
 :class:`SampleContainer` allows streaming directly to an
