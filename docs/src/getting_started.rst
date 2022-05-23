@@ -183,9 +183,12 @@ Advanced Examples
 
 - `Adding structures to a StructureWrangler in parallel`_
 - `Simulated annealing with point electrostatics`_
+- `Li-Mn-O DRX cluster expansion and sampling`_
 
 .. _Adding structures to a StructureWrangler in parallel: notebooks/adding-structures-in-parallel.ipynb
 
 .. _Simulated annealing with point electrostatics: notebooks/running-ewald-sim_anneal.ipynb
+
+.. _Li-Mn-O DRX cluster expansion and sampling: notebooks/lmo-drx-ce-mc.ipynb
 
 More to come...
