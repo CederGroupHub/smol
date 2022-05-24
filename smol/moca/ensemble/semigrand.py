@@ -17,10 +17,10 @@ from smol.cofe.space.domain import Vacancy, get_species
 from smol.moca.processor.base import Processor
 from smol.moca.sublattice import Sublattice
 
-from .base import Ensemble
+from .base import BaseEnsemble
 
 
-class SemiGrandEnsemble(Ensemble, MSONable):
+class SemiGrandEnsemble(BaseEnsemble, MSONable):
     """Relative chemical potential-based SemiGrand Ensemble.
 
     A Semi-Grand Canonical Ensemble for Monte Carlo simulations where species'

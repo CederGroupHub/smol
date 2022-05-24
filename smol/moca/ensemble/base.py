@@ -11,7 +11,7 @@ from smol.moca.processor import (
 )
 
 
-class Ensemble(ABC):
+class BaseEnsemble(ABC):
     """Abstract base class for Monte Carlo Ensembles.
 
     Attributes:
