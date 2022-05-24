@@ -10,6 +10,7 @@ Use this section to keep track of changes in the works.
 ### Changed
 ### Fixed
 * version dunder with pypi project rename.
+* use of np.random.default_rng for reproducibility. #206 (lbluque)
 ### Removed
 ### Deprecated
 
