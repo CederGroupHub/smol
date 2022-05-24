@@ -23,7 +23,7 @@ applications, for more advanced use and custom calculations a more detailed desc
 of the package is given in the :doc:`Developing </developer_guide/index>` section.
 
 
-.. image:: ../../_static/use_workflow.png
+.. image:: ../_static/use_workflow.png
    :width: 800px
 
 ----------------------------------------------------------------------------------------
