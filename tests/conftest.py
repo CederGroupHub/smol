@@ -4,7 +4,7 @@ import numpy as np
 from monty.serialization import loadfn
 from smol.cofe import ClusterSubspace, ClusterExpansion
 from smol.moca.processor import ClusterExpansionProcessor, \
-    EwaldProcessor, OrbitDecompositionProcessor, CompositeProcessor
+    EwaldProcessor, ClusterDecompositionProcessor, CompositeProcessor
 from smol.moca import CanonicalEnsemble, SemiGrandEnsemble
 from smol.cofe.extern import EwaldTerm
 
@@ -53,7 +53,7 @@ def ce_processor(cluster_subspace):
         cluster_subspace, supercell_matrix=scmatrix, coefficients=coefs)
 
 
-@pytest.fixture(params=['CE', 'OD'], scope='module')
+@pytest.fixture(params=['CE', 'CD'], scope='module')
 def composite_processor(cluster_subspace_ewald, request):
     coefs = 2 * np.random.random(cluster_subspace_ewald.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
@@ -68,9 +68,9 @@ def composite_processor(cluster_subspace_ewald, request):
         expansion = ClusterExpansion(
             cluster_subspace_ewald, coefs)
         proc.add_processor(
-            OrbitDecompositionProcessor(
+            ClusterDecompositionProcessor(
                 cluster_subspace_ewald, scmatrix,
-                expansion.orbit_factor_tensors)
+                expansion.cluster_interaction_tensors)
         )
     proc.add_processor(EwaldProcessor(
         cluster_subspace_ewald, scmatrix, EwaldTerm(), coefficient=coefs[-1]))

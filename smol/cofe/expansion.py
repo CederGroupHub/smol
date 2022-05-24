@@ -152,7 +152,7 @@ class ClusterExpansion(MSONable):
         self._feat_matrix = regression_data.feature_matrix.copy() \
             if regression_data is not None else None
         self._eci = None
-        self._fac_tensors = None
+        self._int_tensors = None
 
     @property
     def eci(self):
@@ -197,11 +197,11 @@ class ClusterExpansion(MSONable):
         return self._subspace.function_orbit_ids
 
     @property
-    def effective_orbit_weights(self):
-        """Calculate the orbit weights.
+    def effective_cluster_weights(self):
+        """Calculate the cluster weights.
 
-        The orbit weights are defined as the weighted sum of ECI squared, where
-        the weights are the multiplicities.
+        The cluster weights are defined as the weighted sum of ECI squared, where
+        the weights are the ordering multiplicities.
         """
         weights = np.array(
             [np.sum(
@@ -213,21 +213,21 @@ class ClusterExpansion(MSONable):
         return weights
 
     @property
-    def orbit_factor_tensors(self):
-        """Get tuple of orbit factor tensors.
+    def cluster_interaction_tensors(self):
+        """Get tuple of cluster interaction tensors.
 
-        Tuple of ndarrays where each array is the factor tensor for the
-        corresponding orbit.
+        Tuple of ndarrays where each array is the interaction tensor for the
+        corresponding orbit of clusters.
         """
-        if self._fac_tensors is None:
-            self._fac_tensors = (self.coefs[0], ) + tuple(
+        if self._int_tensors is None:
+            self._int_tensors = (self.coefs[0],) + tuple(
                 sum(m * self.eci[orbit.bit_id + i] * tensor for i, (m, tensor)
                     in enumerate(
                         zip(orbit.bit_combo_multiplicities,
                             orbit.correlation_tensors)))
                 for orbit in self._subspace.orbits
             )
-        return self._fac_tensors
+        return self._int_tensors
 
     @property
     def feature_matrix(self):
@@ -254,11 +254,11 @@ class ClusterExpansion(MSONable):
             structure, normalized=normalize)
         return np.dot(corrs, self.coefs)
 
-    def compute_orbit_factors(self, structure, normalize=True):
-        """Compute the vector of orbit factor values for given structure.
+    def compute_cluster_interactions(self, structure, normalize=True):
+        """Compute the vector of cluster interaction values for given structure.
 
-        The orbit function vector is simply a vector made up of the sum of
-        all cluster expansion terms over the same orbit.
+        A cluster interaction is simply a vector made up of the sum of all cluster
+        expansion terms over the same orbit.
 
         Args:
             structure (Structure):
@@ -268,18 +268,18 @@ class ClusterExpansion(MSONable):
                 the prim cell size.
 
         Returns: ndarray
-            vector of orbit factor values
+            vector of cluster interaction values
         """
         corrs = self.cluster_subspace.corr_from_structure(
             structure, normalized=normalize)
         vals = self.eci * corrs
-        orbit_factors = np.array(
+        interactions = np.array(
             [np.sum(
                 vals[self.eci_orbit_ids == i] *
                 self._subspace.function_ordering_multiplicities[self.eci_orbit_ids == i])  # noqa
                 for i in range(len(self._subspace.orbits) + 1)]
         )
-        return orbit_factors
+        return interactions
 
     def prune(self, threshold=0, with_multiplicity=False):
         """Remove fit coefficients or ECI's with small values.
@@ -313,7 +313,7 @@ class ClusterExpansion(MSONable):
         if self._feat_matrix is not None:
             self._feat_matrix = self._feat_matrix[:, ids_complement]
         self._eci = None  # Reset
-        self._fac_tensors = None
+        self._int_tensors = None
 
     def __str__(self):
         """Pretty string for printing."""

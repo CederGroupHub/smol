@@ -4,7 +4,7 @@ import numpy.testing as npt
 from tests.utils import assert_msonable, gen_random_occupancy
 from smol.cofe import ClusterExpansion
 from smol.cofe.extern import EwaldTerm
-from smol.moca.processor import ClusterExpansionProcessor, OrbitDecompositionProcessor, \
+from smol.moca.processor import ClusterExpansionProcessor, ClusterDecompositionProcessor, \
     EwaldProcessor, CompositeProcessor
 from smol.cofe.space.domain import Vacancy
 from smol.moca.processor.base import Processor
@@ -149,14 +149,14 @@ def test_compute_orbit_factors(cluster_subspace):
     coefs = 2 * np.random.random(cluster_subspace.num_corr_functions)
     scmatrix = 3 * np.eye(3)
     expansion = ClusterExpansion(cluster_subspace, coefs)
-    processor = OrbitDecompositionProcessor(
-        cluster_subspace, scmatrix, expansion.orbit_factor_tensors)
+    processor = ClusterDecompositionProcessor(
+        cluster_subspace, scmatrix, expansion.cluster_interaction_tensors)
     occu = gen_random_occupancy(processor.get_sublattices(),
                                 processor.get_inactive_sublattices())
     struct = processor.structure_from_occupancy(occu)
     # same as normalize=False in corr_from_structure
     npt.assert_allclose(processor.compute_feature_vector(occu) / processor.size,
-                        expansion.compute_orbit_factors(struct))
+                        expansion.compute_cluster_interactions(struct))
 
 
 def test_bad_coef_length(cluster_subspace):

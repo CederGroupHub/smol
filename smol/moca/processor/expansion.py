@@ -138,19 +138,19 @@ class ClusterExpansionProcessor(Processor):
                    coefficients=np.array(d['coefficients']))
 
 
-class OrbitDecompositionProcessor(Processor):
-    """OrbitDecompositionProcessor ClusterExpansion in MC simulations.
+class ClusterDecompositionProcessor(Processor):
+    """ClusterDecompositionProcessor to use a CD in MC simulations.
 
-    An OrbitDecompositionProcessor is similar to a ClusterExpansionProcessor
-    however it computes properties and changes of properties using orbit
-    factors rather than correlation functions and ECI.
+    An ClusterDecompositionProcessor is similar to a ClusterExpansionProcessor
+    however it computes properties and changes of properties using cluster interactions
+    rather than correlation functions and ECI.
 
     For a given ClusterExpansion the results from sampling using this class
     should be the exact same as using a ClusterExpansionProcessor (ie the
     samples are from the same ensemble).
 
     A few practical and important differences though, the featyre vectors
-    that are used and sampled are the orbit factors for each occupancy
+    that are used and sampled are the cluster interactions for each occupancy
     as oposed to the correlation vectors (so if you need correlation vectors
     for further analysis you're probably better off with a standard
     ClusterExpansionProcessor
@@ -163,8 +163,8 @@ class OrbitDecompositionProcessor(Processor):
     """
 
     def __init__(self, cluster_subspace, supercell_matrix,
-                 orbit_factor_tensors):
-        """Initialize an OrbitDecompositionProcessor.
+                 interaction_tensors):
+        """Initialize an ClusterDecompositionProcessor.
 
         Args:
             cluster_subspace (ClusterSubspace):
@@ -172,16 +172,16 @@ class OrbitDecompositionProcessor(Processor):
             supercell_matrix (ndarray):
                 An array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
-            orbit_factor_tensors (sequence of ndarray):
+            interaction_tensors (sequence of ndarray):
                 Sequence of ndarray where each array corresponds to the
-                orbit factor tensor. These should be in the same order as their
+                cluster interaction tensor. These should be in the same order as their
                 corresponding orbits in the given cluster_subspace
         """
-        if len(orbit_factor_tensors) != cluster_subspace.num_orbits:
+        if len(interaction_tensors) != cluster_subspace.num_orbits:
             raise ValueError(
-                f'The number of orbit factor tensors must match the number '
-                f' of orbits in the subspace. Got {len(orbit_factor_tensors)} '
-                f'orbit factors, but need {cluster_subspace.num_orbits} '
+                f'The number of cluster interaction tensors must match the number '
+                f' of orbits in the subspace. Got {len(interaction_tensors)} '
+                f'interaction tensors, but need {cluster_subspace.num_orbits} '
                 f' for the given cluster_subspace.')
 
         #  the orbit multiplicities play the role of coefficients here.
@@ -189,7 +189,7 @@ class OrbitDecompositionProcessor(Processor):
                          coefficients=cluster_subspace.orbit_multiplicities)
 
         self.n_orbits = self.cluster_subspace.num_orbits
-        self._fac_tensors = orbit_factor_tensors
+        self._fac_tensors = interaction_tensors
 
         # List of orbit information and supercell site indices to compute corr
         self._orbit_list = []
@@ -198,11 +198,11 @@ class OrbitDecompositionProcessor(Processor):
         self._orbits_by_sites = defaultdict(list)
         # Prepare necssary information for local updates
         mappings = self._subspace.supercell_orbit_mappings(supercell_matrix)
-        for cluster_indices, orbit_factor, orbit in zip(
+        for cluster_indices, interaction_tensor, orbit in zip(
                 mappings, self._fac_tensors[1:], self._subspace.orbits):
-            flat_factor_tensor = np.ravel(orbit_factor, order='C')
+            flat_interaction_tensor = np.ravel(interaction_tensor, order='C')
             self._orbit_list.append(
-                (orbit.flat_tensor_indices, flat_factor_tensor,
+                (orbit.flat_tensor_indices, flat_interaction_tensor,
                  cluster_indices)
             )
             for site_ind in np.unique(cluster_indices):
@@ -210,13 +210,13 @@ class OrbitDecompositionProcessor(Processor):
                 ratio = len(cluster_indices) / np.sum(in_inds)
                 self._orbits_by_sites[site_ind].append(
                     (orbit.id, ratio, orbit.flat_tensor_indices,
-                     flat_factor_tensor, cluster_indices[in_inds])
+                     flat_interaction_tensor, cluster_indices[in_inds])
                 )
 
     def compute_feature_vector(self, occupancy):
-        """Compute the orbit factor vector for a given occupancy string.
+        """Compute the cluster interaction vector for a given occupancy string.
 
-        The orbit factor vector in this case is normalized per supercell.
+        The cluster interaction vector in this case is normalized per supercell.
 
         Args:
             occupancy (ndarray):
@@ -231,9 +231,9 @@ class OrbitDecompositionProcessor(Processor):
 
     def compute_feature_vector_change(self, occupancy, flips):
         """
-        Compute the change in the orbit factor vector from a list of flips.
+        Compute the change in the cluster interaction vector from a list of flips.
 
-        The orbit factor vector in this case is normalized per supercell.
+        The cluster interaction vector in this case is normalized per supercell.
 
         Args:
             occupancy (ndarray):
@@ -245,19 +245,19 @@ class OrbitDecompositionProcessor(Processor):
                 for the new species to place at that site.
 
         Returns:
-            array: change in orbit factor vector
+            array: change in cluster interaction vector
         """
         occu_i = occupancy
-        delta_factors = np.zeros(self.n_orbits)
+        delta_interactions = np.zeros(self.n_orbits)
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
             site_orbit_list = self._orbits_by_sites[f[0]]
-            delta_factors += delta_factors_single_flip(
+            delta_interactions += delta_factors_single_flip(
                 occu_f, occu_i, self.n_orbits, site_orbit_list)
             occu_i = occu_f
 
-        return delta_factors * self.size
+        return delta_interactions * self.size
 
     def as_dict(self) -> dict:
         """
@@ -267,15 +267,16 @@ class OrbitDecompositionProcessor(Processor):
             MSONable dict
         """
         d = super().as_dict()
-        d['orbit_factor_tensors'] = [factor.tolist() for factor
-                                     in self._fac_tensors]
+        d['interaction_tensors'] = [
+            interaction.tolist() for interaction in self._fac_tensors
+        ]
         return d
 
     @classmethod
     def from_dict(cls, d):
         """Create a ClusterExpansionProcessor from serialized MSONable dict."""
-        factor_tensors = tuple(
-            np.array(factor) for factor in d['orbit_factor_tensors']
+        interaction_tensors = tuple(
+            np.array(interaction) for interaction in d['interaction_tensors']
         )
         return cls(ClusterSubspace.from_dict(d['cluster_subspace']),
-                   np.array(d['supercell_matrix']), factor_tensors)
+                   np.array(d['supercell_matrix']), interaction_tensors)
