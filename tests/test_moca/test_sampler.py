@@ -11,9 +11,9 @@ TEMPERATURE = 5000
 
 
 @pytest.fixture(params=[1, 5])
-def sampler(ensemble, request):
+def sampler(ensemble, rng, request):
     sampler = Sampler.from_ensemble(
-        ensemble, temperature=TEMPERATURE, nwalkers=request.param
+        ensemble, temperature=TEMPERATURE, seed=rng, nwalkers=request.param
     )
     # fix this additional attribute to sampler to access in gen occus for tests
     sampler.num_sites = ensemble.num_sites

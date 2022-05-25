@@ -6,11 +6,11 @@ Getting Started
 Installation
 ============
 **smol** is purposedly light on dependencies which should make the installation
-process headache free.
+process headache free. Using ``pip``::
 
         pip install statmech-on-lattices
 
-(unfortunately PyPi hates fun so we could use "smol".)
+(unfortunately someone is name-squatting so we can't use "smol" for now.)
 
 Basic Usage
 ===========
@@ -28,7 +28,7 @@ Start by creating a disordered primitive structure.
 
 .. nbplot::
 
-    >>> from pymatgen.core.structure import Structure
+    >>> from pymatgen.core.structure import Structure, Lattice
     >>> species = {"Au": 0.5, "Cu": 0.5}
     >>> prim = Structure.from_spacegroup(
             "Fm-3m", Lattice.cubic(3.6), [species], [[0, 0, 0]])
@@ -46,17 +46,18 @@ Preparing training data
 -----------------------
 
 Load and use data computed for a training set of ordered structures to
-generate the necessary fitting data---formation energy and correlation vector
-for each training point.
+generate the necessary fitting data (formation energy and correlation vector
+for each training structure). Training data is added as instances of
+`ComputedStructureEntry <https://pymatgen.org/pymatgen.entries.computed_entries.html?highlight=computedstructureentry#pymatgen.entries.computed_entries.ComputedStructureEntry>`_
 
 .. nbplot::
 
     >>> from monty.serialization import loadfn
     >>> from smol.cofe import StructureWrangler
-    >>> data = loadfn("path_to_file.json")
+    >>> entries = loadfn("path_to_file.json")
     >>> wrangler = StructureWrangler(subspace)
-    >>> for structure, energy in data:
-            wrangler.add_data(structure, properties={"energy": energy})
+    >>> for entry in entries:
+            wrangler.add_entry(entry)
 
 Fitting and creating a cluster expansion
 ----------------------------------------
@@ -160,23 +161,34 @@ Basic Examples
 
 - `Creating a basic cluster expansion`_
 - `Creating a cluster expansion with electrostatics`_
+- `Visualizing clusters`_
 - `Running Canonical Monte Carlo`_
 - `Running Semi-Grand Canonical Monte Carlo`_
 - `Preparing cluster expansion training data`_
-- `Adding structures to a StructureWrangler in parallel`_
 
-.. _Creating a basic cluster expansion: notebooks/1-creating-a-ce.ipynb
+.. _Creating a basic cluster expansion: notebooks/creating-a-ce.ipynb
 
-.. _Creating a cluster expansion with electrostatics: notebooks/1-1-creating-a-ce-w-electrostatics.ipynb
+.. _Creating a cluster expansion with electrostatics: notebooks/creating-a-ce-w-electrostatics.ipynb
 
-.. _Running Canonical Monte Carlo: notebooks/2-running-canonical-mc.ipynb
+.. _Visualizing clusters: notebooks/cluster-visualization.ipynb
 
-.. _Running Semi-Grand Canonical Monte Carlo: notebooks/2-1-running-semigrand-mc.ipynb
+.. _Running Canonical Monte Carlo: notebooks/running-canonical-mc.ipynb
 
-.. _Preparing cluster expansion training data: notebooks/3-training-data-preparation.ipynb
+.. _Running Semi-Grand Canonical Monte Carlo: notebooks/running-semigrand-mc.ipynb
 
-.. _Adding structures to a StructureWrangler in parallel: notebooks/4-adding-structures-in-parallel.ipynb
+.. _Preparing cluster expansion training data: notebooks/training-data-preparation.ipynb
 
 Advanced Examples
 -----------------
-Soon to come...
+
+- `Adding structures to a StructureWrangler in parallel`_
+- `Simulated annealing with point electrostatics`_
+- `Li-Mn-O DRX cluster expansion and sampling`_
+
+.. _Adding structures to a StructureWrangler in parallel: notebooks/adding-structures-in-parallel.ipynb
+
+.. _Simulated annealing with point electrostatics: notebooks/running-ewald-sim_anneal.ipynb
+
+.. _Li-Mn-O DRX cluster expansion and sampling: notebooks/lmo-drx-ce-mc.ipynb
+
+More to come...
