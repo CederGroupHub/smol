@@ -6,29 +6,26 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>LiMnO DRX Cluster Expansion &#8212; smol 0.0.1 documentation</title>
+    <title>LiMnO DRX Cluster Expansion &#8212; smol 0.0.1.dev1+g44d719b documentation</title>
     
-    <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-  
+
     
-    <link rel="stylesheet"
-      href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-    <link rel="preload" as="font" type="font/woff2" crossorigin
-      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-    <link rel="preload" as="font" type="font/woff2" crossorigin
-      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
-  
-    
-      
-  
-    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/pydata-sphinx-theme.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/smol.css" />
     
-    <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
-  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
@@ -45,7 +42,7 @@
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -123,7 +120,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.1  <!-- this text may get changed later by javascript -->
+        0.0.1.dev1+g44d719b  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -133,17 +130,10 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables notebooks/lmo-drx-ce-mc and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1'}.
+     variables notebooks/lmo-drx-ce-mc and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1.dev1+g44d719b'}.
 -->
 
 <script type="text/javascript">
-// Construct the target URL from the JSON components
-function buildURL(entry) {
-    var template = "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/";  // supplied by jinja
-    template = template.replace("{version}", entry.version);
-    return template;
-}
-
 // Check if corresponding page path exists in other version of docs
 // and, if so, go there instead of the homepage of the other docs version
 function checkPageExistsAndRedirect(event) {
@@ -179,22 +169,26 @@ function checkPageExistsAndRedirect(event) {
             const node = document.createElement("a");
             node.setAttribute("class", "list-group-item list-group-item-action py-1");
             node.textContent = `${entry.name}`;
-            // get the base URL for that doc version, add the current page's
-            // path to it, and set as `href`
-            entry.url = buildURL(entry);
             node.setAttribute("href", `${entry.url}${currentFilePath}`);
             // on click, AJAX calls will check if the linked page exists before
             // trying to redirect, and if not, will redirect to the homepage
             // for that version of the docs.
             node.onclick = checkPageExistsAndRedirect;
+            // Add dataset values for the version and name in case people want
+            // to apply CSS styling based on this information.
+            node.dataset["versionName"] = entry.name;
+            node.dataset["version"] = entry.version;
+
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.1 variable.
+            // this version, rather than using sphinx's 0.0.1.dev1+g44d719b variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.1") {
+            if (entry.version == "0.0.1.dev1+g44d719b") {
                 node.classList.add("active");
-                $("#version_switcher_button").text(entry.name);
+                let btn = document.getElementById("version_switcher_button");
+                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
+                btn.dataset["activeVersion"] = entry.version;
             }
         });
     });
@@ -244,7 +238,7 @@ function checkPageExistsAndRedirect(event) {
               
               <div class="toc-item">
                 
-<div class="tocsection onthispage pt-5 pb-3">
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
 
@@ -601,7 +595,7 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="admonition note">
   This page was generated from
-  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/0.0.1/docs/src/notebooks/lmo-drx-ce-mc.ipynb">docs/src/notebooks/lmo-drx-ce-mc.ipynb</a>.<br>
+  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/0.0.1.dev1+g44d719b/docs/src/notebooks/lmo-drx-ce-mc.ipynb">docs/src/notebooks/lmo-drx-ce-mc.ipynb</a>.<br>
   <script>
     if (document.location.host) {
       $(document.currentScript).replaceWith(
@@ -615,10 +609,10 @@ div.rendered_html tbody tr:hover {
     }
   </script>
 </div><section id="LiMnO-DRX-Cluster-Expansion">
-<h1>LiMnO DRX Cluster Expansion<a class="headerlink" href="#LiMnO-DRX-Cluster-Expansion" title="Permalink to this headline">¶</a></h1>
+<h1>LiMnO DRX Cluster Expansion<a class="headerlink" href="#LiMnO-DRX-Cluster-Expansion" title="Permalink to this headline">#</a></h1>
 <p>This example shows a more in depth example of how to generate, fit and sample a cluster expansion for a slightly more complex scenario.</p>
 <section id="0)-Load-all-data">
-<h2>0) Load all data<a class="headerlink" href="#0)-Load-all-data" title="Permalink to this headline">¶</a></h2>
+<h2>0) Load all data<a class="headerlink" href="#0)-Load-all-data" title="Permalink to this headline">#</a></h2>
 <p>Load the structures with oxidation state assignments and prepare the target vector for learning. Target vector is usually a vector of total energies.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -633,9 +627,9 @@ div.rendered_html tbody tr:hover {
 </div>
 </section>
 <section id="1)-Define-a-cluster-expansion">
-<h2>1) Define a cluster expansion<a class="headerlink" href="#1)-Define-a-cluster-expansion" title="Permalink to this headline">¶</a></h2>
+<h2>1) Define a cluster expansion<a class="headerlink" href="#1)-Define-a-cluster-expansion" title="Permalink to this headline">#</a></h2>
 <section id="Load-and-inspect-the-lattice-primitive-cell-with-multi-site-disorder">
-<h3>Load and inspect the lattice primitive cell with multi-site disorder<a class="headerlink" href="#Load-and-inspect-the-lattice-primitive-cell-with-multi-site-disorder" title="Permalink to this headline">¶</a></h3>
+<h3>Load and inspect the lattice primitive cell with multi-site disorder<a class="headerlink" href="#Load-and-inspect-the-lattice-primitive-cell-with-multi-site-disorder" title="Permalink to this headline">#</a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
@@ -707,7 +701,7 @@ PeriodicSite: O2- (1.7146, 1.2124, 2.9699) [0.5000, 0.5000, 0.5000]
 </div>
 </section>
 <section id="Specify-cluster-subspace-information">
-<h3>Specify cluster subspace information<a class="headerlink" href="#Specify-cluster-subspace-information" title="Permalink to this headline">¶</a></h3>
+<h3>Specify cluster subspace information<a class="headerlink" href="#Specify-cluster-subspace-information" title="Permalink to this headline">#</a></h3>
 <p>We will include an electrostatic term in the subspace as well</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
@@ -833,7 +827,7 @@ Our feature matrix has the following dimensions: (238, 387)
 </section>
 </section>
 <section id="2.-Fit-a-cluster-expansion">
-<h2>2. Fit a cluster expansion<a class="headerlink" href="#2.-Fit-a-cluster-expansion" title="Permalink to this headline">¶</a></h2>
+<h2>2. Fit a cluster expansion<a class="headerlink" href="#2.-Fit-a-cluster-expansion" title="Permalink to this headline">#</a></h2>
 <p>Here we are fitting $E(<span class="math">\sigma</span>) = <span class="math">\sum</span><em>:nbsphinx-math:`beta `m</em><span class="math">\beta `J\_:nbsphinx-math:</span>beta <cite>:nbsphinx-math:</cite>langle <cite>:nbsphinx-math:</cite>Phi <cite>(:nbsphinx-math:</cite>sigma`)<em>:nbsphinx-math:`alpha `:nbsphinx-math:`rangle`</em><span class="math">\beta `+ :nbsphinx-math:</span>frac{1}{epsilon}`E_{Ewald}(<span class="math">\sigma</span>) $ and we will do with various compressive sensing techniques because the system is under-determined because <span class="math notranslate nohighlight">\(n\)</span> &lt;
 <span class="math notranslate nohighlight">\(p\)</span>. Our feature matrix <span class="math notranslate nohighlight">\(\textbf{X}\)</span> is the matrix of all correlation functions and Ewald energy for our structures. We are interested in finding $ m_:nbsphinx-math:<cite>beta `J_:nbsphinx-math:</cite>beta`$ and <span class="math notranslate nohighlight">\(\frac{1}{\epsilon}\)</span> which together form vector <span class="math notranslate nohighlight">\(\vec w\)</span>.</p>
 <div class="nbinput nblast docutils container">
@@ -996,7 +990,7 @@ Text(0, 0.5, &#39;Magnitude |$w_i$| eV/prim&#39;)
 </div>
 </div>
 <section id="Generate-the-Cluster-Expansion-object">
-<h3>Generate the Cluster Expansion object<a class="headerlink" href="#Generate-the-Cluster-Expansion-object" title="Permalink to this headline">¶</a></h3>
+<h3>Generate the Cluster Expansion object<a class="headerlink" href="#Generate-the-Cluster-Expansion-object" title="Permalink to this headline">#</a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
@@ -1030,10 +1024,10 @@ Structure with composition Li+10 Mn4+12 Mn3+2 O2-32 has predicted energy -18.959
 </section>
 </section>
 <section id="3)-Run-Canonical-Monte-Carlo">
-<h2>3) Run Canonical Monte Carlo<a class="headerlink" href="#3)-Run-Canonical-Monte-Carlo" title="Permalink to this headline">¶</a></h2>
+<h2>3) Run Canonical Monte Carlo<a class="headerlink" href="#3)-Run-Canonical-Monte-Carlo" title="Permalink to this headline">#</a></h2>
 <p>Now let’s run a canonical MC disordering of spinel LiMn2O4.</p>
 <section id="First-load-the-spinel-structure">
-<h3>First load the spinel structure<a class="headerlink" href="#First-load-the-spinel-structure" title="Permalink to this headline">¶</a></h3>
+<h3>First load the spinel structure<a class="headerlink" href="#First-load-the-spinel-structure" title="Permalink to this headline">#</a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
@@ -1047,7 +1041,7 @@ Structure with composition Li+10 Mn4+12 Mn3+2 O2-32 has predicted energy -18.959
 </div>
 </section>
 <section id="Generate-an-ensemble-for-a-given-transformation-of-the-starting-spinel-structure-and-convert-the-spinel-structure-into-an-initial-occupancy">
-<h3>Generate an ensemble for a given transformation of the starting spinel structure and convert the spinel structure into an initial occupancy<a class="headerlink" href="#Generate-an-ensemble-for-a-given-transformation-of-the-starting-spinel-structure-and-convert-the-spinel-structure-into-an-initial-occupancy" title="Permalink to this headline">¶</a></h3>
+<h3>Generate an ensemble for a given transformation of the starting spinel structure and convert the spinel structure into an initial occupancy<a class="headerlink" href="#Generate-an-ensemble-for-a-given-transformation-of-the-starting-spinel-structure-and-convert-the-spinel-structure-into-an-initial-occupancy" title="Permalink to this headline">#</a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
@@ -1072,7 +1066,7 @@ Structure with composition Li+10 Mn4+12 Mn3+2 O2-32 has predicted energy -18.959
 </div>
 </section>
 <section id="Generate-sampler-for-canonical-MC-disordering-from-T_0-=-300-K-to-T_f-=-500-K-in-steps-of-50-K-as-a-mini-simulation">
-<h3>Generate sampler for canonical MC disordering from <span class="math notranslate nohighlight">\(T_0 = 300 K\)</span> to <span class="math notranslate nohighlight">\(T_f = 500 K\)</span> in steps of <span class="math notranslate nohighlight">\(50 K\)</span> as a mini simulation<a class="headerlink" href="#Generate-sampler-for-canonical-MC-disordering-from-T_0-=-300-K-to-T_f-=-500-K-in-steps-of-50-K-as-a-mini-simulation" title="Permalink to this headline">¶</a></h3>
+<h3>Generate sampler for canonical MC disordering from <span class="math notranslate nohighlight">\(T_0 = 300 K\)</span> to <span class="math notranslate nohighlight">\(T_f = 500 K\)</span> in steps of <span class="math notranslate nohighlight">\(50 K\)</span> as a mini simulation<a class="headerlink" href="#Generate-sampler-for-canonical-MC-disordering-from-T_0-=-300-K-to-T_f-=-500-K-in-steps-of-50-K-as-a-mini-simulation" title="Permalink to this headline">#</a></h3>
 <p>Computing the ewald matrix necessary for fast MC evaluation for large supercells with multi-component structures such as this example can take a long time. Since this is done lazily in the code it will seem like the first step of MC is unbearibly long. It is suggested to save the ensemble or processor used such that the Ewald matrix does not need to be reconstructed at runtime.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
@@ -1121,7 +1115,7 @@ Sampling 1 chain(s) from a cell with 3456 sites...: 100%|███████�
 </div>
 </section>
 <section id="Now-save-the-data">
-<h3>Now save the data<a class="headerlink" href="#Now-save-the-data" title="Permalink to this headline">¶</a></h3>
+<h3>Now save the data<a class="headerlink" href="#Now-save-the-data" title="Permalink to this headline">#</a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -1151,8 +1145,9 @@ Sampling 1 chain(s) from a cell with 3456 sites...: 100%|███████�
       </div>
     </div>
   
-    <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-  <footer class="footer mt-5 mt-md-0">
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+<footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">

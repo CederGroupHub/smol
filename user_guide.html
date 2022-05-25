@@ -6,29 +6,26 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>User Guide &#8212; smol 0.0.1 documentation</title>
+    <title>User Guide &#8212; smol 0.0.1.dev1+g44d719b documentation</title>
     
-    <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-  
+
     
-    <link rel="stylesheet"
-      href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
-    <link rel="preload" as="font" type="font/woff2" crossorigin
-      href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-    <link rel="preload" as="font" type="font/woff2" crossorigin
-      href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
-  
-    
-      
-  
-    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/pydata-sphinx-theme.css" />
     <link rel="stylesheet" type="text/css" href="_static/css/smol.css" />
     
-    <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
-  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
@@ -45,7 +42,7 @@
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -123,7 +120,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.1  <!-- this text may get changed later by javascript -->
+        0.0.1.dev1+g44d719b  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -133,17 +130,10 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables user_guide and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1'}.
+     variables user_guide and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1.dev1+g44d719b'}.
 -->
 
 <script type="text/javascript">
-// Construct the target URL from the JSON components
-function buildURL(entry) {
-    var template = "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/";  // supplied by jinja
-    template = template.replace("{version}", entry.version);
-    return template;
-}
-
 // Check if corresponding page path exists in other version of docs
 // and, if so, go there instead of the homepage of the other docs version
 function checkPageExistsAndRedirect(event) {
@@ -179,22 +169,26 @@ function checkPageExistsAndRedirect(event) {
             const node = document.createElement("a");
             node.setAttribute("class", "list-group-item list-group-item-action py-1");
             node.textContent = `${entry.name}`;
-            // get the base URL for that doc version, add the current page's
-            // path to it, and set as `href`
-            entry.url = buildURL(entry);
             node.setAttribute("href", `${entry.url}${currentFilePath}`);
             // on click, AJAX calls will check if the linked page exists before
             // trying to redirect, and if not, will redirect to the homepage
             // for that version of the docs.
             node.onclick = checkPageExistsAndRedirect;
+            // Add dataset values for the version and name in case people want
+            // to apply CSS styling based on this information.
+            node.dataset["versionName"] = entry.name;
+            node.dataset["version"] = entry.version;
+
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.1 variable.
+            // this version, rather than using sphinx's 0.0.1.dev1+g44d719b variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.1") {
+            if (entry.version == "0.0.1.dev1+g44d719b") {
                 node.classList.add("active");
-                $("#version_switcher_button").text(entry.name);
+                let btn = document.getElementById("version_switcher_button");
+                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
+                btn.dataset["activeVersion"] = entry.version;
             }
         });
     });
@@ -244,7 +238,7 @@ function checkPageExistsAndRedirect(event) {
               
               <div class="toc-item">
                 
-<div class="tocsection onthispage pt-5 pb-3">
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
 
@@ -347,7 +341,7 @@ function checkPageExistsAndRedirect(event) {
               <div>
                 
   <section id="user-guide">
-<h1>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h1>
+<h1>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">#</a></h1>
 <p><strong>smol</strong> implements functionality and extensions of CE-MC methodology. It includes tools
 to define, generate and fit a cluster expansion (or more generally an applied lattice
 model). Additionally, it includes tools to run Monte Carlo simulations to sample
@@ -361,7 +355,7 @@ Markov Chain Monte Carlo (MCMC) sampling based on a cluster expansion
 Hamiltonian (and a few other Hamiltonian models).</p></li>
 </ul>
 <section id="overview-diagram">
-<h2>Overview diagram<a class="headerlink" href="#overview-diagram" title="Permalink to this headline">¶</a></h2>
+<h2>Overview diagram<a class="headerlink" href="#overview-diagram" title="Permalink to this headline">#</a></h2>
 <p>An overview diagram of the main classes and data inputs necessary to build and sample
 a lattice model is shown below. The workflow shown is sufficient for the majority of
 applications, for more advanced use and custom calculations a more detailed description
@@ -371,12 +365,12 @@ of the package is given in the <a class="reference internal" href="developer_gui
 </section>
 <hr class="docutils" />
 <section id="main-classes">
-<h1>Main classes<a class="headerlink" href="#main-classes" title="Permalink to this headline">¶</a></h1>
+<h1>Main classes<a class="headerlink" href="#main-classes" title="Permalink to this headline">#</a></h1>
 <p>Below is a general description of the core classes in each submodule, to help understand
 the design, usage and capabilities of <strong>smol</strong>. You can also refer to the <a class="reference internal" href="api_reference/index.html#api-ref"><span class="std std-ref">API Reference</span></a>
 for full documentation of all classes and functions in the package.</p>
 <section id="smol-cofe">
-<span id="smol-cofe-ug"></span><h2>smol.cofe<a class="headerlink" href="#smol-cofe" title="Permalink to this headline">¶</a></h2>
+<span id="smol-cofe-ug"></span><h2>smol.cofe<a class="headerlink" href="#smol-cofe" title="Permalink to this headline">#</a></h2>
 <p>This module includes the necessary classes to define, train, and test cluster
 expansions. A cluster expansion is essentially a way to fit a function of
 configurational degrees of freedom using a specific set of basis functions that
@@ -393,7 +387,7 @@ cluster expansions refer to this document or any of following references
 <li><p><a class="reference internal" href="#cluster-expansion-ug"><span class="std std-ref">Cluster expansion</span></a></p></li>
 </ul>
 <section id="cluster-subspace">
-<span id="cluster-subspace-ug"></span><h3>Cluster subspace<a class="headerlink" href="#cluster-subspace" title="Permalink to this headline">¶</a></h3>
+<span id="cluster-subspace-ug"></span><h3>Cluster subspace<a class="headerlink" href="#cluster-subspace" title="Permalink to this headline">#</a></h3>
 <p><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code> contains the finite set of orbits and orbit basis
 functions to be included in the cluster expansion.
 In general, a cluster expansion is created by first generating a
@@ -418,7 +412,7 @@ redundant (frame) expansion using site indicator functions
 <p>Full documentation of the class is available here, <a class="reference internal" href="api_reference/cofe/clusterspace.html#cluster-space"><span class="std std-ref">Cluster Spaces</span></a>.</p>
 </section>
 <section id="structure-wrangler">
-<span id="structure-wrangler-ug"></span><h3>Structure wrangler<a class="headerlink" href="#structure-wrangler" title="Permalink to this headline">¶</a></h3>
+<span id="structure-wrangler-ug"></span><h3>Structure wrangler<a class="headerlink" href="#structure-wrangler" title="Permalink to this headline">#</a></h3>
 <p><code class="xref py py-class docutils literal notranslate"><span class="pre">StructureWrangler</span></code> handles input data structures and properties
 to fit to the cluster expansion.
 Once a set of structures and their relevant properties (for example, their
@@ -432,7 +426,7 @@ including methods for checking, preparing, and filtering the data.</p>
 <p>Full documentation of the class is available here: <a class="reference internal" href="api_reference/cofe/wrangling.sw.html#structure-wrangler"><span class="std std-ref">Structure Wrangler</span></a>.</p>
 </section>
 <section id="cluster-expansion">
-<span id="cluster-expansion-ug"></span><h3>Cluster expansion<a class="headerlink" href="#cluster-expansion" title="Permalink to this headline">¶</a></h3>
+<span id="cluster-expansion-ug"></span><h3>Cluster expansion<a class="headerlink" href="#cluster-expansion" title="Permalink to this headline">#</a></h3>
 <p><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterExpansion</span></code> contains the fitted coefficents of the cluster
 expansion for predicting CE properties of new structures.
 Based on the feature matrix from the <code class="xref py py-class docutils literal notranslate"><span class="pre">StructureWrangler</span></code>, one can fit
@@ -453,7 +447,7 @@ classes for MC sampling.</p>
 </section>
 </section>
 <section id="smol-moca">
-<span id="smol-moca-ug"></span><h2>smol.moca<a class="headerlink" href="#smol-moca" title="Permalink to this headline">¶</a></h2>
+<span id="smol-moca-ug"></span><h2>smol.moca<a class="headerlink" href="#smol-moca" title="Permalink to this headline">#</a></h2>
 <p>This module includes classes and functions to run Markov Chain Monte Carlo
 sampling of statistical mechanical ensembles represented by a cluster expansion
 Hamiltonian (there is also support to run MCMC with simple pair interaction
@@ -484,7 +478,7 @@ prim).</p>
 <li><p><a class="reference internal" href="#samplecontainer-ug"><span class="std std-ref">SampleContainer</span></a></p></li>
 </ul>
 <section id="processors">
-<span id="processors-ug"></span><h3>Processors<a class="headerlink" href="#processors" title="Permalink to this headline">¶</a></h3>
+<span id="processors-ug"></span><h3>Processors<a class="headerlink" href="#processors" title="Permalink to this headline">#</a></h3>
 <p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">Processor</span></code> is used to optimally compute correlation vectors, energy,
 and differences in these from variations in site occupancies. Processors
 compute values only for a specific supercell specified by a given supercell
@@ -499,7 +493,7 @@ specific use cases, users will need to instantiate the appropriate processor dir
 <p>Full documentation of the class and its subclasses available here: <a class="reference internal" href="api_reference/moca/processors.html#processors"><span class="std std-ref">Processors</span></a>.</p>
 </section>
 <section id="ensembles">
-<span id="ensembles-ug"></span><h3>Ensembles<a class="headerlink" href="#ensembles" title="Permalink to this headline">¶</a></h3>
+<span id="ensembles-ug"></span><h3>Ensembles<a class="headerlink" href="#ensembles" title="Permalink to this headline">#</a></h3>
 <p><code class="xref py py-class docutils literal notranslate"><span class="pre">Ensemble</span></code> classes represent the specific statistical mechanics ensemble
 by defining the relevant thermodynamic boundary conditions in order to compute
 the appropriate ensemble probability ratios. For example,
@@ -513,7 +507,7 @@ when sampling using a <code class="xref py py-class docutils literal notranslate
 <p>Full documentation of the class and its subclasses are available here: <a class="reference internal" href="api_reference/moca/ensembles.html#ensembles"><span class="std std-ref">Ensembles</span></a>.</p>
 </section>
 <section id="sampler">
-<span id="sampler-ug"></span><h3>Sampler<a class="headerlink" href="#sampler" title="Permalink to this headline">¶</a></h3>
+<span id="sampler-ug"></span><h3>Sampler<a class="headerlink" href="#sampler" title="Permalink to this headline">#</a></h3>
 <p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code> takes care of running MCMC sampling for a given ensemble.
 The easiest way to create a sampler (which suffices for most use cases) is to
 use the <code class="xref py py-meth docutils literal notranslate"><span class="pre">from_ensemble()</span></code> class method, which is sufficient for most cases using
@@ -524,7 +518,7 @@ and elaborate MCMC sampling more knowledge of the underlying classes (especially
 <p>Full documentation of the class is available here: <a class="reference internal" href="api_reference/moca/sampler.sampler.html#sampler"><span class="std std-ref">Sampler</span></a>.</p>
 </section>
 <section id="samplecontainer">
-<span id="samplecontainer-ug"></span><h3>SampleContainer<a class="headerlink" href="#samplecontainer" title="Permalink to this headline">¶</a></h3>
+<span id="samplecontainer-ug"></span><h3>SampleContainer<a class="headerlink" href="#samplecontainer" title="Permalink to this headline">#</a></h3>
 <p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">SampleContainer</span></code> stores data from Monte Carlo sampling simulations,
 especially the occupancies and feature vectors. For lenghty MC simulations a
 <code class="xref py py-class docutils literal notranslate"><span class="pre">SampleContainer</span></code> allows streaming directly to an
@@ -565,8 +559,9 @@ mean/variance/minimum of energies, enthalpies, and composition.</p>
       </div>
     </div>
   
-    <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-  <footer class="footer mt-5 mt-md-0">
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+<footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">

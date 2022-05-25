@@ -6,29 +6,26 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>cofe.wrangling package &#8212; smol 0.0.1 documentation</title>
+    <title>cofe.wrangling package &#8212; smol 0.0.1.dev1+g44d719b documentation</title>
     
-    <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-  
+
     
-    <link rel="stylesheet"
-      href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-    <link rel="preload" as="font" type="font/woff2" crossorigin
-      href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-    <link rel="preload" as="font" type="font/woff2" crossorigin
-      href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
-  
-    
-      
-  
-    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/pydata-sphinx-theme.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/smol.css" />
     
-    <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
-  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
@@ -45,7 +42,7 @@
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -123,7 +120,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.1  <!-- this text may get changed later by javascript -->
+        0.0.1.dev1+g44d719b  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -133,17 +130,10 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables api_reference/autogen/cofe.wrangling and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1'}.
+     variables api_reference/autogen/cofe.wrangling and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1.dev1+g44d719b'}.
 -->
 
 <script type="text/javascript">
-// Construct the target URL from the JSON components
-function buildURL(entry) {
-    var template = "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/";  // supplied by jinja
-    template = template.replace("{version}", entry.version);
-    return template;
-}
-
 // Check if corresponding page path exists in other version of docs
 // and, if so, go there instead of the homepage of the other docs version
 function checkPageExistsAndRedirect(event) {
@@ -179,22 +169,26 @@ function checkPageExistsAndRedirect(event) {
             const node = document.createElement("a");
             node.setAttribute("class", "list-group-item list-group-item-action py-1");
             node.textContent = `${entry.name}`;
-            // get the base URL for that doc version, add the current page's
-            // path to it, and set as `href`
-            entry.url = buildURL(entry);
             node.setAttribute("href", `${entry.url}${currentFilePath}`);
             // on click, AJAX calls will check if the linked page exists before
             // trying to redirect, and if not, will redirect to the homepage
             // for that version of the docs.
             node.onclick = checkPageExistsAndRedirect;
+            // Add dataset values for the version and name in case people want
+            // to apply CSS styling based on this information.
+            node.dataset["versionName"] = entry.name;
+            node.dataset["version"] = entry.version;
+
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.1 variable.
+            // this version, rather than using sphinx's 0.0.1.dev1+g44d719b variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.1") {
+            if (entry.version == "0.0.1.dev1+g44d719b") {
                 node.classList.add("active");
-                $("#version_switcher_button").text(entry.name);
+                let btn = document.getElementById("version_switcher_button");
+                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
+                btn.dataset["activeVersion"] = entry.version;
             }
         });
     });
@@ -261,7 +255,7 @@ function checkPageExistsAndRedirect(event) {
               
               <div class="toc-item">
                 
-<div class="tocsection onthispage pt-5 pb-3">
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
 
@@ -321,16 +315,16 @@ function checkPageExistsAndRedirect(event) {
               <div>
                 
   <section id="cofe-wrangling-package">
-<h1>cofe.wrangling package<a class="headerlink" href="#cofe-wrangling-package" title="Permalink to this headline">¶</a></h1>
+<h1>cofe.wrangling package<a class="headerlink" href="#cofe-wrangling-package" title="Permalink to this headline">#</a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">#</a></h2>
 </section>
 <section id="module-cofe.wrangling.select">
-<span id="cofe-wrangling-select-module"></span><h2>cofe.wrangling.select module<a class="headerlink" href="#module-cofe.wrangling.select" title="Permalink to this headline">¶</a></h2>
+<span id="cofe-wrangling-select-module"></span><h2>cofe.wrangling.select module<a class="headerlink" href="#module-cofe.wrangling.select" title="Permalink to this headline">#</a></h2>
 <p>Tools for training structure selection.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="cofe.wrangling.select.composition_select">
-<span class="sig-name descname"><span class="pre">composition_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">composition_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_sizes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.select.composition_select" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">composition_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">composition_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_sizes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.select.composition_select" title="Permalink to this definition">#</a></dt>
 <dd><p>Structure selection based on composition multinomial probability.</p>
 <p>Note: this function is needs quite a bit of tweaking to get nice samples.</p>
 <dl class="field-list simple">
@@ -364,7 +358,7 @@ numpy seed, Generator, SeedSequence, etc</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cofe.wrangling.select.full_row_rank_select">
-<span class="sig-name descname"><span class="pre">full_row_rank_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nrows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.select.full_row_rank_select" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">full_row_rank_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nrows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.select.full_row_rank_select" title="Permalink to this definition">#</a></dt>
 <dd><p>Choose a (maximally) full rank subset of rows in a feature matrix.</p>
 <p>This method is for underdetermined systems, i.e., where
 columns (i.e. features) &gt; rows (i.e. structures)</p>
@@ -391,7 +385,7 @@ possible number of rows.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cofe.wrangling.select.gaussian_select">
-<span class="sig-name descname"><span class="pre">gaussian_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthogonalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.select.gaussian_select" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">gaussian_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthogonalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.select.gaussian_select" title="Permalink to this definition">#</a></dt>
 <dd><ol class="upperalpha simple" start="22">
 <li><p>Vanilla structure selection to increase incoherence.</p></li>
 </ol>
@@ -418,12 +412,12 @@ is much larger than the number of samples requested.</p>
 
 </section>
 <section id="module-cofe.wrangling.tools">
-<span id="cofe-wrangling-tools-module"></span><h2>cofe.wrangling.tools module<a class="headerlink" href="#module-cofe.wrangling.tools" title="Permalink to this headline">¶</a></h2>
+<span id="cofe-wrangling-tools-module"></span><h2>cofe.wrangling.tools module<a class="headerlink" href="#module-cofe.wrangling.tools" title="Permalink to this headline">#</a></h2>
 <p>Functions to filter data in a StructureWrangler and calculate fitting weights.</p>
 <p>For example, weights can be calculated by energy above hull or energy by composition.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="cofe.wrangling.tools.max_ewald_energy_indices">
-<span class="sig-name descname"><span class="pre">max_ewald_energy_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrangler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_relative_energy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_compliment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.tools.max_ewald_energy_indices" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">max_ewald_energy_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrangler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_relative_energy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_compliment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.tools.max_ewald_energy_indices" title="Permalink to this definition">#</a></dt>
 <dd><p>Return set of indices of structures by electrostatic interaction energy.</p>
 <p>Filter the input structures to remove those with low electrostatic
 energies (no large charge separation in cell). This energy is
@@ -449,7 +443,7 @@ If True will return the compliment of the unique indices.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cofe.wrangling.tools.unique_corr_vector_indices">
-<span class="sig-name descname"><span class="pre">unique_corr_vector_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrangler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'min'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_compliment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.tools.unique_corr_vector_indices" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">unique_corr_vector_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrangler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'min'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_compliment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.tools.unique_corr_vector_indices" title="Permalink to this definition">#</a></dt>
 <dd><p>Return set of indices of structures with unique correlation vectors.</p>
 <p>Keep structures with the min or max value of the given property.
 Note correlation vectors exclude external terms such that even if the
@@ -478,7 +472,7 @@ if True, will return the complement of the unique indices</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cofe.wrangling.tools.weights_energy_above_composition">
-<span class="sig-name descname"><span class="pre">weights_energy_above_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energies</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.tools.weights_energy_above_composition" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">weights_energy_above_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energies</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.tools.weights_energy_above_composition" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute weights for energy above the minimum reduced composition energy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -497,7 +491,7 @@ if True, will return the complement of the unique indices</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cofe.wrangling.tools.weights_energy_above_hull">
-<span class="sig-name descname"><span class="pre">weights_energy_above_hull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energies</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cs_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.tools.weights_energy_above_hull" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">weights_energy_above_hull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energies</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cs_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.tools.weights_energy_above_hull" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute weights for structure energy above the hull of given structures.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -517,7 +511,7 @@ if True, will return the complement of the unique indices</p></li>
 
 </section>
 <section id="module-cofe.wrangling.wrangler">
-<span id="cofe-wrangling-wrangler-module"></span><h2>cofe.wrangling.wrangler module<a class="headerlink" href="#module-cofe.wrangling.wrangler" title="Permalink to this headline">¶</a></h2>
+<span id="cofe-wrangling-wrangler-module"></span><h2>cofe.wrangling.wrangler module<a class="headerlink" href="#module-cofe.wrangling.wrangler" title="Permalink to this headline">#</a></h2>
 <p>Implementation of a StructureWrangler.</p>
 <p>A StructureWrangler is used to generate and organize training data to fit a
 cluster expansion using the terms defined in a ClusterSubspace. It takes care
@@ -528,7 +522,7 @@ a cluster expansion using some linear regression model.</p>
 structures and properties.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">StructureWrangler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">StructureWrangler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Class to create fitting data to fit a cluster expansion.</p>
 <p>A StructureWrangler handles (wrangles) input data structures and properties
@@ -554,7 +548,7 @@ ClusterExpansion with the provided data.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.add_data_indices">
-<span class="sig-name descname"><span class="pre">add_data_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indices</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.add_data_indices" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_data_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indices</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.add_data_indices" title="Permalink to this definition">#</a></dt>
 <dd><p>Add a set of data indices.</p>
 <p>For example, use this for saving test/training splits or separating
 duplicates.</p>
@@ -562,7 +556,7 @@ duplicates.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.add_entry">
-<span class="sig-name descname"><span class="pre">add_entry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_failed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.add_entry" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_entry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_failed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.add_entry" title="Permalink to this definition">#</a></dt>
 <dd><p>Add a structure and measured property to the StructureWrangler.</p>
 <p>The energy and properties need to be extensive (i.e. not normalized per atom
 or unit cell, directly from DFT).</p>
@@ -608,7 +602,7 @@ fail for further inspection.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.add_properties">
-<span class="sig-name descname"><span class="pre">add_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_vector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.add_properties" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_vector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.add_properties" title="Permalink to this definition">#</a></dt>
 <dd><p>Add another property vector to structures already in the StructureWrangler.</p>
 <p>The length of the property vector must match the number of structures
 contained, and should be in the same order so that the property
@@ -625,7 +619,7 @@ corresponds to the correct structure.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.add_weights">
-<span class="sig-name descname"><span class="pre">add_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.add_weights" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.add_weights" title="Permalink to this definition">#</a></dt>
 <dd><p>Add weights to structures already in the StructureWrangler.</p>
 <p>The length of the given weights must match the number of structures
 contained, and should be in the same order.</p>
@@ -641,7 +635,7 @@ contained, and should be in the same order.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.append_entries">
-<span class="sig-name descname"><span class="pre">append_entries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.append_entries" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">append_entries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.append_entries" title="Permalink to this definition">#</a></dt>
 <dd><p>Append a list of entrys.</p>
 <p>Each entry must have all necessary fields. A entry can be
 obtained using the process_structure method.</p>
@@ -654,7 +648,7 @@ obtained using the process_structure method.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.as_dict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.as_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Get Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -665,25 +659,25 @@ obtained using the process_structure method.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.available_indices">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">available_indices</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.available_indices" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">available_indices</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.available_indices" title="Permalink to this definition">#</a></dt>
 <dd><p>Get list of available data index sets.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.available_properties">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">available_properties</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.available_properties" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">available_properties</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.available_properties" title="Permalink to this definition">#</a></dt>
 <dd><p>Get list of properties that have been added.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.available_weights">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">available_weights</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.available_weights" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">available_weights</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.available_weights" title="Permalink to this definition">#</a></dt>
 <dd><p>Get list of weights that have been added.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.change_subspace">
-<span class="sig-name descname"><span class="pre">change_subspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.change_subspace" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">change_subspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.change_subspace" title="Permalink to this definition">#</a></dt>
 <dd><p>Change the underlying ClusterSubspace.</p>
 <p>Will swap out the ClusterSubspace and update features accordingly.
 This is a faster operation than creating a new one. Can also be useful
@@ -697,32 +691,32 @@ to create a copy and then change the subspace.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.cluster_subspace">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cluster_subspace</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.cluster_subspace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cluster_subspace</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.cluster_subspace" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the underlying ClusterSubspace used to compute features.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.data_indices">
-<span class="sig-name descname"><span class="pre">data_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.data_indices" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">data_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.data_indices" title="Permalink to this definition">#</a></dt>
 <dd><p>Get a specific data index set.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.entries">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">entries</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.entries" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">entries</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.entries" title="Permalink to this definition">#</a></dt>
 <dd><p>Get a list of the entry dictionaries.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.feature_matrix">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">feature_matrix</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.feature_matrix" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">feature_matrix</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.feature_matrix" title="Permalink to this definition">#</a></dt>
 <dd><p>Get feature matrix.</p>
 <p>Rows are structures, and columns are correlation vectors.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.from_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Create Structure Wrangler from an MSONable dict.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -740,7 +734,7 @@ energy property key, for legacy files</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.get_condition_number">
-<span class="sig-name descname"><span class="pre">get_condition_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.get_condition_number" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_condition_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.get_condition_number" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute the condition number for the feature matrix or submatrix.</p>
 <p>The condition number is a measure of how sensitive the solution to
 the linear system is to perturbations in the sampled data. The larger
@@ -766,7 +760,7 @@ See the numpy docs for np.linalg.cond for options.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.get_constant_features">
-<span class="sig-name descname"><span class="pre">get_constant_features</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.get_constant_features" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_constant_features</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.get_constant_features" title="Permalink to this definition">#</a></dt>
 <dd><p>Find indices of constant feature vectors (columns).</p>
 <p>A constant feature vector means the corresponding correlation function
 evaluates to the exact same value for all included structures, meaning
@@ -785,7 +779,7 @@ vectors may be a sign of insufficient sampling of configuration space.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.get_duplicate_corr_indices">
-<span class="sig-name descname"><span class="pre">get_duplicate_corr_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rm_external_terms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.get_duplicate_corr_indices" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_duplicate_corr_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rm_external_terms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.get_duplicate_corr_indices" title="Permalink to this definition">#</a></dt>
 <dd><p>Find indices of rows with duplicate corr vectors in feature matrix.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -816,7 +810,7 @@ where duplicates occur</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.get_feature_matrix_orbit_rank">
-<span class="sig-name descname"><span class="pre">get_feature_matrix_orbit_rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.get_feature_matrix_orbit_rank" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_feature_matrix_orbit_rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.get_feature_matrix_orbit_rank" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the rank of an orbit submatrix of the feature matrix.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -837,7 +831,7 @@ list of row indices corresponding to structures to include.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.get_feature_matrix_rank">
-<span class="sig-name descname"><span class="pre">get_feature_matrix_rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.get_feature_matrix_rank" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_feature_matrix_rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.get_feature_matrix_rank" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the rank of the feature matrix or a submatrix of it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -857,7 +851,7 @@ list of row indices corresponding to structures to include.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.get_gram_matrix">
-<span class="sig-name descname"><span class="pre">get_gram_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.get_gram_matrix" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_gram_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.get_gram_matrix" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute the Gram matrix for the feature matrix or a submatrix.</p>
 <p>The Gram matrix, <span class="math notranslate nohighlight">\(G = X^TX\)</span>, where each entry is
 <span class="math notranslate nohighlight">\(G_{ij} = X_i \cdot X_j\)</span>. By default, G will have each column
@@ -884,7 +878,7 @@ feature matrix.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.get_matching_corr_duplicate_indices">
-<span class="sig-name descname"><span class="pre">get_matching_corr_duplicate_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.get_matching_corr_duplicate_indices" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_matching_corr_duplicate_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.get_matching_corr_duplicate_indices" title="Permalink to this definition">#</a></dt>
 <dd><p>Find indices of equivalent structures.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -910,7 +904,7 @@ duplicate correlation vectors.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.get_property_vector">
-<span class="sig-name descname"><span class="pre">get_property_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.get_property_vector" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_property_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.get_property_vector" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the property target vector.</p>
 <p>The property target vector to be used to fit the corresponding
 correlation feature matrix to obtain coefficients for a cluster
@@ -930,7 +924,7 @@ already normalized, you need to normalize before fitting a CE.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.get_similarity_matrix">
-<span class="sig-name descname"><span class="pre">get_similarity_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.get_similarity_matrix" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_similarity_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.get_similarity_matrix" title="Permalink to this definition">#</a></dt>
 <dd><p>Get similarity matrix of correlation vectors.</p>
 <p>Generate a matrix to compare the similarity of correlation feature
 vectors (columns) in the feature matrix. Matrix element a(i,j)
@@ -958,7 +952,7 @@ in feature vectors i and j.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.get_weights">
-<span class="sig-name descname"><span class="pre">get_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.get_weights" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.get_weights" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the weights specified by the given key.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -969,31 +963,31 @@ in feature vectors i and j.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.metadata">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.metadata" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.metadata" title="Permalink to this definition">#</a></dt>
 <dd><p>Get dictionary to save applied filters, etc.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.num_features">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_features</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.num_features" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_features</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.num_features" title="Permalink to this definition">#</a></dt>
 <dd><p>Get number of features for each added structure.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.num_structures">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_structures</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.num_structures" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_structures</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.num_structures" title="Permalink to this definition">#</a></dt>
 <dd><p>Get number of structures added (correctly matched to prim).</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.occupancy_strings">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">occupancy_strings</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.occupancy_strings" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">occupancy_strings</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.occupancy_strings" title="Permalink to this definition">#</a></dt>
 <dd><p>Get occupancy strings for each structure in the StructureWrangler.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.process_entry">
-<span class="sig-name descname"><span class="pre">process_entry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_failed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.process_entry" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">process_entry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_failed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.process_entry" title="Permalink to this definition">#</a></dt>
 <dd><p>Process a ComputedStructureEntry to be added to StructureWrangler.</p>
 <p>Checks if the structure for this entry can be matched to the
 ClusterSubspace prim structure to obtain its supercell matrix,
@@ -1045,25 +1039,25 @@ fail for further inspection.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.refined_structures">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">refined_structures</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.refined_structures" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">refined_structures</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.refined_structures" title="Permalink to this definition">#</a></dt>
 <dd><p>Get list of refined structures.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.remove_all_data">
-<span class="sig-name descname"><span class="pre">remove_all_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.remove_all_data" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">remove_all_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.remove_all_data" title="Permalink to this definition">#</a></dt>
 <dd><p>Remove all data from the StructureWrangler.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.remove_entry">
-<span class="sig-name descname"><span class="pre">remove_entry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.remove_entry" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">remove_entry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.remove_entry" title="Permalink to this definition">#</a></dt>
 <dd><p>Remove a given structure and associated data.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.remove_properties">
-<span class="sig-name descname"><span class="pre">remove_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">property_keys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.remove_properties" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">remove_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">property_keys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.remove_properties" title="Permalink to this definition">#</a></dt>
 <dd><p>Remove properties with given keys.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1074,31 +1068,31 @@ fail for further inspection.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.sizes">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sizes</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.sizes" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sizes</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.sizes" title="Permalink to this definition">#</a></dt>
 <dd><p>Get sizes of each structure in terms of number of prims.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.structure_site_mappings">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">structure_site_mappings</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.structure_site_mappings" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">structure_site_mappings</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.structure_site_mappings" title="Permalink to this definition">#</a></dt>
 <dd><p>Get list of site mappings for each structure to prim.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.structures">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">structures</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.structures" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">structures</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.structures" title="Permalink to this definition">#</a></dt>
 <dd><p>Get list of included structures.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.supercell_matrices">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">supercell_matrices</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.supercell_matrices" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">supercell_matrices</span></span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.supercell_matrices" title="Permalink to this definition">#</a></dt>
 <dd><p>Get list of supercell matrices relating each structure to prim.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.wrangling.wrangler.StructureWrangler.update_features">
-<span class="sig-name descname"><span class="pre">update_features</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.update_features" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">update_features</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.wrangler.StructureWrangler.update_features" title="Permalink to this definition">#</a></dt>
 <dd><p>Update the features/feature matrix for the data held.</p>
 <p>This is useful when something is changed in the ClusterSubspace after
 creating the StructureWrangler, for example when adding an Ewald term
@@ -1110,12 +1104,12 @@ having to re-match structures and such.</p>
 
 </section>
 <section id="module-cofe.wrangling">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cofe.wrangling" title="Permalink to this headline">¶</a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cofe.wrangling" title="Permalink to this headline">#</a></h2>
 <p>Implementation of StructureWrangler.</p>
 <p>And additional wrangling functions to preprocess and filter fitting data.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="cofe.wrangling.composition_select">
-<span class="sig-name descname"><span class="pre">composition_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">composition_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_sizes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.composition_select" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">composition_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">composition_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_sizes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.composition_select" title="Permalink to this definition">#</a></dt>
 <dd><p>Structure selection based on composition multinomial probability.</p>
 <p>Note: this function is needs quite a bit of tweaking to get nice samples.</p>
 <dl class="field-list simple">
@@ -1149,7 +1143,7 @@ numpy seed, Generator, SeedSequence, etc</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cofe.wrangling.full_row_rank_select">
-<span class="sig-name descname"><span class="pre">full_row_rank_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nrows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.full_row_rank_select" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">full_row_rank_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nrows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.full_row_rank_select" title="Permalink to this definition">#</a></dt>
 <dd><p>Choose a (maximally) full rank subset of rows in a feature matrix.</p>
 <p>This method is for underdetermined systems, i.e., where
 columns (i.e. features) &gt; rows (i.e. structures)</p>
@@ -1176,7 +1170,7 @@ possible number of rows.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cofe.wrangling.gaussian_select">
-<span class="sig-name descname"><span class="pre">gaussian_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthogonalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.gaussian_select" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">gaussian_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthogonalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.gaussian_select" title="Permalink to this definition">#</a></dt>
 <dd><ol class="upperalpha simple" start="22">
 <li><p>Vanilla structure selection to increase incoherence.</p></li>
 </ol>
@@ -1203,7 +1197,7 @@ is much larger than the number of samples requested.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cofe.wrangling.max_ewald_energy_indices">
-<span class="sig-name descname"><span class="pre">max_ewald_energy_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrangler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_relative_energy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_compliment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.max_ewald_energy_indices" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">max_ewald_energy_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrangler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_relative_energy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_compliment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.max_ewald_energy_indices" title="Permalink to this definition">#</a></dt>
 <dd><p>Return set of indices of structures by electrostatic interaction energy.</p>
 <p>Filter the input structures to remove those with low electrostatic
 energies (no large charge separation in cell). This energy is
@@ -1229,7 +1223,7 @@ If True will return the compliment of the unique indices.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cofe.wrangling.unique_corr_vector_indices">
-<span class="sig-name descname"><span class="pre">unique_corr_vector_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrangler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'min'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_compliment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.unique_corr_vector_indices" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">unique_corr_vector_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrangler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'min'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_compliment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.unique_corr_vector_indices" title="Permalink to this definition">#</a></dt>
 <dd><p>Return set of indices of structures with unique correlation vectors.</p>
 <p>Keep structures with the min or max value of the given property.
 Note correlation vectors exclude external terms such that even if the
@@ -1258,7 +1252,7 @@ if True, will return the complement of the unique indices</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cofe.wrangling.weights_energy_above_composition">
-<span class="sig-name descname"><span class="pre">weights_energy_above_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energies</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.weights_energy_above_composition" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">weights_energy_above_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energies</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.weights_energy_above_composition" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute weights for energy above the minimum reduced composition energy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1277,7 +1271,7 @@ if True, will return the complement of the unique indices</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cofe.wrangling.weights_energy_above_hull">
-<span class="sig-name descname"><span class="pre">weights_energy_above_hull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energies</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cs_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.weights_energy_above_hull" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">weights_energy_above_hull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energies</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cs_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.wrangling.weights_energy_above_hull" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute weights for structure energy above the hull of given structures.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1312,8 +1306,9 @@ if True, will return the complement of the unique indices</p></li>
       </div>
     </div>
   
-    <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-  <footer class="footer mt-5 mt-md-0">
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+<footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
