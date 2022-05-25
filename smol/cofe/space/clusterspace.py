@@ -14,8 +14,6 @@ from copy import deepcopy
 from importlib import import_module
 
 import numpy as np
-from scipy.linalg import block_diag
-
 from monty.json import MSONable
 from pymatgen.analysis.structure_matcher import (
     OrderDisorderElementComparator,
@@ -29,6 +27,7 @@ from pymatgen.util.coord import (
     is_coord_subset_pbc,
     lattice_points_in_supercell,
 )
+from scipy.linalg import block_diag
 
 from smol.cofe.space import (
     Orbit,
@@ -426,8 +425,11 @@ class ClusterSubspace(MSONable):
         Returns:
            list of Orbits
         """
-        return [orbit for orbit in self.iterorbits()
-                if lower <= orbit.base_cluster.diameter <= upper]
+        return [
+            orbit
+            for orbit in self.iterorbits()
+            if lower <= orbit.base_cluster.diameter <= upper
+        ]
 
     def orbit_hierarchy(self, level=1, min_size=1):
         """Get orbit hierarchy by IDs.
@@ -896,8 +898,10 @@ class ClusterSubspace(MSONable):
         rotated = [basis]
         for orbit in self.orbits:
             for site_basis in orbit.site_bases:
-                if site_basis.site_space == basis.site_space and \
-                        site_basis not in rotated:  # maybe clean this up?
+                if (
+                    site_basis.site_space == basis.site_space
+                    and site_basis not in rotated
+                ):  # maybe clean this up?
                     site_basis.rotate(angle, index1, index2)
                     rotated.append(site_basis)
             orbit.reset_bases()

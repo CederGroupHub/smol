@@ -190,8 +190,11 @@ def test_compute_feature_vector(ce_processor):
         ce_processor.cluster_subspace.corr_from_structure(struct),
     )
 
-    npt.assert_allclose(ce_processor.compute_feature_vector(occu) / ce_processor.size,
-                        ce_processor.cluster_subspace.corr_from_structure(struct))
+    npt.assert_allclose(
+        ce_processor.compute_feature_vector(occu) / ce_processor.size,
+        ce_processor.cluster_subspace.corr_from_structure(struct),
+    )
+
 
 # orbit decomp processor
 def test_compute_orbit_factors(cluster_subspace):
@@ -199,13 +202,18 @@ def test_compute_orbit_factors(cluster_subspace):
     scmatrix = 3 * np.eye(3)
     expansion = ClusterExpansion(cluster_subspace, coefs)
     processor = ClusterDecompositionProcessor(
-        cluster_subspace, scmatrix, expansion.cluster_interaction_tensors)
-    occu = gen_random_occupancy(processor.get_sublattices(),
-                                processor.get_inactive_sublattices())
+        cluster_subspace, scmatrix, expansion.cluster_interaction_tensors
+    )
+    occu = gen_random_occupancy(
+        processor.get_sublattices(), processor.get_inactive_sublattices()
+    )
     struct = processor.structure_from_occupancy(occu)
     # same as normalize=False in corr_from_structure
-    npt.assert_allclose(processor.compute_feature_vector(occu) / processor.size,
-                        expansion.compute_cluster_interactions(struct))
+    npt.assert_allclose(
+        processor.compute_feature_vector(occu) / processor.size,
+        expansion.compute_cluster_interactions(struct),
+    )
+
 
 def test_bad_coef_length(cluster_subspace, rng):
     coefs = rng.random(cluster_subspace.num_corr_functions - 1)

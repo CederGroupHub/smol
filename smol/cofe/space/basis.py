@@ -239,8 +239,8 @@ class StandardBasis(DiscreteBasis):
         )
 
         # make zeros actually zeros
-        r[abs(r) < EPS_MULT * np.finfo(np.float64).eps] = 0.0
-        q[abs(q) < EPS_MULT * np.finfo(np.float64).eps] = 0.0
+        r_mat[abs(r_mat) < EPS_MULT * np.finfo(np.float64).eps] = 0.0
+        q_mat[abs(q_mat) < EPS_MULT * np.finfo(np.float64).eps] = 0.0
 
         self._r_array = q_mat[:, 0] / np.sqrt(self.measure_vector) * r_mat.T
         self._f_array = q_mat.T / q_mat[:, 0]  # make first row constant = 1
@@ -280,8 +280,7 @@ class StandardBasis(DiscreteBasis):
                 UserWarning,
             )
         elif not self.is_orthogonal:
-            raise RuntimeError(
-                "Non-orthogonal site basis rotations are not allowed!")
+            raise RuntimeError("Non-orthogonal site basis rotations are not allowed!")
 
         if len(self.site_space) == 2:
             self._f_array[1] *= -1
@@ -317,8 +316,10 @@ class StandardBasis(DiscreteBasis):
             )
             self._f_array[1:] = self._f_array[1:] @ rotation_mat.T
             # make really small numbers zero
-            self._f_array[abs(self._f_array) < EPS_MULT * np.finfo(np.float64).eps] = 0.0  # noqa
-            self._rot_array = R @ self._rot_array
+            self._f_array[
+                abs(self._f_array) < EPS_MULT * np.finfo(np.float64).eps
+            ] = 0.0
+            self._rot_array = rotation_mat @ self._rot_array
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation."""
@@ -343,9 +344,9 @@ class StandardBasis(DiscreteBasis):
         site_space = SiteSpace.from_dict(d["site_space"])
         site_basis = basis_factory(d["flavor"], site_space)
         # restore arrays
-        site_basis._f_array = np.array(d['func_array'])
-        site_basis._r_array = np.array(d['orthonorm_array'])
-        rot_array = d.get('rot_array')
+        site_basis._f_array = np.array(d["func_array"])
+        site_basis._r_array = np.array(d["orthonorm_array"])
+        rot_array = d.get("rot_array")
         if rot_array is not None:
             site_basis._rot_array = np.array(rot_array)
         return site_basis

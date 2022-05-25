@@ -327,7 +327,9 @@ class UniformlyRandom(MCKernel):
             StepTrace
         """
         step = self._usher.propose_step(occupancy)
-        self.trace.delta_trace.features = self.ensemble.compute_feature_vector_change(occupancy, step)  # noqa
+        self.trace.delta_trace.features = self.ensemble.compute_feature_vector_change(
+            occupancy, step
+        )  # noqa
         self.trace.delta_trace.enthalpy = np.array(
             np.dot(self.natural_params, self.trace.delta_trace.features)
         )
@@ -374,7 +376,9 @@ class Metropolis(ThermalKernel):
             StepTrace
         """
         step = self._usher.propose_step(occupancy)
-        self.trace.delta_trace.features = self.ensemble.compute_feature_vector_change(occupancy, step)  # noqa
+        self.trace.delta_trace.features = self.ensemble.compute_feature_vector_change(
+            occupancy, step
+        )  # noqa
         self.trace.delta_trace.enthalpy = np.array(
             np.dot(self.natural_params, self.trace.delta_trace.features)
         )

@@ -233,7 +233,7 @@ def test_legendre_basis(site_space):
 
 
 def test_rotate(self):
-    for flavor in ('sinusoid', 'legendre', 'polynomial', 'indicator'):
+    for flavor in ("sinusoid", "legendre", "polynomial", "indicator"):
         b = basis.basis_factory(flavor, self.site_space)
         theta = np.pi / np.random.randint(2, 11)
         if b.is_orthogonal:
@@ -242,7 +242,8 @@ def test_rotate(self):
             self.assertTrue(b.is_orthogonal)
             # if orthogonal all inner products should match!
             npt.assert_array_almost_equal(
-                f_array @ f_array.T, b._f_array @ b._f_array.T)
+                f_array @ f_array.T, b._f_array @ b._f_array.T
+            )
         else:
             self.assertRaises(RuntimeError, b.rotate, theta)
             # orthonormalize it and continue
@@ -250,14 +251,13 @@ def test_rotate(self):
             f_array = b._f_array.copy()
             b.rotate(theta)
 
-        npt.assert_array_almost_equal(
-            b._f_array[0], np.ones(len(self.site_space)))
+        npt.assert_array_almost_equal(b._f_array[0], np.ones(len(self.site_space)))
         npt.assert_almost_equal(
             np.arccos(
                 np.dot(b._f_array[1], f_array[1])
-                / (np.linalg.norm(b._f_array[1])
-                   * np.linalg.norm(f_array[1]))),
-            theta
+                / (np.linalg.norm(b._f_array[1]) * np.linalg.norm(f_array[1]))
+            ),
+            theta,
         )
         b.rotate(-theta)
         npt.assert_array_almost_equal(f_array, b._f_array)
@@ -270,20 +270,21 @@ def test_rotate(self):
     self.assertRaises(ValueError, b.rotate, theta, len(self.site_space))
     self.assertRaises(ValueError, b.rotate, theta, 0, len(self.site_space))
 
-    comp = Composition((('A', 0.2), ('B', 0.2),
-                        ('C', 0.3), ('D', 0.3)))
-    b = basis.basis_factory('sinusoid', domain.SiteSpace(comp))
+    comp = Composition((("A", 0.2), ("B", 0.2), ("C", 0.3), ("D", 0.3)))
+    b = basis.basis_factory("sinusoid", domain.SiteSpace(comp))
     self.assertWarns(UserWarning, b.rotate, theta)
 
+
 def test_constructor(self):
-    species = OrderedDict({'A': 1, 'B': 2, 'C': 1})
+    species = OrderedDict({"A": 1, "B": 2, "C": 1})
     basis_iter = basis.SinusoidIterator(tuple(species.keys()))
     self.assertWarns(RuntimeWarning, basis.StandardBasis, species, basis_iter)
-    species = OrderedDict({'A': .1, 'B': .1, 'C': .1})
+    species = OrderedDict({"A": 0.1, "B": 0.1, "C": 0.1})
     basis_iter = basis.SinusoidIterator(tuple(species.keys()))
     self.assertWarns(RuntimeWarning, basis.StandardBasis, species, basis_iter)
     basis_iter = basis.SinusoidIterator(tuple(species.keys())[:-1])
     self.assertRaises(ValueError, basis.StandardBasis, species, basis_iter)
+
 
 def test_msonable(self):
     species = tuple(self.site_space.keys())

@@ -12,7 +12,12 @@ from collections import defaultdict
 import numpy as np
 
 from smol.cofe.space.clusterspace import ClusterSubspace
-from smol.correlations import corr_from_occupancy, delta_corr_single_flip
+from smol.correlations import (
+    corr_from_occupancy,
+    delta_corr_single_flip,
+    delta_interactions_single_flip,
+    interactions_from_occupancy,
+)
 from smol.moca.processor.base import Processor
 
 
@@ -176,8 +181,7 @@ class ClusterDecompositionProcessor(Processor):
     high component systems.
     """
 
-    def __init__(self, cluster_subspace, supercell_matrix,
-                 interaction_tensors):
+    def __init__(self, cluster_subspace, supercell_matrix, interaction_tensors):
         """Initialize an ClusterDecompositionProcessor.
 
         Args:
@@ -193,14 +197,18 @@ class ClusterDecompositionProcessor(Processor):
         """
         if len(interaction_tensors) != cluster_subspace.num_orbits:
             raise ValueError(
-                f'The number of cluster interaction tensors must match the number '
-                f' of orbits in the subspace. Got {len(interaction_tensors)} '
-                f'interaction tensors, but need {cluster_subspace.num_orbits} '
-                f' for the given cluster_subspace.')
+                f"The number of cluster interaction tensors must match the number "
+                f" of orbits in the subspace. Got {len(interaction_tensors)} "
+                f"interaction tensors, but need {cluster_subspace.num_orbits} "
+                f" for the given cluster_subspace."
+            )
 
         #  the orbit multiplicities play the role of coefficients here.
-        super().__init__(cluster_subspace, supercell_matrix,
-                         coefficients=cluster_subspace.orbit_multiplicities)
+        super().__init__(
+            cluster_subspace,
+            supercell_matrix,
+            coefficients=cluster_subspace.orbit_multiplicities,
+        )
 
         self.n_orbits = self.cluster_subspace.num_orbits
         self._fac_tensors = interaction_tensors
@@ -213,18 +221,23 @@ class ClusterDecompositionProcessor(Processor):
         # Prepare necssary information for local updates
         mappings = self._subspace.supercell_orbit_mappings(supercell_matrix)
         for cluster_indices, interaction_tensor, orbit in zip(
-                mappings, self._fac_tensors[1:], self._subspace.orbits):
-            flat_interaction_tensor = np.ravel(interaction_tensor, order='C')
+            mappings, self._fac_tensors[1:], self._subspace.orbits
+        ):
+            flat_interaction_tensor = np.ravel(interaction_tensor, order="C")
             self._orbit_list.append(
-                (orbit.flat_tensor_indices, flat_interaction_tensor,
-                 cluster_indices)
+                (orbit.flat_tensor_indices, flat_interaction_tensor, cluster_indices)
             )
             for site_ind in np.unique(cluster_indices):
                 in_inds = np.any(cluster_indices == site_ind, axis=-1)
                 ratio = len(cluster_indices) / np.sum(in_inds)
                 self._orbits_by_sites[site_ind].append(
-                    (orbit.id, ratio, orbit.flat_tensor_indices,
-                     flat_interaction_tensor, cluster_indices[in_inds])
+                    (
+                        orbit.id,
+                        ratio,
+                        orbit.flat_tensor_indices,
+                        flat_interaction_tensor,
+                        cluster_indices[in_inds],
+                    )
                 )
 
     def compute_feature_vector(self, occupancy):
@@ -239,9 +252,12 @@ class ClusterDecompositionProcessor(Processor):
         Returns:
             array: correlation vector
         """
-        return factors_from_occupancy(
-            occupancy, self.n_orbits, self._fac_tensors[0], self._orbit_list) \
+        return (
+            interactions_from_occupancy(
+                occupancy, self.n_orbits, self._fac_tensors[0], self._orbit_list
+            )
             * self.size
+        )
 
     def compute_feature_vector_change(self, occupancy, flips):
         """
@@ -267,8 +283,9 @@ class ClusterDecompositionProcessor(Processor):
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
             site_orbit_list = self._orbits_by_sites[f[0]]
-            delta_interactions += delta_factors_single_flip(
-                occu_f, occu_i, self.n_orbits, site_orbit_list)
+            delta_interactions += delta_interactions_single_flip(
+                occu_f, occu_i, self.n_orbits, site_orbit_list
+            )
             occu_i = occu_f
 
         return delta_interactions * self.size
@@ -281,7 +298,7 @@ class ClusterDecompositionProcessor(Processor):
             MSONable dict
         """
         d = super().as_dict()
-        d['interaction_tensors'] = [
+        d["interaction_tensors"] = [
             interaction.tolist() for interaction in self._fac_tensors
         ]
         return d
@@ -290,7 +307,10 @@ class ClusterDecompositionProcessor(Processor):
     def from_dict(cls, d):
         """Create a ClusterExpansionProcessor from serialized MSONable dict."""
         interaction_tensors = tuple(
-            np.array(interaction) for interaction in d['interaction_tensors']
+            np.array(interaction) for interaction in d["interaction_tensors"]
         )
-        return cls(ClusterSubspace.from_dict(d['cluster_subspace']),
-                   np.array(d['supercell_matrix']), interaction_tensors)
+        return cls(
+            ClusterSubspace.from_dict(d["cluster_subspace"]),
+            np.array(d["supercell_matrix"]),
+            interaction_tensors,
+        )

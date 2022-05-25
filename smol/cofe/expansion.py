@@ -217,11 +217,15 @@ class ClusterExpansion(MSONable):
         the weights are the ordering multiplicities.
         """
         weights = np.array(
-            [np.sum(
-                self._subspace.function_ordering_multiplicities[
-                    self._subspace.function_orbit_ids == i]
-                * self.eci[self.eci_orbit_ids == i] ** 2)
-                for i in range(len(self._subspace.orbits) + 1)]
+            [
+                np.sum(
+                    self._subspace.function_ordering_multiplicities[
+                        self._subspace.function_orbit_ids == i
+                    ]
+                    * self.eci[self.eci_orbit_ids == i] ** 2
+                )
+                for i in range(len(self._subspace.orbits) + 1)
+            ]
         )
         return weights
 
@@ -234,10 +238,12 @@ class ClusterExpansion(MSONable):
         """
         if self._int_tensors is None:
             self._int_tensors = (self.coefs[0],) + tuple(
-                sum(m * self.eci[orbit.bit_id + i] * tensor for i, (m, tensor)
-                    in enumerate(
-                        zip(orbit.bit_combo_multiplicities,
-                            orbit.correlation_tensors)))
+                sum(
+                    m * self.eci[orbit.bit_id + i] * tensor
+                    for i, (m, tensor) in enumerate(
+                        zip(orbit.bit_combo_multiplicities, orbit.correlation_tensors)
+                    )
+                )
                 for orbit in self._subspace.orbits
             )
         return self._int_tensors
@@ -286,13 +292,19 @@ class ClusterExpansion(MSONable):
             vector of cluster interaction values
         """
         corrs = self.cluster_subspace.corr_from_structure(
-            structure, normalized=normalize)
+            structure, normalized=normalize
+        )
         vals = self.eci * corrs
         interactions = np.array(
-            [np.sum(
-                vals[self.eci_orbit_ids == i] *
-                self._subspace.function_ordering_multiplicities[self.eci_orbit_ids == i])  # noqa
-                for i in range(len(self._subspace.orbits) + 1)]
+            [
+                np.sum(
+                    vals[self.eci_orbit_ids == i]
+                    * self._subspace.function_ordering_multiplicities[
+                        self.eci_orbit_ids == i
+                    ]
+                )  # noqa
+                for i in range(len(self._subspace.orbits) + 1)
+            ]
         )
         return interactions
 
