@@ -5,6 +5,7 @@ __author__ = "Luis Barroso-Luque"
 from collections import Counter
 
 import numpy as np
+from pymatgen.core.composition import ChemicalPotential
 from monty.json import MSONable
 
 from smol.cofe.space.domain import get_species
@@ -17,12 +18,9 @@ from smol.moca.processor.base import Processor
 from smol.moca.sublattice import Sublattice
 
 
-# TODO remove instance attributes otherwise does not work niceley
-#  keep a mu-table and the thermoboundaries...
-class ChemicalPotentials:
-    """Chemical potential descriptor."""
+class ChemicalPotentialManager:
+    """Chemical potential descriptor for use Ensemble class."""
 
-    name: str = "chemical_potentials"
     natural_parameter: float = -1.0
 
     def __init__(self):
@@ -30,33 +28,45 @@ class ChemicalPotentials:
         self._table = None
         self._value = None
 
+    def __set_name__(self, owner, name):
+        """Set the private variable names."""
+        self.public_name = name
+        self.private_name = "_" + name
+
     def __get__(self, obj, objtype=None):
-        """Return the table."""
-        return self._table
+        """Return the chemical potentials if set None otherwise."""
+        value = getattr(obj, self.private_name, None)
+        return value if value is None else value["value"]
 
     def __set__(self, obj, value):
         """Set the table given the owner and value."""
+        if value is None:  # call delete if set to None
+            self.__delete__(obj)
+            return
+
         # if first instantiation concatenate the natural parameter
-        if self._table is None:
+        if not hasattr(obj, self.private_name):
             obj.natural_parameters = np.append(
                 obj.natural_parameters, self.natural_parameter
             )
+        setattr(
+            obj, self.private_name,
+            {"value": ChemicalPotential(value), "table": self._build_table(obj, value)}
+        )
         # update the ensemble dictionary and _boundaries list
         if hasattr(obj, "thermo_boundaries"):
-            obj.thermo_boundaries.update({self.name: value})
+            obj.thermo_boundaries.update({self.public_name: value})
         else:
-            setattr(obj, "thermo_boundaries", {self.name: value})
-
-        self._table = self._build_table(obj, value)
-        self._value = value
+            setattr(obj, "thermo_boundaries", {self.public_name: value})
 
     def __delete__(self, obj):
         """Delete the boundary condition."""
-        self._table = None
-        self._value = None
-
+        if hasattr(obj, self.private_name):
+            del obj.__dict__[self.private_name]
         if hasattr(obj, "thermo_boundaries"):
-            _ = obj.thermo_boundaries.pop(self.name)
+            del obj.thermo_boundaries[self.public_name]
+        if obj.num_energy_coefs < len(obj.natural_parameters):
+            obj.natural_parameters = obj.natural_parameters[:-1]  # remove last entry
 
     def _build_table(self, obj, value):
         """Set the chemical potentials and update table."""
@@ -95,7 +105,7 @@ class Ensemble(MSONable):
             descriptive purposes.
     """
 
-    chemical_potentials = ChemicalPotentials()
+    chemical_potentials = ChemicalPotentialManager()
 
     def __init__(self, processor, sublattices=None):
         """Initialize class instance.
@@ -284,7 +294,7 @@ class Ensemble(MSONable):
 
         if self.chemical_potentials is not None:
             chemical_work = sum(
-                self.chemical_potentials[site][species]
+                self._chemical_potentials["table"][site][species]
                 for site, species in enumerate(occupancy)
             )
             features = np.append(features, chemical_work)
@@ -307,8 +317,8 @@ class Ensemble(MSONable):
 
         if self.chemical_potentials is not None:
             delta_work = sum(
-                self.chemical_potentials[f[0]][f[1]]
-                - self.chemical_potentials[f[0]][occupancy[f[0]]]
+                self._chemical_potentials["table"][f[0]][f[1]]
+                - self._chemical_potentials["table"][f[0]][occupancy[f[0]]]
                 for f in step
             )
             delta_features = np.append(delta_features, delta_work)
