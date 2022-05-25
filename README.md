@@ -1,12 +1,16 @@
-<img src="docs/_static/logo.png" width="500px" alt="smol">
+<img src="docs/_static/logo.png" width="500px" alt=" ">
 
 Statistical Mechanics on Lattices
 =================================
 
 ![test](https://github.com/CederGroupHub/smol/actions/workflows/test.yml/badge.svg)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/f6180b5223f346d2ac9dcf9a4bcc62d9)](https://www.codacy.com/gh/CederGroupHub/smol/dashboard?utm_source=github.com&utm_medium=referral&utm_content=CederGroupHub/smol&utm_campaign=Badge_Coverage)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/CederGroupHub/smol/main.svg)](https://results.pre-commit.ci/latest/github/CederGroupHub/smol/main)
+[![pypi version](https://img.shields.io/pypi/v/statmech-on-lattices?color=blue)](https://pypi.org/project/statmech-on-lattices)
+![python versions](https://img.shields.io/pypi/pyversions/statmech-on-lattices)
 
-*Lighthweight but caffeinated Python implementations of computational methods
-for statistical mechanical calculations of configurational states for
+*Lighthweight but caffeinated Python implementation of computational methods
+for statistical mechanical calculations of configurational states in
 crystalline material systems.*
 
 -----------------------------------------------------------------------------
@@ -46,29 +50,52 @@ supported there.
 
 Installation
 ----------
-`Clone` the repository. The latest tag in the `master` branch is the stable version of the
-code. The `master` branch has the newest tested features, but may have more
-lingering bugs.
+From pypi:
 
-Go to the top level directory of the cloned repo and type:
+    pip install statmech-on-lattices
+
+From source:
+
+`Clone` the repository. The latest tag in the `main` branch is the stable version of the
+code. The `main` branch has the newest tested features, but may have more
+lingering bugs. From the top level directory
 
     pip install .
 
 Usage
 -----
-Refer to the [documentation](http://amox.lbl.gov/smol) (requires lbl vpn) for details on using
-**smol**. The [example notebooks](https://github.com/CederGroupHub/smol/tree/master/examples)
-can help you get started.
+Refer to the [documentation](https://cedergrouphub.github.io/smol/) for details on using
+**smol**. Going through the [example notebooks](https://github.com/CederGroupHub/smol/tree/main/docs/src/notebooks)
+will also help you get started.
 
 Contributing
 ------------
-We welcome all your contributions with open arms! Please see the 
-[contributing](https://github.com/CederGroupHub/smol/CONTRIBUTING.md) page for how to contribute.
+We welcome all your contributions with open arms! Please fork and pull request any contributions.
+See the
+[developing](https://cedergrouphub.github.io/smol/developer_guide/index.html)
+section in the documentation for how to contribute.
 
 
 Changes
 -------
-The most recent changes are detailed in the 
-[change log](https://github.com/CederGroupHub/smol/CHANGES.md).
+The most recent changes are detailed in the
+[change log](https://github.com/CederGroupHub/smol/blob/master/CHANGES.md).
 
 
+Copyright Notice
+----------------
+    Statistical Mechanics on Lattices (smol) Copyright (c) 2022, The Regents
+    of the University of California, through Lawrence Berkeley National
+    Laboratory (subject to receipt of any required approvals from the U.S.
+    Dept. of Energy) and the University of California, Berkeley. All rights reserved.
+
+    If you have questions about your rights to use or distribute this software,
+    please contact Berkeley Lab's Intellectual Property Office at
+    IPO@lbl.gov.
+
+    NOTICE.  This Software was developed under funding from the U.S. Department
+    of Energy and the U.S. Government consequently retains certain rights.  As
+    such, the U.S. Government has been granted for itself and others acting on
+    its behalf a paid-up, nonexclusive, irrevocable, worldwide license in the
+    Software to reproduce, distribute copies to the public, prepare derivative
+    works, and perform publicly and display publicly, and to permit others to do so.

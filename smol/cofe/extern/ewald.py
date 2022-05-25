@@ -10,26 +10,28 @@ W. D. Richards, et al., Energy Environ. Sci., 2016, 9, 3272–3278
 __author__ = "William Davidson Richard, Luis Barroso-Luque"
 
 import numpy as np
-from pymatgen.core import Structure, PeriodicSite
-from pymatgen.analysis.ewald import EwaldSummation
 from monty.json import MSONable
-from smol.cofe.space.domain import get_allowed_species, Vacancy
+from pymatgen.analysis.ewald import EwaldSummation
+from pymatgen.core import PeriodicSite, Structure
+
+from smol.cofe.space.domain import Vacancy, get_allowed_species
 
 
 class EwaldTerm(MSONable):
-    """EwaldTerm Class that can be added to a ClusterSubspace.
+    """EwaldTerm class that can be added to a ClusterSubspace.
 
     This class can be used as an external term added to a ClusterSubspace
-    using the add_external_term method. Doing so allows to introduce Ewald
+    using the add_external_term method. Doing so introduces Ewald
     electrostatic interaction energies as an additional feature to include
     when fitting a cluster expansion. This usually helps to increase accuracy
     and reduce complexity (number of orbits) required to fit ionic materials.
     """
 
-    ewald_term_options = ('total', 'real', 'reciprocal', 'point')
+    ewald_term_options = ("total", "real", "reciprocal", "point")
 
-    def __init__(self, eta=None, real_space_cut=None, recip_space_cut=None,
-                 use_term='total'):
+    def __init__(
+        self, eta=None, real_space_cut=None, recip_space_cut=None, use_term="total"
+    ):
         """Initialize EwaldTerm.
 
         Input parameters are standard input parameters to pymatgen
@@ -37,13 +39,13 @@ class EwaldTerm(MSONable):
 
         Args:
             eta (float):
-                Parameter to override the EwaldSummation default screening
+                parameter to override the EwaldSummation default screening
                 parameter eta. If not given it is determined automatically.
             real_space_cut (float):
-                Real space cutoff radius. Determined automagically if not
+                real space cutoff radius. Determined automatically if not
                 given.
             recip_space_cut (float):
-                Reciprocal space cutoff radius. Determined automagically if not
+                reciprocal space cutoff radius. Determined automatically if not
                 given.
             use_term (str): optional
                 the Ewald expansion term to use as an additional term in the
@@ -55,7 +57,8 @@ class EwaldTerm(MSONable):
         if use_term not in self.ewald_term_options:
             raise AttributeError(
                 f"Provided use_term {use_term} is not a valid option. "
-                f"Please use one of {self.ewald_term_options}.")
+                f"Please use one of {self.ewald_term_options}."
+            )
         self.use_term = use_term
 
     @staticmethod
@@ -65,7 +68,7 @@ class EwaldTerm(MSONable):
         Creates a structure with overlapping sites for each species in the
         corresponding site space. This is used to construct single Ewald
         matrices for all possible configurations. The ewald_inds array is a
-        2D array where the firse element is the index of the site in a
+        2D array where the first element is the index of the site in a
         supercell and the second is the encoded species occupancy
 
         Removes vacancies and the corresponding indices to those sites from the
@@ -84,12 +87,11 @@ class EwaldTerm(MSONable):
         for space, site in zip(site_spaces, structure):
             # allocate array with all -1 for vacancies
             inds = np.zeros(max(nbits) + 1) - 1
-            for i, b in enumerate(space):
-                if isinstance(b, Vacancy):  # skip vacancies
+            for i, spec in enumerate(space):
+                if isinstance(spec, Vacancy):  # skip vacancies
                     continue
                 inds[i] = len(ewald_sites)
-                ewald_sites.append(
-                    PeriodicSite(b, site.frac_coords, site.lattice))
+                ewald_sites.append(PeriodicSite(spec, site.frac_coords, site.lattice))
             ewald_inds.append(inds)
         ewald_inds = np.array(ewald_inds, dtype=np.int)
         ewald_structure = Structure.from_sites(ewald_sites)
@@ -98,20 +100,20 @@ class EwaldTerm(MSONable):
 
     @staticmethod
     def get_ewald_occu(occu, num_ewald_sites, ewald_inds):
-        """Get the ewald indices from a given encoded occupancy string.
+        """Get the Ewald indices from a given encoded occupancy string.
 
-        The ewald indices indicate matrix elements (ie species) corresponding
+        The Ewald indices indicate matrix elements (i.e. species) corresponding
         to the given occupancy.
 
         Args:
             occu (ndarray):
-                encoded encoded occupancy string
+                encoded occupancy string
             num_ewald_sites (int):
-                number of total ewald sites. This is the size of the ewald
+                number of total Ewald sites. This is the size of the Ewald
                 matrix, the sum of the size of all site spaces for all sites
                 in the cell.
             ewald_inds (ndarray):
-                ewald indices for the corresponding species in the occupancy
+                Ewald indices for the corresponding species in the occupancy
                 array.
 
         Returns:
@@ -129,7 +131,7 @@ class EwaldTerm(MSONable):
     def value_from_occupancy(self, occu, structure):
         """Obtain the Ewald interaction energy.
 
-        The size of the given structure in terms of prims.
+        The size of the given structure is in terms of prims.
         The computed electrostatic interactions do not include the charged
         cell energy (which is only important for charged structures). See
         the pymatgen EwaldSummation class for further details.
@@ -141,13 +143,14 @@ class EwaldTerm(MSONable):
                 occupation vector for the given structure
             structure (Structure):
                 pymatgen Structure for which to compute the electrostatic
-                interactions,
+                interactions
         Returns:
             float
         """
         ewald_structure, ewald_inds = self.get_ewald_structure(structure)
-        ewald_summation = EwaldSummation(ewald_structure, self.real_space_cut,
-                                         self.recip_space_cut, eta=self.eta)
+        ewald_summation = EwaldSummation(
+            ewald_structure, self.real_space_cut, self.recip_space_cut, eta=self.eta
+        )
         ewald_matrix = self.get_ewald_matrix(ewald_summation)
         ew_occu = self.get_ewald_occu(occu, ewald_matrix.shape[0], ewald_inds)
         return np.array([np.sum(ewald_matrix[ew_occu, :][:, ew_occu])])
@@ -161,37 +164,54 @@ class EwaldTerm(MSONable):
         Returns:
             ndarray: ewald matrix for corresponding term
         """
-        if self.use_term == 'total':
+        if self.use_term == "total":
             matrix = ewald_summation.total_energy_matrix
-        elif self.use_term == 'reciprocal':
+        elif self.use_term == "reciprocal":
             matrix = ewald_summation.reciprocal_space_energy_matrix
-        elif self.use_term == 'real':
+        elif self.use_term == "real":
             matrix = ewald_summation.real_space_energy_matrix
         else:
             matrix = np.diag(ewald_summation.point_energy_matrix)
         return matrix
+
+    def __str__(self):
+        """Pretty print EwaldTerm."""
+        prop_str = ""
+        for prop, val in self.__dict__.items():
+            if val is not None:
+                prop_str += f"{prop}={val}"
+        return f"EwaldTerm({prop_str})"
+
+    def __repr__(self):
+        """Get EwaldTerm summary."""
+        return f"EwaldTerm({self.use_term})"
 
     def as_dict(self) -> dict:
         """
         Get Json-serialization dict representation.
 
         Returns:
-            dict: MNSONable dict
+            dict: MSONable dict
         """
-        d = {'@module': self.__class__.__module__,
-             '@class': self.__class__.__name__,
-             'eta': self.eta,
-             'real_space_cut': self.real_space_cut,
-             'recip_space_cut': self.recip_space_cut,
-             'use_term': self.use_term}
-        return d
+        ewald_d = {
+            "@module": self.__class__.__module__,
+            "@class": self.__class__.__name__,
+            "eta": self.eta,
+            "real_space_cut": self.real_space_cut,
+            "recip_space_cut": self.recip_space_cut,
+            "use_term": self.use_term,
+        }
+        return ewald_d
 
     @classmethod
     def from_dict(cls, d):
-        """Create EwaldTerm from msonable dict.
+        """Create EwaldTerm from MSONable dict.
 
         (Over-kill here since only EwaldSummation params are saved).
         """
-        return cls(eta=d['eta'], real_space_cut=d['real_space_cut'],
-                   recip_space_cut=d['recip_space_cut'],
-                   use_term=d['use_term'])
+        return cls(
+            eta=d["eta"],
+            real_space_cut=d["real_space_cut"],
+            recip_space_cut=d["recip_space_cut"],
+            use_term=d["use_term"],
+        )

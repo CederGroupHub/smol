@@ -1,9 +1,9 @@
 """Implementats classes/functions to study configurational thermodynamics."""
 
-from pkg_resources import DistributionNotFound, get_distribution
+from importlib.metadata import PackageNotFoundError, version
 
 try:
-    __version__ = get_distribution(__name__).version
-except DistributionNotFound:
+    __version__ = version("statmech-on-lattices")
+except PackageNotFoundError:
     # package is not installed
-    __version__ = ""
+    pass

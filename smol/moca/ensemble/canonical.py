@@ -1,8 +1,8 @@
 """
-Implementation of a Canonical Ensemble Class.
+Implementation of a Canonical Ensemble class.
 
-Used when running Monte Carlo simulations for fixed number of sites and fixed
-concentration of species.
+These are used when running Monte Carlo simulations for systems
+with a fixed number of sites and fixed concentration of species.
 """
 
 __author__ = "Luis Barroso-Luque"
@@ -18,7 +18,7 @@ from smol.moca.sublattice import Sublattice
 class CanonicalEnsemble(Ensemble, MSONable):
     """Canonical Ensemble class to run Monte Carlo Simulations."""
 
-    valid_mcmc_steps = ('swap',)
+    valid_mcmc_steps = ("swap",)
 
     @property
     def natural_parameters(self):
@@ -47,7 +47,7 @@ class CanonicalEnsemble(Ensemble, MSONable):
             occupancy (ndarray):
                 encoded occupancy string.
             step (list of tuple):
-                A sequence of flips as given my the MCUsher.propose_step
+                A sequence of flips as given by MCUsher.propose_step
 
         Returns:
             ndarray: difference in feature vector
@@ -64,5 +64,7 @@ class CanonicalEnsemble(Ensemble, MSONable):
         Returns:
             CanonicalEnsemble
         """
-        return cls(Processor.from_dict(d['processor']),
-                   [Sublattice.from_dict(s) for s in d['sublattices']])
+        return cls(
+            Processor.from_dict(d["processor"]),
+            [Sublattice.from_dict(s) for s in d["sublattices"]],
+        )

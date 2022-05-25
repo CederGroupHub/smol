@@ -1,270 +1,412 @@
-import unittest
-import json
 from copy import deepcopy
-import random
+
 import numpy as np
 import numpy.testing as npt
-from smol.cofe import StructureWrangler, ClusterSubspace
-from smol.cofe.wrangling import weights_energy_above_hull, \
-    weights_energy_above_composition
+import pytest
+from pymatgen.entries.computed_entries import ComputedStructureEntry
+
+from smol.cofe import StructureWrangler
 from smol.cofe.extern import EwaldTerm
-from tests.data import lno_prim, lno_data
+from tests.utils import assert_msonable, gen_fake_training_data, gen_random_structure
 
 
-class TestStructureWrangler(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.cs = ClusterSubspace.from_cutoffs(lno_prim, cutoffs={2: 5, 3: 4.1},
-                                              ltol=0.15, stol=0.2,
-                                              angle_tol=5, supercell_size='O2-')
-        cls.sw = StructureWrangler(cls.cs)
+def test_add_data(structure_wrangler, rng):
+    for entry in gen_fake_training_data(
+        structure_wrangler.cluster_subspace.structure, rng=rng
+    ):
+        structure_wrangler.add_entry(entry, weights={"random": 2.0})
+    struct = gen_random_structure(structure_wrangler.cluster_subspace.structure)
+    energy = -len(struct) * rng.random()
+    structure_wrangler.add_entry(
+        ComputedStructureEntry(
+            struct,
+            energy,
+            data={"weights": {"random": 3.0}, "properties": {"random": rng.random()}},
+        )
+    )
 
-    def setUp(self):
-        self.sw.remove_all_data()
-        for struct, energy in lno_data[:-1]:
-            self.sw.add_data(struct, {'energy': energy},
-                            weights={'random': 2.0})
-        struct, energy = lno_data[-1]
-        self.sw.add_data(struct, {'energy': energy}, weights={'random': 3.0})
+    assert all(w == 2.0 for w in structure_wrangler.get_weights("random")[:-1])
+    assert (
+        len(structure_wrangler.get_weights("random"))
+        == structure_wrangler.num_structures
+    )
+    assert structure_wrangler.get_weights("random")[-1] == 3.0
+    assert structure_wrangler.available_properties == ["random"]
+    assert structure_wrangler.available_weights == ["random"]
 
-    def test_data_indices(self):
-        test = np.random.choice(range(self.sw.num_structures), 5)
-        train = np.setdiff1d(range(self.sw.num_structures), test)
-        self.sw.add_data_indices('test', test)
-        self.sw.add_data_indices('train', train)
-        self.assertTrue(all(key in self.sw.available_indices
-                            for key in ['test', 'train']))
-        self.assertRaises(ValueError, self.sw.add_data_indices,
-                          'bla', [self.sw.num_structures, ])
-        self.assertRaises(TypeError, self.sw.add_data_indices, 'foo', 77)
+    entries = structure_wrangler._entries
+    structure_wrangler.remove_all_data()
+    assert len(structure_wrangler.structures) == 0
 
-    def test_properties(self):
-        self.assertEqual(self.sw.feature_matrix.shape,
-                         (self.sw.num_structures, self.cs.num_corr_functions))
-        self.assertEqual(len(self.sw.occupancy_strings),
-                         self.sw.num_structures)
-        num_prim_sits = len(self.cs.structure)
-        for struct, occu, size in zip(self.sw.structures,
-                                      self.sw.occupancy_strings,
-                                      self.sw.sizes):
-            self.assertTrue(len(struct) <= len(occu))  # < with vacancies
-            self.assertTrue(size*num_prim_sits, len(occu))
+    # Test passing supercell matrices
+    for entry in entries:
+        structure_wrangler.add_entry(
+            entry,
+            entry.data["properties"],
+            weights=entry.data["weights"],
+            supercell_matrix=entry.data["supercell_matrix"],
+        )
+    assert len(structure_wrangler.structures) == len(entries)
+    structure_wrangler.remove_all_data()
+    assert len(structure_wrangler.structures) == 0
 
-    def test_get_gram_matrix(self):
-        G = self.sw.get_gram_matrix()
-        self.assertEqual(G.shape, 2*(self.sw.num_features, ))
-        npt.assert_array_equal(G, G.T)
-        npt.assert_array_almost_equal(np.ones(G.shape[0]), G.diagonal())
+    # Test passing site mappings
+    for entry in entries:
+        structure_wrangler.add_entry(
+            entry,
+            entry.data["properties"],
+            weights=entry.data["weights"],
+            site_mapping=entry.data["site_mapping"],
+        )
 
-        rows = np.random.choice(range(self.sw.num_structures),
-                                self.sw.num_structures - 2)
-        cols = np.random.choice(range(self.sw.num_features),
-                                self.sw.num_features - 4)
-        G = self.sw.get_gram_matrix(rows=rows, cols=cols, normalize=False)
-        self.assertEqual(G.shape, 2 * (self.sw.num_features - 4,))
-        npt.assert_array_equal(G, G.T)
-        self.assertFalse(np.allclose(np.ones(G.shape[0]), G.diagonal()))
+    assert len(structure_wrangler._entries) == len(entries)
+    structure_wrangler.remove_all_data()
+    # test passing both
+    for entry in entries:
+        structure_wrangler.add_entry(
+            entry,
+            entry.data["properties"],
+            weights=entry.data["weights"],
+            supercell_matrix=entry.data["supercell_matrix"],
+            site_mapping=entry.data["site_mapping"],
+        )
+    assert len(structure_wrangler.structures) == len(entries)
 
-    def test_matrix_properties(self):
-        self.assertGreaterEqual(self.sw.get_condition_number(), 1)
-        rows = np.random.choice(range(self.sw.num_structures), 16)
-        cols = np.random.choice(range(self.sw.num_features), 10)
-        self.assertGreaterEqual(self.sw.get_condition_number(), 1)
-        self.assertGreaterEqual(self.sw.get_condition_number(rows, cols), 1)
-        print(self.sw.feature_matrix.shape)
-        self.assertGreaterEqual(self.sw.get_feature_matrix_rank(rows, cols),
-                                self.sw.get_feature_matrix_rank(cols=cols[:-3]))
+    # Add more properties to test removal
+    structure_wrangler.add_properties(
+        "normalized", structure_wrangler.get_property_vector("energy", normalize=True)
+    )
+    structure_wrangler.add_properties(
+        "normalized1", structure_wrangler.get_property_vector("energy", normalize=True)
+    )
+    assert all(
+        prop in ["normalized_energy", "normalized", "normalized1", "random"]
+        for prop in structure_wrangler.available_properties
+    )
+    structure_wrangler.remove_properties(
+        "normalized_energy", "normalized", "normalized1"
+    )
+    assert structure_wrangler.available_properties == ["random"]
 
-    def test_orbit_rank(self):
-        for _ in range(10):
-            oid = random.choice(range(1, len(self.cs.orbits) + 1))
-            orb_size = self.cs.orbits[oid - 1]
-            self.assertLessEqual(self.sw.get_feature_matrix_orbit_rank(oid),
-                                 len(orb_size))
+    # heavily distorted structure
+    struct = struct.copy()
+    struct.apply_strain(0.2)
+    entry = ComputedStructureEntry(struct, energy)
+    with pytest.raises(Exception):
+        structure_wrangler.add_entry(
+            entry,
+            properties={"random": rng.random()},
+            weights={"random": 3.0},
+            raise_failed=True,
+        )
 
-    def test_add_data(self):
-        # Check that a structure that does not match raises error.
-        self.assertRaises(Exception, self.sw.add_data, lno_data[0][0],
-                          {'energy': 0}, raise_failed=True)
-        self.assertWarns(UserWarning, self.sw.add_data, lno_data[0][0],
-                         {'energy': 0})
+    with pytest.warns(UserWarning):
+        structure_wrangler.add_entry(
+            entry,
+            properties={"random": rng.random()},
+            weights={"random": 3.0},
+            raise_failed=False,
+        )
 
-        # Check data in setup was added correctly
-        self.assertTrue(all(w == 2.0 for w in self.sw.get_weights('random')[:-1]))
-        self.assertTrue(len(self.sw.get_weights('random')) == self.sw.num_structures)
-        self.assertTrue(self.sw.get_weights('random')[-1] == 3.0)
-        self.assertEqual(self.sw.available_properties, ['energy'])
-        self.assertEqual(self.sw.available_weights, ['random'])
+    with pytest.raises(AttributeError):
+        structure_wrangler.add_properties("test", structure_wrangler.sizes[:-2])
 
-        # Check adding new properties
-        self.assertRaises(AttributeError, self.sw.add_properties, 'test',
-                          self.sw.sizes[:-2])
-        self.sw.add_properties('normalized_energy',
-                               self.sw.get_property_vector('energy', normalize=True))
-        items = self.sw._items
-        self.sw.remove_all_data()
-        self.assertEqual(len(self.sw.structures), 0)
+    structure_wrangler.add_properties(
+        "normalized_energy",
+        structure_wrangler.get_property_vector("energy", normalize=True),
+    )
 
-        # Test passing supercell matrices
-        for item in items:
-            self.sw.add_data(item['structure'], item['properties'],
-                             supercell_matrix=item['scmatrix'])
-        self.assertEqual(len(self.sw.structures), len(items))
-        self.sw.remove_all_data()
-        self.assertEqual(len(self.sw.structures), 0)
+    entry = deepcopy(
+        structure_wrangler.entries[rng.choice(range(structure_wrangler.num_structures))]
+    )
 
-        # Test passing site mappings
-        for item in items:
-            self.sw.add_data(item['structure'], item['properties'],
-                             site_mapping=item['mapping'])
-        self.assertEqual(len(self.sw.structures), len(items))
-        self.sw.remove_all_data()
-        # test passing both
-        for item in items:
-            self.sw.add_data(item['structure'], item['properties'],
-                             supercell_matrix=item['scmatrix'],
-                             site_mapping=item['mapping'])
-        self.assertEqual(len(self.sw.structures), len(items))
-        
-        # Add more properties to test removal
-        self.sw.add_properties('normalized',
-                               self.sw.get_property_vector('energy', normalize=True))
-        self.sw.add_properties('normalized1',
-                               self.sw.get_property_vector('energy', normalize=True))
-        self.assertTrue(all(prop in ['energy', 'normalized_energy',
-                                     'normalized', 'normalized1'] for
-                            prop in self.sw.available_properties))
-        self.sw.remove_properties('normalized_energy', 'normalized',
-                                  'normalized1')
-        self.assertEqual(self.sw.available_properties, ['energy'])
-        self.assertWarns(RuntimeWarning, self.sw.remove_properties, 'blab')
+    with pytest.raises(ValueError):
+        entry.data["properties"].update({"foo": 10})
+        structure_wrangler.add_entry(
+            ComputedStructureEntry(entry.structure, entry.energy),
+            entry.data["properties"],
+            weights=entry.data["weights"],
+            supercell_matrix=entry.data["supercell_matrix"],
+            site_mapping=entry.data["site_mapping"],
+        )
+    with pytest.raises(ValueError):
+        entry.data["properties"] = {}
+        structure_wrangler.add_entry(
+            ComputedStructureEntry(entry.structure, entry.energy),
+            entry.data["properties"],
+            weights=entry.data["weights"],
+            supercell_matrix=entry.data["supercell_matrix"],
+            site_mapping=entry.data["site_mapping"],
+        )
+    with pytest.raises(ValueError):
+        entry.data["weights"].update({"foo": 10})
+        structure_wrangler.add_entry(
+            ComputedStructureEntry(entry.structure, entry.energy),
+            entry.data["properties"],
+            weights=entry.data["weights"],
+            supercell_matrix=entry.data["supercell_matrix"],
+            site_mapping=entry.data["site_mapping"],
+        )
+    with pytest.raises(ValueError):
+        _ = entry.data["weights"].pop("random")
+        structure_wrangler.add_entry(
+            ComputedStructureEntry(entry.structure, entry.energy),
+            entry.data["properties"],
+            weights=entry.data["weights"],
+            supercell_matrix=entry.data["supercell_matrix"],
+            site_mapping=entry.data["site_mapping"],
+        )
 
-    def test_append_data_items(self):
-        items = self.sw._items
-        self.sw.remove_all_data()
-        self.assertEqual(len(self.sw.structures), 0)
-        self.assertRaises(ValueError, self.sw.append_data_items, [{'b': 1}])
-        data_items = []
-        for item in items:
-            data_items.append(self.sw.process_structure(item['structure'],
-                                                        item['properties'],
-                             supercell_matrix=item['scmatrix'],
-                             site_mapping=item['mapping']))
+    with pytest.warns(RuntimeWarning):
+        structure_wrangler.remove_properties("blab")
 
-        self.sw.append_data_items(data_items)
-        self.assertEqual(len(self.sw.data_items), len(items))
 
-    def test_remove_structure(self):
-        total = len(self.sw.structures)
-        s = self.sw.structures[np.random.randint(0, total)]
-        self.sw.remove_structure(s)
-        self.assertEqual(len(self.sw.structures), total - 1)
-        self.assertRaises(ValueError, self.sw.remove_structure, s)
+def test_add_weights(structure_wrangler, rng):
+    sc_matrices = structure_wrangler.supercell_matrices
+    num_structs = structure_wrangler.num_structures
+    structures = structure_wrangler.structures
+    energies = structure_wrangler.get_property_vector("energy")
+    weights = rng.random(num_structs)
+    structure_wrangler.add_weights("comp", weights)
+    structure_wrangler.remove_all_data()
+    assert structure_wrangler.num_structures == 0
+    for struct, energy, weight, matrix in zip(
+        structures, energies, weights, sc_matrices
+    ):
+        structure_wrangler.add_entry(
+            ComputedStructureEntry(struct, energy),
+            weights={"comp": weight},
+            supercell_matrix=matrix,
+        )
+    assert num_structs == structure_wrangler.num_structures
+    npt.assert_array_almost_equal(
+        weights, structure_wrangler.get_weights("comp"), decimal=9
+    )
+    with pytest.raises(AttributeError):
+        structure_wrangler.add_weights("test", weights[:-2])
 
-    def test_update_features(self):
-        shape = self.sw.feature_matrix.shape
-        self.cs.add_external_term(EwaldTerm())
-        self.sw.update_features()
-        self.assertEqual(shape[1] + 1, self.sw.feature_matrix.shape[1])
 
-    def test_weights_e_above_comp(self):
-        weights = weights_energy_above_composition(self.sw.structures,
-                                                   self.sw.get_property_vector('energy', False),
-                                                   temperature=1000)
-        self.sw.add_weights('comp', weights)
-        expected = np.array([0.85637358, 0.98816678, 1., 0.59209449, 1.,
-                    0.92882071, 0.87907454, 0.94729315, 0.40490513, 0.82484222,
-                    0.81578984, 1., 0.89615121, 0.92893004, 0.81650693,
-                    0.6080223 , 0.94848913, 0.92135297, 0.92326977, 0.83995635,
-                    1., 0.94663979, 1., 0.9414506, 1.])
-        self.assertTrue(np.allclose(expected, self.sw.get_weights('comp')))
-        sc_matrices = self.sw.supercell_matrices
-        num_structs = self.sw.num_structures
-        structures = self.sw.structures
-        energies = self.sw.get_property_vector('energy')
-        structures = self.sw.structures
-        self.sw.remove_all_data()
-        self.assertTrue(self.sw.num_structures == 0)
-        for struct, energy, weight, matrix in zip(structures, energies,
-                                                  weights, sc_matrices):
-            self.sw.add_data(struct, {'energy': energy},
-                             weights={'comp': weight}, supercell_matrix=matrix)
-        self.assertEqual(num_structs, self.sw.num_structures)
-        self.assertTrue(np.allclose(expected, self.sw.get_weights('comp')))
+def test_append_entries(structure_wrangler, rng):
+    entries = structure_wrangler._entries
+    structure_wrangler.remove_all_data()
+    assert len(structure_wrangler.structures) == 0
 
-    def test_weights_e_above_hull(self):
-        weights = weights_energy_above_hull(self.sw.structures,
-                                            self.sw.get_property_vector('energy', False),
-                                            self.cs.structure,
-                                            temperature=1000)
-        self.sw.add_weights('hull', weights)
-        expected = np.array([0.85637358, 0.98816678, 1., 0.56916328, 0.96127103,
-           0.89284844, 0.84502889, 0.91060546, 0.40490513, 0.82484222,
-           0.81578984, 1., 0.89615121, 0.92893004, 0.81650693,
-           0.58819251, 0.91755548, 0.89130433, 0.89315862, 0.81256235,
-           0.9673864 , 0.91576647, 1., 0.9414506 , 1])
-        self.assertTrue(np.allclose(expected, self.sw.get_weights('hull')))
-        sc_matrices = self.sw.supercell_matrices
-        num_structs = self.sw.num_structures
-        structures = self.sw.structures
-        energies = self.sw.get_property_vector('energy')
-        structures = self.sw.structures
-        self.sw.remove_all_data()
-        self.assertTrue(self.sw.num_structures == 0)
-        for struct, energy, weight, matrix in zip(structures, energies,
-                                                  weights, sc_matrices):
-            self.sw.add_data(struct, {'energy': energy},
-                             weights={'hull': weight}, supercell_matrix=matrix)
-        self.assertEqual(num_structs, self.sw.num_structures)
-        self.assertTrue(np.allclose(expected, self.sw.get_weights('hull')))
-        self.assertRaises(AttributeError, self.sw.add_weights, 'test',
-                          weights[:-2])
+    processed_entries = []
+    for entry in entries:
+        processed_entries.append(
+            structure_wrangler.process_entry(
+                ComputedStructureEntry(entry.structure, entry.energy),
+                properties={"random": 1.0},
+                weights=entry.data["weights"],
+                supercell_matrix=entry.data["supercell_matrix"],
+                site_mapping=entry.data["site_mapping"],
+            )
+        )
 
-    def test_get_duplicate_corr_inds(self):
-        ind = np.random.randint(self.sw.num_structures)
-        dup_item = deepcopy(self.sw.data_items[ind])
-        self.assertWarns(UserWarning, self.sw.add_data, dup_item["structure"],
-                         dup_item["properties"])
-        self.assertEqual(self.sw.get_duplicate_corr_indices(),
-                         [[ind, self.sw.num_structures - 1]])
+    structure_wrangler.append_entries(processed_entries[:-2])
+    structure_wrangler.append_entries(processed_entries[-2:])
+    assert len(structure_wrangler.entries) == len(entries)
+    entry = deepcopy(
+        structure_wrangler.entries[rng.choice(range(structure_wrangler.num_structures))]
+    )
 
-    def test_get_matching_corr_duplicate_inds(self):
-        ind = np.random.randint(self.sw.num_structures)
-        dup_item = deepcopy(self.sw.data_items[ind])
-        ind2 = np.random.randint(self.sw.num_structures)
-        dup_item2 = deepcopy(self.sw.data_items[ind2])
-        # change the structure for this one:
-        dup_item2['structure'] = np.random.choice(
-            [s for s in self.sw.structures if s != dup_item2['structure']])
-        self.sw.append_data_items([dup_item, dup_item2])
-        expected_matches = [[ind, self.sw.num_structures - 2]]
-        self.assertTrue(all(i in matches for matches, expected in
-                            zip(self.sw.get_matching_corr_duplicate_indices(),
-                                expected_matches) for i in expected))
+    with pytest.raises(ValueError):
+        entry.data["properties"].update({"foo": 10})
+        structure_wrangler.append_entries([entry])
+    with pytest.raises(ValueError):
+        _ = entry.data["properties"].pop("random")
+        structure_wrangler.append_entries([entry])
+    with pytest.raises(ValueError):
+        entry.data["weights"].update({"foo": 10})
+        structure_wrangler.append_entries([entry])
+    with pytest.raises(ValueError):
+        _ = entry.data["weights"].pop("random")
+        structure_wrangler.append_entries([entry])
 
-    def test_get_constant_features(self):
-        ind = np.random.randint(1, self.sw.num_features)
-        for item in self.sw.data_items:
-            item["features"][ind] = 3.0  # make constant
-        self.assertTrue(ind in self.sw.get_constant_features())
-        self.assertTrue(0 not in self.sw.get_constant_features())
 
-    def test_msonable(self):
-        self.sw.metadata['key'] = 4
-        d = self.sw.as_dict()
-        sw = StructureWrangler.from_dict(d)
-        self.assertTrue(np.array_equal(sw.get_property_vector('energy'),
-                                       self.sw.get_property_vector('energy')))
-        self.assertTrue(np.array_equal(sw.get_weights('random'),
-                        self.sw.get_weights('random')))
-        self.assertTrue(all([s1 == s2 for s1, s2 in zip(sw.structures, self.sw.structures)]))
-        self.assertTrue(all([s1 == s2 for s1, s2 in zip(sw.refined_structures, self.sw.refined_structures)]))
-        self.assertTrue(np.array_equal(sw.feature_matrix, self.sw.feature_matrix))
-        self.assertEqual(sw.metadata, self.sw.metadata)
-        self.assertTrue(all(i1['mapping'] == i1['mapping'] for i1, i2 in
-                            zip(self.sw._items, sw._items)))
-        self.assertTrue(all(np.array_equal(m1, m2) for m1, m2 in
-                            zip(self.sw.supercell_matrices,
-                                sw.supercell_matrices)))
-        j = json.dumps(d)
-        json.loads(j)
+def test_data_indices(structure_wrangler, rng):
+    test = rng.choice(range(structure_wrangler.num_structures), 5)
+    train = np.setdiff1d(range(structure_wrangler.num_structures), test)
+    structure_wrangler.add_data_indices("test", test)
+    structure_wrangler.add_data_indices("train", train)
+    assert all(key in structure_wrangler.available_indices for key in ["test", "train"])
+    with pytest.raises(ValueError):
+        structure_wrangler.add_data_indices(
+            "bla",
+            [
+                structure_wrangler.num_structures,
+            ],
+        )
+
+    with pytest.raises(TypeError):
+        structure_wrangler.add_data_indices("foo", 77)
+
+
+def test_properties(structure_wrangler):
+    assert structure_wrangler.feature_matrix.shape == (
+        structure_wrangler.num_structures,
+        structure_wrangler.cluster_subspace.num_corr_functions,
+    )
+    assert (
+        len(structure_wrangler.occupancy_strings) == structure_wrangler.num_structures
+    )
+    num_prim_sites = len(structure_wrangler.cluster_subspace.structure)
+    for struct, occu, size in zip(
+        structure_wrangler.structures,
+        structure_wrangler.occupancy_strings,
+        structure_wrangler.sizes,
+    ):
+        assert len(struct) <= len(occu)  # < with vacancies
+        assert size * num_prim_sites == len(occu)
+
+
+def test_remove_entry(structure_wrangler, rng):
+    total = len(structure_wrangler.structures)
+    entry = structure_wrangler.entries[rng.integers(0, total)]
+    structure_wrangler.remove_entry(entry)
+    assert len(structure_wrangler.structures) == total - 1
+    with pytest.warns(RuntimeWarning):
+        structure_wrangler.remove_entry(entry)
+
+
+def test_update_features(structure_wrangler):
+    shape = structure_wrangler.feature_matrix.shape
+    structure_wrangler.cluster_subspace.add_external_term(EwaldTerm())
+    structure_wrangler.update_features()
+    assert shape[1] + 1 == structure_wrangler.feature_matrix.shape[1]
+    structure_wrangler.update_features()
+
+
+def test_get_gram_matrix(structure_wrangler, rng):
+    G = structure_wrangler.get_gram_matrix()
+    assert G.shape == 2 * (structure_wrangler.num_features,)
+    npt.assert_array_equal(G, G.T)
+    npt.assert_array_almost_equal(np.ones(G.shape[0]), G.diagonal())
+
+    rows = rng.choice(
+        range(structure_wrangler.num_structures), structure_wrangler.num_structures - 2
+    )
+    cols = rng.choice(
+        range(structure_wrangler.num_features), structure_wrangler.num_features - 4
+    )
+    G = structure_wrangler.get_gram_matrix(rows=rows, cols=cols, normalize=False)
+    assert G.shape == 2 * (structure_wrangler.num_features - 4,)
+    npt.assert_array_equal(G, G.T)
+    assert not np.allclose(np.ones(G.shape[0]), G.diagonal())
+
+
+def test_get_similarity_matrix(structure_wrangler, rng):
+    S = structure_wrangler.get_similarity_matrix()
+    assert S.shape == 2 * (structure_wrangler.num_features,)
+    npt.assert_array_equal(S, S.T)
+    npt.assert_array_equal(S.diagonal(), np.ones(S.shape[0]))
+    rows = rng.choice(
+        range(structure_wrangler.num_structures), structure_wrangler.num_structures - 2
+    )
+    cols = rng.choice(
+        range(structure_wrangler.num_features), structure_wrangler.num_features - 4
+    )
+
+    S = structure_wrangler.get_similarity_matrix(rows=rows, cols=cols)
+    assert S.shape == 2 * (structure_wrangler.num_features - 4,)
+    npt.assert_array_equal(S, S.T)
+    npt.assert_array_equal(np.ones(S.shape[0]), S.diagonal())
+
+
+def test_matrix_properties(structure_wrangler, rng):
+    assert structure_wrangler.get_condition_number() >= 1
+    rows = rng.choice(
+        range(structure_wrangler.num_structures), structure_wrangler.num_structures // 3
+    )
+    cols = rng.choice(
+        range(structure_wrangler.num_features), structure_wrangler.num_features // 3
+    )
+    assert structure_wrangler.get_condition_number() >= 1
+    assert structure_wrangler.get_condition_number(rows, cols) >= 1
+    assert structure_wrangler.get_feature_matrix_rank(
+        rows, cols
+    ) >= structure_wrangler.get_feature_matrix_rank(rows=rows, cols=cols[:-3])
+
+
+def test_get_orbit_rank(structure_wrangler, rng):
+    for _ in range(10):
+        oid = rng.choice(range(1, len(structure_wrangler.cluster_subspace.orbits) + 1))
+        orb_size = structure_wrangler.cluster_subspace.orbits[oid - 1]
+        assert structure_wrangler.get_feature_matrix_orbit_rank(oid) <= len(orb_size)
+
+
+def test_get_duplicate_corr_inds(structure_wrangler, rng):
+    ind = rng.integers(structure_wrangler.num_structures)
+    dup_item = deepcopy(structure_wrangler.entries[ind])
+    with pytest.warns(UserWarning):
+        structure_wrangler.add_entry(dup_item, dup_item.data["properties"])
+
+    assert [
+        ind,
+        structure_wrangler.num_structures - 1,
+    ] in structure_wrangler.get_duplicate_corr_indices()
+
+
+def test_get_matching_corr_duplicate_inds(structure_wrangler, rng):
+    ind = rng.integers(structure_wrangler.num_structures)
+    dup_entry = deepcopy(structure_wrangler.entries[ind])
+    ind2 = rng.integers(structure_wrangler.num_structures)
+    # change the structure for this one:
+    struct = rng.choice(
+        [s for s in structure_wrangler.structures if s != dup_entry.structure]
+    )
+    dup_entry2 = structure_wrangler.process_entry(
+        ComputedStructureEntry(struct, structure_wrangler.entries[ind2].energy),
+        properties=structure_wrangler.entries[ind2].data["properties"],
+        weights=structure_wrangler.entries[ind2].data["weights"],
+    )
+    structure_wrangler.append_entries([dup_entry, dup_entry2])
+    expected_matches = [ind, structure_wrangler.num_structures - 2]
+    print(structure_wrangler.get_matching_corr_duplicate_indices(), expected_matches)
+    assert any(
+        expected_matches == sorted(matches)
+        for matches in structure_wrangler.get_matching_corr_duplicate_indices()
+    )
+
+
+def test_get_constant_features(structure_wrangler, rng):
+    ind = rng.integers(1, structure_wrangler.num_features)
+    for entry in structure_wrangler.entries:
+        entry.data["correlations"][ind] = 3.0  # make constant
+    assert ind in structure_wrangler.get_constant_features()
+    assert 0 not in structure_wrangler.get_constant_features()
+
+
+def test_msonable(structure_wrangler):
+    structure_wrangler.metadata["key"] = 4
+    d = structure_wrangler.as_dict()
+    sw = StructureWrangler.from_dict(d)
+    npt.assert_array_equal(
+        sw.get_property_vector("energy"),
+        structure_wrangler.get_property_vector("energy"),
+    )
+    npt.assert_array_equal(
+        sw.get_weights("random"), structure_wrangler.get_weights("random")
+    )
+    assert all(
+        [s1 == s2 for s1, s2 in zip(sw.structures, structure_wrangler.structures)]
+    )
+    assert all(
+        [
+            s1 == s2
+            for s1, s2 in zip(
+                sw.refined_structures, structure_wrangler.refined_structures
+            )
+        ]
+    )
+    npt.assert_array_equal(sw.feature_matrix, structure_wrangler.feature_matrix)
+    assert sw.metadata == structure_wrangler.metadata
+    assert all(
+        i1.data["site_mapping"] == i1.data["site_mapping"]
+        for i1, i2 in zip(structure_wrangler._entries, sw._entries)
+    )
+    assert all(
+        np.array_equal(m1, m2)
+        for m1, m2 in zip(structure_wrangler.supercell_matrices, sw.supercell_matrices)
+    )
+    assert_msonable(structure_wrangler)

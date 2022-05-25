@@ -7,6 +7,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+### Changed
+### Removed
+### Deprecated
+
+# [v0.0.2](https://github.com/CederGroupHub/smol/releases/tag/v0.0.2) (2022-05-22)
+### Fixed
+* version dunder with pypi project rename.
+* use of np.random.default_rng for reproducibility. #206 (lbluque)
+* Fix passing seed explicitly in Sampler.from_ensemble
+
+# [v0.0.1](https://github.com/CederGroupHub/smol/releases/tag/v0.0.1) (2022-04-26)
+### Added
+* Method to detect and identify orbit degeneracies based on supercell shape. #184 (kamronald)
+* Automatic github release.
+* PyPi install as `statmech-on-lattices` (arghhh)
+### Changed
+* Moved cython code for computing correlations to smol/correlations.pyx and imports as smol.correlations #190 (lbluque)
+### Fixed
+* Fix importing numpy in setup.py
+
+# [v0.0.0](https://github.com/CederGroupHub/smol/releases/tag/v0.0.0) (2022-04-13)
+#### [Full Changelog](https://github.com/CederGroupHub/smol/compare/alpha1.0.1...v0.0.0)
+### Added
+* `Cluster` as `pymatgen.SiteCollection`, str and repr methods for Cluster, Orbit,
+  ClusterSubspace and ClusterExpansion akin to pymatgen, and functionality to render
+  Clusters with crystal-toolkit. [#181](https://github.com/CederGroupHub/smol/pull/181)
+  ([lbluque](https://github.com/lbluque))
+*  Sublattice splitting. [#179](https://github.com/CederGroupHub/smol/pull/179)
+  ([qchempku2017](https://github.com/qchempku2017))
+* `StructureWrangler.get_similarity_matrix` to get similarity fractions
+  between correlation vectors of training set.
+  [\#153](https://github.com/CederGroupHub/smol/pull/153)
+  ([kamronald](https://github.com/kamronald))
+* `ClusterSubspace` with no point terms using `{1: None}`.
+  [\#158](https://github.com/CederGroupHub/smol/pull/158)
+  ([lbluque](https://github.com/lbluque))
+* `MCBias` implementation for biased sampling, `Trace` objects for general
+  state saving during sampling.
+  [\#154](https://github.com/CederGroupHub/smol/pull/154)
+  ([lbluque](https://github.com/lbluque))
+* Active and inactive sublattices for MC sampling.
+  [\#152](https://github.com/CederGroupHub/smol/pull/152)
+  ([lbluque](https://github.com/lbluque))
 * `SamplerContainer.to_hdf5` to save MC sample containers
 [\#151](https://github.com/CederGroupHub/smol/pull/151)
   ([lbluque](https://github.com/lbluque))
@@ -32,6 +75,20 @@ Use this section to keep track of changes in the works.
   ([lbluque](https://github.com/lbluque))
 
 ### Changed
+* `StructureWrangler` based on pymatgen `ComputedStructureEntry`.
+  [\#189](https://github.com/CederGroupHub/smol/pull/189)
+  ([lbluque](https://github.com/lbluque))
+* unittests for `smol.cofe` using `pytest`.
+  [\#159](https://github.com/CederGroupHub/smol/pull/159)
+  ([lbluque](https://github.com/lbluque))
+* New `corr_from_occupancy` and `delta_corr` faster and cleaner
+  implementations. And renamed `CEProcessor` to `ClusterExpansionProcessor`
+  [\#156](https://github.com/CederGroupHub/smol/pull/156)
+  ([lbluque](https://github.com/lbluque))
+* Dropped "er" endings for `MCUsher` names. Renamed `MuSemigrandEnsemble`
+  to `SemigrandEnsemble`.
+  [\#154](https://github.com/CederGroupHub/smol/pull/154)
+  ([lbluque](https://github.com/lbluque))
 * Changed `ClusterSubspace.supercell_orbit_mappings` to only include cluster
   site indices.
   [#145](https://github.com/CederGroupHub/smol/pull/145)
@@ -46,6 +103,9 @@ Use this section to keep track of changes in the works.
   ([lbluque](https://github.com/lbluque))
 
 ### Fixed
+* Allow Ewald only MC.
+  [\#141](https://github.com/CederGroupHub/smol/pull/169)
+  ([kamronald](https://github.com/kamronald))
 * Fix [141](https://github.com/CederGroupHub/smol/issues/140) corrected
   implementation of correlation function hierarchy.
   [\#141](https://github.com/CederGroupHub/smol/pull/141)
@@ -63,15 +123,21 @@ Use this section to keep track of changes in the works.
   orbits from cutoffs. [#138](https://github.com/CederGroupHub/smol/pull/125)
   ([qchempku2017](https://github.com/qchempku2017))
 
-
-### Deprecated
+### Removed
+* `optimize_indicator` in `ClusterExpansionProcessor` and corresponding cython
+   function.
+  [\#156](https://github.com/CederGroupHub/smol/pull/156)
+  ([lbluque](https://github.com/lbluque))
+* `FuSemiGrandEnsemble` now `FugacityBias`.
+  [\#154](https://github.com/CederGroupHub/smol/pull/154)
+  ([lbluque](https://github.com/lbluque))
 * Numerical conversion of coefficients between bases
   `ClusterExpansion.convert_coefs`
   [\#149](https://github.com/CederGroupHub/smol/pull/149)
   ([lbluque](https://github.com/lbluque))
 
-## [v1.0.1](https://github.com/CederGroupHub/smol/tree/v1.0.1) (2021-03-03)
-#### [Full Changelog](https://github.com/CederGroupHub/smol/compare/v1.0.0...v1.0.1)
+## [alpha1.0.1](https://github.com/CederGroupHub/smol/tree/alpha1.0.1) (2021-03-03)
+#### [Full Changelog](https://github.com/CederGroupHub/smol/compare/alpha1.0.0...alpha1.0.1)
 
 ### Added
 * Method in `StructureWrangler` to get structure matching duplicates
@@ -134,7 +200,7 @@ Use this section to keep track of changes in the works.
 (~1.5x faster)
 [\#102](https://github.com/CederGroupHub/smol/pull/102)
 ([lbluque](https://github.com/lbluque))
- 
+
 ### Fixed
 * Raise error in `StructureWrangler.append_data_items` when item properties are
   missing keys already included.
@@ -156,8 +222,8 @@ Use this section to keep track of changes in the works.
 sets. [\#90](https://github.com/CederGroupHub/smol/pull/90)
   ([lbluque](https://github.com/lbluque))
 
-## [v1.0.0](https://github.com/CederGroupHub/smol/releases/tag/v1.0.0) (2020-10-27)
-#### [Full Changelog](https://github.com/CederGroupHub/smol/compare/v0.0.0...v1.0.0)
+## [alpha1.0.0](https://github.com/CederGroupHub/smol/releases/tag/alpha1.0.0) (2020-10-27)
+#### [Full Changelog](https://github.com/CederGroupHub/smol/compare/alpha0.0.0...alpha1.0.0)
 ### Added
 * Completely new `smol.moca` module. Design based generally up as follows:
   *  `Processor` classes used to compute features, properties and their local
@@ -167,7 +233,7 @@ sets. [\#90](https://github.com/CederGroupHub/smol/pull/90)
      * `CompositeProcessor` to mix energy models. Currently only the ones above.
   * `Ensemble` classes to represent the corresponding statistical ensemble
   (probability space). These classes no longer run monte carlo, they only
-  compute the corresponding relative Boltzman probabilities. 
+  compute the corresponding relative Boltzman probabilities.
      * `CanonicalEnsemble` for fixed compositions.
      * `MuSemigrandEnsemble` for fixed chemical potentials.
      * `FuSemigrandEnsemble` for fixed fugacity fractions.
@@ -179,7 +245,7 @@ sets. [\#90](https://github.com/CederGroupHub/smol/pull/90)
   * `MCKernel` classes used to implement specific MCMC algorithms.
      `Metropolis` currently only kernel implemented to run single site
      Metropolis random walk.
-  * `MCUsher` classes to handle specific MCMC step proposals (i.e. single 
+  * `MCUsher` classes to handle specific MCMC step proposals (i.e. single
   swaps, to preseve composition, single flips, single constrained flips,
   multisite flips, local flips, etc).
   * `SampleContainer` class to hold MCMC samples and pertinent information for
@@ -205,11 +271,11 @@ vectors. [\#85](https://github.com/CederGroupHub/smol/pull/85)
 ([lbluque](https://github.com/lbluque))
 * Refactored `smol.cofe.configspace` -> `smol.cofe.space`
 * A few method name changes in `ClusterSubspace` to be more precise and
-appropriate. Most notably `from_radii` classmethod now `from_cutoffs` (since 
+appropriate. Most notably `from_radii` classmethod now `from_cutoffs` (since
 the distances used, max distance between 2 pts, are more like a diameter rather
 than a radius.)
 * filtering functions no longer methods in `StructureWrangler`, now defined
-as functions in `cofe.wrangling.filter`. 
+as functions in `cofe.wrangling.filter`.
 [\#85](https://github.com/CederGroupHub/smol/pull/85)
 ([lbluque](https://github.com/lbluque))
 * Species in site spaces and occupancy strings are now pymatgen `Specie` or
@@ -233,5 +299,5 @@ by making `StandardBasis` MSONable and saving corresponding arrays.
 [\#90](https://github.com/CederGroupHub/smol/pull/90)
 
 
-## [v0.0.0](https://github.com/CederGroupHub/smol/tree/v0.0.0) (2020-10-8)
+## [alpha0.0.0](https://github.com/CederGroupHub/smol/tree/alpha0.0.0) (2020-10-8)
 Initial relatively *stable* version of the code.

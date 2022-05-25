@@ -1,118 +1,106 @@
-# coding: utf-8
 # Copyright (c)
-# Distributed under the terms of the MIT License.
 
-"""Setup.py for smol."""
+"""
+smol -- Statistical Mechanics On Lattices
 
-import sys
-import platform
-
-from setuptools import setup, find_packages, Extension
-from setuptools.command.build_ext import build_ext as _build_ext
-import numpy
-
-
-class build_ext(_build_ext):
-    """Extension builder that checks for numpy before install."""
-
-    def finalize_options(self):
-        """Override finalize_options."""
-        _build_ext.finalize_options(self)
-        # Prevent numpy from thinking it is still in its setup process:
-        import builtins
-        if hasattr(builtins, '__NUMPY_SETUP__'):
-            del builtins.__NUMPY_SETUP__
-        import importlib
-        importlib.reload(numpy)
-        self.include_dirs.append(numpy.get_include())
-
-
-extra_link_args = []
-if sys.platform.startswith('win') and platform.machine().endswith('64'):
-    extra_link_args.append('-Wl,--allow-multiple-definition')
-
-cpp_extra_link_args = extra_link_args
-cpp_extra_compile_args = ["-Wno-cpp", "-Wno-unused-function", "-O2", "-march=native", '-std=c++11']
-if sys.platform.startswith('darwin'):
-    cpp_extra_compile_args.append("-stdlib=libc++")
-    cpp_extra_link_args = ["-O2", "-march=native", '-stdlib=libc++']
-
-long_desc = """
 Lighthweight but caffeinated Python implementations of computational methods
-for statistical mechanical calculations of configurational states for
+for statistical mechanical calculations of configurational states in
 crystalline material systems.
+
+
+smol is a minimal implementation of computational methods to calculate statistical
+mechanical and thermodynamic properties of crystalline material systems based on
+the cluster expansion method from alloy theory and related methods. Although smol
+is intentionally lightweight---in terms of dependencies and built-in functionality
+---it has a modular design that closely follows underlying mathematical formalism
+and provides useful abstractions to easily extend existing methods or implement and
+test new ones. Finally, although conceived mainly for method development, smol can
+(and is being) used in production for materials science research applications.
 """
 
+import sys
+
+from setuptools import Extension, dist, setup
+from setuptools.command.build_ext import build_ext
+
+# get numpy to include headers
+dist.Distribution().fetch_build_eggs(["numpy>=1.20"])
+import numpy
+
+COMPILE_OPTIONS = {
+    "msvc": [
+        "/O2",
+        "/EHsc",
+    ],
+    "mingw32": ["-Wall", "-Wextra"],
+    "other": ["-Wall", "-Wextra", "-ffast-math", "-O3"],
+}
+
+LINK_OPTIONS = {
+    "msvc": ["-Wl, --allow-multiple-definition"],
+    "mingw32": [["-Wl, --allow-multiple-definition"]],
+    "other": [],
+}
+COMPILER_DIRECTIVES = {
+    "language_level": 3,
+}
+
+
+if sys.platform.startswith("darwin"):
+    COMPILE_OPTIONS["other"] += ["-march=native", "-stdlib=libc++"]
+
+
+# By subclassing build_extensions we have the actual compiler that will be used which is
+# really known only after finalize_options
+# http://stackoverflow.com/questions/724664/python-distutils-how-to-get-a-compiler-that-is-going-to-be-used  # noqa
+class build_ext_options:
+    def build_options(self):
+        for e in self.extensions:
+            e.extra_compile_args += COMPILE_OPTIONS.get(
+                self.compiler.compiler_type, COMPILE_OPTIONS["other"]
+            )
+        for e in self.extensions:
+            e.extra_link_args += LINK_OPTIONS.get(
+                self.compiler.compiler_type, LINK_OPTIONS["other"]
+            )
+
+
+class build_ext_subclass(build_ext, build_ext_options):
+    def build_extensions(self):
+        build_ext_options.build_options(self)
+        build_ext.build_extensions(self)
+
+
 # Compile option for cython extensions
-if '--use-cython' in sys.argv:
+if "--use-cython" in sys.argv:
     USE_CYTHON = True
     cython_kwargs = {}
-    sys.argv.remove('--use-cython')
-    if '--annotate-cython' in sys.argv:
-        cython_kwargs['annotate'] = True
-        sys.argv.remove('--annotate-cython')
+    sys.argv.remove("--use-cython")
+    if "--annotate-cython" in sys.argv:
+        cython_kwargs["annotate"] = True
+        sys.argv.remove("--annotate-cython")
 else:
     USE_CYTHON = False
 
-ext = '.pyx' if USE_CYTHON else '.c'
+ext = ".pyx" if USE_CYTHON else ".c"
 ext_modules = [
-    Extension("src.cemc_utils",
-              ["src/cemc_utils"+ext],
-              language="c",
-              include_dirs=["src/"],
-              extra_compile_args=["-O3", "-ffast-math"]
-              )
+    Extension("smol.correlations", ["smol/correlations" + ext], language="c")
 ]
 
 if USE_CYTHON:
     from Cython.Build import cythonize
-    ext_modules = cythonize(ext_modules,
-                            include_path=[numpy.get_include()],
-                            compiler_directives={'language_level': 3},
-                            **cython_kwargs)
+
+    ext_modules = cythonize(
+        ext_modules,
+        include_path=[numpy.get_include()],
+        compiler_directives={"language_level": 3},
+        **cython_kwargs
+    )
+
 
 setup(
-    name="smol",
-    packages=find_packages(),
-    version="v1.0.1",
-    cmdclass={"build_ext": build_ext},
-    setup_requires=['numpy>=1.18.1', 'setuptools>=18.0'],
-    python_requires='>=3.7',
-    install_requires=['numpy>=1.18.1', 'pymatgen>=2020.8.13', 'monty>=3.0.1'],
-    extras_require={
-        "provenance": ["pybtex"],
-        ':python_version > "3.7"': [
-            "dataclasses>=0.6",
-        ]},
-    package_data={},
-    author="Ceder Group CE Development",
-    author_email="lbluque@berkeley.edu",
-    maintainer="Who takes this for the team?",
-    maintainer_email="above@beep.com",
-    url="https://ceder.berkeley.edu/",
-    license="MIT",
-    description="Computational methods for statistical mechanical and"
-                "thermodynamics calculations of crystalline materials systems.",
-    long_description=long_desc,
-    long_description_content_type='text/markdown',
-    keywords=["materials", "science", "structure", "analysis", "phase",
-              "diagrams", "crystal", "clusters", "Monte Carlo", "inference"],
-    classifiers=[
-        "Development Status :: 3 - Alpha",
-        "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
-        "Topic :: Scientific/Engineering :: Information Analysis",
-        "Topic :: Scientific/Engineering :: Physics",
-        "Topic :: Scientific/Engineering :: Chemistry",
-        "Topic :: Software Development :: Libraries :: Python Modules"
-    ],
+    use_scm_version={"version_scheme": "python-simplified-semver"},
     ext_modules=ext_modules,
-    project_urls={
-        'Source': 'https://github.com/CederGroupHub/smol',
-        'Bug Reports': 'https://github.com/CederGroupHub/smol/issues'
-    },
+    cmdclass={"build_ext": build_ext_subclass},
+    include_dirs=numpy.get_include(),
 )

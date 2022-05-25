@@ -1,4 +1,4 @@
-"""Definitions of global constants used in cofe.cofigspace module."""
+"""Definitions of global constants used in cofe.space module."""
 
 
 # site tolerance is the absolute tolerance passed to the pymatgen coord utils
@@ -7,4 +7,4 @@
 # script by adding these lines somewhere at the top.
 # import smol.cofe.space.constants
 # constants.SITE_TOL = your_desired_value
-SITE_TOL = 1E-6
+SITE_TOL = 1e-6

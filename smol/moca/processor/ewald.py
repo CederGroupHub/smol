@@ -1,4 +1,4 @@
-"""Implementation of Ewald processor class for a fixed size super cell.
+"""Implementation of Ewald processor class for a fixed size supercell.
 
 An Ewald processor is optimized to compute electrostatic interaction energy
 and changes in electrostatic energy from a list of local flips for use in
@@ -11,11 +11,15 @@ ClusterExpansionProcessor and an EwaldProcessor class.
 
 __author__ = "Luis Barroso-Luque"
 
+import warnings
+from functools import cached_property, lru_cache
+
 import numpy as np
 from pymatgen.analysis.ewald import EwaldSummation
-from src.cemc_utils import delta_ewald_single_flip
-from smol.cofe import ClusterSubspace
-from smol.cofe.extern import EwaldTerm
+
+from smol.cofe.extern.ewald import EwaldTerm
+from smol.cofe.space.clusterspace import ClusterSubspace
+from smol.correlations import delta_ewald_single_flip
 from smol.moca.processor.base import Processor
 
 
@@ -26,25 +30,39 @@ class EwaldProcessor(Processor):
     energy using an Ewald Summation term.
     """
 
-    def __init__(self, cluster_subspace, supercell_matrix, ewald_term,
-                 coefficient=1.0, ewald_summation=None):
+    def __init__(
+        self,
+        cluster_subspace,
+        supercell_matrix,
+        ewald_term,
+        coefficient=1.0,
+    ):
         """Initialize an EwaldProcessor.
 
         Args:
             cluster_subspace (ClusterSubspace):
-                A cluster subspace.
+                a cluster subspace.
             supercell_matrix (ndarray):
-                An array representing the supercell matrix with respect to the
+                an array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
             ewald_term (EwaldTerm):
-                An instance of EwaldTerm to compute electrostatic energies.
+                an instance of EwaldTerm to compute electrostatic energies.
             coefficient (float):
-                Fitting coeficient to scale Ewald energy by.
-            ewald_summation (EwaldSummation): optional
-                pymatgen EwaldSummation instance, make sure this uses the exact
-                same parameters as those used in the EwaldTerm in the cluster
-                Expansion (i.e. same eta, real and recip cuts).
+                Fitting coefficient to scale Ewald energy by.
         """
+        contains_ewald = False
+        for term in cluster_subspace.external_terms:
+            if isinstance(term, EwaldTerm):
+                contains_ewald = True
+                break
+
+        if not contains_ewald:
+            cluster_subspace.add_external_term(EwaldTerm())
+            warnings.warn(
+                message="Warning: cluster subspace does not contain "
+                "an Ewald term. Creating a default Ewald "
+                "term and adding to cluster subspace"
+            )
         super().__init__(cluster_subspace, supercell_matrix, coefficient)
 
         self._ewald_term = ewald_term
@@ -52,32 +70,29 @@ class EwaldProcessor(Processor):
         struct, inds = self._ewald_term.get_ewald_structure(self.structure)
         self._ewald_structure = struct
         self._ewald_inds = np.ascontiguousarray(inds)
-        # Lazy set up Ewald Summation since it can be slow
-        self._ewald = ewald_summation
-        self._matrix = None  # to cache matrix for now, the use cached_prop
 
-    @property
+    @cached_property
     def ewald_summation(self):
         """Get the pymatgen EwaldSummation object."""
-        if self._ewald is None:
-            self._ewald = EwaldSummation(
-                self._ewald_structure,
-                real_space_cut=self._ewald_term.real_space_cut,
-                recip_space_cut=self._ewald_term.recip_space_cut,
-                eta=self._ewald_term.eta)
-        return self._ewald
+        ewald_summation = EwaldSummation(
+            self._ewald_structure,
+            real_space_cut=self._ewald_term.real_space_cut,
+            recip_space_cut=self._ewald_term.recip_space_cut,
+            eta=self._ewald_term.eta,
+        )
+        return ewald_summation
 
-    @property  # TODO use cached_property (only for python 3.8)
+    @property
+    @lru_cache(maxsize=None)
     def ewald_matrix(self):
         """Get the electrostatic interaction matrix.
 
         The matrix used is the one set in the EwaldTerm of the given
         ClusterExpansion.
         """
-        if self._matrix is None:
-            matrix = self._ewald_term.get_ewald_matrix(self.ewald_summation)
-            self._matrix = np.ascontiguousarray(matrix)
-        return self._matrix
+        matrix = self._ewald_term.get_ewald_matrix(self.ewald_summation)
+        matrix = np.ascontiguousarray(matrix)
+        return matrix
 
     def compute_property(self, occupancy):
         """Compute the Ewald electrostatic energy for a given occupancy array.
@@ -102,7 +117,7 @@ class EwaldProcessor(Processor):
         Returns:
             float: electrostatic energy change
         """
-        return self.coefs*self.compute_feature_vector_change(occupancy, flips)
+        return self.coefs * self.compute_feature_vector_change(occupancy, flips)
 
     def compute_feature_vector(self, occupancy):
         """Compute the feature vector for a given occupancy array.
@@ -117,9 +132,9 @@ class EwaldProcessor(Processor):
         Returns:
             array: correlation vector
         """
-        ew_occu = self._ewald_term.get_ewald_occu(occupancy,
-                                                  self.ewald_matrix.shape[0],
-                                                  self._ewald_inds)
+        ew_occu = self._ewald_term.get_ewald_occu(
+            occupancy, self.ewald_matrix.shape[0], self._ewald_inds
+        )
         return np.sum(self.ewald_matrix[ew_occu, :][:, ew_occu])
 
     def compute_feature_vector_change(self, occupancy, flips):
@@ -143,10 +158,9 @@ class EwaldProcessor(Processor):
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
-            delta_energy += delta_ewald_single_flip(occu_f, occu_i,
-                                                    self.ewald_matrix,
-                                                    self._ewald_inds,
-                                                    f[0])
+            delta_energy += delta_ewald_single_flip(
+                occu_f, occu_i, self.ewald_matrix, self._ewald_inds, f[0]
+            )
             occu_i = occu_f
         return delta_energy
 
@@ -157,18 +171,21 @@ class EwaldProcessor(Processor):
         Returns:
             MSONable dict
         """
-        d = super().as_dict()
-        d['ewald_summation'] = self.ewald_summation.as_dict()
-        d['ewald_term'] = self._ewald_term.as_dict()
-        return d
+        ewald_d = super().as_dict()
+        ewald_d["ewald_summation"] = self.ewald_summation.as_dict()
+        ewald_d["ewald_term"] = self._ewald_term.as_dict()
+        return ewald_d
 
     @classmethod
     def from_dict(cls, d):
-        """Create a ClusterExpansionProcessor from serialized MSONable dict."""
-        pr = cls(ClusterSubspace.from_dict(d['cluster_subspace']),
-                 np.array(d['supercell_matrix']),
-                 ewald_term=EwaldTerm.from_dict(d['ewald_term']),
-                 coefficient=d['coefficients'],
-                 ewald_summation=EwaldSummation.from_dict(d['ewald_summation'])
-                 )
-        return pr
+        """Create a EwaldProcessor from serialized MSONable dict."""
+        # pylint: disable=duplicate-code
+        proc = cls(
+            ClusterSubspace.from_dict(d["cluster_subspace"]),
+            np.array(d["supercell_matrix"]),
+            ewald_term=EwaldTerm.from_dict(d["ewald_term"]),
+            coefficient=d["coefficients"],
+        )
+        proc.ewald_summation = EwaldSummation.from_dict(d["ewald_summation"])
+
+        return proc
