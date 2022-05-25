@@ -18,8 +18,6 @@ from smol.moca.sublattice import Sublattice
 class CanonicalEnsemble(BaseEnsemble, MSONable):
     """Canonical Ensemble class to run Monte Carlo Simulations."""
 
-    valid_mcmc_steps = ("swap",)
-
     @property
     def natural_parameters(self):
         """Get the vector of exponential parameters."""

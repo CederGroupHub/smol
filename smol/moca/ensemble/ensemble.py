@@ -17,6 +17,8 @@ from smol.moca.processor.base import Processor
 from smol.moca.sublattice import Sublattice
 
 
+# TODO remove instance attributes otherwise does not work niceley
+#  keep a mu-table and the thermoboundaries...
 class ChemicalPotentials:
     """Chemical potential descriptor."""
 

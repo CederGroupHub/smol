@@ -22,12 +22,7 @@ class BaseEnsemble(ABC):
             Dictionary with corresponding thermodynamic boundaries, i.e.
             chemical potentials or fugacity fractions. This is kept only for
             descriptive purposes.
-        valid_mcmc_steps (list of str):
-            List of the valid MCMC steps that can be used to sample the
-            ensemble in MCMC.
     """
-
-    valid_mcmc_steps = None  # add this in derived classes
 
     def __init__(self, processor, sublattices=None):
         """Initialize class instance.
