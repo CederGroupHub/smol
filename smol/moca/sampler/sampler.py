@@ -95,7 +95,9 @@ class Sampler:
         if kernel_type is None:
             kernel_type = "Metropolis"
 
-        mckernel = mckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs)
+        mckernel = mckernel_factory(
+            kernel_type, ensemble, step_type, seed=seed, *args, **kwargs
+        )
         # get a trial trace to initialize sample container trace
         _trace = mckernel.compute_initial_trace(np.zeros(ensemble.num_sites, dtype=int))
         sample_trace = Trace(
