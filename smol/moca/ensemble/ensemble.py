@@ -64,7 +64,8 @@ class ChemicalPotentialManager:
         if obj.num_energy_coefs < len(obj.natural_parameters):
             obj.natural_parameters = obj.natural_parameters[:-1]  # remove last entry
 
-    def _build_table(self, obj, value):
+    @staticmethod
+    def _build_table(obj, value):
         """Set the chemical potentials and update table."""
         for spec, count in Counter(map(get_species, value.keys())).items():
             if count > 1:
