@@ -5,7 +5,7 @@ import pytest
 from monty.serialization import loadfn
 from pymatgen.core import Structure
 
-from smol.cofe import ClusterSubspace, StructureWrangler
+from smol.cofe import ClusterSubspace, StructureWrangler, ClusterExpansion
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.basis import BasisIterator
 from smol.moca import CanonicalEnsemble, SemiGrandEnsemble

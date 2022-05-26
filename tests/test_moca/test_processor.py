@@ -3,12 +3,14 @@ import numpy.testing as npt
 import pytest
 from pymatgen.analysis.structure_matcher import StructureMatcher
 
+from smol.cofe import ClusterExpansion
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.domain import Vacancy, get_allowed_species
 from smol.moca.processor import (
     ClusterExpansionProcessor,
     CompositeProcessor,
     EwaldProcessor,
+    ClusterDecompositionProcessor
 )
 from smol.moca.processor.base import Processor
 from tests.utils import assert_msonable, gen_random_occupancy, gen_random_structure

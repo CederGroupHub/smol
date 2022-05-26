@@ -5,13 +5,9 @@ import numpy.testing as npt
 import pytest
 
 from smol.cofe import ClusterExpansion, RegressionData
-from smol.moca import (
-    CanonicalEnsemble,
-    ClusterExpansionProcessor,
-    CompositeProcessor,
-    EwaldProcessor,
-    SemiGrandEnsemble,
-)
+from smol.moca import CanonicalEnsemble, SemiGrandEnsemble
+from smol.moca.processor import ClusterExpansionProcessor, CompositeProcessor, EwaldProcessor
+
 from tests.utils import assert_msonable, gen_random_occupancy
 
 ensembles = [CanonicalEnsemble, SemiGrandEnsemble]
