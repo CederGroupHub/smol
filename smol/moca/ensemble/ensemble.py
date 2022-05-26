@@ -268,6 +268,13 @@ class Ensemble(MSONable):
             + splits
             + self._sublattices[sublattice_id + 1 :]
         )
+        if self.chemical_potentials is not None:
+            # Species in active sub-lattices may change after split.
+            # Need to reset and rebuild chemical potentials.
+            chemical_potentials = {
+                spec: self.chemical_potentials[spec] for spec in self.species
+            }
+            self.chemical_potentials = chemical_potentials
 
     def compute_feature_vector(self, occupancy):
         """Compute the feature vector for a given occupancy.
