@@ -2,6 +2,7 @@
 
 __author__ = "Luis Barroso-Luque"
 
+import warnings
 from abc import ABC, abstractmethod
 
 from smol.moca.processor import (
@@ -35,6 +36,13 @@ class BaseEnsemble(ABC):
                 list of Sublattice objects representing sites in the processor
                 supercell with same site spaces.
         """
+        # deprecation warning
+        warnings.warn(
+            f"{type(self).__name__} is deprecated; use Ensemble in smol.moca instead.",
+            category=FutureWarning,
+            stacklevel=2,
+        )
+
         if sublattices is None:
             sublattices = processor.get_sublattices()
         self.num_energy_coefs = len(processor.coefs)
