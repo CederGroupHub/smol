@@ -165,7 +165,7 @@ def test_compute_property(composite_processor):
     occu = gen_random_occupancy(composite_processor.get_sublattices())
     struct = composite_processor.structure_from_occupancy(occu)
     pred = np.dot(
-        composite_processor.coefs,
+        composite_processor.raw_coefs,
         composite_processor.cluster_subspace.corr_from_structure(struct, False),
     )
     assert composite_processor.compute_property(occu) == pytest.approx(pred, abs=ATOL)
@@ -206,9 +206,7 @@ def test_compute_orbit_factors(cluster_subspace):
     processor = ClusterDecompositionProcessor(
         cluster_subspace, scmatrix, expansion.cluster_interaction_tensors
     )
-    occu = gen_random_occupancy(
-        processor.get_sublattices(), processor.get_inactive_sublattices()
-    )
+    occu = gen_random_occupancy(processor.get_sublattices())
     struct = processor.structure_from_occupancy(occu)
     # same as normalize=False in corr_from_structure
     npt.assert_allclose(
