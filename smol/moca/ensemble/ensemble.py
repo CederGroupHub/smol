@@ -5,7 +5,7 @@ __author__ = "Luis Barroso-Luque"
 from collections import Counter
 
 import numpy as np
-from monty.json import MSONable
+from monty.json import MSONable, jsanitize
 from pymatgen.core.composition import ChemicalPotential
 
 from smol.cofe.space.domain import get_species
@@ -39,6 +39,24 @@ class ChemicalPotentialManager:
             self.__delete__(obj)
             return
 
+        for spec, count in Counter(map(get_species, value.keys())).items():
+            if count > 1:
+                raise ValueError(
+                    f"{count} values of the chemical potential for the same "
+                    f"species {spec} were provided.\n Make sure the dictionary "
+                    "you are using has only string keys or only Species "
+                    "objects as keys."
+                )
+        value = {
+            get_species(k): v for k, v in value.items() if get_species(k) in obj.species
+        }
+        if set(value.keys()) != set(obj.species):
+            raise ValueError(
+                "Chemical potentials given are missing species. "
+                "Values must be given for each of the following:"
+                f" {obj.species}"
+            )
+
         # if first instantiation concatenate the natural parameter
         if not hasattr(obj, self.private_name):
             obj.natural_parameters = np.append(
@@ -59,7 +77,10 @@ class ChemicalPotentialManager:
         """Delete the boundary condition."""
         if hasattr(obj, self.private_name):
             del obj.__dict__[self.private_name]
-        if hasattr(obj, "thermo_boundaries"):
+        if (
+            hasattr(obj, "thermo_boundaries")
+            and self.public_name in obj.thermo_boundaries
+        ):
             del obj.thermo_boundaries[self.public_name]
         if obj.num_energy_coefs < len(obj.natural_parameters):
             obj.natural_parameters = obj.natural_parameters[:-1]  # remove last entry
@@ -67,21 +88,6 @@ class ChemicalPotentialManager:
     @staticmethod
     def _build_table(obj, value):
         """Set the chemical potentials and update table."""
-        for spec, count in Counter(map(get_species, value.keys())).items():
-            if count > 1:
-                raise ValueError(
-                    f"{count} values of the chemical potential for the same "
-                    f"species {spec} were provided.\n Make sure the dictionary "
-                    "you are using has only string keys or only Species "
-                    "objects as keys."
-                )
-        value = {get_species(k): v for k, v in value.items() if k in obj.species}
-        if set(value.keys()) != set(obj.species):
-            raise ValueError(
-                "Chemical potentials given are missing species. "
-                "Values must be given for each of the following:"
-                f" {obj.species}"
-            )
         num_cols = max(max(sl.encoding) for sl in obj.sublattices) + 1
 
         # Sublattice can only be initialized as default, or splitted from default.
@@ -104,7 +110,7 @@ class Ensemble(MSONable):
 
     chemical_potentials = ChemicalPotentialManager()
 
-    def __init__(self, processor, sublattices=None):
+    def __init__(self, processor, sublattices=None, chemical_potentials=None):
         """Initialize class instance.
 
         Args:
@@ -121,6 +127,7 @@ class Ensemble(MSONable):
         self._params = processor.coefs  # natural parameters
         self._processor = processor
         self._sublattices = sublattices
+        self.chemical_potentials = chemical_potentials
 
     @classmethod
     def from_cluster_expansion(cls, cluster_expansion, supercell_matrix, **kwargs):
@@ -357,7 +364,7 @@ class Ensemble(MSONable):
         ensemble_d = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
-            "thermo_boundaries": self.thermo_boundaries,
+            "thermo_boundaries": jsanitize(self.thermo_boundaries),
             "processor": self._processor.as_dict(),
             "sublattices": [s.as_dict() for s in self._sublattices],
         }
