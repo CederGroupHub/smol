@@ -284,7 +284,7 @@ class StandardBasis(DiscreteBasis):
 
         if len(self.site_space) == 2:
             self._f_array[1] *= -1
-            self._rot_array *= -1
+            rotation_mat = -1 * self._rot_array
         else:
             if index1 == index2:
                 raise ValueError("Basis function indices cannot be the same!")
@@ -319,7 +319,8 @@ class StandardBasis(DiscreteBasis):
             self._f_array[
                 abs(self._f_array) < EPS_MULT * np.finfo(np.float64).eps
             ] = 0.0
-            self._rot_array = rotation_mat @ self._rot_array
+
+        self._rot_array = rotation_mat @ self._rot_array
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation."""

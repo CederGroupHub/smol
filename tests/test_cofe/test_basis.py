@@ -93,56 +93,52 @@ def test_rotate(standard_basis, rng):
             standard_basis.rotate(theta)
         return
 
-    standard_basis.rotate(theta)
     if standard_basis.is_orthogonal:
+        standard_basis.rotate(theta)
         assert standard_basis.is_orthogonal
         # if orthogonal all inner products should match!
         npt.assert_array_almost_equal(
             f_array @ f_array.T, standard_basis._f_array @ standard_basis._f_array.T
         )
-    else:
-        # if not orthogonal only vector norms should mathch!
         npt.assert_array_almost_equal(
-            np.diag(f_array @ f_array.T),
-            np.diag(standard_basis._f_array @ standard_basis._f_array.T),
+            standard_basis._f_array[0], np.ones(len(standard_basis.site_space))
         )
+        if len(standard_basis.site_space) == 2:  # rotation is * -1
+            npt.assert_array_almost_equal(standard_basis._f_array[1], -1 * f_array[1])
+        else:
+            npt.assert_almost_equal(
+                np.arccos(
+                    np.dot(standard_basis._f_array[1], f_array[1])
+                    / (
+                            np.linalg.norm(standard_basis._f_array[1])
+                            * np.linalg.norm(f_array[1])
+                    )
+                ),
+                theta,
+            )
+        standard_basis.rotate(-theta)
+        npt.assert_array_almost_equal(f_array, standard_basis._f_array)
+        standard_basis.orthonormalize()
+        assert standard_basis.is_orthonormal
+        standard_basis.rotate(theta)
+        assert standard_basis.is_orthonormal
 
-    npt.assert_array_almost_equal(
-        standard_basis._f_array[0], np.ones(len(standard_basis.site_space))
-    )
-    if len(standard_basis.site_space) == 2:  # rotation is * -1
-        npt.assert_array_almost_equal(standard_basis._f_array[1], -1 * f_array[1])
+        if len(standard_basis.site_space) > 2:
+            with pytest.raises(ValueError):
+                standard_basis.rotate(theta, 0, 0)
+
+            with pytest.raises(ValueError):
+                standard_basis.rotate(theta, len(standard_basis.site_space))
+            with pytest.raises(ValueError):
+                standard_basis.rotate(theta, 0, len(standard_basis.site_space))
+
+        comp = Composition((("A", 0.2), ("B", 0.2), ("C", 0.3), ("D", 0.3)))
+        b = basis.basis_factory("sinusoid", domain.SiteSpace(comp))
+        with pytest.warns(UserWarning):
+            b.rotate(theta)
     else:
-        npt.assert_almost_equal(
-            np.arccos(
-                np.dot(standard_basis._f_array[1], f_array[1])
-                / (
-                    np.linalg.norm(standard_basis._f_array[1])
-                    * np.linalg.norm(f_array[1])
-                )
-            ),
-            theta,
-        )
-    standard_basis.rotate(-theta)
-    npt.assert_array_almost_equal(f_array, standard_basis._f_array)
-    standard_basis.orthonormalize()
-    assert standard_basis.is_orthonormal
-    standard_basis.rotate(theta)
-    assert standard_basis.is_orthonormal
-
-    if len(standard_basis.site_space) > 2:
-        with pytest.raises(ValueError):
-            standard_basis.rotate(theta, 0, 0)
-
-        with pytest.raises(ValueError):
-            standard_basis.rotate(theta, len(standard_basis.site_space))
-        with pytest.raises(ValueError):
-            standard_basis.rotate(theta, 0, len(standard_basis.site_space))
-
-    comp = Composition((("A", 0.2), ("B", 0.2), ("C", 0.3), ("D", 0.3)))
-    b = basis.basis_factory("sinusoid", domain.SiteSpace(comp))
-    with pytest.warns(UserWarning):
-        b.rotate(theta)
+        with pytest.raises(RuntimeError):
+            standard_basis.rotate(theta)
 
 
 # basis specific tests
@@ -230,70 +226,3 @@ def test_legendre_basis(site_space):
 
     b.orthonormalize()
     assert b.is_orthonormal
-
-
-def test_rotate(self):
-    for flavor in ("sinusoid", "legendre", "polynomial", "indicator"):
-        b = basis.basis_factory(flavor, self.site_space)
-        theta = np.pi / np.random.randint(2, 11)
-        if b.is_orthogonal:
-            f_array = b._f_array.copy()
-            b.rotate(theta)
-            self.assertTrue(b.is_orthogonal)
-            # if orthogonal all inner products should match!
-            npt.assert_array_almost_equal(
-                f_array @ f_array.T, b._f_array @ b._f_array.T
-            )
-        else:
-            self.assertRaises(RuntimeError, b.rotate, theta)
-            # orthonormalize it and continue
-            b.orthonormalize()
-            f_array = b._f_array.copy()
-            b.rotate(theta)
-
-        npt.assert_array_almost_equal(b._f_array[0], np.ones(len(self.site_space)))
-        npt.assert_almost_equal(
-            np.arccos(
-                np.dot(b._f_array[1], f_array[1])
-                / (np.linalg.norm(b._f_array[1]) * np.linalg.norm(f_array[1]))
-            ),
-            theta,
-        )
-        b.rotate(-theta)
-        npt.assert_array_almost_equal(f_array, b._f_array)
-        b.orthonormalize()
-        self.assertTrue(b.is_orthonormal)
-        b.rotate(theta)
-        self.assertTrue(b.is_orthonormal)
-
-    self.assertRaises(ValueError, b.rotate, theta, 0, 0)
-    self.assertRaises(ValueError, b.rotate, theta, len(self.site_space))
-    self.assertRaises(ValueError, b.rotate, theta, 0, len(self.site_space))
-
-    comp = Composition((("A", 0.2), ("B", 0.2), ("C", 0.3), ("D", 0.3)))
-    b = basis.basis_factory("sinusoid", domain.SiteSpace(comp))
-    self.assertWarns(UserWarning, b.rotate, theta)
-
-
-def test_constructor(self):
-    species = OrderedDict({"A": 1, "B": 2, "C": 1})
-    basis_iter = basis.SinusoidIterator(tuple(species.keys()))
-    self.assertWarns(RuntimeWarning, basis.StandardBasis, species, basis_iter)
-    species = OrderedDict({"A": 0.1, "B": 0.1, "C": 0.1})
-    basis_iter = basis.SinusoidIterator(tuple(species.keys()))
-    self.assertWarns(RuntimeWarning, basis.StandardBasis, species, basis_iter)
-    basis_iter = basis.SinusoidIterator(tuple(species.keys())[:-1])
-    self.assertRaises(ValueError, basis.StandardBasis, species, basis_iter)
-
-
-def test_msonable(self):
-    species = tuple(self.site_space.keys())
-    b = basis.StandardBasis(self.site_space, basis.SinusoidIterator(species))
-    self.assertTrue(b.is_orthogonal)
-    b.orthonormalize()
-    self.assertTrue(b.is_orthonormal)
-    assert_msonable(b)
-    b1 = basis.StandardBasis.from_dict(b.as_dict())
-    self.assertTrue(b1.is_orthonormal)
-    npt.assert_array_equal(b.function_array, b1.function_array)
-    npt.assert_array_equal(b.orthonormalization_array, b1.orthonormalization_array)
