@@ -343,3 +343,54 @@ def test_build_mu_table(semigrand_ensemble):
             continue
         for i, species in zip(sublatt.encoding, sublatt.species):
             assert semigrand_ensemble.chemical_potentials[species] == row[i]
+
+
+def test_chemical_potentials(semigrand_ensemble):
+    # assert chemical potentials are correctly set
+    assert semigrand_ensemble.chemical_potentials is not None
+    assert (
+        len(semigrand_ensemble.natural_parameters)
+        == semigrand_ensemble.num_energy_coefs + 1
+    )
+    assert semigrand_ensemble.natural_parameters[-1] == -1
+    assert "chemical_potentials" in semigrand_ensemble.thermo_boundaries
+    assert (
+        semigrand_ensemble._chemical_potentials["table"].shape[0]
+        == semigrand_ensemble.num_sites
+    )
+
+    chem_pots = semigrand_ensemble.chemical_potentials
+
+    # remove chemical potentials
+    del semigrand_ensemble.chemical_potentials
+    assert semigrand_ensemble.chemical_potentials is None
+    assert (
+        len(semigrand_ensemble.natural_parameters)
+        == semigrand_ensemble.num_energy_coefs
+    )
+    assert "chemical_potentials" not in semigrand_ensemble.thermo_boundaries
+    assert not hasattr(semigrand_ensemble, "_chemical_potentials")
+
+    # reset the chemical_potentials
+    semigrand_ensemble.chemical_potentials = chem_pots
+    assert semigrand_ensemble.chemical_potentials is not None
+    assert (
+        len(semigrand_ensemble.natural_parameters)
+        == semigrand_ensemble.num_energy_coefs + 1
+    )
+    assert semigrand_ensemble.natural_parameters[-1] == -1
+    assert "chemical_potentials" in semigrand_ensemble.thermo_boundaries
+    assert (
+        semigrand_ensemble._chemical_potentials["table"].shape[0]
+        == semigrand_ensemble.num_sites
+    )
+
+    # remove them again by setting them to None
+    semigrand_ensemble.chemical_potentials = None
+    assert semigrand_ensemble.chemical_potentials is None
+    assert (
+        len(semigrand_ensemble.natural_parameters)
+        == semigrand_ensemble.num_energy_coefs
+    )
+    assert "chemical_potentials" not in semigrand_ensemble.thermo_boundaries
+    assert not hasattr(semigrand_ensemble, "_chemical_potentials")
