@@ -5,8 +5,8 @@ __author__ = "Luis Barroso-Luque"
 from collections import Counter
 
 import numpy as np
-from pymatgen.core.composition import ChemicalPotential
 from monty.json import MSONable
+from pymatgen.core.composition import ChemicalPotential
 
 from smol.cofe.space.domain import get_species
 from smol.moca.processor import (
@@ -22,11 +22,6 @@ class ChemicalPotentialManager:
     """Chemical potential descriptor for use Ensemble class."""
 
     natural_parameter: float = -1.0
-
-    def __init__(self):
-        """Initialize boundary descriptor."""
-        self._table = None
-        self._value = None
 
     def __set_name__(self, owner, name):
         """Set the private variable names."""
@@ -50,8 +45,9 @@ class ChemicalPotentialManager:
                 obj.natural_parameters, self.natural_parameter
             )
         setattr(
-            obj, self.private_name,
-            {"value": ChemicalPotential(value), "table": self._build_table(obj, value)}
+            obj,
+            self.private_name,
+            {"value": ChemicalPotential(value), "table": self._build_table(obj, value)},
         )
         # update the ensemble dictionary and _boundaries list
         if hasattr(obj, "thermo_boundaries"):
