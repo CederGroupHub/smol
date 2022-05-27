@@ -18,13 +18,41 @@ Overview diagram
 ----------------
 
 An overview diagram of the main classes and data inputs necessary to build and sample
-a lattice model is shown below. The workflow shown is sufficient for the majority of
-applications, for more advanced use and custom calculations a more detailed description
-of the package is given in the :doc:`Developing </developer_guide/index>` section.
-
+a lattice model is shown below.
 
 .. image:: ../_static/use_workflow.png
    :width: 800px
+
+Following the diagram above, the general workflow to construct, fit and sample a lattice
+model is as follows,
+
+#. Create a :class:`ClusterSubspace` based on a disordered primitive :mod:`pymatgen`
+   `Structure <https://pymatgen.org/pymatgen.core.structure.html>`_, a given set of
+   diameter cutoffs for clusters, and a specified type of basis set.
+#. Use the :class:`ClusterSubspace` to create a :class:`StructureWrangler` to generate
+   fitting data in the form of correlation vectors and a normalized property (usually
+   energy). The training data, energy and additional properties are added to the
+   :class:`StructureWrangler` as :mod:`pymatgen` entries of type
+   `ComputedStructureEntry <https://pymatgen.org/pymatgen.entries.computed_entries.html?highlight=computedstructureentry#pymatgen.entries.computed_entries.ComputedStructureEntry>`_.
+#. Fitting data in the form of a correlation :attr:`StructureWrangler.feature_matrix`
+   and a normalized property :meth:`StructureWrangler.get_property_vector` can be used
+   as input to a linear regression estimator from any choice of third party package,
+   such as :mod:`scikit-learn`, :mod:`glmnet` or :mod:`sparse-lm`.
+#. Using the fitted coefficients and the :class:`ClusterSubspace` instance, a
+   :class:`ClusterExpansion` is constructed. A :class:`ClusterExpansion` can be used
+   to predict properties of new structures, obtain the *effective cluster interactions*,
+   prune out unimportant terms, among other things.
+#. Using a :class:`ClusterExpansion` instance, an :class:`Ensemble` object can be
+   created to sample the corresponding Hamiltonian for a given supercell size and shape
+   that is specified as a supercell matrix of the unit cell corresponding to the
+   disordered structure used in the first step.
+#. Finally, an :class:`Ensemble` can be sampled in a Monte Carlo simulation by using a
+   an :class:`Sampler`.
+
+This simple workflow shown is sufficient for the majority of applications. A summary of
+the main classes is given below. For more advanced use and custom calculations a more
+detailed description of the package is given in the
+:doc:`Developing </developer_guide/index>` section.
 
 ----------------------------------------------------------------------------------------
 
@@ -65,7 +93,7 @@ Cluster subspace
 functions to be included in the cluster expansion.
 In general, a cluster expansion is created by first generating a
 :class:`ClusterSubspace`, which uses a provided primitive cell of the
-pymatgen `Structure <https://pymatgen.org/pymatgen.core.structure.html>`_
+:mod:`pymatgen` `Structure <https://pymatgen.org/pymatgen.core.structure.html>`_
 class to build the orbits of the cluster expansion. Because orbits generally
 decrease in importance with length, it is recommended to use the convenience
 method :meth:`from_cutoffs` to specify the cutoffs of different size
