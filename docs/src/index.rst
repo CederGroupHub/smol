@@ -86,3 +86,10 @@ Since **smol** is based on **pymatgen**, please also cite this publication,
 Additionally, several of the functionality included in **smol** is based on
 methodology developed by various researchers. Please see the
 :doc:`citing page </citing>` for additional refrences.
+
+License
+=======
+
+**smol** is distributed openly under a modified 3-clause BSD licence.
+
+.. include:: ../../LICENSE
