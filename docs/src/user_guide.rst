@@ -153,11 +153,7 @@ The core classes are:
   - :class:`EwaldProcessor`
   - :class:`CompositeProcessor`
 
-- :ref:`ensembles ug`
-
-  - :class:`CanonicalEnsemle`
-  - :class:`SemiGrandEnsemble`
-
+- :ref:`ensemble ug`
 - :ref:`sampler ug`
 - :ref:`samplecontainer ug`
 
@@ -180,22 +176,24 @@ specific use cases, users will need to instantiate the appropriate processor dir
 
 Full documentation of the class and its subclasses available here: :ref:`processors`.
 
-.. _ensembles ug:
+.. _ensemble ug:
 
-Ensembles
-^^^^^^^^^
-:class:`Ensemble` classes represent the specific statistical mechanics ensemble
+Ensemble
+^^^^^^^^
+The :class:`Ensemble` class represents the specific statistical mechanics ensemble
 by defining the relevant thermodynamic boundary conditions in order to compute
 the appropriate ensemble probability ratios. For example,
-:class:`CanonicalEnsemble` is used for systems at constant temperature and
-constant composition, while :class:`SemiGrandEnsemble` is used for systems at
-constant temperature and constant chemical potential. Ensembles also hold
+canonical ensemble is used for systems at constant temperature and
+constant composition, and can be created simply using an :class:`Ensemble` without setting
+any chemical potentials. While a semigrand ensemble is used for systems at
+constant temperature and constant chemical potential, which can be created simply by setting
+the :class:`Ensemble` :prop:`chemical_potentials`. Ensembles also hold
 information of the underlying set of :class:`Sublattice` for the configuration
 space to be sampled. Note that as implemented, an ensemble applies to any
 temperature, but the specific temperature to generate samples at is set in kernel used
 when sampling using a :class:`Sampler`.
 
-Full documentation of the class and its subclasses are available here: :ref:`ensembles`.
+Full documentation of the class and its subclasses are available here: :ref:`ensemble`.
 
 .. _sampler ug:
 
