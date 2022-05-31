@@ -64,6 +64,8 @@ def rand_occu_lmtpo(all_sublattices_lmtpo):
 @pytest.fixture(params=mcmcusher_classes)
 def mcmcusher(request, all_sublattices):
     # instantiate mcmcushers to test
+    if request.param == Tableflip:
+        return request.param(all_sublattices[0] + all_sublattices[1], swap_weight=0)
     return request.param(all_sublattices[0] + all_sublattices[1])
 
 
@@ -183,6 +185,7 @@ def test_table_flip(table_flip, rand_occu_lmtpo):
 
     # Uniformly random kernel.
     # print("Sublattices:", table_flip.sublattices)
+    # print("flip table:", table_flip.flip_table)
     l = 100000
     for i in range(l):
         assert bias.compute_bias(occu) == 0

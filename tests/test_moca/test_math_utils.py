@@ -553,6 +553,8 @@ def test_mask():
         vs = np.random.randint(low=-100, high=100, size=(30, 50))
         table = np.concatenate([(u, -u) for u in vs], axis=0)
         n = np.random.randint(low=0, high=100, size=50)
+        aa = np.random.randint(low=-50, high=50, size=50)
+        b = aa @ n
         max_n = np.random.randint(low=100, high=200, size=50)
         mask = flip_weights_mask(vs, n)
         assert len(mask) == len(table)

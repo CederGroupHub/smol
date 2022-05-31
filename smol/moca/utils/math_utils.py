@@ -900,21 +900,25 @@ def flip_weights_mask(flip_vectors, n, max_n=None):
 
 
 # Probability selection tools
-def choose_section_from_partition(p):
+def choose_section_from_partition(p, rng=np.random.default_rng()):
     """Choose one partition from multiple partitions.
 
     This function choose one section from a list with probability weights.
     Args:
         p(1D Arraylike[float]):
             Probabilities of each element. Will be normalized if not yet.
+        rng (np.Generator): optional
+            The given PRNG must be the same instance as that used by the
+            kernel and any bias terms, otherwise reproducibility will be
+            compromised.
     Return:
         The index of randomly chosen element:
            int
     """
+    p = np.array(p)
     if np.allclose(p, 0):
         p = np.ones(len(p))
-    if not np.all(p >= NUM_TOL):
+    if not np.all(p >= -NUM_TOL):
         raise ValueError("Probabilities contain negative number.")
-    p = np.array(p) / np.sum(p)
-    rng = np.random.default_rng()
+    p = p / p.sum()
     return int(round(rng.choice(len(p), p=p)))
