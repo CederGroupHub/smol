@@ -219,7 +219,7 @@ class SquarechargeBias(MCBias):
     This bias penalizes energy on square of the system net charge.
     """
 
-    def __init__(self, sublattices, lam=0.5):
+    def __init__(self, sublattices, lam=0.5, **kwargs):
         """Square charge bias.
 
         Args:
@@ -286,7 +286,7 @@ class SquarecompBias(MCBias):
     to n.
     """
 
-    def __init__(self, sublattices, A, b, lam=0.5):
+    def __init__(self, sublattices, A, b, lam=0.5, **kwargs):
         """Square composition bias.
 
         Use this when you have other constraints to the composition
