@@ -1,6 +1,6 @@
 name: build-dist
 
-# Build on every branch push, tag push, and pull request change:
+# Use this workflow to manually trigger a build for testing purposes. Download it from artifacts
 on: workflow_dispatch
 
 jobs:
@@ -9,7 +9,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-20.04, windows-2019, macos-10.15]
 
     steps:
       - uses: actions/checkout@v2
