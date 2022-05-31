@@ -369,7 +369,6 @@ class Tableflip(MCUsher):
                              f" cannot have negative value!")
         if np.allclose(masked_weights, 0):
             # Second condition to mute mckernel trace init.
-            print("All masked weights zero!")
             if not np.allclose(occupancy, 0):
                 warnings.warn("Current occupancy is not ergodic! "
                               "Will do canonical swap only!")
