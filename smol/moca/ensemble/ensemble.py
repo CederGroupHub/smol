@@ -1,31 +1,116 @@
-"""Abstract base class for Monte Carlo Ensembles."""
+"""Implementation of Thermodynamic Ensemble for MC sampling."""
 
 __author__ = "Luis Barroso-Luque"
 
-import warnings
-from abc import ABC, abstractmethod
+from collections import Counter
 
+import numpy as np
+from monty.json import MSONable, jsanitize
+from pymatgen.core.composition import ChemicalPotential
+
+from smol.cofe.space.domain import get_species
 from smol.moca.processor import (
     ClusterExpansionProcessor,
     CompositeProcessor,
     EwaldProcessor,
 )
+from smol.moca.processor.base import Processor
+from smol.moca.sublattice import Sublattice
 
 
-class BaseEnsemble(ABC):
-    """Abstract base class for Monte Carlo Ensembles.
+class ChemicalPotentialManager:
+    """Chemical potential descriptor for use Ensemble class."""
+
+    natural_parameter: float = -1.0
+
+    def __set_name__(self, owner, name):
+        """Set the private variable names."""
+        self.public_name = name
+        self.private_name = "_" + name
+
+    def __get__(self, obj, objtype=None):
+        """Return the chemical potentials if set None otherwise."""
+        value = getattr(obj, self.private_name, None)
+        return value if value is None else value["value"]
+
+    def __set__(self, obj, value):
+        """Set the table given the owner and value."""
+        if value is None:  # call delete if set to None
+            self.__delete__(obj)
+            return
+
+        for spec, count in Counter(map(get_species, value.keys())).items():
+            if count > 1:
+                raise ValueError(
+                    f"{count} values of the chemical potential for the same "
+                    f"species {spec} were provided.\n Make sure the dictionary "
+                    "you are using has only string keys or only Species "
+                    "objects as keys."
+                )
+        value = {
+            get_species(k): v for k, v in value.items() if get_species(k) in obj.species
+        }
+        if set(value.keys()) != set(obj.species):
+            raise ValueError(
+                "Chemical potentials given are missing species. "
+                "Values must be given for each of the following:"
+                f" {obj.species}"
+            )
+
+        # if first instantiation concatenate the natural parameter
+        if not hasattr(obj, self.private_name):
+            obj.natural_parameters = np.append(
+                obj.natural_parameters, self.natural_parameter
+            )
+        setattr(
+            obj,
+            self.private_name,
+            {"value": ChemicalPotential(value), "table": self._build_table(obj, value)},
+        )
+        # update the ensemble dictionary and _boundaries list
+        if hasattr(obj, "thermo_boundaries"):
+            obj.thermo_boundaries.update({self.public_name: value})
+        else:
+            setattr(obj, "thermo_boundaries", {self.public_name: value})
+
+    def __delete__(self, obj):
+        """Delete the boundary condition."""
+        if hasattr(obj, self.private_name):
+            del obj.__dict__[self.private_name]
+        if (
+            hasattr(obj, "thermo_boundaries")
+            and self.public_name in obj.thermo_boundaries
+        ):
+            del obj.thermo_boundaries[self.public_name]
+        if obj.num_energy_coefs < len(obj.natural_parameters):
+            obj.natural_parameters = obj.natural_parameters[:-1]  # remove last entry
+
+    @staticmethod
+    def _build_table(obj, value):
+        """Set the chemical potentials and update table."""
+        num_cols = max(max(sl.encoding) for sl in obj.sublattices) + 1
+
+        # Sublattice can only be initialized as default, or splitted from default.
+        table = np.zeros((obj.num_sites, num_cols))
+        for sublatt in obj.active_sublattices:
+            ordered_pots = [value[sp] for sp in sublatt.site_space]
+            table[sublatt.sites[:, None], sublatt.encoding] = ordered_pots
+        return table
+
+
+class Ensemble(MSONable):
+    """Thermodynamic ensemble class.
 
     Attributes:
-        num_energy_coefs (int):
-            Number of coefficients in the natural parameters array that
-            correspond to energy only.
         thermo_boundaries (dict):
             Dictionary with corresponding thermodynamic boundaries, i.e.
             chemical potentials or fugacity fractions. This is kept only for
             descriptive purposes.
     """
 
-    def __init__(self, processor, sublattices=None):
+    chemical_potentials = ChemicalPotentialManager()
+
+    def __init__(self, processor, sublattices=None, chemical_potentials=None):
         """Initialize class instance.
 
         Args:
@@ -36,19 +121,13 @@ class BaseEnsemble(ABC):
                 list of Sublattice objects representing sites in the processor
                 supercell with same site spaces.
         """
-        # deprecation warning
-        warnings.warn(
-            f"{type(self).__name__} is deprecated; use Ensemble in smol.moca instead.",
-            category=FutureWarning,
-            stacklevel=2,
-        )
-
         if sublattices is None:
             sublattices = processor.get_sublattices()
-        self.num_energy_coefs = len(processor.coefs)
         self.thermo_boundaries = {}  # not pretty way to save general info
+        self._params = processor.coefs  # natural parameters
         self._processor = processor
         self._sublattices = sublattices
+        self.chemical_potentials = chemical_potentials
 
     @classmethod
     def from_cluster_expansion(cls, cluster_expansion, supercell_matrix, **kwargs):
@@ -105,6 +184,11 @@ class BaseEnsemble(ABC):
         return self.processor.num_sites
 
     @property
+    def num_energy_coefs(self):
+        """Return the number of coefficients used in the energy expansion."""
+        return len(self._processor.coefs)
+
+    @property
     def system_size(self):
         """Get size of supercell in number of prims."""
         return self.processor.size
@@ -144,6 +228,26 @@ class BaseEnsemble(ABC):
             {sp for sublatt in self.active_sublattices for sp in sublatt.site_space}
         )
 
+    @property
+    def natural_parameters(self):
+        """Get the vector of natural parameters.
+
+        The natural parameters correspond to the fit coefficients of the
+        underlying processor plus any additional terms involved in the Legendre
+        transformation corresponding to the ensemble.
+        """
+        return self._params
+
+    @natural_parameters.setter
+    def natural_parameters(self, value):
+        """Set the value of the natural parameters.
+
+        Should only allow appending to the original energy coefficients
+        """
+        if not np.array_equal(self.processor.coefs, value[: self.num_energy_coefs]):
+            raise ValueError("The original expansion coefficients can not be changed!")
+        self._params = value
+
     def split_sublattice_by_species(self, sublattice_id, occu, species_in_partitions):
         """Split a sub-lattice in system by its occupied species.
 
@@ -171,19 +275,14 @@ class BaseEnsemble(ABC):
             + splits
             + self._sublattices[sublattice_id + 1 :]
         )
+        if self.chemical_potentials is not None:
+            # Species in active sub-lattices may change after split.
+            # Need to reset and rebuild chemical potentials.
+            chemical_potentials = {
+                spec: self.chemical_potentials[spec] for spec in self.species
+            }
+            self.chemical_potentials = chemical_potentials
 
-    @property
-    @abstractmethod
-    def natural_parameters(self):
-        """Get the vector of natural parameters.
-
-        The natural parameters correspond to the fit coefficients of the
-        underlying processor plus any additional terms involved in the Legendre
-        transformation corresponding to the ensemble.
-        """
-        return
-
-    @abstractmethod
     def compute_feature_vector(self, occupancy):
         """Compute the feature vector for a given occupancy.
 
@@ -202,9 +301,17 @@ class BaseEnsemble(ABC):
         Returns:
             ndarray: feature vector
         """
-        return
+        features = self.processor.compute_feature_vector(occupancy)
 
-    @abstractmethod
+        if self.chemical_potentials is not None:
+            chemical_work = sum(
+                self._chemical_potentials["table"][site][species]
+                for site, species in enumerate(occupancy)
+            )
+            features = np.append(features, chemical_work)
+
+        return features
+
     def compute_feature_vector_change(self, occupancy, step):
         """Compute the change in the feature vector from a given step.
 
@@ -217,7 +324,17 @@ class BaseEnsemble(ABC):
         Returns:
             ndarray: difference in feature vector
         """
-        return
+        delta_features = self.processor.compute_feature_vector_change(occupancy, step)
+
+        if self.chemical_potentials is not None:
+            delta_work = sum(
+                self._chemical_potentials["table"][f[0]][f[1]]
+                - self._chemical_potentials["table"][f[0]][occupancy[f[0]]]
+                for f in step
+            )
+            delta_features = np.append(delta_features, delta_work)
+
+        return delta_features
 
     def restrict_sites(self, sites):
         """Restricts (freezes) the given sites.
@@ -247,8 +364,28 @@ class BaseEnsemble(ABC):
         ensemble_d = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
-            "thermo_boundaries": self.thermo_boundaries,
+            "thermo_boundaries": jsanitize(self.thermo_boundaries),
             "processor": self._processor.as_dict(),
             "sublattices": [s.as_dict() for s in self._sublattices],
         }
         return ensemble_d
+
+    @classmethod
+    def from_dict(cls, ensemble_d):
+        """Instantiate a CanonicalEnsemble from dict representation.
+
+        Args:
+            ensemble_d (dict):
+                dictionary representation.
+        Returns:
+            CanonicalEnsemble
+        """
+        ensemble = cls(
+            Processor.from_dict(ensemble_d["processor"]),
+            [Sublattice.from_dict(s) for s in ensemble_d["sublattices"]],
+        )
+        chemical_potentials = ensemble_d["thermo_boundaries"].get("chemical_potentials")
+        if chemical_potentials is not None:
+            ensemble.chemical_potentials = chemical_potentials
+
+        return ensemble
