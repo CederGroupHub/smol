@@ -111,7 +111,14 @@ class MCKernel(ABC):
     valid_bias = None
 
     def __init__(
-        self, ensemble, step_type, *args, bias_type=None, bias_kwargs=None, **kwargs
+        self,
+        ensemble,
+        step_type,
+        *args,
+        seed=None,
+        bias_type=None,
+        bias_kwargs=None,
+        **kwargs,
     ):
         """Initialize MCKernel.
 
@@ -121,9 +128,11 @@ class MCKernel(ABC):
                 used in computing log probabilities.
             step_type (str):
                 string specifying the MCMC step type.
-            bias (MCBias):
-                a bias instance.
-            bias_kwargs (dict):
+            seed (int): optional
+                non-negative integer to seed the PRNG
+            bias_type (str): optional
+                name for bias type instance.
+            bias_kwargs (dict): optional
                 dictionary of keyword arguments to pass to the bias
                 constructor.
             args:
@@ -134,8 +143,11 @@ class MCKernel(ABC):
                 corresponding step size.
         """
         self.natural_params = ensemble.natural_parameters
+        self._seed = seed if seed is not None else np.random.SeedSequence().entropy
+        self._rng = np.random.default_rng(self._seed)
         self._compute_features = ensemble.compute_feature_vector
         self._feature_change = ensemble.compute_feature_vector_change
+
         self.trace = StepTrace(accepted=np.array([True]))
         self._usher, self._bias = None, None
 
@@ -144,6 +156,7 @@ class MCKernel(ABC):
             mcusher_name,
             ensemble.sublattices,
             *args,
+            rng=self._rng,
             **kwargs,
         )
 
@@ -153,6 +166,7 @@ class MCKernel(ABC):
             self.bias = mcbias_factory(
                 bias_name,
                 ensemble.sublattices,
+                rng=self._rng,
                 **bias_kwargs,
             )
 
@@ -170,6 +184,11 @@ class MCKernel(ABC):
         if usher.__class__.__name__ not in self.valid_mcushers:
             raise ValueError(f"{type(usher)} is not a valid MCUsher for this kernel.")
         self._usher = usher
+
+    @property
+    def seed(self):
+        """Get seed for PRNG."""
+        return self._seed
 
     @property
     def bias(self):
@@ -308,7 +327,6 @@ class UniformlyRandom(MCKernel):
         Returns:
             StepTrace
         """
-        rng = np.random.default_rng()
         step = self._usher.propose_step(occupancy)
         log_factor = self._usher.compute_log_priori_factor(occupancy, step)
         self.trace.delta_trace.features = self._feature_change(occupancy, step)
@@ -322,7 +340,9 @@ class UniformlyRandom(MCKernel):
             )
             exponent = self.trace.delta_trace.bias + log_factor
             self.trace.accepted = np.array(
-                True if exponent >= 0 else exponent > log(rng.random())
+                True
+                if self.trace.delta_trace.bias >= 0
+                else self.trace.delta_trace.bias > log(self._rng.random())
             )
 
         if self.trace.accepted:
@@ -356,7 +376,6 @@ class Metropolis(ThermalKernel):
         Returns:
             StepTrace
         """
-        rng = np.random.default_rng()
         step = self._usher.propose_step(occupancy)
         log_factor = self._usher.compute_log_priori_factor(occupancy, step)
         self.trace.delta_trace.features = self._feature_change(occupancy, step)
@@ -373,14 +392,14 @@ class Metropolis(ThermalKernel):
                 + self.trace.delta_trace.bias + log_factor
             )
             self.trace.accepted = np.array(
-                True if exponent >= 0 else exponent > log(rng.random())
+                True if exponent >= 0 else exponent > log(self._rng.random())
             )
         else:
             self.trace.accepted = np.array(
                 True
                 if self.trace.delta_trace.enthalpy <= 0
                 else -self.beta * self.trace.delta_trace.enthalpy
-                > log(rng.random())  # noqa
+                > log(self._rng.random())  # noqa
             )
 
         if self.trace.accepted:

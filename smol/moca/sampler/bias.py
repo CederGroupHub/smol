@@ -28,13 +28,16 @@ class MCBias(ABC):
             list of sublattices with active sites.
     """
 
-    def __init__(self, sublattices, *args, **kwargs):
+    def __init__(self, sublattices, rng=None, *args, **kwargs):
         """Initialize MCBias.
 
         Args:
             sublattices (List[Sublattice]):
                 list of active sublattices, containing species information and
                 site indices in sublattice.
+            rng (np.Generator): optional
+                The given PRNG must be the same instance as that used by the kernel and
+                any bias terms, otherwise reproducibility will be compromised.
             args:
                 Additional arguments buffer.
             kwargs:
@@ -44,6 +47,7 @@ class MCBias(ABC):
         self.active_sublattices = [
             sublatt for sublatt in self.sublattices if sublatt.is_active
         ]
+        self._rng = np.random.default_rng(rng)
 
     @abstractmethod
     def compute_bias(self, occupancy):
@@ -89,7 +93,7 @@ class FugacityBias(MCBias):
     potentials can then be calculated.
     """
 
-    def __init__(self, sublattices, fugacity_fractions=None):
+    def __init__(self, sublattices, fugacity_fractions=None, **kwargs):
         """Initialize fugacity ratio bias.
 
         Args:

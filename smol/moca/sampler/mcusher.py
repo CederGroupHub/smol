@@ -27,11 +27,10 @@ from ..utils.math_utils import (choose_section_from_partition, gcd_list,
                                 comb, flip_weights_mask)
 
 
-# TODO  keep RNG as attribute for reproducibility, pass as optional constructor...
 class MCUsher(ABC):
     """Abstract base class for MC usher classes."""
 
-    def __init__(self, sublattices, sublattice_probabilities=None):
+    def __init__(self, sublattices, sublattice_probabilities=None, rng=None):
         """Initialize MCMCStep.
 
         Args:
@@ -43,6 +42,9 @@ class MCUsher(ABC):
             sublattice_probabilities (list of float): optional
                 list of probabilities to pick a site from specific active
                 sublattices.
+            rng (np.Generator): optional
+                The given PRNG must be the same instance as that used by the kernel and
+                any bias terms, otherwise reproducibility will be compromised.
         """
         self.sublattices = sublattices
         self.active_sublattices = [
@@ -64,6 +66,8 @@ class MCUsher(ABC):
             raise ValueError("Sublattice probabilites must sum to one.")
         else:
             self._sublatt_probs = sublattice_probabilities
+
+        self._rng = np.random.default_rng(rng)
 
     @property
     def sublattice_probabilities(self):
@@ -127,8 +131,7 @@ class MCUsher(ABC):
 
     def get_random_sublattice(self):
         """Return a random sublattice based on given probabilities."""
-        rng = np.random.default_rng()
-        return rng.choice(self.active_sublattices, p=self._sublatt_probs)
+        return self._rng.choice(self.active_sublattices, p=self._sublatt_probs)
 
 
 class Flip(MCUsher):
@@ -147,11 +150,10 @@ class Flip(MCUsher):
         Returns:
             list(tuple): list of tuples each with (index, code)
         """
-        rng = np.random.default_rng()
         sublattice = self.get_random_sublattice()
-        site = rng.choice(sublattice.active_sites)
+        site = self._rng.choice(sublattice.active_sites)
         choices = set(sublattice.encoding) - {occupancy[site]}
-        return [(site, rng.choice(list(choices)))]
+        return [(site, self._rng.choice(list(choices)))]
 
 
 class Swap(MCUsher):
@@ -170,14 +172,13 @@ class Swap(MCUsher):
         Returns:
             list(tuple): list of tuples each with (index, code)
         """
-        rng = np.random.default_rng()
         sublattice = self.get_random_sublattice()
-        site1 = rng.choice(sublattice.active_sites)
+        site1 = self._rng.choice(sublattice.active_sites)
         species1 = occupancy[site1]
         sublattice_occu = occupancy[sublattice.active_sites]
         swap_options = sublattice.active_sites[sublattice_occu != species1]
         if swap_options.size > 0:  # check if swap_options are not empty
-            site2 = rng.choice(swap_options)
+            site2 = self._rng.choice(swap_options)
             swap = [(site1, occupancy[site2]), (site2, species1)]
         else:
             # inefficient, maybe re-call method? infinite recursion problem

@@ -17,10 +17,10 @@ from smol.cofe.space.domain import Vacancy, get_species
 from smol.moca.processor.base import Processor
 from smol.moca.sublattice import Sublattice
 
-from .base import Ensemble
+from .base import BaseEnsemble
 
 
-class SemiGrandEnsemble(Ensemble, MSONable):
+class SemiGrandEnsemble(BaseEnsemble, MSONable):
     """Relative chemical potential-based SemiGrand Ensemble.
 
     A Semi-Grand Canonical Ensemble for Monte Carlo simulations where species'
@@ -34,8 +34,6 @@ class SemiGrandEnsemble(Ensemble, MSONable):
         thermo_boundaries (dict):
             dict of chemical potentials.
     """
-
-    valid_mcmc_steps = ("flip", "tableflip")
 
     def __init__(self, processor, chemical_potentials, sublattices=None):
         """Initialize MuSemiGrandEnsemble.

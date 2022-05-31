@@ -11,21 +11,20 @@ TEMPERATURE = 5000
 
 
 @pytest.fixture(params=[1, 5])
-def sampler(ensemble, request):
+def sampler(ensemble, rng, request):
     sampler = Sampler.from_ensemble(
-        ensemble, temperature=TEMPERATURE, nwalkers=request.param
+        ensemble, temperature=TEMPERATURE, seed=rng, nwalkers=request.param
     )
-    # fix this additional attribute to sampler to access in gen occus
-    # for tests
+    # fix this additional attribute to sampler to access in gen occus for tests
     sampler.num_sites = ensemble.num_sites
     return sampler
 
 
 def test_from_ensemble(sampler):
-    if "Canonical" in sampler.samples.metadata["name"]:
-        assert isinstance(sampler.mckernel._usher, Swap)
+    if "chemical_potentials" in sampler.samples.metadata:
+        assert isinstance(sampler.mckernel._usher, Flip)
     else:
-        assert isinstance(sampler.mckernel._usher, (Flip, Tableflip))
+        assert isinstance(sampler.mckernel._usher, Swap)
     assert isinstance(sampler.mckernel, Metropolis)
 
 
@@ -75,11 +74,11 @@ def test_anneal(sampler):
     expected = []
     for T in temperatures:
         expected += (
-                steps
-                * sampler.samples.shape[0]
-                * [
-                    T,
-                ]
+            steps
+            * sampler.samples.shape[0]
+            * [
+                T,
+            ]
         )
     npt.assert_array_equal(sampler.samples.get_trace_value("temperature"), expected)
     # test temp error
