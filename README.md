@@ -49,10 +49,14 @@ structure analysis can be done seamlessly using the various functionality
 supported there.
 
 Installation
-----------
+------------
+
+> :warning: We have been granted the name `smol` on PyPi now. Please use `smol` instead
+> of the previous alternative `statmech-on-lattices`.
+
 From pypi:
 
-    pip install statmech-on-lattices
+    pip install smol
 
 From source:
 

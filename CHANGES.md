@@ -9,6 +9,7 @@ Use this section to keep track of changes in the works.
 ### Added
 * Single `Ensemble` class for canonical and semi-grand canonical sampling #210 @lbluque
 ### Changed
+* Package name properly `smol` instead of `statmech-on-lattices`.
 ### Removed
 ### Deprecated
 * `SemiGrandEnsemble` and `CanonicalEnsemble`. Use `Ensemble` with or without setting chemical
