@@ -21,10 +21,10 @@ def sampler(ensemble, rng, request):
 
 
 def test_from_ensemble(sampler):
-    if "Canonical" in sampler.samples.metadata["name"]:
-        assert isinstance(sampler.mckernel._usher, Swap)
-    else:
+    if "chemical_potentials" in sampler.samples.metadata:
         assert isinstance(sampler.mckernel._usher, Flip)
+    else:
+        assert isinstance(sampler.mckernel._usher, Swap)
     assert isinstance(sampler.mckernel, Metropolis)
 
 
