@@ -45,7 +45,6 @@ def test_mcbias_factory(all_sublattices):
 
 
 # Tests for FugacityBias
-# Tests for FuSemiGrandEnsemble
 @pytest.fixture(scope="module")
 def fugacity_bias(all_sublattices):
     return FugacityBias(all_sublattices)

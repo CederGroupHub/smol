@@ -6,36 +6,31 @@ import pytest
 
 from smol.cofe import ClusterExpansion, RegressionData
 from smol.moca import (
-    CanonicalEnsemble,
     ClusterExpansionProcessor,
     CompositeProcessor,
+    Ensemble,
     EwaldProcessor,
-    SemiGrandEnsemble,
 )
 from tests.utils import assert_msonable, gen_random_occupancy
-
-ensembles = [CanonicalEnsemble, SemiGrandEnsemble]
 
 
 @pytest.fixture
 def canonical_ensemble(composite_processor):
-    return CanonicalEnsemble(composite_processor)
+    return Ensemble(composite_processor)
 
 
 @pytest.fixture
-def mugrand_ensemble(composite_processor):
+def semigrand_ensemble(composite_processor):
     species = {
         sp for space in composite_processor.active_site_spaces for sp in space.keys()
     }
     chemical_potentials = {sp: 0.3 for sp in species}
-    return SemiGrandEnsemble(
-        composite_processor, chemical_potentials=chemical_potentials
-    )
+    return Ensemble(composite_processor, chemical_potentials=chemical_potentials)
 
 
 # Test with composite processors to cover more ground
-@pytest.mark.parametrize("ensemble_cls", ensembles)
-def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_cls, rng):
+@pytest.mark.parametrize("ensemble_type", ["canonical", "semigrand"])
+def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_type, rng):
     coefs = rng.random(cluster_subspace_ewald.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
     proc = CompositeProcessor(cluster_subspace_ewald, scmatrix)
@@ -61,13 +56,13 @@ def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_cls, rng):
     )
     expansion = ClusterExpansion(cluster_subspace_ewald, coefs, reg_data)
 
-    if ensemble_cls is SemiGrandEnsemble:
+    if ensemble_type == "semigrand":
         species = {sp for space in proc.active_site_spaces for sp in space.keys()}
         chemical_potentials = {sp: 0.3 for sp in species}
         kwargs = {"chemical_potentials": chemical_potentials}
     else:
         kwargs = {}
-    ensemble = ensemble_cls.from_cluster_expansion(
+    ensemble = Ensemble.from_cluster_expansion(
         expansion, supercell_matrix=scmatrix, **kwargs
     )
     npt.assert_array_equal(
@@ -115,9 +110,9 @@ def test_split_ensemble(ensemble):
         S = len(sublattice.species)
         old_sublattices = deepcopy(ensemble.sublattices)
         old_species = deepcopy(ensemble.species)
-        if isinstance(ensemble, SemiGrandEnsemble):
+        if ensemble.chemical_potentials is not None:
             old_chemical_potentials = deepcopy(ensemble.chemical_potentials)
-            old_mu_table = deepcopy(ensemble._mu_table)
+            old_mu_table = deepcopy(ensemble._chemical_potentials["table"])
         split_encodings = [sublattice.encoding[: S // 2], sublattice.encoding[S // 2 :]]
         ensemble.split_sublattice_by_species(sl_id, occu, split_encodings)
         assert len(ensemble.sublattices) == len(old_sublattices) + 1
@@ -154,9 +149,9 @@ def test_split_ensemble(ensemble):
                 )
                 assert len(new1.encoding) == len(new1.species)
                 assert len(new2.encoding) == len(new2.species)
-        if isinstance(ensemble, SemiGrandEnsemble):
+        if ensemble.chemical_potentials is not None:
             assert set(ensemble.chemical_potentials.keys()) == set(ensemble.species)
-            assert ensemble._mu_table.shape == old_mu_table.shape
+            assert ensemble._chemical_potentials["table"].shape == old_mu_table.shape
             for sp in ensemble.species:
                 assert sp in old_species
                 assert ensemble.chemical_potentials[sp] == old_chemical_potentials[sp]
@@ -164,7 +159,9 @@ def test_split_ensemble(ensemble):
                     if sp in sublattice.species:
                         code = sublattice.encoding[sublattice.species.index(sp)]
                         npt.assert_array_equal(
-                            ensemble._mu_table[sublattice.sites, code],
+                            ensemble._chemical_potentials["table"][
+                                sublattice.sites, code
+                            ],
                             ensemble.chemical_potentials[sp],
                         )
             for sp in set(old_species) - set(ensemble.species):
@@ -172,11 +169,16 @@ def test_split_ensemble(ensemble):
                     if sp in sublattice.species:
                         code = sublattice.encoding[sublattice.species.index(sp)]
                         npt.assert_array_equal(
-                            ensemble._mu_table[sublattice.sites, code], 0
+                            ensemble._chemical_potentials["table"][
+                                sublattice.sites, code
+                            ],
+                            0,
                         )
             for sublattice in ensemble.sublattices:
                 if not sublattice.is_active:
-                    npt.assert_array_equal(ensemble._mu_table[sublattice.sites, :], 0)
+                    npt.assert_array_equal(
+                        ensemble._chemical_potentials["table"][sublattice.sites, :], 0
+                    )
 
 
 # Canonical Ensemble tests
@@ -238,102 +240,157 @@ def test_compute_feature_vector_canonical(canonical_ensemble, rng):
             )
 
 
-# MuSemigrandEnsemble Tests
-def test_compute_feature_vector_sgc(mugrand_ensemble, rng):
-    proc = mugrand_ensemble.processor
-    occu = gen_random_occupancy(mugrand_ensemble.sublattices)
-    assert np.dot(
-        mugrand_ensemble.natural_parameters,
-        mugrand_ensemble.compute_feature_vector(occu),
-    ) == pytest.approx(
-        proc.compute_property(occu) - mugrand_ensemble.compute_chemical_work(occu)
+# tests for a semigrand ensemble
+def test_compute_feature_vector_sgc(semigrand_ensemble, rng):
+    proc = semigrand_ensemble.processor
+    occu = gen_random_occupancy(semigrand_ensemble.sublattices)
+    chemical_work = sum(
+        semigrand_ensemble._chemical_potentials["table"][site][species]
+        for site, species in enumerate(occu)
     )
+    assert np.dot(
+        semigrand_ensemble.natural_parameters,
+        semigrand_ensemble.compute_feature_vector(occu),
+    ) == pytest.approx(proc.compute_property(occu) - chemical_work)
     npt.assert_array_equal(
-        mugrand_ensemble.compute_feature_vector(occu)[:-1],
-        mugrand_ensemble.processor.compute_feature_vector(occu),
+        semigrand_ensemble.compute_feature_vector(occu)[:-1],
+        semigrand_ensemble.processor.compute_feature_vector(occu),
     )
     for _ in range(50):  # test a few flips
-        sublatt = rng.choice(mugrand_ensemble.active_sublattices)
+        sublatt = rng.choice(semigrand_ensemble.active_sublattices)
         site = rng.choice(sublatt.sites)
         spec = rng.choice(sublatt.encoding)
         flip = [(site, spec)]
         dmu = (
-            mugrand_ensemble._mu_table[site][spec]
-            - mugrand_ensemble._mu_table[site][occu[site]]
+            semigrand_ensemble._chemical_potentials["table"][site][spec]
+            - semigrand_ensemble._chemical_potentials["table"][site][occu[site]]
         )
         assert np.dot(
-            mugrand_ensemble.natural_parameters,
-            mugrand_ensemble.compute_feature_vector_change(occu, flip),
+            semigrand_ensemble.natural_parameters,
+            semigrand_ensemble.compute_feature_vector_change(occu, flip),
         ) == pytest.approx(proc.compute_property_change(occu, flip) - dmu)
         npt.assert_array_equal(
-            mugrand_ensemble.compute_feature_vector_change(occu, flip),
+            semigrand_ensemble.compute_feature_vector_change(occu, flip),
             np.append(proc.compute_feature_vector_change(occu, flip), dmu),
         )
     # Can still work normally with processor after splitting.
-    is_active = [s.is_active for s in mugrand_ensemble.sublattices]
+    is_active = [s.is_active for s in semigrand_ensemble.sublattices]
     sl_id = np.random.choice(
-        np.arange(len(mugrand_ensemble.sublattices), dtype=int)[is_active]
+        np.arange(len(semigrand_ensemble.sublattices), dtype=int)[is_active]
     )
-    encoding = mugrand_ensemble.sublattices[sl_id].encoding
+    encoding = semigrand_ensemble.sublattices[sl_id].encoding
     S = len(encoding)
     split = [encoding[: S // 2], encoding[S // 2 :]]
-    mugrand_ensemble.split_sublattice_by_species(sl_id, occu, split)
-    if len(mugrand_ensemble.active_sublattices) > 0:
-        assert np.dot(
-            mugrand_ensemble.natural_parameters,
-            mugrand_ensemble.compute_feature_vector(occu),
-        ) == pytest.approx(
-            proc.compute_property(occu) - mugrand_ensemble.compute_chemical_work(occu)
+    semigrand_ensemble.split_sublattice_by_species(sl_id, occu, split)
+    if len(semigrand_ensemble.active_sublattices) > 0:
+        chemical_work = sum(
+            semigrand_ensemble._chemical_potentials["table"][site][species]
+            for site, species in enumerate(occu)
         )
+        assert np.dot(
+            semigrand_ensemble.natural_parameters,
+            semigrand_ensemble.compute_feature_vector(occu),
+        ) == pytest.approx(proc.compute_property(occu) - chemical_work)
         npt.assert_array_equal(
-            mugrand_ensemble.compute_feature_vector(occu)[:-1],
-            mugrand_ensemble.processor.compute_feature_vector(occu),
+            semigrand_ensemble.compute_feature_vector(occu)[:-1],
+            semigrand_ensemble.processor.compute_feature_vector(occu),
         )
         for _ in range(50):  # test a few flips
-            sublatt = np.random.choice(mugrand_ensemble.active_sublattices)
+            sublatt = np.random.choice(semigrand_ensemble.active_sublattices)
             site = np.random.choice(sublatt.sites)
             spec = np.random.choice(sublatt.encoding)
             flip = [(site, spec)]
             dmu = (
-                mugrand_ensemble._mu_table[site][spec]
-                - mugrand_ensemble._mu_table[site][occu[site]]
+                semigrand_ensemble._chemical_potentials["table"][site][spec]
+                - semigrand_ensemble._chemical_potentials["table"][site][occu[site]]
             )
             assert np.dot(
-                mugrand_ensemble.natural_parameters,
-                mugrand_ensemble.compute_feature_vector_change(occu, flip),
+                semigrand_ensemble.natural_parameters,
+                semigrand_ensemble.compute_feature_vector_change(occu, flip),
             ) == pytest.approx(proc.compute_property_change(occu, flip) - dmu)
             npt.assert_array_equal(
-                mugrand_ensemble.compute_feature_vector_change(occu, flip),
+                semigrand_ensemble.compute_feature_vector_change(occu, flip),
                 np.append(proc.compute_feature_vector_change(occu, flip), dmu),
             )
 
 
-def test_bad_chemical_potentials(mugrand_ensemble):
-    proc = mugrand_ensemble.processor
-    chem_pots = mugrand_ensemble.chemical_potentials
+def test_bad_chemical_potentials(semigrand_ensemble):
+    proc = semigrand_ensemble.processor
+    chem_pots = semigrand_ensemble.chemical_potentials
     print(chem_pots)
     with pytest.raises(ValueError):
         items = list(chem_pots.items())
-        mugrand_ensemble.chemical_potentials = {items[0][0]: items[0][1]}
+        semigrand_ensemble.chemical_potentials = {items[0][0]: items[0][1]}
     with pytest.raises(ValueError):
-        mugrand_ensemble.chemical_potentials = {"A": 0.5, "D": 0.6}
+        semigrand_ensemble.chemical_potentials = {"A": 0.5, "D": 0.6}
     with pytest.raises(ValueError):
         chem_pots["foo"] = 0.4
-        SemiGrandEnsemble(proc, chemical_potentials=chem_pots)
+        Ensemble(proc, chemical_potentials=chem_pots)
     with pytest.raises(ValueError):
         del chem_pots["foo"]
         chem_pots.pop(items[0][0])
-        SemiGrandEnsemble(proc, chemical_potentials=chem_pots)
+        Ensemble(proc, chemical_potentials=chem_pots)
     with pytest.raises(ValueError):
         chem_pots[str(list(chem_pots.keys()))[0]] = 0.0
-        mugrand_ensemble.chemical_potentials = chem_pots
+        semigrand_ensemble.chemical_potentials = chem_pots
 
 
-def test_build_mu_table(mugrand_ensemble):
+def test_build_mu_table(semigrand_ensemble):
     # Do not use processor sub-lattices in these tests.
-    table = mugrand_ensemble._build_mu_table(mugrand_ensemble.chemical_potentials)
-    for sublatt, row in zip(mugrand_ensemble.active_sublattices, table):
+    table = semigrand_ensemble._chemical_potentials["table"]
+    for sublatt, row in zip(semigrand_ensemble.active_sublattices, table):
         if len(sublatt.species) == 1:  # skip inactive sites
             continue
         for i, species in zip(sublatt.encoding, sublatt.species):
-            assert mugrand_ensemble.chemical_potentials[species] == row[i]
+            assert semigrand_ensemble.chemical_potentials[species] == row[i]
+
+
+def test_chemical_potentials(semigrand_ensemble):
+    # assert chemical potentials are correctly set
+    assert semigrand_ensemble.chemical_potentials is not None
+    assert (
+        len(semigrand_ensemble.natural_parameters)
+        == semigrand_ensemble.num_energy_coefs + 1
+    )
+    assert semigrand_ensemble.natural_parameters[-1] == -1
+    assert "chemical_potentials" in semigrand_ensemble.thermo_boundaries
+    assert (
+        semigrand_ensemble._chemical_potentials["table"].shape[0]
+        == semigrand_ensemble.num_sites
+    )
+
+    chem_pots = semigrand_ensemble.chemical_potentials
+
+    # remove chemical potentials
+    del semigrand_ensemble.chemical_potentials
+    assert semigrand_ensemble.chemical_potentials is None
+    assert (
+        len(semigrand_ensemble.natural_parameters)
+        == semigrand_ensemble.num_energy_coefs
+    )
+    assert "chemical_potentials" not in semigrand_ensemble.thermo_boundaries
+    assert not hasattr(semigrand_ensemble, "_chemical_potentials")
+
+    # reset the chemical_potentials
+    semigrand_ensemble.chemical_potentials = chem_pots
+    assert semigrand_ensemble.chemical_potentials is not None
+    assert (
+        len(semigrand_ensemble.natural_parameters)
+        == semigrand_ensemble.num_energy_coefs + 1
+    )
+    assert semigrand_ensemble.natural_parameters[-1] == -1
+    assert "chemical_potentials" in semigrand_ensemble.thermo_boundaries
+    assert (
+        semigrand_ensemble._chemical_potentials["table"].shape[0]
+        == semigrand_ensemble.num_sites
+    )
+
+    # remove them again by setting them to None
+    semigrand_ensemble.chemical_potentials = None
+    assert semigrand_ensemble.chemical_potentials is None
+    assert (
+        len(semigrand_ensemble.natural_parameters)
+        == semigrand_ensemble.num_energy_coefs
+    )
+    assert "chemical_potentials" not in semigrand_ensemble.thermo_boundaries
+    assert not hasattr(semigrand_ensemble, "_chemical_potentials")

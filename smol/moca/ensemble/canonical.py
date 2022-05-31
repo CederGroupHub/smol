@@ -10,15 +10,13 @@ __author__ = "Luis Barroso-Luque"
 
 from monty.json import MSONable
 
-from smol.moca.ensemble.base import Ensemble
+from smol.moca.ensemble.base import BaseEnsemble
 from smol.moca.processor.base import Processor
 from smol.moca.sublattice import Sublattice
 
 
-class CanonicalEnsemble(Ensemble, MSONable):
+class CanonicalEnsemble(BaseEnsemble, MSONable):
     """Canonical Ensemble class to run Monte Carlo Simulations."""
-
-    valid_mcmc_steps = ("swap",)
 
     @property
     def natural_parameters(self):
