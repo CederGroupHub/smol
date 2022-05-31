@@ -25,7 +25,7 @@ class Sampler:
     The default will use a simple Metropolis random walk kernel.
     """
 
-    def __init__(self, kernel, container, seed=None):
+    def __init__(self, kernel, container):
         """Initialize BaseSampler.
 
         It is recommended to initialize a sampler with the from_ensemble
@@ -37,17 +37,11 @@ class Sampler:
                 an MCKernel instance.
             container (SampleContainer):
                 a sampler container to store samples.
-            seed (int): optional
-                seed for random number generator.
         """
         self._kernel = kernel
         self._container = container
-        # Set and save the seed for random. This allows reproducible results.
-        if seed is None:
-            seed = np.random.seed()
         #  Save the seed for reproducibility
-        self._container.metadata["seed"] = seed
-        self._seed = seed
+        self._container.metadata["seed"] = kernel.seed
 
     @classmethod
     def from_ensemble(
@@ -70,8 +64,8 @@ class Sampler:
             ensemble (Ensemble):
                 an Ensemble class to obtain sample probabilities from.
             step_type (str): optional
-                type of step to run MCMC with. If not given the default is the
-                first entry in the Ensemble.valid_mcmc_steps.
+                type of step to run MCMC with. If not given the default depends on
+                whether chemical potentials are defined.
             *args:
                 positional arguments to pass to the MCKernel constructor.
                 More often than not you want to specify the temperature!
@@ -92,16 +86,20 @@ class Sampler:
             Sampler
         """
         if step_type is None:
-            step_type = ensemble.valid_mcmc_steps[0]
-        elif step_type not in ensemble.valid_mcmc_steps:
-            raise ValueError(
-                f"Step type {step_type} can not be used for sampling a "
-                f"{type(ensemble)}."
-            )
+            if (
+                hasattr(ensemble, "chemical_potentials")
+                and ensemble.chemical_potentials is not None
+            ):
+                step_type = "flip"
+            else:
+                step_type = "swap"
+
         if kernel_type is None:
             kernel_type = "Metropolis"
 
-        mckernel = mckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs)
+        mckernel = mckernel_factory(
+            kernel_type, ensemble, step_type, seed=seed, *args, **kwargs
+        )
         # get a trial trace to initialize sample container trace
         _trace = mckernel.compute_initial_trace(np.zeros(ensemble.num_sites, dtype=int))
         sample_trace = Trace(
@@ -111,9 +109,9 @@ class Sampler:
             }
         )
 
-        sampling_metadata = {"name": type(ensemble).__name__}
+        sampling_metadata = {"kernel": kernel_type, "step": step_type}
         sampling_metadata.update(ensemble.thermo_boundaries)
-        sampling_metadata.update({"kernel": kernel_type, "step": step_type})
+
         # Container will be initialized to read all sub-lattices,
         # active or not.
         container = SampleContainer(
@@ -123,7 +121,7 @@ class Sampler:
             sample_trace,
             sampling_metadata,
         )
-        return cls(mckernel, container, seed=seed)
+        return cls(mckernel, container)
 
     @property
     def mckernel(self):
@@ -133,12 +131,7 @@ class Sampler:
     @property
     def seed(self):
         """Seed for the random number generator."""
-        return self._seed
-
-    @seed.setter
-    def seed(self, seed):
-        """Set the seed for the PRNG."""
-        self._seed = seed
+        return self._kernel.seed
 
     @property
     def samples(self):

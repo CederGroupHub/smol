@@ -3,7 +3,7 @@
 from importlib.metadata import PackageNotFoundError, version
 
 try:
-    __version__ = version("statmech-on-lattices")
+    __version__ = version("smol")
 except PackageNotFoundError:
     # package is not installed
     pass

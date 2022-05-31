@@ -11,9 +11,9 @@ TEMPERATURE = 5000
 
 
 @pytest.fixture(params=[1, 5])
-def sampler(ensemble, request):
+def sampler(ensemble, rng, request):
     sampler = Sampler.from_ensemble(
-        ensemble, temperature=TEMPERATURE, nwalkers=request.param
+        ensemble, temperature=TEMPERATURE, seed=rng, nwalkers=request.param
     )
     # fix this additional attribute to sampler to access in gen occus for tests
     sampler.num_sites = ensemble.num_sites
@@ -21,10 +21,10 @@ def sampler(ensemble, request):
 
 
 def test_from_ensemble(sampler):
-    if "Canonical" in sampler.samples.metadata["name"]:
-        assert isinstance(sampler.mckernel._usher, Swap)
-    else:
+    if "chemical_potentials" in sampler.samples.metadata:
         assert isinstance(sampler.mckernel._usher, Flip)
+    else:
+        assert isinstance(sampler.mckernel._usher, Swap)
     assert isinstance(sampler.mckernel, Metropolis)
 
 
