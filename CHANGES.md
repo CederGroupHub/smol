@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+* Single `Ensemble` class for canonical and semi-grand canonical sampling #210 @lbluque
 ### Changed
+* Package name properly `smol` instead of `statmech-on-lattices`.
 ### Removed
 ### Deprecated
+* `SemiGrandEnsemble` and `CanonicalEnsemble`. Use `Ensemble` with or without setting chemical
+   potentials instead.
 
 # [v0.0.2](https://github.com/CederGroupHub/smol/releases/tag/v0.0.2) (2022-05-22)
 ### Fixed
