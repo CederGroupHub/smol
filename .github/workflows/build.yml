@@ -1,0 +1,39 @@
+name: build-dist
+
+# Use this workflow to manually trigger a build for testing purposes. Download it from artifacts
+on: workflow_dispatch
+
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    env:
+      CIBW_SKIP: pp*  # skip pypy wheels
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.6.0
+
+      - uses: actions/upload-artifact@v2
+        with:
+          path: wheelhouse/*.whl
+
+  build_sdist:
+    name: Build source distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Optional, use if you use setuptools_scm
+
+      - name: Build sdist
+        run: pipx run build --sdist
+
+      - uses: actions/upload-artifact@v2
+        with:
+          path: dist/*.tar.gz

@@ -26,13 +26,13 @@ crystalline material systems.*
       :alt: Coverage
       :target: https://www.codacy.com/gh/CederGroupHub/smol/dashboard?utm_source=github.com&utm_medium=referral&utm_content=CederGroupHub/smol&utm_campaign=Badge_Coverage
 
-.. image:: https://img.shields.io/pypi/v/statmech-on-lattices?color=blue
+.. image:: https://img.shields.io/pypi/v/smol?color=blue
       :alt: PyPi Version
-      :target: https://pypi.org/project/statmech-on-lattices
+      :target: https://pypi.org/project/smol
 
-.. image:: https://img.shields.io/pypi/pyversions/statmech-on-lattices
+.. image:: https://img.shields.io/pypi/pyversions/smol
       :alt: Python Versions
-      :target: https://img.shields.io/pypi/pyversions/statmech-on-lattices
+      :target: https://img.shields.io/pypi/pyversions/smol
 
 
 -------------------------------------------------------------------------------
