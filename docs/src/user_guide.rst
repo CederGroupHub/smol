@@ -15,13 +15,12 @@ two main submodules:
   Hamiltonian (and a few other Hamiltonian models).
 
 Overview diagram
-----------------
+================
 
 An overview diagram of the main classes and data inputs necessary to build and sample
 a lattice model is shown below.
 
-.. image:: ../_static/use_workflow.png
-   :width: 800px
+.. image:: ../_static/smol_workflow.svg
 
 Following the diagram above, the general workflow to construct, fit and sample a lattice
 model is as follows,
@@ -56,7 +55,6 @@ detailed description of the package is given in the
 
 ----------------------------------------------------------------------------------------
 
-============
 Main classes
 ============
 

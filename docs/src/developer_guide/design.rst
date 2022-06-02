@@ -25,8 +25,12 @@ Module Design
 smol.cofe
 ---------
 
+.. image:: ../../_static/smol_cofe.svg
+
 smol.moca
 ---------
+
+.. image:: ../../_static/smol_moca.svg
 
 .. rubric:: Footnotes
 
