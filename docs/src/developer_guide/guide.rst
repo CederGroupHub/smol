@@ -45,7 +45,7 @@ Guidelines
 Adding code contributions
 -------------------------
 
-1.  If you are contributing for the first time:
+#.  If you are contributing for the first time:
 
     * *Fork* the repository and then *clone* your fork to your local workspace.
     * Make sure to add the *upstream* repository as a remote::
@@ -56,7 +56,7 @@ Adding code contributions
       with the upstream repository ``main`` branch. Be good about doing *fast forward*
       merges of the upstream ``main`` into your fork branches while developing.
 
-2.  In order to have changes available without having to re-install the package:
+#.  In order to have changes available without having to re-install the package:
 
     * Install the package in *editable* mode::
 
@@ -68,7 +68,7 @@ Adding code contributions
         python setup.py develop --use-cython
 
 
-3.  To develop your contributions you are free to do so in your *main* branch or any feature
+#.  To develop your contributions you are free to do so in your *main* branch or any feature
     branch in your fork.
 
     * We recommend to only your forks *main* branch for short/easy fixes and additions.
@@ -76,7 +76,7 @@ Adding code contributions
     * For very complex feautres feel free to open up a PR even before your contribution is finished with
       [WIP] in its name, and optionally mark it as a *draft*.
 
-4.  While developing we recommend you use the pre-commit hook that is setup to ensure that your
+#.  While developing we recommend you use the pre-commit hook that is setup to ensure that your
     code will satisfy all lint, documentation and black requirements. To do so install pre-commit, and run
     in your clones top directory::
 
@@ -85,18 +85,18 @@ Adding code contributions
     *  All code should use `google style <https://google.github.io/styleguide/pyguide.html>`_ docstrings
        and `black <https://black.readthedocs.io/en/stable/?badge=stable>`_ style formatting.
 
-5.  Make sure to test your contribution and write unit tests for any new features. All tests should go i
+#.  Make sure to test your contribution and write unit tests for any new features. All tests should go i
     ``smol\tests`` directory. The CI will run tests upon opening a PR, but running them locally will help find
     problems before::
 
         pytests tests
 
 
-6.  To submit a contribution open a *pull request* to the upstream repository. If your contribution changes
+#.  To submit a contribution open a *pull request* to the upstream repository. If your contribution changes
     the API (adds new features, edits or removes existing features). Please add a description to the
     `change log <https://github.com/CederGroupHub/smol/blob/main/CHANGES.md>`_.
 
-7.  If your contribution includes novel published (or to be published) methodology, you should also edit the
+#.  If your contribution includes novel published (or to be published) methodology, you should also edit the
     :ref:`citing` page accordingly.
 
 
@@ -107,10 +107,10 @@ In many occasions novel use of the package does not necessarily require introduc
 using the existing functionality, and possibly external packages (that are are requirements) for particular or
 advanced calculations.
 
-1.  Create a notebook with a descriptive name in the ``docs/src/notebooks`` directory.
-2.  Implement the functionality with enough markdown cells carefully describing the background, theory,
+#.  Create a notebook with a descriptive name in the ``docs/src/notebooks`` directory.
+#.  Implement the functionality with enough markdown cells carefully describing the background, theory,
     and steps in the notebook.
-3.  Any necessary data should be added to the ``docs/src/notebooks/data`` directory. Files should be at most
+#.  Any necessary data should be added to the ``docs/src/notebooks/data`` directory. Files should be at most
     a few MB.
-4.  Once the notebook is ready, add an entry to the :ref:`getting-started` page so your notebook shows up in the
+#.  Once the notebook is ready, add an entry to the :ref:`getting-started` page so your notebook shows up in the
     documentation.
