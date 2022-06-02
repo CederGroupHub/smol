@@ -1,3 +1,5 @@
+.. _user_guide :
+
 ==========
 User Guide
 ==========
@@ -8,9 +10,9 @@ model). Additionally, it includes tools to run Monte Carlo simulations to sample
 thermodynamic properties based on a fitted lattice model. The package is organized in
 two main submodules:
 
-- :ref:`smol.cofe ug` (Cluster Orbit Function Expansions) includes classes and
+- :ref:`smol.cofe ug` (:mod:`smol.cofe`) includes classes and
   functions to define, train, and test cluster expansions.
-- :ref:`smol.moca ug` (Monte Carlo) includes classes and functions to run
+- :ref:`smol.moca ug` (:mod:`smol.moca`) includes classes and functions to run
   Markov Chain Monte Carlo (MCMC) sampling based on a cluster expansion
   Hamiltonian (and a few other Hamiltonian models).
 
@@ -64,10 +66,10 @@ for full documentation of all classes and functions in the package.
 
 .. _smol.cofe ug:
 
-smol.cofe
----------
+Cluster Orbit Function Expansions
+---------------------------------
 
-This module includes the necessary classes to define, train, and test cluster
+:mod:`smol.cofe` includes the necessary classes to define, train, and test cluster
 expansions. A cluster expansion is essentially a way to fit a function of
 configurational degrees of freedom using a specific set of basis functions that
 allow a sparse representation of that function (which resides in a high
@@ -156,10 +158,10 @@ Full documentation of the class is available here: :ref:`cluster expansion`.
 
 .. _smol.moca ug:
 
-smol.moca
----------
+Monte Carlo
+-----------
 
-This module includes classes and functions to run Markov Chain Monte Carlo
+:mod:`smol.moca` includes classes and functions to run Markov Chain Monte Carlo
 sampling of statistical mechanical ensembles represented by a cluster expansion
 Hamiltonian (there is also support to run MCMC with simple pair interaction
 models, such as Ewald electrostatic interactions). MCMC sampling is done for a
