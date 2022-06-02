@@ -14,7 +14,7 @@ from collections import defaultdict
 
 import numpy as np
 from monty.dev import requires
-from monty.json import MSONable, MontyDecoder, jsanitize
+from monty.json import MontyDecoder, MSONable, jsanitize
 
 from smol.moca.sampler.kernel import Trace
 from smol.moca.sublattice import Sublattice
