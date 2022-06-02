@@ -10,9 +10,8 @@ Installation
 **smol** is purposedly light on dependencies which should make the installation
 process headache free. Using ``pip``::
 
-        pip install statmech-on-lattices
+        pip install smol
 
-(unfortunately someone is name-squatting so we can't use "smol" for now.)
 
 Basic Usage
 ===========
