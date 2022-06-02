@@ -5,7 +5,7 @@ from itertools import product
 import numpy as np
 import numpy.testing as npt
 import pytest
-from pymatgen.core.composition import Composition, ChemicalPotential
+from pymatgen.core.composition import ChemicalPotential, Composition
 
 from smol.cofe.space.domain import SiteSpace, get_species
 from smol.moca.sampler import SampleContainer
@@ -45,9 +45,11 @@ def container(request, rng):
         num_energy_coefs=num_energy_coefs,
         sample_trace=trace,
         sampling_metadata={
-            "thermo_boundaries": ChemicalPotential({get_species("Li+"): 0.5, get_species("Vacancy"): 0.3}),
-            "seed": 0
-        }
+            "thermo_boundaries": ChemicalPotential(
+                {get_species("Li+"): 0.5, get_species("Vacancy"): 0.3}
+            ),
+            "seed": 0,
+        },
     )
     yield sampler_container
     sampler_container.clear()

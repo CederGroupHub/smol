@@ -14,7 +14,7 @@ from collections import defaultdict
 
 import numpy as np
 from monty.dev import requires
-from monty.json import MSONable, MontyEncoder, MontyDecoder, jsanitize
+from monty.json import MontyDecoder, MSONable, jsanitize
 
 from smol.moca.sampler.kernel import Trace
 from smol.moca.sublattice import Sublattice
@@ -407,7 +407,9 @@ class SampleContainer(MSONable):
         backend["natural_parameters"].attrs[
             "num_energy_coefs"
         ] = self._num_energy_coefs  # noqa
-        backend.create_dataset("sampling_metadata", data=json.dumps(jsanitize(self.metadata)))
+        backend.create_dataset(
+            "sampling_metadata", data=json.dumps(jsanitize(self.metadata))
+        )
         trace_grp = backend.create_group("trace")
         for name, value in self._trace.items():
             trace_grp.create_dataset(
@@ -538,7 +540,8 @@ class SampleContainer(MSONable):
                 ],  # noqa
                 sample_trace=trace,
                 sampling_metadata=json.loads(
-                    f["sampling_metadata"][()], cls=MontyDecoder),
+                    f["sampling_metadata"][()], cls=MontyDecoder
+                ),
             )
             container._nsamples = nsamples
             container._total_steps = f["trace"].attrs["total_mc_steps"]
