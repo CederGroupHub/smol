@@ -1,3 +1,5 @@
+.. _user_guide :
+
 ==========
 User Guide
 ==========
@@ -8,27 +10,53 @@ model). Additionally, it includes tools to run Monte Carlo simulations to sample
 thermodynamic properties based on a fitted lattice model. The package is organized in
 two main submodules:
 
-- :ref:`smol.cofe ug` (Cluster Orbit Function Expansions) includes classes and
+- :ref:`smol.cofe ug` (:mod:`smol.cofe`) includes classes and
   functions to define, train, and test cluster expansions.
-- :ref:`smol.moca ug` (Monte Carlo) includes classes and functions to run
+- :ref:`smol.moca ug` (:mod:`smol.moca`) includes classes and functions to run
   Markov Chain Monte Carlo (MCMC) sampling based on a cluster expansion
   Hamiltonian (and a few other Hamiltonian models).
 
 Overview diagram
-----------------
+================
 
 An overview diagram of the main classes and data inputs necessary to build and sample
-a lattice model is shown below. The workflow shown is sufficient for the majority of
-applications, for more advanced use and custom calculations a more detailed description
-of the package is given in the :doc:`Developing </developer_guide/index>` section.
+a lattice model is shown below.
 
+.. image:: ../_static/smol_workflow.svg
 
-.. image:: ../_static/use_workflow.png
-   :width: 800px
+Following the diagram above, the general workflow to construct, fit and sample a lattice
+model is as follows,
+
+#. Create a :class:`ClusterSubspace` based on a disordered primitive :mod:`pymatgen`
+   `Structure <https://pymatgen.org/pymatgen.core.structure.html>`_, a given set of
+   diameter cutoffs for clusters, and a specified type of basis set.
+#. Use the :class:`ClusterSubspace` to create a :class:`StructureWrangler` to generate
+   fitting data in the form of correlation vectors and a normalized property (usually
+   energy). The training data, energy and additional properties are added to the
+   :class:`StructureWrangler` as :mod:`pymatgen` entries of type
+   `ComputedStructureEntry <https://pymatgen.org/pymatgen.entries.computed_entries.html?highlight=computedstructureentry#pymatgen.entries.computed_entries.ComputedStructureEntry>`_.
+#. Fitting data in the form of a correlation :attr:`StructureWrangler.feature_matrix`
+   and a normalized property :meth:`StructureWrangler.get_property_vector` can be used
+   as input to a linear regression estimator from any choice of third party package,
+   such as :mod:`scikit-learn`, :mod:`glmnet` or :mod:`sparse-lm`.
+#. Using the fitted coefficients and the :class:`ClusterSubspace` instance, a
+   :class:`ClusterExpansion` is constructed. A :class:`ClusterExpansion` can be used
+   to predict properties of new structures, obtain the *effective cluster interactions*,
+   prune out unimportant terms, among other things.
+#. Using a :class:`ClusterExpansion` instance, an :class:`Ensemble` object can be
+   created to sample the corresponding Hamiltonian for a given supercell size and shape
+   that is specified as a supercell matrix of the unit cell corresponding to the
+   disordered structure used in the first step.
+#. Finally, an :class:`Ensemble` can be sampled in a Monte Carlo simulation by using a
+   an :class:`Sampler`.
+
+This simple workflow shown is sufficient for the majority of applications. A summary of
+the main classes is given below. For more advanced use and custom calculations a more
+detailed description of the package is given in the
+:ref:`design` section of the Developing page.
 
 ----------------------------------------------------------------------------------------
 
-============
 Main classes
 ============
 
@@ -38,10 +66,10 @@ for full documentation of all classes and functions in the package.
 
 .. _smol.cofe ug:
 
-smol.cofe
----------
+Cluster Orbit Function Expansions
+---------------------------------
 
-This module includes the necessary classes to define, train, and test cluster
+:mod:`smol.cofe` includes the necessary classes to define, train, and test cluster
 expansions. A cluster expansion is essentially a way to fit a function of
 configurational degrees of freedom using a specific set of basis functions that
 allow a sparse representation of that function (which resides in a high
@@ -65,7 +93,7 @@ Cluster subspace
 functions to be included in the cluster expansion.
 In general, a cluster expansion is created by first generating a
 :class:`ClusterSubspace`, which uses a provided primitive cell of the
-pymatgen `Structure <https://pymatgen.org/pymatgen.core.structure.html>`_
+:mod:`pymatgen` `Structure <https://pymatgen.org/pymatgen.core.structure.html>`_
 class to build the orbits of the cluster expansion. Because orbits generally
 decrease in importance with length, it is recommended to use the convenience
 method :meth:`from_cutoffs` to specify the cutoffs of different size
@@ -130,10 +158,10 @@ Full documentation of the class is available here: :ref:`cluster expansion`.
 
 .. _smol.moca ug:
 
-smol.moca
----------
+Monte Carlo
+-----------
 
-This module includes classes and functions to run Markov Chain Monte Carlo
+:mod:`smol.moca` includes classes and functions to run Markov Chain Monte Carlo
 sampling of statistical mechanical ensembles represented by a cluster expansion
 Hamiltonian (there is also support to run MCMC with simple pair interaction
 models, such as Ewald electrostatic interactions). MCMC sampling is done for a
@@ -153,11 +181,7 @@ The core classes are:
   - :class:`EwaldProcessor`
   - :class:`CompositeProcessor`
 
-- :ref:`ensembles ug`
-
-  - :class:`CanonicalEnsemle`
-  - :class:`SemiGrandEnsemble`
-
+- :ref:`ensemble ug`
 - :ref:`sampler ug`
 - :ref:`samplecontainer ug`
 
@@ -180,22 +204,24 @@ specific use cases, users will need to instantiate the appropriate processor dir
 
 Full documentation of the class and its subclasses available here: :ref:`processors`.
 
-.. _ensembles ug:
+.. _ensemble ug:
 
-Ensembles
-^^^^^^^^^
-:class:`Ensemble` classes represent the specific statistical mechanics ensemble
+Ensemble
+^^^^^^^^
+The :class:`Ensemble` class represents the specific statistical mechanics ensemble
 by defining the relevant thermodynamic boundary conditions in order to compute
 the appropriate ensemble probability ratios. For example,
-:class:`CanonicalEnsemble` is used for systems at constant temperature and
-constant composition, while :class:`SemiGrandEnsemble` is used for systems at
-constant temperature and constant chemical potential. Ensembles also hold
+canonical ensemble is used for systems at constant temperature and
+constant composition, and can be created simply using an :class:`Ensemble` without setting
+any chemical potentials. While a semigrand ensemble is used for systems at
+constant temperature and constant chemical potential, which can be created simply by setting
+the :class:`Ensemble` :prop:`chemical_potentials`. Ensembles also hold
 information of the underlying set of :class:`Sublattice` for the configuration
 space to be sampled. Note that as implemented, an ensemble applies to any
 temperature, but the specific temperature to generate samples at is set in kernel used
 when sampling using a :class:`Sampler`.
 
-Full documentation of the class and its subclasses are available here: :ref:`ensembles`.
+Full documentation of the class and its subclasses are available here: :ref:`ensemble`.
 
 .. _sampler ug:
 

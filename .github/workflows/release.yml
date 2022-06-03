@@ -80,7 +80,7 @@ jobs:
       - name: Build
         run: |
           pip install setuptools setuptools_scm numpy build
-          python -m build
+          python -m build --sdist
 
       - name: Publish package
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
