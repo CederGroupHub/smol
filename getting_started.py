@@ -6,10 +6,8 @@
 # process headache free. Using `pip`:
 #
 # ```
-# pip install statmech-on-lattices
+# pip install smol
 # ```
-#
-# (unfortunately someone is name-squatting so we can’t use “smol” for now.)
 #
 # ### Basic Usage
 #
@@ -26,7 +24,7 @@
 
 from pymatgen.core.structure import Structure, Lattice
 species = {"Au": 0.5, "Cu": 0.5}
-prim = Structure.from_spacegroup(
+prim = Structure.from_spacegroup("Fm-3m", Lattice.cubic(3.6), [species], [[0, 0, 0]])
 
 # Now create a cluster subspace for that structure including pair, triplet and
 # quadruplet clusters up to given cluster diameter cutoffs.
@@ -57,7 +55,7 @@ for entry in entries:
 
 from sklearn.linear_model import LinearRegression
 reg = LinearRegression(fit_intercept=False)
-reg.fit(wrangler.feature_matrix,
+reg.fit(wrangler.feature_matrix, wrangler.get_property_vector("energy"))
 
 # Finally, create a cluster expansion for prediction of new structures and
 # eventual Monte Carlo sampling. We recommed saving the details used to fit the
@@ -65,16 +63,16 @@ reg.fit(wrangler.feature_matrix,
 
 from smol.cofe import ClusterExpansion, RegressionData
 reg_data = RegressionData.from_sklearn(
-expansion = ClusterExpansion(
+expansion = ClusterExpansion(subspace, coefficients=reg.coef_, regression_data=reg_data)
 
 # # Creating an ensemble for Monte Carlo Sampling
 #
 # Creating an ensemble only requires the cluster expansion and a supercell matrix
 # to define the sampling domain.
 
-from smol.moca import CanonicalEnsemble
+from smol.moca import Ensemble
 sc_matrix = [[5, 0, 0], [0, 5, 0], [0, 0, 5]]
-ensemble = CanonicalEnsemble.from_cluster_expansion(
+ensemble = Ensemble.from_cluster_expansion(expansion, supercell_matrix=sc_matrix)
 
 # # Running Monte Carlo sampling
 #
@@ -82,13 +80,13 @@ ensemble = CanonicalEnsemble.from_cluster_expansion(
 # object.
 
 from smol.moca import Sampler
-sampler = Sampler.from_ensemble(
+sampler = Sampler.from_ensemble(ensemble, temperature=1000)
 
 # In order to begin an MC simulation, an initial configuration must be provided.
 # In this case we use pymatgen’s functionality to provide an ordered structure
 # given a disordered one.
 
-from pymatgen.transformations.standard_transformations import \
+from pymatgen.transformations.standard_transformations import OrderDisorderedStructureTransformation
 transformation = OrderDisorderedStructureTransformation()
 structure = expansion.cluster_subspace.structure.copy()
 structure.make_supercell(sc_matrix)
@@ -98,7 +96,7 @@ structure = transformation.apply_transformation(structure)
 # to run MC sampling interations.
 
 init_occu = ensemble.processor.occupancy_from_structure(structure)
-sampler.run(1000000, initial_occupancy=init_occu)
+sampler.run(100000, initial_occupancy=init_occu)
 
 # # Saving the generated objects and data
 #
@@ -108,7 +106,7 @@ sampler.run(1000000, initial_occupancy=init_occu)
 # using the [monty](https://guide.materialsvirtuallab.org/monty//) python
 # package.
 
-save_work(
+save_work("CuAu_ce_mc.json", wrangler, expansion, ensemble, sampler.samples)
 
 # Example Notebooks
 #

@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Contributing &amp; Developing Guidelines &#8212; smol 0.0.2 documentation</title>
+    <title>Contributing &amp; Developing Guidelines &#8212; smol 0.0.3 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -33,6 +33,8 @@
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Package Design" href="design.html" />
+    <link rel="prev" title="Developing" href="index.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -93,7 +95,7 @@
  </a>
 </li>
 
-<li class="toctree-l1 nav-item">
+<li class="toctree-l1 current active nav-item">
  <a class="reference internal nav-link" href="index.html">
   Developing
  </a>
@@ -118,7 +120,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.2  <!-- this text may get changed later by javascript -->
+        0.0.3  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -128,14 +130,14 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables developer_guide/guidelines and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.2'}.
+     variables developer_guide/guide and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.3'}.
 -->
 
 <script type="text/javascript">
 // Check if corresponding page path exists in other version of docs
 // and, if so, go there instead of the homepage of the other docs version
 function checkPageExistsAndRedirect(event) {
-    const currentFilePath = "developer_guide/guidelines.html",
+    const currentFilePath = "developer_guide/guide.html",
           tryUrl = event.target.getAttribute("href");
     let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
     $.ajax({
@@ -156,7 +158,7 @@ function checkPageExistsAndRedirect(event) {
 // Populate the version switcher from the JSON config file
 (function () {
     $.getJSON("https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json", function(data, textStatus, jqXHR) {
-        const currentFilePath = "developer_guide/guidelines.html";
+        const currentFilePath = "developer_guide/guide.html";
         // create links to the corresponding page in the other docs versions
         $.each(data, function(index, entry) {
             // if no custom name specified (e.g., "latest"), use version string
@@ -179,10 +181,10 @@ function checkPageExistsAndRedirect(event) {
 
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.2 variable.
+            // this version, rather than using sphinx's 0.0.3 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.2") {
+            if (entry.version == "0.0.3") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -220,7 +222,19 @@ function checkPageExistsAndRedirect(event) {
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
-    
+    <ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Contributing &amp; Developing Guidelines
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="design.html">
+   Package Design
+  </a>
+ </li>
+</ul>
+
   </div>
 </nav>
               </div>
@@ -251,6 +265,23 @@ function checkPageExistsAndRedirect(event) {
   <a class="reference internal nav-link" href="#developing">
    Developing
   </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#guidelines">
+     Guidelines
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#adding-code-contributions">
+     Adding code contributions
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#adding-examples">
+     Adding examples
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 
@@ -261,7 +292,7 @@ function checkPageExistsAndRedirect(event) {
                 
 
 <div class="tocsection editthispage">
-    <a href="https://github.com/CederGroupHub/smol/edit/main/docs/src/developer_guide/guidelines.rst">
+    <a href="https://github.com/CederGroupHub/smol/edit/main/docs/src/developer_guide/guide.rst">
         <i class="fas fa-pencil-alt"></i> Edit this page
     </a>
 </div>
@@ -307,144 +338,102 @@ much better than nothing!</p>
 <h2>Developing<a class="headerlink" href="#developing" title="Permalink to this headline">#</a></h2>
 <p>Code contributions can be anything from fixing the simplest bugs, to adding new
 extensive features or subpackages. If you have written code or want to start
-writing new code that you think will improve <code class="docutils literal notranslate"><span class="pre">smol</span></code> then please follow the
-steps bellow to add it to the repository.</p>
-<ol class="arabic simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">Fork</span></code> the repository and then <code class="docutils literal notranslate"><span class="pre">clone</span></code> your fork to your local workspace.
-You should always keep your <code class="docutils literal notranslate"><span class="pre">main</span></code> branch up to date with the main
-repository <code class="docutils literal notranslate"><span class="pre">main</span></code> branch. Be good about doing <em>fast forward</em> merges of
-the main <code class="docutils literal notranslate"><span class="pre">main</span></code> into your <code class="docutils literal notranslate"><span class="pre">main</span></code> branch while developing.</p></li>
-</ol>
-<p>2.  In order to have changes available without having to re-install the package,
-type in the top level directory:</p>
-<blockquote>
-<div><p>pip install -e .</p>
-</div></blockquote>
-<p>3.  If at any point you need to re-cythonize (in case you changed a .pyx file
-while developing or the .c files have gone missing) use:</p>
-<blockquote>
-<div><p>python setup.py develop –use-cython</p>
-</div></blockquote>
-<p>4. Once you have changes worth sharing there are 3 main ways of adding your
-work to the main repository for others to see. All these require you to open a
-<strong>*pull request*</strong> to a specific branch in the main repo. If you are not sure
-were your work should go please ask one of the repo administrators.</p>
-<blockquote>
-<div><p>1. For short and concise additions (such as single new methods, bug fixes
-and small edits) open a PR to the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch.
-2. For more involved work in developing complex functionality, consider
-opening a new <em>feature</em> branch for your work that will eventually be merged
-into the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch once all your work is ready.
-3. For small, but very specific or niche features; such that they are very
-“experimental” but are not general enough to or easy to add robust testing
-for open a PR to the <code class="docutils literal notranslate"><span class="pre">experimental</span></code> branch.</p>
-</div></blockquote>
-<p>5. Since the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch is reserved only for the most stable version of
-the code, any new features should come with new unit-tests. Every so often a
-tag will be added to create versions of the code where it is most
-stable/tested. When opening a PR to the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch, you will need to do
-the following:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>When opening a new pull request you will get a standard template, you</p></li>
-</ul>
-<p>do not need to fill/keep everything, only the things that apply to your
-pull request, but please try to be as thorough as possible in describing
-what you have done.
--   You should make sure your work does not break any of the unittests, and
-if you implemented new functionality you should write tests for it.</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>To run the tests you need to install <code class="docutils literal notranslate"><span class="pre">pytest</span></code>. Then from the top</p></li>
-</ul>
-<blockquote>
-<div><p>level directiory run:</p>
-<blockquote>
-<div><p>pytest tests</p>
-</div></blockquote>
-</div></blockquote>
+writing new code that you think will improve <strong>smol</strong> then please follow the
+steps bellow to make a contribution. To know where best to start implementing new
+functionality please have a look at the <a class="reference internal" href="design.html#design"><span class="std std-ref">Package Design</span></a> page.</p>
+<section id="guidelines">
+<h3>Guidelines<a class="headerlink" href="#guidelines" title="Permalink to this headline">#</a></h3>
 <ul class="simple">
-<li><p>New tests should be put in the <code class="docutils literal notranslate"><span class="pre">/tests/</span></code> directory, and follow</p></li>
+<li><p>All code should have unit tests.</p></li>
+<li><p>Code should be well documented following <a class="reference external" href="https://google.github.io/styleguide/pyguide.html">google style</a>  docstrings.</p></li>
+<li><p>All code should pass the pre-commit hook. The code follows the <a class="reference external" href="https://black.readthedocs.io/en/stable/">black code style</a>.</p></li>
+<li><p>Additional dependencies should only be added when they are critical or if they are
+already a <code class="xref py py-mod docutils literal notranslate"><span class="pre">pymatgen</span></code> dependency. More often than not it is best to avoid adding
+a new dependency by simply delegating to directly using the external packages rather
+than adding them to the source code.</p></li>
+<li><p>Implementing new features should be more fun than tedious.</p></li>
 </ul>
-<p>standard <code class="docutils literal notranslate"><span class="pre">pytest</span></code> naming.</p>
-</div></blockquote>
+</section>
+<section id="adding-code-contributions">
+<h3>Adding code contributions<a class="headerlink" href="#adding-code-contributions" title="Permalink to this headline">#</a></h3>
+<ol class="arabic">
+<li><p>If you are contributing for the first time:</p>
 <ul>
-<li><p>You should also check your code conforms with standard python style by
-installing <code class="docutils literal notranslate"><span class="pre">flake8</span></code> (use pip). Then from the top level directory,</p>
-<blockquote>
-<div><p>flake8 smol</p>
-</div></blockquote>
+<li><p><em>Fork</em> the repository and then <em>clone</em> your fork to your local workspace.</p></li>
+<li><p>Make sure to add the <em>upstream</em> repository as a remote:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">remote</span> <span class="n">add</span> <span class="n">upstream</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">CederGroupHub</span><span class="o">/</span><span class="n">smol</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
 </li>
-<li><p>Make sure you write proper docstrings following <strong>*Google*</strong></p></li>
+<li><p>You should always keep your <code class="docutils literal notranslate"><span class="pre">main</span></code> branch or any feature branch up to date
+with the upstream repository <code class="docutils literal notranslate"><span class="pre">main</span></code> branch. Be good about doing <em>fast forward</em>
+merges of the upstream <code class="docutils literal notranslate"><span class="pre">main</span></code> into your fork branches while developing.</p></li>
 </ul>
-<p>style. You can just look at other docstrings to see what this looks like,
-but it is also helpful to set up your IDE to help you with this (PyCharm
-is nice for this). You should install <code class="docutils literal notranslate"><span class="pre">pydocstyle</span></code> and run it from the top
-level directory to make sure everything looks real nice.</p>
-<blockquote>
-<div><p>pydocstyle smol</p>
-</div></blockquote>
+</li>
+<li><p>In order to have changes available without having to re-install the package:</p>
+<ul>
+<li><p>Install the package in <em>editable</em> mode:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
+</pre></div>
+</div>
+</li>
+<li><p>If you make changes to cython files (a .pyx file) or the .c files have gone missing),
+the you will need to <em>re-cythonize</em>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">develop</span> <span class="o">--</span><span class="n">use</span><span class="o">-</span><span class="n">cython</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+<li><p>To develop your contributions you are free to do so in your <em>main</em> branch or any feature
+branch in your fork.</p>
 <ul class="simple">
-<li><p>Finally, you are also encouraged to start a pull request before you’re</p></li>
+<li><p>We recommend to only your forks <em>main</em> branch for short/easy fixes and additions.</p></li>
+<li><p>For more complex features, try to use a feature branch with a descriptive name.</p></li>
+<li><p>For very complex feautres feel free to open up a PR even before your contribution is finished with
+[WIP] in its name, and optionally mark it as a <em>draft</em>.</p></li>
 </ul>
-<p>fully done with your work when you want others to see what you are doing
-and possibly get feedback or comments. If you open a pull request that is a
-work in progress use [WIP] in the title.</p>
-</div></blockquote>
-<p>6. If you will working on a large feature you should consider discussing the
-idea with the team first. Then you should consider creating a new <strong>feature</strong>
-branch so that your work can be included in the main repo during development
-(once the feature is ready in can be merged into the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch). This
-will allow you to work on your own schedule, but also allow for suggestions
-and collaboration with others. To open up a new branch contact a repo admin.</p>
-<blockquote>
-<div><blockquote>
-<div><ul class="simple">
-<li><p>You need to tell the admin creating the name for your feature branch.</p></li>
+</li>
+<li><p>While developing we recommend you use the pre-commit hook that is setup to ensure that your
+code will satisfy all lint, documentation and black requirements. To do so install pre-commit, and run
+in your clones top directory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">install</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>All code should use <a class="reference external" href="https://google.github.io/styleguide/pyguide.html">google style</a> docstrings
+and <a class="reference external" href="https://black.readthedocs.io/en/stable/?badge=stable">black</a> style formatting.</p></li>
 </ul>
-<p>Make sure this is a descriptive name so it is obvious to others what the
-branch is for.
--   You can (and should) open many PRs to the feature branch as you are
-developing the necessary code. These PRs do not need anything special you
-are free to organize them however you see fit.
-- As you work on your feature make sure you follow updates on the
-<code class="docutils literal notranslate"><span class="pre">main</span></code> branch as closely as possible by doing appropariate
-fast-forward merges.
-- If you are working on a feature which needs changes or updates of any
-existing code please discuss this with the author before doing changes
-and adding work on those changes. This makes mergine larger features
-a whole lot easier.
-- If your feature needs another package that is not currently a requirement
-make sure to run it by &#64;lbluque before putting in too much work. In most
-cases additional dependencies will not be accepted.
--   When you think the code for the the branch is ready and well tested
-with its corresponding unit tests, then it can be merged into the <code class="docutils literal notranslate"><span class="pre">main</span></code>
-branch to become part of the main code. This requires a PR from the feature
-branch to the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch. Ask a repo admin to help you with this if
-necessary.
--   Once the feature branch has been merged to the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch it will
-be deleted.</p>
-</div></blockquote>
-<p>### A note on style
-Keeping the coding style consistently clean makes using the code and further
-development a whole lot easier. When writing new code please look at existing
-code and do your best to follow the current coding style.
-[PEP8](<a class="reference external" href="https://www.python.org/dev/peps/pep-0008/">https://www.python.org/dev/peps/pep-0008/</a>) everywhere please.
-Also look into the
-[google style guide](<a class="reference external" href="https://google.github.io/styleguide/pyguide.html">https://google.github.io/styleguide/pyguide.html</a>)
-(although everything in there is not strictly done here, it is a good guiding
-document).
-Name your variables, functions and classes with a descriptive name; and use
-abbreviations sparingly and make it <em>very obvious</em> what the abbrevation
-means. All new public classes and functions must have detailed docstring
-following
-[google style docstrings](<a class="reference external" href="https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html">https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html</a>)
-(private objects should still have a docstring but get a bit more slack).
-Doing this allows to easily keep the autogenerated documentation clean and up
-to date.
-Making sure all of the above is done continuously during development keeps the
-code in good shape for developers and users alike.</p>
-</div></blockquote>
+</li>
+<li><p>Make sure to test your contribution and write unit tests for any new features. All tests should go in the
+<code class="docutils literal notranslate"><span class="pre">smol\tests</span></code> directory. The CI will run tests upon opening a PR, but running them locally will help find
+problems before:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pytests</span> <span class="n">tests</span>
+</pre></div>
+</div>
+</li>
+<li><p>To submit a contribution open a <em>pull request</em> to the upstream repository. If your contribution changes
+the API (adds new features, edits or removes existing features). Please add a description to the
+<a class="reference external" href="https://github.com/CederGroupHub/smol/blob/main/CHANGES.md">change log</a>.</p></li>
+<li><p>If your contribution includes novel published (or to be published) methodology, you should also edit the
+<a class="reference internal" href="../citing.html#citing"><span class="std std-ref">Citing</span></a> page accordingly.</p></li>
+</ol>
+</section>
+<section id="adding-examples">
+<h3>Adding examples<a class="headerlink" href="#adding-examples" title="Permalink to this headline">#</a></h3>
+<p>In many occasions novel use of the package does not necessarily require introducing new source code, but rather
+using the existing functionality, and possibly external packages (that are are requirements) for particular or
+advanced calculations.</p>
+<ol class="arabic simple">
+<li><p>Create a notebook with a descriptive name in the <code class="docutils literal notranslate"><span class="pre">docs/src/notebooks</span></code> directory.</p></li>
+<li><p>Implement the functionality with enough markdown cells carefully describing the background, theory,
+and steps in the notebook.</p></li>
+<li><p>Any necessary data should be added to the <code class="docutils literal notranslate"><span class="pre">docs/src/notebooks/data</span></code> directory. Files should be at most
+a few MB.</p></li>
+<li><p>Once the notebook is ready, add an entry to the <span class="xref std std-ref">getting-started</span> page so your notebook shows up in the
+documentation.</p></li>
+</ol>
+</section>
 </section>
 </section>
 
@@ -454,6 +443,20 @@ code in good shape for developers and users alike.</p>
               
               <!-- Previous / next buttons -->
 <div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="index.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Developing</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="design.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Package Design</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
 </div>
               
           </main>

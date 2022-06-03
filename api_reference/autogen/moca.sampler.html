@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>moca.sampler package &#8212; smol 0.0.2 documentation</title>
+    <title>moca.sampler package &#8212; smol 0.0.3 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -118,7 +118,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.2  <!-- this text may get changed later by javascript -->
+        0.0.3  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -128,7 +128,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables api_reference/autogen/moca.sampler and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.2'}.
+     variables api_reference/autogen/moca.sampler and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.3'}.
 -->
 
 <script type="text/javascript">
@@ -179,10 +179,10 @@ function checkPageExistsAndRedirect(event) {
 
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.2 variable.
+            // this version, rather than using sphinx's 0.0.3 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.2") {
+            if (entry.version == "0.0.3") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -572,7 +572,7 @@ can be anything representative, i.e. number of sites)</p>
 <li><p><strong>num_energy_coefs</strong> (<em>int</em>) – the number of coefficients in the natural parameters that
 correspond to the energy only.</p></li>
 <li><p><strong>sample_trace</strong> (<a class="reference internal" href="#moca.sampler.kernel.Trace" title="moca.sampler.kernel.Trace"><em>Trace</em></a>) – a trace object for the traced values during MC sampling</p></li>
-<li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="moca.ensemble.html#moca.ensemble.base.Ensemble" title="moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
+<li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
 </ul>
 </dd>
 </dl>
@@ -903,7 +903,7 @@ and write a specific kernel see the Metropolis kernel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ensemble</strong> (<a class="reference internal" href="moca.ensemble.html#moca.ensemble.base.Ensemble" title="moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – an Ensemble instance to obtain the features and parameters
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – an Ensemble instance to obtain the features and parameters
 used in computing log probabilities.</p></li>
 <li><p><strong>step_type</strong> (<em>str</em>) – string specifying the MCMC step type.</p></li>
 <li><p><strong>seed</strong> (<em>int</em>) – optional
@@ -1003,7 +1003,7 @@ successful.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ensemble</strong> (<a class="reference internal" href="moca.ensemble.html#moca.ensemble.base.Ensemble" title="moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – an Ensemble instance to obtain the features and parameters
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – an Ensemble instance to obtain the features and parameters
 used in computing log probabilities.</p></li>
 <li><p><strong>step_type</strong> (<em>str</em>) – string specifying the MCMC step type.</p></li>
 <li><p><strong>temperature</strong> (<em>float</em>) – temperature at which the MCMC sampling will be carried out.</p></li>
@@ -1083,7 +1083,7 @@ for multicanonical sampling and related methods</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ensemble</strong> (<a class="reference internal" href="moca.ensemble.html#moca.ensemble.base.Ensemble" title="moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – an Ensemble instance to obtain the features and parameters
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – an Ensemble instance to obtain the features and parameters
 used in computing log probabilities.</p></li>
 <li><p><strong>step_type</strong> (<em>str</em>) – string specifying the MCMC step type.</p></li>
 <li><p><strong>temperature</strong> (<em>float</em>) – temperature at which the MCMC sampling will be carried out.</p></li>
@@ -1156,7 +1156,7 @@ accordingly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ensemble</strong> (<a class="reference internal" href="moca.ensemble.html#moca.ensemble.base.Ensemble" title="moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – an Ensemble instance to obtain the features and parameters
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – an Ensemble instance to obtain the features and parameters
 used in computing log probabilities.</p></li>
 <li><p><strong>step_type</strong> (<em>str</em>) – string specifying the MCMC step type.</p></li>
 <li><p><strong>seed</strong> (<em>int</em>) – optional
@@ -1209,7 +1209,7 @@ successful.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>kernel_type</strong> (<em>str</em>) – string specifying kernel type to instantiate.</p></li>
-<li><p><strong>ensemble</strong> (<a class="reference internal" href="moca.ensemble.html#moca.ensemble.base.Ensemble" title="moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – an Ensemble object to create the MCMC kernel from.</p></li>
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – an Ensemble object to create the MCMC kernel from.</p></li>
 <li><p><strong>step_type</strong> (<em>str</em>) – string specifying the proposal type (i.e. key for MCUsher type)</p></li>
 <li><p><strong>*args</strong> – positional arguments passed to class constructor</p></li>
 <li><p><strong>**kwargs</strong> – keyword arguments passed to class constructor</p></li>
@@ -1477,10 +1477,10 @@ automatically populate and create an appropriate SampleContainer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ensemble</strong> (<a class="reference internal" href="moca.ensemble.html#moca.ensemble.base.Ensemble" title="moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – an Ensemble class to obtain sample probabilities from.</p></li>
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – an Ensemble class to obtain sample probabilities from.</p></li>
 <li><p><strong>step_type</strong> (<em>str</em>) – optional
-type of step to run MCMC with. If not given the default is the
-first entry in the Ensemble.valid_mcmc_steps.</p></li>
+type of step to run MCMC with. If not given the default depends on
+whether chemical potentials are defined.</p></li>
 <li><p><strong>*args</strong> – positional arguments to pass to the MCKernel constructor.
 More often than not you want to specify the temperature!</p></li>
 <li><p><strong>kernel_type</strong> (<em>str</em>) – optional
@@ -1660,7 +1660,7 @@ can be anything representative, i.e. number of sites)</p>
 <li><p><strong>num_energy_coefs</strong> (<em>int</em>) – the number of coefficients in the natural parameters that
 correspond to the energy only.</p></li>
 <li><p><strong>sample_trace</strong> (<a class="reference internal" href="#moca.sampler.kernel.Trace" title="moca.sampler.kernel.Trace"><em>Trace</em></a>) – a trace object for the traced values during MC sampling</p></li>
-<li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="moca.ensemble.html#moca.ensemble.base.Ensemble" title="moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
+<li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
 </ul>
 </dd>
 </dl>

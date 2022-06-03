@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; smol 0.0.2 documentation</title>
+    <title>Index &#8212; smol 0.0.3 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -117,7 +117,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.2  <!-- this text may get changed later by javascript -->
+        0.0.3  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -127,7 +127,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables genindex and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.2'}.
+     variables genindex and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.3'}.
 -->
 
 <script type="text/javascript">
@@ -178,10 +178,10 @@ function checkPageExistsAndRedirect(event) {
 
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.2 variable.
+            // this version, rather than using sphinx's 0.0.3 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.2") {
+            if (entry.version == "0.0.3") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -273,8 +273,12 @@ function checkPageExistsAndRedirect(event) {
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api_reference/autogen/moca.html#id0">active_sites (Sublattice attribute)</a>, <a href="api_reference/autogen/moca.html#moca.sublattice.Sublattice.active_sites">[1]</a>, <a href="api_reference/moca/sublattice.html#id0">[2]</a>, <a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice.active_sites">[3]</a>
 </li>
-      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.active_sublattices">active_sublattices (Ensemble property)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.active_sublattices">[1]</a>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.BaseEnsemble.active_sublattices">active_sublattices (BaseEnsemble property)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.html#moca.Ensemble.active_sublattices">(Ensemble property)</a>, <a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.Ensemble.active_sublattices">[1]</a>
 </li>
+      </ul></li>
       <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.add_data_indices">add_data_indices() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.add_data_indices">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.add_data_indices">[2]</a>
 </li>
       <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.add_entry">add_entry() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.add_entry">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.add_entry">[2]</a>
@@ -295,9 +299,11 @@ function checkPageExistsAndRedirect(event) {
 </li>
       <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.append_entries">append_entries() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.append_entries">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.append_entries">[2]</a>
 </li>
-      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.as_dict">as_dict() (Cluster method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.as_dict">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.as_dict">[2]</a>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.BaseEnsemble.as_dict">as_dict() (BaseEnsemble method)</a>
 
       <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.as_dict">(Cluster method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.as_dict">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.as_dict">[2]</a>
+</li>
         <li><a href="api_reference/autogen/cofe.html#cofe.ClusterExpansion.as_dict">(ClusterExpansion method)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.ClusterExpansion.as_dict">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.as_dict">[2]</a>
 </li>
         <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.as_dict">(ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.as_dict">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.as_dict">[2]</a>
@@ -306,7 +312,7 @@ function checkPageExistsAndRedirect(event) {
 </li>
         <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.DiscreteBasis.as_dict">(DiscreteBasis method)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.DiscreteBasis.as_dict">[1]</a>
 </li>
-        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.as_dict">(Ensemble method)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.as_dict">[1]</a>
+        <li><a href="api_reference/autogen/moca.html#moca.Ensemble.as_dict">(Ensemble method)</a>, <a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.Ensemble.as_dict">[1]</a>
 </li>
         <li><a href="api_reference/autogen/moca.html#moca.EwaldProcessor.as_dict">(EwaldProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.EwaldProcessor.as_dict">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.ewald.EwaldProcessor.as_dict">[2]</a>, <a href="api_reference/moca/processors.ewald.html#smol.moca.processor.ewald.EwaldProcessor.as_dict">[3]</a>
 </li>
@@ -320,7 +326,7 @@ function checkPageExistsAndRedirect(event) {
 </li>
         <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.as_dict">(SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.as_dict">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.as_dict">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.as_dict">[3]</a>
 </li>
-        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.as_dict">(SemiGrandEnsemble method)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.as_dict">[1]</a>, <a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble.as_dict">[2]</a>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.as_dict">(SemiGrandEnsemble method)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.as_dict">[1]</a>
 </li>
         <li><a href="api_reference/autogen/cofe.space.html#cofe.space.domain.SiteSpace.as_dict">(SiteSpace method)</a>, <a href="api_reference/cofe/space.domain.html#smol.cofe.space.domain.SiteSpace.as_dict">[1]</a>
 </li>
@@ -355,6 +361,8 @@ function checkPageExistsAndRedirect(event) {
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.BaseEnsemble">BaseEnsemble (class in moca.ensemble.base)</a>
+</li>
       <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.basis_arrays">basis_arrays (Orbit property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.basis_arrays">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.basis_arrays">[2]</a>
 </li>
       <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis_factory">basis_factory() (in module cofe.space)</a>
@@ -410,8 +418,6 @@ function checkPageExistsAndRedirect(event) {
       <ul>
         <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.canonical.CanonicalEnsemble">(class in moca.ensemble.canonical)</a>
 </li>
-        <li><a href="api_reference/moca/ensembles.canonical.html#smol.moca.ensemble.canonical.CanonicalEnsemble">(class in smol.moca.ensemble.canonical)</a>
-</li>
       </ul></li>
       <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.centroid">centroid (Cluster attribute)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.centroid">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.centroid">[2]</a>
 
@@ -429,7 +435,13 @@ function checkPageExistsAndRedirect(event) {
         <li><a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.ChebyshevIterator">(class in smol.cofe.space.basis)</a>
 </li>
       </ul></li>
-      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.chemical_potentials">chemical_potentials (SemiGrandEnsemble property)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.chemical_potentials">[1]</a>, <a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble.chemical_potentials">[2]</a>
+      <li><a href="api_reference/autogen/moca.html#moca.Ensemble.chemical_potentials">chemical_potentials (Ensemble attribute)</a>, <a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.Ensemble.chemical_potentials">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.chemical_potentials">(SemiGrandEnsemble property)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.chemical_potentials">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.ChemicalPotentialManager">ChemicalPotentialManager (class in smol.moca.ensemble.ensemble)</a>
 </li>
       <li><a href="api_reference/utils.html#smol.utils.class_name_from_str">class_name_from_str() (in module smol.utils)</a>
 </li>
@@ -634,38 +646,42 @@ function checkPageExistsAndRedirect(event) {
         <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.MCBias.compute_bias_change">(MCBias method)</a>, <a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.MCBias.compute_bias_change">[1]</a>
 </li>
       </ul></li>
-      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.compute_chemical_work">compute_chemical_work() (SemiGrandEnsemble method)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.compute_chemical_work">[1]</a>, <a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble.compute_chemical_work">[2]</a>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.compute_chemical_work">compute_chemical_work() (SemiGrandEnsemble method)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.compute_chemical_work">[1]</a>
 </li>
-      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.canonical.CanonicalEnsemble.compute_feature_vector">compute_feature_vector() (CanonicalEnsemble method)</a>, <a href="api_reference/autogen/moca.html#moca.CanonicalEnsemble.compute_feature_vector">[1]</a>, <a href="api_reference/moca/ensembles.canonical.html#smol.moca.ensemble.canonical.CanonicalEnsemble.compute_feature_vector">[2]</a>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.BaseEnsemble.compute_feature_vector">compute_feature_vector() (BaseEnsemble method)</a>
 
       <ul>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.canonical.CanonicalEnsemble.compute_feature_vector">(CanonicalEnsemble method)</a>, <a href="api_reference/autogen/moca.html#moca.CanonicalEnsemble.compute_feature_vector">[1]</a>
+</li>
         <li><a href="api_reference/autogen/moca.html#moca.ClusterExpansionProcessor.compute_feature_vector">(ClusterExpansionProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.ClusterExpansionProcessor.compute_feature_vector">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector">[2]</a>, <a href="api_reference/moca/processors.expansion.html#smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector">[3]</a>
 </li>
         <li><a href="api_reference/autogen/moca.html#moca.CompositeProcessor.compute_feature_vector">(CompositeProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.CompositeProcessor.compute_feature_vector">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.composite.CompositeProcessor.compute_feature_vector">[2]</a>, <a href="api_reference/moca/processors.composite.html#smol.moca.processor.composite.CompositeProcessor.compute_feature_vector">[3]</a>
 </li>
-        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.compute_feature_vector">(Ensemble method)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.compute_feature_vector">[1]</a>
+        <li><a href="api_reference/autogen/moca.html#moca.Ensemble.compute_feature_vector">(Ensemble method)</a>, <a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.Ensemble.compute_feature_vector">[1]</a>
 </li>
         <li><a href="api_reference/autogen/moca.html#moca.EwaldProcessor.compute_feature_vector">(EwaldProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.EwaldProcessor.compute_feature_vector">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.ewald.EwaldProcessor.compute_feature_vector">[2]</a>, <a href="api_reference/moca/processors.ewald.html#smol.moca.processor.ewald.EwaldProcessor.compute_feature_vector">[3]</a>
 </li>
         <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.compute_feature_vector">(Processor method)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.compute_feature_vector">[1]</a>
 </li>
-        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.compute_feature_vector">(SemiGrandEnsemble method)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.compute_feature_vector">[1]</a>, <a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble.compute_feature_vector">[2]</a>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.compute_feature_vector">(SemiGrandEnsemble method)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.compute_feature_vector">[1]</a>
 </li>
       </ul></li>
-      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.canonical.CanonicalEnsemble.compute_feature_vector_change">compute_feature_vector_change() (CanonicalEnsemble method)</a>, <a href="api_reference/autogen/moca.html#moca.CanonicalEnsemble.compute_feature_vector_change">[1]</a>, <a href="api_reference/moca/ensembles.canonical.html#smol.moca.ensemble.canonical.CanonicalEnsemble.compute_feature_vector_change">[2]</a>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.BaseEnsemble.compute_feature_vector_change">compute_feature_vector_change() (BaseEnsemble method)</a>
 
       <ul>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.canonical.CanonicalEnsemble.compute_feature_vector_change">(CanonicalEnsemble method)</a>, <a href="api_reference/autogen/moca.html#moca.CanonicalEnsemble.compute_feature_vector_change">[1]</a>
+</li>
         <li><a href="api_reference/autogen/moca.html#moca.ClusterExpansionProcessor.compute_feature_vector_change">(ClusterExpansionProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.ClusterExpansionProcessor.compute_feature_vector_change">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector_change">[2]</a>, <a href="api_reference/moca/processors.expansion.html#smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector_change">[3]</a>
 </li>
         <li><a href="api_reference/autogen/moca.html#moca.CompositeProcessor.compute_feature_vector_change">(CompositeProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.CompositeProcessor.compute_feature_vector_change">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.composite.CompositeProcessor.compute_feature_vector_change">[2]</a>, <a href="api_reference/moca/processors.composite.html#smol.moca.processor.composite.CompositeProcessor.compute_feature_vector_change">[3]</a>
 </li>
-        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.compute_feature_vector_change">(Ensemble method)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.compute_feature_vector_change">[1]</a>
+        <li><a href="api_reference/autogen/moca.html#moca.Ensemble.compute_feature_vector_change">(Ensemble method)</a>, <a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.Ensemble.compute_feature_vector_change">[1]</a>
 </li>
         <li><a href="api_reference/autogen/moca.html#moca.EwaldProcessor.compute_feature_vector_change">(EwaldProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.EwaldProcessor.compute_feature_vector_change">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.ewald.EwaldProcessor.compute_feature_vector_change">[2]</a>, <a href="api_reference/moca/processors.ewald.html#smol.moca.processor.ewald.EwaldProcessor.compute_feature_vector_change">[3]</a>
 </li>
         <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.compute_feature_vector_change">(Processor method)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.compute_feature_vector_change">[1]</a>
 </li>
-        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.compute_feature_vector_change">(SemiGrandEnsemble method)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.compute_feature_vector_change">[1]</a>, <a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble.compute_feature_vector_change">[2]</a>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.compute_feature_vector_change">(SemiGrandEnsemble method)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.compute_feature_vector_change">[1]</a>
 </li>
       </ul></li>
       <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.MCKernel.compute_initial_trace">compute_initial_trace() (MCKernel method)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.MCKernel.compute_initial_trace">[1]</a>
@@ -754,10 +770,10 @@ function checkPageExistsAndRedirect(event) {
 </li>
       <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.energy_variance">energy_variance() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.energy_variance">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.energy_variance">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.energy_variance">[3]</a>
 </li>
-      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble">Ensemble (class in moca.ensemble.base)</a>
+      <li><a href="api_reference/autogen/moca.html#moca.Ensemble">Ensemble (class in moca)</a>
 
       <ul>
-        <li><a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble">(class in smol.moca.ensemble.base)</a>
+        <li><a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.Ensemble">(class in smol.moca.ensemble.ensemble)</a>
 </li>
       </ul></li>
       <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.enthalpy_variance">enthalpy_variance() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.enthalpy_variance">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.enthalpy_variance">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.enthalpy_variance">[3]</a>
@@ -850,15 +866,19 @@ function checkPageExistsAndRedirect(event) {
         <li><a href="api_reference/autogen/cofe.space.html#id2">(Cluster property)</a>, <a href="api_reference/autogen/cofe.space.html#id5">[1]</a>, <a href="api_reference/cofe/space.cluster.html#id1">[2]</a>
 </li>
       </ul></li>
-      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.from_cluster_expansion">from_cluster_expansion() (Ensemble class method)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.from_cluster_expansion">[1]</a>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.BaseEnsemble.from_cluster_expansion">from_cluster_expansion() (BaseEnsemble class method)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.html#moca.Ensemble.from_cluster_expansion">(Ensemble class method)</a>, <a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.Ensemble.from_cluster_expansion">[1]</a>
 </li>
+      </ul></li>
       <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.from_cutoffs">from_cutoffs() (ClusterSubspace class method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.from_cutoffs">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.from_cutoffs">[2]</a>
 
       <ul>
         <li><a href="api_reference/autogen/cofe.html#cofe.PottsSubspace.from_cutoffs">(PottsSubspace class method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.PottsSubspace.from_cutoffs">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace.from_cutoffs">[2]</a>
 </li>
       </ul></li>
-      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.canonical.CanonicalEnsemble.from_dict">from_dict() (CanonicalEnsemble class method)</a>, <a href="api_reference/autogen/moca.html#moca.CanonicalEnsemble.from_dict">[1]</a>, <a href="api_reference/moca/ensembles.canonical.html#smol.moca.ensemble.canonical.CanonicalEnsemble.from_dict">[2]</a>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.canonical.CanonicalEnsemble.from_dict">from_dict() (CanonicalEnsemble class method)</a>, <a href="api_reference/autogen/moca.html#moca.CanonicalEnsemble.from_dict">[1]</a>
 
       <ul>
         <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.from_dict">(Cluster class method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.from_dict">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.from_dict">[2]</a>
@@ -872,6 +892,8 @@ function checkPageExistsAndRedirect(event) {
         <li><a href="api_reference/autogen/moca.html#moca.CompositeProcessor.from_dict">(CompositeProcessor class method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.CompositeProcessor.from_dict">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.composite.CompositeProcessor.from_dict">[2]</a>, <a href="api_reference/moca/processors.composite.html#smol.moca.processor.composite.CompositeProcessor.from_dict">[3]</a>
 </li>
         <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.DiscreteBasis.from_dict">(DiscreteBasis class method)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.DiscreteBasis.from_dict">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.Ensemble.from_dict">(Ensemble class method)</a>, <a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.Ensemble.from_dict">[1]</a>
 </li>
         <li><a href="api_reference/autogen/moca.html#moca.EwaldProcessor.from_dict">(EwaldProcessor class method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.EwaldProcessor.from_dict">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.ewald.EwaldProcessor.from_dict">[2]</a>, <a href="api_reference/moca/processors.ewald.html#smol.moca.processor.ewald.EwaldProcessor.from_dict">[3]</a>
 </li>
@@ -887,7 +909,7 @@ function checkPageExistsAndRedirect(event) {
 </li>
         <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.from_dict">(SampleContainer class method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.from_dict">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.from_dict">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.from_dict">[3]</a>
 </li>
-        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.from_dict">(SemiGrandEnsemble class method)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.from_dict">[1]</a>, <a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble.from_dict">[2]</a>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.from_dict">(SemiGrandEnsemble class method)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.from_dict">[1]</a>
 </li>
         <li><a href="api_reference/autogen/cofe.space.html#cofe.space.domain.SiteSpace.from_dict">(SiteSpace class method)</a>, <a href="api_reference/cofe/space.domain.html#smol.cofe.space.domain.SiteSpace.from_dict">[1]</a>
 </li>
@@ -1319,6 +1341,8 @@ function checkPageExistsAndRedirect(event) {
         <li><a href="api_reference/autogen/moca.sampler.html#module-moca.sampler.mcusher">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     moca.sampler.sampler
 
@@ -1326,8 +1350,6 @@ function checkPageExistsAndRedirect(event) {
         <li><a href="api_reference/autogen/moca.sampler.html#module-moca.sampler.sampler">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     moca.sublattice
 
@@ -1427,11 +1449,7 @@ function checkPageExistsAndRedirect(event) {
 </li>
         <li><a href="api_reference/io.html#module-smol.io">smol.io</a>
 </li>
-        <li><a href="api_reference/moca/ensembles.base.html#module-smol.moca.ensemble.base">smol.moca.ensemble.base</a>
-</li>
-        <li><a href="api_reference/moca/ensembles.canonical.html#module-smol.moca.ensemble.canonical">smol.moca.ensemble.canonical</a>
-</li>
-        <li><a href="api_reference/moca/ensembles.semigrand.html#module-smol.moca.ensemble.semigrand">smol.moca.ensemble.semigrand</a>
+        <li><a href="api_reference/moca/ensemble.html#module-smol.moca.ensemble.ensemble">smol.moca.ensemble.ensemble</a>
 </li>
         <li><a href="api_reference/moca/processors.base.html#module-smol.moca.processor.base">smol.moca.processor.base</a>
 </li>
@@ -1468,14 +1486,18 @@ function checkPageExistsAndRedirect(event) {
         <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.Trace.names">(Trace property)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.Trace.names">[1]</a>
 </li>
       </ul></li>
-      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.canonical.CanonicalEnsemble.natural_parameters">natural_parameters (CanonicalEnsemble property)</a>, <a href="api_reference/autogen/moca.html#moca.CanonicalEnsemble.natural_parameters">[1]</a>, <a href="api_reference/moca/ensembles.canonical.html#smol.moca.ensemble.canonical.CanonicalEnsemble.natural_parameters">[2]</a>
+      <li><a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.ChemicalPotentialManager.natural_parameter">natural_parameter (ChemicalPotentialManager attribute)</a>
+</li>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.BaseEnsemble.natural_parameters">natural_parameters (BaseEnsemble property)</a>
 
       <ul>
-        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.natural_parameters">(Ensemble property)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.natural_parameters">[1]</a>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.canonical.CanonicalEnsemble.natural_parameters">(CanonicalEnsemble property)</a>, <a href="api_reference/autogen/moca.html#moca.CanonicalEnsemble.natural_parameters">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.Ensemble.natural_parameters">(Ensemble property)</a>, <a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.Ensemble.natural_parameters">[1]</a>
 </li>
         <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.natural_parameters">(SampleContainer attribute)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.natural_parameters">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.natural_parameters">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.natural_parameters">[3]</a>
 </li>
-        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.natural_parameters">(SemiGrandEnsemble property)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.natural_parameters">[1]</a>, <a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble.natural_parameters">[2]</a>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.natural_parameters">(SemiGrandEnsemble property)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.natural_parameters">[1]</a>
 </li>
       </ul></li>
       <li><a href="api_reference/exceptions.html#smol.exceptions.NotFittedError">NotFittedError</a>
@@ -1488,8 +1510,12 @@ function checkPageExistsAndRedirect(event) {
         <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.num_corr_functions">(ClusterSubspace attribute)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.num_corr_functions">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.num_corr_functions">[2]</a>
 </li>
       </ul></li>
-      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.num_energy_coefs">num_energy_coefs (Ensemble attribute)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.num_energy_coefs">[1]</a>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.BaseEnsemble.num_energy_coefs">num_energy_coefs (BaseEnsemble attribute)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.html#moca.Ensemble.num_energy_coefs">(Ensemble property)</a>, <a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.Ensemble.num_energy_coefs">[1]</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.num_features">num_features (StructureWrangler property)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.num_features">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.num_features">[2]</a>
@@ -1502,9 +1528,11 @@ function checkPageExistsAndRedirect(event) {
 </li>
       <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.num_samples">num_samples (SampleContainer property)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.num_samples">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.num_samples">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.num_samples">[3]</a>
 </li>
-      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.num_sites">num_sites (Ensemble property)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.num_sites">[1]</a>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.BaseEnsemble.num_sites">num_sites (BaseEnsemble property)</a>
 
       <ul>
+        <li><a href="api_reference/autogen/moca.html#moca.Ensemble.num_sites">(Ensemble property)</a>, <a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.Ensemble.num_sites">[1]</a>
+</li>
         <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.num_sites">(Processor property)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.num_sites">[1]</a>
 </li>
         <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.num_sites">(SampleContainer attribute)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.num_sites">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.num_sites">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.num_sites">[3]</a>
@@ -1594,13 +1622,15 @@ function checkPageExistsAndRedirect(event) {
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.process_entry">process_entry() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.process_entry">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.process_entry">[2]</a>
 </li>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.BaseEnsemble.processor">processor (BaseEnsemble property)</a>
+</li>
       <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor">Processor (class in moca.processor.base)</a>
 
       <ul>
         <li><a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor">(class in smol.moca.processor.base)</a>
 </li>
       </ul></li>
-      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.processor">processor (Ensemble property)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.processor">[1]</a>
+      <li><a href="api_reference/autogen/moca.html#moca.Ensemble.processor">processor (Ensemble property)</a>, <a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.Ensemble.processor">[1]</a>
 </li>
       <li><a href="api_reference/autogen/moca.html#moca.CompositeProcessor.processors">processors (CompositeProcessor property)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.CompositeProcessor.processors">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.composite.CompositeProcessor.processors">[2]</a>, <a href="api_reference/moca/processors.composite.html#smol.moca.processor.composite.CompositeProcessor.processors">[3]</a>
 </li>
@@ -1648,29 +1678,35 @@ function checkPageExistsAndRedirect(event) {
 </li>
       <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.remove_entry">remove_entry() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.remove_entry">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.remove_entry">[2]</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.remove_orbits">remove_orbits() (ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.remove_orbits">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.remove_orbits">[2]</a>
 </li>
       <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.remove_properties">remove_properties() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.remove_properties">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.remove_properties">[2]</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.reset_bases">reset_bases() (Orbit method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.reset_bases">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.reset_bases">[2]</a>
 </li>
-      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.reset_restricted_sites">reset_restricted_sites() (Ensemble method)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.reset_restricted_sites">[1]</a>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.BaseEnsemble.reset_restricted_sites">reset_restricted_sites() (BaseEnsemble method)</a>
 
       <ul>
+        <li><a href="api_reference/autogen/moca.html#moca.Ensemble.reset_restricted_sites">(Ensemble method)</a>, <a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.Ensemble.reset_restricted_sites">[1]</a>
+</li>
         <li><a href="api_reference/autogen/moca.html#moca.sublattice.Sublattice.reset_restricted_sites">(Sublattice method)</a>, <a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice.reset_restricted_sites">[1]</a>
 </li>
       </ul></li>
-      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.restrict_sites">restrict_sites() (Ensemble method)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.restrict_sites">[1]</a>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.BaseEnsemble.restrict_sites">restrict_sites() (BaseEnsemble method)</a>
 
       <ul>
+        <li><a href="api_reference/autogen/moca.html#moca.Ensemble.restrict_sites">(Ensemble method)</a>, <a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.Ensemble.restrict_sites">[1]</a>
+</li>
         <li><a href="api_reference/autogen/moca.html#moca.sublattice.Sublattice.restrict_sites">(Sublattice method)</a>, <a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice.restrict_sites">[1]</a>
 </li>
       </ul></li>
-      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.restricted_sites">restricted_sites (Ensemble property)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.restricted_sites">[1]</a>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.BaseEnsemble.restricted_sites">restricted_sites (BaseEnsemble property)</a>
 
       <ul>
+        <li><a href="api_reference/autogen/moca.html#moca.Ensemble.restricted_sites">(Ensemble property)</a>, <a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.Ensemble.restricted_sites">[1]</a>
+</li>
         <li><a href="api_reference/autogen/moca.html#moca.sublattice.Sublattice.restricted_sites">(Sublattice property)</a>, <a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice.restricted_sites">[1]</a>
 </li>
       </ul></li>
@@ -1726,8 +1762,6 @@ function checkPageExistsAndRedirect(event) {
 
       <ul>
         <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble">(class in moca.ensemble.semigrand)</a>
-</li>
-        <li><a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble">(class in smol.moca.ensemble.semigrand)</a>
 </li>
       </ul></li>
       <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.MCKernel.set_aux_state">set_aux_state() (MCKernel method)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.MCKernel.set_aux_state">[1]</a>
@@ -1877,24 +1911,10 @@ function checkPageExistsAndRedirect(event) {
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li>
-    smol.moca.ensemble.base
+    smol.moca.ensemble.ensemble
 
       <ul>
-        <li><a href="api_reference/moca/ensembles.base.html#module-smol.moca.ensemble.base">module</a>
-</li>
-      </ul></li>
-      <li>
-    smol.moca.ensemble.canonical
-
-      <ul>
-        <li><a href="api_reference/moca/ensembles.canonical.html#module-smol.moca.ensemble.canonical">module</a>
-</li>
-      </ul></li>
-      <li>
-    smol.moca.ensemble.semigrand
-
-      <ul>
-        <li><a href="api_reference/moca/ensembles.semigrand.html#module-smol.moca.ensemble.semigrand">module</a>
+        <li><a href="api_reference/moca/ensemble.html#module-smol.moca.ensemble.ensemble">module</a>
 </li>
       </ul></li>
       <li>
@@ -1960,20 +1980,24 @@ function checkPageExistsAndRedirect(event) {
         <li><a href="api_reference/utils.html#module-smol.utils">module</a>
 </li>
       </ul></li>
-      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.DiscreteBasis.species">species (DiscreteBasis property)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.DiscreteBasis.species">[1]</a>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.BaseEnsemble.species">species (BaseEnsemble property)</a>
 
       <ul>
-        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.species">(Ensemble property)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.species">[1]</a>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.DiscreteBasis.species">(DiscreteBasis property)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.DiscreteBasis.species">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.Ensemble.species">(Ensemble property)</a>, <a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.Ensemble.species">[1]</a>
 </li>
         <li><a href="api_reference/autogen/moca.html#moca.sublattice.Sublattice.species">(Sublattice property)</a>, <a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice.species">[1]</a>
 </li>
       </ul></li>
       <li><a href="api_reference/autogen/moca.html#moca.sublattice.Sublattice.split_by_species">split_by_species() (Sublattice method)</a>, <a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice.split_by_species">[1]</a>
 </li>
-      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.split_sublattice_by_species">split_sublattice_by_species() (Ensemble method)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.split_sublattice_by_species">[1]</a>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.BaseEnsemble.split_sublattice_by_species">split_sublattice_by_species() (BaseEnsemble method)</a>
 
       <ul>
-        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.split_sublattice_by_species">(SemiGrandEnsemble method)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.split_sublattice_by_species">[1]</a>, <a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble.split_sublattice_by_species">[2]</a>
+        <li><a href="api_reference/autogen/moca.html#moca.Ensemble.split_sublattice_by_species">(Ensemble method)</a>, <a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.Ensemble.split_sublattice_by_species">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.split_sublattice_by_species">(SemiGrandEnsemble method)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.split_sublattice_by_species">[1]</a>
 </li>
       </ul></li>
       <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.StandardBasis">StandardBasis (class in cofe.space.basis)</a>
@@ -2028,9 +2052,11 @@ function checkPageExistsAndRedirect(event) {
 </li>
       <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.MCUsher.sublattice_probabilities">sublattice_probabilities (MCUsher property)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.MCUsher.sublattice_probabilities">[1]</a>
 </li>
-      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.sublattices">sublattices (Ensemble property)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.sublattices">[1]</a>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.BaseEnsemble.sublattices">sublattices (BaseEnsemble property)</a>
 
       <ul>
+        <li><a href="api_reference/autogen/moca.html#moca.Ensemble.sublattices">(Ensemble property)</a>, <a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.Ensemble.sublattices">[1]</a>
+</li>
         <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.MCBias.sublattices">(MCBias attribute)</a>, <a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.MCBias.sublattices">[1]</a>
 </li>
         <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.sublattices">(SampleContainer attribute)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.sublattices">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.sublattices">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.sublattices">[3]</a>
@@ -2052,8 +2078,12 @@ function checkPageExistsAndRedirect(event) {
 </li>
       <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.symops">symops (ClusterSubspace attribute)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.symops">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.symops">[2]</a>
 </li>
-      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.system_size">system_size (Ensemble property)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.system_size">[1]</a>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.BaseEnsemble.system_size">system_size (BaseEnsemble property)</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.html#moca.Ensemble.system_size">(Ensemble property)</a>, <a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.Ensemble.system_size">[1]</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -2068,10 +2098,12 @@ function checkPageExistsAndRedirect(event) {
         <li><a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.ThermalKernel">(class in smol.moca.sampler.kernel)</a>
 </li>
       </ul></li>
-      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.thermo_boundaries">thermo_boundaries (Ensemble attribute)</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.thermo_boundaries">[1]</a>
+      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.BaseEnsemble.thermo_boundaries">thermo_boundaries (BaseEnsemble attribute)</a>
 
       <ul>
-        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.thermo_boundaries">(SemiGrandEnsemble attribute)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.thermo_boundaries">[1]</a>, <a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble.thermo_boundaries">[2]</a>
+        <li><a href="api_reference/autogen/moca.html#moca.Ensemble.thermo_boundaries">(Ensemble attribute)</a>, <a href="api_reference/moca/ensemble.html#smol.moca.ensemble.ensemble.Ensemble.thermo_boundaries">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.thermo_boundaries">(SemiGrandEnsemble attribute)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.thermo_boundaries">[1]</a>
 </li>
       </ul></li>
       <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.to">to() (Cluster method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.to">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.to">[2]</a>
@@ -2146,14 +2178,6 @@ function checkPageExistsAndRedirect(event) {
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.canonical.CanonicalEnsemble.valid_mcmc_steps">valid_mcmc_steps (CanonicalEnsemble attribute)</a>, <a href="api_reference/autogen/moca.html#moca.CanonicalEnsemble.valid_mcmc_steps">[1]</a>, <a href="api_reference/moca/ensembles.canonical.html#smol.moca.ensemble.canonical.CanonicalEnsemble.valid_mcmc_steps">[2]</a>
-
-      <ul>
-        <li><a href="api_reference/autogen/moca.ensemble.html#id0">(Ensemble attribute)</a>, <a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.base.Ensemble.valid_mcmc_steps">[1]</a>, <a href="api_reference/moca/ensembles.base.html#id0">[2]</a>, <a href="api_reference/moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble.valid_mcmc_steps">[3]</a>
-</li>
-        <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.semigrand.SemiGrandEnsemble.valid_mcmc_steps">(SemiGrandEnsemble attribute)</a>, <a href="api_reference/autogen/moca.html#moca.SemiGrandEnsemble.valid_mcmc_steps">[1]</a>, <a href="api_reference/moca/ensembles.semigrand.html#smol.moca.ensemble.semigrand.SemiGrandEnsemble.valid_mcmc_steps">[2]</a>
-</li>
-      </ul></li>
       <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.MCKernel.valid_mcushers">valid_mcushers (MCKernel attribute)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.MCKernel.valid_mcushers">[1]</a>
 
       <ul>

@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Developing &#8212; smol 0.0.2 documentation</title>
+    <title>Developing &#8212; smol 0.0.3 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -33,6 +33,7 @@
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contributing &amp; Developing Guidelines" href="guide.html" />
     <link rel="prev" title="Citing" href="../citing.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
@@ -119,7 +120,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.2  <!-- this text may get changed later by javascript -->
+        0.0.3  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -129,7 +130,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables developer_guide/index and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.2'}.
+     variables developer_guide/index and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.3'}.
 -->
 
 <script type="text/javascript">
@@ -180,10 +181,10 @@ function checkPageExistsAndRedirect(event) {
 
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.2 variable.
+            // this version, rather than using sphinx's 0.0.3 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.2") {
+            if (entry.version == "0.0.3") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -221,7 +222,19 @@ function checkPageExistsAndRedirect(event) {
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
-    
+    <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="guide.html">
+   Contributing &amp; Developing Guidelines
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="design.html">
+   Package Design
+  </a>
+ </li>
+</ul>
+
   </div>
 </nav>
               </div>
@@ -268,12 +281,33 @@ function checkPageExistsAndRedirect(event) {
                 
   <section id="developing">
 <h1>Developing<a class="headerlink" href="#developing" title="Permalink to this headline">#</a></h1>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This page is still under construction…</p>
+<p>The following sections list contributing guidelines as well a detailed description of
+design of the package that may help to understand much better how and where to implement
+new features. This information should help make writting and contributing new
+functionality much more straightforward.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="guide.html">Contributing &amp; Developing Guidelines</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide.html#bugs-issues-input-questions-etc">Bugs, issues, input, questions, etc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide.html#developing">Developing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="guide.html#guidelines">Guidelines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="guide.html#adding-code-contributions">Adding code contributions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="guide.html#adding-examples">Adding examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">Package Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="design.html#overview-mission">Overview &amp; Mission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design.html#module-design">Module Design</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="design.html#smol-cofe"><code class="xref py py-mod docutils literal notranslate"><span class="pre">smol.cofe</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="design.html#smol-moca"><code class="xref py py-mod docutils literal notranslate"><span class="pre">smol.moca</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 </div>
-<p>All classes and functions are designed for easy extension and implementation
-of new metholody.</p>
 </section>
 
 
@@ -288,6 +322,13 @@ of new metholody.</p>
             <p class="prev-next-subtitle">previous</p>
             <p class="prev-next-title">Citing</p>
         </div>
+    </a>
+    <a class='right-next' id="next-link" href="guide.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Contributing &amp; Developing Guidelines</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
     </a>
 </div>
               

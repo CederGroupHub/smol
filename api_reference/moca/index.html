@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>moca — Monte Carlo Module &#8212; smol 0.0.2 documentation</title>
+    <title>moca — Monte Carlo Module &#8212; smol 0.0.3 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -33,7 +33,7 @@
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Ensembles" href="ensembles.html" />
+    <link rel="next" title="Processors" href="processors.html" />
     <link rel="prev" title="External Terms" href="../cofe/extern.ewald.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
@@ -120,7 +120,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.2  <!-- this text may get changed later by javascript -->
+        0.0.3  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -130,7 +130,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables api_reference/moca/index and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.2'}.
+     variables api_reference/moca/index and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.3'}.
 -->
 
 <script type="text/javascript">
@@ -181,10 +181,10 @@ function checkPageExistsAndRedirect(event) {
 
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.2 variable.
+            // this version, rather than using sphinx's 0.0.3 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.2") {
+            if (entry.version == "0.0.3") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -277,13 +277,13 @@ function checkPageExistsAndRedirect(event) {
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="ensembles.html">
-     Ensembles
+    <a class="reference internal" href="processors.html">
+     Processors
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="processors.html">
-     Processors
+    <a class="reference internal" href="ensemble.html">
+     Ensemble
     </a>
    </li>
    <li class="toctree-l2">
@@ -370,12 +370,6 @@ function checkPageExistsAndRedirect(event) {
 using a cluster expansion Hamiltonian with/or using optional pair potentials.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="ensembles.html">Ensembles</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="ensembles.base.html">Base Ensemble</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ensembles.canonical.html">Canonical Ensemble</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ensembles.semigrand.html">Semigrand Ensemble</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="processors.html">Processors</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="processors.base.html">Base Processor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="processors.composite.html">Composite Processor</a></li>
@@ -383,6 +377,7 @@ using a cluster expansion Hamiltonian with/or using optional pair potentials.</p
 <li class="toctree-l2"><a class="reference internal" href="processors.expansion.html">Expansion Processor</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="ensemble.html">Ensemble</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampler.html">Sampling</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="sampler.sampler.html">Sampler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sampler.kernel.html">Sampling Kernel</a></li>
@@ -409,10 +404,10 @@ using a cluster expansion Hamiltonian with/or using optional pair potentials.</p
             <p class="prev-next-title">External Terms</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="ensembles.html" title="next page">
+    <a class='right-next' id="next-link" href="processors.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Ensembles</p>
+        <p class="prev-next-title">Processors</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

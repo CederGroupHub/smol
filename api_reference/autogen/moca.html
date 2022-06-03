@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>moca package &#8212; smol 0.0.2 documentation</title>
+    <title>moca package &#8212; smol 0.0.3 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -118,7 +118,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.2  <!-- this text may get changed later by javascript -->
+        0.0.3  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -128,7 +128,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables api_reference/autogen/moca and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.2'}.
+     variables api_reference/autogen/moca and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.3'}.
 -->
 
 <script type="text/javascript">
@@ -179,10 +179,10 @@ function checkPageExistsAndRedirect(event) {
 
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.2 variable.
+            // this version, rather than using sphinx's 0.0.3 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.2") {
+            if (entry.version == "0.0.3") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -524,7 +524,7 @@ Monte Carlo simulations using Cluster Expansion Hamiltonians.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.CanonicalEnsemble">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CanonicalEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CanonicalEnsemble" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../moca/ensembles.base.html#smol.moca.ensemble.base.Ensemble" title="smol.moca.ensemble.base.Ensemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.base.Ensemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.base.BaseEnsemble</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Canonical Ensemble class to run Monte Carlo Simulations.</p>
 <p>Initialize class instance.</p>
 <dl class="field-list simple">
@@ -596,11 +596,6 @@ processor.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">natural_parameters</span></span><a class="headerlink" href="#moca.CanonicalEnsemble.natural_parameters" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the vector of exponential parameters.</p>
 </dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="moca.CanonicalEnsemble.valid_mcmc_steps">
-<span class="sig-name descname"><span class="pre">valid_mcmc_steps</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('swap',)</span></em><a class="headerlink" href="#moca.CanonicalEnsemble.valid_mcmc_steps" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
@@ -846,6 +841,234 @@ for the new species to place at that site.</p></li>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="moca.Ensemble">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chemical_potentials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
+<p>Thermodynamic ensemble class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="moca.Ensemble.thermo_boundaries">
+<span class="sig-name descname"><span class="pre">thermo_boundaries</span></span><a class="headerlink" href="#moca.Ensemble.thermo_boundaries" title="Permalink to this definition">#</a></dt>
+<dd><p>Dictionary with corresponding thermodynamic boundaries, i.e.
+chemical potentials or fugacity fractions. This is kept only for
+descriptive purposes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Initialize class instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>processor</strong> (<a class="reference internal" href="moca.processor.html#moca.processor.base.Processor" title="moca.processor.base.Processor"><em>Processor</em></a>) – a processor that can compute the change in property given
+a set of flips.</p></li>
+<li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – optional
+list of Sublattice objects representing sites in the processor
+supercell with same site spaces.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.Ensemble.active_sublattices">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">active_sublattices</span></span><a class="headerlink" href="#moca.Ensemble.active_sublattices" title="Permalink to this definition">#</a></dt>
+<dd><p>Get list of active sub-lattices.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.Ensemble.as_dict">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.as_dict" title="Permalink to this definition">#</a></dt>
+<dd><p>Get Json-serialization dict representation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>MSONable dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="moca.Ensemble.chemical_potentials">
+<span class="sig-name descname"><span class="pre">chemical_potentials</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#moca.Ensemble.chemical_potentials" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.Ensemble.compute_feature_vector">
+<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.compute_feature_vector" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the feature vector for a given occupancy.</p>
+<p>The feature vector includes the necessary features required to compute
+the exponent determining the relative probability for the given
+occupancy (i.e. a generalized enthalpy). The feature vector for
+ensembles represents the sufficient statistics.</p>
+<p>For a cluster expansion, the feature vector is the
+correlation vector x system size</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>feature vector</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.Ensemble.compute_feature_vector_change">
+<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.compute_feature_vector_change" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the change in the feature vector from a given step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string.</p></li>
+<li><p><strong>step</strong> (<em>list of tuple</em>) – a sequence of flips given by MCUsher.propose_step</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>difference in feature vector</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.Ensemble.from_cluster_expansion">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_cluster_expansion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_expansion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.from_cluster_expansion" title="Permalink to this definition">#</a></dt>
+<dd><p>Initialize an ensemble from a cluster expansion.</p>
+<p>Convenience constructor to instantiate an ensemble. This will take
+care of initializing the correct processor based on the
+ClusterExpansion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cluster_expansion</strong> (<a class="reference internal" href="cofe.html#cofe.expansion.ClusterExpansion" title="cofe.expansion.ClusterExpansion"><em>ClusterExpansion</em></a>) – A cluster expansion object.</p></li>
+<li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – Supercell matrix defining the system size.</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments to pass to ensemble constructor. Such as
+sublattices, sublattice_probabilities, chemical_potentials,
+fugacity_fractions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Ensemble</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.Ensemble.from_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble_d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.from_dict" title="Permalink to this definition">#</a></dt>
+<dd><p>Instantiate a CanonicalEnsemble from dict representation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ensemble_d</strong> (<em>dict</em>) – dictionary representation.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>CanonicalEnsemble</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.Ensemble.natural_parameters">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">natural_parameters</span></span><a class="headerlink" href="#moca.Ensemble.natural_parameters" title="Permalink to this definition">#</a></dt>
+<dd><p>Get the vector of natural parameters.</p>
+<p>The natural parameters correspond to the fit coefficients of the
+underlying processor plus any additional terms involved in the Legendre
+transformation corresponding to the ensemble.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.Ensemble.num_energy_coefs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_energy_coefs</span></span><a class="headerlink" href="#moca.Ensemble.num_energy_coefs" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the number of coefficients used in the energy expansion.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.Ensemble.num_sites">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_sites</span></span><a class="headerlink" href="#moca.Ensemble.num_sites" title="Permalink to this definition">#</a></dt>
+<dd><p>Get the total number of sites in the supercell.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.Ensemble.processor">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">processor</span></span><a class="headerlink" href="#moca.Ensemble.processor" title="Permalink to this definition">#</a></dt>
+<dd><p>Get the ensemble processor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.Ensemble.reset_restricted_sites">
+<span class="sig-name descname"><span class="pre">reset_restricted_sites</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.reset_restricted_sites" title="Permalink to this definition">#</a></dt>
+<dd><p>Unfreeze all previously restricted sites.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.Ensemble.restrict_sites">
+<span class="sig-name descname"><span class="pre">restrict_sites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.restrict_sites" title="Permalink to this definition">#</a></dt>
+<dd><p>Restricts (freezes) the given sites.</p>
+<p>This will exclude those sites from being flipped during a Monte Carlo
+run. If some of the given indices refer to inactive sites, there will
+be no effect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sites</strong> (<em>Sequence</em>) – indices of sites in the occupancy string to restrict.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.Ensemble.restricted_sites">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">restricted_sites</span></span><a class="headerlink" href="#moca.Ensemble.restricted_sites" title="Permalink to this definition">#</a></dt>
+<dd><p>Get indices of all restricted sites.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.Ensemble.species">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">species</span></span><a class="headerlink" href="#moca.Ensemble.species" title="Permalink to this definition">#</a></dt>
+<dd><p>Species on active sublattices.</p>
+<p>These are minimal species required in setting chemical potentials.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.Ensemble.split_sublattice_by_species">
+<span class="sig-name descname"><span class="pre">split_sublattice_by_species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">occu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species_in_partitions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.split_sublattice_by_species" title="Permalink to this definition">#</a></dt>
+<dd><p>Split a sub-lattice in system by its occupied species.</p>
+<p>An example use case might be simulating topotactic Li extraction
+and insertion, where we want to consider Li/Vac, TM and O as
+different sub-lattices that can not be mixed by swapping.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sublattice_id</strong> (<em>int</em>) – The index of sub-lattice to split in self.sublattices.</p></li>
+<li><p><strong>occu</strong> (<em>np.ndarray</em><em>[</em><em>int</em><em>]</em>) – An occupancy array to reference with.</p></li>
+<li><p><strong>species_in_partitions</strong> (<em>List</em><em>[</em><em>List</em><em>[</em><em>int</em><em>|</em><em>Species</em><em>|</em><a class="reference internal" href="cofe.space.html#cofe.space.domain.Vacancy" title="cofe.space.domain.Vacancy"><em>Vacancy</em></a><em>|</em><em>Element</em><em>|</em><em>str</em><em>]</em><em>]</em>) – Each sub-list contains a few species or encodings of species in
+the site space to be grouped as a new sub-lattice, namely,
+sites with occu[sites] == specie in the sub-list, will be
+used to initialize a new sub-lattice.
+Sub-lists will be pre-sorted to ascending order.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.Ensemble.sublattices">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sublattices</span></span><a class="headerlink" href="#moca.Ensemble.sublattices" title="Permalink to this definition">#</a></dt>
+<dd><p>Get list of Sublattices included in ensemble.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.Ensemble.system_size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">system_size</span></span><a class="headerlink" href="#moca.Ensemble.system_size" title="Permalink to this definition">#</a></dt>
+<dd><p>Get size of supercell in number of prims.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="moca.EwaldProcessor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">EwaldProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ewald_term</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.EwaldProcessor" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../moca/processors.base.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.processor.base.Processor</span></code></a></p>
@@ -1052,7 +1275,7 @@ can be anything representative, i.e. number of sites)</p>
 <li><p><strong>num_energy_coefs</strong> (<em>int</em>) – the number of coefficients in the natural parameters that
 correspond to the energy only.</p></li>
 <li><p><strong>sample_trace</strong> (<a class="reference internal" href="moca.sampler.html#moca.sampler.kernel.Trace" title="moca.sampler.kernel.Trace"><em>Trace</em></a>) – a trace object for the traced values during MC sampling</p></li>
-<li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="moca.ensemble.html#moca.ensemble.base.Ensemble" title="moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
+<li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1428,10 +1651,10 @@ automatically populate and create an appropriate SampleContainer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ensemble</strong> (<a class="reference internal" href="moca.ensemble.html#moca.ensemble.base.Ensemble" title="moca.ensemble.base.Ensemble"><em>Ensemble</em></a>) – an Ensemble class to obtain sample probabilities from.</p></li>
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – an Ensemble class to obtain sample probabilities from.</p></li>
 <li><p><strong>step_type</strong> (<em>str</em>) – optional
-type of step to run MCMC with. If not given the default is the
-first entry in the Ensemble.valid_mcmc_steps.</p></li>
+type of step to run MCMC with. If not given the default depends on
+whether chemical potentials are defined.</p></li>
 <li><p><strong>*args</strong> – positional arguments to pass to the MCKernel constructor.
 More often than not you want to specify the temperature!</p></li>
 <li><p><strong>kernel_type</strong> (<em>str</em>) – optional
@@ -1530,7 +1753,7 @@ number to thin iterations by and provide samples.</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.SemiGrandEnsemble">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SemiGrandEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chemical_potentials</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SemiGrandEnsemble" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="moca.ensemble.html#moca.ensemble.base.Ensemble" title="moca.ensemble.base.Ensemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">moca.ensemble.base.Ensemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="moca.ensemble.html#moca.ensemble.base.BaseEnsemble" title="moca.ensemble.base.BaseEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">moca.ensemble.base.BaseEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Relative chemical potential-based SemiGrand Ensemble.</p>
 <p>A Semi-Grand Canonical Ensemble for Monte Carlo simulations where species’
 relative chemical potentials are predefined. Note that in the SGC Ensemble
@@ -1666,11 +1889,6 @@ Sub-lists will be pre-sorted to ascending order.</p></li>
 </dd>
 </dl>
 </dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="moca.SemiGrandEnsemble.valid_mcmc_steps">
-<span class="sig-name descname"><span class="pre">valid_mcmc_steps</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('flip',)</span></em><a class="headerlink" href="#moca.SemiGrandEnsemble.valid_mcmc_steps" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 

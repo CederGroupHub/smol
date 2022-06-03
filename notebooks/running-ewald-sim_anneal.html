@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Running Canonical Monte Carlo Simulated Annealing on an Ewald Hamiltonian &#8212; smol 0.0.2 documentation</title>
+    <title>Running Canonical Monte Carlo Simulated Annealing on an Ewald Hamiltonian &#8212; smol 0.0.3 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -120,7 +120,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.2  <!-- this text may get changed later by javascript -->
+        0.0.3  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -130,7 +130,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables notebooks/running-ewald-sim_anneal and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.2'}.
+     variables notebooks/running-ewald-sim_anneal and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.3'}.
 -->
 
 <script type="text/javascript">
@@ -181,10 +181,10 @@ function checkPageExistsAndRedirect(event) {
 
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.2 variable.
+            // this version, rather than using sphinx's 0.0.3 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.2") {
+            if (entry.version == "0.0.3") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -569,7 +569,7 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="admonition note">
   This page was generated from
-  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/0.0.2/docs/src/notebooks/running-ewald-sim_anneal.ipynb">docs/src/notebooks/running-ewald-sim_anneal.ipynb</a>.<br>
+  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/0.0.3/docs/src/notebooks/running-ewald-sim_anneal.ipynb">docs/src/notebooks/running-ewald-sim_anneal.ipynb</a>.<br>
   <script>
     if (document.location.host) {
       $(document.currentScript).replaceWith(
@@ -665,10 +665,10 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">CanonicalEnsemble</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">Ensemble</span>
 
 <span class="c1"># Create the canonical ensemble directly from the Ewald Processor, without creating a Cluster Expansion.</span>
-<span class="n">ensemble</span> <span class="o">=</span> <span class="n">CanonicalEnsemble</span><span class="p">(</span><span class="n">processor</span><span class="o">=</span><span class="n">ewald_proc</span><span class="p">)</span>
+<span class="n">ensemble</span> <span class="o">=</span> <span class="n">Ensemble</span><span class="p">(</span><span class="n">processor</span><span class="o">=</span><span class="n">ewald_proc</span><span class="p">)</span>
 
 <span class="c1"># If the goal is to enumerate new structures for DFT calculations, it may be wise to limit the size of</span>
 <span class="c1"># your supercell such that a relaxation calculation is feasible.</span>
@@ -722,7 +722,7 @@ Sublattice(site_space=Li+0.5 vacA0+0.5, sites=array([ 0,  1,  2,  3,  4,  5,  6,
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Sampling information: {&#39;name&#39;: &#39;CanonicalEnsemble&#39;, &#39;kernel&#39;: &#39;Metropolis&#39;, &#39;step&#39;: &#39;swap&#39;, &#39;seed&#39;: None}
+Sampling information: {&#39;kernel&#39;: &#39;Metropolis&#39;, &#39;step&#39;: &#39;swap&#39;, &#39;seed&#39;: 113860772837390708981298157429735849979}
 </pre></div></div>
 </div>
 </section>
@@ -802,12 +802,13 @@ The initial occupancy is:
 <span class="n">n_thin_by</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1"># Number to thin by</span>
 
 <span class="c1"># Start simulated annealing.</span>
-<span class="n">sampler</span><span class="o">.</span><span class="n">anneal</span><span class="p">(</span><span class="n">temperatures</span><span class="o">=</span><span class="n">temps</span><span class="p">,</span>
-               <span class="n">mcmc_steps</span><span class="o">=</span><span class="n">mc_steps</span><span class="p">,</span>
-               <span class="n">initial_occupancies</span><span class="o">=</span><span class="n">init_occu</span><span class="p">,</span>
-               <span class="n">thin_by</span><span class="o">=</span><span class="n">n_thin_by</span><span class="p">,</span> <span class="c1"># Saving every 10 samples</span>
-               <span class="n">progress</span><span class="o">=</span><span class="kc">True</span> <span class="c1"># Show the progress bar to know how far along you are</span>
-              <span class="p">)</span>
+<span class="n">sampler</span><span class="o">.</span><span class="n">anneal</span><span class="p">(</span>
+    <span class="n">temperatures</span><span class="o">=</span><span class="n">temps</span><span class="p">,</span>
+    <span class="n">mcmc_steps</span><span class="o">=</span><span class="n">mc_steps</span><span class="p">,</span>
+    <span class="n">initial_occupancies</span><span class="o">=</span><span class="n">init_occu</span><span class="p">,</span>
+    <span class="n">thin_by</span><span class="o">=</span><span class="n">n_thin_by</span><span class="p">,</span> <span class="c1"># Saving every 10 samples</span>
+    <span class="n">progress</span><span class="o">=</span><span class="kc">True</span> <span class="c1"># Show the progress bar to know how far along you are</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -816,16 +817,16 @@ The initial occupancy is:
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Sampling 1 chain(s) from a cell with 128 sites...: 100%|██████████| 100000/100000 [00:24&lt;00:00, 4049.65it/s]
-Sampling 1 chain(s) from a cell with 128 sites...: 100%|██████████| 100000/100000 [00:24&lt;00:00, 4036.97it/s]
-Sampling 1 chain(s) from a cell with 128 sites...: 100%|██████████| 100000/100000 [00:24&lt;00:00, 4138.69it/s]
-Sampling 1 chain(s) from a cell with 128 sites...: 100%|██████████| 100000/100000 [00:23&lt;00:00, 4206.24it/s]
-Sampling 1 chain(s) from a cell with 128 sites...: 100%|██████████| 100000/100000 [00:23&lt;00:00, 4265.49it/s]
-Sampling 1 chain(s) from a cell with 128 sites...: 100%|██████████| 100000/100000 [00:23&lt;00:00, 4175.66it/s]
-Sampling 1 chain(s) from a cell with 128 sites...: 100%|██████████| 100000/100000 [00:23&lt;00:00, 4225.40it/s]
-Sampling 1 chain(s) from a cell with 128 sites...: 100%|██████████| 100000/100000 [00:23&lt;00:00, 4317.89it/s]
-Sampling 1 chain(s) from a cell with 128 sites...: 100%|██████████| 100000/100000 [00:23&lt;00:00, 4216.13it/s]
-Sampling 1 chain(s) from a cell with 128 sites...: 100%|██████████| 100000/100000 [00:23&lt;00:00, 4258.17it/s]
+Sampling 1 chain(s) from a cell with 128 sites...: 100%|███████████████████████████████████████████████████████████████| 100000/100000 [00:15&lt;00:00, 6622.09it/s]
+Sampling 1 chain(s) from a cell with 128 sites...: 100%|███████████████████████████████████████████████████████████████| 100000/100000 [00:19&lt;00:00, 5182.36it/s]
+Sampling 1 chain(s) from a cell with 128 sites...: 100%|███████████████████████████████████████████████████████████████| 100000/100000 [00:14&lt;00:00, 6695.68it/s]
+Sampling 1 chain(s) from a cell with 128 sites...: 100%|███████████████████████████████████████████████████████████████| 100000/100000 [00:14&lt;00:00, 6780.63it/s]
+Sampling 1 chain(s) from a cell with 128 sites...: 100%|███████████████████████████████████████████████████████████████| 100000/100000 [00:14&lt;00:00, 6668.70it/s]
+Sampling 1 chain(s) from a cell with 128 sites...: 100%|███████████████████████████████████████████████████████████████| 100000/100000 [00:14&lt;00:00, 6976.41it/s]
+Sampling 1 chain(s) from a cell with 128 sites...: 100%|███████████████████████████████████████████████████████████████| 100000/100000 [00:14&lt;00:00, 6903.15it/s]
+Sampling 1 chain(s) from a cell with 128 sites...: 100%|███████████████████████████████████████████████████████████████| 100000/100000 [00:14&lt;00:00, 6955.37it/s]
+Sampling 1 chain(s) from a cell with 128 sites...: 100%|███████████████████████████████████████████████████████████████| 100000/100000 [00:14&lt;00:00, 6921.88it/s]
+Sampling 1 chain(s) from a cell with 128 sites...: 100%|███████████████████████████████████████████████████████████████| 100000/100000 [00:16&lt;00:00, 5973.91it/s]
 </pre></div></div>
 </div>
 </section>
@@ -864,43 +865,43 @@ Sampling 1 chain(s) from a cell with 128 sites...: 100%|████████
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 At T = 10000.0 K
-Average energy = -22.112 eV/prim
-Std dev = 0.032 eV/prim
+Average energy = -22.114 eV/prim
+Std dev = 0.0319 eV/prim
 
 At T = 5994.84 K
 Average energy = -22.133 eV/prim
-Std dev = 0.0263 eV/prim
+Std dev = 0.026 eV/prim
 
 At T = 3593.81 K
 Average energy = -22.155 eV/prim
-Std dev = 0.0199 eV/prim
+Std dev = 0.0201 eV/prim
 
 At T = 2154.43 K
-Average energy = -22.176 eV/prim
-Std dev = 0.0151 eV/prim
+Average energy = -22.177 eV/prim
+Std dev = 0.0155 eV/prim
 
 At T = 1291.55 K
 Average energy = -22.197 eV/prim
-Std dev = 0.0122 eV/prim
+Std dev = 0.012 eV/prim
 
 At T = 774.26 K
-Average energy = -22.257 eV/prim
-Std dev = 0.0181 eV/prim
+Average energy = -22.25 eV/prim
+Std dev = 0.0146 eV/prim
 
 At T = 464.16 K
-Average energy = -22.266 eV/prim
+Average energy = -22.261 eV/prim
 Std dev = 0.0 eV/prim
 
 At T = 278.26 K
-Average energy = -22.266 eV/prim
+Average energy = -22.261 eV/prim
 Std dev = 0.0 eV/prim
 
 At T = 166.81 K
-Average energy = -22.266 eV/prim
+Average energy = -22.261 eV/prim
 Std dev = 0.0 eV/prim
 
 At T = 100.0 K
-Average energy = -22.266 eV/prim
+Average energy = -22.261 eV/prim
 Std dev = 0.0 eV/prim
 
 </pre></div></div>
@@ -908,14 +909,15 @@ Std dev = 0.0 eV/prim
 <section id="Obtaining-the-ground-state">
 <h3>Obtaining the ground state<a class="headerlink" href="#Obtaining-the-ground-state" title="Permalink to this headline">#</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lowest_en</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">get_minimum_energy</span><span class="p">()</span> <span class="o">/</span> <span class="n">ewald_proc</span><span class="o">.</span><span class="n">size</span>
 <span class="n">lowest_en_occu</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">get_minimum_energy_occupancy</span><span class="p">()</span>
+<span class="n">lowest_en_struct</span> <span class="o">=</span> <span class="n">ensemble</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">structure_from_occupancy</span><span class="p">(</span><span class="n">lowest_en_occu</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The ground state energy is </span><span class="si">{</span><span class="n">lowest_en</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Ground state occupancy is </span><span class="si">{</span><span class="n">lowest_en_occu</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Ground state structure is </span><span class="si">{</span><span class="n">lowest_en_occu</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -924,9 +926,9 @@ Std dev = 0.0 eV/prim
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-The ground state energy is -22.2657575304729 eV/prim
-Ground state occupancy is [1 1 1 1 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 0
- 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 1 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0
+The ground state energy is -22.26063356093077 eV/prim
+Ground state structure is [0 0 0 1 1 1 0 1 1 0 0 0 1 0 1 1 1 1 0 1 0 0 0 1 1 0 1 1 1 0 0 0 0 0 1 0 1
+ 1 1 0 0 1 0 0 0 1 1 1 1 1 1 0 0 0 1 0 0 1 1 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0
  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
 </pre></div></div>
@@ -936,7 +938,7 @@ Ground state occupancy is [1 1 1 1 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 1 0
 <section id="7)-Plotting-the-results">
 <h2>7) Plotting the results<a class="headerlink" href="#7)-Plotting-the-results" title="Permalink to this headline">#</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_ind</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># To keep track of x axis indexing</span>
@@ -960,7 +962,7 @@ Ground state occupancy is [1 1 1 1 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 1 0
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -983,6 +985,14 @@ Ground state occupancy is [1 1 1 1 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 1 0
 </div>
 <div class="output_area docutils container">
 <img alt="../_images/notebooks_running-ewald-sim_anneal_23_1.png" src="../_images/notebooks_running-ewald-sim_anneal_23_1.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
 </div>
 </div>
 </section>

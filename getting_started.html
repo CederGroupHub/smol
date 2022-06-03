@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Getting Started &#8212; smol 0.0.2 documentation</title>
+    <title>Getting Started &#8212; smol 0.0.3 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -120,7 +120,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.2  <!-- this text may get changed later by javascript -->
+        0.0.3  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -130,7 +130,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables getting_started and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.2'}.
+     variables getting_started and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.3'}.
 -->
 
 <script type="text/javascript">
@@ -181,10 +181,10 @@ function checkPageExistsAndRedirect(event) {
 
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.2 variable.
+            // this version, rather than using sphinx's 0.0.3 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.2") {
+            if (entry.version == "0.0.3") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -332,7 +332,7 @@ function checkPageExistsAndRedirect(event) {
               <div>
                 
   <section id="getting-started">
-<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">#</a></h1>
+<span id="geting-started"></span><h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">#</a></h1>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">#</a></h2>
 <p><strong>smol</strong> is purposedly light on dependencies which should make the installation
@@ -353,8 +353,7 @@ expansion terms and compute the corresponding correlation functions.</p>
 <p>Start by creating a disordered primitive structure.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pymatgen.core.structure</span> <span class="kn">import</span> <span class="n">Structure</span><span class="p">,</span> <span class="n">Lattice</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">species</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Au&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;Cu&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">prim</span> <span class="o">=</span> <span class="n">Structure</span><span class="o">.</span><span class="n">from_spacegroup</span><span class="p">(</span>
-<span class="go">        &quot;Fm-3m&quot;, Lattice.cubic(3.6), [species], [[0, 0, 0]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prim</span> <span class="o">=</span> <span class="n">Structure</span><span class="o">.</span><span class="n">from_spacegroup</span><span class="p">(</span><span class="s2">&quot;Fm-3m&quot;</span><span class="p">,</span> <span class="n">Lattice</span><span class="o">.</span><span class="n">cubic</span><span class="p">(</span><span class="mf">3.6</span><span class="p">),</span> <span class="p">[</span><span class="n">species</span><span class="p">],</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
 </pre></div>
 </div>
 <p>Now create a cluster subspace for that structure including pair, triplet and
@@ -388,8 +387,7 @@ not be appropriate and a regularized regression model will yield a much better
 fit.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">reg</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">fit_intercept</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">reg</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span>
-<span class="go">            wrangler.get_property_vector(&quot;energy&quot;))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">reg</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span> <span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s2">&quot;energy&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>Finally, create a cluster expansion for prediction of new structures and
@@ -399,9 +397,9 @@ expansion for future reproducibility (although this is not strictly necessary).<
 <span class="gp">&gt;&gt;&gt; </span><span class="n">reg_data</span> <span class="o">=</span> <span class="n">RegressionData</span><span class="o">.</span><span class="n">from_sklearn</span><span class="p">(</span>
 <span class="go">        estimator=reg,</span>
 <span class="go">        feature_matrix=wrangler.feature_matrix,</span>
-<span class="go">        property_vector=wrangler.get_property_vector(&#39;energy&#39;))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">expansion</span> <span class="o">=</span> <span class="n">ClusterExpansion</span><span class="p">(</span>
-<span class="go">        subspace, coefficients=reg.coef_, regression_data=reg_data)</span>
+<span class="go">        property_vector=wrangler.get_property_vector(&#39;energy&#39;)</span>
+<span class="go">    )</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">expansion</span> <span class="o">=</span> <span class="n">ClusterExpansion</span><span class="p">(</span><span class="n">subspace</span><span class="p">,</span> <span class="n">coefficients</span><span class="o">=</span><span class="n">reg</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">regression_data</span><span class="o">=</span><span class="n">reg_data</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -409,10 +407,9 @@ expansion for future reproducibility (although this is not strictly necessary).<
 <h3>Creating an ensemble for Monte Carlo Sampling<a class="headerlink" href="#creating-an-ensemble-for-monte-carlo-sampling" title="Permalink to this headline">#</a></h3>
 <p>Creating an ensemble only requires the cluster expansion and a supercell matrix
 to define the sampling domain.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">CanonicalEnsemble</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">Ensemble</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sc_matrix</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ensemble</span> <span class="o">=</span> <span class="n">CanonicalEnsemble</span><span class="o">.</span><span class="n">from_cluster_expansion</span><span class="p">(</span>
-<span class="go">        expansion, supercell_matrix=sc_matrix)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ensemble</span> <span class="o">=</span> <span class="n">Ensemble</span><span class="o">.</span><span class="n">from_cluster_expansion</span><span class="p">(</span><span class="n">expansion</span><span class="p">,</span> <span class="n">supercell_matrix</span><span class="o">=</span><span class="n">sc_matrix</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -421,15 +418,13 @@ to define the sampling domain.</p>
 <p>To generate MC samples for the ensemble, we need to create a sampler
 object.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">Sampler</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sampler</span> <span class="o">=</span> <span class="n">Sampler</span><span class="o">.</span><span class="n">from_ensemble</span><span class="p">(</span>
-<span class="go">        ensemble, temperature=500)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sampler</span> <span class="o">=</span> <span class="n">Sampler</span><span class="o">.</span><span class="n">from_ensemble</span><span class="p">(</span><span class="n">ensemble</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In order to begin an MC simulation, an initial configuration must be provided.
 In this case we use pymatgen’s functionality to provide an ordered structure
 given a disordered one.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pymatgen.transformations.standard_transformations</span> <span class="kn">import</span> \
-<span class="go">        OrderDisorderedStructureTransformation</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pymatgen.transformations.standard_transformations</span> <span class="kn">import</span> <span class="n">OrderDisorderedStructureTransformation</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">transformation</span> <span class="o">=</span> <span class="n">OrderDisorderedStructureTransformation</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">structure</span> <span class="o">=</span> <span class="n">expansion</span><span class="o">.</span><span class="n">cluster_subspace</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">structure</span><span class="o">.</span><span class="n">make_supercell</span><span class="p">(</span><span class="n">sc_matrix</span><span class="p">)</span>
@@ -439,7 +434,7 @@ given a disordered one.</p>
 <p>Finally, the ordered structure can be used to generate an initial configuration
 to run MC sampling interations.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">init_occu</span> <span class="o">=</span> <span class="n">ensemble</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">occupancy_from_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mi">1000000</span><span class="p">,</span> <span class="n">initial_occupancy</span><span class="o">=</span><span class="n">init_occu</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mi">100000</span><span class="p">,</span> <span class="n">initial_occupancy</span><span class="o">=</span><span class="n">init_occu</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -450,8 +445,7 @@ provided convenience io functionaltiy. However, all main classes are
 serializable just as pymatgen and so can be saved as json dictionaries or
 using the <a class="reference external" href="https://guide.materialsvirtuallab.org/monty//">monty</a> python
 package.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">save_work</span><span class="p">(</span>
-<span class="go">    &quot;CuAu_ce_mc.json&quot;, wrangler, expansion, ensemble, sampler.samples)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">save_work</span><span class="p">(</span><span class="s2">&quot;CuAu_ce_mc.json&quot;</span><span class="p">,</span> <span class="n">wrangler</span><span class="p">,</span> <span class="n">expansion</span><span class="p">,</span> <span class="n">ensemble</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">samples</span><span class="p">)</span>
 </pre></div>
 </div>
 <ul class="simple">
