@@ -53,7 +53,7 @@ model is as follows,
 This simple workflow shown is sufficient for the majority of applications. A summary of
 the main classes is given below. For more advanced use and custom calculations a more
 detailed description of the package is given in the
-:doc:`Developing </developer_guide/index>` section.
+:ref:`design` section of the Developing page.
 
 ----------------------------------------------------------------------------------------
 

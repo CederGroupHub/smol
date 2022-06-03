@@ -35,11 +35,13 @@ functionality please have a look at the :ref:`design` page.
 Guidelines
 ----------
 
-* All code should have tests.
+* All code should have unit tests.
 * Code should be well documented following `google style <https://google.github.io/styleguide/pyguide.html>`_  docstrings.
-* All code should pass the pre-commit hooks.
-* Additional dependencies should only be added when they are critical. More often than not it is best to simply delegate
-  directly to using external packages rather than adding them to the source code.
+* All code should pass the pre-commit hook. The code follows the `black code style <https://black.readthedocs.io/en/stable/>`_.
+* Additional dependencies should only be added when they are critical or if they are
+  already a :mod:`pymatgen` dependency. More often than not it is best to avoid adding
+  a new dependency by simply delegating to directly using the external packages rather
+  than adding them to the source code.
 * Implementing new features should be more fun than tedious.
 
 Adding code contributions
@@ -85,7 +87,7 @@ Adding code contributions
     *  All code should use `google style <https://google.github.io/styleguide/pyguide.html>`_ docstrings
        and `black <https://black.readthedocs.io/en/stable/?badge=stable>`_ style formatting.
 
-#.  Make sure to test your contribution and write unit tests for any new features. All tests should go i
+#.  Make sure to test your contribution and write unit tests for any new features. All tests should go in the
     ``smol\tests`` directory. The CI will run tests upon opening a PR, but running them locally will help find
     problems before::
 
