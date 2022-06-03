@@ -5,9 +5,9 @@ from itertools import product
 import numpy as np
 import numpy.testing as npt
 import pytest
-from pymatgen.core import Composition
+from pymatgen.core.composition import ChemicalPotential, Composition
 
-from smol.cofe.space.domain import SiteSpace
+from smol.cofe.space.domain import SiteSpace, get_species
 from smol.moca.sampler import SampleContainer
 from smol.moca.sampler.kernel import Trace
 from smol.moca.sublattice import Sublattice
@@ -44,6 +44,12 @@ def container(request, rng):
         natural_parameters=natural_parameters,
         num_energy_coefs=num_energy_coefs,
         sample_trace=trace,
+        sampling_metadata={
+            "thermo_boundaries": ChemicalPotential(
+                {get_species("Li+"): 0.5, get_species("Vacancy"): 0.3}
+            ),
+            "seed": 0,
+        },
     )
     yield sampler_container
     sampler_container.clear()

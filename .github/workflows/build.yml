@@ -1,0 +1,67 @@
+name: build-dist
+
+# Use this workflow to manually trigger a build for testing purposes.
+# Download it from artifacts to test installation, or upload directly to PyPI.
+on:
+  workflow_dispatch:
+    inputs:
+      release-pypi:
+        required: true
+        type: boolean
+      CIBW_SKIP:
+        description: wheel builds to skip
+
+jobs:
+
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, windows-2019, macos-10.15]
+    env:
+      CIBW_SKIP: pp*  ${{ github.event.inputs.CIBW_SKIP }}  # skip pypy wheels
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.6.0
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: wheelhouse/*.whl
+
+  build_sdist:
+    name: Build sdist
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Optional, use if you use setuptools_scm
+
+      - name: Build sdist
+        run: pipx run build --sdist
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: dist/*.tar.gz
+
+  release-pypi:
+    needs: [build_wheels, build_sdist]
+    runs-on: ubuntu-latest
+    if: github.event.inputs.release-pypi == 'true'
+
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: artifact
+          path: dist
+
+      - uses: pypa/gh-action-pypi-publish@v1
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}

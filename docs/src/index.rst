@@ -26,13 +26,13 @@ crystalline material systems.*
       :alt: Coverage
       :target: https://www.codacy.com/gh/CederGroupHub/smol/dashboard?utm_source=github.com&utm_medium=referral&utm_content=CederGroupHub/smol&utm_campaign=Badge_Coverage
 
-.. image:: https://img.shields.io/pypi/v/statmech-on-lattices?color=blue
+.. image:: https://img.shields.io/pypi/v/smol?color=blue
       :alt: PyPi Version
-      :target: https://pypi.org/project/statmech-on-lattices
+      :target: https://pypi.org/project/smol
 
-.. image:: https://img.shields.io/pypi/pyversions/statmech-on-lattices
+.. image:: https://img.shields.io/pypi/pyversions/smol
       :alt: Python Versions
-      :target: https://img.shields.io/pypi/pyversions/statmech-on-lattices
+      :target: https://img.shields.io/pypi/pyversions/smol
 
 
 -------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ related methods. Although **smol** is intentionally lightweight---in terms of
 dependencies and built-in functionality---it has a modular design that closely
 follows underlying mathematical formalism and provides useful abstractions to
 easily extend existing methods or implement and test new ones. Finally,
-although conceived mainly for method development, **smol** can (and is being)
+although initially conceived for method development, **smol** can (and is being)
 used in production for materials science reasearch applications.
 
 Functionality
@@ -86,3 +86,10 @@ Since **smol** is based on **pymatgen**, please also cite this publication,
 Additionally, several of the functionality included in **smol** is based on
 methodology developed by various researchers. Please see the
 :doc:`citing page </citing>` for additional refrences.
+
+License
+=======
+
+**smol** is distributed openly under a modified 3-clause BSD licence.
+
+.. include:: ../../LICENSE
