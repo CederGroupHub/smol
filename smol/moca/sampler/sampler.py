@@ -313,9 +313,13 @@ class Sampler:
     ):
         """Carry out a simulated annealing procedure.
 
-        Uses the total number of temperatures given by "steps" interpolating
-        between the start and end temperature according to a cooling function.
-        The start temperature is the temperature set for the ensemble.
+        Will MC sampling for each temperature for the specified number of steps,
+        taking the last sampled configuration at each temperature as the starting
+        configuration for the next temperature.
+
+        Everything is saved to the same SampleContainer, or if streaming, saved to the
+        same file. To save each temperature in a different container, simply run
+        a similar "for loop" creating a new sampler at each temperature.
 
         Args:
             temperatures (Sequence):
