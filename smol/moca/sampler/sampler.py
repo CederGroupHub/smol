@@ -214,6 +214,7 @@ class Sampler:
         progress=False,
         stream_chunk=0,
         stream_file=None,
+        keep_last_chunk=False,
         swmr_mode=False,
     ):
         """Run an MCMC sampling simulation.
@@ -239,6 +240,10 @@ class Sampler:
             stream_file (str): optional
                 file name to use as backend. If file already exists will try
                 to append to datasets. If not given will create a new file.
+            keep_last_chunk (bool): optional
+                if True will keep the last chunk of samples in memory, but will reset
+                the sampler otherwise. This is useful if the last occupancies are
+                needed to start another run (ie for simulated annealing with streaming)
             swmr_mode (bool): optional
                 if true allows to read file from other processes. Single Writer
                 Multiple Readers.
@@ -271,7 +276,9 @@ class Sampler:
             backend = self.samples.get_backend(
                 stream_file, nsteps // thin_by, swmr_mode=swmr_mode
             )
-            self.samples.allocate(stream_chunk)
+            # allocate memory only if there is None available
+            if len(self.samples.get_occupancies()) == 0:
+                self.samples.allocate(stream_chunk)
         else:
             backend = None
             self.samples.allocate(nsteps // thin_by)
@@ -284,8 +291,10 @@ class Sampler:
                 self.samples.flush_to_backend(backend)
 
         if backend is not None:
-            self.clear_samples()
             backend.close()
+
+        if keep_last_chunk is False:
+            self.clear_samples()
 
         # A checkpoing of aux states should be saved to container here.
         # Note that to save any general "state" we will need to make sure it is
@@ -298,6 +307,9 @@ class Sampler:
         initial_occupancies=None,
         thin_by=1,
         progress=False,
+        stream_chunk=0,
+        stream_file=None,
+        swmr_mode=True,
     ):
         """Carry out a simulated annealing procedure.
 
@@ -318,6 +330,15 @@ class Sampler:
                 amount to thin by for saving samples.
             progress (bool):
                 if true will show a progress bar.
+            stream_chunk (int): optional
+                chunk of samples to stream into a file. If > 0 samples will
+                be flushed to backend file in stream_chucks
+            stream_file (str): optional
+                file name to use as backend. If file already exists will try
+                to append to datasets. If not given will create a new file.
+            swmr_mode (bool): optional
+                if true allows to read file from other processes. Single Writer
+                Multiple Readers.
         """
         if temperatures[0] < temperatures[-1]:
             raise ValueError(
@@ -332,10 +353,26 @@ class Sampler:
             initial_occupancies=initial_occupancies,
             thin_by=thin_by,
             progress=progress,
+            stream_chunk=stream_chunk,
+            stream_file=stream_file,
+            swmr_mode=swmr_mode,
+            keep_last_chunk=True,
         )
         for temperature in temperatures[1:]:
             self._kernel.temperature = temperature
-            self.run(mcmc_steps, thin_by=thin_by, progress=progress)
+            self.run(
+                mcmc_steps,
+                thin_by=thin_by,
+                progress=progress,
+                stream_chunk=stream_chunk,
+                stream_file=stream_file,
+                swmr_mode=swmr_mode,
+                keep_last_chunk=True,
+            )
+
+        # If streaming to file was done then clear samplers now.
+        if stream_chunk > 0:
+            self.clear_samples()
 
     def _reshape_occu(self, occupancies):
         """Reshape occupancies for the single walker case."""
