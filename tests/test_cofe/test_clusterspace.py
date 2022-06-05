@@ -671,18 +671,14 @@ def test_site_basis_rotation(cluster_subspace):
             # test ECI invariance
             assert np.allclose(norms, norms1)
             # test correlation vector invariance
-            assert (
-                np.allclose(
-                    cs1.site_rotation_matrix @ cs.corr_from_structure(structure),
-                    cs1.corr_from_structure(structure),
-                )
+            assert np.allclose(
+                cs1.site_rotation_matrix @ cs.corr_from_structure(structure),
+                cs1.corr_from_structure(structure),
             )
             # test values are the same
-            assert (
-                np.isclose(
-                    np.dot(cs.corr_from_structure(structure), coefs),
-                    np.dot(cs1.corr_from_structure(structure), coefs1),
-                )
+            assert np.isclose(
+                np.dot(cs.corr_from_structure(structure), coefs),
+                np.dot(cs1.corr_from_structure(structure), coefs1),
             )
             # test rotation matrix is invertible and abs(det) = 1
             # binary site rotations may lead to det = -1 ?

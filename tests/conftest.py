@@ -5,14 +5,14 @@ import pytest
 from monty.serialization import loadfn
 from pymatgen.core import Structure
 
-from smol.cofe import ClusterSubspace, StructureWrangler, ClusterExpansion
+from smol.cofe import ClusterExpansion, ClusterSubspace, StructureWrangler
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.basis import BasisIterator
-from smol.moca import CanonicalEnsemble, SemiGrandEnsemble
 from smol.moca.processor import (
     ClusterDecompositionProcessor,
     ClusterExpansionProcessor,
     CompositeProcessor,
+    Ensemble,
     EwaldProcessor,
 )
 from smol.utils import get_subclasses
@@ -34,7 +34,6 @@ files = [
 
 test_structures = [loadfn(os.path.join(DATA_DIR, file)) for file in files]
 basis_iterator_names = list(get_subclasses(BasisIterator))
-ensembles = [CanonicalEnsemble, SemiGrandEnsemble]
 
 
 @pytest.fixture(scope="module")
@@ -106,7 +105,7 @@ def ce_processor(cluster_subspace, rng):
 
 
 @pytest.fixture(params=["CE", "CD"], scope="module")
-def composite_processor(cluster_subspace_ewald, request):
+def composite_processor(cluster_subspace_ewald, rng, request):
     coefs = 2 * np.random.random(cluster_subspace_ewald.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
     proc = CompositeProcessor(cluster_subspace_ewald, supercell_matrix=scmatrix)
@@ -134,9 +133,9 @@ def composite_processor(cluster_subspace_ewald, request):
     return proc
 
 
-@pytest.fixture(params=ensembles, scope="module")
+@pytest.fixture(params=["canonical", "semigrand"], scope="module")
 def ensemble(composite_processor, request):
-    if request.param is SemiGrandEnsemble:
+    if request.param == "semigrand":
         species = {
             sp
             for space in composite_processor.active_site_spaces
@@ -145,14 +144,14 @@ def ensemble(composite_processor, request):
         kwargs = {"chemical_potentials": {sp: 0.3 for sp in species}}
     else:
         kwargs = {}
-    return request.param(composite_processor, **kwargs)
+    return Ensemble(composite_processor, **kwargs)
 
 
 @pytest.fixture(scope="module")
 def single_canonical_ensemble(single_subspace, rng):
     coefs = rng.random(single_subspace.num_corr_functions)
     proc = ClusterExpansionProcessor(single_subspace, 4 * np.eye(3), coefs)
-    return CanonicalEnsemble(proc)
+    return Ensemble(proc)
 
 
 @pytest.fixture(params=basis_iterator_names, scope="package")

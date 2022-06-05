@@ -110,8 +110,8 @@ def test_rotate(standard_basis, rng):
                 np.arccos(
                     np.dot(standard_basis._f_array[1], f_array[1])
                     / (
-                            np.linalg.norm(standard_basis._f_array[1])
-                            * np.linalg.norm(f_array[1])
+                        np.linalg.norm(standard_basis._f_array[1])
+                        * np.linalg.norm(f_array[1])
                     )
                 ),
                 theta,

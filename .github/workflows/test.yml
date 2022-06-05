@@ -43,8 +43,8 @@ jobs:
         run: |
           pytest tests --cov=smol --cov-report=xml
 
-      - name: codacy-coverage-reporter
-        if: ${{ matrix.python_version == 3.9 }}
+      - if: ${{ matrix.python_version == 3.9 && github.event_name == 'push' }}
+        name: codacy-coverage-reporter
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
             project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}

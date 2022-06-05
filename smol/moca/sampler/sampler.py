@@ -64,8 +64,8 @@ class Sampler:
             ensemble (Ensemble):
                 an Ensemble class to obtain sample probabilities from.
             step_type (str): optional
-                type of step to run MCMC with. If not given the default is the
-                first entry in the Ensemble.valid_mcmc_steps.
+                type of step to run MCMC with. If not given the default depends on
+                whether chemical potentials are defined.
             *args:
                 positional arguments to pass to the MCKernel constructor.
                 More often than not you want to specify the temperature!
@@ -86,12 +86,14 @@ class Sampler:
             Sampler
         """
         if step_type is None:
-            step_type = ensemble.valid_mcmc_steps[0]
-        elif step_type not in ensemble.valid_mcmc_steps:
-            raise ValueError(
-                f"Step type {step_type} can not be used for sampling a "
-                f"{type(ensemble)}."
-            )
+            if (
+                hasattr(ensemble, "chemical_potentials")
+                and ensemble.chemical_potentials is not None
+            ):
+                step_type = "flip"
+            else:
+                step_type = "swap"
+
         if kernel_type is None:
             kernel_type = "Metropolis"
 
@@ -107,9 +109,9 @@ class Sampler:
             }
         )
 
-        sampling_metadata = {"name": type(ensemble).__name__}
+        sampling_metadata = {"kernel": kernel_type, "step": step_type}
         sampling_metadata.update(ensemble.thermo_boundaries)
-        sampling_metadata.update({"kernel": kernel_type, "step": step_type})
+
         # Container will be initialized to read all sub-lattices,
         # active or not.
         container = SampleContainer(
@@ -212,6 +214,7 @@ class Sampler:
         progress=False,
         stream_chunk=0,
         stream_file=None,
+        keep_last_chunk=False,
         swmr_mode=False,
     ):
         """Run an MCMC sampling simulation.
@@ -237,6 +240,10 @@ class Sampler:
             stream_file (str): optional
                 file name to use as backend. If file already exists will try
                 to append to datasets. If not given will create a new file.
+            keep_last_chunk (bool): optional
+                if True will keep the last chunk of samples in memory, but will reset
+                the sampler otherwise. This is useful if the last occupancies are
+                needed to start another run (ie for simulated annealing with streaming)
             swmr_mode (bool): optional
                 if true allows to read file from other processes. Single Writer
                 Multiple Readers.
@@ -269,7 +276,9 @@ class Sampler:
             backend = self.samples.get_backend(
                 stream_file, nsteps // thin_by, swmr_mode=swmr_mode
             )
-            self.samples.allocate(stream_chunk)
+            # allocate memory only if there is None available
+            if len(self.samples.get_occupancies()) == 0:
+                self.samples.allocate(stream_chunk)
         else:
             backend = None
             self.samples.allocate(nsteps // thin_by)
@@ -282,8 +291,10 @@ class Sampler:
                 self.samples.flush_to_backend(backend)
 
         if backend is not None:
-            self.clear_samples()
             backend.close()
+            # Only clear samples if requested.
+            if keep_last_chunk is False:
+                self.clear_samples()
 
         # A checkpoing of aux states should be saved to container here.
         # Note that to save any general "state" we will need to make sure it is
@@ -296,12 +307,19 @@ class Sampler:
         initial_occupancies=None,
         thin_by=1,
         progress=False,
+        stream_chunk=0,
+        stream_file=None,
+        swmr_mode=True,
     ):
         """Carry out a simulated annealing procedure.
 
-        Uses the total number of temperatures given by "steps" interpolating
-        between the start and end temperature according to a cooling function.
-        The start temperature is the temperature set for the ensemble.
+        Will MC sampling for each temperature for the specified number of steps,
+        taking the last sampled configuration at each temperature as the starting
+        configuration for the next temperature.
+
+        Everything is saved to the same SampleContainer, or if streaming, saved to the
+        same file. To save each temperature in a different container, simply run
+        a similar "for loop" creating a new sampler at each temperature.
 
         Args:
             temperatures (Sequence):
@@ -316,6 +334,15 @@ class Sampler:
                 amount to thin by for saving samples.
             progress (bool):
                 if true will show a progress bar.
+            stream_chunk (int): optional
+                chunk of samples to stream into a file. If > 0 samples will
+                be flushed to backend file in stream_chucks
+            stream_file (str): optional
+                file name to use as backend. If file already exists will try
+                to append to datasets. If not given will create a new file.
+            swmr_mode (bool): optional
+                if true allows to read file from other processes. Single Writer
+                Multiple Readers.
         """
         if temperatures[0] < temperatures[-1]:
             raise ValueError(
@@ -330,10 +357,26 @@ class Sampler:
             initial_occupancies=initial_occupancies,
             thin_by=thin_by,
             progress=progress,
+            stream_chunk=stream_chunk,
+            stream_file=stream_file,
+            swmr_mode=swmr_mode,
+            keep_last_chunk=True,
         )
         for temperature in temperatures[1:]:
             self._kernel.temperature = temperature
-            self.run(mcmc_steps, thin_by=thin_by, progress=progress)
+            self.run(
+                mcmc_steps,
+                thin_by=thin_by,
+                progress=progress,
+                stream_chunk=stream_chunk,
+                stream_file=stream_file,
+                swmr_mode=swmr_mode,
+                keep_last_chunk=True,
+            )
+
+        # If streaming to file was done then clear samplers now.
+        if stream_chunk > 0:
+            self.clear_samples()
 
     def _reshape_occu(self, occupancies):
         """Reshape occupancies for the single walker case."""
