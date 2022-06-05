@@ -292,9 +292,9 @@ class Sampler:
 
         if backend is not None:
             backend.close()
-
-        if keep_last_chunk is False:
-            self.clear_samples()
+            # Only clear samples if requested.
+            if keep_last_chunk is False:
+                self.clear_samples()
 
         # A checkpoing of aux states should be saved to container here.
         # Note that to save any general "state" we will need to make sure it is
