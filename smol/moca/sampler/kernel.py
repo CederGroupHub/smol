@@ -435,7 +435,8 @@ class WangLandau(MCKernel):
     alas we can be code descriptivists.
     """
 
-    valid_mcushers = {"flip": "Flipper", "swap": "Swapper"}
+    valid_mcushers = ALL_MCUSHERS
+    valid_bias = ALL_BIAS
 
     def __init__(
         self,
@@ -449,6 +450,7 @@ class WangLandau(MCKernel):
         check_period=1000,
         fixed_window=False,
         mod_update=None,
+        seed=None,
         nwalkers=1,
     ):
         """Initialize a WangLandau Kernel.
@@ -482,6 +484,8 @@ class WangLandau(MCKernel):
                 satisfies the flatness criteria. The function is used to update
                 the entropy value for an energy level and so must monotonically
                 decrease to 0.
+            seed (int): optional
+                non-negative integer to seed the PRNG
             nwalkers (int): optional
                 Number of walkers/chains to sampler. Default is 1.
         """
@@ -624,8 +628,7 @@ class WangLandau(MCKernel):
         new_bin_num = self._get_bin(new_energy)
         new_state = self._aux_states[new_bin_num][walker]
 
-        rng = np.random.default_rng()
-        accept = state[0] - new_state[0] >= log(rng.random())
+        accept = state[0] - new_state[0] >= log(self._rng.random())
         if accept:
             for f in step:
                 occupancy[f[0]] = f[1]
