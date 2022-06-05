@@ -73,7 +73,9 @@ def gaussian_select(feature_matrix, num_samples, orthogonalize=False):
     return np.sort(sample_ids)
 
 
-def composition_select(composition_vector, composition, cell_sizes, num_samples):
+def composition_select(
+    composition_vector, composition, cell_sizes, num_samples, rng=None
+):
     """Structure selection based on composition multinomial probability.
 
     Note: this function is needs quite a bit of tweaking to get nice samples.
@@ -92,10 +94,14 @@ def composition_select(composition_vector, composition, cell_sizes, num_samples)
             compared to the total number of samples (or coverage of the space),
             it may take very long to return if at all, and the samples will not
             be very representative of the multinomial distributions.
+        rng (np.Generator): optional
+            numpy seed, Generator, SeedSequence, etc
+
     Returns:
         list of int: list with indices of the composition vector corresponding
                      to selected samples.
     """
+    rng = np.random.default_rng(rng)
     unique_compositions = np.unique(composition_vector, axis=1)
     # Sample structures biased by composition
     if isinstance(cell_sizes, int):
@@ -113,7 +119,6 @@ def composition_select(composition_vector, composition, cell_sizes, num_samples)
         size: dist.pmf(size * unique_compositions).max() for size, dist in dists.items()
     }
 
-    rng = np.random.default_rng()
     sample_ids = [
         i
         for i, (size, comp) in enumerate(zip(cell_sizes, composition_vector))

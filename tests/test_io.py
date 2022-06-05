@@ -2,7 +2,7 @@ import os
 
 from smol.cofe import ClusterSubspace, StructureWrangler
 from smol.io import load_work, save_work
-from smol.moca import CanonicalEnsemble, ClusterExpansionProcessor
+from smol.moca import ClusterExpansionProcessor, Ensemble
 
 
 def test_save_load_work(single_canonical_ensemble, tmpdir):
@@ -20,6 +20,6 @@ def test_save_load_work(single_canonical_ensemble, tmpdir):
             ClusterSubspace,
             StructureWrangler,
             ClusterExpansionProcessor,
-            CanonicalEnsemble,
+            Ensemble,
         )
     os.remove(file_path)

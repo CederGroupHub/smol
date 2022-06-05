@@ -7,15 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+* Allow streaming to h5 in simulated annealing. #216 @lbluque
 ### Changed
 ### Fixed
 ### Removed
 ### Deprecated
 
-# [v0.0.1](https://github.com/CederGroupHub/smol/releases/tag/v0.0.1) (2022-04-22)
+# [v0.0.3](https://github.com/CederGroupHub/smol/releases/tag/v0.0.3) (2022-06-03)
+### Added
+* Developing section of docs. #215 @lbluque
+* Single `Ensemble` class for canonical and semi-grand canonical sampling. #210 @lbluque
+### Changed
+* Package name properly `smol` instead of `statmech-on-lattices`.
+### Fixed
+* Fixed #213 metadata serialization for saving of `SampleContainers`. #214 @lbluque
+### Deprecated
+* `SemiGrandEnsemble` and `CanonicalEnsemble`. Use `Ensemble` with or without setting
+   chemical potentials instead. #210 @lbluque
+
+# [v0.0.2](https://github.com/CederGroupHub/smol/releases/tag/v0.0.2) (2022-05-22)
+### Fixed
+* version dunder with pypi project rename.
+* use of np.random.default_rng for reproducibility. #206 (lbluque)
+* Fix passing seed explicitly in Sampler.from_ensemble
+
+# [v0.0.1](https://github.com/CederGroupHub/smol/releases/tag/v0.0.1) (2022-04-26)
 ### Added
 * Method to detect and identify orbit degeneracies based on supercell shape. #184 (kamronald)
 * Automatic github release.
+* PyPi install as `statmech-on-lattices` (arghhh)
 ### Changed
 * Moved cython code for computing correlations to smol/correlations.pyx and imports as smol.correlations #190 (lbluque)
 ### Fixed

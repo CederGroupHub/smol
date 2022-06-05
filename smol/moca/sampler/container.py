@@ -14,7 +14,7 @@ from collections import defaultdict
 
 import numpy as np
 from monty.dev import requires
-from monty.json import MSONable, jsanitize
+from monty.json import MontyDecoder, MSONable, jsanitize
 
 from smol.moca.sampler.kernel import Trace
 from smol.moca.sublattice import Sublattice
@@ -322,6 +322,7 @@ class SampleContainer(MSONable):
     def clear(self):
         """Clear all samples from container."""
         self._total_steps = 0
+        self._total_steps = 0
         self._nsamples = 0
         for name, value in self._trace.items():
             setattr(
@@ -342,7 +343,7 @@ class SampleContainer(MSONable):
                 backend file object, currently only hdf5 supported.
         """
         start = backend["trace"].attrs["nsamples"]
-        end = len(self._trace.occupancy) + start
+        end = self._nsamples + start
         for name, value in self._trace.items():
             backend["trace"][name][start:end] = value
 
@@ -375,12 +376,12 @@ class SampleContainer(MSONable):
         if os.path.isfile(file_path):
             backend = self._check_backend(file_path)
             trace_grp = backend["trace"]
-            available = len(trace_grp.occupancy) - trace_grp.attrs["nsamples"]
+            available = len(trace_grp["occupancy"]) - trace_grp.attrs["nsamples"]
             # this probably fails since maxshape is not set.
             if available < alloc_nsamples:
                 SampleContainer._grow_backend(backend, alloc_nsamples - available)
         else:
-            backend = h5py.File(file_path, "w", libver="latest")
+            backend = h5py.File(file_path, "w-", libver="latest")
             self._init_backend(backend, alloc_nsamples)
 
         if swmr_mode:
@@ -407,7 +408,9 @@ class SampleContainer(MSONable):
         backend["natural_parameters"].attrs[
             "num_energy_coefs"
         ] = self._num_energy_coefs  # noqa
-        backend.create_dataset("sampling_metadata", data=json.dumps(self.metadata))
+        backend.create_dataset(
+            "sampling_metadata", data=json.dumps(jsanitize(self.metadata))
+        )
         trace_grp = backend.create_group("trace")
         for name, value in self._trace.items():
             trace_grp.create_dataset(
@@ -423,7 +426,9 @@ class SampleContainer(MSONable):
     def _grow_backend(backend, nsamples):
         """Extend space available in a backend file."""
         for name in backend["trace"]:
-            backend["trace"][name].resize(nsamples, axis=0)
+            backend["trace"][name].resize(
+                len(backend["trace"][name]) + nsamples, axis=0
+            )
 
     @staticmethod
     def _flatten(traced_values):
@@ -447,7 +452,7 @@ class SampleContainer(MSONable):
             "@class": self.__class__.__name__,
             "sublattices": [s.as_dict() for s in self.sublattices],
             "natural_parameters": jsanitize(self.natural_parameters),
-            "metadata": self.metadata,
+            "metadata": jsanitize(self.metadata),
             "num_energy_coefs": self._num_energy_coefs,
             "total_mc_steps": self._total_steps,
             "nsamples": self._nsamples,
@@ -537,7 +542,9 @@ class SampleContainer(MSONable):
                     "num_energy_coefs"
                 ],  # noqa
                 sample_trace=trace,
-                sampling_metadata=json.loads(f["sampling_metadata"][()]),
+                sampling_metadata=json.loads(
+                    f["sampling_metadata"][()], cls=MontyDecoder
+                ),
             )
             container._nsamples = nsamples
             container._total_steps = f["trace"].attrs["total_mc_steps"]

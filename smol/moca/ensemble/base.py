@@ -2,6 +2,7 @@
 
 __author__ = "Luis Barroso-Luque"
 
+import warnings
 from abc import ABC, abstractmethod
 
 from smol.moca.processor import (
@@ -11,7 +12,7 @@ from smol.moca.processor import (
 )
 
 
-class Ensemble(ABC):
+class BaseEnsemble(ABC):
     """Abstract base class for Monte Carlo Ensembles.
 
     Attributes:
@@ -22,12 +23,7 @@ class Ensemble(ABC):
             Dictionary with corresponding thermodynamic boundaries, i.e.
             chemical potentials or fugacity fractions. This is kept only for
             descriptive purposes.
-        valid_mcmc_steps (list of str):
-            List of the valid MCMC steps that can be used to sample the
-            ensemble in MCMC.
     """
-
-    valid_mcmc_steps = None  # add this in derived classes
 
     def __init__(self, processor, sublattices=None):
         """Initialize class instance.
@@ -40,6 +36,13 @@ class Ensemble(ABC):
                 list of Sublattice objects representing sites in the processor
                 supercell with same site spaces.
         """
+        # deprecation warning
+        warnings.warn(
+            f"{type(self).__name__} is deprecated; use Ensemble in smol.moca instead.",
+            category=FutureWarning,
+            stacklevel=2,
+        )
+
         if sublattices is None:
             sublattices = processor.get_sublattices()
         self.num_energy_coefs = len(processor.coefs)

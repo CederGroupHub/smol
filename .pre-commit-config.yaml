@@ -38,7 +38,7 @@ repos:
     - --profile=black
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v2.32.0
+  rev: v2.32.1
   hooks:
     - id: pyupgrade
       args: [--py38-plus]
@@ -54,8 +54,8 @@ repos:
         - --expand-star-imports
         - --ignore-init-module-imports
 
-- repo: https://gitlab.com/pycqa/flake8
-  rev: 3.9.2
+- repo: https://github.com/PyCQA/flake8
+  rev: 4.0.1
   hooks:
   - id: flake8
     files: ^smol/

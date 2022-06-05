@@ -5,9 +5,9 @@ from itertools import product
 import numpy as np
 import numpy.testing as npt
 import pytest
-from pymatgen.core import Composition
+from pymatgen.core.composition import ChemicalPotential, Composition
 
-from smol.cofe.space.domain import SiteSpace
+from smol.cofe.space.domain import SiteSpace, get_species
 from smol.moca.sampler import SampleContainer
 from smol.moca.sampler.kernel import Trace
 from smol.moca.sublattice import Sublattice
@@ -39,14 +39,20 @@ def container(request, rng):
         temperature=np.zeros((0, request.param, 1)),
         accepted=np.zeros((0, request.param, 1), dtype=bool),
     )
-    sampler_container = SampleContainer(
+    sample_container = SampleContainer(
         sublattices=sublattices,
         natural_parameters=natural_parameters,
         num_energy_coefs=num_energy_coefs,
         sample_trace=trace,
+        sampling_metadata={
+            "thermo_boundaries": ChemicalPotential(
+                {get_species("Li+"): 0.5, get_species("Vacancy"): 0.3}
+            ),
+            "seed": 0,
+        },
     )
-    yield sampler_container
-    sampler_container.clear()
+    yield sample_container
+    sample_container.clear()
 
 
 @pytest.fixture
@@ -347,7 +353,6 @@ def test_flush_to_hdf5(container, fake_traces, mode, tmpdir):
     add_samples(container, fake_traces)
     file_path = os.path.join(tmpdir, "test.h5")
     chunk = len(fake_traces) // 4
-    print(chunk)
     flushed_container.allocate(chunk)
     backend = flushed_container.get_backend(file_path, len(fake_traces), swmr_mode=mode)
     start = 0
@@ -358,16 +363,42 @@ def test_flush_to_hdf5(container, fake_traces, mode, tmpdir):
         flushed_container.flush_to_backend(backend)
         start += chunk
 
-    if mode is not True:
+    if mode is False:
         backend.close()
 
     assert flushed_container._trace.occupancy.shape[0] == chunk
     assert flushed_container.num_samples == 0
     cntr = SampleContainer.from_hdf5(file_path)
+    assert cntr.num_samples == container.num_samples
+    assert cntr.total_mc_steps == container.total_mc_steps
     npt.assert_array_equal(container.get_occupancies(), cntr.get_occupancies())
     npt.assert_array_equal(container.get_energies(), cntr.get_energies())
 
     if mode is True:
         backend.close()
+
+    # now get it again, and make sure more space is allocated
+    add_samples(container, fake_traces)
+    backend = flushed_container.get_backend(file_path, len(fake_traces))
+    assert backend["trace"].attrs["nsamples"] == len(fake_traces)
+    assert len(backend["trace"]["occupancy"]) == 2 * len(fake_traces)
+
+    start = 0
+    for _ in range(4):
+        for i in range(start, start + chunk):
+            flushed_container.save_sampled_trace(fake_traces[i], thinned_by=1)
+        assert flushed_container._trace.occupancy.shape[0] == chunk
+        flushed_container.flush_to_backend(backend)
+        start += chunk
+
+    assert flushed_container._trace.occupancy.shape[0] == chunk
+    assert flushed_container.num_samples == 0
+    cntr = SampleContainer.from_hdf5(file_path)
+    assert cntr.num_samples == container.num_samples
+    assert cntr.total_mc_steps == container.total_mc_steps
+    npt.assert_array_equal(container.get_occupancies(), cntr.get_occupancies())
+    npt.assert_array_equal(container.get_energies(), cntr.get_energies())
+
+    backend.close()
 
     os.remove(file_path)

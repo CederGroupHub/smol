@@ -122,6 +122,7 @@ class MCKernel(ABC):
         ensemble,
         step_type,
         *args,
+        seed=None,
         nwalkers=1,
         bias_type=None,
         bias_kwargs=None,
@@ -133,13 +134,15 @@ class MCKernel(ABC):
             ensemble (Ensemble):
                 an Ensemble instance to obtain the features and parameters
                 used in computing log probabilities.
-            step_type (str): optional
-                String specifying the MCMC step type.
+            step_type (str):
+                string specifying the MCMC step type.
+            seed (int): optional
+                non-negative integer to seed the PRNG
             nwalkers (int): optional
                 Number of walkers/chains to sampler.
-            bias (MCBias):
-                a bias instance.
-            bias_kwargs (dict):
+            bias_type (str): optional
+                name for bias type instance.
+            bias_kwargs (dict): optional
                 dictionary of keyword arguments to pass to the bias
                 constructor.
             args:
@@ -150,6 +153,8 @@ class MCKernel(ABC):
                 corresponding step size.
         """
         self.natural_params = ensemble.natural_parameters
+        self._seed = seed if seed is not None else np.random.SeedSequence().entropy
+        self._rng = np.random.default_rng(self._seed)
         self._compute_features = ensemble.compute_feature_vector
         self._feature_change = ensemble.compute_feature_vector_change
         self._nwalkers = nwalkers
@@ -161,6 +166,7 @@ class MCKernel(ABC):
             mcusher_name,
             ensemble.sublattices,
             *args,
+            rng=self._rng,
             **kwargs,
         )
 
@@ -170,6 +176,7 @@ class MCKernel(ABC):
             self.bias = mcbias_factory(
                 bias_name,
                 ensemble.sublattices,
+                rng=self._rng,
                 **bias_kwargs,
             )
 
@@ -187,6 +194,11 @@ class MCKernel(ABC):
         if usher.__class__.__name__ not in self.valid_mcushers:
             raise ValueError(f"{type(usher)} is not a valid MCUsher for this kernel.")
         self._usher = usher
+
+    @property
+    def seed(self):
+        """Get seed for PRNG."""
+        return self._seed
 
     @property
     def bias(self):
@@ -334,7 +346,6 @@ class UniformlyRandom(MCKernel):
         Returns:
             StepTrace
         """
-        rng = np.random.default_rng()
         step = self._usher.propose_step(occupancy)
         self.trace.delta_trace.features = self._feature_change(occupancy, step)
         self.trace.delta_trace.enthalpy = np.array(
@@ -348,7 +359,7 @@ class UniformlyRandom(MCKernel):
             self.trace.accepted = np.array(
                 True
                 if self.trace.delta_trace.bias >= 0
-                else self.trace.delta_trace.bias > log(rng.random())
+                else self.trace.delta_trace.bias > log(self._rng.random())
             )
 
         if self.trace.accepted:
@@ -382,7 +393,6 @@ class Metropolis(ThermalKernel):
         Returns:
             StepTrace
         """
-        rng = np.random.default_rng()
         step = self._usher.propose_step(occupancy)
         self.trace.delta_trace.features = self._feature_change(occupancy, step)
         self.trace.delta_trace.enthalpy = np.array(
@@ -398,14 +408,14 @@ class Metropolis(ThermalKernel):
                 + self.trace.delta_trace.bias
             )
             self.trace.accepted = np.array(
-                True if exponent >= 0 else exponent > log(rng.random())
+                True if exponent >= 0 else exponent > log(self._rng.random())
             )
         else:
             self.trace.accepted = np.array(
                 True
                 if self.trace.delta_trace.enthalpy <= 0
                 else -self.beta * self.trace.delta_trace.enthalpy
-                > log(rng.random())  # noqa
+                > log(self._rng.random())  # noqa
             )
 
         if self.trace.accepted:
@@ -441,7 +451,7 @@ class WangLandau(MCKernel):
         mod_update=None,
         nwalkers=1,
     ):
-        """Initialize a WangLandau Kernel
+        """Initialize a WangLandau Kernel.
 
         Args:
             ensemble (Ensemble):
@@ -544,7 +554,7 @@ class WangLandau(MCKernel):
 
     @property
     def dos(self):
-        """Get current DOS for each walker"""
+        """Get current DOS for each walker."""
         # TODO look into handling this to avoid overflow issues...
         return np.exp(self.entropy)
 
@@ -560,7 +570,7 @@ class WangLandau(MCKernel):
 
     @property
     def mod_factors(self):
-        """Get the entropy modification factors"""
+        """Get the entropy modification factors."""
         return self._mfactors
 
     def _get_bin(self, energy):
@@ -631,7 +641,7 @@ class WangLandau(MCKernel):
         return accept, occupancy, delta_energy, delta_features
 
     def set_aux_state(self, occupancies):
-        """Set the auxiliary occupancies based on an occupancy"""
+        """Set the auxiliary occupancies based on an occupancy."""
         energies = np.dot(list(map(self.feature_fun, occupancies)), self.natural_params)
         self._current_energy[:] = energies
         self._usher.set_aux_state(occupancies)
