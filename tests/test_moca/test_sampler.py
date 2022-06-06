@@ -10,6 +10,7 @@ from smol.moca.sampler.mcusher import Flip, Swap
 from tests.utils import gen_random_occupancy
 
 TEMPERATURE = 5000
+ATOL = 1e-14
 
 
 @pytest.fixture(params=[1, 5])
@@ -49,7 +50,7 @@ def test_sample(sampler, thin):
 
 # TODO efficiency is sometimes =0 and so fails
 @pytest.mark.parametrize("thin", (1, 10))
-def test_run(sampler, thin):
+def test_run(sampler, thin, rng):
     occu = np.vstack(
         [
             gen_random_occupancy(sampler.mckernel._usher.sublattices)
@@ -60,6 +61,22 @@ def test_run(sampler, thin):
     sampler.run(steps, occu, thin_by=thin)
     assert len(sampler.samples) == steps // thin
     assert 0 <= sampler.efficiency() <= 1
+
+    # pick some random samples and check recorded traces match!
+    for i in rng.choice(range(sampler.samples.num_samples), size=10):
+        npt.assert_allclose(
+            sampler.samples.get_feature_vectors(flat=False)[i],
+            np.vstack(
+                list(
+                    map(
+                        sampler.mckernel._compute_features,
+                        sampler.samples.get_occupancies(flat=False)[i],
+                    )
+                )
+            ),
+            atol=ATOL,
+        )
+
     sampler.clear_samples()
 
 

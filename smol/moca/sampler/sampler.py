@@ -201,7 +201,10 @@ class Sampler:
                 for _ in range(thin_by):
                     for i, strace in enumerate(self._kernel.iter_steps(occupancies)):
                         for name, value in strace.items():
-                            setattr(trace, name, value)
+                            val = getattr(trace, name)
+                            val[i] = value
+                            # this will mess up recording values for > 1 walkers
+                            # setattr(trace, name, value)
                         if strace.accepted:
                             for name, delta_val in strace.delta_trace.items():
                                 val = getattr(trace, name)

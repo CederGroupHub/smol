@@ -10,6 +10,7 @@ Use this section to keep track of changes in the works.
 * Allow streaming to h5 in simulated annealing. #216 @lbluque
 ### Changed
 ### Fixed
+* Fix recording sampled traces for nwalkers > 1. #219 @lbluque
 ### Removed
 ### Deprecated
 
