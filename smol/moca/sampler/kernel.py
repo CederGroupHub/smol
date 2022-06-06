@@ -653,6 +653,21 @@ class WangLandau(MCKernel):
         self._current_energy[:] = energies
         self._usher.set_aux_state(occupancies)
 
+    def compute_initial_trace(self, occupancy):
+        """Compute inital values for sample trace given an occupancy.
+
+        Args:
+            occupancy (ndarray):
+                Initial occupancy
+
+        Returns:
+            Trace
+        """
+        trace = super().compute_initial_trace(occupancy)
+        # clear the aux states!
+        self._aux_states.clear()
+        return trace
+
 
 def mckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs):
     """Get a MCMC Kernel from string name.
