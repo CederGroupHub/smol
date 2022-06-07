@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>moca package &#8212; smol 0.0.3 documentation</title>
+    <title>moca package &#8212; smol 0.0.1.dev1+g45fd81e documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -118,7 +118,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.3  <!-- this text may get changed later by javascript -->
+        0.0.1.dev1+g45fd81e  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -128,7 +128,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables api_reference/autogen/moca and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.3'}.
+     variables api_reference/autogen/moca and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1.dev1+g45fd81e'}.
 -->
 
 <script type="text/javascript">
@@ -179,10 +179,10 @@ function checkPageExistsAndRedirect(event) {
 
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.3 variable.
+            // this version, rather than using sphinx's 0.0.1.dev1+g45fd81e variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.3") {
+            if (entry.version == "0.0.1.dev1+g45fd81e") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -1609,11 +1609,14 @@ mcusher, etc.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.Sampler.anneal">
-<span class="sig-name descname"><span class="pre">anneal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temperatures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcmc_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_occupancies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Sampler.anneal" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">anneal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temperatures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcmc_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_occupancies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Sampler.anneal" title="Permalink to this definition">#</a></dt>
 <dd><p>Carry out a simulated annealing procedure.</p>
-<p>Uses the total number of temperatures given by “steps” interpolating
-between the start and end temperature according to a cooling function.
-The start temperature is the temperature set for the ensemble.</p>
+<p>Will MC sampling for each temperature for the specified number of steps,
+taking the last sampled configuration at each temperature as the starting
+configuration for the next temperature.</p>
+<p>Everything is saved to the same SampleContainer, or if streaming, saved to the
+same file. To save each temperature in a different container, simply run
+a similar “for loop” creating a new sampler at each temperature.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1625,6 +1628,15 @@ You should only provide this the first time you call run.</p></li>
 <li><p><strong>thin_by</strong> (<em>int</em>) – optional
 amount to thin by for saving samples.</p></li>
 <li><p><strong>progress</strong> (<em>bool</em>) – if true will show a progress bar.</p></li>
+<li><p><strong>stream_chunk</strong> (<em>int</em>) – optional
+chunk of samples to stream into a file. If &gt; 0 samples will
+be flushed to backend file in stream_chucks</p></li>
+<li><p><strong>stream_file</strong> (<em>str</em>) – optional
+file name to use as backend. If file already exists will try
+to append to datasets. If not given will create a new file.</p></li>
+<li><p><strong>swmr_mode</strong> (<em>bool</em>) – optional
+if true allows to read file from other processes. Single Writer
+Multiple Readers.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1684,7 +1696,7 @@ More often than not you want to specify the temperature!</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.Sampler.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nsteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_occupancies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Sampler.run" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nsteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_occupancies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_last_chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Sampler.run" title="Permalink to this definition">#</a></dt>
 <dd><p>Run an MCMC sampling simulation.</p>
 <p>This will run and save the samples every thin_by into a
 SampleContainer.</p>
@@ -1706,6 +1718,10 @@ be flushed to backend file in stream_chucks</p></li>
 <li><p><strong>stream_file</strong> (<em>str</em>) – optional
 file name to use as backend. If file already exists will try
 to append to datasets. If not given will create a new file.</p></li>
+<li><p><strong>keep_last_chunk</strong> (<em>bool</em>) – optional
+if True will keep the last chunk of samples in memory, but will reset
+the sampler otherwise. This is useful if the last occupancies are
+needed to start another run (ie for simulated annealing with streaming)</p></li>
 <li><p><strong>swmr_mode</strong> (<em>bool</em>) – optional
 if true allows to read file from other processes. Single Writer
 Multiple Readers.</p></li>

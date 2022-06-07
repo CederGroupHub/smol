@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Creating a Cluster Expansion with an additional Ewald electrostatic term &#8212; smol 0.0.3 documentation</title>
+    <title>Creating a Cluster Expansion with an additional Ewald electrostatic term &#8212; smol 0.0.1.dev1+g45fd81e documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -120,7 +120,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.3  <!-- this text may get changed later by javascript -->
+        0.0.1.dev1+g45fd81e  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -130,7 +130,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables notebooks/creating-a-ce-w-electrostatics and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.3'}.
+     variables notebooks/creating-a-ce-w-electrostatics and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1.dev1+g45fd81e'}.
 -->
 
 <script type="text/javascript">
@@ -181,10 +181,10 @@ function checkPageExistsAndRedirect(event) {
 
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.3 variable.
+            // this version, rather than using sphinx's 0.0.1.dev1+g45fd81e variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.3") {
+            if (entry.version == "0.0.1.dev1+g45fd81e") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -568,7 +568,7 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="admonition note">
   This page was generated from
-  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/0.0.3/docs/src/notebooks/creating-a-ce-w-electrostatics.ipynb">docs/src/notebooks/creating-a-ce-w-electrostatics.ipynb</a>.<br>
+  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/0.0.1.dev1+g45fd81e/docs/src/notebooks/creating-a-ce-w-electrostatics.ipynb">docs/src/notebooks/creating-a-ce-w-electrostatics.ipynb</a>.<br>
   <script>
     if (document.location.host) {
       $(document.currentScript).replaceWith(
@@ -660,7 +660,7 @@ div.rendered_html tbody tr:hover {
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 The Ewald interaction for a structure with composition Li+1 Ni4+5 Ni3+1 O2-12 is:
--116.41651881128502 eV/prim
+-116.41651881128503 eV/prim
 </pre></div></div>
 </div>
 </section>
@@ -723,9 +723,9 @@ The Ewald interaction for a structure with composition Li+1 Ni4+5 Ni3+1 O2-12 is
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-RMSE 7.366465328124667 meV/prim
+RMSE 7.366465328125201 meV/prim
 MAX 16.051863315254877 meV/prim
-Fitted dielectric constant 9.413114998056717
+Fitted dielectric constant 9.413114998055713
 </pre></div></div>
 </div>
 </section>
@@ -750,8 +750,7 @@ Fitted dielectric constant 9.413114998056717
     <span class="n">indices</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,],</span> <span class="n">low</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">max_dielectric</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)(</span><span class="n">fit</span><span class="p">)(</span>
     <span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span> <span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
 <span class="p">)</span>
-<span class="n">train_predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span>
-                           <span class="n">expansion</span><span class="o">.</span><span class="n">coefs</span><span class="p">)</span>
+<span class="n">train_predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span> <span class="n">coefs</span><span class="p">)</span>
 <span class="n">rmse</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">),</span>
                           <span class="n">train_predictions</span><span class="p">,</span> <span class="n">squared</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">maxer</span> <span class="o">=</span> <span class="n">max_error</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">),</span>
@@ -768,8 +767,8 @@ Fitted dielectric constant 9.413114998056717
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-RMSE 7.366465328124667 meV/prim
-MAX 16.051863315254877 meV/prim
+RMSE 10.332921196955532 meV/prim
+MAX 22.073503797322758 meV/prim
 Fitted dielectric constant 5.0
 </pre></div></div>
 </div>
@@ -787,8 +786,7 @@ Fitted dielectric constant 5.0
 <span class="n">coefs</span> <span class="o">=</span> <span class="n">fit</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span>
             <span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">))</span>
 
-<span class="n">train_predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span>
-                           <span class="n">expansion</span><span class="o">.</span><span class="n">coefs</span><span class="p">)</span>
+<span class="n">train_predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span> <span class="n">coefs</span><span class="p">)</span>
 <span class="n">rmse</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">),</span>
                           <span class="n">train_predictions</span><span class="p">,</span> <span class="n">squared</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">maxer</span> <span class="o">=</span> <span class="n">max_error</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">),</span>
@@ -806,8 +804,8 @@ Fitted dielectric constant 5.0
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-RMSE 7.366465328124667 meV/prim
-MAX 16.051863315254877 meV/prim
+RMSE 10.332921196955532 meV/prim
+MAX 22.073503797322758 meV/prim
 Fitted dielectric constant 5.0
 </pre></div></div>
 </div>
