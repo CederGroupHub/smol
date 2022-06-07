@@ -525,6 +525,8 @@ class WangLandau(MCKernel):
             seed=seed,
             **kwargs,
         )
+        # clear aux_states from single_step call in super.__init__ (not v clean though)
+        self._aux_states.clear()
 
     @property
     def bin_size(self):
@@ -640,8 +642,8 @@ class WangLandau(MCKernel):
 
         mfactor = self._mfactors[walker]
         # update DOS and histogram
-        self._aux_states[bin_num][walker][0] += mfactor
-        self._aux_states[bin_num][walker][1] += 1
+        self._aux_states[bin_num][walker, 0] += mfactor
+        self._aux_states[bin_num][walker, 1] += 1
 
         return self.trace
 
@@ -652,21 +654,6 @@ class WangLandau(MCKernel):
         )
         self._current_energy[:] = energies
         self._usher.set_aux_state(occupancies)
-
-    def compute_initial_trace(self, occupancy):
-        """Compute inital values for sample trace given an occupancy.
-
-        Args:
-            occupancy (ndarray):
-                Initial occupancy
-
-        Returns:
-            Trace
-        """
-        trace = super().compute_initial_trace(occupancy)
-        # clear the aux states!
-        self._aux_states.clear()
-        return trace
 
 
 def mckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs):
