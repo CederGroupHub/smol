@@ -7,13 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
-* Single `Ensemble` class for canonical and semi-grand canonical sampling #210 @lbluque
+* Allow streaming to h5 in simulated annealing. #216 @lbluque
 ### Changed
-* Package name properly `smol` instead of `statmech-on-lattices`.
+### Fixed
+* Fix recording sampled traces for nwalkers > 1. #219 @lbluque
 ### Removed
 ### Deprecated
-* `SemiGrandEnsemble` and `CanonicalEnsemble`. Use `Ensemble` with or without setting chemical
-   potentials instead.
+
+# [v0.0.3](https://github.com/CederGroupHub/smol/releases/tag/v0.0.3) (2022-06-03)
+### Added
+* Developing section of docs. #215 @lbluque
+* Single `Ensemble` class for canonical and semi-grand canonical sampling. #210 @lbluque
+### Changed
+* Package name properly `smol` instead of `statmech-on-lattices`.
+### Fixed
+* Fixed #213 metadata serialization for saving of `SampleContainers`. #214 @lbluque
+### Deprecated
+* `SemiGrandEnsemble` and `CanonicalEnsemble`. Use `Ensemble` with or without setting
+   chemical potentials instead. #210 @lbluque
 
 # [v0.0.2](https://github.com/CederGroupHub/smol/releases/tag/v0.0.2) (2022-05-22)
 ### Fixed

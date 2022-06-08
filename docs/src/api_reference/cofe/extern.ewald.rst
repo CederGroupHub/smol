@@ -6,7 +6,8 @@ Additional pair interaction terms can be used to improve training
 convergence. :class:`EwaldTerm` can be used to add an electrostatic
 pair term based on the `Ewald summation
 <https://pymatgen.org/pymatgen.analysis.ewald.html>`_, as
-implemented in pymatgen, and is particularly useful in oxides.
+implemented in :mod:`pymatgen`, and is particularly useful in ionic systems such as
+oxides.
 
 .. _ewald term:
 
