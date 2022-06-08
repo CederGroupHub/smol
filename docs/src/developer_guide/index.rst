@@ -2,13 +2,13 @@
 Developing
 ==========
 
-.. note::
-   This page is still under construction...
-
-All classes and functions are designed for easy extension and implementation
-of new metholody.
+The following sections list contributing guidelines as well a detailed description of
+design of the package that may help to understand much better how and where to implement
+new features. This information should help make writting and contributing new
+functionality much more straightforward.
 
 .. toctree::
-   :maxdepth: 1
-   guidelines
+   :maxdepth: 3
+
+   guide
    design
