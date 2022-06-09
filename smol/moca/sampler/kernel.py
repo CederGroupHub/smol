@@ -629,17 +629,18 @@ class WangLandau(MCKernel):
             self._aux_states["current-features"][walker] = features
             self._usher.update_aux_state(step)
 
-        # compute the cumulative statistics
-        total = self._aux_states["total-histogram"][walker, bin_num]
-        curr_mean = self._aux_states["mean-features"][walker, bin_num]
-        self._aux_states["mean-features"][walker, bin_num] = (1 / (total + 1)) * (
-            features + total * curr_mean
-        )
-
-        # update DOS and histogram
-        self._aux_states["entropy"][walker, bin_num] += self._mfactors[walker]
-        self._aux_states["histogram"][walker, bin_num] += 1
-        self._aux_states["total-histogram"][walker, bin_num] += 1
+        # only if bin_num is valid
+        if 0 < bin_num < len(self._energy_levels):
+            # compute the cumulative statistics
+            total = self._aux_states["total-histogram"][walker, bin_num]
+            curr_mean = self._aux_states["mean-features"][walker, bin_num]
+            self._aux_states["mean-features"][walker, bin_num] = (1 / (total + 1)) * (
+                features + total * curr_mean
+            )
+            # update DOS and histogram
+            self._aux_states["entropy"][walker, bin_num] += self._mfactors[walker]
+            self._aux_states["histogram"][walker, bin_num] += 1
+            self._aux_states["total-histogram"][walker, bin_num] += 1
 
         # fill up values in the trace
         self.trace.histogram = self._aux_states["histogram"][walker]
