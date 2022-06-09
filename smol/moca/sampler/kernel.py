@@ -508,6 +508,15 @@ class WangLandau(MCKernel):
             "entropy": np.zeros((nwalkers, len(self._energy_levels))),
             "current-energy": np.zeros(nwalkers),
             "counter": 0,  # count steps to check flatness at given intervals
+            # keep a total-histogram for online means (and variances eventually?)
+            "total-histogram": np.zeros(
+                (nwalkers, len(self._energy_levels)), dtype=int
+            ),
+            "current-features": np.zeros((nwalkers, len(ensemble.natural_parameters))),
+            # for cumulative mean features per energy level
+            "mean-features": np.zeros(
+                (nwalkers, len(self.energy_levels), len(ensemble.natural_parameters))
+            ),
         }
 
         super().__init__(
@@ -590,6 +599,7 @@ class WangLandau(MCKernel):
             tuple: (acceptance, occupancy, features change, enthalpy change)
         """
         energy = self._aux_states["current-energy"][walker]
+        features = self._aux_states["current-features"][walker]
         bin_num = self._get_bin(energy)
 
         step = self._usher.propose_step(occupancy)
@@ -614,17 +624,29 @@ class WangLandau(MCKernel):
             for f in step:
                 occupancy[f[0]] = f[1]
             bin_num = new_bin_num
+            features += self.trace.delta_trace.features
             self._aux_states["current-energy"][walker] = new_energy
+            self._aux_states["current-features"][walker] = features
             self._usher.update_aux_state(step)
+
+        # compute the cumulative statistics
+        total = self._aux_states["total-histogram"][walker, bin_num]
+        curr_mean = self._aux_states["mean-features"][walker, bin_num]
+        self._aux_states["mean-features"][walker, bin_num] = (1 / (total + 1)) * (
+            features + total * curr_mean
+        )
 
         # update DOS and histogram
         self._aux_states["entropy"][walker, bin_num] += self._mfactors[walker]
         self._aux_states["histogram"][walker, bin_num] += 1
+        self._aux_states["total-histogram"][walker, bin_num] += 1
 
         # fill up values in the trace
-        self.trace.histogram = self._aux_states["histogram"]
-        self.trace.entropy = self._aux_states["entropy"]
-        self.trace.mod_factor = self._mfactors
+        self.trace.histogram = self._aux_states["histogram"][walker]
+        self.trace.entropy = self._aux_states["entropy"][walker]
+        self.trace.cumulative_mean_features = self._aux_states["mean-features"][walker]
+        # this multiple walker thing is so unessecary!!!
+        self.trace.mod_factor = np.array([self._mfactors[walker]])
 
         return self.trace
 
@@ -645,15 +667,16 @@ class WangLandau(MCKernel):
         # but that is ok since we are not recording the initial trace when sampling.
         trace.histogram = self._aux_states["histogram"][0]
         trace.entropy = self._aux_states["entropy"][0]
+        trace.cumulative_mean_features = self._aux_states["mean-features"][0]
         trace.mod_factor = self._mfactors[0]
 
         return trace
 
     def set_aux_state(self, occupancies, *args, **kwargs):
         """Set the auxiliary occupancies based on an occupancy."""
-        energies = np.dot(
-            list(map(self._compute_features, occupancies)), self.natural_params
-        )
+        features = np.array(list(map(self._compute_features, occupancies)))
+        energies = np.dot(features, self.natural_params)
+        self._aux_states["current-features"][:] = features
         self._aux_states["current-energy"][:] = energies
         self._usher.set_aux_state(occupancies)
 
