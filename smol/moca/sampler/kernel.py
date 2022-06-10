@@ -447,6 +447,7 @@ class WangLandau(MCKernel):
         flatness=0.8,
         mod_factor=1.0,
         check_period=1000,
+        update_period=1,
         mod_update=None,
         seed=None,
         nwalkers=1,
@@ -475,6 +476,10 @@ class WangLandau(MCKernel):
             check_period (int): optional
                 The period in number of steps for the histogram flatness to be
                 checked.
+            update_period (int): optional
+                The period number in steps to update the histogram and entropy.
+                In some cases periods slightly larger than each step, may allow
+                more efficient exploration of energy space.
             mod_update (Callable): optional
                 A function used to update the fill factor when the histogram
                 satisfies the flatness criteria. The function is used to update
@@ -492,6 +497,7 @@ class WangLandau(MCKernel):
 
         self.flatness = flatness
         self.check_period = check_period
+        self.update_period = update_period
         self._mfactors = np.array(
             nwalkers
             * [
@@ -507,7 +513,8 @@ class WangLandau(MCKernel):
             "histogram": np.zeros((nwalkers, len(self._energy_levels)), dtype=int),
             "entropy": np.zeros((nwalkers, len(self._energy_levels))),
             "current-energy": np.zeros(nwalkers),
-            "counter": 0,  # count steps to check flatness at given intervals
+            "check-counter": 0,  # count steps to check flatness at given intervals
+            "update-counter": 0,  # count steps to update histogram and entropy
             # keep a total-histogram for online means (and variances eventually?)
             "total-histogram": np.zeros(
                 (nwalkers, len(self._energy_levels)), dtype=int
@@ -574,9 +581,9 @@ class WangLandau(MCKernel):
         for walker, occupancy in enumerate(occupancies):
             yield self.single_step(occupancy, walker)
 
-        self._aux_states["counter"] += 1
+        self._aux_states["check-counter"] += 1
         # check if histograms are flat and reset accordingly
-        if self._aux_states["counter"] % self.check_period == 0:
+        if self._aux_states["check-counter"] % self.check_period == 0:
             for i, histogram in enumerate(self._aux_states["histogram"]):
                 histogram = histogram[histogram > 0]  # remove zero entries
                 if (histogram > self.flatness * histogram.mean()).all():
@@ -637,10 +644,13 @@ class WangLandau(MCKernel):
             self._aux_states["mean-features"][walker, bin_num] = (1 / (total + 1)) * (
                 features + total * curr_mean
             )
-            # update DOS and histogram
-            self._aux_states["entropy"][walker, bin_num] += self._mfactors[walker]
-            self._aux_states["histogram"][walker, bin_num] += 1
-            self._aux_states["total-histogram"][walker, bin_num] += 1
+            self._aux_states["update-counter"] += 1
+            # check if histograms are flat and reset accordingly
+            if self._aux_states["update-counter"] % self.update_period == 0:
+                # update DOS and histogram
+                self._aux_states["entropy"][walker, bin_num] += self._mfactors[walker]
+                self._aux_states["histogram"][walker, bin_num] += 1
+                self._aux_states["total-histogram"][walker, bin_num] += 1
 
         # fill up values in the trace
         self.trace.histogram = self._aux_states["histogram"][walker]
