@@ -550,7 +550,9 @@ class WangLandau(MCKernel):
     @property
     def entropy(self):
         """Return entropy values for each walker."""
-        return self._aux_states["entropy"]
+        # TODO this again is a mess because of this multiple walker mess...
+        mask = self._aux_states["entropy"][0] > 0
+        return np.vstack([entropy[mask] for entropy in self._aux_states["entropy"]])
 
     @property
     def dos(self):
@@ -561,7 +563,10 @@ class WangLandau(MCKernel):
     @property
     def histogram(self):
         """Get current histograms for each walker."""
-        return self._aux_states["histogram"]
+        # remove unvisited states
+        # TODO this again is a mess because of this multiple walker mess...
+        mask = self._aux_states["histogram"][0] > 0
+        return np.vstack([hist[mask] for hist in self._aux_states["histogram"]])
 
     @property
     def mod_factors(self):
