@@ -158,6 +158,88 @@ class Swap(MCUsher):
         return swap
 
 
+class MultiStep(MCUsher):
+    """A multi step usher to generate steps of several flips.
+
+    Any usher can be used to chain steps, ie create multi flip steps, multi swap steps
+    even multi composite steps, etc.
+    """
+
+    def __init__(
+        self,
+        sublattices,
+        mcusher,
+        step_lengths,
+        sublattice_probabilities=None,
+        step_probabilities=None,
+        rng=None,
+    ):
+        """Initialize a multistep usher.
+
+        Args:
+            sublattices (list of Sublattice):
+                list of active Sublattices to propose steps for. Active
+                sublattices are those that include sites with configuration
+                degrees of freedom DOFs, only occupancy on active sub-lattices' active sites
+                are allowed to change.
+            mcusher (MCUsher):
+                The MCUsher to use to create multisteps.
+            step_lengths (int or Sequence of int):
+                The length or lengths of steps. If given a sequence of sizes, a size
+                is choosen at each proposal according to step_probabilities.
+            sublattice_probabilities (list of float): optional
+                list of probabilities to pick a site from specific active
+                sublattices.
+            step_probabilities (Sequence of float): optional
+                A sequence of probabilites corresponding to the step lengths provided.
+                If none is given, then a uniform probability is used.
+            rng (np.Generator): optional
+                The given PRNG must be the same instance as that used by the kernel and
+                any bias terms, otherwise reproducibility will be compromised.
+        """
+        super().__init__(sublattices, sublattice_probabilities, rng=rng)
+
+        if isinstance(step_lengths, int):
+            self._step_lens = np.array([step_lengths], dtype=int)
+        else:
+            self._step_lens = np.array(step_lengths, dtype=int)
+
+        if step_probabilities is not None:
+            if sum(step_probabilities) != 1.0:
+                raise ValueError("The step_probabilities do not sum to 1.")
+            if len(step_probabilities) != len(step_lengths):
+                raise ValueError(
+                    "The lenght of step_lengths and step_probabilities does not match."
+                )
+            self.step_p = np.array(step_probabilities)
+        else:
+            self._step_p = np.array(
+                [1.0 / len(self._step_lens) for _ in range(len(self._step_lens))]
+            )
+
+        if isinstance(mcusher, str):  # TODO additional kwargs?
+            mcusher = mcusher_factory(
+                mcusher,
+                self.sublattices,
+                sublattice_probabilities=self.sublattice_probabilities,
+            )
+
+        self._mcusher = mcusher
+
+    def propose_step(self, occupancy):
+        """Propose a step given an occupancy."""
+        step_length = self._rng.choice(self._step_lens, p=self._step_p)
+        steps = []
+        occu = occupancy.copy()
+        for _ in range(step_length):
+            steps.append(self._mcusher.propose_step(occu))
+            for f in steps[-1]:
+                occu[f[0]] = f[1]
+
+        # unpack them to single list
+        return [flip for step in steps for flip in step]
+
+
 class Composite(MCUsher):
     """A composite usher for chaining different step types.
 
