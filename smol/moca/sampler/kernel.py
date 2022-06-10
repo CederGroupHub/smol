@@ -522,7 +522,7 @@ class WangLandau(MCKernel):
             "current-features": np.zeros((nwalkers, len(ensemble.natural_parameters))),
             # for cumulative mean features per energy level
             "mean-features": np.zeros(
-                (nwalkers, len(self.energy_levels), len(ensemble.natural_parameters))
+                (nwalkers, len(self._energy_levels), len(ensemble.natural_parameters))
             ),
         }
 
@@ -545,7 +545,8 @@ class WangLandau(MCKernel):
     @property
     def energy_levels(self):
         """Get energies that have been visited or are inside initial window."""
-        return self._energy_levels
+        # TODO this again is a mess because of this multiple walker mess...
+        return self._energy_levels[self._aux_states["entropy"][0] > 0]
 
     @property
     def entropy(self):
