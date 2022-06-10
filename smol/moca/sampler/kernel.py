@@ -625,7 +625,7 @@ class WangLandau(MCKernel):
 
         if new_energy < self._window[0]:  # reject
             self.trace.accepted = np.array(False)
-        elif new_energy > self._window[1]:  # reject
+        elif new_energy >= self._window[1]:  # reject
             self.trace.accepted = np.array(False)
         else:
             state = self._aux_states["entropy"][walker, bin_num]
