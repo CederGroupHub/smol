@@ -566,8 +566,8 @@ class WangLandau(MCKernel):
         """Get current histograms for each walker."""
         # remove unvisited states
         # TODO this again is a mess because of this multiple walker mess...
-        mask = self._aux_states["histogram"][0] > 0
-        return np.vstack([hist[mask] for hist in self._aux_states["histogram"]])
+        mask = self._aux_states["entropy"][0] > 0
+        return np.vstack([hist[mask] for hist in self._aux_states["entropy"]])
 
     @property
     def mod_factors(self):
