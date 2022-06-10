@@ -576,7 +576,7 @@ class WangLandau(MCKernel):
 
     def _get_bin(self, energy):
         """Get the histogram bin for _aux_states dict from given energy."""
-        return int((energy - self._window[0]) / self._bin_size)
+        return int((energy - self._window[0]) // self._bin_size)
 
     def _get_bin_energy(self, bin_number):
         """Get the bin energy for _aux_states dict from given energy."""
