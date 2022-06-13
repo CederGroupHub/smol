@@ -558,8 +558,7 @@ class WangLandau(MCKernel):
     @property
     def dos(self):
         """Get current DOS for each walker."""
-        # TODO look into handling this to avoid overflow issues...
-        return np.exp(self.entropy)
+        return np.exp(self.entropy - self.entropy.min(axis=0))
 
     @property
     def histogram(self):
