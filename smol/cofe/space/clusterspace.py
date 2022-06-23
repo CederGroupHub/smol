@@ -1287,7 +1287,7 @@ class ClusterSubspace(MSONable):
         """Convert class into pretty string for printing."""
         outs = [
             f"Basis/Orthogonal/Orthonormal : {self.basis_type}/{self.basis_orthogonal}/"
-            "{self.basis_orthonormal}",
+            f"{self.basis_orthonormal}",
             f"       Unit Cell Composition : {self.structure.composition}",
             f"            Number of Orbits : {self.num_orbits}",
             f"No. of Correlation Functions : {self.num_corr_functions}",
