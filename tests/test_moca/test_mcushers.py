@@ -157,6 +157,34 @@ def test_propose_step(mcmcusher, rand_occu):
         assert count2 / total == pytest.approx(0.2, abs=1e-2)
 
 
+def test_table_flip_factors():
+    sites1 = np.array([0, 1, 2])
+    sites2 = np.array([3, 4, 5])
+    site_space1 = SiteSpace(Composition({"Li+": 2 / 3, "Zr4+": 1 / 6, "Mn3+": 1 / 6}))
+    site_space2 = SiteSpace(Composition({"O2-": 5 / 6, "F-": 1 / 6}))
+    sublattices = [Sublattice(site_space1, sites1), Sublattice(site_space2, sites2)]
+
+    tf = Tableflip(sublattices,
+                   optimize_basis=True,
+                   table_ergodic=True)
+    # Case 1:
+    occu1 = np.array([0, 0, 1, 0, 0, 0])
+    step1 = [(2, 2), (4, 1)]
+    assert np.isclose(tf.compute_log_priori_factor(occu1, step1), np.log(3 / 2))  # forth p=1/3, back p=1/2
+    # Case 2:
+    occu2 = np.array([0, 0, 2, 1, 0, 0])
+    step2 = [(2, 1), (3, 0)]
+    assert np.isclose(tf.compute_log_priori_factor(occu2, step2), np.log(2 / 3))  # forth p=1/2, back p=1/3
+    # Case 3:
+    occu3 = np.array([0, 0, 2, 1, 0, 0])
+    step3 = [(2, 0), (4, 1), (5, 1)]
+    assert np.isclose(tf.compute_log_priori_factor(occu3, step3), np.log(2 / 9))  # forth p=1/2, back p=1/9
+    # Case 4:
+    occu4 = np.array([0, 0, 0, 1, 1, 1])
+    step4 = [(0, 2), (4, 0), (5, 0)]
+    assert np.isclose(tf.compute_log_priori_factor(occu4, step4), np.log(9 / 2))  # forth p=1/9, back p=1/2
+
+
 def test_table_flip(table_flip, rand_occu_lmtpo):
 
     def get_n(occu, sublattices):
