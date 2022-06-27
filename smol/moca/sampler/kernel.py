@@ -339,11 +339,14 @@ class UniformlyRandom(MCKernel):
                 self._bias.compute_bias_change(occupancy, step)
             )
             exponent = self.trace.delta_trace.bias + log_factor
-            self.trace.accepted = np.array(
-                True
-                if self.trace.delta_trace.bias >= 0
-                else self.trace.delta_trace.bias > log(self._rng.random())
-            )
+        else:
+            exponent = log_factor
+
+        self.trace.accepted = np.array(
+            True
+            if exponent >= 0
+            else exponent > log(self._rng.random())
+        )
 
         if self.trace.accepted:
             for tup in step:
@@ -391,16 +394,16 @@ class Metropolis(ThermalKernel):
                 -self.beta * self.trace.delta_trace.enthalpy
                 + self.trace.delta_trace.bias + log_factor
             )
-            self.trace.accepted = np.array(
-                True if exponent >= 0 else exponent > log(self._rng.random())
-            )
+
         else:
-            self.trace.accepted = np.array(
-                True
-                if self.trace.delta_trace.enthalpy <= 0
-                else -self.beta * self.trace.delta_trace.enthalpy
-                > log(self._rng.random())  # noqa
+            exponent = (
+                -self.beta * self.trace.delta_trace.enthalpy
+                + log_factor
             )
+
+        self.trace.accepted = np.array(
+            True if exponent >= 0 else exponent > log(self._rng.random())
+        )
 
         if self.trace.accepted:
             for tup in step:
