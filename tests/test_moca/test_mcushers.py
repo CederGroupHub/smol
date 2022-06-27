@@ -183,6 +183,10 @@ def test_table_flip_factors():
     occu4 = np.array([0, 0, 0, 1, 1, 1])
     step4 = [(0, 2), (4, 0), (5, 0)]
     assert np.isclose(tf.compute_log_priori_factor(occu4, step4), np.log(9 / 2))  # forth p=1/9, back p=1/2
+    # Case 5:
+    occu5 = np.array([0, 0, 2, 1, 0, 0])
+    step5 = [(2, 0), (0, 2)]
+    assert np.isclose(tf.compute_log_priori_factor(occu5, step5), 0)  # forth p=back p.
 
 
 def test_table_flip(table_flip, rand_occu_lmtpo):
