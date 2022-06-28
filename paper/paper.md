@@ -78,7 +78,7 @@ These two considerations are at the foundation of the original CE method [@Sanch
 H(\sigma) = \sum_\beta m_\beta J_\beta\Theta_\beta(\sigma)
 \end{equation}
 
-Where m are crystallographic multiplicities, $J_\beta$ are expansion coefficients. The correlation functions $\Theta_\beta$ take as input different sets of clusters of sites $S$ that are symmetrically equivalent under permutations corresponding to the symmetries of the underlying crystal structure’s space group. The set of all correlation functions $\{\Theta_\beta\}$, unlike the classical CE method, is not limited only to those that represent a basis set, but can be any complete set of functions (linearly independent or redundant) that spans the symmetry invariant function subspace over configurations $\sigma$. 
+Where m are crystallographic multiplicities, $J_\beta$ are expansion coefficients. The correlation functions $\Theta_\beta$ take as input different sets of clusters of sites $S$ that are symmetrically equivalent under permutations corresponding to the symmetries of the underlying crystal structure’s space group. The set of all correlation functions $\{\Theta_\beta\}$, unlike the classical CE method, is not limited only to those that represent a basis set, but can be any complete set of functions (linearly independent or redundant) that spans the symmetry invariant function subspace over configurations $\sigma$.
 
 Following the original CE method formalism, the correlation functions $\Theta_\beta$ are constructed from symmetrically adapted averages of cluster product functions,
 
@@ -97,7 +97,7 @@ The `smol` Python package is deliberately designed to be easily extensible, and 
 
 Classes and functions for representation and construction of functions of configuration (i.e. defining terms in a cluster expansion) are included in the `smol.cofe` module. Notably, the following object-oriented abstractions allow flexible definitions and the ability to easily implement extensions,
 
-- Classes and functions to define site function sets, which make up the basic building blocks for an expansion as detailed in \autoref{eq:clusterfun}. The package includes functionality to generate both basis and redundant sets with any of the commonly used site function sets, (polynomial [@Sanchez:1984], trigonometric [@VandeWalle:2009], and occupancy indicator [@Zhang:2016], as well as abstractions to effortlessly implement new function sets.
+- Classes and functions to define site function sets, which make up the basic building blocks for an expansion as detailed in \autoref{eq:clusterfun}. The package includes functionality to generate both basis and redundant sets with any of the commonly used site function sets, (polynomial [@Sanchez:1984], trigonometric [@VandeWalle:2009], and occupancy indicator [@Zhang:2016]), as well as abstractions to effortlessly implement new function sets.
 - Classes to represent clusters of sites S and groupings of symmetrically equivalent cluster functions which represent the terms in the sum of \autoref{eq:clusterexp}. Additionally, the package includes functionality to automatically generate these objects based on a given disordered structure (including neutral species, ionic species with assigned oxidation states, and vacancies), by leveraging pymatgen’s established and flexible representations of structures and associated symmetries.
 - Classes to include additional interaction terms to a CE based lattice model in order to improve training convergence. Currently, the package only includes an electrostatic pair potential for ionic structures [@Richards:2017], but the concept is applicable to any simple interaction model such as the reciprocal space CE constituent strain interaction [@Laks:1992], or any other empirical or fitted pair potential.
 - Classes and functions to preprocess and generate feature matrices and fitting data corresponding to a defined set correlation functions and datasets of relaxed structures and computed energy from any first-principle, machine learning, or empirical potential calculations.
@@ -113,6 +113,6 @@ All classes and functions included in `smol` are thoroughly documented and sever
 
 The development of `smol` was primarily funded by the U.S. Department of Energy, Office
 of Science, Office of Basic Energy Sciences, Materials Sciences and Engineering Division
-under Contract No. DE-AC02-05-CH11231 (Materials Project program KC23MP). L.B.L, Z.J. and T.C. also gratefully acknowledge support from the National Science Foundation Graduate Research Fellowship under Grant No. DGE 1752814 and DGE 1106400. 
+under Contract No. DE-AC02-05-CH11231 (Materials Project program KC23MP). L.B.L, Z.J. and T.C. also gratefully acknowledge support from the National Science Foundation Graduate Research Fellowship under Grant No. DGE 1752814 and DGE 1106400.
 
 # References
