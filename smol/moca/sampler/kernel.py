@@ -298,7 +298,7 @@ class ThermalKernel(MCKernel):
             Trace
         """
         trace = super().compute_initial_trace(occupancy)
-        trace.temperature = self.trace.temperature
+        trace.temperature = np.array([self.trace.temperature])
         return trace
 
 

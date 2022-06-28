@@ -322,6 +322,7 @@ class SampleContainer(MSONable):
     def clear(self):
         """Clear all samples from container."""
         self._total_steps = 0
+        self._total_steps = 0
         self._nsamples = 0
         for name, value in self._trace.items():
             setattr(
@@ -342,7 +343,7 @@ class SampleContainer(MSONable):
                 backend file object, currently only hdf5 supported.
         """
         start = backend["trace"].attrs["nsamples"]
-        end = len(self._trace.occupancy) + start
+        end = self._nsamples + start
         for name, value in self._trace.items():
             backend["trace"][name][start:end] = value
 
@@ -375,12 +376,12 @@ class SampleContainer(MSONable):
         if os.path.isfile(file_path):
             backend = self._check_backend(file_path)
             trace_grp = backend["trace"]
-            available = len(trace_grp.occupancy) - trace_grp.attrs["nsamples"]
+            available = len(trace_grp["occupancy"]) - trace_grp.attrs["nsamples"]
             # this probably fails since maxshape is not set.
             if available < alloc_nsamples:
                 SampleContainer._grow_backend(backend, alloc_nsamples - available)
         else:
-            backend = h5py.File(file_path, "w", libver="latest")
+            backend = h5py.File(file_path, "w-", libver="latest")
             self._init_backend(backend, alloc_nsamples)
 
         if swmr_mode:
@@ -425,7 +426,9 @@ class SampleContainer(MSONable):
     def _grow_backend(backend, nsamples):
         """Extend space available in a backend file."""
         for name in backend["trace"]:
-            backend["trace"][name].resize(nsamples, axis=0)
+            backend["trace"][name].resize(
+                len(backend["trace"][name]) + nsamples, axis=0
+            )
 
     @staticmethod
     def _flatten(traced_values):

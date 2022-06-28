@@ -12,6 +12,13 @@ Use this section to keep track of changes in the works.
 ### Removed
 ### Deprecated
 
+# [v0.0.4](https://github.com/CederGroupHub/smol/releases/tag/v0.0.4) (2022-06-23)
+### Added
+* Allow streaming to h5 in simulated annealing. #216 @lbluque
+### Fixed
+* Fix recording sampled traces for nwalkers > 1. #219 @lbluque
+* Fix minor error in ClusterSubspace.__str__ #226 @lbluque
+
 # [v0.0.3](https://github.com/CederGroupHub/smol/releases/tag/v0.0.3) (2022-06-03)
 ### Added
 * Developing section of docs. #215 @lbluque
