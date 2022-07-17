@@ -51,9 +51,6 @@ supported there.
 Installation
 ------------
 
-> :warning: We have been granted the name `smol` on PyPi now. Please use `smol` instead
-> of the previous alternative `statmech-on-lattices`.
-
 From pypi:
 
     pip install smol
@@ -65,6 +62,19 @@ code. The `main` branch has the newest tested features, but may have more
 lingering bugs. From the top level directory
 
     pip install .
+
+Although `smol` is not tested on Windows platforms, it should still run on Windows since
+there aren't any platform specific dependencies. The only known installation issue
+is building `pymatgen` dependencies. If simply running `pip install smol` fails, try
+installing `pymatgen` with conda first:
+
+    conda install -c conda-forge pymatgen
+    pip install smol
+
+You can also simply use the *environment.yml* file in the repository to install `smol`:
+
+    conda env create -f environment.yml
+    source activate smol-env
 
 Usage
 -----
