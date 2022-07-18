@@ -189,7 +189,7 @@ nbsphinx_prolog = r"""
 
     <div class="admonition note">
       This page was generated from
-      <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/{{ env.config.release|e }}/{{ docname|e }}">{{ docname|e }}</a>.<br>
+      <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v{{ env.config.release|e }}/{{ docname|e }}">{{ docname|e }}</a>.<br>
       <script>
         if (document.location.host) {
           $(document.currentScript).replaceWith(
