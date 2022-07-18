@@ -12,6 +12,13 @@ process headache free. Using ``pip``::
 
         pip install smol
 
+Although **smol** is not tested on Windows platforms, it should still run on Windows
+since there aren't any platform specific dependencies. The only known installation issue
+is building *pymatgen* dependencies. If simply running ``pip install smol`` fails, try
+installing *pymatgen* with conda first::
+
+        conda install -c conda-forge pymatgen
+        pip install smol
 
 Basic Usage
 ===========
@@ -148,8 +155,12 @@ package.
 
 Example Notebooks
 =================
+
 For more detailed examples on how to use **smol** have a look at the following
 Jupyter notebooks.
+
+.. image:: https://mybinder.org/badge_logo.svg
+ :target: https://mybinder.org/v2/gh/CederGroupHub/smol/HEAD?labpath=docs%2Fsrc%2Fnotebooks%2Findex.ipynb
 
 Basic Examples
 --------------
