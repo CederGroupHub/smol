@@ -8,7 +8,7 @@ Statistical Mechanics on Lattices
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/CederGroupHub/smol/main.svg)](https://results.pre-commit.ci/latest/github/CederGroupHub/smol/main)
 [![pypi version](https://img.shields.io/pypi/v/smol?color=blue)](https://pypi.org/project/smol)
 ![python versions](https://img.shields.io/pypi/pyversions/smol)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/lbluque/smol/HEAD?labpath=docs%2Fsrc%2Fnotebooks%2Findex.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/CederGroupHub/smol/HEAD?labpath=docs%2Fsrc%2Fnotebooks%2Findex.ipynb)
 
 *Lighthweight but caffeinated Python implementation of computational methods
 for statistical mechanical calculations of configurational states in
@@ -82,7 +82,7 @@ Usage
 Refer to the [documentation](https://cedergrouphub.github.io/smol/) for details on using
 **smol**. Going through the [example notebooks](https://github.com/CederGroupHub/smol/tree/main/docs/src/notebooks)
 will also help you get started. You can run the example notebooks interactively in
-[binder](https://mybinder.org/v2/gh/lbluque/smol/HEAD?labpath=docs%2Fsrc%2Fnotebooks%2Findex.ipynb).
+[binder](https://mybinder.org/v2/gh/CederGroupHub/smol/HEAD?labpath=docs%2Fsrc%2Fnotebooks%2Findex.ipynb).
 
 Contributing
 ------------
