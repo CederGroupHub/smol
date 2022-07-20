@@ -170,8 +170,8 @@ class MCKernel(ABC):
                 **bias_kwargs,
             )
 
-        # run a initial step to populate trace values
-        _ = self.single_step(np.zeros(ensemble.num_sites, dtype=int))
+        # populate trace values
+        self._populate_trace(np.zeros(ensemble.num_sites, dtype=int))
 
     @property
     def mcusher(self):
@@ -225,6 +225,31 @@ class MCKernel(ABC):
         """
         return self.trace
 
+    def _populate_trace(self, occupancy):
+        """Populate self.trace in init.
+        Note: Only call this at init!
+        Args:
+            occupancy (ndarray):
+                An occupancy string. Since the initial self.trace is not
+                used, you can use any string as long as it is valid in
+                your ensemble's configuration space.
+        """
+        # Set up trace. Do not call self.compute_initial_trace here because
+        # children classes might use self.trace in compute_initial_trace while
+        # it is not set up.
+        self.trace.occupancy = occupancy
+        self.trace.features = self._compute_features(occupancy)
+        # set scalar values into shape (1,) array for sampling consistency.
+        self.trace.enthalpy = np.array([np.dot(self.natural_params, self.trace.features)])
+        if self.bias is not None:
+            self.trace.bias = np.array([self.bias.compute_bias(occupancy)])
+        self.trace.accepted = np.array([True])
+        # Set up delta.
+        self.trace.delta_trace.features = np.zeros(len(self.trace.features))
+        self.trace.delta_trace.enthalpy = np.array(0)
+        if self._bias is not None:
+            self.trace.delta_trace.bias = np.array(0)
+
     def compute_initial_trace(self, occupancy):
         """Compute inital values for sample trace given an occupancy.
 
@@ -271,9 +296,8 @@ class ThermalKernel(MCKernel):
                 keyword arguments to instantiate the MCUsher for the
                 corresponding step size.
         """
-        # hacky for initialization single_step to run
-        self.beta = 1.0 / (kB * temperature)
         super().__init__(ensemble, step_type, *args, **kwargs)
+        self.beta = 1.0 / (kB * temperature)
         self.temperature = temperature
 
     @property
