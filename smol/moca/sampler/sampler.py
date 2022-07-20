@@ -199,8 +199,6 @@ class Sampler:
                         for name, value in strace.items():
                             val = getattr(trace, name)
                             val[i] = value
-                            # this will mess up recording values for > 1 walkers
-                            # setattr(trace, name, value)
                         if strace.accepted:
                             for name, delta_val in strace.delta_trace.items():
                                 val = getattr(trace, name)

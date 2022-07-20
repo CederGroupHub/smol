@@ -237,15 +237,15 @@ class MCKernel(ABC):
         # Set up trace. Do not call self.compute_initial_trace here because
         # children classes might use self.trace in compute_initial_trace while
         # it is not set up.
+        # Also note that an attribute in delta_trace should not be added into
+        # the trace itself, because in sampler any non-delta attribute of a
+        # StepTrace will be used to overwrite the attribute in sampler trace
+        # with the same name. This will cause problem in the sampler.
         self.trace.occupancy = occupancy
-        self.trace.features = self._compute_features(occupancy)
-        # set scalar values into shape (1,) array for sampling consistency.
-        self.trace.enthalpy = np.array([np.dot(self.natural_params, self.trace.features)])
-        if self.bias is not None:
-            self.trace.bias = np.array([self.bias.compute_bias(occupancy)])
-        self.trace.accepted = np.array([True])
+        self.trace.accepted = np.array(False)
         # Set up delta.
-        self.trace.delta_trace.features = np.zeros(len(self.trace.features))
+        features = self._compute_features(occupancy)
+        self.trace.delta_trace.features = np.zeros(len(features))
         self.trace.delta_trace.enthalpy = np.array(0)
         if self._bias is not None:
             self.trace.delta_trace.bias = np.array(0)
