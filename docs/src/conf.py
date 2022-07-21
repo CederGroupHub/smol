@@ -91,9 +91,7 @@ pygments_style = "sphinx"
 
 html_theme = "pydata_sphinx_theme"
 
-html_logo = (
-    "../_static/logo.png"  # banner.svg needs text as paths to avoid font missing
-)
+html_logo = "_static/logo.png"  # banner.svg needs text as paths to avoid font missing
 
 html_theme_options = {
     "github_url": "https://github.com/CederGroupHub/smol",
@@ -151,7 +149,13 @@ html_sidebars = {
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-# html_static_path = ["_static"]
+
+html_static_path = ["_static"]
+
+html_js_files = [
+    "require.js",  # Add to your _static
+    "custom.js",
+]
 
 html_css_files = [
     "css/smol.css",

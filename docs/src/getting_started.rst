@@ -159,6 +159,8 @@ Example Notebooks
 For more detailed examples on how to use **smol** have a look at the following
 Jupyter notebooks.
 
+You can run the notebooks interactively on Binder.
+
 .. image:: https://mybinder.org/badge_logo.svg
  :target: https://mybinder.org/v2/gh/CederGroupHub/smol/HEAD?labpath=docs%2Fsrc%2Fnotebooks%2Findex.ipynb
 
