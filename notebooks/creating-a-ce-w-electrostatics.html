@@ -1,48 +1,54 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>Creating a Cluster Expansion with an additional Ewald electrostatic term &#8212; smol 0.0.4 documentation</title>
     
-  <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+    <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-
+  
     
-  <link rel="stylesheet"
-    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
-
+    <link rel="stylesheet"
+      href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+    
+      
+  
+    
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/pydata-sphinx-theme.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/smol.css" />
     
-  <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
-
+    <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/require.js"></script>
+    <script src="../_static/custom.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="None">
+    <meta name="docsearch:language" content="en">
     
 
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -134,6 +140,13 @@
 -->
 
 <script type="text/javascript">
+// Construct the target URL from the JSON components
+function buildURL(entry) {
+    var template = "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/";  // supplied by jinja
+    template = template.replace("{version}", entry.version);
+    return template;
+}
+
 // Check if corresponding page path exists in other version of docs
 // and, if so, go there instead of the homepage of the other docs version
 function checkPageExistsAndRedirect(event) {
@@ -169,16 +182,14 @@ function checkPageExistsAndRedirect(event) {
             const node = document.createElement("a");
             node.setAttribute("class", "list-group-item list-group-item-action py-1");
             node.textContent = `${entry.name}`;
+            // get the base URL for that doc version, add the current page's
+            // path to it, and set as `href`
+            entry.url = buildURL(entry);
             node.setAttribute("href", `${entry.url}${currentFilePath}`);
             // on click, AJAX calls will check if the linked page exists before
             // trying to redirect, and if not, will redirect to the homepage
             // for that version of the docs.
             node.onclick = checkPageExistsAndRedirect;
-            // Add dataset values for the version and name in case people want
-            // to apply CSS styling based on this information.
-            node.dataset["versionName"] = entry.name;
-            node.dataset["version"] = entry.version;
-
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
             // this version, rather than using sphinx's 0.0.4 variable.
@@ -186,9 +197,7 @@ function checkPageExistsAndRedirect(event) {
             // version's entry
             if (entry.version == "0.0.4") {
                 node.classList.add("active");
-                let btn = document.getElementById("version_switcher_button");
-                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
-                btn.dataset["activeVersion"] = entry.version;
+                $("#version_switcher_button").text(entry.name);
             }
         });
     });
@@ -238,7 +247,7 @@ function checkPageExistsAndRedirect(event) {
               
               <div class="toc-item">
                 
-<div class="tocsection onthispage mt-5 pt-1 pb-3">
+<div class="tocsection onthispage pt-5 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
 
@@ -267,14 +276,14 @@ function checkPageExistsAndRedirect(event) {
   </a>
   <ul class="visible nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#3.1)-Check-the-quality-of-the-fit-and-the-“dielectric”-constant">
+    <a class="reference internal nav-link" href='#3.1)-Check-the-quality-of-the-fit-and-the-"dielectric"-constant'>
      3.1) Check the quality of the fit and the “dielectric” constant
     </a>
    </li>
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#4)-Constraining-the-value-of-the-“dielectric”-constant">
+  <a class="reference internal nav-link" href='#4)-Constraining-the-value-of-the-"dielectric"-constant'>
    4) Constraining the value of the “dielectric” constant
   </a>
   <ul class="visible nav section-nav flex-column">
@@ -533,6 +542,7 @@ div.nboutput.container div.output_area > div[class^='highlight']{
 }
 
 /* Some additional styling taken form the Jupyter notebook CSS */
+.jp-RenderedHTMLCommon table,
 div.rendered_html table {
   border: none;
   border-collapse: collapse;
@@ -541,10 +551,14 @@ div.rendered_html table {
   font-size: 12px;
   table-layout: fixed;
 }
+.jp-RenderedHTMLCommon thead,
 div.rendered_html thead {
   border-bottom: 1px solid black;
   vertical-align: bottom;
 }
+.jp-RenderedHTMLCommon tr,
+.jp-RenderedHTMLCommon th,
+.jp-RenderedHTMLCommon td,
 div.rendered_html tr,
 div.rendered_html th,
 div.rendered_html td {
@@ -556,19 +570,22 @@ div.rendered_html td {
   max-width: none;
   border: none;
 }
+.jp-RenderedHTMLCommon th,
 div.rendered_html th {
   font-weight: bold;
 }
+.jp-RenderedHTMLCommon tbody tr:nth-child(odd),
 div.rendered_html tbody tr:nth-child(odd) {
   background: #f5f5f5;
 }
+.jp-RenderedHTMLCommon tbody tr:hover,
 div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
 <div class="admonition note">
   This page was generated from
-  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/0.0.4/docs/src/notebooks/creating-a-ce-w-electrostatics.ipynb">docs/src/notebooks/creating-a-ce-w-electrostatics.ipynb</a>.<br>
+  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.0.4/docs/src/notebooks/creating-a-ce-w-electrostatics.ipynb">docs/src/notebooks/creating-a-ce-w-electrostatics.ipynb</a>.<br>
   <script>
     if (document.location.host) {
       $(document.currentScript).replaceWith(
@@ -582,7 +599,7 @@ div.rendered_html tbody tr:hover {
     }
   </script>
 </div><section id="Creating-a-Cluster-Expansion-with-an-additional-Ewald-electrostatic-term">
-<h1>Creating a Cluster Expansion with an additional Ewald electrostatic term<a class="headerlink" href="#Creating-a-Cluster-Expansion-with-an-additional-Ewald-electrostatic-term" title="Permalink to this headline">#</a></h1>
+<h1>Creating a Cluster Expansion with an additional Ewald electrostatic term<a class="headerlink" href="#Creating-a-Cluster-Expansion-with-an-additional-Ewald-electrostatic-term" title="Permalink to this heading">¶</a></h1>
 <p>Fitting cluster expansions with an ewald term was proposed by former student Will Richards. See chapter 4.6 of his <a class="reference external" href="https://ceder.berkeley.edu/theses/Will_Richards_2017.pdf">thesis</a> for details.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -609,7 +626,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <section id="1)-Create-the-cluster-subspace">
-<h2>1) Create the cluster subspace<a class="headerlink" href="#1)-Create-the-cluster-subspace" title="Permalink to this headline">#</a></h2>
+<h2>1) Create the cluster subspace<a class="headerlink" href="#1)-Create-the-cluster-subspace" title="Permalink to this heading">¶</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
@@ -623,7 +640,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </section>
 <section id="2)-Add-the-ewald-term.">
-<h2>2) Add the ewald term.<a class="headerlink" href="#2)-Add-the-ewald-term." title="Permalink to this headline">#</a></h2>
+<h2>2) Add the ewald term.<a class="headerlink" href="#2)-Add-the-ewald-term." title="Permalink to this heading">¶</a></h2>
 <p>An <code class="docutils literal notranslate"><span class="pre">EwaldTerm</span></code> can be added to a cluster expansion to account for long range electrostatic interactions in ionic materials and therefore reduce the cluster complexity required to train the cluster expansion.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
@@ -639,7 +656,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <section id="2.1)-The-Electrostatic-term">
-<h3>2.1) The Electrostatic term<a class="headerlink" href="#2.1)-The-Electrostatic-term" title="Permalink to this headline">#</a></h3>
+<h3>2.1) The Electrostatic term<a class="headerlink" href="#2.1)-The-Electrostatic-term" title="Permalink to this heading">¶</a></h3>
 <p>The last entry in the correlation vector corresponds to the electrostatic energy from the Ewald summation. It essentially is the normalized electrostatic interaction energy. Since it has units of energy it is not rigorously a correlation like the orbit correlations which are unitless.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
@@ -666,7 +683,7 @@ The Ewald interaction for a structure with composition Li+1 Ni4+5 Ni3+1 O2-12 is
 </section>
 </section>
 <section id="3)-Creating-the-cluster-expansion">
-<h2>3) Creating the cluster expansion<a class="headerlink" href="#3)-Creating-the-cluster-expansion" title="Permalink to this headline">#</a></h2>
+<h2>3) Creating the cluster expansion<a class="headerlink" href="#3)-Creating-the-cluster-expansion" title="Permalink to this heading">¶</a></h2>
 <p>Preparing the training data, fiting and creating the cluster expansion with the Ewald term is same procedure as done for a regular cluster expansion.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
@@ -695,8 +712,8 @@ The Ewald interaction for a structure with composition Li+1 Ni4+5 Ni3+1 O2-12 is
 </pre></div>
 </div>
 </div>
-<section id="3.1)-Check-the-quality-of-the-fit-and-the-“dielectric”-constant">
-<h3>3.1) Check the quality of the fit and the “dielectric” constant<a class="headerlink" href="#3.1)-Check-the-quality-of-the-fit-and-the-“dielectric”-constant" title="Permalink to this headline">#</a></h3>
+<section id="3.1)-Check-the-quality-of-the-fit-and-the-&quot;dielectric&quot;-constant">
+<h3>3.1) Check the quality of the fit and the “dielectric” constant<a class="headerlink" href="#3.1)-Check-the-quality-of-the-fit-and-the-"dielectric"-constant" title="Permalink to this heading">¶</a></h3>
 <p>We will check the quality of the fit with the simple methods from before.</p>
 <p>It is also useful to look at the value of the fit coefficient obtained for the Ewald interaction, since its inverse can be intepreted as a dielectric constant.</p>
 <div class="nbinput docutils container">
@@ -730,8 +747,8 @@ Fitted dielectric constant 9.413114998055713
 </div>
 </section>
 </section>
-<section id="4)-Constraining-the-value-of-the-“dielectric”-constant">
-<h2>4) Constraining the value of the “dielectric” constant<a class="headerlink" href="#4)-Constraining-the-value-of-the-“dielectric”-constant" title="Permalink to this headline">#</a></h2>
+<section id="4)-Constraining-the-value-of-the-&quot;dielectric&quot;-constant">
+<h2>4) Constraining the value of the “dielectric” constant<a class="headerlink" href="#4)-Constraining-the-value-of-the-"dielectric"-constant" title="Permalink to this heading">¶</a></h2>
 <p>Sometimes we want to constrain the obtained value of the dielectric constant, when it is too large or when it is negative (which would mean higher electrostatic interaction energy is more favorable?)</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
@@ -773,7 +790,7 @@ Fitted dielectric constant 5.0
 </pre></div></div>
 </div>
 <section id="4.1)-If-you-want-to-play-with-decorators-you-can-also-do-the-above-in-a-cleaner-looking-way.">
-<h3>4.1) If you want to play with decorators you can also do the above in a cleaner looking way.<a class="headerlink" href="#4.1)-If-you-want-to-play-with-decorators-you-can-also-do-the-above-in-a-cleaner-looking-way." title="Permalink to this headline">#</a></h3>
+<h3>4.1) If you want to play with decorators you can also do the above in a cleaner looking way.<a class="headerlink" href="#4.1)-If-you-want-to-play-with-decorators-you-can-also-do-the-above-in-a-cleaner-looking-way." title="Permalink to this heading">¶</a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
@@ -812,7 +829,7 @@ Fitted dielectric constant 5.0
 </section>
 </section>
 <section id="5)-Save-work">
-<h2>5) Save work<a class="headerlink" href="#5)-Save-work" title="Permalink to this headline">#</a></h2>
+<h2>5) Save work<a class="headerlink" href="#5)-Save-work" title="Permalink to this heading">¶</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -843,9 +860,8 @@ Fitted dielectric constant 5.0
       </div>
     </div>
   
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-<footer class="footer mt-5 mt-md-0">
+    <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
@@ -856,7 +872,7 @@ Fitted dielectric constant 5.0
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.2.<br>
 </p>
     </div>
     

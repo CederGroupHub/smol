@@ -1,48 +1,54 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>Domain &#8212; smol 0.0.4 documentation</title>
     
-  <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+    <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-
+  
     
-  <link rel="stylesheet"
-    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
-
+    <link rel="stylesheet"
+      href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+    
+      
+  
+    
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/pydata-sphinx-theme.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/smol.css" />
     
-  <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
-
+    <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/require.js"></script>
+    <script src="../../_static/custom.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Orbits" href="space.orbit.html" />
     <link rel="prev" title="Cluster" href="space.cluster.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="None">
+    <meta name="docsearch:language" content="en">
     
 
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -134,6 +140,13 @@
 -->
 
 <script type="text/javascript">
+// Construct the target URL from the JSON components
+function buildURL(entry) {
+    var template = "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/";  // supplied by jinja
+    template = template.replace("{version}", entry.version);
+    return template;
+}
+
 // Check if corresponding page path exists in other version of docs
 // and, if so, go there instead of the homepage of the other docs version
 function checkPageExistsAndRedirect(event) {
@@ -169,16 +182,14 @@ function checkPageExistsAndRedirect(event) {
             const node = document.createElement("a");
             node.setAttribute("class", "list-group-item list-group-item-action py-1");
             node.textContent = `${entry.name}`;
+            // get the base URL for that doc version, add the current page's
+            // path to it, and set as `href`
+            entry.url = buildURL(entry);
             node.setAttribute("href", `${entry.url}${currentFilePath}`);
             // on click, AJAX calls will check if the linked page exists before
             // trying to redirect, and if not, will redirect to the homepage
             // for that version of the docs.
             node.onclick = checkPageExistsAndRedirect;
-            // Add dataset values for the version and name in case people want
-            // to apply CSS styling based on this information.
-            node.dataset["versionName"] = entry.name;
-            node.dataset["version"] = entry.version;
-
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
             // this version, rather than using sphinx's 0.0.4 variable.
@@ -186,9 +197,7 @@ function checkPageExistsAndRedirect(event) {
             // version's entry
             if (entry.version == "0.0.4") {
                 node.classList.add("active");
-                let btn = document.getElementById("version_switcher_button");
-                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
-                btn.dataset["activeVersion"] = entry.version;
+                $("#version_switcher_button").text(entry.name);
             }
         });
     });
@@ -365,7 +374,7 @@ function checkPageExistsAndRedirect(event) {
               <div>
                 
   <section id="module-smol.cofe.space.domain">
-<span id="domain"></span><h1>Domain<a class="headerlink" href="#module-smol.cofe.space.domain" title="Permalink to this headline">#</a></h1>
+<span id="domain"></span><h1>Domain<a class="headerlink" href="#module-smol.cofe.space.domain" title="Permalink to this heading">¶</a></h1>
 <p>Implementation of SiteSpace and functions to get spaces and allowed species.</p>
 <p>Implementation functions to generate lists of site spaces and allowed species
 for a given disordered strucuture.</p>
@@ -374,8 +383,8 @@ including special species such as vacancies. A site spaces makes up the domain
 of a site function and many site spaces make up the space of configurations.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.space.domain.SiteSpace">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SiteSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">composition</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Mapping</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Hashable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SiteSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">composition</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Hashable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MSONable</span></code></p>
 <p>Represents a site space.</p>
 <p>A site spaces is a set of allowed species at a site and their corresponding
 measure (composition in the disordered state).</p>
@@ -393,25 +402,25 @@ site space.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.domain.SiteSpace.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.as_dict" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.as_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get MSONable dict representation.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.domain.SiteSpace.codes">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">codes</span></span><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.codes" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">codes</span></span><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.codes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return range of species.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.domain.SiteSpace.composition">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">composition</span></span><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.composition" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">composition</span></span><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.composition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the underlying composition.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.domain.SiteSpace.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.from_dict" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a SiteSpace from dict representation.</p>
 </dd></dl>
 
@@ -419,8 +428,8 @@ site space.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.space.domain.Vacancy">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Vacancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oxidation_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.Vacancy" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymatgen.core.periodic_table.DummySpecie</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Vacancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oxidation_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.Vacancy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DummySpecie</span></code></p>
 <p>Wrapper class around DummySpecie to treat vacancies as their own species.</p>
 <p>Initialize a Vacancy.</p>
 <dl class="field-list simple">
@@ -441,7 +450,7 @@ the charge of a point defect. Defaults to zero.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="smol.cofe.space.domain.get_allowed_species">
-<span class="sig-name descname"><span class="pre">get_allowed_species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.get_allowed_species" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_allowed_species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.get_allowed_species" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the allowed species for each site in a disordered structure.</p>
 <p>This will get all the allowed species for each site in a pymatgen structure.
 If the site composition does not add to 1, a Vacancy will be appended to
@@ -465,7 +474,7 @@ be disordered, otherwise there is no point in using this.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="smol.cofe.space.domain.get_site_spaces">
-<span class="sig-name descname"><span class="pre">get_site_spaces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_measure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.get_site_spaces" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_site_spaces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_measure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.get_site_spaces" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get site spaces for each site in a disordered structure.</p>
 <p>Method to obtain the single site spaces for the sites in a structure.
 The single site spaces are represented by the allowed species for each site
@@ -495,7 +504,7 @@ otherwise a uniform measure is assumed.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="smol.cofe.space.domain.get_species">
-<span class="sig-name descname"><span class="pre">get_species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.get_species" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.domain.get_species" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get specie object.</p>
 <p>Wraps pymatgen.core.periodic_table.get_el_sp to be able to catch and
 return Vacancies when needed.</p>
@@ -545,9 +554,8 @@ properties that can be determined.</p>
       </div>
     </div>
   
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-<footer class="footer mt-5 mt-md-0">
+    <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
@@ -558,7 +566,7 @@ properties that can be determined.</p>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.2.<br>
 </p>
     </div>
     

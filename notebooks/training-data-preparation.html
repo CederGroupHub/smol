@@ -1,48 +1,54 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>Training Data Preparation &#8212; smol 0.0.4 documentation</title>
     
-  <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+    <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-
+  
     
-  <link rel="stylesheet"
-    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
-
+    <link rel="stylesheet"
+      href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+    
+      
+  
+    
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/pydata-sphinx-theme.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/smol.css" />
     
-  <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
-
+    <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/require.js"></script>
+    <script src="../_static/custom.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="None">
+    <meta name="docsearch:language" content="en">
     
 
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -134,6 +140,13 @@
 -->
 
 <script type="text/javascript">
+// Construct the target URL from the JSON components
+function buildURL(entry) {
+    var template = "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/";  // supplied by jinja
+    template = template.replace("{version}", entry.version);
+    return template;
+}
+
 // Check if corresponding page path exists in other version of docs
 // and, if so, go there instead of the homepage of the other docs version
 function checkPageExistsAndRedirect(event) {
@@ -169,16 +182,14 @@ function checkPageExistsAndRedirect(event) {
             const node = document.createElement("a");
             node.setAttribute("class", "list-group-item list-group-item-action py-1");
             node.textContent = `${entry.name}`;
+            // get the base URL for that doc version, add the current page's
+            // path to it, and set as `href`
+            entry.url = buildURL(entry);
             node.setAttribute("href", `${entry.url}${currentFilePath}`);
             // on click, AJAX calls will check if the linked page exists before
             // trying to redirect, and if not, will redirect to the homepage
             // for that version of the docs.
             node.onclick = checkPageExistsAndRedirect;
-            // Add dataset values for the version and name in case people want
-            // to apply CSS styling based on this information.
-            node.dataset["versionName"] = entry.name;
-            node.dataset["version"] = entry.version;
-
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
             // this version, rather than using sphinx's 0.0.4 variable.
@@ -186,9 +197,7 @@ function checkPageExistsAndRedirect(event) {
             // version's entry
             if (entry.version == "0.0.4") {
                 node.classList.add("active");
-                let btn = document.getElementById("version_switcher_button");
-                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
-                btn.dataset["activeVersion"] = entry.version;
+                $("#version_switcher_button").text(entry.name);
             }
         });
     });
@@ -238,7 +247,7 @@ function checkPageExistsAndRedirect(event) {
               
               <div class="toc-item">
                 
-<div class="tocsection onthispage mt-5 pt-1 pb-3">
+<div class="tocsection onthispage pt-5 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
 
@@ -517,6 +526,7 @@ div.nboutput.container div.output_area > div[class^='highlight']{
 }
 
 /* Some additional styling taken form the Jupyter notebook CSS */
+.jp-RenderedHTMLCommon table,
 div.rendered_html table {
   border: none;
   border-collapse: collapse;
@@ -525,10 +535,14 @@ div.rendered_html table {
   font-size: 12px;
   table-layout: fixed;
 }
+.jp-RenderedHTMLCommon thead,
 div.rendered_html thead {
   border-bottom: 1px solid black;
   vertical-align: bottom;
 }
+.jp-RenderedHTMLCommon tr,
+.jp-RenderedHTMLCommon th,
+.jp-RenderedHTMLCommon td,
 div.rendered_html tr,
 div.rendered_html th,
 div.rendered_html td {
@@ -540,19 +554,22 @@ div.rendered_html td {
   max-width: none;
   border: none;
 }
+.jp-RenderedHTMLCommon th,
 div.rendered_html th {
   font-weight: bold;
 }
+.jp-RenderedHTMLCommon tbody tr:nth-child(odd),
 div.rendered_html tbody tr:nth-child(odd) {
   background: #f5f5f5;
 }
+.jp-RenderedHTMLCommon tbody tr:hover,
 div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
 <div class="admonition note">
   This page was generated from
-  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/0.0.4/docs/src/notebooks/training-data-preparation.ipynb">docs/src/notebooks/training-data-preparation.ipynb</a>.<br>
+  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.0.4/docs/src/notebooks/training-data-preparation.ipynb">docs/src/notebooks/training-data-preparation.ipynb</a>.<br>
   <script>
     if (document.location.host) {
       $(document.currentScript).replaceWith(
@@ -566,7 +583,7 @@ div.rendered_html tbody tr:hover {
     }
   </script>
 </div><section id="Training-Data-Preparation">
-<h1>Training Data Preparation<a class="headerlink" href="#Training-Data-Preparation" title="Permalink to this headline">#</a></h1>
+<h1>Training Data Preparation<a class="headerlink" href="#Training-Data-Preparation" title="Permalink to this heading">¶</a></h1>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -581,9 +598,9 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <section id="1)-Preparing-a-StructureWrangler">
-<h2>1) Preparing a <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code><a class="headerlink" href="#1)-Preparing-a-StructureWrangler" title="Permalink to this headline">#</a></h2>
+<h2>1) Preparing a <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code><a class="headerlink" href="#1)-Preparing-a-StructureWrangler" title="Permalink to this heading">¶</a></h2>
 <p>Training structures and target data are handled by the <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> class. The class obtains the features and corresponding feature matrix based on the underlying <code class="docutils literal notranslate"><span class="pre">ClusterSubspace</span></code> provided.</p>
-<p>In the most simply settings we just use the feature matrix our supplied total energy from DFT to fit a cluster expansion. But it many cases we may want to improve our fit quality or reduce the model complexity by modifying the target property (i.e. using a reference energy or the energy of mixing) and/or by weighing structures based on some importance metric (i.e. by energy above hull). Using the <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> we can create this modified fitting data.</p>
+<p>In the most simply settings we just use the feature matrix our supplied total energy from DFT to fit a cluster expansion. But it many cases we may want to improve our fit quality or reduce the model complexity by modifying the target property (i.e. using a reference energy or the energy of mixing) and/or by weighing structures based on some importance metric (i.e. by energy above hull). Using the <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> we can create this modified fitting data.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
@@ -624,7 +641,7 @@ Total structures that match 27/31
 </div>
 </section>
 <section id="2)-Modifying-and-adding-new-target-properties">
-<h2>2) Modifying and adding new target properties<a class="headerlink" href="#2)-Modifying-and-adding-new-target-properties" title="Permalink to this headline">#</a></h2>
+<h2>2) Modifying and adding new target properties<a class="headerlink" href="#2)-Modifying-and-adding-new-target-properties" title="Permalink to this heading">¶</a></h2>
 <p>Now that we have access to the structures that match to our cluster subspace, and access to the raw and normalized target properties, we can easily create new modifiend target properties to fit to.</p>
 <p>For a simple example say we simply want to set the minimum energy in our data as a new reference point.</p>
 <div class="nbinput docutils container">
@@ -661,7 +678,7 @@ Total structures that match 27/31
 </div>
 </section>
 <section id="2.1)-Another-example-of-modifying-target-properties">
-<h2>2.1) Another example of modifying target properties<a class="headerlink" href="#2.1)-Another-example-of-modifying-target-properties" title="Permalink to this headline">#</a></h2>
+<h2>2.1) Another example of modifying target properties<a class="headerlink" href="#2.1)-Another-example-of-modifying-target-properties" title="Permalink to this heading">¶</a></h2>
 <p>We can do more complex modifications of the target data. For example a very common target property to fit a cluster expansion is the mixing energy.</p>
 <p>For the current LNO dataset we don’t have a fully delithiated structure, but for the sake of illustration lets assume that we use Ni2O3. (Plus in this dataset mixing energy is not very informative since it is almost linear in concentration.)</p>
 <div class="nbinput docutils container">
@@ -710,7 +727,7 @@ Total structures that match 27/31
 </div>
 </section>
 <section id="3)-Obtaining-and-adding-weights">
-<h2>3) Obtaining and adding weights<a class="headerlink" href="#3)-Obtaining-and-adding-weights" title="Permalink to this headline">#</a></h2>
+<h2>3) Obtaining and adding weights<a class="headerlink" href="#3)-Obtaining-and-adding-weights" title="Permalink to this heading">¶</a></h2>
 <p>Using the structure wrangler it is also very easy to obtain fitting weights based many things such as composition, total energy or energy above hull. Currently the code has the previously available functions to obtaine weights by energy above hull or by energy above composition.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
@@ -755,7 +772,7 @@ LinearRegression(fit_intercept=False)
 </div>
 </section>
 <section id="4)-Structure-Selection">
-<h2>4) Structure Selection<a class="headerlink" href="#4)-Structure-Selection" title="Permalink to this headline">#</a></h2>
+<h2>4) Structure Selection<a class="headerlink" href="#4)-Structure-Selection" title="Permalink to this heading">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> class can also be used to ‘filter’ structures to use for a fit based on some criteria. To do so we obtain the indices of all structures that satisfy some filtering critera</p>
 <p>For example here we will obtain all the structures with electrostatic energy below a given cuttoff</p>
 <div class="nbinput docutils container">
@@ -826,9 +843,8 @@ Property vector shape (26,)
       </div>
     </div>
   
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-<footer class="footer mt-5 mt-md-0">
+    <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
@@ -839,7 +855,7 @@ Property vector shape (26,)
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.2.<br>
 </p>
     </div>
     

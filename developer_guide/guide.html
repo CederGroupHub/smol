@@ -1,48 +1,54 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>Contributing &amp; Developing Guidelines &#8212; smol 0.0.4 documentation</title>
     
-  <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+    <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-
+  
     
-  <link rel="stylesheet"
-    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
-
+    <link rel="stylesheet"
+      href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+    
+      
+  
+    
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/pydata-sphinx-theme.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/smol.css" />
     
-  <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
-
+    <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/require.js"></script>
+    <script src="../_static/custom.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Package Design" href="design.html" />
     <link rel="prev" title="Developing" href="index.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="None">
+    <meta name="docsearch:language" content="en">
     
 
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -134,6 +140,13 @@
 -->
 
 <script type="text/javascript">
+// Construct the target URL from the JSON components
+function buildURL(entry) {
+    var template = "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/";  // supplied by jinja
+    template = template.replace("{version}", entry.version);
+    return template;
+}
+
 // Check if corresponding page path exists in other version of docs
 // and, if so, go there instead of the homepage of the other docs version
 function checkPageExistsAndRedirect(event) {
@@ -169,16 +182,14 @@ function checkPageExistsAndRedirect(event) {
             const node = document.createElement("a");
             node.setAttribute("class", "list-group-item list-group-item-action py-1");
             node.textContent = `${entry.name}`;
+            // get the base URL for that doc version, add the current page's
+            // path to it, and set as `href`
+            entry.url = buildURL(entry);
             node.setAttribute("href", `${entry.url}${currentFilePath}`);
             // on click, AJAX calls will check if the linked page exists before
             // trying to redirect, and if not, will redirect to the homepage
             // for that version of the docs.
             node.onclick = checkPageExistsAndRedirect;
-            // Add dataset values for the version and name in case people want
-            // to apply CSS styling based on this information.
-            node.dataset["versionName"] = entry.name;
-            node.dataset["version"] = entry.version;
-
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
             // this version, rather than using sphinx's 0.0.4 variable.
@@ -186,9 +197,7 @@ function checkPageExistsAndRedirect(event) {
             // version's entry
             if (entry.version == "0.0.4") {
                 node.classList.add("active");
-                let btn = document.getElementById("version_switcher_button");
-                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
-                btn.dataset["activeVersion"] = entry.version;
+                $("#version_switcher_button").text(entry.name);
             }
         });
     });
@@ -250,7 +259,7 @@ function checkPageExistsAndRedirect(event) {
               
               <div class="toc-item">
                 
-<div class="tocsection onthispage mt-5 pt-1 pb-3">
+<div class="tocsection onthispage pt-5 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
 
@@ -312,12 +321,12 @@ function checkPageExistsAndRedirect(event) {
               <div>
                 
   <section id="contributing-developing-guidelines">
-<h1>Contributing &amp; Developing Guidelines<a class="headerlink" href="#contributing-developing-guidelines" title="Permalink to this headline">#</a></h1>
+<h1>Contributing &amp; Developing Guidelines<a class="headerlink" href="#contributing-developing-guidelines" title="Permalink to this heading">¶</a></h1>
 <p>The best code comes from organized collaboration. Collaborations can be grossly
 broken up into the categories below. Both are equally as important to create
 and improve software. Please consider contributing in any way you can!</p>
 <section id="bugs-issues-input-questions-etc">
-<h2>Bugs, issues, input, questions, etc<a class="headerlink" href="#bugs-issues-input-questions-etc" title="Permalink to this headline">#</a></h2>
+<h2>Bugs, issues, input, questions, etc<a class="headerlink" href="#bugs-issues-input-questions-etc" title="Permalink to this heading">¶</a></h2>
 <p>Please use the
 <a class="reference external" href="https://github.com/CederGroupHub/smol/issues">issue tracker</a> to share any
 of the following:</p>
@@ -335,14 +344,14 @@ and neat as possible when opening up an issue, but remember any contribution is
 much better than nothing!</p>
 </section>
 <section id="developing">
-<h2>Developing<a class="headerlink" href="#developing" title="Permalink to this headline">#</a></h2>
+<h2>Developing<a class="headerlink" href="#developing" title="Permalink to this heading">¶</a></h2>
 <p>Code contributions can be anything from fixing the simplest bugs, to adding new
 extensive features or subpackages. If you have written code or want to start
 writing new code that you think will improve <strong>smol</strong> then please follow the
 steps bellow to make a contribution. To know where best to start implementing new
 functionality please have a look at the <a class="reference internal" href="design.html#design"><span class="std std-ref">Package Design</span></a> page.</p>
 <section id="guidelines">
-<h3>Guidelines<a class="headerlink" href="#guidelines" title="Permalink to this headline">#</a></h3>
+<h3>Guidelines<a class="headerlink" href="#guidelines" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>All code should have unit tests.</p></li>
 <li><p>Code should be well documented following <a class="reference external" href="https://google.github.io/styleguide/pyguide.html">google style</a>  docstrings.</p></li>
@@ -355,7 +364,7 @@ than adding them to the source code.</p></li>
 </ul>
 </section>
 <section id="adding-code-contributions">
-<h3>Adding code contributions<a class="headerlink" href="#adding-code-contributions" title="Permalink to this headline">#</a></h3>
+<h3>Adding code contributions<a class="headerlink" href="#adding-code-contributions" title="Permalink to this heading">¶</a></h3>
 <ol class="arabic">
 <li><p>If you are contributing for the first time:</p>
 <ul>
@@ -420,7 +429,7 @@ the API (adds new features, edits or removes existing features). Please add a de
 </ol>
 </section>
 <section id="adding-examples">
-<h3>Adding examples<a class="headerlink" href="#adding-examples" title="Permalink to this headline">#</a></h3>
+<h3>Adding examples<a class="headerlink" href="#adding-examples" title="Permalink to this heading">¶</a></h3>
 <p>In many occasions novel use of the package does not necessarily require introducing new source code, but rather
 using the existing functionality, and possibly external packages (that are are requirements) for particular or
 advanced calculations.</p>
@@ -465,9 +474,8 @@ documentation.</p></li>
       </div>
     </div>
   
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-<footer class="footer mt-5 mt-md-0">
+    <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
@@ -478,7 +486,7 @@ documentation.</p></li>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.2.<br>
 </p>
     </div>
     
