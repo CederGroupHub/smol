@@ -38,13 +38,15 @@ If you use **smol** or any of the other great CE packages to fit an expansion
 using orbit group wise regularization with Group Lasso or any related regression
 model, please cite the following,
 
-    Yang, J.H., Chen, T., Barroso-Luque, L., Jadidi, Z. & Ceder, G.
-    Approaches for handling high-dimensional cluster expansions of ionic
-    systems. (submitted)
+    Yang, J. H., Chen, T., Barroso-Luque, L., Jadidi, Z. & Ceder, G.
+    `Approaches for handling high-dimensional cluster expansions of ionic systems
+    <https://www.nature.com/articles/s41524-022-00818-3>`_.
+    npj Comput Mater 8, 1–11 (2022).
+
 
     Barroso-Luque, L., Zhong, P., Yang, J. H., Chen, T. & Ceder, G.
     Cluster Expansions of Multicomponent Ionic Materials:Formalism & Methods.
-    (in preparation)
+    (submitted)
 
 :math:`\ell_0\ell_2` MIQP fits with hierarchical constraints
 ============================================================

@@ -1,0 +1,9 @@
+name: smol-env
+channels:
+  - default
+  - conda-forge
+dependencies:
+  - python=3.8
+  - pymatgen
+  - pip:
+    - smol

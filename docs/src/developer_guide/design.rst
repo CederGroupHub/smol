@@ -63,7 +63,7 @@ detailed in the :ref:`user_guide`. All main classes are derived from :mod:`monty
 In addition, several other classes are defined to enable the various features and
 functionality in the module.
 
-.. image:: ../../_static/smol_cofe.svg
+.. image:: ../_static/smol_cofe.svg
 
 Following the diagram above, the main purpose of the classes depicted is,
 
@@ -127,7 +127,7 @@ a :class:`ClusterExpansion` are the :class:`Processor` classes, the :class:`Ense
 and the :class:`Sampler` class. However, a number of helper classes are implemented
 to allow running and implenting a large variety of types of MC calculations.
 
-.. image:: ../../_static/smol_moca.svg
+.. image:: ../_static/smol_moca.svg
 
 The class descriptions are as follows,
 
