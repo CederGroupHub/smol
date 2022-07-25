@@ -591,7 +591,11 @@ class WangLandau(MCKernel):
         if self._aux_states["check-counter"] % self.check_period == 0:
             for i, histogram in enumerate(self._aux_states["histogram"]):
                 histogram = histogram[histogram > 0]  # remove zero entries
-                if (histogram > self.flatness * histogram.mean()).all():
+                # TODO find out why sometimes histogram gets stuck in only 1  bin
+                if (
+                    len(histogram) > 1
+                    and (histogram > self.flatness * histogram.mean()).all()
+                ):
                     self._mfactors[i] = self._mod_update(self._mfactors[i])
                     self._aux_states["histogram"][i, :] = 0  # reset histogram
 
@@ -641,7 +645,7 @@ class WangLandau(MCKernel):
             self._aux_states["current-features"][walker] = features
             self._usher.update_aux_state(step)
 
-        # only if bin_num is valid
+        # only if bin_num is valid  # TODO do you really need this check...
         if 0 <= bin_num < len(self._energy_levels):
             # compute the cumulative statistics
             total = self._aux_states["total-histogram"][walker, bin_num]
