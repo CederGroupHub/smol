@@ -52,9 +52,14 @@ model, please cite the following,
 ============================================================
 
 Similarly, if you use :math:`\ell_0\ell_2` mixed integer quadratic programming
-for hierarchical constrained expansion fits, please cite this publication,
+for hierarchical constrained expansion fits, please cite these publications,
 
     Zhong, P., Chen, T., Barroso-Luque, L., Xie, F. & Ceder, G.
-    An :math:`\ell_0\ell_2` norm regularized regression model for construction
-    of robust cluster expansion in multicomponent systems.
-    `[arxiv] <https://arxiv.org/abs/2204.13789>`_
+    An :math:`\ell_0\ell_2`-norm `regularized regression model for construction of
+    robust cluster expansions in multicomponent systems.
+    <https://doi.org/10.1103/PhysRevB.106.024203>`_
+    Phys. Rev. B 106, 024203 (2022).
+
+    Barroso-Luque, L., Zhong, P., Yang, J. H., Chen, T. & Ceder, G.
+    Cluster Expansions of Multicomponent Ionic Materials:Formalism & Methods.
+    (submitted)
