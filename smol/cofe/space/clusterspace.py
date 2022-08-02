@@ -437,12 +437,12 @@ class ClusterSubspace(MSONable):
         The orbit hierarchy represents in inclusion relationships between orbits and
         their suborbits.
 
-        The empty/constant cluster index 0 is technically a suborbit of all
-        orbits, but is not added to the hierarchy entries.
-
         Args:
-            level (int):
-            min_size (int):
+            level (int): optional
+                how many levels down to look for suborbits. If all suborbits
+                are needed make level large enough or set to None.
+            min_size (int): optional
+                minimum size of clusters in sub orbits to include
 
         Returns:
             list of list: each element of the inner lists is the orbit id for
@@ -472,8 +472,11 @@ class ClusterSubspace(MSONable):
         it is a factor of a higher degree correlation function.
 
         Args:
-            level (int):
-            min_size (int):
+            level (int): optional
+                how many levels down to look for suborbits. If all suborbits
+                are needed make level large enough or set to None.
+            min_size (int): optional
+                minimum size of clusters in sub orbits to include
             invert (bool): optional
                 Default is invert=False which gives the high to low bit combo
                 hierarchy. Invert= True will invert the hierarchy into low to
