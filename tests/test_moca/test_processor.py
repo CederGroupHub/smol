@@ -209,10 +209,13 @@ def test_compute_orbit_factors(cluster_subspace):
     occu = gen_random_occupancy(processor.get_sublattices())
     struct = processor.structure_from_occupancy(occu)
     # same as normalize=False in corr_from_structure
-    npt.assert_allclose(
-        processor.compute_feature_vector(occu) / processor.size,
-        expansion.compute_cluster_interactions(struct),
-    )
+    proc_interactions = processor.compute_feature_vector(occu) / processor.size
+    exp_interactions = expansion.compute_cluster_interactions(struct)
+    npt.assert_allclose(proc_interactions, exp_interactions)
+    pred_energy = expansion.predict(struct, normalize=True)
+    assert sum(
+        cluster_subspace.orbit_multiplicities * proc_interactions
+    ) == pytest.approx(pred_energy)
 
 
 def test_bad_coef_length(cluster_subspace, rng):
