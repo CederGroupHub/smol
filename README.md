@@ -1,4 +1,4 @@
-<img src="docs/_static/logo.png" width="500px" alt=" ">
+<img src="docs/src/_static/logo.png" width="500px" alt=" ">
 
 Statistical Mechanics on Lattices
 =================================
@@ -8,6 +8,7 @@ Statistical Mechanics on Lattices
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/CederGroupHub/smol/main.svg)](https://results.pre-commit.ci/latest/github/CederGroupHub/smol/main)
 [![pypi version](https://img.shields.io/pypi/v/smol?color=blue)](https://pypi.org/project/smol)
 ![python versions](https://img.shields.io/pypi/pyversions/smol)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/CederGroupHub/smol/HEAD?labpath=docs%2Fsrc%2Fnotebooks%2Findex.ipynb)
 
 *Lighthweight but caffeinated Python implementation of computational methods
 for statistical mechanical calculations of configurational states in
@@ -51,9 +52,6 @@ supported there.
 Installation
 ------------
 
-> :warning: We have been granted the name `smol` on PyPi now. Please use `smol` instead
-> of the previous alternative `statmech-on-lattices`.
-
 From pypi:
 
     pip install smol
@@ -66,11 +64,25 @@ lingering bugs. From the top level directory
 
     pip install .
 
+Although `smol` is not tested on Windows platforms, it should still run on Windows since
+there aren't any platform specific dependencies. The only known installation issue
+is building `pymatgen` dependencies. If simply running `pip install smol` fails, try
+installing `pymatgen` with conda first:
+
+    conda install -c conda-forge pymatgen
+    pip install smol
+
+You can also simply use the *environment.yml* file in the repository to install `smol`:
+
+    conda env create -f environment.yml
+    source activate smol-env
+
 Usage
 -----
 Refer to the [documentation](https://cedergrouphub.github.io/smol/) for details on using
 **smol**. Going through the [example notebooks](https://github.com/CederGroupHub/smol/tree/main/docs/src/notebooks)
-will also help you get started.
+will also help you get started. You can run the example notebooks interactively in
+[binder](https://mybinder.org/v2/gh/CederGroupHub/smol/HEAD?labpath=docs%2Fsrc%2Fnotebooks%2Findex.ipynb).
 
 Contributing
 ------------
