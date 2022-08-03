@@ -104,11 +104,16 @@ class Sampler:
         else:
             seeds = [None for _ in range(nwalkers)]
 
-        mckernels = [mckernel_factory(
-            kernel_type, ensemble, step_type, seed=seed, *args, **kwargs
-        ) for seed in seeds]
+        mckernels = [
+            mckernel_factory(
+                kernel_type, ensemble, step_type, seed=seed, *args, **kwargs
+            )
+            for seed in seeds
+        ]
         # get a trial trace to initialize sample container trace
-        _trace = mckernels[0].compute_initial_trace(np.zeros(ensemble.num_sites, dtype=int))
+        _trace = mckernels[0].compute_initial_trace(
+            np.zeros(ensemble.num_sites, dtype=int)
+        )
         sample_trace = Trace(
             **{
                 name: np.empty((0, nwalkers, *value.shape), dtype=value.dtype)
@@ -206,9 +211,7 @@ class Sampler:
         with progress_bar(progress, total=nsteps, description=desc) as p_bar:
             for _ in range(nsteps // thin_by):
                 for _ in range(thin_by):
-                    for i, strace in enumerate(
-                        self._single_step(occupancies)
-                    ):
+                    for i, strace in enumerate(self._single_step(occupancies)):
                         for name, value in strace.items():
                             val = getattr(trace, name)
                             val[i] = value

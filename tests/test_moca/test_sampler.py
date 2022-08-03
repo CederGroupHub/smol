@@ -16,8 +16,10 @@ ATOL = 1e-14
 @pytest.fixture(params=[1, 5])
 def sampler(ensemble, rng, request):
     sampler = Sampler.from_ensemble(
-        ensemble, temperature=TEMPERATURE, seeds=[rng for _ in range(request.param)],
-        nwalkers=request.param
+        ensemble,
+        temperature=TEMPERATURE,
+        seeds=[rng for _ in range(request.param)],
+        nwalkers=request.param,
     )
     # fix this additional attribute to sampler to access in gen occus for tests
     sampler.num_sites = ensemble.num_sites
