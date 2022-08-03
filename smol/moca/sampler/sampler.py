@@ -108,7 +108,8 @@ class Sampler:
             kernel_type, ensemble, step_type, seed=seed, *args, **kwargs
         ) for seed in seeds]
         # get a trial trace to initialize sample container trace
-        _trace = mckernels[0].compute_initial_trace(np.zeros(ensemble.num_sites, dtype=int))
+        _trace = mckernels[0].compute_initial_trace(np.zeros(ensemble.num_sites,
+                                                             dtype=int))
         sample_trace = Trace(
             **{
                 name: np.empty((0, nwalkers, *value.shape), dtype=value.dtype)

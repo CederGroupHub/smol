@@ -548,7 +548,8 @@ class StructureWrangler(MSONable):
                     raise ValueError(
                         f"The properties in the entry being added do not match all "
                         f"the properties that have already been added: "
-                        f"{self.available_properties}.\n Additional entrys must include "
+                        f"{self.available_properties}.\n"
+                        f" Additional entries must include "
                         f"the same properties included."
                     )
 
@@ -556,7 +557,8 @@ class StructureWrangler(MSONable):
                     raise ValueError(
                         f"The properties in the entry being added do not match all "
                         f"the weights that have already been added: "
-                        f"{self.available_weights}.\n Additional entrys must include the"
+                        f"{self.available_weights}.\n"
+                        f" Additional entries must include the"
                         f" same weights included."
                     )
             self._entries.append(entry)
