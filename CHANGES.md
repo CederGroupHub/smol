@@ -9,6 +9,7 @@ Use this section to keep track of changes in the works.
 ### Added
 * Data centering example notebook. #238 @kamronald
 ### Changed
+* Single sampler multiple kernels. #245 @qchempku2017
 ### Fixed
 ### Removed
 ### Deprecated

@@ -48,7 +48,7 @@ def container(request, rng):
             "thermo_boundaries": ChemicalPotential(
                 {get_species("Li+"): 0.5, get_species("Vacancy"): 0.3}
             ),
-            "seed": 0,
+            "seeds": [0 for _ in range(request.param)],
         },
     )
     yield sample_container
