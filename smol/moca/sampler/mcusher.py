@@ -13,7 +13,7 @@ __author__ = "Luis Barroso-Luque, Fengyu Xie"
 from abc import ABC, abstractmethod
 import numpy as np
 import warnings
-import math
+from scipy.special import gammaln
 
 from smol.utils import derived_class_factory, class_name_from_str
 from ..comp_space import CompSpace
@@ -24,7 +24,7 @@ from ..utils.occu_utils import (get_dim_ids_by_sublattice,
                                 occu_to_species_n,
                                 delta_n_from_step)
 from ..utils.math_utils import (choose_section_from_partition, gcd_list,
-                                comb, flip_weights_mask, NUM_TOL)
+                                flip_weights_mask, NUM_TOL)
 
 
 class MCUsher(ABC):
@@ -466,15 +466,12 @@ class Tableflip(MCUsher):
         # Combinatorial factor.
         log_factor = np.log(p_next / p_now)
         dim_ids = np.arange(len(u), dtype=int)
-        dims_from = dim_ids[u < 0]
-        dims_to = dim_ids[u > 0]
+        dims_nonzero = dim_ids[~np.isclose(u, 0)]
 
-        for dim in dims_from:
-            log_factor += np.log(math.factorial(-u[dim])
-                                 * comb(n_now[dim], -u[dim]))
-        for dim in dims_to:
-            log_factor -= np.log(math.factorial(u[dim])
-                                 * comb(n_next[dim], u[dim]))
+        def facln(n):  # log(n!), will speed up calculations.
+            return gammaln(n + 1)
+        for dim in dims_nonzero:
+            log_factor += facln(n_now[dim]) - facln(n_next[dim])
 
         return log_factor
 
