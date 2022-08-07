@@ -408,6 +408,219 @@ class Metropolis(ThermalKernel):
         return self.trace
 
 
+class WangLandau(MCKernel):
+    """A Wang-Landau sampling kernel.
+
+    Allows wang-landau sampling method. Stores histogram and DOS in its instance.
+    """
+    valid_mcushers = ALL_MCUSHERS
+    valid_bias = None  # Wang-Landau does not need bias.
+
+    def __init__(
+        self,
+        ensemble,
+        step_type,
+        min_enthalpy,
+        max_enthalpy,
+        bin_size,
+        *args,
+        flatness=0.8,
+        mod_factor=1.0,
+        check_period=1000,
+        update_period=1,
+        mod_update=None,
+        seed=None,
+        **kwargs,
+    ):
+        """Initialize a WangLandau Kernel.
+
+        Args:
+            ensemble (Ensemble):
+                The ensemble object to use to generate samples
+            step_type (str):
+                An MC step type corresponding to an MCUsher. See valid_mcushers
+            min_enthalpy (float):
+                The minimum enthalpy to sample. Enthalpy means the dot product
+                of natural parameters and ensemble features. In canonical ensemble,
+                it shall be the energy. In semigrand ensemble, it shall be E- mu N.
+                Unit is eV scaled at the super-cell.
+            max_enthalpy (float):
+                The maximum enthalpy to sample.
+            bin_size (float):
+                The enthalpy bin size to determine different states.
+            flatness (float): optional
+                The flatness factor used when checking histogram flatness.
+                Must be between 0 and 1.
+            mod_factor (float):
+                log of the initial modification factor used to update the
+                DOS/entropy.
+                Default is 1, which means the DOS shall be multiplied by e^1.
+            check_period (int): optional
+                The period in number of steps for the histogram flatness to be
+                checked.
+            update_period (int): optional
+                The period in number of steps to update the histogram and entropy.
+                In some cases periods slightly larger than each step, may allow
+                more efficient exploration of energy space.
+            mod_update (float|Callable): optional
+                A function used to update the fill factor when the histogram
+                satisfies the flatness criteria. It must monotonically decrease
+                to 0.
+                When a number is provided, at each update we will divide the
+                mod factor by this number.
+            seed (int): optional
+                non-negative integer to seed the PRNG
+            args:
+                Positional arguments to instantiate MCUsher.
+            kwargs:
+                Keyword arguments to instantiate MCUsher.
+        """
+        if min_enthalpy > max_enthalpy:
+            raise ValueError("min_enthalpy can not be larger than max_energy.")
+        if mod_factor <= 0:
+            raise ValueError("mod_factor must be greater than 0.")
+
+        self.flatness = flatness
+        self.check_period = check_period
+        self.update_period = update_period
+        self._m = mod_factor
+        self._window = (min_enthalpy, max_enthalpy, bin_size)
+        if callable(mod_update):
+            self._mod_update = mod_update
+        elif mod_update is not None:
+            self._mod_update = lambda x: x / mod_update
+        else:
+            self._mod_update = lambda x: x / 2.0
+
+        self._levels = np.arange(**self._window)
+
+        # The correct intialization will be handled in set_aux_state.
+        self._current_enthalpy = np.inf
+        self._current_features = np.zeros(len(ensemble.natural_parameters))
+        self._entropy = np.zeros(len(self._levels))
+        self._histogram = np.zeros(len(self._levels), dtype=int)
+        # Used to compute average features only.
+        self._histogram_total = np.zeros(len(self._levels), dtype=int)
+        # Mean feature vector per level.
+        self._mean_features = np.zeros((len(self._levels),
+                                        len(ensemble.natural_parameters)))
+
+        # Population of initial trace included here.
+        super(WangLandau, self).__init__(ensemble=ensemble,
+                                         step_type=step_type,
+                                         *args,
+                                         seed=seed,
+                                         **kwargs)
+        # Additional clean-ups.
+        self._histogram[:] = 0
+        self._histogram_total[:] = 0
+        self._entropy[:] = 0
+
+    @property
+    def bin_size(self):
+        """Enthalpy bin size."""
+        return self._window[2]
+
+    @property
+    def levels(self):
+        """Visited enthalpy levels."""
+        return self._levels[self._entropy > 0]
+
+    @property
+    def entropy(self):
+        """log(dos) on visited levels."""
+        return self._entropy[self._entropy > 0]
+
+    @property
+    def dos(self):
+        """Density of states on visited levels."""
+        return np.exp(self.entropy - self.entropy.min())
+
+    @property
+    def histogram(self):
+        """Histogram on visited levels."""
+        return self._histogram[self._entropy > 0]
+
+    @property
+    def mod_factor(self):
+        """The current mod factor."""
+        return self._m
+
+    def _get_bin_id(self, e):
+        """Get bin index of an enthalpy."""
+        if e < self._window[0] or e >= self._window[1]:
+            return None
+        return int((e - self._window[0]) // self._window[2])
+
+    def _get_bin_e(self, bin_id):
+        """Get enthalpy form bin index."""
+        return bin_id * self._window[2] + self._window[0]
+
+    def single_step(self, occupancy):
+        """Attempt an MC step.
+
+        Returns the next steptrace in the chain.
+        Args:
+            occupancy (ndarray):
+                encoded occupancy.
+        Returns:
+            StepTrace
+        """
+        bin_num = self._get_bin_id(self._current_enthalpy)
+
+        step = self._usher.propose_step(occupancy)
+        self.trace.delta_trace.features = self._feature_change(occupancy, step)
+        self.trace.delta_trace.enthalpy = np.array(
+            np.dot(self.natural_params, self.trace.delta_trace.features)
+        )
+        new_enthalpy = self._current_enthalpy + self.trace.delta_trace.enthalpy
+
+        if new_enthalpy < self._window[0]:  # reject
+            self.trace.accepted = np.array(False)
+        elif new_enthalpy >= self._window[1]:  # reject
+            self.trace.accepted = np.array(False)
+        else:
+            state = self._aux_states["entropy"][walker, bin_num]
+            new_bin_num = self._get_bin(new_energy)
+            new_state = self._aux_states["entropy"][walker, new_bin_num]
+            self.trace.accepted = np.array(state - new_state >= log(self._rng.random()))
+
+        if self.trace.accepted:
+            for f in step:
+                occupancy[f[0]] = f[1]
+            bin_num = new_bin_num
+            features += self.trace.delta_trace.features
+            self._aux_states["current-energy"][walker] = new_energy
+            self._aux_states["current-features"][walker] = features
+            self._usher.update_aux_state(step)
+
+        # only if bin_num is valid  # TODO do you really need this check...
+        if 0 <= bin_num < len(self._energy_levels):
+            # compute the cumulative statistics
+            total = self._aux_states["total-histogram"][walker, bin_num]
+            curr_mean = self._aux_states["mean-features"][walker, bin_num]
+            self._aux_states["mean-features"][walker, bin_num] = (1 / (total + 1)) * (
+                features + total * curr_mean
+            )
+            self._aux_states["update-counter"] += 1
+            # check if histograms are flat and reset accordingly
+            if self._aux_states["update-counter"] % self.update_period == 0:
+                # update DOS and histogram
+                self._aux_states["entropy"][walker, bin_num] += self._mfactors[walker]
+                self._aux_states["histogram"][walker, bin_num] += 1
+                self._aux_states["total-histogram"][walker, bin_num] += 1
+
+        # fill up values in the trace
+        self.trace.histogram = self._aux_states["histogram"][walker]
+        self.trace.entropy = self._aux_states["entropy"][walker]
+        self.trace.cumulative_mean_features = self._aux_states["mean-features"][walker]
+        # this multiple walker thing is so unessecary!!!
+        self.trace.mod_factor = np.array([self._mfactors[walker]])
+
+        return self.trace
+
+
+
 def mckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs):
     """Get a MCMC Kernel from string name.
 
