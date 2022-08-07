@@ -37,8 +37,8 @@ class MCUsher(ABC):
             sublattices (list of Sublattice):
                 list of active Sublattices to propose steps for. Active
                 sublattices are those that include sites with configuration
-                degrees of freedom DOFs, only occupancy on active sub-lattices' active sites
-                are allowed to change.
+                degrees of freedom DOFs, only occupancy on active sub-lattices'
+                active sites are allowed to change.
             sublattice_probabilities (list of float): optional
                 list of probabilities to pick a site from specific active
                 sublattices.

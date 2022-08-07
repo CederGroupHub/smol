@@ -291,7 +291,8 @@ class ClusterExpansion(MSONable):
             self._subspace.function_total_multiplicities[1:] * self.eci[1:] ** 2
         )
         outs += [
-            f"ECI-based Property : mean={self.eci[0]:0.4f}  std={np.sqrt(fit_var):0.4f}",
+            f"ECI-based Property : mean={self.eci[0]:0.4f}"
+            f"  std={np.sqrt(fit_var):0.4f}",
             "Fit Summary",
         ]
 
