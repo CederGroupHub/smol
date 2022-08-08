@@ -13,11 +13,14 @@ from smol.moca.sampler.kernel import (
     ThermalKernel,
     Trace,
     UniformlyRandom,
+    WangLandau
 )
 from smol.moca.sampler.mcusher import Flip, Swap
 from tests.utils import gen_random_occupancy
 
-kernels = [UniformlyRandom, Metropolis]
+kernels_with_bias = [UniformlyRandom, Metropolis]
+kernels_no_bias = [WangLandau]
+kernels = kernels_with_bias + kernels_no_bias
 ushers = ALL_MCUSHERS
 
 
@@ -27,11 +30,15 @@ def mckernel(ensemble, request):
     kernel_class, step_type = request.param
     if issubclass(kernel_class, ThermalKernel):
         kwargs["temperature"] = 5000
+    if kernel_class == WangLandau:
+        kwargs["min_enthalpy"] = 0
+        kwargs["max_enthalpy"] = 100
+        kwargs["bin_size"] = 1
     kernel = kernel_class(ensemble, step_type=step_type, **kwargs)
     return kernel
 
 
-@pytest.fixture(params=product(kernels, ushers), scope="module")
+@pytest.fixture(params=product(kernels_with_bias, ushers), scope="module")
 def mckernel_bias(ensemble, request):
     kwargs = {}
     kernel_class, step_type = request.param
@@ -86,6 +93,12 @@ def test_single_step(mckernel):
             assert not np.array_equal(trace.occupancy, occu_)
         else:
             npt.assert_array_equal(trace.occupancy, occu_)
+        if isinstance(mckernel, WangLandau):
+            assert "histogram" in trace.names
+            assert "occurrences" in trace.names
+            assert "entropy" in trace.names
+            assert "mean_features" in trace.names
+            assert "mod_factor" in trace.names
 
 
 def test_single_step_bias(mckernel_bias):

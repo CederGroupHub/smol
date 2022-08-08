@@ -111,14 +111,14 @@ class MCKernel(ABC):
     valid_bias = None
 
     def __init__(
-        self,
-        ensemble,
-        step_type,
-        *args,
-        seed=None,
-        bias_type=None,
-        bias_kwargs=None,
-        **kwargs,
+            self,
+            ensemble,
+            step_type,
+            *args,
+            seed=None,
+            bias_type=None,
+            bias_kwargs=None,
+            **kwargs,
     ):
         """Initialize MCKernel.
 
@@ -384,10 +384,9 @@ class Metropolis(ThermalKernel):
             self.trace.delta_trace.bias = np.array(
                 self._bias.compute_bias_change(occupancy, step)
             )
-            exponent = (
-                -self.beta * self.trace.delta_trace.enthalpy
-                + self.trace.delta_trace.bias
-            )
+            exponent = (-self.beta * self.trace.delta_trace.enthalpy
+                        + self.trace.delta_trace.bias
+                        )
             self.trace.accepted = np.array(
                 True if exponent >= 0 else exponent > log(self._rng.random())
             )
@@ -396,7 +395,7 @@ class Metropolis(ThermalKernel):
                 True
                 if self.trace.delta_trace.enthalpy <= 0
                 else -self.beta * self.trace.delta_trace.enthalpy
-                > log(self._rng.random())  # noqa
+                     > log(self._rng.random())  # noqa
             )
 
         if self.trace.accepted:
@@ -417,20 +416,20 @@ class WangLandau(MCKernel):
     valid_bias = None  # Wang-Landau does not need bias.
 
     def __init__(
-        self,
-        ensemble,
-        step_type,
-        min_enthalpy,
-        max_enthalpy,
-        bin_size,
-        *args,
-        flatness=0.8,
-        mod_factor=1.0,
-        check_period=1000,
-        update_period=1,
-        mod_update=None,
-        seed=None,
-        **kwargs,
+            self,
+            ensemble,
+            step_type,
+            min_enthalpy,
+            max_enthalpy,
+            bin_size,
+            *args,
+            flatness=0.8,
+            mod_factor=1.0,
+            check_period=1000,
+            update_period=1,
+            mod_update=None,
+            seed=None,
+            **kwargs,
     ):
         """Initialize a WangLandau Kernel.
 
@@ -492,7 +491,7 @@ class WangLandau(MCKernel):
         else:
             self._mod_update = lambda x: x / 2.0
 
-        self._levels = np.arange(**self._window)
+        self._levels = np.arange(min_enthalpy, max_enthalpy, bin_size)
 
         # The correct intialization will be handled in set_aux_state.
         self._current_enthalpy = np.inf
@@ -500,10 +499,13 @@ class WangLandau(MCKernel):
         self._entropy = np.zeros(len(self._levels))
         self._histogram = np.zeros(len(self._levels), dtype=int)
         # Used to compute average features only.
-        self._histogram_total = np.zeros(len(self._levels), dtype=int)
+        self._occurrences = np.zeros(len(self._levels), dtype=int)
         # Mean feature vector per level.
         self._mean_features = np.zeros((len(self._levels),
                                         len(ensemble.natural_parameters)))
+        self._steps_counter = 0  # Log n_steps elapsed.
+        self._states_counter = 0  # Log n_valid_states elapsed
+        # TODO: Do we really need to distinguish them?
 
         # Population of initial trace included here.
         super(WangLandau, self).__init__(ensemble=ensemble,
@@ -513,8 +515,10 @@ class WangLandau(MCKernel):
                                          **kwargs)
         # Additional clean-ups.
         self._histogram[:] = 0
-        self._histogram_total[:] = 0
+        self._occurrences[:] = 0
         self._entropy[:] = 0
+        self._steps_counter = 0  # Log n_steps elapsed.
+        self._states_counter = 0  # Log n_valid_states elapsed.
 
     @property
     def bin_size(self):
@@ -548,11 +552,12 @@ class WangLandau(MCKernel):
 
     def _get_bin_id(self, e):
         """Get bin index of an enthalpy."""
-        if e < self._window[0] or e >= self._window[1]:
-            return None
+        # Does not check if enthalpy is in window.
+        if e == np.inf:  # This happens at init.
+            return np.inf
         return int((e - self._window[0]) // self._window[2])
 
-    def _get_bin_e(self, bin_id):
+    def _get_bin_enthalpy(self, bin_id):
         """Get enthalpy form bin index."""
         return bin_id * self._window[2] + self._window[0]
 
@@ -566,7 +571,7 @@ class WangLandau(MCKernel):
         Returns:
             StepTrace
         """
-        bin_num = self._get_bin_id(self._current_enthalpy)
+        bin_id = self._get_bin_id(self._current_enthalpy)
 
         step = self._usher.propose_step(occupancy)
         self.trace.delta_trace.features = self._feature_change(occupancy, step)
@@ -577,48 +582,93 @@ class WangLandau(MCKernel):
 
         if new_enthalpy < self._window[0]:  # reject
             self.trace.accepted = np.array(False)
+            new_bin_id = bin_id
         elif new_enthalpy >= self._window[1]:  # reject
             self.trace.accepted = np.array(False)
+            new_bin_id = bin_id
         else:
-            state = self._aux_states["entropy"][walker, bin_num]
-            new_bin_num = self._get_bin(new_energy)
-            new_state = self._aux_states["entropy"][walker, new_bin_num]
-            self.trace.accepted = np.array(state - new_state >= log(self._rng.random()))
+            new_bin_id = self._get_bin_id(new_enthalpy)
+            entropy = self._entropy[bin_id]
+            new_entropy = self._entropy[new_bin_id]
+            exponent = entropy - new_entropy
+            self.trace.accepted = np.array(True if exponent >= 0 else
+                                           exponent > log(self._rng.random()))
 
         if self.trace.accepted:
             for f in step:
                 occupancy[f[0]] = f[1]
-            bin_num = new_bin_num
-            features += self.trace.delta_trace.features
-            self._aux_states["current-energy"][walker] = new_energy
-            self._aux_states["current-features"][walker] = features
+            bin_id = new_bin_id
+            self._current_features += self.trace.delta_trace.features
+            self._current_enthalpy = new_enthalpy
             self._usher.update_aux_state(step)
+        self.trace.occupancy = occupancy
 
-        # only if bin_num is valid  # TODO do you really need this check...
-        if 0 <= bin_num < len(self._energy_levels):
+        # Only if bin_id is valid, because bin_id is not checked.
+        if 0 <= bin_id < len(self._levels):
             # compute the cumulative statistics
-            total = self._aux_states["total-histogram"][walker, bin_num]
-            curr_mean = self._aux_states["mean-features"][walker, bin_num]
-            self._aux_states["mean-features"][walker, bin_num] = (1 / (total + 1)) * (
-                features + total * curr_mean
-            )
-            self._aux_states["update-counter"] += 1
+            self._states_counter += 1
+            total = self._occurrences[bin_id]
+            self._mean_features[bin_id, :] = \
+                1 / (total + 1) * (self._current_features
+                                   + total * self._mean_features[bin_id, :]
+                                   )
             # check if histograms are flat and reset accordingly
-            if self._aux_states["update-counter"] % self.update_period == 0:
-                # update DOS and histogram
-                self._aux_states["entropy"][walker, bin_num] += self._mfactors[walker]
-                self._aux_states["histogram"][walker, bin_num] += 1
-                self._aux_states["total-histogram"][walker, bin_num] += 1
+            if self._states_counter % self.update_period == 0:
+                # Add to DOS and histogram
+                self._entropy[bin_id] += self._m
+                self._histogram[bin_id] += 1
+                self._occurrences[bin_id] += 1
 
         # fill up values in the trace
-        self.trace.histogram = self._aux_states["histogram"][walker]
-        self.trace.entropy = self._aux_states["entropy"][walker]
-        self.trace.cumulative_mean_features = self._aux_states["mean-features"][walker]
-        # this multiple walker thing is so unessecary!!!
-        self.trace.mod_factor = np.array([self._mfactors[walker]])
+        self.trace.histogram = self._histogram
+        self.trace.occurrences = self._occurrences
+        self.trace.entropy = self._entropy
+        self.trace.mean_features = self._mean_features
+        self.trace.mod_factor = np.array([self._m])
+
+        self._steps_counter += 1
+        if self._steps_counter % self.check_period == 0:
+            histogram = self._histogram[self._histogram > 0]  # remove zero entries
+            if ((histogram > self.flatness * histogram.mean()).all()
+                    and len(histogram) >= 0.5 * len(self._histogram)):
+                # A sufficient portion of histogram must have been populated.
+                # So be careful with your min and max energy setting.
+                self._m = self._mod_update(self._m)
+                self._histogram[:] = 0  # reset histogram and decrease _m.
 
         return self.trace
 
+    def compute_initial_trace(self, occupancy):
+        """Compute initial values for sample trace given an occupancy.
+        Add the micro-canonical entropy and histograms to the trace
+        Args:
+            occupancy (ndarray):
+                Initial occupancy
+        Returns:
+            Trace
+        """
+        trace = super().compute_initial_trace(occupancy)
+        # This will not be counting the state corresponding to the given occupancy.
+        # but that is ok since we are not recording the initial trace when sampling.
+        trace.histogram = self._histogram
+        trace.occurrences = self._occurrences
+        trace.entropy = self._entropy
+        trace.mean_features = self._mean_features
+        trace.mod_factor = self._m
+
+        return trace
+
+    def set_aux_state(self, occupancy, *args, **kwargs):
+        """Set the auxiliary occupancies based on an occupancy.
+
+        This is necessary for WangLandau to work properly because
+        it needs to store the current enthalpy and features.
+        """
+        features = np.array(self._compute_features(occupancy))
+        enthalpy = np.dot(features, self.natural_params)
+        self._current_features = features
+        self._current_enthalpy = enthalpy
+        self._usher.set_aux_state(occupancy)
 
 
 def mckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs):
