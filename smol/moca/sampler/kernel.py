@@ -412,6 +412,7 @@ class WangLandau(MCKernel):
 
     Allows wang-landau sampling method. Stores histogram and DOS in its instance.
     """
+
     valid_mcushers = ALL_MCUSHERS
     valid_bias = None  # Wang-Landau does not need bias.
 
@@ -547,7 +548,7 @@ class WangLandau(MCKernel):
 
     @property
     def mod_factor(self):
-        """The current mod factor."""
+        """Mod factor."""
         return self._m
 
     def _get_bin_id(self, e):
@@ -640,7 +641,8 @@ class WangLandau(MCKernel):
 
     def compute_initial_trace(self, occupancy):
         """Compute initial values for sample trace given an occupancy.
-        Add the micro-canonical entropy and histograms to the trace
+
+        Add the micro-canonical entropy and histograms to the trace.
         Args:
             occupancy (ndarray):
                 Initial occupancy
