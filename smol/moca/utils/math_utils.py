@@ -98,8 +98,8 @@ def comb(n, k):
     if hasattr(math, "comb"):
         return math.comb(n, k)
     else:
-        return (math.factorial(n) //
-                (math.factorial(n - k) * math.factorial(k)))
+        return (math.factorial(n)
+                // (math.factorial(n - k) * math.factorial(k)))
 
 
 def rationalize_number(a, max_denominator=1000, dtol=NUM_TOL):
@@ -123,7 +123,7 @@ def rationalize_number(a, max_denominator=1000, dtol=NUM_TOL):
     denominator = f.denominator
 
     if abs(float(numerator) / denominator - a) > dtol:
-        raise ValueError("Can't find a rational number near " +
+        raise ValueError("Can't find a rational number near "
                          "{} within tolerance!".format(a))
 
     return numerator, denominator
