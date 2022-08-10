@@ -97,7 +97,7 @@ def test_single_step(mckernel):
             assert "histogram" in trace.names
             assert "occurrences" in trace.names
             assert "entropy" in trace.names
-            assert "mean_features" in trace.names
+            assert "cumulative_mean_features" in trace.names
             assert "mod_factor" in trace.names
 
 

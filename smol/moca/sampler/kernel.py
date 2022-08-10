@@ -476,7 +476,7 @@ class WangLandau(MCKernel):
                 Keyword arguments to instantiate MCUsher.
         """
         if min_enthalpy > max_enthalpy:
-            raise ValueError("min_enthalpy can not be larger than max_energy.")
+            raise ValueError("min_enthalpy can not be larger than max_enthalpy.")
         if mod_factor <= 0:
             raise ValueError("mod_factor must be greater than 0.")
 
@@ -504,9 +504,7 @@ class WangLandau(MCKernel):
         # Mean feature vector per level.
         self._mean_features = np.zeros((len(self._levels),
                                         len(ensemble.natural_parameters)))
-        self._steps_counter = 0  # Log n_steps elapsed.
-        self._states_counter = 0  # Log n_valid_states elapsed
-        # TODO: Do we really need to distinguish them?
+        self._steps_counter = 0  # Save number of valid states elapsed.
 
         # Population of initial trace included here.
         super(WangLandau, self).__init__(ensemble=ensemble,
@@ -519,7 +517,6 @@ class WangLandau(MCKernel):
         self._occurrences[:] = 0
         self._entropy[:] = 0
         self._steps_counter = 0  # Log n_steps elapsed.
-        self._states_counter = 0  # Log n_valid_states elapsed.
 
     @property
     def bin_size(self):
@@ -607,14 +604,14 @@ class WangLandau(MCKernel):
         # Only if bin_id is valid, because bin_id is not checked.
         if 0 <= bin_id < len(self._levels):
             # compute the cumulative statistics
-            self._states_counter += 1
+            self._steps_counter += 1
             total = self._occurrences[bin_id]
             self._mean_features[bin_id, :] = \
                 1 / (total + 1) * (self._current_features
                                    + total * self._mean_features[bin_id, :]
                                    )
             # check if histograms are flat and reset accordingly
-            if self._states_counter % self.update_period == 0:
+            if self._steps_counter % self.update_period == 0:
                 # Add to DOS and histogram
                 self._entropy[bin_id] += self._m
                 self._histogram[bin_id] += 1
@@ -624,10 +621,9 @@ class WangLandau(MCKernel):
         self.trace.histogram = self._histogram
         self.trace.occurrences = self._occurrences
         self.trace.entropy = self._entropy
-        self.trace.mean_features = self._mean_features
+        self.trace.cumulative_mean_features = self._mean_features
         self.trace.mod_factor = np.array([self._m])
 
-        self._steps_counter += 1
         if self._steps_counter % self.check_period == 0:
             histogram = self._histogram[self._histogram > 0]  # remove zero entries
             if ((histogram > self.flatness * histogram.mean()).all()
@@ -655,7 +651,7 @@ class WangLandau(MCKernel):
         trace.histogram = self._histogram
         trace.occurrences = self._occurrences
         trace.entropy = self._entropy
-        trace.mean_features = self._mean_features
+        trace.cumulative_mean_features = self._mean_features
         trace.mod_factor = self._m
 
         return trace
