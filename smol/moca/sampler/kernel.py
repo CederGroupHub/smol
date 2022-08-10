@@ -98,6 +98,12 @@ class StepTrace(Trace):
         return step_trace_d
 
 
+# TODO make it easier to have multiple walkers, either have the sampler have
+#  a list of kernel copies or make a multi-kernel class that simply holds
+#  the copies but ow behaves the same, that will really simplify writing kernels!
+#  TODO it is so tedious and unessecary to have multiple walkers for the WL Kernel !
+
+
 class MCKernel(ABC):
     """Abtract base class for transition kernels.
 
@@ -118,7 +124,7 @@ class MCKernel(ABC):
             seed=None,
             bias_type=None,
             bias_kwargs=None,
-            **kwargs,
+            **kwargs
     ):
         """Initialize MCKernel.
 
@@ -130,6 +136,8 @@ class MCKernel(ABC):
                 string specifying the MCMC step type.
             seed (int): optional
                 non-negative integer to seed the PRNG
+            nwalkers (int): optional
+                Number of walkers/chains to sampler.
             bias_type (str): optional
                 name for bias type instance.
             bias_kwargs (dict): optional
@@ -147,7 +155,7 @@ class MCKernel(ABC):
         self._rng = np.random.default_rng(self._seed)
         self._compute_features = ensemble.compute_feature_vector
         self._feature_change = ensemble.compute_feature_vector_change
-
+        self._nwalkers = nwalkers
         self.trace = StepTrace(accepted=np.array([True]))
         self._usher, self._bias = None, None
 
@@ -204,9 +212,9 @@ class MCKernel(ABC):
             self.trace.delta_trace.bias = np.zeros(1)
         self._bias = bias
 
-    def set_aux_state(self, state, *args, **kwargs):
-        """Set the auxiliary state from initial or checkpoint values."""
-        self._usher.set_aux_state(state, *args, **kwargs)
+    def set_aux_state(self, occupancies, *args, **kwargs):
+        """Set the auxiliary occupancies from initial or checkpoint values."""
+        self._usher.set_aux_state(occupancies, *args, **kwargs)
 
     @abstractmethod
     def single_step(self, occupancy):
@@ -244,6 +252,11 @@ class MCKernel(ABC):
             trace.bias = np.array([self.bias.compute_bias(occupancy)])
         trace.accepted = np.array([True])
         return trace
+
+    def iter_steps(self, occupancies):
+        """Iterate steps for each walker over an array of occupancies."""
+        for occupancy in occupancies:
+            yield self.single_step(occupancy)
 
 
 class ThermalKernel(MCKernel):
@@ -301,6 +314,10 @@ class ThermalKernel(MCKernel):
         trace.temperature = np.array([self.trace.temperature])
         return trace
 
+    def set_aux_state(self, occupancies, *args, **kwargs):
+        """Set the auxiliary occupancies from initial or checkpoint values."""
+        self._usher.set_aux_state(occupancies, *args, **kwargs)
+
 
 class UniformlyRandom(MCKernel):
     """A Kernel that accepts all proposed steps.
@@ -317,7 +334,7 @@ class UniformlyRandom(MCKernel):
     def single_step(self, occupancy):
         """Attempt an MCMC step.
 
-        Returns the next state in the chain and if the attempted step was
+        Returns the next occupancies in the chain and if the attempted step was
         successful.
 
         Args:
@@ -364,7 +381,7 @@ class Metropolis(ThermalKernel):
     def single_step(self, occupancy):
         """Attempt an MC step.
 
-        Returns the next state in the chain and if the attempted step was
+        Returns the next occupancies in the chain and if the attempted step was
         successful.
 
         Args:
@@ -570,12 +587,12 @@ class WangLandau(MCKernel):
             StepTrace
         """
         bin_id = self._get_bin_id(self._current_enthalpy)
-
         step = self._usher.propose_step(occupancy)
         self.trace.delta_trace.features = self._feature_change(occupancy, step)
         self.trace.delta_trace.enthalpy = np.array(
             np.dot(self.natural_params, self.trace.delta_trace.features)
         )
+
         new_enthalpy = self._current_enthalpy + self.trace.delta_trace.enthalpy
 
         if new_enthalpy < self._window[0]:  # reject
@@ -595,6 +612,7 @@ class WangLandau(MCKernel):
         if self.trace.accepted:
             for f in step:
                 occupancy[f[0]] = f[1]
+
             bin_id = new_bin_id
             self._current_features += self.trace.delta_trace.features
             self._current_enthalpy = new_enthalpy
@@ -646,6 +664,7 @@ class WangLandau(MCKernel):
             Trace
         """
         trace = super().compute_initial_trace(occupancy)
+        
         # This will not be counting the state corresponding to the given occupancy.
         # but that is ok since we are not recording the initial trace when sampling.
         trace.histogram = self._histogram
