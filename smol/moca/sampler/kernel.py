@@ -136,8 +136,6 @@ class MCKernel(ABC):
                 string specifying the MCMC step type.
             seed (int): optional
                 non-negative integer to seed the PRNG
-            nwalkers (int): optional
-                Number of walkers/chains to sampler.
             bias_type (str): optional
                 name for bias type instance.
             bias_kwargs (dict): optional
