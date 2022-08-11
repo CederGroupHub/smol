@@ -417,11 +417,14 @@ class Orbit(MSONable):
                 # take the centroid of subset of sites, not all cluster sites
                 centroid = np.average(cluster.frac_coords[inds], axis=0)
                 recenter = np.round(centroid - orbit.base_cluster.centroid)
-                c_sites = orbit.base_cluster.frac_coords + recenter
-                if is_coord_subset(c_sites, cluster.frac_coords):
-                    mappings.append(
-                        coord_list_mapping(c_sites, cluster.frac_coords, atol=SITE_TOL)
-                    )
+                for sub_cluster in orbit.clusters:
+                    c_sites = sub_cluster.frac_coords + recenter
+                    if is_coord_subset(c_sites, cluster.frac_coords):
+                        mappings.append(
+                            coord_list_mapping(
+                                c_sites, cluster.frac_coords, atol=SITE_TOL
+                            )
+                        )
 
         if len(mappings) == 0 and self.is_sub_orbit(orbit):
             raise RuntimeError(
