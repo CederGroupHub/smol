@@ -1,38 +1,34 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>moca package &#8212; smol 0.0.4 documentation</title>
+    <title>moca package &#8212; smol 0.0.5 documentation</title>
     
-    <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-  
+
     
-    <link rel="stylesheet"
-      href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-    <link rel="preload" as="font" type="font/woff2" crossorigin
-      href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-    <link rel="preload" as="font" type="font/woff2" crossorigin
-      href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
-  
-    
-      
-  
-    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/pydata-sphinx-theme.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/smol.css" />
     
-    <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
-  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../_static/require.js"></script>
@@ -40,13 +36,13 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en">
+    <meta name="docsearch:language" content="None">
     
 
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -124,7 +120,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.4  <!-- this text may get changed later by javascript -->
+        0.0.5  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -134,17 +130,10 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables api_reference/autogen/moca and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.4'}.
+     variables api_reference/autogen/moca and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.5'}.
 -->
 
 <script type="text/javascript">
-// Construct the target URL from the JSON components
-function buildURL(entry) {
-    var template = "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/";  // supplied by jinja
-    template = template.replace("{version}", entry.version);
-    return template;
-}
-
 // Check if corresponding page path exists in other version of docs
 // and, if so, go there instead of the homepage of the other docs version
 function checkPageExistsAndRedirect(event) {
@@ -180,22 +169,26 @@ function checkPageExistsAndRedirect(event) {
             const node = document.createElement("a");
             node.setAttribute("class", "list-group-item list-group-item-action py-1");
             node.textContent = `${entry.name}`;
-            // get the base URL for that doc version, add the current page's
-            // path to it, and set as `href`
-            entry.url = buildURL(entry);
             node.setAttribute("href", `${entry.url}${currentFilePath}`);
             // on click, AJAX calls will check if the linked page exists before
             // trying to redirect, and if not, will redirect to the homepage
             // for that version of the docs.
             node.onclick = checkPageExistsAndRedirect;
+            // Add dataset values for the version and name in case people want
+            // to apply CSS styling based on this information.
+            node.dataset["versionName"] = entry.name;
+            node.dataset["version"] = entry.version;
+
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.4 variable.
+            // this version, rather than using sphinx's 0.0.5 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.4") {
+            if (entry.version == "0.0.5") {
                 node.classList.add("active");
-                $("#version_switcher_button").text(entry.name);
+                let btn = document.getElementById("version_switcher_button");
+                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
+                btn.dataset["activeVersion"] = entry.version;
             }
         });
     });
@@ -262,7 +255,7 @@ function checkPageExistsAndRedirect(event) {
               
               <div class="toc-item">
                 
-<div class="tocsection onthispage pt-5 pb-3">
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
 
@@ -317,9 +310,9 @@ function checkPageExistsAndRedirect(event) {
               <div>
                 
   <section id="moca-package">
-<h1>moca package<a class="headerlink" href="#moca-package" title="Permalink to this heading">¶</a></h1>
+<h1>moca package<a class="headerlink" href="#moca-package" title="Permalink to this headline">#</a></h1>
 <section id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading">¶</a></h2>
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">#</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="moca.ensemble.html">moca.ensemble package</a><ul>
@@ -353,10 +346,10 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </section>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">#</a></h2>
 </section>
 <section id="module-moca.sublattice">
-<span id="moca-sublattice-module"></span><h2>moca.sublattice module<a class="headerlink" href="#module-moca.sublattice" title="Permalink to this heading">¶</a></h2>
+<span id="moca-sublattice-module"></span><h2>moca.sublattice module<a class="headerlink" href="#module-moca.sublattice" title="Permalink to this headline">#</a></h2>
 <p>Implementation of Sublattice class.</p>
 <p>A sublattice represents a set of sites in a supercell that all have
 the same domain/site space. More rigourously it represents a substructure
@@ -364,15 +357,15 @@ of the random structure supercell being sampled in a Monte Carlo
 simulation.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.sublattice.Sublattice">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Sublattice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">site_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../cofe/space.domain.html#smol.cofe.space.domain.SiteSpace" title="smol.cofe.space.domain.SiteSpace"><span class="pre">SiteSpace</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sublattice.Sublattice" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MSONable</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Sublattice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">site_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../cofe/space.domain.html#smol.cofe.space.domain.SiteSpace" title="smol.cofe.space.domain.SiteSpace"><span class="pre">smol.cofe.space.domain.SiteSpace</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sublattice.Sublattice" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Sublattice class.</p>
 <p>A Sublattice is used to represent a subset of supercell sites that have
 the same site space. Rigorously it represents a set of sites in a
 “substructure” of the total structure.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="moca.sublattice.Sublattice.site_space">
-<span class="sig-name descname"><span class="pre">site_space</span></span><a class="headerlink" href="#moca.sublattice.Sublattice.site_space" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">site_space</span></span><a class="headerlink" href="#moca.sublattice.Sublattice.site_space" title="Permalink to this definition">#</a></dt>
 <dd><p>SiteSpace with the allowed species and their random
 state composition.</p>
 <dl class="field-list simple">
@@ -384,7 +377,7 @@ state composition.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="moca.sublattice.Sublattice.sites">
-<span class="sig-name descname"><span class="pre">sites</span></span><a class="headerlink" href="#moca.sublattice.Sublattice.sites" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">sites</span></span><a class="headerlink" href="#moca.sublattice.Sublattice.sites" title="Permalink to this definition">#</a></dt>
 <dd><p>array of site indices for all sites in sublattice</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -395,7 +388,7 @@ state composition.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="moca.sublattice.Sublattice.active_sites">
-<span class="sig-name descname"><span class="pre">active_sites</span></span><a class="headerlink" href="#moca.sublattice.Sublattice.active_sites" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">active_sites</span></span><a class="headerlink" href="#moca.sublattice.Sublattice.active_sites" title="Permalink to this definition">#</a></dt>
 <dd><p>array of site indices for all unrestricted sites in the sublattice.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -406,7 +399,7 @@ state composition.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="moca.sublattice.Sublattice.encoding">
-<span class="sig-name descname"><span class="pre">encoding</span></span><a class="headerlink" href="#moca.sublattice.Sublattice.encoding" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">encoding</span></span><a class="headerlink" href="#moca.sublattice.Sublattice.encoding" title="Permalink to this definition">#</a></dt>
 <dd><p>array of species encoding in integer indices. By default,
 will be initialized as range(len(site_space)). Might be different
 if a sub-lattice was created from the split of another sub-lattice.</p>
@@ -419,12 +412,12 @@ if a sub-lattice was created from the split of another sub-lattice.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">active_sites</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">array</span></em><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">active_sites</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.array</span></em><a class="headerlink" href="#id0" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.sublattice.Sublattice.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#moca.sublattice.Sublattice.as_dict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#moca.sublattice.Sublattice.as_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Get Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -435,12 +428,12 @@ if a sub-lattice was created from the split of another sub-lattice.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="id1">
-<span class="sig-name descname"><span class="pre">encoding</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">array</span></em><a class="headerlink" href="#id1" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">encoding</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.array</span></em><a class="headerlink" href="#id1" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.sublattice.Sublattice.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sublattice.Sublattice.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sublattice.Sublattice.from_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Instantiate a sublattice from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -451,19 +444,19 @@ if a sub-lattice was created from the split of another sub-lattice.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.sublattice.Sublattice.is_active">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_active</span></span><a class="headerlink" href="#moca.sublattice.Sublattice.is_active" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_active</span></span><a class="headerlink" href="#moca.sublattice.Sublattice.is_active" title="Permalink to this definition">#</a></dt>
 <dd><p>Whether sub-lattice has active sites.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.sublattice.Sublattice.reset_restricted_sites">
-<span class="sig-name descname"><span class="pre">reset_restricted_sites</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#moca.sublattice.Sublattice.reset_restricted_sites" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">reset_restricted_sites</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#moca.sublattice.Sublattice.reset_restricted_sites" title="Permalink to this definition">#</a></dt>
 <dd><p>Reset all restricted sites to active.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.sublattice.Sublattice.restrict_sites">
-<span class="sig-name descname"><span class="pre">restrict_sites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sublattice.Sublattice.restrict_sites" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">restrict_sites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sublattice.Sublattice.restrict_sites" title="Permalink to this definition">#</a></dt>
 <dd><p>Restricts (freezes) the given sites.</p>
 <p>Once a site is restricted, no Metropolis step can be proposed
 with it, including flipping, swapping, etc.</p>
@@ -476,29 +469,29 @@ with it, including flipping, swapping, etc.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.sublattice.Sublattice.restricted_sites">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">restricted_sites</span></span><a class="headerlink" href="#moca.sublattice.Sublattice.restricted_sites" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">restricted_sites</span></span><a class="headerlink" href="#moca.sublattice.Sublattice.restricted_sites" title="Permalink to this definition">#</a></dt>
 <dd><p>Get restricted sites for species.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="id2">
-<span class="sig-name descname"><span class="pre">site_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../cofe/space.domain.html#smol.cofe.space.domain.SiteSpace" title="smol.cofe.space.domain.SiteSpace"><span class="pre">SiteSpace</span></a></em><a class="headerlink" href="#id2" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">site_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../cofe/space.domain.html#smol.cofe.space.domain.SiteSpace" title="smol.cofe.space.domain.SiteSpace"><span class="pre">smol.cofe.space.domain.SiteSpace</span></a></em><a class="headerlink" href="#id2" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="id3">
-<span class="sig-name descname"><span class="pre">sites</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">array</span></em><a class="headerlink" href="#id3" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">sites</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.array</span></em><a class="headerlink" href="#id3" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.sublattice.Sublattice.species">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">species</span></span><a class="headerlink" href="#moca.sublattice.Sublattice.species" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">species</span></span><a class="headerlink" href="#moca.sublattice.Sublattice.species" title="Permalink to this definition">#</a></dt>
 <dd><p>Get allowed species for sites in sublattice.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.sublattice.Sublattice.split_by_species">
-<span class="sig-name descname"><span class="pre">split_by_species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species_in_partitions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sublattice.Sublattice.split_by_species" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">split_by_species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species_in_partitions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sublattice.Sublattice.split_by_species" title="Permalink to this definition">#</a></dt>
 <dd><p>Split a sub-lattice into multiple by specie.</p>
 <p>An example use case might be simulating topotactic Li extraction
 and insertion, where we want to consider Li/Vac, TM and O as
@@ -526,14 +519,14 @@ Sub-lists will be pre-sorted to ascending order.</p>
 
 </section>
 <section id="module-moca">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-moca" title="Permalink to this heading">¶</a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-moca" title="Permalink to this headline">#</a></h2>
 <p>Class implementations for ClusterExpansion based Monte Carlo.</p>
 <p>The moca (pronounced mocha) holds implementations of classes used to run
 Monte Carlo simulations using Cluster Expansion Hamiltonians.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.CanonicalEnsemble">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CanonicalEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CanonicalEnsemble" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnsemble</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MSONable</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CanonicalEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CanonicalEnsemble" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.ensemble.base.BaseEnsemble</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Canonical Ensemble class to run Monte Carlo Simulations.</p>
 <p>Initialize class instance.</p>
 <dl class="field-list simple">
@@ -549,7 +542,7 @@ supercell with same site spaces.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.CanonicalEnsemble.compute_feature_vector">
-<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CanonicalEnsemble.compute_feature_vector" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CanonicalEnsemble.compute_feature_vector" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute the feature vector for a given occupancy.</p>
 <p>In the canonical case it is just the feature vector from the underlying
 processor.</p>
@@ -568,7 +561,7 @@ processor.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.CanonicalEnsemble.compute_feature_vector_change">
-<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CanonicalEnsemble.compute_feature_vector_change" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CanonicalEnsemble.compute_feature_vector_change" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute the change in the feature vector from a given step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -588,7 +581,7 @@ processor.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.CanonicalEnsemble.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CanonicalEnsemble.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CanonicalEnsemble.from_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Instantiate a CanonicalEnsemble from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -602,7 +595,7 @@ processor.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.CanonicalEnsemble.natural_parameters">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">natural_parameters</span></span><a class="headerlink" href="#moca.CanonicalEnsemble.natural_parameters" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">natural_parameters</span></span><a class="headerlink" href="#moca.CanonicalEnsemble.natural_parameters" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the vector of exponential parameters.</p>
 </dd></dl>
 
@@ -610,8 +603,8 @@ processor.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.ClusterExpansionProcessor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ClusterExpansionProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.ClusterExpansionProcessor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../moca/processors.base.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Processor</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ClusterExpansionProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.ClusterExpansionProcessor" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../moca/processors.base.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.processor.base.Processor</span></code></a></p>
 <p>ClusterExpansionProcessor class to use a ClusterExpansion in MC.</p>
 <p>A CE processor is optimized to compute correlation vectors and local
 changes in correlation vectors. This class allows the use of a CE
@@ -620,7 +613,7 @@ Hamiltonian to run Monte Carlo-based simulations</p>
 for sampling thermodynamic properties from a CE Hamiltonian.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="moca.ClusterExpansionProcessor.coefs">
-<span class="sig-name descname"><span class="pre">coefs</span></span><a class="headerlink" href="#moca.ClusterExpansionProcessor.coefs" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">coefs</span></span><a class="headerlink" href="#moca.ClusterExpansionProcessor.coefs" title="Permalink to this definition">#</a></dt>
 <dd><p>Fitted coefficients from the cluster expansion.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -631,7 +624,7 @@ for sampling thermodynamic properties from a CE Hamiltonian.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="moca.ClusterExpansionProcessor.num_corr_functions">
-<span class="sig-name descname"><span class="pre">num_corr_functions</span></span><a class="headerlink" href="#moca.ClusterExpansionProcessor.num_corr_functions" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">num_corr_functions</span></span><a class="headerlink" href="#moca.ClusterExpansionProcessor.num_corr_functions" title="Permalink to this definition">#</a></dt>
 <dd><p>Total number of orbit basis functions (correlation functions).
 This includes all possible labelings/orderings for all orbits.
 Same as <code class="code docutils literal notranslate"><span class="pre">ClusterSubspace.n_bit_orderings</span></code>.</p>
@@ -655,7 +648,7 @@ Cluster Expansion prim structure.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.ClusterExpansionProcessor.compute_feature_vector">
-<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.ClusterExpansionProcessor.compute_feature_vector" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.ClusterExpansionProcessor.compute_feature_vector" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute the correlation vector for a given occupancy string.</p>
 <p>The correlation vector in this case is normalized per supercell. In
 other works it is extensive corresponding to the size of the supercell.</p>
@@ -674,7 +667,7 @@ other works it is extensive corresponding to the size of the supercell.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.ClusterExpansionProcessor.compute_feature_vector_change">
-<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flips</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.ClusterExpansionProcessor.compute_feature_vector_change" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flips</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.ClusterExpansionProcessor.compute_feature_vector_change" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute the change in the correlation vector from a list of flips.</p>
 <p>The correlation vector in this case is normalized per supercell. In
 other works it is extensive corresponding to the size of the supercell.</p>
@@ -699,7 +692,7 @@ for the new species to place at that site.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.ClusterExpansionProcessor.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.ClusterExpansionProcessor.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.ClusterExpansionProcessor.from_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Create a ClusterExpansionProcessor from serialized MSONable dict.</p>
 </dd></dl>
 
@@ -707,8 +700,8 @@ for the new species to place at that site.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.CompositeProcessor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CompositeProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CompositeProcessor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../moca/processors.base.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Processor</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CompositeProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CompositeProcessor" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../moca/processors.base.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.processor.base.Processor</span></code></a></p>
 <p>CompositeProcessor class used for mixed models.</p>
 <p>A Composite processor is merely a container for many different processors
 that acts as an interface such that it can be used in the same way as an
@@ -735,7 +728,7 @@ cluster expansion prim structure.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.CompositeProcessor.add_processor">
-<span class="sig-name descname"><span class="pre">add_processor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CompositeProcessor.add_processor" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_processor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CompositeProcessor.add_processor" title="Permalink to this definition">#</a></dt>
 <dd><p>Add a processor to composite.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -747,7 +740,7 @@ ClusterSubspace and supercell matrix.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.CompositeProcessor.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#moca.CompositeProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#moca.CompositeProcessor.as_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -758,7 +751,7 @@ ClusterSubspace and supercell matrix.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.CompositeProcessor.compute_feature_vector">
-<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CompositeProcessor.compute_feature_vector" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CompositeProcessor.compute_feature_vector" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute the feature vector for a given occupancy array.</p>
 <p>Each entry in the correlation vector corresponds to a particular
 symmetrically distinct bit ordering.</p>
@@ -777,7 +770,7 @@ symmetrically distinct bit ordering.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.CompositeProcessor.compute_feature_vector_change">
-<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flips</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CompositeProcessor.compute_feature_vector_change" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flips</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CompositeProcessor.compute_feature_vector_change" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute the change in the feature vector from a list of flips.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -800,7 +793,7 @@ for the new species to place at that site.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.CompositeProcessor.compute_property">
-<span class="sig-name descname"><span class="pre">compute_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CompositeProcessor.compute_property" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">compute_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CompositeProcessor.compute_property" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute the value of the property for the given occupancy array.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -817,7 +810,7 @@ for the new species to place at that site.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.CompositeProcessor.compute_property_change">
-<span class="sig-name descname"><span class="pre">compute_property_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flips</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CompositeProcessor.compute_property_change" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">compute_property_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flips</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CompositeProcessor.compute_property_change" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute the change in property from a set of flips.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -837,13 +830,13 @@ for the new species to place at that site.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.CompositeProcessor.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CompositeProcessor.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CompositeProcessor.from_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Create a CompositeProcessor from serialized MSONable dict.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.CompositeProcessor.processors">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">processors</span></span><a class="headerlink" href="#moca.CompositeProcessor.processors" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">processors</span></span><a class="headerlink" href="#moca.CompositeProcessor.processors" title="Permalink to this definition">#</a></dt>
 <dd><p>Return the list of processors in CompositeProcessor.</p>
 </dd></dl>
 
@@ -851,12 +844,12 @@ for the new species to place at that site.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.Ensemble">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chemical_potentials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MSONable</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chemical_potentials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Thermodynamic ensemble class.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="moca.Ensemble.thermo_boundaries">
-<span class="sig-name descname"><span class="pre">thermo_boundaries</span></span><a class="headerlink" href="#moca.Ensemble.thermo_boundaries" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">thermo_boundaries</span></span><a class="headerlink" href="#moca.Ensemble.thermo_boundaries" title="Permalink to this definition">#</a></dt>
 <dd><p>Dictionary with corresponding thermodynamic boundaries, i.e.
 chemical potentials or fugacity fractions. This is kept only for
 descriptive purposes.</p>
@@ -881,13 +874,13 @@ supercell with same site spaces.</p></li>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.Ensemble.active_sublattices">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">active_sublattices</span></span><a class="headerlink" href="#moca.Ensemble.active_sublattices" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">active_sublattices</span></span><a class="headerlink" href="#moca.Ensemble.active_sublattices" title="Permalink to this definition">#</a></dt>
 <dd><p>Get list of active sub-lattices.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.Ensemble.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.as_dict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.as_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Get Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -898,12 +891,12 @@ supercell with same site spaces.</p></li>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="moca.Ensemble.chemical_potentials">
-<span class="sig-name descname"><span class="pre">chemical_potentials</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#moca.Ensemble.chemical_potentials" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">chemical_potentials</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#moca.Ensemble.chemical_potentials" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.Ensemble.compute_feature_vector">
-<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.compute_feature_vector" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.compute_feature_vector" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute the feature vector for a given occupancy.</p>
 <p>The feature vector includes the necessary features required to compute
 the exponent determining the relative probability for the given
@@ -926,7 +919,7 @@ correlation vector x system size</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.Ensemble.compute_feature_vector_change">
-<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.compute_feature_vector_change" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.compute_feature_vector_change" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute the change in the feature vector from a given step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -946,7 +939,7 @@ correlation vector x system size</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.Ensemble.from_cluster_expansion">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_cluster_expansion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_expansion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.from_cluster_expansion" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_cluster_expansion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_expansion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.from_cluster_expansion" title="Permalink to this definition">#</a></dt>
 <dd><p>Initialize an ensemble from a cluster expansion.</p>
 <p>Convenience constructor to instantiate an ensemble. This will take
 care of initializing the correct processor based on the
@@ -969,7 +962,7 @@ fugacity_fractions.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.Ensemble.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble_d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble_d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.from_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Instantiate a CanonicalEnsemble from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -983,7 +976,7 @@ fugacity_fractions.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.Ensemble.natural_parameters">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">natural_parameters</span></span><a class="headerlink" href="#moca.Ensemble.natural_parameters" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">natural_parameters</span></span><a class="headerlink" href="#moca.Ensemble.natural_parameters" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the vector of natural parameters.</p>
 <p>The natural parameters correspond to the fit coefficients of the
 underlying processor plus any additional terms involved in the Legendre
@@ -992,31 +985,31 @@ transformation corresponding to the ensemble.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.Ensemble.num_energy_coefs">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_energy_coefs</span></span><a class="headerlink" href="#moca.Ensemble.num_energy_coefs" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_energy_coefs</span></span><a class="headerlink" href="#moca.Ensemble.num_energy_coefs" title="Permalink to this definition">#</a></dt>
 <dd><p>Return the number of coefficients used in the energy expansion.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.Ensemble.num_sites">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_sites</span></span><a class="headerlink" href="#moca.Ensemble.num_sites" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_sites</span></span><a class="headerlink" href="#moca.Ensemble.num_sites" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the total number of sites in the supercell.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.Ensemble.processor">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">processor</span></span><a class="headerlink" href="#moca.Ensemble.processor" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">processor</span></span><a class="headerlink" href="#moca.Ensemble.processor" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the ensemble processor.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.Ensemble.reset_restricted_sites">
-<span class="sig-name descname"><span class="pre">reset_restricted_sites</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.reset_restricted_sites" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">reset_restricted_sites</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.reset_restricted_sites" title="Permalink to this definition">#</a></dt>
 <dd><p>Unfreeze all previously restricted sites.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.Ensemble.restrict_sites">
-<span class="sig-name descname"><span class="pre">restrict_sites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.restrict_sites" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">restrict_sites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.restrict_sites" title="Permalink to this definition">#</a></dt>
 <dd><p>Restricts (freezes) the given sites.</p>
 <p>This will exclude those sites from being flipped during a Monte Carlo
 run. If some of the given indices refer to inactive sites, there will
@@ -1030,20 +1023,20 @@ be no effect.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.Ensemble.restricted_sites">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">restricted_sites</span></span><a class="headerlink" href="#moca.Ensemble.restricted_sites" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">restricted_sites</span></span><a class="headerlink" href="#moca.Ensemble.restricted_sites" title="Permalink to this definition">#</a></dt>
 <dd><p>Get indices of all restricted sites.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.Ensemble.species">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">species</span></span><a class="headerlink" href="#moca.Ensemble.species" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">species</span></span><a class="headerlink" href="#moca.Ensemble.species" title="Permalink to this definition">#</a></dt>
 <dd><p>Species on active sublattices.</p>
 <p>These are minimal species required in setting chemical potentials.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.Ensemble.split_sublattice_by_species">
-<span class="sig-name descname"><span class="pre">split_sublattice_by_species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">occu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species_in_partitions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.split_sublattice_by_species" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">split_sublattice_by_species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">occu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species_in_partitions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Ensemble.split_sublattice_by_species" title="Permalink to this definition">#</a></dt>
 <dd><p>Split a sub-lattice in system by its occupied species.</p>
 <p>An example use case might be simulating topotactic Li extraction
 and insertion, where we want to consider Li/Vac, TM and O as
@@ -1065,13 +1058,13 @@ Sub-lists will be pre-sorted to ascending order.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.Ensemble.sublattices">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sublattices</span></span><a class="headerlink" href="#moca.Ensemble.sublattices" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sublattices</span></span><a class="headerlink" href="#moca.Ensemble.sublattices" title="Permalink to this definition">#</a></dt>
 <dd><p>Get list of Sublattices included in ensemble.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.Ensemble.system_size">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">system_size</span></span><a class="headerlink" href="#moca.Ensemble.system_size" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">system_size</span></span><a class="headerlink" href="#moca.Ensemble.system_size" title="Permalink to this definition">#</a></dt>
 <dd><p>Get size of supercell in number of prims.</p>
 </dd></dl>
 
@@ -1079,8 +1072,8 @@ Sub-lists will be pre-sorted to ascending order.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.EwaldProcessor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">EwaldProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ewald_term</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.EwaldProcessor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../moca/processors.base.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Processor</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">EwaldProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ewald_term</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.EwaldProcessor" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../moca/processors.base.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.processor.base.Processor</span></code></a></p>
 <p>Processor for CE’s including an EwaldTerm.</p>
 <p>A Processor class that handles changes for the electrostatic interaction
 energy using an Ewald Summation term.</p>
@@ -1098,7 +1091,7 @@ Cluster Expansion prim structure.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.EwaldProcessor.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#moca.EwaldProcessor.as_dict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#moca.EwaldProcessor.as_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1109,7 +1102,7 @@ Cluster Expansion prim structure.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.EwaldProcessor.compute_feature_vector">
-<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.EwaldProcessor.compute_feature_vector" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.EwaldProcessor.compute_feature_vector" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute the feature vector for a given occupancy array.</p>
 <p>Each entry in the correlation vector corresponds to a particular
 symmetrically distinct bit ordering.</p>
@@ -1128,7 +1121,7 @@ symmetrically distinct bit ordering.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.EwaldProcessor.compute_feature_vector_change">
-<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flips</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.EwaldProcessor.compute_feature_vector_change" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flips</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.EwaldProcessor.compute_feature_vector_change" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute the change in the feature vector from a list of flips.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1151,7 +1144,7 @@ for the new species to place at that site.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.EwaldProcessor.compute_property">
-<span class="sig-name descname"><span class="pre">compute_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.EwaldProcessor.compute_property" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">compute_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.EwaldProcessor.compute_property" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute the Ewald electrostatic energy for a given occupancy array.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1168,7 +1161,7 @@ for the new species to place at that site.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.EwaldProcessor.compute_property_change">
-<span class="sig-name descname"><span class="pre">compute_property_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flips</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.EwaldProcessor.compute_property_change" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">compute_property_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flips</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.EwaldProcessor.compute_property_change" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute change in electrostatic energy from a set of flips.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1188,7 +1181,7 @@ for the new species to place at that site.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.EwaldProcessor.ewald_matrix">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ewald_matrix</span></span><a class="headerlink" href="#moca.EwaldProcessor.ewald_matrix" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ewald_matrix</span></span><a class="headerlink" href="#moca.EwaldProcessor.ewald_matrix" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the electrostatic interaction matrix.</p>
 <p>The matrix used is the one set in the EwaldTerm of the given
 ClusterExpansion.</p>
@@ -1196,13 +1189,13 @@ ClusterExpansion.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.EwaldProcessor.ewald_summation">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ewald_summation</span></span><a class="headerlink" href="#moca.EwaldProcessor.ewald_summation" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ewald_summation</span></span><a class="headerlink" href="#moca.EwaldProcessor.ewald_summation" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the pymatgen EwaldSummation object.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.EwaldProcessor.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.EwaldProcessor.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.EwaldProcessor.from_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Create a EwaldProcessor from serialized MSONable dict.</p>
 </dd></dl>
 
@@ -1210,8 +1203,8 @@ ClusterExpansion.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.SampleContainer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SampleContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">natural_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_energy_coefs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MSONable</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SampleContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">natural_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_energy_coefs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>A SampleContainer class stores Monte Carlo simulation samples.</p>
 <p>A SampleContainer holds samples and sampling information from an MCMC
 sampling run. It is useful to obtain the raw data and minimal empirical
@@ -1232,7 +1225,7 @@ chains into one. Defaults to True.</p>
 </div></blockquote>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="moca.SampleContainer.num_sites">
-<span class="sig-name descname"><span class="pre">num_sites</span></span><a class="headerlink" href="#moca.SampleContainer.num_sites" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">num_sites</span></span><a class="headerlink" href="#moca.SampleContainer.num_sites" title="Permalink to this definition">#</a></dt>
 <dd><p>Size of system (usually in number of prims in supercell, but
 can be anything representative, i.e. number of sites)</p>
 <dl class="field-list simple">
@@ -1244,7 +1237,7 @@ can be anything representative, i.e. number of sites)</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="moca.SampleContainer.sublattices">
-<span class="sig-name descname"><span class="pre">sublattices</span></span><a class="headerlink" href="#moca.SampleContainer.sublattices" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">sublattices</span></span><a class="headerlink" href="#moca.SampleContainer.sublattices" title="Permalink to this definition">#</a></dt>
 <dd><p>Sublattices of the ensemble sampled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1255,7 +1248,7 @@ can be anything representative, i.e. number of sites)</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="moca.SampleContainer.natural_parameters">
-<span class="sig-name descname"><span class="pre">natural_parameters</span></span><a class="headerlink" href="#moca.SampleContainer.natural_parameters" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">natural_parameters</span></span><a class="headerlink" href="#moca.SampleContainer.natural_parameters" title="Permalink to this definition">#</a></dt>
 <dd><p>Array of natural parameters used in the ensemble.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1266,7 +1259,7 @@ can be anything representative, i.e. number of sites)</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="moca.SampleContainer.metadata">
-<span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#moca.SampleContainer.metadata" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#moca.SampleContainer.metadata" title="Permalink to this definition">#</a></dt>
 <dd><p>Dictionary of metadata from the MC run that generated the samples.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1290,13 +1283,13 @@ correspond to the energy only.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.allocate">
-<span class="sig-name descname"><span class="pre">allocate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nsamples</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.allocate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">allocate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nsamples</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.allocate" title="Permalink to this definition">#</a></dt>
 <dd><p>Allocate more space in arrays for more samples.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.as_dict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.as_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Get Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1307,37 +1300,37 @@ correspond to the energy only.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.clear">
-<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.clear" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.clear" title="Permalink to this definition">#</a></dt>
 <dd><p>Clear all samples from container.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.composition_variance">
-<span class="sig-name descname"><span class="pre">composition_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.composition_variance" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">composition_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.composition_variance" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the variance in composition of all species.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.energy_variance">
-<span class="sig-name descname"><span class="pre">energy_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.energy_variance" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">energy_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.energy_variance" title="Permalink to this definition">#</a></dt>
 <dd><p>Calculate the variance of sampled energies.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.enthalpy_variance">
-<span class="sig-name descname"><span class="pre">enthalpy_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.enthalpy_variance" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">enthalpy_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.enthalpy_variance" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the variance in enthalpy.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.feature_vector_variance">
-<span class="sig-name descname"><span class="pre">feature_vector_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.feature_vector_variance" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">feature_vector_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.feature_vector_variance" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the variance of feature vector elements.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.flush_to_backend">
-<span class="sig-name descname"><span class="pre">flush_to_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.flush_to_backend" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">flush_to_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.flush_to_backend" title="Permalink to this definition">#</a></dt>
 <dd><p>Flush current samples and trace to backend file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1348,7 +1341,7 @@ correspond to the energy only.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.from_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Instantiate a SampleContainer from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1362,7 +1355,7 @@ correspond to the energy only.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.from_hdf5">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.from_hdf5" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.from_hdf5" title="Permalink to this definition">#</a></dt>
 <dd><p>Instantiate a SampleContainer from an hdf5 file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1381,7 +1374,7 @@ Multiple Readers.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.get_backend">
-<span class="sig-name descname"><span class="pre">get_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alloc_nsamples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_backend" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alloc_nsamples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_backend" title="Permalink to this definition">#</a></dt>
 <dd><p>Get a backend file object.</p>
 <p>Currently only hdf5 files supported</p>
 <dl class="field-list simple">
@@ -1405,73 +1398,73 @@ Multiple Readers.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.get_compositions">
-<span class="sig-name descname"><span class="pre">get_compositions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_compositions" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_compositions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_compositions" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the compositions for each occupancy in the chain.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.get_energies">
-<span class="sig-name descname"><span class="pre">get_energies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_energies" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_energies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_energies" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the energies from samples in chain.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.get_enthalpies">
-<span class="sig-name descname"><span class="pre">get_enthalpies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_enthalpies" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_enthalpies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_enthalpies" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the generalized enthalpy changes from samples in chain.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.get_feature_vectors">
-<span class="sig-name descname"><span class="pre">get_feature_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_feature_vectors" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_feature_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_feature_vectors" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the feature vector changes from samples in chain.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.get_minimum_energy">
-<span class="sig-name descname"><span class="pre">get_minimum_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_minimum_energy" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_minimum_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_minimum_energy" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the minimum energy from samples.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.get_minimum_energy_occupancy">
-<span class="sig-name descname"><span class="pre">get_minimum_energy_occupancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_minimum_energy_occupancy" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_minimum_energy_occupancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_minimum_energy_occupancy" title="Permalink to this definition">#</a></dt>
 <dd><p>Find the occupancy with minimum energy from samples.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.get_minimum_enthalpy">
-<span class="sig-name descname"><span class="pre">get_minimum_enthalpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_minimum_enthalpy" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_minimum_enthalpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_minimum_enthalpy" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the minimum energy from samples.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.get_minimum_enthalpy_occupancy">
-<span class="sig-name descname"><span class="pre">get_minimum_enthalpy_occupancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_minimum_enthalpy_occupancy" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_minimum_enthalpy_occupancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_minimum_enthalpy_occupancy" title="Permalink to this definition">#</a></dt>
 <dd><p>Find the occupancy with minimum energy from samples.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.get_occupancies">
-<span class="sig-name descname"><span class="pre">get_occupancies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_occupancies" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_occupancies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_occupancies" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the occupancy chain of the samples.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.get_species_counts">
-<span class="sig-name descname"><span class="pre">get_species_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_species_counts" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_species_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_species_counts" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the species counts for each occupancy in the chain.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.get_sublattice_compositions">
-<span class="sig-name descname"><span class="pre">get_sublattice_compositions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_sublattice_compositions" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_sublattice_compositions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_sublattice_compositions" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the compositions of a specific sublattice.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.get_sublattice_species_counts">
-<span class="sig-name descname"><span class="pre">get_sublattice_species_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_sublattice_species_counts" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_sublattice_species_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_sublattice_species_counts" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the counts of each species in a sublattices.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1486,61 +1479,61 @@ same order as the underlying site space.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.get_trace_value">
-<span class="sig-name descname"><span class="pre">get_trace_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_trace_value" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_trace_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.get_trace_value" title="Permalink to this definition">#</a></dt>
 <dd><p>Get sampled values of a traced value given by name.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.mean_composition">
-<span class="sig-name descname"><span class="pre">mean_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.mean_composition" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">mean_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.mean_composition" title="Permalink to this definition">#</a></dt>
 <dd><p>Get mean composition for all species regardless of sublattice.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.mean_energy">
-<span class="sig-name descname"><span class="pre">mean_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.mean_energy" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">mean_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.mean_energy" title="Permalink to this definition">#</a></dt>
 <dd><p>Calculate the mean energy from samples.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.mean_enthalpy">
-<span class="sig-name descname"><span class="pre">mean_enthalpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.mean_enthalpy" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">mean_enthalpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.mean_enthalpy" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the mean generalized enthalpy.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.mean_feature_vector">
-<span class="sig-name descname"><span class="pre">mean_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.mean_feature_vector" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">mean_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.mean_feature_vector" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the mean feature vector from samples.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.mean_sublattice_composition">
-<span class="sig-name descname"><span class="pre">mean_sublattice_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.mean_sublattice_composition" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">mean_sublattice_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.mean_sublattice_composition" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the mean composition of a specific sublattice.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.mean_trace_value">
-<span class="sig-name descname"><span class="pre">mean_trace_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.mean_trace_value" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">mean_trace_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.mean_trace_value" title="Permalink to this definition">#</a></dt>
 <dd><p>Get mean of a traced value given by name.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.SampleContainer.num_samples">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_samples</span></span><a class="headerlink" href="#moca.SampleContainer.num_samples" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_samples</span></span><a class="headerlink" href="#moca.SampleContainer.num_samples" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the total number of samples.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.sampling_efficiency">
-<span class="sig-name descname"><span class="pre">sampling_efficiency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.sampling_efficiency" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">sampling_efficiency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.sampling_efficiency" title="Permalink to this definition">#</a></dt>
 <dd><p>Return the sampling efficiency for chains.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.save_sampled_trace">
-<span class="sig-name descname"><span class="pre">save_sampled_trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thinned_by</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.save_sampled_trace" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">save_sampled_trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thinned_by</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.save_sampled_trace" title="Permalink to this definition">#</a></dt>
 <dd><p>Save a sampled trace.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1555,19 +1548,19 @@ the total mc iterations.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.SampleContainer.shape">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#moca.SampleContainer.shape" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#moca.SampleContainer.shape" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the shape of the samples in chain.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.sublattice_composition_variance">
-<span class="sig-name descname"><span class="pre">sublattice_composition_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.sublattice_composition_variance" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">sublattice_composition_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.sublattice_composition_variance" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the variance in composition of a specific sublattice.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.to_hdf5">
-<span class="sig-name descname"><span class="pre">to_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.to_hdf5" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">to_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.to_hdf5" title="Permalink to this definition">#</a></dt>
 <dd><p>Save SampleContainer as an HDF5 file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1579,19 +1572,19 @@ match samples will be appended.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.SampleContainer.total_mc_steps">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_mc_steps</span></span><a class="headerlink" href="#moca.SampleContainer.total_mc_steps" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_mc_steps</span></span><a class="headerlink" href="#moca.SampleContainer.total_mc_steps" title="Permalink to this definition">#</a></dt>
 <dd><p>Return the total number of MC steps taken during sampling.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SampleContainer.trace_value_variance">
-<span class="sig-name descname"><span class="pre">trace_value_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.trace_value_variance" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">trace_value_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SampleContainer.trace_value_variance" title="Permalink to this definition">#</a></dt>
 <dd><p>Get variance of a traced value given by name.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.SampleContainer.traced_values">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">traced_values</span></span><a class="headerlink" href="#moca.SampleContainer.traced_values" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">traced_values</span></span><a class="headerlink" href="#moca.SampleContainer.traced_values" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the names of traced values being sampled.</p>
 </dd></dl>
 
@@ -1599,7 +1592,7 @@ match samples will be appended.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.Sampler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">container</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Sampler" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">container</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Sampler" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A sampler is used to run MCMC sampling simulations.</p>
 <p>The specific MCMC algorithm is defined by the given MCKernel.
@@ -1611,14 +1604,19 @@ mcusher, etc.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>kernel</strong> (<a class="reference internal" href="moca.sampler.html#moca.sampler.kernel.MCKernel" title="moca.sampler.kernel.MCKernel"><em>MCKernel</em></a>) – an MCKernel instance.</p></li>
+<li><p><strong>kernels</strong> (<em>[</em><a class="reference internal" href="moca.sampler.html#moca.sampler.kernel.MCKernel" title="moca.sampler.kernel.MCKernel"><em>MCKernel</em></a><em>]</em>) – <p>a list of MCKernel instances for each walker.
+Note: we only support the same type of kernel and the</p>
+<blockquote>
+<div><p>same ensemble for all walkers.</p>
+</div></blockquote>
+</p></li>
 <li><p><strong>container</strong> (<a class="reference internal" href="#moca.SampleContainer" title="moca.SampleContainer"><em>SampleContainer</em></a>) – a sampler container to store samples.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.Sampler.anneal">
-<span class="sig-name descname"><span class="pre">anneal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temperatures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcmc_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_occupancies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Sampler.anneal" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">anneal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temperatures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcmc_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_occupancies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Sampler.anneal" title="Permalink to this definition">#</a></dt>
 <dd><p>Carry out a simulated annealing procedure.</p>
 <p>Will MC sampling for each temperature for the specified number of steps,
 taking the last sampled configuration at each temperature as the starting
@@ -1630,7 +1628,8 @@ a similar “for loop” creating a new sampler at each temperature.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>temperatures</strong> (<em>Sequence</em>) – sequence of temperatures to anneal, should be strictly
-decreasing.</p></li>
+decreasing.
+Note: only available for ThermalKernel.</p></li>
 <li><p><strong>mcmc_steps</strong> (<em>int</em>) – number of Monte Carlo steps to run at each temperature.</p></li>
 <li><p><strong>initial_occupancies</strong> (<em>ndarray</em>) – array of occupancies. If None, the last sample will be taken.
 You should only provide this the first time you call run.</p></li>
@@ -1653,19 +1652,19 @@ Multiple Readers.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.Sampler.clear_samples">
-<span class="sig-name descname"><span class="pre">clear_samples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#moca.Sampler.clear_samples" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">clear_samples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#moca.Sampler.clear_samples" title="Permalink to this definition">#</a></dt>
 <dd><p>Clear samples from sampler container.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.Sampler.efficiency">
-<span class="sig-name descname"><span class="pre">efficiency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Sampler.efficiency" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">efficiency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Sampler.efficiency" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the efficiency of MCMC sampling (accepted/total).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.Sampler.from_ensemble">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Sampler.from_ensemble" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nwalkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Sampler.from_ensemble" title="Permalink to this definition">#</a></dt>
 <dd><p>Create a sampler based on an Ensemble instance.</p>
 <p>This is the easier way to set up a Sampler. This will
 automatically populate and create an appropriate SampleContainer.</p>
@@ -1682,8 +1681,8 @@ More often than not you want to specify the temperature!</p></li>
 string specifying the specific MCMC transition kernel. This
 represents the underlying MC algorithm. Currently only
 Metropolis is supported.</p></li>
-<li><p><strong>seed</strong> (<em>int</em>) – optional
-seed for the PRNG.</p></li>
+<li><p><strong>seeds</strong> (<em>[</em><em>int</em><em>]</em>) – optional
+seed for the PRNG in each kernel.</p></li>
 <li><p><strong>nwalkers</strong> (<em>int</em>) – optional
 number of walkers/chains to sampler. Default is 1. More than 1
 is still experimental…</p></li>
@@ -1698,14 +1697,14 @@ More often than not you want to specify the temperature!</p></li>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="moca.Sampler.mckernel">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mckernel</span></span><a class="headerlink" href="#moca.Sampler.mckernel" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="moca.Sampler.mckernels">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mckernels</span></span><a class="headerlink" href="#moca.Sampler.mckernels" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the underlying ensemble.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.Sampler.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nsteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_occupancies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_last_chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Sampler.run" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nsteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_occupancies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_last_chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Sampler.run" title="Permalink to this definition">#</a></dt>
 <dd><p>Run an MCMC sampling simulation.</p>
 <p>This will run and save the samples every thin_by into a
 SampleContainer.</p>
@@ -1741,7 +1740,7 @@ Multiple Readers.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.Sampler.sample">
-<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nsteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_occupancies</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Sampler.sample" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nsteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_occupancies</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.Sampler.sample" title="Permalink to this definition">#</a></dt>
 <dd><p>Generate MCMC samples.</p>
 <p>Yield a sampler state every <cite>thin_by</cite> iterations. A state is give by
 a tuple of (occupancies, features, enthalpy)</p>
@@ -1763,13 +1762,13 @@ number to thin iterations by and provide samples.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.Sampler.samples">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">samples</span></span><a class="headerlink" href="#moca.Sampler.samples" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">samples</span></span><a class="headerlink" href="#moca.Sampler.samples" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the SampleContainer.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="moca.Sampler.seed">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">seed</span></span><a class="headerlink" href="#moca.Sampler.seed" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="moca.Sampler.seeds">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">seeds</span></span><a class="headerlink" href="#moca.Sampler.seeds" title="Permalink to this definition">#</a></dt>
 <dd><p>Seed for the random number generator.</p>
 </dd></dl>
 
@@ -1777,8 +1776,8 @@ number to thin iterations by and provide samples.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.SemiGrandEnsemble">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SemiGrandEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chemical_potentials</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SemiGrandEnsemble" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="moca.ensemble.html#moca.ensemble.base.BaseEnsemble" title="moca.ensemble.base.BaseEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MSONable</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SemiGrandEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chemical_potentials</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SemiGrandEnsemble" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="moca.ensemble.html#moca.ensemble.base.BaseEnsemble" title="moca.ensemble.base.BaseEnsemble"><code class="xref py py-class docutils literal notranslate"><span class="pre">moca.ensemble.base.BaseEnsemble</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>Relative chemical potential-based SemiGrand Ensemble.</p>
 <p>A Semi-Grand Canonical Ensemble for Monte Carlo simulations where species’
 relative chemical potentials are predefined. Note that in the SGC Ensemble
@@ -1788,7 +1787,7 @@ absolute values. To obtain the absolute values you must calculate the
 reference chemical potential and then subtract it from the given values.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="moca.SemiGrandEnsemble.thermo_boundaries">
-<span class="sig-name descname"><span class="pre">thermo_boundaries</span></span><a class="headerlink" href="#moca.SemiGrandEnsemble.thermo_boundaries" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">thermo_boundaries</span></span><a class="headerlink" href="#moca.SemiGrandEnsemble.thermo_boundaries" title="Permalink to this definition">#</a></dt>
 <dd><p>dict of chemical potentials.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1812,7 +1811,7 @@ supercell with same site spaces.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SemiGrandEnsemble.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#moca.SemiGrandEnsemble.as_dict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#moca.SemiGrandEnsemble.as_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Get Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1823,19 +1822,19 @@ supercell with same site spaces.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.SemiGrandEnsemble.chemical_potentials">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">chemical_potentials</span></span><a class="headerlink" href="#moca.SemiGrandEnsemble.chemical_potentials" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">chemical_potentials</span></span><a class="headerlink" href="#moca.SemiGrandEnsemble.chemical_potentials" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the chemical potentials for species in the system.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SemiGrandEnsemble.compute_chemical_work">
-<span class="sig-name descname"><span class="pre">compute_chemical_work</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SemiGrandEnsemble.compute_chemical_work" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">compute_chemical_work</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SemiGrandEnsemble.compute_chemical_work" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute sum of mu * N for given occupancy.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SemiGrandEnsemble.compute_feature_vector">
-<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SemiGrandEnsemble.compute_feature_vector" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SemiGrandEnsemble.compute_feature_vector" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute the relevant feature vector for a given occupancy.</p>
 <p>In the semigrand case it is the feature vector and the chemical work
 term.</p>
@@ -1854,7 +1853,7 @@ term.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SemiGrandEnsemble.compute_feature_vector_change">
-<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SemiGrandEnsemble.compute_feature_vector_change" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SemiGrandEnsemble.compute_feature_vector_change" title="Permalink to this definition">#</a></dt>
 <dd><p>Return the change in the feature vector from a given step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1874,7 +1873,7 @@ term.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SemiGrandEnsemble.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SemiGrandEnsemble.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SemiGrandEnsemble.from_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Instantiate a SemiGrandEnsemble from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1885,7 +1884,7 @@ term.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="moca.SemiGrandEnsemble.natural_parameters">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">natural_parameters</span></span><a class="headerlink" href="#moca.SemiGrandEnsemble.natural_parameters" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">natural_parameters</span></span><a class="headerlink" href="#moca.SemiGrandEnsemble.natural_parameters" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the vector of natural parameters.</p>
 <p>For SGC an extra -1 is added for the chemical part of the Legendre
 transform.</p>
@@ -1893,7 +1892,7 @@ transform.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.SemiGrandEnsemble.split_sublattice_by_species">
-<span class="sig-name descname"><span class="pre">split_sublattice_by_species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">occu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species_in_partitions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SemiGrandEnsemble.split_sublattice_by_species" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">split_sublattice_by_species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">occu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species_in_partitions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.SemiGrandEnsemble.split_sublattice_by_species" title="Permalink to this definition">#</a></dt>
 <dd><p>Split a sub-lattice in system by its occupied species.</p>
 <p>An example use case might be simulating topotactic Li extraction
 and insertion, where we want to consider Li/Vac, TM and O as
@@ -1934,8 +1933,9 @@ Sub-lists will be pre-sorted to ascending order.</p></li>
       </div>
     </div>
   
-    <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-  <footer class="footer mt-5 mt-md-0">
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+<footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
@@ -1946,7 +1946,7 @@ Sub-lists will be pre-sorted to ascending order.</p></li>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
     </div>
     

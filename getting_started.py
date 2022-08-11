@@ -141,6 +141,8 @@ save_work("CuAu_ce_mc.json", wrangler, expansion, ensemble, sampler.samples)
 #
 # # Advanced Examples
 #
+# * Centering training data in stage-wise fit with electrostatics
+#
 # * Adding structures to a StructureWrangler in parallel
 #
 # * Simulated annealing with point electrostatics

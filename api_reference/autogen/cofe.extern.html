@@ -1,38 +1,34 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>cofe.extern package &#8212; smol 0.0.4 documentation</title>
+    <title>cofe.extern package &#8212; smol 0.0.5 documentation</title>
     
-    <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-  
+
     
-    <link rel="stylesheet"
-      href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-    <link rel="preload" as="font" type="font/woff2" crossorigin
-      href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-    <link rel="preload" as="font" type="font/woff2" crossorigin
-      href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
-  
-    
-      
-  
-    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/pydata-sphinx-theme.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/smol.css" />
     
-    <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
-  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../_static/require.js"></script>
@@ -40,13 +36,13 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en">
+    <meta name="docsearch:language" content="None">
     
 
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -124,7 +120,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.4  <!-- this text may get changed later by javascript -->
+        0.0.5  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -134,17 +130,10 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables api_reference/autogen/cofe.extern and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.4'}.
+     variables api_reference/autogen/cofe.extern and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.5'}.
 -->
 
 <script type="text/javascript">
-// Construct the target URL from the JSON components
-function buildURL(entry) {
-    var template = "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/";  // supplied by jinja
-    template = template.replace("{version}", entry.version);
-    return template;
-}
-
 // Check if corresponding page path exists in other version of docs
 // and, if so, go there instead of the homepage of the other docs version
 function checkPageExistsAndRedirect(event) {
@@ -180,22 +169,26 @@ function checkPageExistsAndRedirect(event) {
             const node = document.createElement("a");
             node.setAttribute("class", "list-group-item list-group-item-action py-1");
             node.textContent = `${entry.name}`;
-            // get the base URL for that doc version, add the current page's
-            // path to it, and set as `href`
-            entry.url = buildURL(entry);
             node.setAttribute("href", `${entry.url}${currentFilePath}`);
             // on click, AJAX calls will check if the linked page exists before
             // trying to redirect, and if not, will redirect to the homepage
             // for that version of the docs.
             node.onclick = checkPageExistsAndRedirect;
+            // Add dataset values for the version and name in case people want
+            // to apply CSS styling based on this information.
+            node.dataset["versionName"] = entry.name;
+            node.dataset["version"] = entry.version;
+
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.4 variable.
+            // this version, rather than using sphinx's 0.0.5 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.4") {
+            if (entry.version == "0.0.5") {
                 node.classList.add("active");
-                $("#version_switcher_button").text(entry.name);
+                let btn = document.getElementById("version_switcher_button");
+                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
+                btn.dataset["activeVersion"] = entry.version;
             }
         });
     });
@@ -262,7 +255,7 @@ function checkPageExistsAndRedirect(event) {
               
               <div class="toc-item">
                 
-<div class="tocsection onthispage pt-5 pb-3">
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
 
@@ -312,12 +305,12 @@ function checkPageExistsAndRedirect(event) {
               <div>
                 
   <section id="cofe-extern-package">
-<h1>cofe.extern package<a class="headerlink" href="#cofe-extern-package" title="Permalink to this heading">¶</a></h1>
+<h1>cofe.extern package<a class="headerlink" href="#cofe-extern-package" title="Permalink to this headline">#</a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">#</a></h2>
 </section>
 <section id="module-cofe.extern.ewald">
-<span id="cofe-extern-ewald-module"></span><h2>cofe.extern.ewald module<a class="headerlink" href="#module-cofe.extern.ewald" title="Permalink to this heading">¶</a></h2>
+<span id="cofe-extern-ewald-module"></span><h2>cofe.extern.ewald module<a class="headerlink" href="#module-cofe.extern.ewald" title="Permalink to this headline">#</a></h2>
 <p>Implementation of EwaldTerm.</p>
 <p>Provides the functionality to fit an Ewald term as an additional feature in a
 cluster expansion as proposed refs below to improve convergence of expansions
@@ -326,8 +319,8 @@ Chapter 4.6 of W.D. Richard’s thesis.
 W. D. Richards, et al., Energy Environ. Sci., 2016, 9, 3272–3278</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="cofe.extern.ewald.EwaldTerm">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">EwaldTerm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">real_space_cut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recip_space_cut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_term</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'total'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.ewald.EwaldTerm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MSONable</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">EwaldTerm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">real_space_cut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recip_space_cut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_term</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'total'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.ewald.EwaldTerm" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>EwaldTerm class that can be added to a ClusterSubspace.</p>
 <p>This class can be used as an external term added to a ClusterSubspace
 using the add_external_term method. Doing so introduces Ewald
@@ -354,7 +347,7 @@ expansion. Options are total, real, reciprocal, point.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.extern.ewald.EwaldTerm.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#cofe.extern.ewald.EwaldTerm.as_dict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#cofe.extern.ewald.EwaldTerm.as_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Get Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -368,19 +361,19 @@ expansion. Options are total, real, reciprocal, point.</p></li>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="cofe.extern.ewald.EwaldTerm.ewald_term_options">
-<span class="sig-name descname"><span class="pre">ewald_term_options</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('total',</span> <span class="pre">'real',</span> <span class="pre">'reciprocal',</span> <span class="pre">'point')</span></em><a class="headerlink" href="#cofe.extern.ewald.EwaldTerm.ewald_term_options" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">ewald_term_options</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('total',</span> <span class="pre">'real',</span> <span class="pre">'reciprocal',</span> <span class="pre">'point')</span></em><a class="headerlink" href="#cofe.extern.ewald.EwaldTerm.ewald_term_options" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.extern.ewald.EwaldTerm.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.ewald.EwaldTerm.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.ewald.EwaldTerm.from_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Create EwaldTerm from MSONable dict.</p>
 <p>(Over-kill here since only EwaldSummation params are saved).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.extern.ewald.EwaldTerm.get_ewald_matrix">
-<span class="sig-name descname"><span class="pre">get_ewald_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ewald_summation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.ewald.EwaldTerm.get_ewald_matrix" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_ewald_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ewald_summation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.ewald.EwaldTerm.get_ewald_matrix" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the corresponding Ewald matrix for the given term to use.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -397,7 +390,7 @@ expansion. Options are total, real, reciprocal, point.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.extern.ewald.EwaldTerm.get_ewald_occu">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_ewald_occu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_ewald_sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ewald_inds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.ewald.EwaldTerm.get_ewald_occu" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_ewald_occu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_ewald_sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ewald_inds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.ewald.EwaldTerm.get_ewald_occu" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the Ewald indices from a given encoded occupancy string.</p>
 <p>The Ewald indices indicate matrix elements (i.e. species) corresponding
 to the given occupancy.</p>
@@ -423,7 +416,7 @@ array.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.extern.ewald.EwaldTerm.get_ewald_structure">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_ewald_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.ewald.EwaldTerm.get_ewald_structure" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_ewald_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.ewald.EwaldTerm.get_ewald_structure" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the structure and site indices contributing to Ewald summation.</p>
 <p>Creates a structure with overlapping sites for each species in the
 corresponding site space. This is used to construct single Ewald
@@ -447,7 +440,7 @@ original structure.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.extern.ewald.EwaldTerm.value_from_occupancy">
-<span class="sig-name descname"><span class="pre">value_from_occupancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.ewald.EwaldTerm.value_from_occupancy" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">value_from_occupancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.ewald.EwaldTerm.value_from_occupancy" title="Permalink to this definition">#</a></dt>
 <dd><p>Obtain the Ewald interaction energy.</p>
 <p>The size of the given structure is in terms of prims.
 The computed electrostatic interactions do not include the charged
@@ -473,7 +466,7 @@ interactions</p></li>
 
 </section>
 <section id="module-cofe.extern">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cofe.extern" title="Permalink to this heading">¶</a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cofe.extern" title="Permalink to this headline">#</a></h2>
 <p>Classes for external terms that can be added to a cluster subspace.</p>
 <p>Contains classes for external terms to be added to a cluster subspace
 representing additional features to be fitted in a cluster expansion.</p>
@@ -481,8 +474,8 @@ representing additional features to be fitted in a cluster expansion.</p>
 be the only term ever needed, but alas abstraction?</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="cofe.extern.EwaldTerm">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">EwaldTerm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">real_space_cut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recip_space_cut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_term</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'total'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.EwaldTerm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MSONable</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">EwaldTerm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">real_space_cut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recip_space_cut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_term</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'total'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.EwaldTerm" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
 <p>EwaldTerm class that can be added to a ClusterSubspace.</p>
 <p>This class can be used as an external term added to a ClusterSubspace
 using the add_external_term method. Doing so introduces Ewald
@@ -509,7 +502,7 @@ expansion. Options are total, real, reciprocal, point.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.extern.EwaldTerm.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#cofe.extern.EwaldTerm.as_dict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#cofe.extern.EwaldTerm.as_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Get Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -523,19 +516,19 @@ expansion. Options are total, real, reciprocal, point.</p></li>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="cofe.extern.EwaldTerm.ewald_term_options">
-<span class="sig-name descname"><span class="pre">ewald_term_options</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('total',</span> <span class="pre">'real',</span> <span class="pre">'reciprocal',</span> <span class="pre">'point')</span></em><a class="headerlink" href="#cofe.extern.EwaldTerm.ewald_term_options" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">ewald_term_options</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('total',</span> <span class="pre">'real',</span> <span class="pre">'reciprocal',</span> <span class="pre">'point')</span></em><a class="headerlink" href="#cofe.extern.EwaldTerm.ewald_term_options" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.extern.EwaldTerm.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.EwaldTerm.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.EwaldTerm.from_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Create EwaldTerm from MSONable dict.</p>
 <p>(Over-kill here since only EwaldSummation params are saved).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.extern.EwaldTerm.get_ewald_matrix">
-<span class="sig-name descname"><span class="pre">get_ewald_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ewald_summation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.EwaldTerm.get_ewald_matrix" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_ewald_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ewald_summation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.EwaldTerm.get_ewald_matrix" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the corresponding Ewald matrix for the given term to use.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -552,7 +545,7 @@ expansion. Options are total, real, reciprocal, point.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.extern.EwaldTerm.get_ewald_occu">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_ewald_occu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_ewald_sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ewald_inds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.EwaldTerm.get_ewald_occu" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_ewald_occu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_ewald_sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ewald_inds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.EwaldTerm.get_ewald_occu" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the Ewald indices from a given encoded occupancy string.</p>
 <p>The Ewald indices indicate matrix elements (i.e. species) corresponding
 to the given occupancy.</p>
@@ -578,7 +571,7 @@ array.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.extern.EwaldTerm.get_ewald_structure">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_ewald_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.EwaldTerm.get_ewald_structure" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_ewald_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.EwaldTerm.get_ewald_structure" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the structure and site indices contributing to Ewald summation.</p>
 <p>Creates a structure with overlapping sites for each species in the
 corresponding site space. This is used to construct single Ewald
@@ -602,7 +595,7 @@ original structure.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.extern.EwaldTerm.value_from_occupancy">
-<span class="sig-name descname"><span class="pre">value_from_occupancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.EwaldTerm.value_from_occupancy" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">value_from_occupancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.extern.EwaldTerm.value_from_occupancy" title="Permalink to this definition">#</a></dt>
 <dd><p>Obtain the Ewald interaction energy.</p>
 <p>The size of the given structure is in terms of prims.
 The computed electrostatic interactions do not include the charged
@@ -643,8 +636,9 @@ interactions</p></li>
       </div>
     </div>
   
-    <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-  <footer class="footer mt-5 mt-md-0">
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+<footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
@@ -655,7 +649,7 @@ interactions</p></li>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
     </div>
     

@@ -1,38 +1,34 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Running Canonical Monte Carlo Simulated Annealing on an Ewald Hamiltonian &#8212; smol 0.0.4 documentation</title>
+    <title>Running Canonical Monte Carlo Simulated Annealing on an Ewald Hamiltonian &#8212; smol 0.0.5 documentation</title>
     
-    <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-  
+
     
-    <link rel="stylesheet"
-      href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-    <link rel="preload" as="font" type="font/woff2" crossorigin
-      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-    <link rel="preload" as="font" type="font/woff2" crossorigin
-      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
-  
-    
-      
-  
-    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/pydata-sphinx-theme.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/smol.css" />
     
-    <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
-  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
@@ -42,13 +38,13 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en">
+    <meta name="docsearch:language" content="None">
     
 
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -126,7 +122,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.4  <!-- this text may get changed later by javascript -->
+        0.0.5  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -136,17 +132,10 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables notebooks/running-ewald-sim_anneal and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.4'}.
+     variables notebooks/running-ewald-sim_anneal and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.5'}.
 -->
 
 <script type="text/javascript">
-// Construct the target URL from the JSON components
-function buildURL(entry) {
-    var template = "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/";  // supplied by jinja
-    template = template.replace("{version}", entry.version);
-    return template;
-}
-
 // Check if corresponding page path exists in other version of docs
 // and, if so, go there instead of the homepage of the other docs version
 function checkPageExistsAndRedirect(event) {
@@ -182,22 +171,26 @@ function checkPageExistsAndRedirect(event) {
             const node = document.createElement("a");
             node.setAttribute("class", "list-group-item list-group-item-action py-1");
             node.textContent = `${entry.name}`;
-            // get the base URL for that doc version, add the current page's
-            // path to it, and set as `href`
-            entry.url = buildURL(entry);
             node.setAttribute("href", `${entry.url}${currentFilePath}`);
             // on click, AJAX calls will check if the linked page exists before
             // trying to redirect, and if not, will redirect to the homepage
             // for that version of the docs.
             node.onclick = checkPageExistsAndRedirect;
+            // Add dataset values for the version and name in case people want
+            // to apply CSS styling based on this information.
+            node.dataset["versionName"] = entry.name;
+            node.dataset["version"] = entry.version;
+
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.4 variable.
+            // this version, rather than using sphinx's 0.0.5 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.4") {
+            if (entry.version == "0.0.5") {
                 node.classList.add("active");
-                $("#version_switcher_button").text(entry.name);
+                let btn = document.getElementById("version_switcher_button");
+                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
+                btn.dataset["activeVersion"] = entry.version;
             }
         });
     });
@@ -247,7 +240,7 @@ function checkPageExistsAndRedirect(event) {
               
               <div class="toc-item">
                 
-<div class="tocsection onthispage pt-5 pb-3">
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
 
@@ -543,7 +536,6 @@ div.nboutput.container div.output_area > div[class^='highlight']{
 }
 
 /* Some additional styling taken form the Jupyter notebook CSS */
-.jp-RenderedHTMLCommon table,
 div.rendered_html table {
   border: none;
   border-collapse: collapse;
@@ -552,14 +544,10 @@ div.rendered_html table {
   font-size: 12px;
   table-layout: fixed;
 }
-.jp-RenderedHTMLCommon thead,
 div.rendered_html thead {
   border-bottom: 1px solid black;
   vertical-align: bottom;
 }
-.jp-RenderedHTMLCommon tr,
-.jp-RenderedHTMLCommon th,
-.jp-RenderedHTMLCommon td,
 div.rendered_html tr,
 div.rendered_html th,
 div.rendered_html td {
@@ -571,22 +559,19 @@ div.rendered_html td {
   max-width: none;
   border: none;
 }
-.jp-RenderedHTMLCommon th,
 div.rendered_html th {
   font-weight: bold;
 }
-.jp-RenderedHTMLCommon tbody tr:nth-child(odd),
 div.rendered_html tbody tr:nth-child(odd) {
   background: #f5f5f5;
 }
-.jp-RenderedHTMLCommon tbody tr:hover,
 div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
 <div class="admonition note">
   This page was generated from
-  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.0.4/docs/src/notebooks/running-ewald-sim_anneal.ipynb">docs/src/notebooks/running-ewald-sim_anneal.ipynb</a>.<br>
+  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.0.5/docs/src/notebooks/running-ewald-sim_anneal.ipynb">docs/src/notebooks/running-ewald-sim_anneal.ipynb</a>.<br>
   <script>
     if (document.location.host) {
       $(document.currentScript).replaceWith(
@@ -600,7 +585,7 @@ div.rendered_html tbody tr:hover {
     }
   </script>
 </div><section id="Running-Canonical-Monte-Carlo-Simulated-Annealing-on-an-Ewald-Hamiltonian">
-<h1>Running Canonical Monte Carlo Simulated Annealing on an Ewald Hamiltonian<a class="headerlink" href="#Running-Canonical-Monte-Carlo-Simulated-Annealing-on-an-Ewald-Hamiltonian" title="Permalink to this heading">¶</a></h1>
+<h1>Running Canonical Monte Carlo Simulated Annealing on an Ewald Hamiltonian<a class="headerlink" href="#Running-Canonical-Monte-Carlo-Simulated-Annealing-on-an-Ewald-Hamiltonian" title="Permalink to this headline">#</a></h1>
 <p>When generating a set of structures to sample, it may be useful to enumerate them through a Monte Carlo (MC) simulation. A MC with only Ewald electrostatic energies can be especially useful for the initial training set, when there are no DFT energies to parametrize a cluster expansion and run MC.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -620,7 +605,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <section id="0)-Create-a-Cluster-Subspace-based-on-the-disordered-structure-with-only-the-empty-cluster-and-Ewald-term">
-<h2>0) Create a Cluster Subspace based on the disordered structure with only the empty cluster and Ewald term<a class="headerlink" href="#0)-Create-a-Cluster-Subspace-based-on-the-disordered-structure-with-only-the-empty-cluster-and-Ewald-term" title="Permalink to this heading">¶</a></h2>
+<h2>0) Create a Cluster Subspace based on the disordered structure with only the empty cluster and Ewald term<a class="headerlink" href="#0)-Create-a-Cluster-Subspace-based-on-the-disordered-structure-with-only-the-empty-cluster-and-Ewald-term" title="Permalink to this headline">#</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
@@ -645,7 +630,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </section>
 <section id="1)-Create-an-Ewald-Processor">
-<h2>1) Create an Ewald Processor<a class="headerlink" href="#1)-Create-an-Ewald-Processor" title="Permalink to this heading">¶</a></h2>
+<h2>1) Create an Ewald Processor<a class="headerlink" href="#1)-Create-an-Ewald-Processor" title="Permalink to this headline">#</a></h2>
 <p>An Ewald Processor handles changes in electrostatic interaction energies among different configurational states, using an Ewald Summation term.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
@@ -677,7 +662,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </section>
 <section id="2)-Create-a-Canonical-Ensemble">
-<h2>2) Create a Canonical Ensemble<a class="headerlink" href="#2)-Create-a-Canonical-Ensemble" title="Permalink to this heading">¶</a></h2>
+<h2>2) Create a Canonical Ensemble<a class="headerlink" href="#2)-Create-a-Canonical-Ensemble" title="Permalink to this headline">#</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
@@ -722,7 +707,7 @@ Sublattice(site_space=Li+0.5 vacA0+0.5, sites=array([ 0,  1,  2,  3,  4,  5,  6,
 </div>
 </section>
 <section id="3)-Create-the-Sampler">
-<h2>3) Create the Sampler<a class="headerlink" href="#3)-Create-the-Sampler" title="Permalink to this heading">¶</a></h2>
+<h2>3) Create the Sampler<a class="headerlink" href="#3)-Create-the-Sampler" title="Permalink to this headline">#</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
@@ -744,7 +729,7 @@ Sampling information: {&#39;kernel&#39;: &#39;Metropolis&#39;, &#39;step&#39;: &
 </div>
 </section>
 <section id="4)-Generate-an-initial-ordered-structure-to-start-the-MC-simulation.">
-<h2>4) Generate an initial ordered structure to start the MC simulation.<a class="headerlink" href="#4)-Generate-an-initial-ordered-structure-to-start-the-MC-simulation." title="Permalink to this heading">¶</a></h2>
+<h2>4) Generate an initial ordered structure to start the MC simulation.<a class="headerlink" href="#4)-Generate-an-initial-ordered-structure-to-start-the-MC-simulation." title="Permalink to this headline">#</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
@@ -805,7 +790,7 @@ The initial occupancy is:
 </div>
 </section>
 <section id="5)-Run-MC-simulated-annealing">
-<h2>5) Run MC simulated annealing<a class="headerlink" href="#5)-Run-MC-simulated-annealing" title="Permalink to this heading">¶</a></h2>
+<h2>5) Run MC simulated annealing<a class="headerlink" href="#5)-Run-MC-simulated-annealing" title="Permalink to this headline">#</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
@@ -848,7 +833,7 @@ Sampling 1 chain(s) from a cell with 128 sites...: 100%|████████
 </div>
 </section>
 <section id="6)-Analyzing-MC-sampling-at-each-temperature">
-<h2>6) Analyzing MC sampling at each temperature<a class="headerlink" href="#6)-Analyzing-MC-sampling-at-each-temperature" title="Permalink to this heading">¶</a></h2>
+<h2>6) Analyzing MC sampling at each temperature<a class="headerlink" href="#6)-Analyzing-MC-sampling-at-each-temperature" title="Permalink to this headline">#</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
@@ -924,7 +909,7 @@ Std dev = 0.0 eV/prim
 </pre></div></div>
 </div>
 <section id="Obtaining-the-ground-state">
-<h3>Obtaining the ground state<a class="headerlink" href="#Obtaining-the-ground-state" title="Permalink to this heading">¶</a></h3>
+<h3>Obtaining the ground state<a class="headerlink" href="#Obtaining-the-ground-state" title="Permalink to this headline">#</a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
@@ -953,7 +938,7 @@ Ground state structure is [0 0 0 1 1 1 0 1 1 0 0 0 1 0 1 1 1 1 0 1 0 0 0 1 1 0 1
 </section>
 </section>
 <section id="7)-Plotting-the-results">
-<h2>7) Plotting the results<a class="headerlink" href="#7)-Plotting-the-results" title="Permalink to this heading">¶</a></h2>
+<h2>7) Plotting the results<a class="headerlink" href="#7)-Plotting-the-results" title="Permalink to this headline">#</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
@@ -1029,8 +1014,9 @@ Ground state structure is [0 0 0 1 1 1 0 1 1 0 0 0 1 0 1 1 1 1 0 1 0 0 0 1 1 0 1
       </div>
     </div>
   
-    <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-  <footer class="footer mt-5 mt-md-0">
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+<footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
@@ -1041,7 +1027,7 @@ Ground state structure is [0 0 0 1 1 1 0 1 1 0 0 0 1 0 1 1 1 1 0 1 0 0 0 1 1 0 1
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
     </div>
     

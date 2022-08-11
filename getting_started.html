@@ -1,38 +1,34 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Getting Started &#8212; smol 0.0.4 documentation</title>
+    <title>Getting Started &#8212; smol 0.0.5 documentation</title>
     
-    <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-  
+
     
-    <link rel="stylesheet"
-      href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
-    <link rel="preload" as="font" type="font/woff2" crossorigin
-      href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-    <link rel="preload" as="font" type="font/woff2" crossorigin
-      href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
-  
-    
-      
-  
-    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/pydata-sphinx-theme.css" />
     <link rel="stylesheet" type="text/css" href="_static/css/smol.css" />
     
-    <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
-  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/require.js"></script>
@@ -42,13 +38,13 @@
     <link rel="next" title="User Guide" href="user_guide.html" />
     <link rel="prev" title="Statistical Mechanics on Lattices" href="index.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en">
+    <meta name="docsearch:language" content="None">
     
 
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -126,7 +122,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.4  <!-- this text may get changed later by javascript -->
+        0.0.5  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -136,17 +132,10 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables getting_started and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.4'}.
+     variables getting_started and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.5'}.
 -->
 
 <script type="text/javascript">
-// Construct the target URL from the JSON components
-function buildURL(entry) {
-    var template = "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/";  // supplied by jinja
-    template = template.replace("{version}", entry.version);
-    return template;
-}
-
 // Check if corresponding page path exists in other version of docs
 // and, if so, go there instead of the homepage of the other docs version
 function checkPageExistsAndRedirect(event) {
@@ -182,22 +171,26 @@ function checkPageExistsAndRedirect(event) {
             const node = document.createElement("a");
             node.setAttribute("class", "list-group-item list-group-item-action py-1");
             node.textContent = `${entry.name}`;
-            // get the base URL for that doc version, add the current page's
-            // path to it, and set as `href`
-            entry.url = buildURL(entry);
             node.setAttribute("href", `${entry.url}${currentFilePath}`);
             // on click, AJAX calls will check if the linked page exists before
             // trying to redirect, and if not, will redirect to the homepage
             // for that version of the docs.
             node.onclick = checkPageExistsAndRedirect;
+            // Add dataset values for the version and name in case people want
+            // to apply CSS styling based on this information.
+            node.dataset["versionName"] = entry.name;
+            node.dataset["version"] = entry.version;
+
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.4 variable.
+            // this version, rather than using sphinx's 0.0.5 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.4") {
+            if (entry.version == "0.0.5") {
                 node.classList.add("active");
-                $("#version_switcher_button").text(entry.name);
+                let btn = document.getElementById("version_switcher_button");
+                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
+                btn.dataset["activeVersion"] = entry.version;
             }
         });
     });
@@ -247,7 +240,7 @@ function checkPageExistsAndRedirect(event) {
               
               <div class="toc-item">
                 
-<div class="tocsection onthispage pt-5 pb-3">
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
 
@@ -341,9 +334,9 @@ function checkPageExistsAndRedirect(event) {
               <div>
                 
   <section id="getting-started">
-<span id="geting-started"></span><h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading">¶</a></h1>
+<span id="geting-started"></span><h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">#</a></h1>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h2>
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">#</a></h2>
 <p><strong>smol</strong> is purposedly light on dependencies which should make the installation
 process headache free. Using <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">smol</span>
@@ -359,12 +352,12 @@ installing <em>pymatgen</em> with conda first:</p>
 </div>
 </section>
 <section id="basic-usage">
-<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">#</a></h2>
 <p><strong>smol</strong> is designed to be simple and intuitive to use. Here is the most
 basic example of creating a Cluster Expansion for a binary alloy and
 subsequently using it to run Monte Carlo sampling.</p>
 <section id="creating-a-cluster-subspace">
-<h3>Creating a cluster subspace<a class="headerlink" href="#creating-a-cluster-subspace" title="Permalink to this heading">¶</a></h3>
+<h3>Creating a cluster subspace<a class="headerlink" href="#creating-a-cluster-subspace" title="Permalink to this headline">#</a></h3>
 <p>Create a cluster subspace for a AuCu binary FCC alloy to define the cluster
 expansion terms and compute the corresponding correlation functions.</p>
 <p>Start by creating a disordered primitive structure.</p>
@@ -382,7 +375,7 @@ quadruplet clusters up to given cluster diameter cutoffs.</p>
 </div>
 </section>
 <section id="preparing-training-data">
-<h3>Preparing training data<a class="headerlink" href="#preparing-training-data" title="Permalink to this heading">¶</a></h3>
+<h3>Preparing training data<a class="headerlink" href="#preparing-training-data" title="Permalink to this headline">#</a></h3>
 <p>Load and use data computed for a training set of ordered structures to
 generate the necessary fitting data (formation energy and correlation vector
 for each training structure). Training data is added as instances of
@@ -397,7 +390,7 @@ for each training structure). Training data is added as instances of
 </div>
 </section>
 <section id="fitting-and-creating-a-cluster-expansion">
-<h3>Fitting and creating a cluster expansion<a class="headerlink" href="#fitting-and-creating-a-cluster-expansion" title="Permalink to this heading">¶</a></h3>
+<h3>Fitting and creating a cluster expansion<a class="headerlink" href="#fitting-and-creating-a-cluster-expansion" title="Permalink to this headline">#</a></h3>
 <p>Using the generated feature matrix and property vector fit a cluster expansion.
 In this case we use simple linear regression, although for most cases this will
 not be appropriate and a regularized regression model will yield a much better
@@ -421,7 +414,7 @@ expansion for future reproducibility (although this is not strictly necessary).<
 </div>
 </section>
 <section id="creating-an-ensemble-for-monte-carlo-sampling">
-<h3>Creating an ensemble for Monte Carlo Sampling<a class="headerlink" href="#creating-an-ensemble-for-monte-carlo-sampling" title="Permalink to this heading">¶</a></h3>
+<h3>Creating an ensemble for Monte Carlo Sampling<a class="headerlink" href="#creating-an-ensemble-for-monte-carlo-sampling" title="Permalink to this headline">#</a></h3>
 <p>Creating an ensemble only requires the cluster expansion and a supercell matrix
 to define the sampling domain.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">Ensemble</span>
@@ -431,7 +424,7 @@ to define the sampling domain.</p>
 </div>
 </section>
 <section id="running-monte-carlo-sampling">
-<h3>Running Monte Carlo sampling<a class="headerlink" href="#running-monte-carlo-sampling" title="Permalink to this heading">¶</a></h3>
+<h3>Running Monte Carlo sampling<a class="headerlink" href="#running-monte-carlo-sampling" title="Permalink to this headline">#</a></h3>
 <p>To generate MC samples for the ensemble, we need to create a sampler
 object.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">Sampler</span>
@@ -456,7 +449,7 @@ to run MC sampling interations.</p>
 </div>
 </section>
 <section id="saving-the-generated-objects-and-data">
-<h3>Saving the generated objects and data<a class="headerlink" href="#saving-the-generated-objects-and-data" title="Permalink to this heading">¶</a></h3>
+<h3>Saving the generated objects and data<a class="headerlink" href="#saving-the-generated-objects-and-data" title="Permalink to this headline">#</a></h3>
 <p>To save the generated objects for the previous workflow we can simply use the
 provided convenience io functionaltiy. However, all main classes are
 serializable just as pymatgen and so can be saved as json dictionaries or
@@ -474,13 +467,13 @@ package.</p>
 </section>
 </section>
 <section id="example-notebooks">
-<h2>Example Notebooks<a class="headerlink" href="#example-notebooks" title="Permalink to this heading">¶</a></h2>
+<h2>Example Notebooks<a class="headerlink" href="#example-notebooks" title="Permalink to this headline">#</a></h2>
 <p>For more detailed examples on how to use <strong>smol</strong> have a look at the following
 Jupyter notebooks.</p>
 <p>You can run the notebooks interactively on Binder.</p>
 <a class="reference external image-reference" href="https://mybinder.org/v2/gh/CederGroupHub/smol/HEAD?labpath=docs%2Fsrc%2Fnotebooks%2Findex.ipynb"><img alt="https://mybinder.org/badge_logo.svg" src="https://mybinder.org/badge_logo.svg" /></a>
 <section id="basic-examples">
-<h3>Basic Examples<a class="headerlink" href="#basic-examples" title="Permalink to this heading">¶</a></h3>
+<h3>Basic Examples<a class="headerlink" href="#basic-examples" title="Permalink to this headline">#</a></h3>
 <ul class="simple">
 <li><p><a class="reference internal" href="notebooks/creating-a-ce.html"><span class="doc">Creating a basic cluster expansion</span></a></p></li>
 <li><p><a class="reference internal" href="notebooks/creating-a-ce-w-electrostatics.html"><span class="doc">Creating a cluster expansion with electrostatics</span></a></p></li>
@@ -491,8 +484,9 @@ Jupyter notebooks.</p>
 </ul>
 </section>
 <section id="advanced-examples">
-<h3>Advanced Examples<a class="headerlink" href="#advanced-examples" title="Permalink to this heading">¶</a></h3>
+<h3>Advanced Examples<a class="headerlink" href="#advanced-examples" title="Permalink to this headline">#</a></h3>
 <ul class="simple">
+<li><p><a class="reference internal" href="notebooks/ce-fit-w-centering.html"><span class="doc">Centering training data in stage-wise fit with electrostatics</span></a></p></li>
 <li><p><a class="reference internal" href="notebooks/adding-structures-in-parallel.html"><span class="doc">Adding structures to a StructureWrangler in parallel</span></a></p></li>
 <li><p><a class="reference internal" href="notebooks/running-ewald-sim_anneal.html"><span class="doc">Simulated annealing with point electrostatics</span></a></p></li>
 <li><p><a class="reference internal" href="notebooks/lmo-drx-ce-mc.html"><span class="doc">Li-Mn-O DRX cluster expansion and sampling</span></a></p></li>
@@ -530,8 +524,9 @@ Jupyter notebooks.</p>
       </div>
     </div>
   
-    <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-  <footer class="footer mt-5 mt-md-0">
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+<footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
@@ -542,7 +537,7 @@ Jupyter notebooks.</p>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
     </div>
     
