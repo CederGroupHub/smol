@@ -13,7 +13,7 @@ from smol.moca.sampler.kernel import (
     ThermalKernel,
     Trace,
     UniformlyRandom,
-    WangLandau
+    WangLandau,
 )
 from smol.moca.sampler.mcusher import Flip, Swap
 from tests.utils import gen_random_occupancy

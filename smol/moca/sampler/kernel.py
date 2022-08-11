@@ -117,14 +117,14 @@ class MCKernel(ABC):
     valid_bias = None
 
     def __init__(
-            self,
-            ensemble,
-            step_type,
-            *args,
-            seed=None,
-            bias_type=None,
-            bias_kwargs=None,
-            **kwargs
+        self,
+        ensemble,
+        step_type,
+        *args,
+        seed=None,
+        bias_type=None,
+        bias_kwargs=None,
+        **kwargs,
     ):
         """Initialize MCKernel.
 
@@ -155,7 +155,6 @@ class MCKernel(ABC):
         self._rng = np.random.default_rng(self._seed)
         self._compute_features = ensemble.compute_feature_vector
         self._feature_change = ensemble.compute_feature_vector_change
-        self._nwalkers = nwalkers
         self.trace = StepTrace(accepted=np.array([True]))
         self._usher, self._bias = None, None
 
@@ -401,9 +400,10 @@ class Metropolis(ThermalKernel):
             self.trace.delta_trace.bias = np.array(
                 self._bias.compute_bias_change(occupancy, step)
             )
-            exponent = (-self.beta * self.trace.delta_trace.enthalpy
-                        + self.trace.delta_trace.bias
-                        )
+            exponent = (
+                -self.beta * self.trace.delta_trace.enthalpy
+                + self.trace.delta_trace.bias
+            )
             self.trace.accepted = np.array(
                 True if exponent >= 0 else exponent > log(self._rng.random())
             )
@@ -412,7 +412,7 @@ class Metropolis(ThermalKernel):
                 True
                 if self.trace.delta_trace.enthalpy <= 0
                 else -self.beta * self.trace.delta_trace.enthalpy
-                     > log(self._rng.random())  # noqa
+                > log(self._rng.random())  # noqa
             )
 
         if self.trace.accepted:
@@ -434,20 +434,20 @@ class WangLandau(MCKernel):
     valid_bias = None  # Wang-Landau does not need bias.
 
     def __init__(
-            self,
-            ensemble,
-            step_type,
-            min_enthalpy,
-            max_enthalpy,
-            bin_size,
-            *args,
-            flatness=0.8,
-            mod_factor=1.0,
-            check_period=1000,
-            update_period=1,
-            mod_update=None,
-            seed=None,
-            **kwargs,
+        self,
+        ensemble,
+        step_type,
+        min_enthalpy,
+        max_enthalpy,
+        bin_size,
+        *args,
+        flatness=0.8,
+        mod_factor=1.0,
+        check_period=1000,
+        update_period=1,
+        mod_update=None,
+        seed=None,
+        **kwargs,
     ):
         """Initialize a WangLandau Kernel.
 
@@ -519,16 +519,15 @@ class WangLandau(MCKernel):
         # Used to compute average features only.
         self._occurrences = np.zeros(len(self._levels), dtype=int)
         # Mean feature vector per level.
-        self._mean_features = np.zeros((len(self._levels),
-                                        len(ensemble.natural_parameters)))
+        self._mean_features = np.zeros(
+            (len(self._levels), len(ensemble.natural_parameters))
+        )
         self._steps_counter = 0  # Save number of valid states elapsed.
 
         # Population of initial trace included here.
-        super(WangLandau, self).__init__(ensemble=ensemble,
-                                         step_type=step_type,
-                                         *args,
-                                         seed=seed,
-                                         **kwargs)
+        super().__init__(
+            ensemble=ensemble, step_type=step_type, *args, seed=seed, **kwargs
+        )
         # Additional clean-ups.
         self._histogram[:] = 0
         self._occurrences[:] = 0
@@ -606,8 +605,9 @@ class WangLandau(MCKernel):
             entropy = self._entropy[bin_id]
             new_entropy = self._entropy[new_bin_id]
             exponent = entropy - new_entropy
-            self.trace.accepted = np.array(True if exponent >= 0 else
-                                           exponent > log(self._rng.random()))
+            self.trace.accepted = np.array(
+                True if exponent >= 0 else exponent > log(self._rng.random())
+            )
 
         if self.trace.accepted:
             for f in step:
@@ -624,10 +624,11 @@ class WangLandau(MCKernel):
             # compute the cumulative statistics
             self._steps_counter += 1
             total = self._occurrences[bin_id]
-            self._mean_features[bin_id, :] = \
-                1 / (total + 1) * (self._current_features
-                                   + total * self._mean_features[bin_id, :]
-                                   )
+            self._mean_features[bin_id, :] = (
+                1
+                / (total + 1)
+                * (self._current_features + total * self._mean_features[bin_id, :])
+            )
             # check if histograms are flat and reset accordingly
             if self._steps_counter % self.update_period == 0:
                 # Add to DOS and histogram
@@ -644,8 +645,9 @@ class WangLandau(MCKernel):
 
         if self._steps_counter % self.check_period == 0:
             histogram = self._histogram[self._histogram > 0]  # remove zero entries
-            if ((histogram > self.flatness * histogram.mean()).all()
-                    and len(histogram) >= 0.5 * len(self._histogram)):
+            if (histogram > self.flatness * histogram.mean()).all() and len(
+                histogram
+            ) >= 0.5 * len(self._histogram):
                 # A sufficient portion of histogram must have been populated.
                 # So be careful with your min and max energy setting.
                 self._m = self._mod_update(self._m)
@@ -664,7 +666,7 @@ class WangLandau(MCKernel):
             Trace
         """
         trace = super().compute_initial_trace(occupancy)
-        
+
         # This will not be counting the state corresponding to the given occupancy.
         # but that is ok since we are not recording the initial trace when sampling.
         trace.histogram = self._histogram
