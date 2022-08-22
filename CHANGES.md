@@ -12,6 +12,14 @@ Use this section to keep track of changes in the works.
 ### Removed
 ### Deprecated
 
+# [v0.0.5](https://github.com/CederGroupHub/smol/releases/tag/v0.0.5) (2022-08-10)
+### Added
+* Data centering example notebook. #238 @kamronald
+### Changed
+* Single sampler multiple kernels. #245 @qchempku2017
+### Fixed
+* Fix returning all sub_orbit_mappings. #249 @lbluque
+
 # [v0.0.4](https://github.com/CederGroupHub/smol/releases/tag/v0.0.4) (2022-06-23)
 ### Added
 * Allow streaming to h5 in simulated annealing. #216 @lbluque

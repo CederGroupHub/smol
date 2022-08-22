@@ -189,9 +189,12 @@ Basic Examples
 Advanced Examples
 -----------------
 
+- `Centering training data in stage-wise fit with electrostatics`_
 - `Adding structures to a StructureWrangler in parallel`_
 - `Simulated annealing with point electrostatics`_
 - `Li-Mn-O DRX cluster expansion and sampling`_
+
+.. _Centering training data in stage-wise fit with electrostatics: notebooks/ce-fit-w-centering.ipynb
 
 .. _Adding structures to a StructureWrangler in parallel: notebooks/adding-structures-in-parallel.ipynb
 
