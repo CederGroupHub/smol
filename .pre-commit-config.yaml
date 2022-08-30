@@ -44,7 +44,7 @@ repos:
       args: [--py38-plus]
 
 - repo: https://github.com/myint/autoflake
-  rev: v1.5.0
+  rev: v1.5.1
   hooks:
     - id: autoflake
       args:
