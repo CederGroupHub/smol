@@ -14,6 +14,7 @@ from fractions import Fraction
 import cvxpy as cp
 import polytope as pc
 from scipy.spatial import KDTree
+from scipy.linalg import null_space
 
 
 # Global numerical tolerance in this module.
@@ -219,7 +220,7 @@ def compute_snf(a):
             m[i, j1] = b * x + d * y
 
     # Must convert to a sympy.Matrix.
-    m = np.array(a).astype(int).copy()
+    m = np.round(a).astype(int).copy()
     s = np.eye(m.shape[0]).astype(int)
     t = np.eye(m.shape[1]).astype(int)
     last_j = -1
@@ -355,18 +356,19 @@ def get_nonneg_float_vertices(A, b):
     a primitive cell.
 
     Args:
-        A(2D np.ndarray[int]):
+        A(2D np.ndarray):
             A in An=b.
-        b(2D np.ndarray[int]):
+        b(2D np.ndarray):
             b in An=b.
     Returns:
         Vertices of polytope An=b, n>=0 in float:
             np.ndarray[float]
     """
-    A = np.array(A, dtype=int)
-    b = np.array(b, dtype=int)
+    A = np.array(A)
+    b = np.array(b)
 
-    n0, vs = solve_diophantines(A, b)
+    vs = null_space(A).transpose()  # each basis vector as a row.
+    n0 = np.linalg.pinv(A) @ b
     poly = pc.Polytope(-1 * vs.transpose(), n0)
 
     verts = pc.extreme(poly)
@@ -381,7 +383,9 @@ def get_nonneg_float_vertices(A, b):
     return verts
 
 
-def get_natural_centroid(n0, vs):
+def get_natural_centroid(n0, vs, sc_size,
+                         a_leq=None, b_leq=None,
+                         a_geq=None, b_geq=None):
     """Get the natural number solution closest to centroid.
 
     Done by linear programming, minimize:
@@ -397,6 +401,12 @@ def get_natural_centroid(n0, vs):
             An origin point of integer lattice.
         vs(2D ArrayLike[int]):
             Basis vectors of integer lattice.
+        sc_size(int):
+            Super-cell size with n0 as a base solution.
+        a_leq(2D ArrayLike[int]), b_leq(1D ArrayLike[float]):
+            Constraint A @ n <= b. Unit is per prim.
+        a_geq(2D ArrayLike[int]), b_geq(1D ArrayLike[float]):
+            Constraint A @ n >= b. Unit is per prim.
 
     Returns:
         The natural number point on the grid closest to centroid ("x"):
@@ -410,6 +420,12 @@ def get_natural_centroid(n0, vs):
     centroid = np.average(pc.extreme(poly), axis=0)
     x = cp.Variable(n, integer=True)
     constraints = [n0[i] + vs[:, i] @ x >= 0 for i in range(d)]
+    if a_leq is not None and b_leq is not None:
+        for a, bb in zip(a_leq, b_leq):
+            constraints.append(a @ (n0 + x @ vs) / sc_size <= bb + NUM_TOL)
+    if a_geq is not None and b_geq is not None:
+        for a, bb in zip(a_geq, b_geq):
+            constraints.append(a @ (n0 + x @ vs) / sc_size >= bb - NUM_TOL)
     prob = cp.Problem(cp.Minimize(cp.sum_squares(x - centroid)),
                       constraints)
     # Use gurobi if present.
@@ -423,7 +439,7 @@ def get_natural_centroid(n0, vs):
     return np.array(np.round(x.value), dtype=int)
 
 
-def get_one_dim_solutions(n0, v, integer_tol=NUM_TOL):
+def get_one_dim_solutions(n0, v, integer_tol=NUM_TOL, step=1):
     """Solve one dimensional integer inequalities.
 
     This will solve n0 + v * x >= 0, give all
@@ -439,6 +455,10 @@ def get_one_dim_solutions(n0, v, integer_tol=NUM_TOL):
             <= integer_tol, it will be considered
             as an integer. Default is set by global
             NUM_TOL.
+        step(int): optional
+            Step to skip when yielding solutions. For example,
+            when step=2, will yield every 2 solutions.
+            Default is 1, yield every solution.
     Returns:
         All Integer solutions:
             1D np.ndarray[int]
@@ -474,7 +494,7 @@ def get_one_dim_solutions(n0, v, integer_tol=NUM_TOL):
     if n_min > n_max:
         return np.array([], dtype=int)
     else:
-        return np.arange(n_min, n_max + 1, dtype=int)
+        return np.arange(n_min, n_max + 1, step, dtype=int)
 
 
 def get_first_dim_extremes(a, b):
@@ -511,7 +531,7 @@ def get_first_dim_extremes(a, b):
     return prob1.value, prob2.value
 
 
-def get_natural_solutions(n0, vs, integer_tol=NUM_TOL):
+def get_natural_solutions(n0, vs, integer_tol=NUM_TOL, step=1):
     """Enumerate all natural number solutions.
 
     Given the convex polytope n0 + sum_i x_i*v_i >= 0.
@@ -538,6 +558,12 @@ def get_natural_solutions(n0, vs, integer_tol=NUM_TOL):
             <= integer_tol, it will be considered
             as an integer. Default is set by global
             NUM_TOL.
+        step(int): optional
+            Step to skip when yielding solutions in each
+            dimension. For example,
+            when step=2, will yield every 2 solutions in each
+            dimension.
+            Default is 1, yield every solution.
 
     Returns:
         All natural number solutions ("x"):
@@ -549,7 +575,8 @@ def get_natural_solutions(n0, vs, integer_tol=NUM_TOL):
     n, d = vs.shape
     if n == 1:
         sols = get_one_dim_solutions(n0, vs[0, :],
-                                     integer_tol=integer_tol)
+                                     integer_tol=integer_tol,
+                                     step=step)
         sols = sols.reshape(-1, 1)
 
         return sols
@@ -573,14 +600,14 @@ def get_natural_solutions(n0, vs, integer_tol=NUM_TOL):
     if n_min > n_max:
         return np.array([], dtype=int).reshape(-1, n)
     else:
-        n_range = np.arange(n_min, n_max + 1, dtype=int)
+        n_range = np.arange(n_min, n_max + 1, step, dtype=int)
         sols = []
         for m in n_range:
             n0_next = m * vs[0, :] + n0
             vs_next = vs[1:, :]
             sols_m = (get_natural_solutions(
                 n0_next, vs_next,
-                integer_tol=integer_tol)
+                integer_tol=integer_tol, step=step)
             )
             if len(sols_m) > 0:
                 sols_m = np.append(m * np.ones(len(sols_m),
@@ -900,7 +927,7 @@ def flip_weights_mask(flip_vectors, n, max_n=None):
 
 
 # Probability selection tools
-def choose_section_from_partition(p, rng=np.random.default_rng()):
+def choose_section_from_partition(p, rng=None):
     """Choose one partition from multiple partitions.
 
     This function choose one section from a list with probability weights.
@@ -915,6 +942,8 @@ def choose_section_from_partition(p, rng=np.random.default_rng()):
         The index of randomly chosen element:
            int
     """
+    if rng is None:
+        rng = np.random.default_rng()
     p = np.array(p)
     if np.allclose(p, 0):
         p = np.ones(len(p))

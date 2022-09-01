@@ -11,6 +11,7 @@ from pymatgen.core import Element, Composition
 from smol.cofe.space.domain import Vacancy
 
 from .utils.math_utils import (NUM_TOL, get_nonneg_float_vertices,
+                               integerize_vector,
                                integerize_multiple, solve_diophantines,
                                get_natural_solutions, get_optimal_basis,
                                get_ergodic_vectors, get_natural_centroid)
@@ -68,6 +69,21 @@ class ConstraintViolationError(Exception):
         """Represent."""
         return f"Composition: {self.c}, format: {self.form}, " \
                f"tolerance: {NUM_TOL} -> {self.message}"
+
+
+class ConstraintIntegerizeError(Exception):
+    """Raises when constraints cannot be multipled to int under sc_size."""
+
+    def __init__(self, sc_size,
+                 message="Composition constraints cannot be multiplied to integer!"):
+        """Initialize exception class."""
+        self.sc_size = sc_size
+        self.message = message
+        super(ConstraintIntegerizeError, self).__init__(self.message)
+
+    def __str__(self):
+        """Represent."""
+        return f"Super-cell size: {self.sc_size}"
 
 
 class CompUnNormalizedError(Exception):
@@ -176,6 +192,8 @@ class CompSpace(MSONable):
     def __init__(self, bits, sl_sizes=None,
                  charge_balanced=True,
                  other_constraints=None,
+                 leq_constraints=None,
+                 geq_constraints=None,
                  optimize_basis=False,
                  table_ergodic=False):
         """Initialize CompSpace.
@@ -190,10 +208,22 @@ class CompSpace(MSONable):
             charge_balanced(bool): optional
                 Whether to add charge balance constraint. Default
                 to true.
-            other_constraints(List[tuple(1D arrayLike[int], int)]): optional
-                Other integer constraints except charge balance and
-                site-number conservation. Should be given in the form of
-                tuple(a, bb), each gives constraint np.dot(a, n)=bb.
+            other_constraints(List[tuple(1D arrayLike[float], float)]): optional
+                Other equality type composition constraints except charge balance
+                and site-number conservation. Should be given in the form of
+                tuple(a, bb), each gives constraint np.dot(a, n)=bb. a and bb
+                should be in the form of per primitive cell.
+                For example, you may want to constrain n_Li + n_Vac = 0.5 per
+                primitive cell.
+            leq_constraints(List[tuple(1D arrayLike[float], float)]): optional
+                Constraint np.dot(a, n)<=bb. a and bb should be in the form of
+                per primitive cell.
+            geq_constraints(List[tuple(1D arrayLike[float], float)]): optional
+                Constraint np.dot(a, n)>=bb. a and bb should be in the form of
+                per primitive cell.
+                Both leq and geq constraints are only used when enumerating
+                compositions. Table ergodicity code will only consider equality
+                constraints, not leq and geqs.
             optimize_basis(bool): optional
                 Whether to optimize the basis to minimal flip sizes and maximal
                 connectivity in the minimum super-cell size.
@@ -273,20 +303,33 @@ class CompSpace(MSONable):
             if len(a) != self.n_dims:
                 raise ValueError(f"Constraint length: {len(a)} does not match"
                                  f" dimensions: {self.n_dims}!")
-            if not np.allclose(np.array(a), np.round(a)) or not \
-                    np.allclose(b, np.round(b)):
-                raise ValueError("Provided constraints must be integers!")
-            A.append(a)
-            b.append(bb)
-        self._A = np.array(np.round(A), dtype=int)
-        self._b = np.array(np.round(b), dtype=int)
+            # No-longer enforce integers in a and b.
+            # Integerize a.
+            a_new, scale = integerize_vector(a)
+            A.append(np.round(a * scale).astype(int))
+            b.append(bb * scale)
+        self._A = np.array(A, dtype=int)
+        self._b = np.array(b)  # per-prim
+
+        if leq_constraints is not None:
+            self._A_leq = np.array([a for a, bb in leq_constraints])
+            self._b_leq = np.array([bb for a, bb in leq_constraints])
+        else:
+            self._A_leq = None
+            self._b_leq = None
+        if geq_constraints is not None:
+            self._A_geq = np.array([a for a, bb in geq_constraints])
+            self._b_geq = np.array([bb for a, bb in geq_constraints])
+        else:
+            self._A_geq = None
+            self._b_geq = None
 
         self._prim_vertices = None
         # Minimum supercell size required to make prim_vertices coordinates
         # all integer.
         self._min_sc_size = None
         self._flip_table = None
-        self._n0 = None  # Prim cell base solution
+        self._n0_all = {}  # n0 base solution at each super-cell size.
         self._vs = None  # Basis vectors, n = n0 + vs.T @ x
         self._comp_grids = {}  # Grid of integer compositions, in "x" format.
 
@@ -339,33 +382,39 @@ class CompSpace(MSONable):
                         for species, sl_size
                         in zip(self.bits, self.sl_sizes)])
 
-    @property
-    def n0(self):
-        """Primitive cell base solution (not natural numbers).
+    def get_n0(self, sc_size=None):
+        """Base solution (not natural numbers) in a super-cell size.
 
-        self.n0 * sc_size is a base solution in super-cell in
-        "n" format.
+        Args:
+            sc_size(int): optional
+                Super-cell size. If not given, will use self.min_sc_size.
         Returns:
              1D np.ndarray[int]
         """
-        if self._n0 is None:
-            n0, vs = solve_diophantines(self.A, self.b)
-            self._n0 = n0
-        return self._n0
+        if sc_size is None:
+            sc_size = self.min_sc_size
+        if sc_size not in self._n0_all:
+            if not np.allclose(self.b * sc_size,
+                               np.round(self.b * sc_size), atol=NUM_TOL):
+                raise ConstraintIntegerizeError(sc_size)
+            n0, vs = solve_diophantines(self.A, np.round(self.b * sc_size))
+            # n0 and vs must always be ints.
+            self._n0_all[sc_size] = n0.copy()
+        return self._n0_all[sc_size]
 
     @property
     def basis(self):
         """Basis vectors of the composition grid An=b.
 
-        Will be optimized if self.optimize_basis is set
-        to true.
+        Will be optimized so that basis flip sizes are minimal,
+        if self.optimize_basis is set to true.
         Returns:
-            Basis vectors in "n" format:
+            Basis vectors in "n" format, each in a row:
                 2D np.ndarray[int]
         """
         if self._vs is None:
             n0, vs = solve_diophantines(self.A,
-                                        self.b * self.min_sc_size)
+                                        np.round(self.b * self.min_sc_size))
             if self.optimize_basis:
                 n_comps = self.n_comps_estimate
                 if n_comps > 10 ** 6:
@@ -384,8 +433,8 @@ class CompSpace(MSONable):
     def flip_table(self):
         """Give flip table vectors.
 
-        If self.table_ergodic is true, will add flips if basis
-        is not ergodic.
+        If self.table_ergodic is true, will add flips until ergodic
+        in min_sc_size super-cell.
         Returns:
             Flip vectors in the "n" format:
                 2D np.ndarray[int]
@@ -400,8 +449,8 @@ class CompSpace(MSONable):
                                   "at your composition space size = "
                                   f"{n_comps}. "
                                   "Do this at your own risk!")
-                self._flip_table = get_ergodic_vectors(self.n0
-                                                       * self.min_sc_size,
+                n0 = self.get_n0(self.min_sc_size)
+                self._flip_table = get_ergodic_vectors(n0,
                                                        self.basis,
                                                        self.min_sc_grid)
         return self._flip_table
@@ -416,28 +465,47 @@ class CompSpace(MSONable):
         """
         return [flip_vec_to_reaction(u, self.bits) for u in self.flip_table]
 
-    def get_comp_grid(self, sc_size=1):
+    def get_comp_grid(self, sc_size=1, step=1):
         """Get the natural number compositions.
 
         Args:
             sc_size(int):
                 Super-cell size to enumerate with.
+            step(int): optional
+                Step in returning the enumerated compositions.
+                If step = N > 1, on each dimension of the composition space,
+                we will only yield one composition every N compositions.
+                Default to 1.
         Returns:
             Solutions to n0 + Vx >= 0 ("x" format, not normalized):
                 2Dnp.ndarray[int]
         """
-        if sc_size not in self._comp_grids:
-            self._comp_grids[sc_size] = get_natural_solutions(self.n0
-                                                              * sc_size,
-                                                              self.basis)
-        return self._comp_grids[sc_size]
+        if (sc_size, step) not in self._comp_grids:
+            n0 = self.get_n0(sc_size)
+            grid = get_natural_solutions(n0, self.basis, step=step)
+            ns = grid @ self.basis + n0  # each row
+            if self._A_geq is not None and self._b_geq is not None:
+                _filter_geq = (self._A_geq @ ns.T / sc_size >= self._b_geq[:, None] - NUM_TOL)\
+                    .all(axis=0)
+            else:
+                _filter_geq = np.ones(len(ns)).astype(bool)
+            if self._A_leq is not None and self._b_leq is not None:
+                _filter_leq = (self._A_leq @ ns.T / sc_size <= self._b_geq[:, None] + NUM_TOL)\
+                    .all(axis=0)
+            else:
+                _filter_leq = np.ones(len(ns)).astype(bool)
+
+            # Filter inequality constraints.
+            self._comp_grids[(sc_size, step)] = grid[_filter_leq & _filter_geq]
+
+        return self._comp_grids[(sc_size, step)]
 
     @property
     def min_sc_grid(self):
         """Get the natural number solutions on grid at min_sc_size.
 
         Returns:
-            Solutions to n0 + Vx >= 0 ("x" format, not normalized):
+            All solutions to n0 + Vx >= 0 ("x" format, not normalized):
                 2Dnp.ndarray[int]
         """
         return self.get_comp_grid(sc_size=self.min_sc_size)
@@ -456,7 +524,10 @@ class CompSpace(MSONable):
         """
         if sc_size is None:
             sc_size = self.min_sc_size
-        return get_natural_centroid(self.n0 * sc_size, self.basis)
+        n0 = self.get_n0(sc_size)
+        return get_natural_centroid(n0, self.basis, sc_size,
+                                    self._A_leq, self._b_leq,
+                                    self._A_geq, self._b_geq)
 
     def translate_format(self, c, sc_size, from_format, to_format='n',
                          rounding=False):
@@ -504,7 +575,7 @@ class CompSpace(MSONable):
         if form == "n":
             n = np.array(c)
         elif form == "x":
-            n = self.basis.transpose() @ np.array(c) + self.n0 * sc_size
+            n = self.basis.transpose() @ np.array(c) + self.get_n0(sc_size)
         elif form == "comp":
             n = []
             for species, sl_size, comp in zip(self.bits, self.sl_sizes, c):
@@ -545,7 +616,7 @@ class CompSpace(MSONable):
         if form == "n":
             c = n.copy()
         elif form == "x":
-            dn = n - self.n0 * sc_size
+            dn = n - self.get_n0(sc_size)
             c = np.linalg.pinv(self.basis.T) @ dn
         elif form == "comp":
             c = []
@@ -586,6 +657,8 @@ class CompSpace(MSONable):
                                     self.b[n_cons:].tolist())]
         comp_grids = {k: v.tolist() for k, v
                       in self._comp_grids.items()}
+        n0_all = {k: v.tolist() for k, v
+                  in self._n0_all.items()}
 
         def to_list(arr):
             if arr is not None:
@@ -601,7 +674,7 @@ class CompSpace(MSONable):
                 'table_ergodic': self.table_ergodic,
                 'min_sc_size': self._min_sc_size,
                 'prim_vertices': to_list(self._prim_vertices),
-                'n0': to_list(self._n0),
+                'n0_all': n0_all,
                 'vs': to_list(self._vs),
                 'flip_table': to_list(self._flip_table),
                 'comp_grids': comp_grids,
@@ -640,9 +713,10 @@ class CompSpace(MSONable):
         if prim_vertices is not None:
             obj._prim_vertices = np.array(prim_vertices)
 
-        n0 = d.get('n0')
-        if n0 is not None:
-            obj._n0 = np.array(n0, dtype=int)
+        n0_all = d.get('n0_all')
+        if n0_all is not None:
+            obj._n0_all = {k: np.array(v, dtype=int)
+                           for k, v in n0_all.items()}
 
         vs = d.get('vs')
         if vs is not None:

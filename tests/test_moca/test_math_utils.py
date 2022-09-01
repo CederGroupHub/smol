@@ -34,6 +34,7 @@ a4 = [[0, 0, 0, 0],
       [0, 0, 1, 1]]
 b4 = [0, 1, 2]  # Some random charge neutral alloy of 2 sub-lattices, prim.
 
+
 all_ab = [(a1, b1), (a2, b2), (a3, b3), (a4, b4)]
 
 
@@ -276,6 +277,26 @@ def test_centroid_specific(ab):
     # Can not test for optimality.
 
 
+def test_centroid_conditioned():
+    a = np.array([[1, 3, 4, -3, -2], [1, 1, 1, 0, 0], [0, 0, 0, 1, 1]])
+    b = np.array([0, 1, 1]) * 12  # LMTPO, sc_size = 12
+
+    a_leq = np.array([[0, 1, 0, 0, 0], [0, 0, 0, 1, 0]])
+    b_leq = np.array([5 / 6, 5 / 6])
+
+    a_geq = np.array([[0, 1, 0, 0, 0], [0, 0, 0, 1, 0]])
+    b_geq = np.array([1 / 6, 1 / 6])
+
+    n0, vs = solve_diophantines(a, b)
+    x_cent = get_natural_centroid(n0, vs)
+    x_cent2 = get_natural_centroid(n0, vs, 12, a_leq, b_leq, a_geq, b_geq)
+    npt.assert_array_equal(x_cent2, x_cent)
+
+    b_geq2 = np.array([1, 4])
+    x_cent3 = get_natural_centroid(n0, vs, a_leq, b_leq, a_geq, b_geq2)
+    assert not np.allclose(x_cent3, x_cent)
+
+
 def test_one_dim_solution():
     for _ in range(10):
         n = np.random.randint(low=0, high=1000,
@@ -350,6 +371,32 @@ def test_natural_solutions_specific():
     ns_std = np.array(sorted(ns_std.tolist()), dtype=int)
     npt.assert_array_equal(ns, ns_std)
 
+    a = np.array([[1, 3, 4, -3, -2],
+                  [1, 1, 1, 0, 0],
+                  [0, 0, 0, 1, 1]])
+    b = np.array([0, 6, 6]) * 2
+    n0, vs = solve_diophantines(a, b)
+    xs = get_natural_solutions(n0, vs, step=2)  # Test a step.
+    ns = xs @ vs + n0
+    ns = np.array(sorted(ns.tolist()), dtype=int)
+    # Scaling test.
+    ns_std = np.array([[4, 0, 2, 0, 6],
+                       [3, 3, 0, 0, 6],
+                       [3, 2, 1, 1, 5],
+                       [3, 1, 2, 2, 4],
+                       [2, 4, 0, 2, 4],
+                       [3, 0, 3, 3, 3],
+                       [2, 3, 1, 3, 3],
+                       [2, 2, 2, 4, 2],
+                       [1, 5, 0, 4, 2],
+                       [2, 1, 3, 5, 1],
+                       [1, 4, 1, 5, 1],
+                       [2, 0, 4, 6, 0],
+                       [1, 3, 2, 6, 0],
+                       [0, 6, 0, 6, 0]], dtype=int) * 2
+    ns_std = np.array(sorted(ns_std.tolist()), dtype=int)
+    npt.assert_array_equal(ns, ns_std)
+
     a = np.array([[1, 3, 4, -2, -1],
                   [1, 1, 1, 0, 0],
                   [0, 0, 0, 1, 1]])
@@ -405,6 +452,28 @@ def test_natural_solutions_specific():
                        [0, 1, 0, 1, 1, 3, 5, 0, 1],
                        [0, 1, 1, 0, 1, 3, 4, 1, 1],
                        [0, 2, 0, 0, 1, 3, 3, 2, 1]], dtype=int)
+    ns_std = np.array(sorted(ns_std.tolist()), dtype=int)
+    npt.assert_array_equal(ns, ns_std)
+
+    a = np.array([[1, 2, 3, 4, 5, 0, -2, -1, -1],
+                  [1, 0, 0, 0, 0, 1, 0, 0, 0],
+                  [0, 1, 1, 1, 0, 0, 0, 0, 0],
+                  [0, 0, 0, 0, 1, 0, 0, 0, 0],
+                  [0, 0, 0, 0, 0, 0, 1, 1, 0],
+                  [0, 0, 0, 0, 0, 0, 0, 0, 1]])
+    b = np.array([0, 3, 2, 1, 5, 1]) * 3
+    n0, vs = solve_diophantines(a, b)
+    xs = get_natural_solutions(n0, vs, step=3)
+    ns = xs @ vs + n0
+    ns = np.array(sorted(ns.tolist()), dtype=int)
+    # Scalability test.
+    ns_std = np.array([[2, 2, 0, 0, 1, 1, 5, 0, 1],
+                       [1, 1, 1, 0, 1, 2, 5, 0, 1],
+                       [1, 2, 0, 0, 1, 2, 4, 1, 1],
+                       [0, 0, 2, 0, 1, 3, 5, 0, 1],
+                       [0, 1, 0, 1, 1, 3, 5, 0, 1],
+                       [0, 1, 1, 0, 1, 3, 4, 1, 1],
+                       [0, 2, 0, 0, 1, 3, 3, 2, 1]], dtype=int) * 3
     ns_std = np.array(sorted(ns_std.tolist()), dtype=int)
     npt.assert_array_equal(ns, ns_std)
 
