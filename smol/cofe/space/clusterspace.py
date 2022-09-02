@@ -1183,9 +1183,9 @@ class ClusterSubspace(MSONable):
         orbits = {1: point_orbits}
         max_lp = np.linalg.norm(exp_struct.lattice.matrix.sum(axis=0)) / 2
         max_lp += SITE_TOL
+        prim_center = exp_struct.lattice.get_cartesian_coords([0.5, 0.5, 0.5])
         for size, diameter in sorted(cutoffs.items()):
             new_orbits = []
-            prim_center = exp_struct.lattice.get_cartesian_coords([0.5, 0.5, 0.5])
             neighbors = exp_struct.get_sites_in_sphere(
                 prim_center, diameter + max_lp, include_index=True
             )
