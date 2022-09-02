@@ -1,6 +1,6 @@
 numpy>=1.20.1
 monty==2022.4.26
-pymatgen==2022.7.25
+pymatgen==2022.8.23
 scipy>=1.8.0
 polytope
 cvxpy
