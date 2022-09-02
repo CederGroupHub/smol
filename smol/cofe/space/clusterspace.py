@@ -1185,8 +1185,9 @@ class ClusterSubspace(MSONable):
         max_lp += SITE_TOL
         for size, diameter in sorted(cutoffs.items()):
             new_orbits = []
+            prim_center = exp_struct.lattice.get_cartesian_coords([0.5, 0.5, 0.5])
             neighbors = exp_struct.get_sites_in_sphere(
-                [0.5, 0.5, 0.5], diameter + max_lp, include_index=True
+                prim_center, diameter + max_lp, include_index=True
             )
             for orbit in orbits[size - 1]:
                 if orbit.base_cluster.diameter > diameter:
