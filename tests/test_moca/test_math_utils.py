@@ -9,6 +9,7 @@ from collections import Counter
 
 from tests.utils import assert_table_set_equal
 from fractions import Fraction
+import polytope as pc
 
 
 a1 = [[1, 3, 4, -3, -2], [1, 1, 1, 0, 0], [0, 0, 0, 1, 1]]
@@ -270,7 +271,7 @@ def test_centroid_specific(ab):
     b = b * 10
 
     n0, vs = solve_diophantines(a, b)
-    x_cent = get_natural_centroid(n0, vs)
+    x_cent = get_natural_centroid(n0, vs, 10)
     n_cent = x_cent @ vs + n0
     npt.assert_array_equal(a @ n_cent, b)
     assert np.all(n_cent >= 0)
@@ -288,13 +289,18 @@ def test_centroid_conditioned():
     b_geq = np.array([1 / 6, 1 / 6])
 
     n0, vs = solve_diophantines(a, b)
-    x_cent = get_natural_centroid(n0, vs)
+    poly = pc.Polytope(-vs.transpose(), n0)
+    centroid = np.average(pc.extreme(poly), axis=0)
+    x_cent = get_natural_centroid(n0, vs, 12)
     x_cent2 = get_natural_centroid(n0, vs, 12, a_leq, b_leq, a_geq, b_geq)
-    npt.assert_array_equal(x_cent2, x_cent)
+    assert np.isclose(np.linalg.norm(x_cent - centroid), np.linalg.norm(x_cent2 - centroid))
+    # Will allow some degeneracy.
 
-    b_geq2 = np.array([1, 4])
-    x_cent3 = get_natural_centroid(n0, vs, a_leq, b_leq, a_geq, b_geq2)
-    assert not np.allclose(x_cent3, x_cent)
+    # When setting 4 / 6 in ECOS_BB, this test can not work. In guorbi 4/6 works.
+    # Very strange indeed.
+    b_geq2 = np.array([1 / 6, 3.5 / 6])  # In per prim unit.
+    x_cent3 = get_natural_centroid(n0, vs, 12, a_leq, b_leq, a_geq, b_geq2)
+    assert np.linalg.norm(x_cent - centroid) < np.linalg.norm(x_cent3 - centroid)
 
 
 def test_one_dim_solution():

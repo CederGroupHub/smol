@@ -10,7 +10,8 @@ from monty.json import MSONable, MontyDecoder
 from pymatgen.core import Element, Composition
 from smol.cofe.space.domain import Vacancy
 
-from .utils.math_utils import (NUM_TOL, get_nonneg_float_vertices,
+from .utils.math_utils import (NUM_TOL, gcd,
+                               get_nonneg_float_vertices,
                                integerize_vector,
                                integerize_multiple, solve_diophantines,
                                get_natural_solutions, get_optimal_basis,
@@ -310,6 +311,8 @@ class CompSpace(MSONable):
             b.append(bb * scale)
         self._A = np.array(A, dtype=int)
         self._b = np.array(b)  # per-prim
+        if np.linalg.matrix_rank(self._A) >= self.n_dims:
+            raise ValueError("Valid constraints more than number of dimensions!")
 
         if leq_constraints is not None:
             self._A_leq = np.array([a for a, bb in leq_constraints])
@@ -329,7 +332,7 @@ class CompSpace(MSONable):
         # all integer.
         self._min_sc_size = None
         self._flip_table = None
-        self._n0_all = {}  # n0 base solution at each super-cell size.
+        self._n0 = None  # n0 base solution at minimum feasible sc size.
         self._vs = None  # Basis vectors, n = n0 + vs.T @ x
         self._comp_grids = {}  # Grid of integer compositions, in "x" format.
 
@@ -391,16 +394,23 @@ class CompSpace(MSONable):
         Returns:
              1D np.ndarray[int]
         """
+        # This conserves scalability of grid enumeration, which means a grid
+        # enumerated at sc_size = 2 * a and step = 2 is exactly 2 * the
+        # grid enumerated at sc_size = a and step = 1. But make sure that
+        # step = 1 case is called first.
         if sc_size is None:
             sc_size = self.min_sc_size
-        if sc_size not in self._n0_all:
-            if not np.allclose(self.b * sc_size,
-                               np.round(self.b * sc_size), atol=NUM_TOL):
-                raise ConstraintIntegerizeError(sc_size)
-            n0, vs = solve_diophantines(self.A, np.round(self.b * sc_size))
+        # minimum sc size that makes self.b an integer vector.
+        # Any allowed sc_size must be a multiple of it.
+        _ , min_feasible_sc_size = integerize_vector(self.b)
+        if not sc_size % min_feasible_sc_size == 0:
+            raise ConstraintIntegerizeError(sc_size)
+        if self._n0 is None:
+            n0, vs = solve_diophantines(self.A,
+                                        np.round(self.b * min_feasible_sc_size))
             # n0 and vs must always be ints.
-            self._n0_all[sc_size] = n0.copy()
-        return self._n0_all[sc_size]
+            self._n0 = n0.copy()
+        return self._n0 * sc_size // min_feasible_sc_size
 
     @property
     def basis(self):
@@ -480,25 +490,46 @@ class CompSpace(MSONable):
             Solutions to n0 + Vx >= 0 ("x" format, not normalized):
                 2Dnp.ndarray[int]
         """
-        if (sc_size, step) not in self._comp_grids:
-            n0 = self.get_n0(sc_size)
-            grid = get_natural_solutions(n0, self.basis, step=step)
-            ns = grid @ self.basis + n0  # each row
-            if self._A_geq is not None and self._b_geq is not None:
-                _filter_geq = (self._A_geq @ ns.T / sc_size >= self._b_geq[:, None] - NUM_TOL)\
-                    .all(axis=0)
-            else:
-                _filter_geq = np.ones(len(ns)).astype(bool)
-            if self._A_leq is not None and self._b_leq is not None:
-                _filter_leq = (self._A_leq @ ns.T / sc_size <= self._b_geq[:, None] + NUM_TOL)\
-                    .all(axis=0)
-            else:
-                _filter_leq = np.ones(len(ns)).astype(bool)
+        # Also scalablity issue.
+        scale = None
+        sc_size_prev = None
+        step_prev = None
+        for k1, k2 in self._comp_grids:
+            if (sc_size % k1 == 0 and step % k2 == 0
+                    and sc_size // k1 == step // k2):
+                scale = sc_size // k1
+                sc_size_prev = k1
+                step_prev = k2
+                break
 
-            # Filter inequality constraints.
-            self._comp_grids[(sc_size, step)] = grid[_filter_leq & _filter_geq]
+        if scale is not None:
+            return self._comp_grids[(sc_size_prev, step_prev)] * scale
+        else:
+            s = gcd(sc_size, step)
+            if s > 1:
+                return self.get_comp_grid(sc_size=sc_size // s,
+                                          step=step // s) * s
+            else:
+                n0 = self.get_n0(sc_size)
+                grid = get_natural_solutions(n0, self.basis, step=step)
 
-        return self._comp_grids[(sc_size, step)]
+                ns = grid @ self.basis + n0  # each row
+                if self._A_geq is not None and self._b_geq is not None:
+                    _filter_geq = (self._A_geq @ ns.T / sc_size
+                                   >= self._b_geq[:, None] - NUM_TOL) \
+                        .all(axis=0)
+                else:
+                    _filter_geq = np.ones(len(ns)).astype(bool)
+                if self._A_leq is not None and self._b_leq is not None:
+                    _filter_leq = (self._A_leq @ ns.T / sc_size
+                                   <= self._b_leq[:, None] + NUM_TOL) \
+                        .all(axis=0)
+                else:
+                    _filter_leq = np.ones(len(ns)).astype(bool)
+
+                # Filter inequality constraints.
+                self._comp_grids[(sc_size, step)] = grid[_filter_leq & _filter_geq]
+                return self._comp_grids[(sc_size, step)]
 
     @property
     def min_sc_grid(self):
@@ -655,10 +686,9 @@ class CompSpace(MSONable):
         other_constraints = [(a, bb) for a, bb
                              in zip(self.A[n_cons:].tolist(),
                                     self.b[n_cons:].tolist())]
-        comp_grids = {k: v.tolist() for k, v
-                      in self._comp_grids.items()}
-        n0_all = {k: v.tolist() for k, v
-                  in self._n0_all.items()}
+
+        comp_grids = {f"{k[0]}_{k[1]}": v.tolist() for k, v
+                      in self._comp_grids.items()}  # Encode tuple keys.
 
         def to_list(arr):
             if arr is not None:
@@ -674,7 +704,7 @@ class CompSpace(MSONable):
                 'table_ergodic': self.table_ergodic,
                 'min_sc_size': self._min_sc_size,
                 'prim_vertices': to_list(self._prim_vertices),
-                'n0_all': n0_all,
+                'n0': to_list(self._n0),
                 'vs': to_list(self._vs),
                 'flip_table': to_list(self._flip_table),
                 'comp_grids': comp_grids,
@@ -713,10 +743,8 @@ class CompSpace(MSONable):
         if prim_vertices is not None:
             obj._prim_vertices = np.array(prim_vertices)
 
-        n0_all = d.get('n0_all')
-        if n0_all is not None:
-            obj._n0_all = {k: np.array(v, dtype=int)
-                           for k, v in n0_all.items()}
+        n0 = d.get('n0')
+        obj._n0 = np.array(n0, dtype=int) if n0 is not None else None
 
         vs = d.get('vs')
         if vs is not None:
@@ -727,8 +755,9 @@ class CompSpace(MSONable):
             obj._flip_table = np.array(flip_table, dtype=int)
 
         comp_grids = d.get('comp_grids', {})
-        comp_grids = {k: np.array(v, dtype=int)
-                      for k, v in comp_grids.items()}
+        comp_grids = {(int(k.split("_")[0]),
+                       int(k.split("_")[1])): np.array(v, dtype=int)
+                      for k, v in comp_grids.items()}  # Decode tuple keys.
         obj._comp_grids = comp_grids
 
         return obj

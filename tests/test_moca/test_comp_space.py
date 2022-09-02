@@ -143,15 +143,15 @@ def test_generic_attributes(comp_space):
     assert np.all(np.any(np.isclose(prim_verts, 0, atol=NUM_TOL), axis=-1))
 
     if comp_space.n_comps_estimate < 10 ** 6:
-        scs = [1, min_sc // 2, min_sc, min_sc * 2]
+        scs = [1, min_sc, min_sc * 2] + ([min_sc // 2] if min_sc >= 2 else [])
         for sc in scs:
             if not np.allclose(sc * comp_space.b, np.round(sc * comp_space.b)):
                 with pytest.raises(ConstraintIntegerizeError):
-                    grid = comp_space.get_comp_grid(sc)
+                    grid = comp_space.get_comp_grid(sc, step=1)
             else:
-                grid = comp_space.get_comp_grid(sc)
+                grid = comp_space.get_comp_grid(sc, step=1)
             ns = grid @ comp_space.basis + comp_space.get_n0(sc)
-            npt.assert_array_equal(grid, comp_space._comp_grids[sc])
+            npt.assert_array_equal(grid, comp_space._comp_grids[(sc, 1)])
             # x-format
             npt.assert_array_equal(A @ ns.T - b[:, None] * sc, 0)
             assert np.all(ns >= 0)
@@ -203,12 +203,9 @@ def test_serialize(comp_space):
                            comp_space._flip_table)
     npt.assert_array_equal(comp_space_reload._vs,
                            comp_space._vs)
-    for key in comp_space_reload._n0_all:
-        assert key in comp_space._n0_all
-        npt.assert_array_equal(comp_space_reload._n0_all[key],
-                               comp_space._n0_all[key])
-    for key in comp_space._n0_all:
-        assert key in comp_space_reload._n0_all
+
+    npt.assert_array_equal(comp_space_reload._n0,
+                           comp_space._n0)
 
     npt.assert_array_equal(comp_space_reload._min_sc_size,
                            comp_space._min_sc_size)
@@ -223,7 +220,7 @@ def test_serialize(comp_space):
 def test_sc_size(comp_space_lmtpo, comp_space_lmtpo2,
                  comp_space_lmtpo3, comp_space_lmntof):
     assert comp_space_lmtpo.min_sc_size == 6
-    assert comp_space_lmtpo2.min_sc_size == 6
+    assert comp_space_lmtpo2.min_sc_size == 12
     assert comp_space_lmtpo3.min_sc_size == 6
     assert comp_space_lmntof.min_sc_size == 6
 
@@ -259,12 +256,29 @@ def test_basis(comp_space_lmtpo, comp_space_lmtpo2,
     assert_table_set_equal(ts4, std1)
 
 
+def test_get_n0(comp_space):
+    comp_space._n0 = None  # Clear up.
+    min_sc_size = comp_space.min_sc_size
+    n00 = comp_space.get_n0(sc_size=min_sc_size * 2)
+    _, min_feasible_size = integerize_vector(comp_space.b)
+    assert min_sc_size % min_feasible_size == 0
+    scale = min_sc_size * 2 // min_feasible_size
+    n01 = comp_space.get_n0(sc_size=min_feasible_size)
+    npt.assert_array_equal(n01 * scale, n00)
+
+
 def test_enumerate_grid(comp_space_lmtpo, comp_space_lmtpo2, comp_space_lmtpo3):
-    grid2 = comp_space_lmtpo2.min_sc_grid
-    grid3 = comp_space_lmtpo3.min_sc_grid
-    std2 = np.array([[1, 5, 0, 4, 2],
-                     [2, 3, 1, 3, 3],
-                     [3, 1, 2, 2, 4]], dtype=int)
+    # Convert x-format to n-format
+    grid2 = (comp_space_lmtpo2.min_sc_grid @ comp_space_lmtpo2.basis
+             + comp_space_lmtpo2.get_n0())
+    grid3 = (comp_space_lmtpo3.min_sc_grid @ comp_space_lmtpo3.basis
+             + comp_space_lmtpo3.get_n0())
+    std2 = np.array([[2, 10, 0, 8, 4],
+                     [3, 8, 1, 7, 5],
+                     [4, 6, 2, 6, 6],
+                     [5, 4, 3, 5, 7],
+                     [6, 2, 4, 4, 8],
+                     [7, 0, 5, 3, 9]], dtype=int)
     std3 = np.array([[3, 2, 1, 1, 5],
                      [3, 1, 2, 2, 4],
                      [2, 4, 0, 2, 4],
@@ -280,7 +294,8 @@ def test_enumerate_grid(comp_space_lmtpo, comp_space_lmtpo2, comp_space_lmtpo3):
     npt.assert_array_equal(grid2, std2)
     npt.assert_array_equal(grid3, std3)
 
-    grid = comp_space_lmtpo.get_comp_grid(sc_size=4)
+    grid = (comp_space_lmtpo.get_comp_grid(sc_size=4) @ comp_space_lmtpo.basis
+            + comp_space_lmtpo.get_n0(sc_size=4))
     std = np.array([[0, 4, 0, 4, 0],
                     [1, 2, 1, 3, 1],
                     [2, 0, 2, 2, 2],
@@ -292,18 +307,62 @@ def test_enumerate_grid(comp_space_lmtpo, comp_space_lmtpo2, comp_space_lmtpo3):
     std = np.array(sorted(std.tolist()), dtype=int)
     npt.assert_array_equal(grid, std)
 
-    # Scalability
-    grid = comp_space_lmtpo.get_comp_grid(sc_size=8, step=2)
-    std = np.array([[0, 4, 0, 4, 0],
-                    [1, 2, 1, 3, 1],
-                    [2, 0, 2, 2, 2],
-                    [1, 3, 0, 2, 2],
-                    [1, 1, 2, 4, 0],
-                    [2, 1, 1, 1, 3],
-                    [2, 2, 0, 0, 4]], dtype=int) * 2
+    # Scalability guaranteed in comp_space, which means when sc_size / step
+    # is the same value, the enumerated grid will always be original_grid
+    # * step.
+    min_sc_size = comp_space_lmtpo.min_sc_size
+    grid = comp_space_lmtpo.get_comp_grid(sc_size=2 * min_sc_size, step=2)
+    std = comp_space_lmtpo.min_sc_grid * 2
     grid = np.array(sorted(grid.tolist()), dtype=int)
     std = np.array(sorted(std.tolist()), dtype=int)
     npt.assert_array_equal(grid, std)
+
+    grid = comp_space_lmtpo.get_comp_grid(sc_size=8, step=2)
+    std = comp_space_lmtpo.get_comp_grid(sc_size=4, step=1) * 2
+    std2 = comp_space_lmtpo.get_comp_grid(sc_size=4, step=1) * 2
+    grid = np.array(sorted(grid.tolist()), dtype=int)
+    std = np.array(sorted(std.tolist()), dtype=int)
+    std2 = np.array(sorted(std2.tolist()), dtype=int)
+    npt.assert_array_equal(grid, std)
+    npt.assert_array_equal(grid, std2)
+
+    grid = comp_space_lmtpo2.get_comp_grid(sc_size=12, step=2)
+    std = comp_space_lmtpo2.get_comp_grid(sc_size=6, step=1) * 2
+    std2 = comp_space_lmtpo2.get_comp_grid(sc_size=6, step=1) * 2
+    grid = np.array(sorted(grid.tolist()), dtype=int)
+    std = np.array(sorted(std.tolist()), dtype=int)
+    std2 = np.array(sorted(std2.tolist()), dtype=int)
+    npt.assert_array_equal(grid, std)
+    npt.assert_array_equal(grid, std2)
+
+    grid = comp_space_lmtpo3.get_comp_grid(sc_size=8, step=2)
+    std = comp_space_lmtpo3.get_comp_grid(sc_size=4, step=1) * 2
+    std2 = comp_space_lmtpo3.get_comp_grid(sc_size=4, step=1) * 2
+    grid = np.array(sorted(grid.tolist()), dtype=int)
+    std = np.array(sorted(std.tolist()), dtype=int)
+    std2 = np.array(sorted(std2.tolist()), dtype=int)
+    npt.assert_array_equal(grid, std)
+    npt.assert_array_equal(grid, std2)
+
+    grid1 = comp_space_lmtpo.get_comp_grid(sc_size=10, step=2)
+    grid2 = comp_space_lmtpo.get_comp_grid(sc_size=5, step=1) * 2
+    grid1 = np.array(sorted(grid1.tolist()), dtype=int)
+    grid2 = np.array(sorted(grid2.tolist()), dtype=int)
+    npt.assert_array_equal(grid1, grid2)
+
+
+def test_grid_storage(comp_space_lmtpo):
+    comp_space_lmtpo._comp_grids = {}  # Clear up for new enumeration
+    assert len(comp_space_lmtpo._comp_grids) == 0
+    _ = comp_space_lmtpo.get_comp_grid(sc_size=10, step=2)
+    _ = comp_space_lmtpo.get_comp_grid()
+    _ = comp_space_lmtpo.get_comp_grid(sc_size=24, step=4)
+    _ = comp_space_lmtpo.get_comp_grid(sc_size=16, step=6)
+    _ = comp_space_lmtpo.get_comp_grid(sc_size=8, step=3)
+    _ = comp_space_lmtpo.get_comp_grid(sc_size=12, step=1)
+    _ = comp_space_lmtpo.get_comp_grid(sc_size=24, step=2)
+    keyset = {(5, 1), (6, 1), (8, 3), (12, 1), (1, 1)}
+    assert keyset == set(list(comp_space_lmtpo._comp_grids.keys()))
 
 
 def test_convert_formats(comp_space):

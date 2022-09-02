@@ -422,17 +422,20 @@ def get_natural_centroid(n0, vs, sc_size,
     constraints = [n0[i] + vs[:, i] @ x >= 0 for i in range(d)]
     if a_leq is not None and b_leq is not None:
         for a, bb in zip(a_leq, b_leq):
-            constraints.append(a @ (n0 + x @ vs) / sc_size <= bb + NUM_TOL)
+            constraints.append(a @ (n0 + x @ vs)
+                               <= bb * sc_size)
     if a_geq is not None and b_geq is not None:
         for a, bb in zip(a_geq, b_geq):
-            constraints.append(a @ (n0 + x @ vs) / sc_size >= bb - NUM_TOL)
+            constraints.append(a @ (n0 + x @ vs)
+                               >= bb * sc_size)
     prob = cp.Problem(cp.Minimize(cp.sum_squares(x - centroid)),
                       constraints)
     # Use gurobi if present.
     if "GUROBI" in cp.installed_solvers():
         _ = prob.solve(solver=cp.GUROBI)
     else:
-        _ = prob.solve(solver=cp.ECOS_BB)
+        _ = prob.solve(solver=cp.ECOS_BB, max_iters=200,
+                       abstol=NUM_TOL, feastol=NUM_TOL)
     if x.value is None:
         raise NaturalInfeasibleError
 
