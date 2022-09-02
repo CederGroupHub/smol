@@ -1,8 +1,8 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 
-# ci:  when open add this
-#  autoupdate_schedule: monthly
+ci:
+  autoupdate_schedule: monthly
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -44,7 +44,7 @@ repos:
       args: [--py38-plus]
 
 - repo: https://github.com/myint/autoflake
-  rev: v1.4
+  rev: v1.5.1
   hooks:
     - id: autoflake
       args:
