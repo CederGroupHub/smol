@@ -81,8 +81,10 @@ def occu_to_species_list(occupancy, d, dim_ids_table):
     """
     occu = np.array(occupancy, dtype=int)
     if len(occu) != len(dim_ids_table):
-        raise ValueError(f"Occupancy size {len(occu)} does not match "
-                         f"table size {len(dim_ids_table)}!")
+        raise ValueError(
+            f"Occupancy size {len(occu)} does not match "
+            f"table size {len(dim_ids_table)}!"
+        )
     dim_ids = dim_ids_table[np.arange(len(occu), dtype=int), occu]
     all_sites = np.arange(len(occu), dtype=int)
     return [all_sites[dim_ids == i].tolist() for i in range(d)]
@@ -112,8 +114,10 @@ def occu_to_species_n(occupancy, d, dim_ids_table):
     """
     occu = np.array(occupancy, dtype=int)
     if len(occu) != len(dim_ids_table):
-        raise ValueError(f"Occupancy size {len(occu)} does not match "
-                         f"table size {len(dim_ids_table)}!")
+        raise ValueError(
+            f"Occupancy size {len(occu)} does not match "
+            f"table size {len(dim_ids_table)}!"
+        )
     dim_ids = dim_ids_table[np.arange(len(occu), dtype=int), occu]
     n = np.zeros(d, dtype=int)
     dims, counts = np.unique(dim_ids, return_counts=True)
@@ -152,8 +156,9 @@ def delta_n_from_step(occu, step, d, dim_ids_table):
         dim_ori = dim_ids_table[site, code_ori]
         dim_nex = dim_ids_table[site, code]
         if dim_ori < 0 or dim_nex < 0:
-            raise ValueError(f"Inactive sites or impossible codes "
-                             f"involved in step {step}!")
+            raise ValueError(
+                f"Inactive sites or impossible codes " f"involved in step {step}!"
+            )
         delta_n[dim_ori] -= 1
         delta_n[dim_nex] += 1
         occu_now[site] = code

@@ -6,7 +6,7 @@ import pytest
 
 from smol.moca import SampleContainer, Sampler
 from smol.moca.sampler.kernel import Metropolis
-from smol.moca.sampler.mcusher import Flip, Swap, Tableflip
+from smol.moca.sampler.mcusher import Flip, Swap
 from tests.utils import gen_random_occupancy
 
 TEMPERATURE = 5000

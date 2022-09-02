@@ -3,19 +3,18 @@
 Including linear algebra, combinatorics and integer enumerations.
 """
 
-__author___ = 'Fengyu Xie'
+__author___ = "Fengyu Xie"
 
 import math
-import numpy as np
+from fractions import Fraction
 from functools import reduce
 from itertools import combinations
-from fractions import Fraction
 
 import cvxpy as cp
+import numpy as np
 import polytope as pc
-from scipy.spatial import KDTree
 from scipy.linalg import null_space
-
+from scipy.spatial import KDTree
 
 # Global numerical tolerance in this module.
 NUM_TOL = 1e-6
@@ -27,7 +26,7 @@ class DiopInfeasibleError(Exception):
     def __init__(self):
         """Initialize exception."""
         message = "Diophantine equations have no integer solution!"
-        super(DiopInfeasibleError, self).__init__(message)
+        super().__init__(message)
 
 
 class NaturalInfeasibleError(Exception):
@@ -36,7 +35,7 @@ class NaturalInfeasibleError(Exception):
     def __init__(self):
         """Initialize exception."""
         message = "Diophantine equations have no natural number solution!"
-        super(NaturalInfeasibleError, self).__init__(message)
+        super().__init__(message)
 
 
 def gcd(a, b):
@@ -99,8 +98,7 @@ def comb(n, k):
     if hasattr(math, "comb"):
         return math.comb(n, k)
     else:
-        return (math.factorial(n)
-                // (math.factorial(n - k) * math.factorial(k)))
+        return math.factorial(n) // (math.factorial(n - k) * math.factorial(k))
 
 
 def rationalize_number(a, max_denominator=1000, dtol=NUM_TOL):
@@ -124,8 +122,9 @@ def rationalize_number(a, max_denominator=1000, dtol=NUM_TOL):
     denominator = f.denominator
 
     if abs(float(numerator) / denominator - a) > dtol:
-        raise ValueError("Can't find a rational number near "
-                         "{} within tolerance!".format(a))
+        raise ValueError(
+            "Can't find a rational number near " "{} within tolerance!".format(a)
+        )
 
     return numerator, denominator
 
@@ -154,10 +153,7 @@ def integerize_vector(v, max_denominator=1000, dtol=NUM_TOL):
     denos = []
     v = np.array(v)
     for c in v:
-        _, deno = rationalize_number(
-            c, max_denominator=max_denominator,
-            dtol=dtol
-        )
+        _, deno = rationalize_number(c, max_denominator=max_denominator, dtol=dtol)
         denos.append(deno)
     lcm = lcm_list(denos)
     return np.array(np.round(v * lcm), dtype=np.int64), lcm
@@ -182,9 +178,9 @@ def integerize_multiple(vs, max_denominator=1000, dtol=NUM_TOL):
     vs = np.array(vs)
     shp = vs.shape
     vs_flatten = vs.flatten()
-    vs_flat_int, mul = integerize_vector(vs_flatten,
-                                         max_denominator=max_denominator,
-                                         dtol=dtol)
+    vs_flat_int, mul = integerize_vector(
+        vs_flatten, max_denominator=max_denominator, dtol=dtol
+    )
     vs_int = np.reshape(vs_flat_int, shp)
     return vs_int, mul
 
@@ -314,8 +310,7 @@ def solve_diophantines(A, b=None):
     """
     A = np.array(A, dtype=int)
     n, d = A.shape
-    b = (np.array(b, dtype=int) if b is not None
-         else np.zeros(d, dtype=int))
+    b = np.array(b, dtype=int) if b is not None else np.zeros(d, dtype=int)
     # If you choose b=0, the equations may not have
     # any natural number solution!
 
@@ -340,7 +335,7 @@ def solve_diophantines(A, b=None):
             raise DiopInfeasibleError
 
     # Get base solution
-    n0 = V[:, :k] @ (c[: k] // B.diagonal()[: k])
+    n0 = V[:, :k] @ (c[:k] // B.diagonal()[:k])
 
     return n0, V[:, k:].transpose().copy()
 
@@ -374,18 +369,18 @@ def get_nonneg_float_vertices(A, b):
     verts = pc.extreme(poly)
     if len(verts) == 0:
         if pc.is_empty(poly):
-            raise ValueError("Provided equation An=b is not feasible "
-                             "under n>=0.")
+            raise ValueError("Provided equation An=b is not feasible " "under n>=0.")
         else:
-            raise ValueError("Provided equation An=b is not fill "
-                             "dimensional under n>=0.")
+            raise ValueError(
+                "Provided equation An=b is not fill " "dimensional under n>=0."
+            )
     verts = verts @ vs + n0
     return verts
 
 
-def get_natural_centroid(n0, vs, sc_size,
-                         a_leq=None, b_leq=None,
-                         a_geq=None, b_geq=None):
+def get_natural_centroid(
+    n0, vs, sc_size, a_leq=None, b_leq=None, a_geq=None, b_geq=None
+):
     """Get the natural number solution closest to centroid.
 
     Done by linear programming, minimize:
@@ -422,20 +417,18 @@ def get_natural_centroid(n0, vs, sc_size,
     constraints = [n0[i] + vs[:, i] @ x >= 0 for i in range(d)]
     if a_leq is not None and b_leq is not None:
         for a, bb in zip(a_leq, b_leq):
-            constraints.append(a @ (n0 + x @ vs)
-                               <= bb * sc_size)
+            constraints.append(a @ (n0 + x @ vs) <= bb * sc_size)
     if a_geq is not None and b_geq is not None:
         for a, bb in zip(a_geq, b_geq):
-            constraints.append(a @ (n0 + x @ vs)
-                               >= bb * sc_size)
-    prob = cp.Problem(cp.Minimize(cp.sum_squares(x - centroid)),
-                      constraints)
+            constraints.append(a @ (n0 + x @ vs) >= bb * sc_size)
+    prob = cp.Problem(cp.Minimize(cp.sum_squares(x - centroid)), constraints)
     # Use gurobi if present.
     if "GUROBI" in cp.installed_solvers():
         _ = prob.solve(solver=cp.GUROBI)
     else:
-        _ = prob.solve(solver=cp.ECOS_BB, max_iters=200,
-                       abstol=NUM_TOL, feastol=NUM_TOL)
+        _ = prob.solve(
+            solver=cp.ECOS_BB, max_iters=200, abstol=NUM_TOL, feastol=NUM_TOL
+        )
     if x.value is None:
         raise NaturalInfeasibleError
 
@@ -481,16 +474,12 @@ def get_one_dim_solutions(n0, v, integer_tol=NUM_TOL, step=1):
             if n0[i] < 0:  # Dim i not feasible.
                 return np.array([], dtype=int)
 
-    if x_min <= - np.inf or x_max >= np.inf:
+    if x_min <= -np.inf or x_max >= np.inf:
         raise ValueError("Inequalities are not bounded!")
     # If close to an integer, shift to it.
     # This is to prevent error in floor and ceil.
-    x_min = (round(x_min)
-             if abs(x_min - round(x_min)) <= integer_tol
-             else x_min)
-    x_max = (round(x_max)
-             if abs(x_max - round(x_max)) <= integer_tol
-             else x_max)
+    x_min = round(x_min) if abs(x_min - round(x_min)) <= integer_tol else x_min
+    x_max = round(x_max) if abs(x_max - round(x_max)) <= integer_tol else x_max
 
     n_min = np.ceil(x_min)
     n_max = np.floor(x_max)
@@ -515,8 +504,7 @@ def get_first_dim_extremes(a, b):
     b = np.array(b)
     n, d = a.shape
     if len(b) != n:
-        raise ValueError(f"Constraint matrix {a} and "
-                         f"vector {b} does not match!")
+        raise ValueError(f"Constraint matrix {a} and " f"vector {b} does not match!")
     x1 = cp.Variable(d)
     prob1 = cp.Problem(cp.Minimize(x1[0]), [a @ x1 <= b])
     _ = prob1.solve()
@@ -577,26 +565,20 @@ def get_natural_solutions(n0, vs, integer_tol=NUM_TOL, step=1):
 
     n, d = vs.shape
     if n == 1:
-        sols = get_one_dim_solutions(n0, vs[0, :],
-                                     integer_tol=integer_tol,
-                                     step=step)
+        sols = get_one_dim_solutions(n0, vs[0, :], integer_tol=integer_tol, step=step)
         sols = sols.reshape(-1, 1)
 
         return sols
 
     x_min, x_max = get_first_dim_extremes(-1 * vs.transpose(), n0)
-    if x_min <= - np.inf or x_max >= np.inf:
+    if x_min <= -np.inf or x_max >= np.inf:
         raise ValueError("Inequalities are not bounded!")
     # Do not use polytope module here. A polytope cannot be take extreme
     # if it is not feasible or has 0 volume.
     # Always branch the 1st dimension.
 
-    x_min = (round(x_min)
-             if abs(x_min - round(x_min)) <= integer_tol
-             else x_min)
-    x_max = (round(x_max)
-             if abs(x_max - round(x_max)) <= integer_tol
-             else x_max)
+    x_min = round(x_min) if abs(x_min - round(x_min)) <= integer_tol else x_min
+    x_max = round(x_max) if abs(x_max - round(x_max)) <= integer_tol else x_max
 
     n_min = np.ceil(x_min)
     n_max = np.floor(x_max)
@@ -608,14 +590,13 @@ def get_natural_solutions(n0, vs, integer_tol=NUM_TOL, step=1):
         for m in n_range:
             n0_next = m * vs[0, :] + n0
             vs_next = vs[1:, :]
-            sols_m = (get_natural_solutions(
-                n0_next, vs_next,
-                integer_tol=integer_tol, step=step)
+            sols_m = get_natural_solutions(
+                n0_next, vs_next, integer_tol=integer_tol, step=step
             )
             if len(sols_m) > 0:
-                sols_m = np.append(m * np.ones(len(sols_m),
-                                               dtype=int).reshape(-1, 1),
-                                   sols_m, axis=-1)
+                sols_m = np.append(
+                    m * np.ones(len(sols_m), dtype=int).reshape(-1, 1), sols_m, axis=-1
+                )
             else:
                 sols_m = np.array([], dtype=int).reshape(-1, n)
             sols.append(sols_m)
@@ -645,8 +626,7 @@ def flip_size(u):
     """
     u = np.array(u, dtype=int)
     if np.sum(u) != 0:
-        raise ValueError(f"Flip vector {u} does not"
-                         "conserve number of sites!")
+        raise ValueError(f"Flip vector {u} does not" "conserve number of sites!")
     return np.sum(u[u > 0])
 
 
@@ -662,8 +642,8 @@ def count_row_matches(a1, a2):
     """
     a1 = np.array(a1, dtype=int)
     a2 = np.array(a2, dtype=int)
-    s1 = set([tuple(r) for r in a1])
-    s2 = set([tuple(r) for r in a2])
+    s1 = {tuple(r) for r in a1}
+    s2 = {tuple(r) for r in a2}
     return len(s1 & s2)
 
 
@@ -714,9 +694,7 @@ def is_connected(n, vs, ns):
     vs = np.array(vs, dtype=int)
     ns = np.array(ns, dtype=int)
     n_images = np.concatenate((vs, -vs), axis=0) + n
-    return np.any(np.all(np.isclose(n_images[:, None, :],
-                                    ns[None, :, :]),
-                         axis=-1))
+    return np.any(np.all(np.isclose(n_images[:, None, :], ns[None, :, :]), axis=-1))
 
 
 def get_optimal_basis(n0, vs, xs, max_loops=100):
@@ -791,8 +769,7 @@ def get_optimal_basis(n0, vs, xs, max_loops=100):
     for _ in range(max_loops):
         V = vs_opt.copy()
         for i1, i2 in combinations(list(range(n)), 2):
-            V = np.concatenate((V, [V[i1] + V[i2], V[i1] - V[i2]]),
-                               axis=0)
+            V = np.concatenate((V, [V[i1] + V[i2], V[i1] - V[i2]]), axis=0)
 
         V = np.array(sorted(V, key=key_func), dtype=int)
         vs_new = np.array([], dtype=int).reshape(0, d)
@@ -800,8 +777,7 @@ def get_optimal_basis(n0, vs, xs, max_loops=100):
             if len(vs_new) == n:
                 break
             vs_current = np.concatenate((vs_new, [V[i]]), axis=0)
-            if np.linalg.matrix_rank(vs_current) \
-                    == min(vs_current.shape):
+            if np.linalg.matrix_rank(vs_current) == min(vs_current.shape):
                 # Full rank.
                 vs_new = vs_current.copy()
 
@@ -846,9 +822,9 @@ def get_ergodic_vectors(n0, vs, xs, k=3):
         Basis + Flip directions added to guarantee ergodicity:
             2D np.ndarray[int]
     """
+
     def test_connected(vs, ns_disconnected, ns):
-        return np.array([is_connected(n, vs, ns)
-                         for n in ns_disconnected], dtype=bool)
+        return np.array([is_connected(n, vs, ns) for n in ns_disconnected], dtype=bool)
 
     def candidate_key(u):
         return flip_size(u)
@@ -858,7 +834,7 @@ def get_ergodic_vectors(n0, vs, xs, k=3):
     vs = np.array(vs, dtype=int)
     ns = xs @ vs + n0
     connected = test_connected(vs, ns, ns)
-    ns_disconnected = ns[~ connected]
+    ns_disconnected = ns[~connected]
     if len(ns_disconnected) == 0:
         return vs
 
@@ -872,13 +848,14 @@ def get_ergodic_vectors(n0, vs, xs, k=3):
         points = ns[point_ids, :]
         for point in points:
             u = point - n
-            if (tuple(u.tolist()) in candidate_vectors
-                    or tuple((-u).tolist()) in candidate_vectors):
+            if (
+                tuple(u.tolist()) in candidate_vectors
+                or tuple((-u).tolist()) in candidate_vectors
+            ):
                 continue
             candidate_vectors.append(tuple(u.tolist()))
 
-    candidate_vectors = sorted(candidate_vectors,
-                               key=candidate_key)
+    candidate_vectors = sorted(candidate_vectors, key=candidate_key)
     candidate_vectors = np.array(candidate_vectors, dtype=int)
     selected_vectors = vs.copy()
     ns_rem = ns_disconnected.copy()
@@ -886,7 +863,7 @@ def get_ergodic_vectors(n0, vs, xs, k=3):
         vs_current = np.concatenate((selected_vectors, [u]), axis=0)
         connected = test_connected(vs_current, ns_rem, ns)
         selected_vectors = vs_current.copy()
-        ns_rem = ns_rem[~ connected]
+        ns_rem = ns_rem[~connected]
         if len(ns_rem) == 0:
             break
 
@@ -925,8 +902,9 @@ def flip_weights_mask(flip_vectors, n, max_n=None):
         max_n = np.ones(len(n), dtype=int) * max_n
     else:
         max_n = np.array(max_n, dtype=int)
-    return ~(np.any(directions + n < 0, axis=-1)
-             | np.any(directions + n > max_n, axis=-1))
+    return ~(
+        np.any(directions + n < 0, axis=-1) | np.any(directions + n > max_n, axis=-1)
+    )
 
 
 # Probability selection tools

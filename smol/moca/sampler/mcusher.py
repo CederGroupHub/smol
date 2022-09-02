@@ -10,21 +10,28 @@ More complex steps can be defined simply by deriving from the MCUsher.
 
 __author__ = "Luis Barroso-Luque, Fengyu Xie"
 
-from abc import ABC, abstractmethod
-import numpy as np
 import warnings
+from abc import ABC, abstractmethod
+
+import numpy as np
 from scipy.special import gammaln
 
-from smol.utils import derived_class_factory, class_name_from_str
-from ..comp_space import CompSpace
+from smol.utils import class_name_from_str, derived_class_factory
 
-from ..utils.occu_utils import (get_dim_ids_by_sublattice,
-                                get_dim_ids_table,
-                                occu_to_species_list,
-                                occu_to_species_n,
-                                delta_n_from_step)
-from ..utils.math_utils import (choose_section_from_partition, gcd_list,
-                                flip_weights_mask, NUM_TOL)
+from ..comp_space import CompSpace
+from ..utils.math_utils import (
+    NUM_TOL,
+    choose_section_from_partition,
+    flip_weights_mask,
+    gcd_list,
+)
+from ..utils.occu_utils import (
+    delta_n_from_step,
+    get_dim_ids_by_sublattice,
+    get_dim_ids_table,
+    occu_to_species_list,
+    occu_to_species_n,
+)
 
 
 class MCUsher(ABC):
@@ -200,13 +207,18 @@ class Tableflip(MCUsher):
     write.
     """
 
-    def __init__(self, sublattices, rng=None,
-                 flip_table=None,
-                 charge_balanced=True,
-                 other_constraints=None,
-                 optimize_basis=False,
-                 table_ergodic=False,
-                 flip_weights=None, swap_weight=0.1):
+    def __init__(
+        self,
+        sublattices,
+        rng=None,
+        flip_table=None,
+        charge_balanced=True,
+        other_constraints=None,
+        optimize_basis=False,
+        table_ergodic=False,
+        flip_weights=None,
+        swap_weight=0.1,
+    ):
         """Initialize Tableflip.
 
         Args:
@@ -269,23 +281,27 @@ class Tableflip(MCUsher):
         sub-lattices is not meaningful. We will always assign
         sub-lattice probabilties as equal.
         """
-        super(Tableflip, self).__init__(sublattices, rng=rng)
+        super().__init__(sublattices, rng=rng)
         self.bits = [sl.species for sl in self.sublattices]
         self.dim_ids = get_dim_ids_by_sublattice(self.bits)
-        self.sl_sizes = np.array([len(sl.sites) for sl in self.sublattices],
-                                 dtype=int)
+        self.sl_sizes = np.array([len(sl.sites) for sl in self.sublattices], dtype=int)
         self.sc_size = gcd_list(self.sl_sizes)
         self.sl_sizes = self.sl_sizes // self.sc_size
-        self.max_n = [len(sublatt.active_sites)
-                      for sublatt in self.sublattices
-                      for _ in sublatt.species]
+        self.max_n = [
+            len(sublatt.active_sites)
+            for sublatt in self.sublattices
+            for _ in sublatt.species
+        ]
         self.d = len(self.max_n)
 
-        self._compspace = CompSpace(self.bits, self.sl_sizes,
-                                    charge_balanced=charge_balanced,
-                                    other_constraints=other_constraints,
-                                    optimize_basis=optimize_basis,
-                                    table_ergodic=table_ergodic)
+        self._compspace = CompSpace(
+            self.bits,
+            self.sl_sizes,
+            charge_balanced=charge_balanced,
+            other_constraints=other_constraints,
+            optimize_basis=optimize_basis,
+            table_ergodic=table_ergodic,
+        )
 
         if flip_table is not None:
             self.flip_table = np.array(flip_table, dtype=int)
@@ -298,12 +314,16 @@ class Tableflip(MCUsher):
         if flip_weights is None:
             self.flip_weights = np.ones(len(self.flip_table) * 2)
         else:
-            if (len(flip_weights) != len(self.flip_table)
-                    and len(flip_weights) != len(self.flip_table) * 2):
-                raise ValueError(f"{len(flip_weights)} weights provided. "
-                                 "You must provide either 1* or 2* weights "
-                                 f"given {len(self.flip_table)} flip "
-                                 "vectors!")
+            if (
+                len(flip_weights) != len(self.flip_table)
+                and len(flip_weights) != len(self.flip_table) * 2
+            ):
+                raise ValueError(
+                    f"{len(flip_weights)} weights provided. "
+                    "You must provide either 1* or 2* weights "
+                    f"given {len(self.flip_table)} flip "
+                    "vectors!"
+                )
             # Forward and backward directions are assigned equal weights.
             if len(flip_weights) == len(self.flip_table):
                 self.flip_weights = np.repeat(flip_weights, 2)
@@ -311,10 +331,8 @@ class Tableflip(MCUsher):
                 self.flip_weights = np.array(flip_weights)
 
         self._swapper = Swap(self.sublattices)
-        self._dim_ids_table = get_dim_ids_table(self.sublattices,
-                                                active_only=True)
-        self._dim_ids_full = get_dim_ids_table(self.sublattices,
-                                               active_only=False)
+        self._dim_ids_table = get_dim_ids_table(self.sublattices, active_only=True)
+        self._dim_ids_full = get_dim_ids_table(self.sublattices, active_only=False)
 
     def propose_step(self, occupancy):
         """Propose a single random flip step.
@@ -345,33 +363,34 @@ class Tableflip(MCUsher):
             return self._swapper.propose_step(occupancy)
 
         # We shall only flip active sites. And only active sites stated.
-        species_list = occu_to_species_list(occupancy, self.d,
-                                            self._dim_ids_table)
+        species_list = occu_to_species_list(occupancy, self.d, self._dim_ids_table)
         species_n = [len(sites) for sites in species_list]
-        species_list_full = occu_to_species_list(occupancy,
-                                                 self.d,
-                                                 self._dim_ids_full)
+        species_list_full = occu_to_species_list(occupancy, self.d, self._dim_ids_full)
         species_n_full = [len(sites) for sites in species_list_full]
 
-        if not np.allclose(self._compspace.A @ np.array(species_n_full),
-                           self._compspace.b * self.sc_size):
-            warnings.warn("Current occupancy violates compspace constraints! "
-                          "Are you initializing trace?")
+        if not np.allclose(
+            self._compspace.A @ np.array(species_n_full),
+            self._compspace.b * self.sc_size,
+        ):
+            warnings.warn(
+                "Current occupancy violates compspace constraints! "
+                "Are you initializing trace?"
+            )
             mask = np.zeros(2 * len(self.flip_table), dtype=int)
         else:
-            mask = flip_weights_mask(self.flip_table,
-                                     species_n,
-                                     self.max_n).astype(int)
+            mask = flip_weights_mask(self.flip_table, species_n, self.max_n).astype(int)
         masked_weights = self.flip_weights * mask
         # Mask out impossible selections.
         if np.any(masked_weights <= -NUM_TOL):
-            raise ValueError(f"Masked weights: {masked_weights}"
-                             f" cannot have negative value!")
+            raise ValueError(
+                f"Masked weights: {masked_weights}" f" cannot have negative value!"
+            )
         if np.allclose(masked_weights, 0):
             # Second condition to mute mckernel trace init.
             if not np.allclose(occupancy, 0):
-                warnings.warn("Current occupancy is not ergodic! "
-                              "Will do canonical swap only!")
+                warnings.warn(
+                    "Current occupancy is not ergodic! " "Will do canonical swap only!"
+                )
             return self._swapper.propose_step(occupancy)
 
         idx = choose_section_from_partition(masked_weights, rng=rng)
@@ -382,8 +401,7 @@ class Tableflip(MCUsher):
 
         # Sub-lattices can not cross.
         step = []
-        for sl_id, (sublatt, dim_ids) \
-                in enumerate(zip(self.sublattices, self.dim_ids)):
+        for sl_id, (sublatt, dim_ids) in enumerate(zip(self.sublattices, self.dim_ids)):
             if not sublatt.is_active:
                 continue
             site_ids = []
@@ -393,12 +411,11 @@ class Tableflip(MCUsher):
             dims_to = dim_ids[u_sl > 0]
             codes_to = sublatt.encoding[u_sl > 0]
             for d in dims_from:
-                site_ids.extend(rng.choice(species_list[d],
-                                           size=-1 * u[d],
-                                           replace=False).tolist())
+                site_ids.extend(
+                    rng.choice(species_list[d], size=-1 * u[d], replace=False).tolist()
+                )
             for d, code in zip(dims_to, codes_to):
-                for site_id in rng.choice(site_ids, size=u[d],
-                                          replace=False):
+                for site_id in rng.choice(site_ids, size=u[d], replace=False):
                     step.append((int(site_id), int(code)))
                     site_ids.remove(site_id)
             assert len(site_ids) == 0  # Site num conservation.
@@ -407,8 +424,7 @@ class Tableflip(MCUsher):
 
     def _get_flip_id(self, occupancy, step):
         """Compute flip id in table from occupancy and step."""
-        dn = delta_n_from_step(occupancy, step, self.d,
-                               self._dim_ids_table)
+        dn = delta_n_from_step(occupancy, step, self.d, self._dim_ids_table)
 
         if np.allclose(dn, 0):
             return -1, 0
@@ -447,21 +463,23 @@ class Tableflip(MCUsher):
 
         u = (-2 * direction + 1) * self.flip_table[fid]
 
-        n_now = occu_to_species_n(occupancy, self.d,
-                                  self._dim_ids_table)
-        mask_now = flip_weights_mask(self.flip_table,
-                                     n_now, self.max_n).astype(int)
+        n_now = occu_to_species_n(occupancy, self.d, self._dim_ids_table)
+        mask_now = flip_weights_mask(self.flip_table, n_now, self.max_n).astype(int)
         weights_now = self.flip_weights * mask_now
-        p_now = ((1 - self.swap_weight) * weights_now[fid * 2 + direction]
-                 / weights_now.sum())
+        p_now = (
+            (1 - self.swap_weight)
+            * weights_now[fid * 2 + direction]
+            / weights_now.sum()
+        )
 
         n_next = n_now + u
-        mask_next = flip_weights_mask(self.flip_table,
-                                      n_next, self.max_n).astype(int)
+        mask_next = flip_weights_mask(self.flip_table, n_next, self.max_n).astype(int)
         weights_next = self.flip_weights * mask_next
-        p_next = ((1 - self.swap_weight)
-                  * weights_next[fid * 2 + (1 - direction)]
-                  / weights_next.sum())
+        p_next = (
+            (1 - self.swap_weight)
+            * weights_next[fid * 2 + (1 - direction)]
+            / weights_next.sum()
+        )
 
         # Combinatorial factor.
         log_factor = np.log(p_next / p_now)
@@ -470,6 +488,7 @@ class Tableflip(MCUsher):
 
         def facln(n):  # log(n!), will speed up calculations.
             return gammaln(n + 1)
+
         for dim in dims_nonzero:
             log_factor += facln(n_now[dim]) - facln(n_next[dim])
 

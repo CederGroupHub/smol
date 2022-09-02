@@ -1,17 +1,24 @@
-import pytest
-import numpy.testing as npt
 import itertools
 import re
 from copy import deepcopy
 
-from smol.moca.comp_space import *
+import numpy.testing as npt
+import pytest
+from pymatgen.core import Composition, Species
+
 from smol.cofe.space.domain import Vacancy
-from pymatgen.core import Species, Composition
-
-from smol.moca.utils.math_utils import (gcd_list, NUM_TOL,
-                                        compute_snf)
+from smol.moca.comp_space import (
+    CompSpace,
+    CompUnNormalizedError,
+    ConstraintIntegerizeError,
+    ConstraintViolationError,
+    NegativeSpeciesError,
+    RoundingError,
+    integerize_vector,
+    np,
+)
+from smol.moca.utils.math_utils import NUM_TOL, compute_snf, gcd_list
 from smol.moca.utils.occu_utils import get_dim_ids_by_sublattice
-
 from tests.utils import assert_msonable, assert_table_set_equal
 
 
@@ -26,82 +33,89 @@ def comp_space(ensemble):
 
 @pytest.fixture(scope="module")
 def comp_space_lmtpo():
-    li = Species.from_string('Li+')
-    mn = Species.from_string('Mn3+')
-    ti = Species.from_string('Ti4+')
-    o = Species.from_string('O2-')
-    p = Species.from_string('P3-')
+    li = Species.from_string("Li+")
+    mn = Species.from_string("Mn3+")
+    ti = Species.from_string("Ti4+")
+    o = Species.from_string("O2-")
+    p = Species.from_string("P3-")
 
     bits = [[li, mn, ti], [p, o]]
     sl_sizes = [1, 1]
-    return CompSpace(bits, sl_sizes,
-                     charge_balanced=True,
-                     optimize_basis=True,
-                     table_ergodic=True)
+    return CompSpace(
+        bits, sl_sizes, charge_balanced=True, optimize_basis=True, table_ergodic=True
+    )
 
 
 @pytest.fixture(scope="module")
 def comp_space_lmtpo2():
-    li = Species.from_string('Li+')
-    mn = Species.from_string('Mn3+')
-    ti = Species.from_string('Ti4+')
-    o = Species.from_string('O2-')
-    p = Species.from_string('P3-')
+    li = Species.from_string("Li+")
+    mn = Species.from_string("Mn3+")
+    ti = Species.from_string("Ti4+")
+    o = Species.from_string("O2-")
+    p = Species.from_string("P3-")
 
     bits = [[li, mn, ti], [p, o]]
     sl_sizes = [1, 1]
-    return CompSpace(bits, sl_sizes,
-                     charge_balanced=True,
-                     optimize_basis=True,
-                     table_ergodic=True,
-                     other_constraints=
-                     [([2, 1, 0, 0, 0], 7 / 6)])
+    return CompSpace(
+        bits,
+        sl_sizes,
+        charge_balanced=True,
+        optimize_basis=True,
+        table_ergodic=True,
+        other_constraints=[([2, 1, 0, 0, 0], 7 / 6)],
+    )
 
 
 @pytest.fixture(scope="module")
 def comp_space_lmtpo3():
-    li = Species.from_string('Li+')
-    mn = Species.from_string('Mn3+')
-    ti = Species.from_string('Ti4+')
-    o = Species.from_string('O2-')
-    p = Species.from_string('P3-')
+    li = Species.from_string("Li+")
+    mn = Species.from_string("Mn3+")
+    ti = Species.from_string("Ti4+")
+    o = Species.from_string("O2-")
+    p = Species.from_string("P3-")
 
     bits = [[li, mn, ti], [p, o]]
     sl_sizes = [1, 1]
-    return CompSpace(bits, sl_sizes,
-                     charge_balanced=True,
-                     optimize_basis=True,
-                     table_ergodic=True,
-                     leq_constraints=
-                     [([0, 1, 0, 0, 0], 5 / 6),
-                      ([0, 0, 0, 1, 0], 5 / 6),
-                      ([2, 1, 0, 0, 0], 8 / 6)],
-                     geq_constraints=
-                     [([0, 1, 0, 0, 0], 1 / 6),
-                      ([0, 0, 0, 1, 0], 1 / 6),
-                      ([2, 1, 0, 0, 0], 5 / 6)],
-                     )
+    return CompSpace(
+        bits,
+        sl_sizes,
+        charge_balanced=True,
+        optimize_basis=True,
+        table_ergodic=True,
+        leq_constraints=[
+            ([0, 1, 0, 0, 0], 5 / 6),
+            ([0, 0, 0, 1, 0], 5 / 6),
+            ([2, 1, 0, 0, 0], 8 / 6),
+        ],
+        geq_constraints=[
+            ([0, 1, 0, 0, 0], 1 / 6),
+            ([0, 0, 0, 1, 0], 1 / 6),
+            ([2, 1, 0, 0, 0], 5 / 6),
+        ],
+    )
 
 
 # A test example with extra constraints.
 @pytest.fixture(scope="module")
 def comp_space_lmntof():
-    li = Species.from_string('Li+')
-    ni = Species.from_string('Ni2+')
-    mn = Species.from_string('Mn3+')
-    ti = Species.from_string('Ti4+')
-    f = Species.from_string('F-')
-    o = Species.from_string('O2-')
+    li = Species.from_string("Li+")
+    ni = Species.from_string("Ni2+")
+    mn = Species.from_string("Mn3+")
+    ti = Species.from_string("Ti4+")
+    f = Species.from_string("F-")
+    o = Species.from_string("O2-")
 
     bits = [[li, ni, mn, ti], [o, f]]
     sl_sizes = [1, 1]
-    other_constraints = [([0, 1, -1, 0, 0, 0], 0),
-                         ([0, 0, 1, -1, 0, 0], 0)]
-    return CompSpace(bits, sl_sizes,
-                     other_constraints=other_constraints,
-                     charge_balanced=True,
-                     optimize_basis=True,
-                     table_ergodic=True)
+    other_constraints = [([0, 1, -1, 0, 0, 0], 0), ([0, 0, 1, -1, 0, 0], 0)]
+    return CompSpace(
+        bits,
+        sl_sizes,
+        other_constraints=other_constraints,
+        charge_balanced=True,
+        optimize_basis=True,
+        table_ergodic=True,
+    )
 
 
 # Generic attributes test.
@@ -138,11 +152,10 @@ def test_generic_attributes(comp_space):
 
     prim_verts = comp_space.prim_vertices
     assert prim_verts.shape[1] == A.shape[1]
-    npt.assert_almost_equal(A @ prim_verts.T - b[:, None],
-                            0, decimal=6)
+    npt.assert_almost_equal(A @ prim_verts.T - b[:, None], 0, decimal=6)
     assert np.all(np.any(np.isclose(prim_verts, 0, atol=NUM_TOL), axis=-1))
 
-    if comp_space.n_comps_estimate < 10 ** 6:
+    if comp_space.n_comps_estimate < 10**6:
         scs = [1, min_sc, min_sc * 2] + ([min_sc // 2] if min_sc >= 2 else [])
         for sc in scs:
             if not np.allclose(sc * comp_space.b, np.round(sc * comp_space.b)):
@@ -195,30 +208,29 @@ def test_generic_attributes(comp_space):
 
 def test_serialize(comp_space):
     _ = comp_space.flip_table
-    if comp_space.n_comps_estimate < 10 ** 6:
+    if comp_space.n_comps_estimate < 10**6:
         _ = comp_space.min_sc_grid
     assert_msonable(comp_space)
     comp_space_reload = CompSpace.from_dict(comp_space.as_dict())
-    npt.assert_array_equal(comp_space_reload._flip_table,
-                           comp_space._flip_table)
-    npt.assert_array_equal(comp_space_reload._vs,
-                           comp_space._vs)
+    npt.assert_array_equal(comp_space_reload._flip_table, comp_space._flip_table)
+    npt.assert_array_equal(comp_space_reload._vs, comp_space._vs)
 
-    npt.assert_array_equal(comp_space_reload._n0,
-                           comp_space._n0)
+    npt.assert_array_equal(comp_space_reload._n0, comp_space._n0)
 
-    npt.assert_array_equal(comp_space_reload._min_sc_size,
-                           comp_space._min_sc_size)
-    assert (set(list(comp_space._comp_grids.keys()))
-            == set(list(comp_space_reload._comp_grids.keys())))
+    npt.assert_array_equal(comp_space_reload._min_sc_size, comp_space._min_sc_size)
+    assert set(list(comp_space._comp_grids.keys())) == set(
+        list(comp_space_reload._comp_grids.keys())
+    )
     for k in comp_space._comp_grids.keys():
-        npt.assert_array_equal(comp_space._comp_grids[k],
-                               comp_space_reload._comp_grids[k])
+        npt.assert_array_equal(
+            comp_space._comp_grids[k], comp_space_reload._comp_grids[k]
+        )
 
 
 # Pre-computed data test.
-def test_sc_size(comp_space_lmtpo, comp_space_lmtpo2,
-                 comp_space_lmtpo3, comp_space_lmntof):
+def test_sc_size(
+    comp_space_lmtpo, comp_space_lmtpo2, comp_space_lmtpo3, comp_space_lmntof
+):
     assert comp_space_lmtpo.min_sc_size == 6
     assert comp_space_lmtpo2.min_sc_size == 12
     assert comp_space_lmtpo3.min_sc_size == 6
@@ -230,8 +242,9 @@ def test_n_comps_est(comp_space_lmtpo, comp_space_lmntof):
     assert comp_space_lmntof.n_comps_estimate == 46656
 
 
-def test_basis(comp_space_lmtpo, comp_space_lmtpo2,
-               comp_space_lmtpo3, comp_space_lmntof):
+def test_basis(
+    comp_space_lmtpo, comp_space_lmtpo2, comp_space_lmtpo3, comp_space_lmntof
+):
     vs1 = comp_space_lmtpo.basis
     vs2 = comp_space_lmntof.basis
     vs3 = comp_space_lmtpo2.basis
@@ -241,8 +254,7 @@ def test_basis(comp_space_lmtpo, comp_space_lmtpo2,
     ts3 = comp_space_lmtpo2.flip_table
     ts4 = comp_space_lmtpo3.flip_table
     # Pre-computed optimal basis
-    std1 = np.array([[0, -1, 1, 1, -1],
-                     [-1, 1, 0, 2, -2]], dtype=int)
+    std1 = np.array([[0, -1, 1, 1, -1], [-1, 1, 0, 2, -2]], dtype=int)
     std2 = np.array([[-3, 1, 1, 1, 6, -6]], dtype=int)
     std3 = np.array([[-1, 2, -1, 1, -1]], dtype=int)
 
@@ -269,24 +281,38 @@ def test_get_n0(comp_space):
 
 def test_enumerate_grid(comp_space_lmtpo, comp_space_lmtpo2, comp_space_lmtpo3):
     # Convert x-format to n-format
-    grid2 = (comp_space_lmtpo2.min_sc_grid @ comp_space_lmtpo2.basis
-             + comp_space_lmtpo2.get_n0())
-    grid3 = (comp_space_lmtpo3.min_sc_grid @ comp_space_lmtpo3.basis
-             + comp_space_lmtpo3.get_n0())
-    std2 = np.array([[2, 10, 0, 8, 4],
-                     [3, 8, 1, 7, 5],
-                     [4, 6, 2, 6, 6],
-                     [5, 4, 3, 5, 7],
-                     [6, 2, 4, 4, 8],
-                     [7, 0, 5, 3, 9]], dtype=int)
-    std3 = np.array([[3, 2, 1, 1, 5],
-                     [3, 1, 2, 2, 4],
-                     [2, 4, 0, 2, 4],
-                     [2, 3, 1, 3, 3],
-                     [2, 2, 2, 4, 2],
-                     [1, 5, 0, 4, 2],
-                     [2, 1, 3, 5, 1],
-                     [1, 4, 1, 5, 1]], dtype=int)
+    grid2 = (
+        comp_space_lmtpo2.min_sc_grid @ comp_space_lmtpo2.basis
+        + comp_space_lmtpo2.get_n0()
+    )
+    grid3 = (
+        comp_space_lmtpo3.min_sc_grid @ comp_space_lmtpo3.basis
+        + comp_space_lmtpo3.get_n0()
+    )
+    std2 = np.array(
+        [
+            [2, 10, 0, 8, 4],
+            [3, 8, 1, 7, 5],
+            [4, 6, 2, 6, 6],
+            [5, 4, 3, 5, 7],
+            [6, 2, 4, 4, 8],
+            [7, 0, 5, 3, 9],
+        ],
+        dtype=int,
+    )
+    std3 = np.array(
+        [
+            [3, 2, 1, 1, 5],
+            [3, 1, 2, 2, 4],
+            [2, 4, 0, 2, 4],
+            [2, 3, 1, 3, 3],
+            [2, 2, 2, 4, 2],
+            [1, 5, 0, 4, 2],
+            [2, 1, 3, 5, 1],
+            [1, 4, 1, 5, 1],
+        ],
+        dtype=int,
+    )
     grid2 = np.array(sorted(grid2.tolist()), dtype=int)
     grid3 = np.array(sorted(grid3.tolist()), dtype=int)
     std2 = np.array(sorted(std2.tolist()), dtype=int)
@@ -294,15 +320,21 @@ def test_enumerate_grid(comp_space_lmtpo, comp_space_lmtpo2, comp_space_lmtpo3):
     npt.assert_array_equal(grid2, std2)
     npt.assert_array_equal(grid3, std3)
 
-    grid = (comp_space_lmtpo.get_comp_grid(sc_size=4) @ comp_space_lmtpo.basis
-            + comp_space_lmtpo.get_n0(sc_size=4))
-    std = np.array([[0, 4, 0, 4, 0],
-                    [1, 2, 1, 3, 1],
-                    [2, 0, 2, 2, 2],
-                    [1, 3, 0, 2, 2],
-                    [1, 1, 2, 4, 0],
-                    [2, 1, 1, 1, 3],
-                    [2, 2, 0, 0, 4]], dtype=int)
+    grid = comp_space_lmtpo.get_comp_grid(
+        sc_size=4
+    ) @ comp_space_lmtpo.basis + comp_space_lmtpo.get_n0(sc_size=4)
+    std = np.array(
+        [
+            [0, 4, 0, 4, 0],
+            [1, 2, 1, 3, 1],
+            [2, 0, 2, 2, 2],
+            [1, 3, 0, 2, 2],
+            [1, 1, 2, 4, 0],
+            [2, 1, 1, 1, 3],
+            [2, 2, 0, 0, 4],
+        ],
+        dtype=int,
+    )
     grid = np.array(sorted(grid.tolist()), dtype=int)
     std = np.array(sorted(std.tolist()), dtype=int)
     npt.assert_array_equal(grid, std)
@@ -381,34 +413,29 @@ def test_convert_formats(comp_space):
         npt.assert_almost_equal(a @ n - b, 0, decimal=6)
         assert np.all(n >= -NUM_TOL)
 
-        n2 = comp_space.translate_format(n, sc_size,
-                                         from_format="n", to_format="n")
+        n2 = comp_space.translate_format(n, sc_size, from_format="n", to_format="n")
         npt.assert_almost_equal(n2, n, decimal=6)
-        x = comp_space.translate_format(n, sc_size,
-                                        from_format="n", to_format="x")
+        x = comp_space.translate_format(n, sc_size, from_format="n", to_format="x")
         # This x format must be integers.
         npt.assert_almost_equal(x, np.round(x), decimal=6)
         n0 = comp_space.get_n0(sc_size)
-        npt.assert_almost_equal(comp_space.basis.T @ x + n0, n,
-                                decimal=6)
+        npt.assert_almost_equal(comp_space.basis.T @ x + n0, n, decimal=6)
         npt.assert_almost_equal(x, x_std, decimal=6)
-        npt.assert_almost_equal(comp_space.translate_format(x, sc_size,
-                                                            from_format="x",
-                                                            to_format="n"),
-                                n)
-        c = comp_space.translate_format(n, sc_size,
-                                        from_format="n",
-                                        to_format="comp")
+        npt.assert_almost_equal(
+            comp_space.translate_format(x, sc_size, from_format="x", to_format="n"), n
+        )
+        c = comp_space.translate_format(n, sc_size, from_format="n", to_format="comp")
         assert len(c) == len(comp_space.bits)
         assert all(isinstance(sl_c, Composition) for sl_c in c)
         assert all(0 <= sl_c.num_atoms <= 1 for sl_c in c)
-        npt.assert_almost_equal(comp_space.translate_format(c, sc_size,
-                                                            from_format="comp",
-                                                            to_format="n"),
-                                n, decimal=6)
-        nd = comp_space.translate_format(n, sc_size,
-                                         from_format="n",
-                                         to_format="nondisc")
+        npt.assert_almost_equal(
+            comp_space.translate_format(c, sc_size, from_format="comp", to_format="n"),
+            n,
+            decimal=6,
+        )
+        nd = comp_space.translate_format(
+            n, sc_size, from_format="n", to_format="nondisc"
+        )
         for sp_id, sp in enumerate(comp_space.species):
             dim_id = []
             for dim_ids, sl_sps in zip(comp_space.dim_ids, comp_space.bits):
@@ -421,50 +448,48 @@ def test_convert_formats(comp_space):
             assert np.sum(n[dim_id]) == nd[sp_id]
         # Nondisc format can not be converted to anything else.
         with pytest.raises(ValueError):
-            _ = comp_space.translate_format(nd, sc_size,
-                                            from_format="nondisc",
-                                            to_format="n")
+            _ = comp_space.translate_format(
+                nd, sc_size, from_format="nondisc", to_format="n"
+            )
         with pytest.raises(ValueError):
-            _ = comp_space.translate_format(n, sc_size,
-                                            from_format="n",
-                                            to_format="whatever")
+            _ = comp_space.translate_format(
+                n, sc_size, from_format="n", to_format="whatever"
+            )
         with pytest.raises(ValueError):
-            _ = comp_space.translate_format(n, sc_size,
-                                            from_format="whatever",
-                                            to_format="n")
+            _ = comp_space.translate_format(
+                n, sc_size, from_format="whatever", to_format="n"
+            )
         # Test bad cases.
         # Test negative error.
         n_bad = n - 30
         with pytest.raises(NegativeSpeciesError):
-            _ = comp_space.translate_format(n_bad, sc_size,
-                                            from_format="n",
-                                            to_format="n")
+            _ = comp_space.translate_format(
+                n_bad, sc_size, from_format="n", to_format="n"
+            )
         # Test constraints violation
         null_vec = np.random.rand(len(null_space)) * 0.01
-        if len(null_space) > 0 and not np.allclose(np.abs(null_vec),
-                                                   0, atol=NUM_TOL):
+        if len(null_space) > 0 and not np.allclose(np.abs(null_vec), 0, atol=NUM_TOL):
             dn = null_space.T @ null_vec
             n_bad = n + dn
             if np.all(n_bad >= 0):
                 with pytest.raises(ConstraintViolationError):
-                    _ = comp_space.translate_format(n_bad, sc_size,
-                                                    from_format="n",
-                                                    to_format="n")
+                    _ = comp_space.translate_format(
+                        n_bad, sc_size, from_format="n", to_format="n"
+                    )
         # Test rounding fails
-        dx = np.random.rand(len(comp_space.basis)) + 1E-5
+        dx = np.random.rand(len(comp_space.basis)) + 1e-5
         x_bad = x + dx
         n_bad = comp_space.basis.T @ x_bad + n0
         if np.all(n_bad >= 0):
             with pytest.raises(RoundingError):
-                _ = comp_space.translate_format(n_bad, sc_size,
-                                                from_format="n",
-                                                to_format="n",
-                                                rounding=True)
+                _ = comp_space.translate_format(
+                    n_bad, sc_size, from_format="n", to_format="n", rounding=True
+                )
         # Test un-normalized compositions.
         c_bad = deepcopy(c)
         c0_bad = {k: v + 100 for k, v in c_bad[0].items()}
         c_bad[0] = Composition(c0_bad)
         with pytest.raises(CompUnNormalizedError):
-            _ = comp_space.translate_format(c_bad, sc_size,
-                                            from_format="comp",
-                                            to_format="n")
+            _ = comp_space.translate_format(
+                c_bad, sc_size, from_format="comp", to_format="n"
+            )

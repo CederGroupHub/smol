@@ -6,9 +6,13 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 
-from smol.moca.sampler.bias import (FugacityBias, SquarechargeBias,
-                                    SquarecompBias, mcbias_factory)
 from smol.moca.comp_space import get_oxi_state
+from smol.moca.sampler.bias import (
+    FugacityBias,
+    SquarechargeBias,
+    SquarecompBias,
+    mcbias_factory,
+)
 from tests.utils import gen_random_occupancy
 
 bias_classes = [FugacityBias, SquarechargeBias, SquarecompBias]
@@ -60,8 +64,9 @@ def test_mcbias_factory(all_sublattices):
             kwargs = {"A": a, "b": b}
         else:
             kwargs = {}
-        assert isinstance(mcbias_factory(bias.__name__, all_sublattices,
-                                         **kwargs), bias)
+        assert isinstance(
+            mcbias_factory(bias.__name__, all_sublattices, **kwargs), bias
+        )
 
 
 # Tests for FugacityBias
@@ -122,12 +127,13 @@ def test_charge_bias(square_charge_bias):
     # All sites on all sublattices must be included in table
     for sublatt in square_charge_bias.sublattices:
         charges = np.array([get_oxi_state(sp) for sp in sublatt.species])
-        npt.assert_array_equal(table[sublatt.sites[:, None], sublatt.encoding]
-                               - charges[None, :], 0)
+        npt.assert_array_equal(
+            table[sublatt.sites[:, None], sublatt.encoding] - charges[None, :], 0
+        )
     # Bias should be implemented as negative.
     for _ in range(100):
         occu = gen_random_occupancy(square_charge_bias.sublattices)
-        assert square_charge_bias.compute_bias(occu) <= 1E-6
+        assert square_charge_bias.compute_bias(occu) <= 1e-6
 
 
 @pytest.fixture(scope="module")
@@ -143,4 +149,4 @@ def test_comp_bias(square_comp_bias):
     # Bias should be implemented as negative.
     for _ in range(100):
         occu = gen_random_occupancy(square_comp_bias.sublattices)
-        assert square_comp_bias.compute_bias(occu) <= 1E-6
+        assert square_comp_bias.compute_bias(occu) <= 1e-6

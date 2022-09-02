@@ -13,9 +13,9 @@ from math import log
 import numpy as np
 
 from smol.cofe.space.domain import get_species
-from smol.utils import class_name_from_str, derived_class_factory
 from smol.moca.comp_space import get_oxi_state
 from smol.moca.utils.occu_utils import get_dim_ids_table, occu_to_species_n
+from smol.utils import class_name_from_str, derived_class_factory
 
 
 class MCBias(ABC):
@@ -233,8 +233,10 @@ class SquarechargeBias(MCBias):
                 for most of the cases.
         """
         super().__init__(sublattices)
-        charges = [[get_oxi_state(sp) for sp in sublatt.species]
-                   for sublatt in self.sublattices]
+        charges = [
+            [get_oxi_state(sp) for sp in sublatt.species]
+            for sublatt in self.sublattices
+        ]
         if lam <= 0:
             raise ValueError("Penalty factor should be > 0!")
         self.lam = lam
@@ -255,9 +257,8 @@ class SquarechargeBias(MCBias):
         Returns:
             Float, bias value.
         """
-        c = np.sum(self._c_table[np.arange(len(occupancy), dtype=int),
-                                 occupancy])
-        return -self.lam * c ** 2
+        c = np.sum(self._c_table[np.arange(len(occupancy), dtype=int), occupancy])
+        return -self.lam * c**2
 
     def compute_bias_change(self, occupancy, step):
         """Compute bias change from step.
@@ -273,8 +274,7 @@ class SquarechargeBias(MCBias):
         occu_next = occupancy.copy()
         for site, code in step:
             occu_next[site] = code
-        return (self.compute_bias(occu_next)
-                - self.compute_bias(occupancy))
+        return self.compute_bias(occu_next) - self.compute_bias(occupancy)
 
 
 class SquarecompBias(MCBias):
@@ -337,8 +337,7 @@ class SquarecompBias(MCBias):
         occu_next = occupancy.copy()
         for site, code in step:
             occu_next[site] = code
-        return (self.compute_bias(occu_next)
-                - self.compute_bias(occupancy))
+        return self.compute_bias(occu_next) - self.compute_bias(occupancy)
 
 
 def mcbias_factory(bias_type, sublattices, *args, **kwargs):

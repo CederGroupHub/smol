@@ -343,9 +343,7 @@ class UniformlyRandom(MCKernel):
             exponent = log_factor
 
         self.trace.accepted = np.array(
-            True
-            if exponent >= 0
-            else exponent > log(self._rng.random())
+            True if exponent >= 0 else exponent > log(self._rng.random())
         )
 
         if self.trace.accepted:
@@ -392,14 +390,12 @@ class Metropolis(ThermalKernel):
             )
             exponent = (
                 -self.beta * self.trace.delta_trace.enthalpy
-                + self.trace.delta_trace.bias + log_factor
+                + self.trace.delta_trace.bias
+                + log_factor
             )
 
         else:
-            exponent = (
-                -self.beta * self.trace.delta_trace.enthalpy
-                + log_factor
-            )
+            exponent = -self.beta * self.trace.delta_trace.enthalpy + log_factor
 
         self.trace.accepted = np.array(
             True if exponent >= 0 else exponent > log(self._rng.random())

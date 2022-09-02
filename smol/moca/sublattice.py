@@ -66,8 +66,10 @@ class Sublattice(MSONable):
     def is_active(self):
         """Whether sub-lattice has active sites."""
         if len(self.active_sites) == 0 and len(self.species) > 1:
-            warnings.warn("Sub-lattice is inactive, but have multiple "
-                          "allowed species. You'd better split it.")
+            warnings.warn(
+                "Sub-lattice is inactive, but have multiple "
+                "allowed species. You'd better split it."
+            )
         return len(self.active_sites) > 0
 
     @property

@@ -42,8 +42,9 @@ def mckernel_bias(ensemble, request):
     return kernel
 
 
-@pytest.mark.parametrize("step_type, mcusher", [("swap", Swap), ("flip", Flip),
-                                                ("tableflip", Tableflip)])
+@pytest.mark.parametrize(
+    "step_type, mcusher", [("swap", Swap), ("flip", Flip), ("tableflip", Tableflip)]
+)
 def test_constructor(ensemble, step_type, mcusher):
     kernel = Metropolis(ensemble, step_type=step_type, temperature=500)
     assert isinstance(kernel._usher, mcusher)
