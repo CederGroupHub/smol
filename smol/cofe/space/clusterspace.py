@@ -713,7 +713,7 @@ class ClusterSubspace(MSONable):
         if site_mapping is None:
             site_mapping = self.structure_site_mapping(supercell, structure)
 
-        occu = []  # np.zeros(len(self.supercell_structure), dtype=np.int)
+        occu = []  # np.zeros(len(self.supercell_structure), dtype=int)
 
         for i, allowed_species in enumerate(get_allowed_species(supercell)):
             # rather than starting with all vacancies and looping
