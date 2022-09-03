@@ -618,7 +618,7 @@ class StructureWrangler(MSONable):
                 for entry in self._entries:
                     del entry.data["properties"][key]
             except KeyError:
-                warnings.warn(f"Propertiy {key} does not exist.", RuntimeWarning)
+                warnings.warn(f"Property {key} does not exist.", RuntimeWarning)
 
     def remove_entry(self, entry):
         """Remove a given structure and associated data."""
@@ -877,7 +877,7 @@ class StructureWrangler(MSONable):
             "@class": self.__class__.__name__,
             "_subspace": self._subspace.as_dict(),
             "_entries": [entry.as_dict() for entry in self._entries],
-            "_ind_sets": jsanitize(self._ind_sets),  # jic for np.int's
+            "_ind_sets": jsanitize(self._ind_sets),  # jic for int's
             "metadata": self.metadata,
         }
         return wrangler_dict

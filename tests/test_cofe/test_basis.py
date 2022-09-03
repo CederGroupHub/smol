@@ -11,6 +11,7 @@ from smol.cofe.space import basis, domain
 from smol.utils import get_subclasses
 from tests.utils import assert_msonable
 
+pytestmark = pytest.mark.filterwarnings("ignore:The measure given does not sum to 1.")
 basis_iterators = list(get_subclasses(basis.BasisIterator).values())
 
 
