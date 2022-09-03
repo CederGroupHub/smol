@@ -9,6 +9,11 @@ from smol.cofe import StructureWrangler
 from smol.cofe.extern import EwaldTerm
 from tests.utils import assert_msonable, gen_fake_training_data, gen_random_structure
 
+pytestmark = [
+    pytest.mark.filterwarnings("ignore:.*supercell_structure. Throwing out."),
+    pytest.mark.filterwarnings("ignore:.*have duplicated correlation vectors"),
+]
+
 
 def test_add_data(structure_wrangler, rng):
     for entry in gen_fake_training_data(
