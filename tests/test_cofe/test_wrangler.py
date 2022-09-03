@@ -80,12 +80,10 @@ def test_add_data(structure_wrangler, rng):
         "normalized1", structure_wrangler.get_property_vector("energy", normalize=True)
     )
     assert all(
-        prop in ["normalized_energy", "normalized", "normalized1", "random"]
+        prop in ["normalized", "normalized1", "random"]
         for prop in structure_wrangler.available_properties
     )
-    structure_wrangler.remove_properties(
-        "normalized_energy", "normalized", "normalized1"
-    )
+    structure_wrangler.remove_properties("normalized", "normalized1")
     assert structure_wrangler.available_properties == ["random"]
 
     # heavily distorted structure
