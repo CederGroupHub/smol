@@ -16,7 +16,8 @@ Use this section to keep track of changes in the works.
 :warning: This version introduced updates that change the order in which orbits are
 sorted in a ClusterSubspace. This means that the order correlation functions appear
 a correlation vector will be different when generating ClusterSubspaces compared to
-previous versions.
+previous versions. However, loading a ClusterSubspace from a json file that was
+created with a previous version will still have its original order.
 ### Changed
 * Include number of corr functions when sorting orbits. #256 @lbluque
 * Use max distance of centroid to sites in unit cell in cluster search. #256 @lbluque
