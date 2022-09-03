@@ -9,6 +9,11 @@ from smol.cofe import StructureWrangler
 from smol.cofe.extern import EwaldTerm
 from tests.utils import assert_msonable, gen_fake_training_data, gen_random_structure
 
+pytestmark = [
+    pytest.mark.filterwarnings("ignore:.*supercell_structure. Throwing out."),
+    pytest.mark.filterwarnings("ignore:.*have duplicated correlation vectors"),
+]
+
 
 def test_add_data(structure_wrangler, rng):
     for entry in gen_fake_training_data(
@@ -80,12 +85,10 @@ def test_add_data(structure_wrangler, rng):
         "normalized1", structure_wrangler.get_property_vector("energy", normalize=True)
     )
     assert all(
-        prop in ["normalized_energy", "normalized", "normalized1", "random"]
+        prop in ["normalized", "normalized1", "random"]
         for prop in structure_wrangler.available_properties
     )
-    structure_wrangler.remove_properties(
-        "normalized_energy", "normalized", "normalized1"
-    )
+    structure_wrangler.remove_properties("normalized", "normalized1")
     assert structure_wrangler.available_properties == ["random"]
 
     # heavily distorted structure

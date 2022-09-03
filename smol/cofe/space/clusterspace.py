@@ -713,7 +713,7 @@ class ClusterSubspace(MSONable):
         if site_mapping is None:
             site_mapping = self.structure_site_mapping(supercell, structure)
 
-        occu = []  # np.zeros(len(self.supercell_structure), dtype=np.int)
+        occu = []  # np.zeros(len(self.supercell_structure), dtype=int)
 
         for i, allowed_species in enumerate(get_allowed_species(supercell)):
             # rather than starting with all vacancies and looping
@@ -1143,9 +1143,15 @@ class ClusterSubspace(MSONable):
             if new_orbit not in pt_orbits:
                 pt_orbits.append(new_orbit)
 
+        # sorted by decreasing crystallographic multiplicity and finally by increasing
+        # number of correlation functions (bit combos) -> so that higher symmetry orbits
+        # come first
         pt_orbits = sorted(
             pt_orbits,
-            key=lambda x: (np.round(x.base_cluster.diameter, 6), -x.multiplicity),
+            key=lambda x: (
+                -x.multiplicity,
+                len(x),
+            ),
         )
         return pt_orbits
 
@@ -1176,18 +1182,18 @@ class ClusterSubspace(MSONable):
             dict:
                 {size: list of Orbits within diameter cutoff}
         """
-        # Vector sum of a, b, c divided by 2.
         # diameter + max_lp gives maximum possible distance from
         # [0.5, 0.5, 0.5] prim centoid to a point in all enumerable
         # clusters. Add SITE_TOL as a numerical tolerance grace.
         orbits = {1: point_orbits}
-        max_lp = np.linalg.norm(exp_struct.lattice.matrix.sum(axis=0)) / 2
-        max_lp += SITE_TOL
-        prim_center = exp_struct.lattice.get_cartesian_coords([0.5, 0.5, 0.5])
+        centroid = exp_struct.lattice.get_cartesian_coords([0.5, 0.5, 0.5])
+        coords = exp_struct.lattice.get_cartesian_coords(exp_struct.frac_coords)
+        max_lp = max(np.sum((coords - centroid) ** 2, axis=-1) ** 0.5) + SITE_TOL
+
         for size, diameter in sorted(cutoffs.items()):
             new_orbits = []
             neighbors = exp_struct.get_sites_in_sphere(
-                prim_center, diameter + max_lp, include_index=True
+                centroid, diameter + max_lp, include_index=True
             )
             for orbit in orbits[size - 1]:
                 if orbit.base_cluster.diameter > diameter:
@@ -1218,12 +1224,16 @@ class ClusterSubspace(MSONable):
                     if new_orbit not in new_orbits:
                         new_orbits.append(new_orbit)
 
+            # sorted by increasing cluster diameter, then by decreasing crystallographic
+            # multiplicity and finally by increasing number of correlation functions
+            # (bit combos) -> so that higher symmetry orbits come first
             if len(new_orbits) > 0:
                 orbits[size] = sorted(
                     new_orbits,
                     key=lambda x: (
                         np.round(x.base_cluster.diameter, 6),
                         -x.multiplicity,
+                        len(x),
                     ),
                 )
         return orbits
