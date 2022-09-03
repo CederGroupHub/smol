@@ -16,7 +16,10 @@ ATOL = 1e-14
 @pytest.fixture(params=[1, 5])
 def sampler(ensemble, rng, request):
     sampler = Sampler.from_ensemble(
-        ensemble, temperature=TEMPERATURE, seed=rng, nwalkers=request.param
+        ensemble,
+        temperature=TEMPERATURE,
+        seeds=[rng for _ in range(request.param)],
+        nwalkers=request.param,
     )
     # fix this additional attribute to sampler to access in gen occus for tests
     sampler.num_sites = ensemble.num_sites
@@ -25,17 +28,17 @@ def sampler(ensemble, rng, request):
 
 def test_from_ensemble(sampler):
     if "chemical_potentials" in sampler.samples.metadata:
-        assert isinstance(sampler.mckernel._usher, Flip)
+        assert isinstance(sampler.mckernels[0]._usher, Flip)
     else:
-        assert isinstance(sampler.mckernel._usher, Swap)
-    assert isinstance(sampler.mckernel, Metropolis)
+        assert isinstance(sampler.mckernels[0]._usher, Swap)
+    assert isinstance(sampler.mckernels[0], Metropolis)
 
 
 @pytest.mark.parametrize("thin", (1, 10))
 def test_sample(sampler, thin):
     occu = np.vstack(
         [
-            gen_random_occupancy(sampler.mckernel._usher.sublattices)
+            gen_random_occupancy(sampler.mckernels[0]._usher.sublattices)
             for _ in range(sampler.samples.shape[0])
         ]
     )
@@ -53,8 +56,8 @@ def test_sample(sampler, thin):
 def test_run(sampler, thin, rng):
     occu = np.vstack(
         [
-            gen_random_occupancy(sampler.mckernel._usher.sublattices)
-            for _ in range(sampler.samples.shape[0])
+            gen_random_occupancy(kernel._usher.sublattices)
+            for kernel in sampler.mckernels
         ]
     )
     steps = 1000
@@ -69,7 +72,7 @@ def test_run(sampler, thin, rng):
             np.vstack(
                 list(
                     map(
-                        sampler.mckernel._compute_features,
+                        sampler.mckernels[0]._compute_features,
                         sampler.samples.get_occupancies(flat=False)[i],
                     )
                 )
@@ -84,7 +87,7 @@ def test_anneal(sampler, tmpdir):
     temperatures = np.linspace(2000, 500, 5)
     occu = np.vstack(
         [
-            gen_random_occupancy(sampler.mckernel._usher.sublattices)
+            gen_random_occupancy(sampler.mckernels[0]._usher.sublattices)
             for _ in range(sampler.samples.shape[0])
         ]
     )
@@ -105,7 +108,7 @@ def test_anneal(sampler, tmpdir):
     # test streaming anneal
     new_container = SampleContainer.from_dict(sampler.samples.as_dict())
     new_container.clear()
-    new_sampler = Sampler(sampler.mckernel, new_container)
+    new_sampler = Sampler(sampler.mckernels, new_container)
     file_path = os.path.join(tmpdir, "test.h5")
 
     new_sampler.anneal(

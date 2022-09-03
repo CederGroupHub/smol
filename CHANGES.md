@@ -7,12 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
-* Allow streaming to h5 in simulated annealing. #216 @lbluque
 ### Changed
 ### Fixed
-* Fix recording sampled traces for nwalkers > 1. #219 @lbluque
 ### Removed
 ### Deprecated
+
+# [v0.0.6](https://github.com/CederGroupHub/smol/releases/tag/v0.0.6) (2022-09-02)
+:warning: This version introduced updates that change the order in which orbits are
+sorted in a ClusterSubspace. This means that the order correlation functions appear
+a correlation vector will be different when generating ClusterSubspaces compared to
+previous versions.
+### Changed
+* Include number of corr functions when sorting orbits. #256 @lbluque
+* Use max distance of centroid to sites in unit cell in cluster search. #256 @lbluque
+### Fixed
+* Fixed search of clusters by correctly using centroid of unit cell. #255 @kamronald
+### Removed
+* Removed CanonicalEnsemble and SemigrandEnsemble. #257 @lbluque
+
+# [v0.0.5](https://github.com/CederGroupHub/smol/releases/tag/v0.0.5) (2022-08-10)
+### Added
+* Data centering example notebook. #238 @kamronald
+### Changed
+* Single sampler multiple kernels. #245 @qchempku2017
+### Fixed
+* Fix returning all sub_orbit_mappings. #249 @lbluque
+
+# [v0.0.4](https://github.com/CederGroupHub/smol/releases/tag/v0.0.4) (2022-06-23)
+### Added
+* Allow streaming to h5 in simulated annealing. #216 @lbluque
+### Fixed
+* Fix recording sampled traces for nwalkers > 1. #219 @lbluque
+* Fix minor error in ClusterSubspace.__str__ #226 @lbluque
 
 # [v0.0.3](https://github.com/CederGroupHub/smol/releases/tag/v0.0.3) (2022-06-03)
 ### Added

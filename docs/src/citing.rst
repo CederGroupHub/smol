@@ -38,21 +38,28 @@ If you use **smol** or any of the other great CE packages to fit an expansion
 using orbit group wise regularization with Group Lasso or any related regression
 model, please cite the following,
 
-    Yang, J.H., Chen, T., Barroso-Luque, L., Jadidi, Z. & Ceder, G.
-    Approaches for handling high-dimensional cluster expansions of ionic
-    systems. (submitted)
+    Yang, J. H., Chen, T., Barroso-Luque, L., Jadidi, Z. & Ceder, G.
+    `Approaches for handling high-dimensional cluster expansions of ionic systems
+    <https://www.nature.com/articles/s41524-022-00818-3>`_.
+    npj Comput Mater 8, 1–11 (2022).
+
 
     Barroso-Luque, L., Zhong, P., Yang, J. H., Chen, T. & Ceder, G.
     Cluster Expansions of Multicomponent Ionic Materials:Formalism & Methods.
-    (in preparation)
+    (submitted)
 
 :math:`\ell_0\ell_2` MIQP fits with hierarchical constraints
 ============================================================
 
 Similarly, if you use :math:`\ell_0\ell_2` mixed integer quadratic programming
-for hierarchical constrained expansion fits, please cite this publication,
+for hierarchical constrained expansion fits, please cite these publications,
 
     Zhong, P., Chen, T., Barroso-Luque, L., Xie, F. & Ceder, G.
-    An :math:`\ell_0\ell_2` norm regularized regression model for construction
-    of robust cluster expansion in multicomponent systems.
-    `[arxiv] <https://arxiv.org/abs/2204.13789>`_
+    An :math:`\ell_0\ell_2`-norm `regularized regression model for construction of
+    robust cluster expansions in multicomponent systems.
+    <https://doi.org/10.1103/PhysRevB.106.024203>`_
+    Phys. Rev. B 106, 024203 (2022).
+
+    Barroso-Luque, L., Zhong, P., Yang, J. H., Chen, T. & Ceder, G.
+    Cluster Expansions of Multicomponent Ionic Materials:Formalism & Methods.
+    (submitted)

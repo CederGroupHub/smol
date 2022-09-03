@@ -25,7 +25,7 @@ class Sampler:
     The default will use a simple Metropolis random walk kernel.
     """
 
-    def __init__(self, kernel, container):
+    def __init__(self, kernels, container):
         """Initialize BaseSampler.
 
         It is recommended to initialize a sampler with the from_ensemble
@@ -33,15 +33,17 @@ class Sampler:
         mcusher, etc.
 
         Args:
-            kernel (MCKernel):
-                an MCKernel instance.
+            kernels ([MCKernel]):
+                a list of MCKernel instances for each walker.
+                Note: we only support the same type of kernel and the
+                 same ensemble for all walkers.
             container (SampleContainer):
                 a sampler container to store samples.
         """
-        self._kernel = kernel
+        self._kernels = kernels
         self._container = container
         #  Save the seed for reproducibility
-        self._container.metadata["seed"] = kernel.seed
+        self._container.metadata["seeds"] = [kernel.seed for kernel in kernels]
 
     @classmethod
     def from_ensemble(
@@ -50,7 +52,7 @@ class Sampler:
         *args,
         step_type=None,
         kernel_type=None,
-        seed=None,
+        seeds=None,
         nwalkers=1,
         **kwargs,
     ):
@@ -73,8 +75,8 @@ class Sampler:
                 string specifying the specific MCMC transition kernel. This
                 represents the underlying MC algorithm. Currently only
                 Metropolis is supported.
-            seed (int): optional
-                seed for the PRNG.
+            seeds ([int]): optional
+                seed for the PRNG in each kernel.
             nwalkers (int): optional
                 number of walkers/chains to sampler. Default is 1. More than 1
                 is still experimental...
@@ -96,12 +98,22 @@ class Sampler:
 
         if kernel_type is None:
             kernel_type = "Metropolis"
+        if seeds is not None:
+            if len(seeds) != nwalkers:
+                raise ValueError("Number of seeds does not match number of kernels!")
+        else:
+            seeds = [None for _ in range(nwalkers)]
 
-        mckernel = mckernel_factory(
-            kernel_type, ensemble, step_type, seed=seed, *args, **kwargs
-        )
+        mckernels = [
+            mckernel_factory(
+                kernel_type, ensemble, step_type, seed=seed, *args, **kwargs
+            )
+            for seed in seeds
+        ]
         # get a trial trace to initialize sample container trace
-        _trace = mckernel.compute_initial_trace(np.zeros(ensemble.num_sites, dtype=int))
+        _trace = mckernels[0].compute_initial_trace(
+            np.zeros(ensemble.num_sites, dtype=int)
+        )
         sample_trace = Trace(
             **{
                 name: np.empty((0, nwalkers, *value.shape), dtype=value.dtype)
@@ -121,17 +133,17 @@ class Sampler:
             sample_trace,
             sampling_metadata,
         )
-        return cls(mckernel, container)
+        return cls(mckernels, container)
 
     @property
-    def mckernel(self):
+    def mckernels(self):
         """Get the underlying ensemble."""
-        return self._kernel
+        return self._kernels
 
     @property
-    def seed(self):
+    def seeds(self):
         """Seed for the random number generator."""
-        return self._kernel.seed
+        return [kernel.seed for kernel in self._kernels]
 
     @property
     def samples(self):
@@ -145,6 +157,11 @@ class Sampler:
     def clear_samples(self):
         """Clear samples from sampler container."""
         self.samples.clear()
+
+    def _single_step(self, occupancies):
+        """Do a single step for all kernels."""
+        for kernel, occupancy in zip(self._kernels, occupancies):
+            yield kernel.single_step(occupancy)
 
     def sample(self, nsteps, initial_occupancies, thin_by=1, progress=False):
         """Generate MCMC samples.
@@ -178,11 +195,12 @@ class Sampler:
         # TODO make samplers with single chain, multiple and multiprocess
         # TODO kernel should take only 1 occupancy
         # set up any auxiliary states from inital occupancies
-        self._kernel.set_aux_state(occupancies)
+        for kernel, occupancy in zip(self._kernels, occupancies):
+            kernel.set_aux_state(occupancy)
 
         # get initial traces and stack them
         trace = Trace()
-        traces = list(map(self._kernel.compute_initial_trace, occupancies))
+        traces = list(map(self._kernels[0].compute_initial_trace, occupancies))
         for name in traces[0].names:
             stack = np.vstack([getattr(tr, name) for tr in traces])
             setattr(trace, name, stack)
@@ -193,9 +211,7 @@ class Sampler:
         with progress_bar(progress, total=nsteps, description=desc) as p_bar:
             for _ in range(nsteps // thin_by):
                 for _ in range(thin_by):
-                    for i, strace in enumerate(
-                        map(self._kernel.single_step, occupancies)
-                    ):
+                    for i, strace in enumerate(self._single_step(occupancies)):
                         for name, value in strace.items():
                             val = getattr(trace, name)
                             val[i] = value
@@ -328,6 +344,7 @@ class Sampler:
             temperatures (Sequence):
                sequence of temperatures to anneal, should be strictly
                decreasing.
+               Note: only available for ThermalKernel.
             mcmc_steps (int):
                number of Monte Carlo steps to run at each temperature.
             initial_occupancies (ndarray):
@@ -354,7 +371,8 @@ class Sampler:
                 f"{temperatures[0]:.2f}."
             )
         # initialize for first temperature.
-        self._kernel.temperature = temperatures[0]
+        for kernel in self._kernels:
+            kernel.temperature = temperatures[0]
         self.run(
             mcmc_steps,
             initial_occupancies=initial_occupancies,
@@ -366,7 +384,8 @@ class Sampler:
             keep_last_chunk=True,
         )
         for temperature in temperatures[1:]:
-            self._kernel.temperature = temperature
+            for kernel in self._kernels:
+                kernel.temperature = temperature
             self.run(
                 mcmc_steps,
                 thin_by=thin_by,

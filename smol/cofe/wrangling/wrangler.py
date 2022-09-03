@@ -548,7 +548,8 @@ class StructureWrangler(MSONable):
                     raise ValueError(
                         f"The properties in the entry being added do not match all "
                         f"the properties that have already been added: "
-                        f"{self.available_properties}.\n Additional entrys must include "
+                        f"{self.available_properties}.\n"
+                        f" Additional entries must include "
                         f"the same properties included."
                     )
 
@@ -556,7 +557,8 @@ class StructureWrangler(MSONable):
                     raise ValueError(
                         f"The properties in the entry being added do not match all "
                         f"the weights that have already been added: "
-                        f"{self.available_weights}.\n Additional entrys must include the"
+                        f"{self.available_weights}.\n"
+                        f" Additional entries must include the"
                         f" same weights included."
                     )
             self._entries.append(entry)
@@ -616,7 +618,7 @@ class StructureWrangler(MSONable):
                 for entry in self._entries:
                     del entry.data["properties"][key]
             except KeyError:
-                warnings.warn(f"Propertiy {key} does not exist.", RuntimeWarning)
+                warnings.warn(f"Property {key} does not exist.", RuntimeWarning)
 
     def remove_entry(self, entry):
         """Remove a given structure and associated data."""
@@ -875,7 +877,7 @@ class StructureWrangler(MSONable):
             "@class": self.__class__.__name__,
             "_subspace": self._subspace.as_dict(),
             "_entries": [entry.as_dict() for entry in self._entries],
-            "_ind_sets": jsanitize(self._ind_sets),  # jic for np.int's
+            "_ind_sets": jsanitize(self._ind_sets),  # jic for int's
             "metadata": self.metadata,
         }
         return wrangler_dict

@@ -12,6 +12,13 @@ process headache free. Using ``pip``::
 
         pip install smol
 
+Although **smol** is not tested on Windows platforms, it should still run on Windows
+since there aren't any platform specific dependencies. The only known installation issue
+is building *pymatgen* dependencies. If simply running ``pip install smol`` fails, try
+installing *pymatgen* with conda first::
+
+        conda install -c conda-forge pymatgen
+        pip install smol
 
 Basic Usage
 ===========
@@ -148,8 +155,14 @@ package.
 
 Example Notebooks
 =================
+
 For more detailed examples on how to use **smol** have a look at the following
 Jupyter notebooks.
+
+You can run the notebooks interactively on Binder.
+
+.. image:: https://mybinder.org/badge_logo.svg
+ :target: https://mybinder.org/v2/gh/CederGroupHub/smol/HEAD?labpath=docs%2Fsrc%2Fnotebooks%2Findex.ipynb
 
 Basic Examples
 --------------
@@ -176,9 +189,12 @@ Basic Examples
 Advanced Examples
 -----------------
 
+- `Centering training data in stage-wise fit with electrostatics`_
 - `Adding structures to a StructureWrangler in parallel`_
 - `Simulated annealing with point electrostatics`_
 - `Li-Mn-O DRX cluster expansion and sampling`_
+
+.. _Centering training data in stage-wise fit with electrostatics: notebooks/ce-fit-w-centering.ipynb
 
 .. _Adding structures to a StructureWrangler in parallel: notebooks/adding-structures-in-parallel.ipynb
 
