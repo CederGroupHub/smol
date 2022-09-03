@@ -1143,9 +1143,15 @@ class ClusterSubspace(MSONable):
             if new_orbit not in pt_orbits:
                 pt_orbits.append(new_orbit)
 
+        # sorted by decreasing crystallographic multiplicity and finally by increasing
+        # number of correlation functions (bit combos) -> so that higher symmetry orbits
+        # come first
         pt_orbits = sorted(
             pt_orbits,
-            key=lambda x: (np.round(x.base_cluster.diameter, 6), -x.multiplicity),
+            key=lambda x: (
+                -x.multiplicity,
+                len(x),
+            ),
         )
         return pt_orbits
 
@@ -1218,12 +1224,16 @@ class ClusterSubspace(MSONable):
                     if new_orbit not in new_orbits:
                         new_orbits.append(new_orbit)
 
+            # sorted by increasing cluster diameter, then by decreasing crystallographic
+            # multiplicity and finally by increasing number of correlation functions
+            # (bit combos) -> so that higher symmetry orbits come first
             if len(new_orbits) > 0:
                 orbits[size] = sorted(
                     new_orbits,
                     key=lambda x: (
                         np.round(x.base_cluster.diameter, 6),
                         -x.multiplicity,
+                        len(x),
                     ),
                 )
         return orbits

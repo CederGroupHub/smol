@@ -505,7 +505,7 @@ def test_function_hierarchy_fixed(single_subspace):
     assert sorted(hierarchy[35]) == [5, 7, 10]
     assert sorted(hierarchy[56]) == [7, 8, 16]
     assert sorted(hierarchy[75]) == [7, 14, 20]
-    assert sorted(hierarchy[95]) == [9, 19]
+    assert sorted(hierarchy[95]) == [13, 19, 21]
     assert sorted(hierarchy[115]) == [13, 19, 21]
 
 
