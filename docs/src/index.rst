@@ -14,7 +14,7 @@
 Statistical Mechanics on Lattices
 =================================
 
-*Lighthweight but caffeinated Python implementation of computational methods
+*Lightweight but caffeinated Python implementation of computational methods
 for statistical mechanical calculations of configurational states in
 crystalline material systems.*
 
@@ -43,9 +43,7 @@ material systems based on the *cluster expansion* method from alloy theory and
 related methods. Although **smol** is intentionally lightweight---in terms of
 dependencies and built-in functionality---it has a modular design that closely
 follows underlying mathematical formalism and provides useful abstractions to
-easily extend existing methods or implement and test new ones. Finally,
-although initially conceived for method development, **smol** can (and is being)
-used in production for materials science reasearch applications.
+easily extend existing methods or implement and test new ones.
 
 Functionality
 =============

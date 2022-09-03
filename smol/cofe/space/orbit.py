@@ -126,27 +126,23 @@ class Orbit(MSONable):
 
     @property
     def multiplicity(self):
-        """Get number of clusters in orbit.
-
-        Number of clusters in the given sites of the lattice object that are in
-        the orbit.
-        """
+        """Get number of clusters in orbit per normilizing unit cell."""
         return len(self.clusters)
 
     @property
     def bit_combos(self):
-        """Get tuple representing the multi-index for site function ordering.
+        """Get tuple of contracted multi-indeces for site function ordering.
 
         tuple of ndarrays, each array is a set of symmetrically equivalent bit
         orderings represented by each row. Bit combos represent non-constant site
-        function orderings, i.e. contracted multi-indices
+        function orderings.
         """
         if self._bit_combos is None:
             # get all the bit symmetry operations
             all_combos = []
             for bit_combo in product(*self.bits):
                 if not any(np.array_equal(bit_combo, bc) for bc in chain(*all_combos)):
-                    bit_combo = np.array(bit_combo, dtype=np.int_)
+                    bit_combo = np.array(bit_combo, dtype=int)
                     new_bits = np.unique(bit_combo[self.cluster_permutations], axis=0)
                     all_combos.append(new_bits)
             self._bit_combos = tuple(all_combos)
@@ -217,7 +213,7 @@ class Orbit(MSONable):
         """Get the array of correlation functions for all possible configs.
 
         Array of stacked correlation arrays for each symetrically distinct
-        set of bit combos.
+        set of bit combos, i.e a correlation function.
 
         The correlations array is a multidimensional array with each dimension
         corresponding to each site space.
@@ -387,7 +383,7 @@ class Orbit(MSONable):
         return match
 
     def sub_orbit_mappings(self, orbit):
-        """Return a mapping of the sites in the orbit to a sub orbit.
+        """Return a mapping of cluster sites in the orbit to cluster sites in sub orbit.
 
         If the given orbit is not a sub-orbit will return an empty list.
         Note this works for mapping between sites, sites spaces, and basis
@@ -397,7 +393,8 @@ class Orbit(MSONable):
             orbit (Orbit):
                 A sub orbit to return mapping of sites
         Returns:
-            list: of indices sucht that
+            list:
+                a list of indices such that
                 self.base_cluster.sites[indices] = orbit.base_cluster.sites
         """
         indsets = np.array(
@@ -420,11 +417,14 @@ class Orbit(MSONable):
                 # take the centroid of subset of sites, not all cluster sites
                 centroid = np.average(cluster.frac_coords[inds], axis=0)
                 recenter = np.round(centroid - orbit.base_cluster.centroid)
-                c_sites = orbit.base_cluster.frac_coords + recenter
-                if is_coord_subset(c_sites, cluster.frac_coords):
-                    mappings.append(
-                        coord_list_mapping(c_sites, cluster.frac_coords, atol=SITE_TOL)
-                    )
+                for sub_cluster in orbit.clusters:
+                    c_sites = sub_cluster.frac_coords + recenter
+                    if is_coord_subset(c_sites, cluster.frac_coords):
+                        mappings.append(
+                            coord_list_mapping(
+                                c_sites, cluster.frac_coords, atol=SITE_TOL
+                            )
+                        )
 
         if len(mappings) == 0 and self.is_sub_orbit(orbit):
             raise RuntimeError(
@@ -478,7 +478,7 @@ class Orbit(MSONable):
 
         Returns:
             (int, int, int):
-            next orbit id, next bit ordering id, next cluster id
+                next orbit id, next bit ordering id, next cluster id
         """
         self.id = orbit_id
         self.bit_id = orbit_bit_id
