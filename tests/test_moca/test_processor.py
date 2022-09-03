@@ -13,6 +13,8 @@ from smol.moca.processor import (
 from smol.moca.processor.base import Processor
 from tests.utils import assert_msonable, gen_random_occupancy, gen_random_structure
 
+pytestmark = pytest.mark.filterwarnings("ignore:All bit combos have been removed")
+
 RTOL = 0.0  # relative tolerance to check property change functions
 # absolute tolerance to check property change functions (eps is approx 2E-16)
 ATOL = 2e4 * np.finfo(float).eps

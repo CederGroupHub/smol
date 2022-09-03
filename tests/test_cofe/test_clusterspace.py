@@ -19,6 +19,8 @@ from smol.correlations import corr_from_occupancy
 from smol.exceptions import StructureMatchError
 from tests.utils import assert_msonable, gen_random_structure
 
+pytestmark = pytest.mark.filterwarnings("ignore:All bit combos have been removed")
+
 
 def test_from_cutoffs(structure):
     cutoffs = {2: 5, 3: 4, 4: 4}

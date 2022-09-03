@@ -142,7 +142,7 @@ class Orbit(MSONable):
             all_combos = []
             for bit_combo in product(*self.bits):
                 if not any(np.array_equal(bit_combo, bc) for bc in chain(*all_combos)):
-                    bit_combo = np.array(bit_combo, dtype=np.int_)
+                    bit_combo = np.array(bit_combo, dtype=int)
                     new_bits = np.unique(bit_combo[self.cluster_permutations], axis=0)
                     all_combos.append(new_bits)
             self._bit_combos = tuple(all_combos)
