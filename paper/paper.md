@@ -45,15 +45,15 @@ The growing research focus on high principal element materials—which span a
 variety of applications, such as electrochemical [@Lun:2020], metal alloys
 [@George:2019], semiconductor, thermoelectric, magnetic, and superconducting
 [@Gao:2018] materials—necessitates the development of computational methodology
-capable of resolving atomic configuration behavior and resulting thermodynamic
+capable of resolving details of atomic configuration and resulting thermodynamic
 properties. The cluster expansion method is a formal and effective way to
 construct functions of atomic configuration by coarse-graining materials
 properties, such as formation energies, in terms of species site occupations in
-a lattice model [Sanchez:1984]. The cluster expansion method coupled with Monte
+a lattice model [@Sanchez:1984]. The cluster expansion method coupled with Monte
 Carlo sampling (CE-MC) is an established and effective way to resolve atomic
 details underlying important thermodynamic properties [@VanderVen:2018].
 
-`smol` (Statistical Mechanics on Lattices) is a Python package for constructing general applied lattice models, and performing Monte Carlo sampling of associated thermodynamic ensembles. The representation of lattice models in `smol` is based largely on the Cluster Expansion (CE) formalism [@Sanchez:1984], however the package is designed to allow easy implementation of extensions to the formalism, such as redundant representations [@Barroso-Luque:2021]. `smol` also includes flexible and extensible functionality to run Monte Carlo (MC) sampling from canonical and semigrand-canonical ensembles associated with generated lattice models. `smol` has been intentionally designed to be lightweight and include a minimal set of dependencies to enable smooth installation, use and development. `smol` was conceived primarily to enable development and implementation of novel CE-MC methodology but is now sufficiently mature that it is already being used in applied research of real material systems. [@Yang:2022-a; @Chen:2022; @Jadidi:2022; @Yang:2022-b]
+`smol` (Statistical Mechanics on Lattices) is a Python package for constructing general applied lattice models, and performing Monte Carlo sampling of associated thermodynamic ensembles. The representation of lattice models in `smol` is based largely on the Cluster Expansion (CE) formalism [@Sanchez:1984]; however the package is designed to allow easy implementation of extensions to the formalism, such as redundant representations [@Barroso-Luque:2021]. `smol` also includes flexible and extensible functionality to run Monte Carlo (MC) sampling from canonical and semigrand-canonical ensembles associated with generated lattice models. `smol` has been intentionally designed to be lightweight and include a minimal set of dependencies to enable smooth installation, use and development. `smol` was conceived primarily to enable development and implementation of novel CE-MC methodology but is now sufficiently mature that it is already being used in applied research of real material systems. [@Yang:2022-a; @Chen:2022; @Jadidi:2022; @Yang:2022-b]
 
 # Statement of need
 
@@ -69,13 +69,13 @@ Several high quality software packages implementing CE-MC methodology, such as `
 
 # Formalism overview
 
-The atomic configuration of a crystalline material can be represented by a string of occupation variables, $\sigma = (\sigma_1, \sigma_2, \ldots, \sigma_N)$. Where the value of each occupation variable i  represents the atomic species occupying the i-th site in an N-site supercell. Accordingly, any generalized lattice model of the atomic configuration  can be written as a sum of multi-site (cluster) interaction functions,
+The atomic configuration of a crystalline material can be represented by a string of occupation variables, $\sigma = (\sigma_1, \sigma_2, \ldots, \sigma_N)$. Where the value of each occupation variable $\sigma_i$ represents the atomic species occupying the i-th site in an N-site supercell. Accordingly, any generalized lattice model of the atomic configuration  can be written as a sum of multi-site (cluster) interaction functions,
 
 \begin{equation}\label{eq:expansion}
 H(\sigma) = \sum_{S\subseteq [N]} H_S(\sigma_S)
 \end{equation}
 
-Where $[N] = \{1, 2, , N\}$ is the set of all site indices, and $S$ is the set of all occupation variables for the sites in the cluster $S$.
+Where $[N] = \{1, 2, , N\}$ is the set of all site indices, and $\sigma_S$ is the set of all occupation variables for the sites in a cluster $S$.
 
 Two important considerations enable practical representations for effective fitting of applied lattice models:
 
@@ -114,7 +114,7 @@ Classes and functions for representation and construction of functions of config
 
 Additionally, the functionality to sample thermodynamic properties for a fitted lattice model under both canonical and semi-grand canonical ensembles is included in the `smol.moca` module; which similarly includes flexible object-oriented abstractions, including the following,
 
-- Classes and functions to quickly evaluate a cluster expansion for a given configuration and local configuration changes over a predefined supercell size and shape. The critical evaluation functions are implemented in Cython so that MC performance is not compromised.
+- Classes and functions to quickly evaluate a cluster expansion for a given configuration and local configuration changes over a predefined supercell size and shape. Critical functions are implemented in Cython so that MC performance is not compromised.
 - Classes to implement complex MC algorithms. The different components of MC are implemented as independent objects and utilities, that include classes to define configuration transition proposals, statistical ensembles, sampled value traces, and various Monte Carlo algorithm kernels. This enables customization of MC sampling methods, ensembles and computed properties without the need to re-write the overhead sample generation, saving, and streaming to file functionality.
 
 All classes and functions included in `smol` are thoroughly documented and several usage examples are available in the documentation.
